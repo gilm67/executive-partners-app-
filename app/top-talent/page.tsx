@@ -6,7 +6,9 @@ import { getCandidates } from "@/lib/sheets"; // aliased import
 export const revalidate = 30;
 
 export default async function TopTalentPage() {
-  const hasAccess = cookies().get("tt_access")?.value === "1";
+  // cookies() is async in your Next version
+  const cookieStore = await cookies();
+  const hasAccess = cookieStore.get("tt_access")?.value === "1";
 
   // ---------- PASSCODE SCREEN ----------
   if (!hasAccess) {
@@ -14,7 +16,7 @@ export default async function TopTalentPage() {
       <section className="flex min-h-[70vh] items-center justify-center px-4">
         <div className="w-full max-w-md rounded-2xl border bg-white p-6 shadow-sm">
           <h1 className="text-xl font-semibold text-neutral-900">Top Talent (protected)</h1>
-          <p className="mt-1 text-sm text-neutral-600">
+        <p className="mt-1 text-sm text-neutral-600">
             Enter your passcode to access the anonymous Top Talent dashboard.
           </p>
 
