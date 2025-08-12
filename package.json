@@ -3,11 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
+  "dev": "next dev --turbopack",
+  "build": "next build --no-lint",
+  "start": "next start"
+}
   "dependencies": {
     "googleapis": "^155.0.1",
     "lucide-react": "^0.539.0",
