@@ -251,3 +251,74 @@ export async function getJobByIdOrSlug(idOrSlug: string): Promise<Job | null> {
   match = all.find((j) => jobSlug(j) === idOrSlug);
   return match || null;
 }
+// ---------- Create Job (append to "Jobs" tab") ----------
+export type NewJobInput = {
+  Title?: string;        // or use Role if your sheet uses that column
+  Role?: string;
+  Location?: string;
+  Market?: string;
+  Seniority?: string;
+  Summary?: string;
+  Description?: string;
+  Confidential?: string; // "YES"/"NO"
+  Active?: string;       // "TRUE"/"FALSE"
+};
+
+export async function createJob(input: NewJobInput): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+  const sheetId = process.env.GOOGLE_SHEET_ID || "";
+  if (!sheetId) return { ok: false, error: "GOOGLE_SHEET_ID missing" };
+
+  const auth = getSheetsAuth();
+  const sheets = google.sheets({ version: "v4", auth });
+
+  // Read header row to know the column order and the next ID
+  const range = `Jobs!A1:ZZ1`;
+  const headResp = await sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range });
+  const headers = (headResp.data.values?.[0] || []) as string[];
+
+  // Ensure must-have columns exist
+  const required = ["ID", "Title", "Role", "Location", "Market", "Seniority", "Summary", "Description", "Confidential", "Active"];
+  const merged = Array.from(new Set([...headers, ...required]));
+  if (merged.length !== headers.length) {
+    // write updated headers back (adds missing ones)
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: sheetId,
+      range: `Jobs!1:1`,
+      valueInputOption: "RAW",
+      requestBody: { values: [merged] },
+    });
+  }
+  const cols = merged; // use final header order
+
+  // Find next numeric ID (read a few rows)
+  const idRange = `Jobs!A2:A1000`;
+  const idResp = await sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: idRange });
+  const ids = (idResp.data.values || []).map(r => Number(r?.[0])).filter(n => Number.isFinite(n)) as number[];
+  const nextId = ids.length ? Math.max(...ids) + 1 : 101;
+
+  // Build row by header order
+  const row: string[] = cols.map((h) => {
+    if (h === "ID") return String(nextId);
+    const v =
+      (input as any)[h] ??
+      (h === "Title" ? input.Title ?? input.Role ?? "" :
+       h === "Role" ? input.Role ?? input.Title ?? "" :
+       h === "Confidential" ? (input.Confidential ?? "YES") :
+       h === "Active" ? (input.Active ?? "TRUE") :
+       "");
+    return String(v ?? "");
+  });
+
+  // Append
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: sheetId,
+    range: `Jobs!A:A`,
+    valueInputOption: "RAW",
+    insertDataOption: "INSERT_ROWS",
+    requestBody: { values: [row] },
+  });
+
+  return { ok: true, id: String(nextId) };
+}
+
+
