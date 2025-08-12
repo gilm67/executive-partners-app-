@@ -1,0 +1,5 @@
+declare module 'mammoth' {
+  export function extractRawText(input: { buffer: Buffer | Uint8Array | ArrayBuffer }, options?: any): Promise<{ value: string }>;
+  const _default: any;
+  export default _default;
+}
