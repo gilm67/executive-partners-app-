@@ -1,10 +1,12 @@
+// app/api/candidates/export/route.ts
 import { NextResponse } from "next/server";
-import { getCandidates } from "../../../../../lib/sheets";
+import { getCandidates } from "@/lib/sheets"; // ✅ use alias so it works locally & on Vercel
 
 export const runtime = "nodejs";
 
 export async function GET() {
   const rows = await getCandidates();
+
   const headers = [
     "Timestamp","Name","Email","Role","Market",
     "AUM","Mobility","Notes","CV Link","LinkedIn Search",
@@ -13,10 +15,7 @@ export async function GET() {
 
   const esc = (v: any) => {
     const s = (v ?? "").toString();
-    if (s.includes('"') || s.includes(",") || s.includes("\n")) {
-      return `"${s.replace(/"/g, '""')}"`;
-    }
-    return s;
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
 
   const lines = [
