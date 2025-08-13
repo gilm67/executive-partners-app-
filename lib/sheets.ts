@@ -212,7 +212,8 @@ export async function getJobs(): Promise<Job[]> {
   const rows = resp.data.values || [];
   if (rows.length < 2) return [];
 
-  const headers = (rows[0] as string[]).map(h => (h || "").trim());
+  const rawHeaders = rows[0] as string[];
+  const headers = rawHeaders.map(h => (h || "").trim());
   const data = rows.slice(1);
 
   // helper to pick the first non-empty among several header variants
@@ -275,7 +276,7 @@ export async function getJobByIdOrSlug(idOrSlug: string): Promise<Job | null> {
   const all = await getJobs();
   // direct ID match
   let match = all.find((j) => (j.ID || "").toString() === idOrSlug);
-  if (match) return match;
+  if (match) return match || null;
   // slug match
   match = all.find((j) => jobSlug(j) === idOrSlug);
   return match || null;
@@ -354,4 +355,3 @@ export async function createJob(
 
   return { ok: true, id: String(nextId) };
 }
-
