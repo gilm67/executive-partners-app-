@@ -1,30 +1,32 @@
 "use client";
 
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
 
-export const dynamic = "force-dynamic";   // ensure Vercel doesn’t cache a 404
+// Keep this to prevent any static optimization on Vercel
+export const dynamic = "force-dynamic";
 
-export default function ApplyPage() {
+function ApplyFormInner() {
   const sp = useSearchParams();
-  const [name, setName]   = useState("");
-  const [email, setEmail] = useState("");
-  const [notes, setNotes] = useState("");
 
   // Pre-fill from query
   const role   = sp.get("role")   || "";
   const market = sp.get("market") || "";
   const jobId  = sp.get("jobId")  || "";
 
+  const [name, setName]     = useState("");
+  const [email, setEmail]   = useState("");
+  const [notes, setNotes]   = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [ok, setOk] = useState<null | boolean>(null);
-  const [err, setErr] = useState<string | null>(null);
+  const [ok, setOk]         = useState<null | boolean>(null);
+  const [err, setErr]       = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     setOk(null);
     setErr(null);
+
     try {
       const res = await fetch("/api/apply", {
         method: "POST",
@@ -33,7 +35,9 @@ export default function ApplyPage() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setOk(true);
-      setName(""); setEmail(""); setNotes("");
+      setName("");
+      setEmail("");
+      setNotes("");
     } catch (e: any) {
       setOk(false);
       setErr(e?.message || "Submit error");
@@ -122,5 +126,23 @@ export default function ApplyPage() {
         )}
       </form>
     </section>
+  );
+}
+
+export default function ApplyPage() {
+  return (
+    <Suspense
+      fallback={
+        <section className="space-y-6">
+          <div className="h-6 w-56 rounded bg-neutral-800" />
+          <div className="h-4 w-96 rounded bg-neutral-900" />
+          <div className="mx-auto mt-4 w-full max-w-xl rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
+            <div className="h-32 w-full rounded bg-neutral-800" />
+          </div>
+        </section>
+      }
+    >
+      <ApplyFormInner />
+    </Suspense>
   );
 }
