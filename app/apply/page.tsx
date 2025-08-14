@@ -1,14 +1,47 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";   // ensure Vercel doesn’t cache a 404
+export const runtime = "nodejs";          // keep it on the server runtime
 
 export default function ApplyPage() {
   const sp = useSearchParams();
-  const role = sp.get("role") ?? "";
-  const market = sp.get("market") ?? "";
-  const jobId = sp.get("jobId") ?? "";
+  const [name, setName]   = useState("");
+  const [email, setEmail] = useState("");
+  const [notes, setNotes] = useState("");
+
+  // Pre-fill from query
+  const role   = sp.get("role")   || "";
+  const market = sp.get("market") || "";
+  const jobId  = sp.get("jobId")  || "";
+
+  const [submitting, setSubmitting] = useState(false);
+  const [ok, setOk] = useState<null | boolean>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    setOk(null);
+    setErr(null);
+    try {
+      const res = await fetch("/api/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, role, market, notes, jobId }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setOk(true);
+      setName(""); setEmail(""); setNotes("");
+    } catch (e: any) {
+      setOk(false);
+      setErr(e?.message || "Submit error");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <section className="space-y-6">
@@ -18,81 +51,76 @@ export default function ApplyPage() {
       </p>
 
       <form
-        method="POST"
-        action="/api/apply"
-        className="mx-auto w-full max-w-2xl rounded-2xl border bg-white p-6 shadow-sm"
+        onSubmit={onSubmit}
+        className="mx-auto w-full max-w-xl rounded-2xl border border-neutral-800 bg-neutral-900 p-6"
       >
-        {/* hidden context */}
-        <input type="hidden" name="jobId" value={jobId} />
-        <input type="hidden" name="__source" value="apply-page" />
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-neutral-800">Name</label>
+            <label className="block text-sm text-neutral-300">Name</label>
             <input
-              name="name"
-              required
+              className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
               placeholder="Your full name"
-              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-neutral-800">Email</label>
-            <input
-              name="email"
-              type="email"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-neutral-300">Email</label>
+            <input
+              type="email"
+              className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
               placeholder="you@example.com"
-              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
-          </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-neutral-800">Role</label>
-            <input
-              name="role"
-              defaultValue={role}
-              placeholder="e.g. Private Banker"
-              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-neutral-800">Market</label>
+            <label className="block text-sm text-neutral-300">Role</label>
             <input
-              name="market"
-              defaultValue={market}
-              placeholder="e.g. CH Onshore"
-              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-neutral-100"
+              value={role}
+              readOnly
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-neutral-300">Market</label>
+            <input
+              className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-neutral-100"
+              value={market}
+              readOnly
             />
           </div>
         </div>
 
         <div className="mt-4">
-          <label className="mb-1 block text-sm font-medium text-neutral-800">Notes (optional)</label>
+          <label className="block text-sm text-neutral-300">Notes (optional)</label>
           <textarea
-            name="notes"
-            rows={5}
+            className="mt-1 h-28 w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
             placeholder="Anything you’d like to add…"
-            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
           />
         </div>
 
-        <div className="mt-6">
-          <button
-            type="submit"
-            className="rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
-          >
-            Submit
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={submitting}
+          className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          {submitting ? "Submitting…" : "Submit"}
+        </button>
 
-        <p className="mt-3 text-xs text-neutral-500">
-          By submitting, you agree your data will be processed to assess role fit. You can request deletion at any time.
-        </p>
+        {ok === true && (
+          <p className="mt-3 text-sm text-green-400">Thanks—application received.</p>
+        )}
+        {ok === false && (
+          <p className="mt-3 text-sm text-red-400">Sorry, something went wrong: {err}</p>
+        )}
       </form>
     </section>
   );
