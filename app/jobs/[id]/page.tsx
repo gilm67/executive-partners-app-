@@ -1,61 +1,131 @@
-import { getJobByIdOrSlug } from "@/lib/sheets";
-import ApplyButtons from "./ApplyButtons";
+// app/jobs/[id]/page.tsx
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getJobByIdOrSlug, jobSlug, type Job } from "@/lib/sheets";
 
-export default async function JobPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const job = await getJobByIdOrSlug(params.id);
+// keep it server-only (we import googleapis indirectly in lib/sheets)
+export const revalidate = 60;
+
+// Next.js 15 dynamic routes: params must be awaited
+type Params = { id: string };
+
+export default async function JobDetailPage(
+  props: { params: Promise<Params> } // <- IMPORTANT: Promise here
+) {
+  const { id } = await props.params;   // <- and await here
+
+  const job = await getJobByIdOrSlug(id);
   if (!job) {
-    return <div className="p-6">Job not found</div>;
+    notFound();
   }
 
-  // Replace escaped \n with real newlines
-  const description = (job.Description || "").replace(/\\n/g, "\n");
+  // Safe field normalization
+  const title = (job.Title || job.Role || "").trim() || "Untitled Role";
+  const location = (job.Location || "").trim();
+  const market = (job.Market || "").trim();
+  const seniority = (job.Seniority || "").trim();
+  const summary = (job.Summary || "").trim();
+  const rawDescription = (job.Description || "").toString();
 
-  // Format description with bold section headers
-  const formattedDescription = description.split("\n").map((line, idx) => {
-    const trimmed = line.trim();
-    if (!trimmed) return <br key={idx} />;
+  // Unescape any "\n" sequences into real newlines (data often pasted that way)
+  const unescaped = rawDescription.replace(/\\n/g, "\n").trim();
 
-    if (
-      trimmed.toLowerCase().startsWith("key responsibilities") ||
-      trimmed.toLowerCase().startsWith("key qualifications")
-    ) {
-      return (
-        <p key={idx} className="font-bold mt-4 mb-2">
-          {trimmed}
-        </p>
-      );
-    }
+  // Make simple “section” headings bold when they appear on a line by themselves
+  const bolded = unescaped
+    .replace(/(^|\n)\s*Key Responsibilities\s*\/\s*Tasks\s*(\n|$)/gi, "\n**Key Responsibilities / Tasks**\n")
+    .replace(/(^|\n)\s*Key Qualifications\s*\/\s*Experience\s*(\n|$)/gi, "\n**Key Qualifications / Experience**\n");
 
-    if (trimmed.startsWith("•") || trimmed.startsWith("-")) {
-      return (
-        <li key={idx} className="ml-6 list-disc">
-          {trimmed.replace(/^[-•]\s*/, "")}
-        </li>
-      );
-    }
+  // Convert bullet characters to markdown bullets and collapse excessive blank lines
+  const mdReady = bolded
+    .replace(/(^|\n)\s*•\s*/g, "\n- ")
+    .replace(/\n{3,}/g, "\n\n");
 
-    return <p key={idx} className="mb-2">{trimmed}</p>;
-  });
+  const idOrSlug = (job.ID && String(job.ID)) || jobSlug(job);
+  const applyHref = `/apply?role=${encodeURIComponent(title)}&market=${encodeURIComponent(market || location || "")}&jobId=${encodeURIComponent(idOrSlug)}`;
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-2">{job.Title || job.Role}</h1>
-      <p className="text-gray-600 mb-4">
-        {job.Location} • {job.Market} • {job.Seniority}
+    <section className="space-y-6">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-2xl font-semibold">{title}</h1>
+        <Link
+          href="/jobs"
+          className="text-sm text-neutral-400 underline hover:text-neutral-200"
+        >
+          ← Back to Jobs
+        </Link>
+      </div>
+
+      <p className="text-sm text-neutral-400">
+        {(location || "—")}
+        {market ? ` • ${market}` : ""}
+        {seniority ? ` • ${seniority}` : ""}
       </p>
-      <p className="mb-6">{job.Summary}</p>
 
-      <div className="prose max-w-none mb-6">{formattedDescription}</div>
+      {summary && (
+        <div className="rounded-xl border border-neutral-700 bg-neutral-900 p-4 text-neutral-200">
+          <p className="whitespace-pre-wrap">{summary}</p>
+        </div>
+      )}
 
-      <ApplyButtons
-        title={job.Title || job.Role || ""}
-        market={job.Market}
-        location={job.Location}
-      />
+      {mdReady && (
+        <div className="rounded-xl border border-neutral-700 bg-neutral-900 p-4 text-neutral-200">
+          <h2 className="mb-2 text-lg font-semibold">Role Description</h2>
+          {/* minimal markdown renderer for headings + bullets */}
+          <Article md={mdReady} />
+        </div>
+      )}
+
+      <div className="flex gap-3">
+        <Link
+          href={applyHref}
+          className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+        >
+          Apply confidentially
+        </Link>
+        <Link
+          href="/contact"
+          className="rounded-lg border border-neutral-700 px-4 py-2 text-neutral-200 hover:bg-neutral-900"
+        >
+          Ask about this role
+        </Link>
+      </div>
+
+      <p className="text-xs text-neutral-500">
+        Reference: {idOrSlug || "(unassigned)"}
+      </p>
+    </section>
+  );
+}
+
+/**
+ * Tiny Markdown-ish renderer for our limited needs:
+ * - **Bold** headings
+ * - "- " bullets
+ * - Paragraphs & line breaks
+ */
+function Article({ md }: { md: string }) {
+  const lines = md.split("\n");
+  return (
+    <div className="space-y-2">
+      {lines.map((line, i) => {
+        const t = line.trim();
+        if (!t) return <div key={i} className="h-2" />;
+        if (t.startsWith("- ")) {
+          // bullet
+          return (
+            <div key={i} className="flex items-start gap-2">
+              <div className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-neutral-400" />
+              <div className="whitespace-pre-wrap">{t.slice(2)}</div>
+            </div>
+          );
+        }
+        // bold headings if wrapped in **...**
+        const m = t.match(/^\*\*(.+)\*\*$/);
+        if (m) {
+          return <h3 key={i} className="mt-4 text-base font-semibold">{m[1]}</h3>;
+        }
+        return <p key={i} className="whitespace-pre-wrap">{t}</p>;
+      })}
     </div>
   );
 }
