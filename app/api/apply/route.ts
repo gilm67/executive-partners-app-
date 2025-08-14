@@ -1,10 +1,9 @@
+// app/api/apply/route.ts
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-// app/api/apply/route.ts
+
 import { NextResponse } from "next/server";
 import { appendApplication } from "@/lib/sheets";
-
-export const runtime = "nodejs";
 
 export async function POST(req: Request) {
   try {
@@ -17,7 +16,10 @@ export async function POST(req: Request) {
     const jobId = (body.jobId || "").toString().trim();
 
     if (!name || !email) {
-      return NextResponse.json({ ok: false, error: "Name and Email are required" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "Name and Email are required" },
+        { status: 400 }
+      );
     }
 
     await appendApplication({
@@ -32,9 +34,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    return NextResponse.json({ ok: false, error: err?.message || "Unknown error" }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: err?.message || "Unknown error" },
+      { status: 500 }
+    );
   }
 }
-
-
-

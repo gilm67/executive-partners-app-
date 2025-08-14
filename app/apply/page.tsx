@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export const dynamic = "force-dynamic";   // ensure Vercel doesn’t cache a 404
-export const runtime = "nodejs";          // keep it on the server runtime
 
 export default function ApplyPage() {
   const sp = useSearchParams();
