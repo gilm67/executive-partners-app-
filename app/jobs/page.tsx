@@ -5,6 +5,7 @@ export const revalidate = 60;
 
 export default async function JobsPage() {
   const jobs = await getJobs();
+  // keep only active (anything not an explicit "false")
   const active = jobs.filter(
     (j: any) => (j.Active || "").toString().toLowerCase() !== "false"
   );
@@ -18,12 +19,17 @@ export default async function JobsPage() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         {active.map((j: any) => {
-          const title = (j.Title || j.Role || "").trim() || "Untitled Role";
+          const title = (j.Title || j.Role || "Untitled Role").toString();
+          const locationOrMarket = (j.Location || j.Market || "—").toString();
           const idOrSlug = (j.ID && String(j.ID)) || jobSlug(j as Job);
           const href = `/jobs/${idOrSlug}`;
-          const applyHref = `/candidates/register?role=${encodeURIComponent(
-            title
-          )}&market=${encodeURIComponent(j.Market || j.Location || "")}`;
+
+          // ✅ NEW: point to the /apply page with id, role, and market prefilled
+          const applyHref = `/apply?id=${encodeURIComponent(
+            idOrSlug
+          )}&role=${encodeURIComponent(title)}&market=${encodeURIComponent(
+            locationOrMarket
+          )}`;
 
           return (
             <div
@@ -35,8 +41,8 @@ export default async function JobsPage() {
                   {title}
                 </h2>
                 <p className="text-sm text-neutral-600">
-                  {(j.Location || j.Market || "—") +
-                    (j.Seniority ? ` • ${j.Seniority}` : "")}
+                  {locationOrMarket}
+                  {j.Seniority ? ` • ${j.Seniority}` : ""}
                 </p>
                 {j.Summary && (
                   <p className="mt-3 text-sm text-neutral-700">{j.Summary}</p>
