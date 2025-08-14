@@ -1,23 +1,14 @@
-// app/apply/page.tsx
+"use client";
+
+import { useSearchParams } from "next/navigation";
+
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Apply confidentially",
-  description:
-    "Send your details securely. We’ll contact you if there’s a strong fit.",
-};
-
-// Helper to read a single query value
-function getParam(sp: Record<string, any> | undefined, key: string): string {
-  const v = sp?.[key];
-  if (Array.isArray(v)) return v[0] ?? "";
-  return (v as string) ?? "";
-}
-
-export default function ApplyPage({ searchParams }: any) {
-  const role = getParam(searchParams, "role");
-  const market = getParam(searchParams, "market");
-  const jobId = getParam(searchParams, "jobId");
+export default function ApplyPage() {
+  const sp = useSearchParams();
+  const role = sp.get("role") ?? "";
+  const market = sp.get("market") ?? "";
+  const jobId = sp.get("jobId") ?? "";
 
   return (
     <section className="space-y-6">
