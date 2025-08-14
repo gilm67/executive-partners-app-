@@ -7,30 +7,23 @@ export const metadata = {
     "Send your details securely. We’ll contact you if there’s a strong fit.",
 };
 
-// Keep typing minimal & App-Router friendly
-type SP = Record<string, string | string[] | undefined>;
-
-function getParam(sp: SP, key: string): string {
+// Helper to read a single query value
+function getParam(sp: Record<string, any> | undefined, key: string): string {
   const v = sp?.[key];
   if (Array.isArray(v)) return v[0] ?? "";
   return (v as string) ?? "";
 }
 
-export default function ApplyPage({
-  searchParams,
-}: {
-  searchParams?: SP;
-}) {
-  const role = getParam(searchParams ?? {}, "role");
-  const market = getParam(searchParams ?? {}, "market");
-  const jobId = getParam(searchParams ?? {}, "jobId");
+export default function ApplyPage({ searchParams }: any) {
+  const role = getParam(searchParams, "role");
+  const market = getParam(searchParams, "market");
+  const jobId = getParam(searchParams, "jobId");
 
   return (
     <section className="space-y-6">
       <h1 className="text-2xl font-semibold">Apply confidentially</h1>
       <p className="text-neutral-400">
-        Your profile will be reviewed discreetly. We’ll contact you if there’s
-        a strong fit.
+        Your profile will be reviewed discreetly. We’ll contact you if there’s a strong fit.
       </p>
 
       <form
@@ -38,15 +31,13 @@ export default function ApplyPage({
         action="/api/apply"
         className="mx-auto w-full max-w-2xl rounded-2xl border bg-white p-6 shadow-sm"
       >
-        {/* Hidden context (kept in plain inputs so SSR works everywhere) */}
+        {/* hidden context */}
         <input type="hidden" name="jobId" value={jobId} />
         <input type="hidden" name="__source" value="apply-page" />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-neutral-800">
-              Name
-            </label>
+            <label className="mb-1 block text-sm font-medium text-neutral-800">Name</label>
             <input
               name="name"
               required
@@ -56,9 +47,7 @@ export default function ApplyPage({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-neutral-800">
-              Email
-            </label>
+            <label className="mb-1 block text-sm font-medium text-neutral-800">Email</label>
             <input
               name="email"
               type="email"
@@ -71,9 +60,7 @@ export default function ApplyPage({
 
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium text-neutral-800">
-              Role
-            </label>
+            <label className="mb-1 block text-sm font-medium text-neutral-800">Role</label>
             <input
               name="role"
               defaultValue={role}
@@ -83,9 +70,7 @@ export default function ApplyPage({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-neutral-800">
-              Market
-            </label>
+            <label className="mb-1 block text-sm font-medium text-neutral-800">Market</label>
             <input
               name="market"
               defaultValue={market}
@@ -96,9 +81,7 @@ export default function ApplyPage({
         </div>
 
         <div className="mt-4">
-          <label className="mb-1 block text-sm font-medium text-neutral-800">
-            Notes (optional)
-          </label>
+          <label className="mb-1 block text-sm font-medium text-neutral-800">Notes (optional)</label>
           <textarea
             name="notes"
             rows={5}
@@ -117,8 +100,7 @@ export default function ApplyPage({
         </div>
 
         <p className="mt-3 text-xs text-neutral-500">
-          By submitting, you agree your data will be processed to assess role
-          fit. You can request deletion at any time.
+          By submitting, you agree your data will be processed to assess role fit. You can request deletion at any time.
         </p>
       </form>
     </section>
