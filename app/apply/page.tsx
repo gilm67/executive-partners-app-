@@ -1,103 +1,100 @@
 // app/apply/page.tsx
-import Link from "next/link";
+// Server component: plain HTML form posts to /api/apply
 
-export const revalidate = 0;
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-type Props = {
-  searchParams?: { [key: string]: string | string[] | undefined };
+type SearchParams = {
+  [key: string]: string | string[] | undefined;
 };
 
-export default function ApplyPage({ searchParams }: Props) {
-  const qs = (k: string) => {
-    const v = searchParams?.[k];
-    return Array.isArray(v) ? v[0] : v || "";
-  };
+function pickFirst(v: string | string[] | undefined): string {
+  if (Array.isArray(v)) return v[0] ?? "";
+  return v ?? "";
+}
 
-  const role = qs("role");
-  const market = qs("market");
-  const jobId = qs("jobId"); // optional
+export default function ApplyPage({
+  searchParams,
+}: {
+  searchParams?: SearchParams;
+}) {
+  const role = pickFirst(searchParams?.role);
+  const market = pickFirst(searchParams?.market);
+  const jobId = pickFirst(searchParams?.jobId);
 
   return (
-    <section className="mx-auto max-w-3xl space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Apply confidentially</h1>
-        <Link href="/jobs" className="text-sm underline text-neutral-600 hover:text-neutral-800">
-          ← Back to Jobs
-        </Link>
-      </div>
-
-      <p className="text-neutral-500">
+    <section className="max-w-2xl mx-auto py-10">
+      <h1 className="text-2xl font-semibold mb-2">Apply confidentially</h1>
+      <p className="text-sm text-neutral-500 mb-6">
         Your profile will be reviewed discreetly. We’ll contact you if there’s a strong fit.
       </p>
 
       <form
-        method="post"
         action="/api/apply"
-        className="rounded-2xl border border-neutral-200 bg-white p-6 text-neutral-900"
+        method="POST"
+        className="space-y-4 rounded-2xl border bg-white p-6 shadow-sm"
       >
-        {/* Name + Email */}
-        <div className="grid gap-4 sm:grid-cols-2">
+        {/* Hidden job id if present */}
+        <input type="hidden" name="jobId" value={jobId} />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="mb-1 block text-sm text-neutral-600">Name</label>
+            <label className="block text-sm font-medium text-neutral-800">Name</label>
             <input
               name="name"
               required
+              className="mt-1 block w-full rounded-lg border border-neutral-300 bg-white p-2 text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Your full name"
-              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-500"
             />
           </div>
+
           <div>
-            <label className="mb-1 block text-sm text-neutral-600">Email</label>
+            <label className="block text-sm font-medium text-neutral-800">Email</label>
             <input
-              type="email"
               name="email"
+              type="email"
               required
+              className="mt-1 block w-full rounded-lg border border-neutral-300 bg-white p-2 text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="you@example.com"
-              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-500"
             />
           </div>
         </div>
 
-        {/* Role + Market */}
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="mb-1 block text-sm text-neutral-600">Role</label>
+            <label className="block text-sm font-medium text-neutral-800">Role</label>
             <input
               name="role"
               defaultValue={role}
+              className="mt-1 block w-full rounded-lg border border-neutral-300 bg-white p-2 text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g., Private Banker"
-              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-500"
             />
           </div>
+
           <div>
-            <label className="mb-1 block text-sm text-neutral-600">Market</label>
+            <label className="block text-sm font-medium text-neutral-800">Market</label>
             <input
               name="market"
               defaultValue={market}
+              className="mt-1 block w-full rounded-lg border border-neutral-300 bg-white p-2 text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="e.g., CH Onshore"
-              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-500"
             />
           </div>
         </div>
 
-        {/* Notes */}
-        <div className="mt-4">
-          <label className="mb-1 block text-sm text-neutral-600">Notes (optional)</label>
+        <div>
+          <label className="block text-sm font-medium text-neutral-800">Notes (optional)</label>
           <textarea
             name="notes"
             rows={5}
-            placeholder="Anything you'd like to add…"
-            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-500"
+            className="mt-1 block w-full rounded-lg border border-neutral-300 bg-white p-2 text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Anything you’d like to add…"
           />
         </div>
 
-        {/* Optional jobId propagated from job card */}
-        <input type="hidden" name="jobId" value={jobId} />
-
         <button
           type="submit"
-          className="mt-6 rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
+          className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
         >
           Submit
         </button>
@@ -105,3 +102,4 @@ export default function ApplyPage({ searchParams }: Props) {
     </section>
   );
 }
+
