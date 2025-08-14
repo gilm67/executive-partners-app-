@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 import { google } from "googleapis";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
@@ -299,3 +301,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: String(err?.message || "Server error.") }, { status: 500 });
   }
 }
+

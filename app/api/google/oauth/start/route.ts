@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 import { NextResponse, NextRequest } from "next/server";
 import { google } from "googleapis";
 
@@ -25,3 +27,5 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.redirect(url);
 }
+
+

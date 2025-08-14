@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 // app/api/apply/route.ts
 import { NextResponse } from "next/server";
 import { appendApplication } from "@/lib/sheets";
@@ -33,4 +35,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: err?.message || "Unknown error" }, { status: 500 });
   }
 }
+
+
 

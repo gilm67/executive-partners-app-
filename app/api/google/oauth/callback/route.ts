@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 import { NextResponse, NextRequest } from "next/server";
 import { google } from "googleapis";
 import fs from "node:fs";
@@ -31,3 +33,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: false, error: String(e?.message || e) }, { status: 500 });
   }
 }
+

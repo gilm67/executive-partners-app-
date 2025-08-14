@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 // app/api/test-sheets/route.ts
 import { NextResponse } from "next/server";
 import { google } from "googleapis";
@@ -37,3 +39,5 @@ export async function GET() {
     );
   }
 }
+
+
