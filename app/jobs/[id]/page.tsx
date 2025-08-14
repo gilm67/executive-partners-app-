@@ -1,47 +1,62 @@
-import Link from "next/link";
-import { getJobs, jobSlug, type Job } from "@/lib/sheets";
+import { getJobByIdOrSlug } from "@/lib/sheets";
+import ApplyButtons from "./ApplyButtons";
 
-export const revalidate = 60;
+export default async function JobPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const job = await getJobByIdOrSlug(params.id);
+  if (!job) {
+    return <div className="p-6">Job not found</div>;
+  }
 
-export default async function JobsPage() {
-  const jobs = await getJobs();
-  const active = jobs.filter((j: any) => (j.Active || "").toString().toLowerCase() !== "false");
+  // Replace escaped \n with real newlines
+  const description = (job.Description || "").replace(/\\n/g, "\n");
+
+  // Format description with bold section headers
+  const formattedDescription = description.split("\n").map((line, idx) => {
+    const trimmed = line.trim();
+    if (!trimmed) return <br key={idx} />;
+
+    if (
+      trimmed.toLowerCase().startsWith("key responsibilities") ||
+      trimmed.toLowerCase().startsWith("key qualifications")
+    ) {
+      return (
+        <p key={idx} className="font-bold mt-4 mb-2">
+          {trimmed}
+        </p>
+      );
+    }
+
+    if (trimmed.startsWith("•") || trimmed.startsWith("-")) {
+      return (
+        <li key={idx} className="ml-6 list-disc">
+          {trimmed.replace(/^[-•]\s*/, "")}
+        </li>
+      );
+    }
+
+    return <p key={idx} className="mb-2">{trimmed}</p>;
+  });
 
   return (
-    <section className="space-y-6">
-      <h1 className="text-2xl font-semibold">Current Opportunities</h1>
-      <p className="text-neutral-700">Apply confidentially or register to be matched to upcoming mandates.</p>
+    <div className="max-w-3xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-2">{job.Title || job.Role}</h1>
+      <p className="text-gray-600 mb-4">
+        {job.Location} • {job.Market} • {job.Seniority}
+      </p>
+      <p className="mb-6">{job.Summary}</p>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {active.map((j: any) => {
-          const idOrSlug = (j.ID && String(j.ID)) || jobSlug(j as Job);
-          const href = `/jobs/${idOrSlug}`;
-          const applyHref = `/candidates/register?role=${encodeURIComponent(j.Title || "")}&market=${encodeURIComponent(j.Market || j.Location || "")}`;
+      <div className="prose max-w-none mb-6">{formattedDescription}</div>
 
-          return (
-            <div key={idOrSlug} className="rounded-2xl border border-neutral-200 p-6">
-              <Link href={href} className="block group">
-                <h2 className="text-lg font-semibold group-hover:underline">{j.Title}</h2>
-                <p className="text-sm text-neutral-600">
-                  {(j.Location || j.Market || "—")}
-                  {j.Seniority ? ` • ${j.Seniority}` : ""}
-                </p>
-                {j.Summary && <p className="mt-3 text-sm text-neutral-700">{j.Summary}</p>}
-              </Link>
-
-              <div className="mt-4 flex gap-3">
-                <Link href={applyHref} className="rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800">
-                  Apply confidentially
-                </Link>
-                <Link href="/contact" className="rounded-lg border px-4 py-2 hover:bg-white">
-                  Ask about this role
-                </Link>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </section>
+      <ApplyButtons
+        title={job.Title || job.Role || ""}
+        market={job.Market}
+        location={job.Location}
+      />
+    </div>
   );
 }
 

@@ -7,7 +7,7 @@ import { google } from "googleapis";
 export function getSheetsAuth() {
   const email = process.env.GOOGLE_CLIENT_EMAIL || "";
 
-  // Prefer base64-encoded key on Vercel; fallback to \n-escaped plaintext locally
+  // Prefer base64-encoded key (Vercel); fallback to \n-escaped plaintext locally
   let key = "";
   if (process.env.GOOGLE_PRIVATE_KEY_B64) {
     key = Buffer.from(process.env.GOOGLE_PRIVATE_KEY_B64, "base64").toString("utf8");
@@ -22,10 +22,26 @@ export function getSheetsAuth() {
   return new google.auth.JWT({
     email,
     key,
-    scopes: [
-      "https://www.googleapis.com/auth/spreadsheets", // read + write
-    ],
+    scopes: ["https://www.googleapis.com/auth/spreadsheets"], // read + write
   });
+}
+
+/* =========================
+   Helpers
+   ========================= */
+function colNumberToLetters(n: number): string {
+  let s = "";
+  while (n > 0) {
+    const m = (n - 1) % 26;
+    s = String.fromCharCode(65 + m) + s;
+    n = Math.floor((n - 1) / 26);
+  }
+  return s;
+}
+
+function toBool(v: unknown): boolean {
+  const s = String(v ?? "").trim().toLowerCase();
+  return s === "true" || s === "yes" || s === "1" || s === "y";
 }
 
 /* =========================
@@ -43,9 +59,9 @@ export type Candidate = {
   "CV Link": string;
   "LinkedIn Search": string;
   "AI Summary": string;
-  Tags: string;                  // header must be "Tags"
+  Tags: string;
   "Match Score": string | number;
-  Shortlist?: string;            // "YES"/"NO" (may be missing initially)
+  Shortlist?: string;
 };
 
 const CANDIDATES_TAB = "Candidates";
@@ -68,15 +84,13 @@ export async function getCandidates(): Promise<Candidate[]> {
   const headers = rows[0] as string[];
   const data = rows.slice(1);
 
-  const list = data.map((r) => {
+  return data.map((r) => {
     const o: Record<string, any> = {};
     headers.forEach((h, i) => (o[h] = r[i] ?? ""));
     const ms = Number(o["Match Score"]);
     o["Match Score"] = Number.isFinite(ms) ? ms : o["Match Score"];
     return o as Candidate;
   });
-
-  return list;
 }
 
 /** Ensure a header exists on the first row; returns its 1-based column index. */
@@ -109,21 +123,7 @@ export async function ensureHeader(headerName: string): Promise<number> {
   return newHeaders.length; // 1-based
 }
 
-/** Convert 1-based column number to letters (1 -> A, 28 -> AB) */
-function colNumberToLetters(n: number): string {
-  let s = "";
-  while (n > 0) {
-    const m = (n - 1) % 26;
-    s = String.fromCharCode(65 + m) + s;
-    n = Math.floor((n - 1) / 26);
-  }
-  return s;
-}
-
-/**
- * Update the “Shortlist” cell for a row identified by (Timestamp, Email).
- * Creates the “Shortlist” header if missing.
- */
+/** Update the “Shortlist” cell for a row identified by (Timestamp, Email). */
 export async function updateShortlistCell(
   email: string,
   timestamp: string,
@@ -177,26 +177,17 @@ export async function updateShortlistCell(
    ========================= */
 export type Job = {
   ID?: string;
-  Title?: string;          // optional: some tabs use Title instead of Role
+  Title?: string;      // some tabs use Title instead of Role
   Role?: string;
   Location?: string;
   Market?: string;
   Seniority?: string;
   Summary?: string;
   Description?: string;
-  Confidential?: string;   // "YES"/"NO"
-  Active?: string;         // "TRUE"/"FALSE"
+  Confidential?: string; // "YES"/"NO"
+  Active?: string;       // "TRUE"/"FALSE"
 };
 
-function toBool(v: unknown): boolean {
-  if (typeof v === "boolean") return v;
-  const s = String(v ?? "").trim().toLowerCase();
-  return s === "true" || s === "yes" || s === "1" || s === "y";
-}
-
-/** Reads "Jobs" tab and returns ACTIVE jobs only (Active == TRUE/YES/1).
- *  Header-insensitive: accepts Title/Job Title/Position and trims spaces.
- */
 export async function getJobs(): Promise<Job[]> {
   const sheetId = process.env.GOOGLE_SHEET_ID || "";
   if (!sheetId) throw new Error("GOOGLE_SHEET_ID missing");
@@ -212,11 +203,10 @@ export async function getJobs(): Promise<Job[]> {
   const rows = resp.data.values || [];
   if (rows.length < 2) return [];
 
-  const rawHeaders = rows[0] as string[];
-  const headers = rawHeaders.map(h => (h || "").trim());
+  const headers = (rows[0] as string[]).map((h) => (h || "").trim());
   const data = rows.slice(1);
 
-  // helper to pick the first non-empty among several header variants
+  // helper: pick the first non-empty among several header variants
   function pick(map: Record<string, string>, keys: string[]): string {
     for (const k of keys) {
       const v = map[k.toLowerCase()] || "";
@@ -227,25 +217,26 @@ export async function getJobs(): Promise<Job[]> {
 
   const list: Job[] = data.map((r) => {
     // Build a case/space-insensitive map of header -> value
-    const m: Record<string, string> = {};
+    // FIRST-WINS for duplicate headers (e.g., multiple "Description")
+    const rowMap: Record<string, string> = {};
     headers.forEach((h, i) => {
-      m[h.toLowerCase()] = (r[i] ?? "").toString().trim();
+      const key = (h || "").trim().toLowerCase();
+      if (!key) return;
+      if (rowMap[key] === undefined) rowMap[key] = (r[i] ?? "").toString().trim();
     });
 
-    const out: Job = {
-      ID: pick(m, ["id", "job id", "ref", "reference"]),
-      Title: pick(m, ["title", "job title", "position", "role"]), // normalize title
-      Role: pick(m, ["role", "position", "title", "job title"]),  // normalize role
-      Location: pick(m, ["location", "city"]),
-      Market: pick(m, ["market", "region"]),
-      Seniority: pick(m, ["seniority", "level"]),
-      Summary: pick(m, ["summary", "short", "blurb"]),
-      Description: pick(m, ["description", "desc", "details"]),
-      Confidential: pick(m, ["confidential"]),
-      Active: pick(m, ["active", "is active", "status"]),
+    return {
+      ID:          pick(rowMap, ["id", "job id", "ref", "reference"]),
+      Title:       pick(rowMap, ["title", "job title", "position", "role"]),
+      Role:        pick(rowMap, ["role", "position", "title", "job title"]),
+      Location:    pick(rowMap, ["location", "city"]),
+      Market:      pick(rowMap, ["market", "region"]),
+      Seniority:   pick(rowMap, ["seniority", "level"]),
+      Summary:     pick(rowMap, ["summary", "short", "blurb"]),
+      Description: pick(rowMap, ["description", "desc", "details"]),
+      Confidential:pick(rowMap, ["confidential"]),
+      Active:      pick(rowMap, ["active", "is active", "status"]),
     };
-
-    return out;
   });
 
   // Only active
@@ -264,25 +255,23 @@ export async function getJobs(): Promise<Job[]> {
 
 export function jobSlug(j: Job) {
   const base =
-    (j.ID && String(j.ID).trim().length > 0 ? String(j.ID) : `${j.Title || j.Role || ""}-${j.Location || ""}`) ||
-    "";
-  return base
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+    (j.ID && String(j.ID).trim().length > 0
+      ? String(j.ID)
+      : `${j.Title || j.Role || ""}-${j.Location || ""}`) || "";
+  return base.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
 export async function getJobByIdOrSlug(idOrSlug: string): Promise<Job | null> {
   const all = await getJobs();
   // direct ID match
   let match = all.find((j) => (j.ID || "").toString() === idOrSlug);
-  if (match) return match || null;
+  if (match) return match;
   // slug match
   match = all.find((j) => jobSlug(j) === idOrSlug);
   return match || null;
 }
 
-// ---------- Create Job (append to "Jobs" tab") ----------
+/** Append a new job row to the Jobs tab (used by API/automation). */
 export type NewJobInput = {
   Title?: string;        // or use Role if your sheet uses that column
   Role?: string;
@@ -306,14 +295,20 @@ export async function createJob(
 
   // Read header row to know the column order and the next ID
   const range = `Jobs!A1:ZZ1`;
-  const headResp = await sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range });
+  const headResp = await sheets.spreadsheets.values.get({
+    spreadsheetId: sheetId,
+    range,
+  });
   const headers = (headResp.data.values?.[0] || []) as string[];
 
   // Ensure must-have columns exist
-  const required = ["ID", "Title", "Role", "Location", "Market", "Seniority", "Summary", "Description", "Confidential", "Active"];
-  const merged = Array.from(new Set([...headers.map(h => (h || "").trim()), ...required]));
+  const required = [
+    "ID","Title","Role","Location","Market","Seniority","Summary","Description","Confidential","Active",
+  ];
+  const merged = Array.from(
+    new Set([...headers.map((h) => (h || "").trim()), ...required])
+  );
   if (merged.length !== headers.length) {
-    // write updated headers back (adds missing ones)
     await sheets.spreadsheets.values.update({
       spreadsheetId: sheetId,
       range: `Jobs!1:1`,
@@ -323,28 +318,29 @@ export async function createJob(
   }
   const cols = merged; // final header order
 
-  // Find next numeric ID (read a few rows)
+  // Find next numeric ID
   const idRange = `Jobs!A2:A1000`;
-  const idResp = await sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: idRange });
-  const ids = (idResp.data.values || []).map(r => Number(r?.[0])).filter(n => Number.isFinite(n)) as number[];
+  const idResp = await sheets.spreadsheets.values.get({
+    spreadsheetId: sheetId,
+    range: idRange,
+  });
+  const ids = (idResp.data.values || [])
+    .map((r) => Number(r?.[0]))
+    .filter((n) => Number.isFinite(n)) as number[];
   const nextId = ids.length ? Math.max(...ids) + 1 : 101;
 
   // Build row by header order
   const row: string[] = cols.map((h) => {
     if (h === "ID") return String(nextId);
-
-    const valueFromInput =
+    const v =
       (input as any)[h] ??
       (h === "Title" ? input.Title ?? input.Role ?? "" :
        h === "Role" ? input.Role ?? input.Title ?? "" :
        h === "Confidential" ? (input.Confidential ?? "YES") :
-       h === "Active" ? (input.Active ?? "TRUE") :
-       "");
-
-    return String(valueFromInput ?? "");
+       h === "Active" ? (input.Active ?? "TRUE") : "");
+    return String(v ?? "");
   });
 
-  // Append
   await sheets.spreadsheets.values.append({
     spreadsheetId: sheetId,
     range: `Jobs!A:A`,
@@ -355,3 +351,135 @@ export async function createJob(
 
   return { ok: true, id: String(nextId) };
 }
+
+/* =========================
+   Applications (append + read)
+   ========================= */
+export type Application = {
+  Timestamp?: string;
+  Name?: string;
+  Email?: string;
+  Role?: string;
+  Market?: string;
+  Notes?: string;
+  "Job ID"?: string;
+};
+
+type ApplicationRow = {
+  Timestamp: string;
+  Name: string;
+  Email: string;
+  Role: string;
+  Market: string;
+  Notes: string;
+  JobID?: string;
+};
+
+const APPLICATIONS_TAB = "Applications";
+
+/** Ensure Applications tab exists and has the expected header. */
+async function ensureApplicationsHeader(
+  sheets: ReturnType<typeof google.sheets>,
+  spreadsheetId: string
+) {
+  const headers = ["Timestamp", "Name", "Email", "Role", "Market", "Notes", "JobID"];
+  try {
+    const read = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: `${APPLICATIONS_TAB}!A1:G1`,
+    });
+    const existing = (read.data.values?.[0] || []) as string[];
+    if (existing.length === 0 || headers.some((h, i) => (existing[i] || "") !== h)) {
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: `${APPLICATIONS_TAB}!A1:G1`,
+        valueInputOption: "RAW",
+        requestBody: { values: [headers] },
+      });
+    }
+  } catch (err: any) {
+    // If tab doesn't exist (Unable to parse range), create it then write header
+    if (String(err?.message || "").includes("Unable to parse range")) {
+      await sheets.spreadsheets.batchUpdate({
+        spreadsheetId,
+        requestBody: { requests: [{ addSheet: { properties: { title: APPLICATIONS_TAB } } }] },
+      });
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: `${APPLICATIONS_TAB}!A1:G1`,
+        valueInputOption: "RAW",
+        requestBody: { values: [headers] },
+      });
+    } else {
+      throw err;
+    }
+  }
+}
+
+/** Append a single application row. */
+export async function appendApplication(row: ApplicationRow): Promise<void> {
+  const sheetId = process.env.GOOGLE_SHEET_ID || "";
+  if (!sheetId) throw new Error("GOOGLE_SHEET_ID missing");
+
+  const auth = getSheetsAuth();
+  const sheets = google.sheets({ version: "v4", auth });
+
+  await ensureApplicationsHeader(sheets, sheetId);
+
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: sheetId,
+    range: `${APPLICATIONS_TAB}!A:A`,
+    valueInputOption: "RAW",
+    insertDataOption: "INSERT_ROWS",
+    requestBody: {
+      values: [[
+        row.Timestamp,
+        row.Name,
+        row.Email,
+        row.Role,
+        row.Market,
+        row.Notes,
+        row.JobID ?? "",
+      ]],
+    },
+  });
+}
+
+/** Read applications for the dashboard. */
+export async function getApplications(): Promise<Application[]> {
+  const sheetId = process.env.GOOGLE_SHEET_ID || "";
+  if (!sheetId) throw new Error("GOOGLE_SHEET_ID missing");
+
+  const auth = getSheetsAuth();
+  const sheets = google.sheets({ version: "v4", auth });
+
+  const resp = await sheets.spreadsheets.values.get({
+    spreadsheetId: sheetId,
+    range: `${APPLICATIONS_TAB}!A1:ZZ20000`,
+  });
+
+  const rows = resp.data.values || [];
+  if (rows.length < 2) return [];
+
+  const headers = (rows[0] as string[]).map(h => (h || "").trim());
+  const data = rows.slice(1);
+
+  const list = data.map((r) => {
+    const m: Record<string, string> = {};
+    headers.forEach((h, i) => (m[h] = (r[i] ?? "").toString()));
+    // normalize JobID → "Job ID" for UI
+    if (m["JobID"] && !m["Job ID"]) m["Job ID"] = m["JobID"];
+    return m as unknown as Application;
+  });
+
+  // Newest first by Timestamp if parseable
+  list.sort((a, b) => {
+    const at = Date.parse(a.Timestamp || "");
+    const bt = Date.parse(b.Timestamp || "");
+    if (Number.isFinite(at) && Number.isFinite(bt)) return bt - at;
+    return 0;
+  });
+
+  return list;
+}
+

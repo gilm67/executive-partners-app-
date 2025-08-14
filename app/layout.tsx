@@ -1,55 +1,80 @@
 // app/layout.tsx
-import "./globals.css";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { ReactNode } from "react";
+import "./globals.css";
 
-export const metadata = {
-  title: "Executive Partners",
-  description: "Private Banking & Wealth Management Recruitment",
+export const metadata: Metadata = {
+  title:
+    "International & Swiss Private Banking — HNW/UHNWI | Executive Partners",
+  description:
+    "Executive Partners connects top Private Bankers, Wealth Managers,senior executives and Compliance Officers with leading banks and wealth management firms in Switzerland and worldwide.",
+  icons: { icon: "/favicon.ico" },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+function NavLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-gray-50 text-gray-900 antialiased">
-        {/* HEADER */}
-        <header className="bg-white border-b shadow-sm">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-            <Link href="/" className="text-lg font-bold text-gray-900 hover:text-blue-700 transition-colors">
-              Executive Partners
+    <Link
+      href={href}
+      className="px-3 py-1 text-sm font-medium text-neutral-100/90 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md"
+    >
+      {children}
+    </Link>
+  );
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" className="h-full">
+      <body className="min-h-full bg-neutral-950 text-neutral-100 antialiased">
+        {/* Header */}
+        <header className="sticky top-0 z-40 border-b border-neutral-800 bg-neutral-900/75 backdrop-blur supports-[backdrop-filter]:bg-neutral-900/55">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+            <Link
+              href="/"
+              className="group flex items-baseline gap-3 whitespace-nowrap"
+            >
+              <span className="text-base font-semibold tracking-tight text-white group-hover:text-white">
+                Executive Partners
+              </span>
+              <span className="hidden text-[12px] text-neutral-300/80 sm:inline">
+                International & Swiss Private Banking — HNW/UHNWI
+              </span>
             </Link>
-            <nav className="flex gap-6 text-sm font-semibold">
-              <Link className="text-gray-900 hover:text-blue-700 transition-colors" href="/candidates">
-                Candidates
-              </Link>
-              <Link className="text-gray-900 hover:text-blue-700 transition-colors" href="/hiring-managers">
-                Hiring Managers
-              </Link>
-              <Link className="text-gray-900 hover:text-blue-700 transition-colors" href="/bp-simulator">
-                BP Simulator
-              </Link>
-              <Link className="text-gray-900 hover:text-blue-700 transition-colors" href="/jobs">
-                Jobs
-              </Link>
-              <Link className="text-gray-900 hover:text-blue-700 transition-colors" href="/top-talent">
-                Top Talent
-              </Link>
+
+            <nav className="flex items-center gap-1">
+              <NavLink href="/candidates">Candidates</NavLink>
+              <NavLink href="/hiring-managers">Hiring Managers</NavLink>
+              <NavLink href="/bp-simulator">BP Simulator</NavLink>
+              <NavLink href="/jobs">Jobs</NavLink>
+              <NavLink href="/top-talent">Top Talent</NavLink>
             </nav>
           </div>
         </header>
 
-        {/* MAIN CONTENT */}
-        <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          {children}
-        </main>
+        {/* Page */}
+        <main className="mx-auto w-full max-w-6xl px-4 py-10">{children}</main>
 
-        {/* FOOTER */}
-        <footer className="bg-gray-100 border-t mt-12">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 text-xs text-gray-700 flex justify-between">
-            <p>© 2025 Executive Partners — Geneva</p>
+        {/* Footer */}
+        <footer className="border-t border-neutral-900 bg-neutral-950/95">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6 text-xs text-neutral-400">
+            <span>© 2025 Executive Partners — Geneva</span>
             <div className="flex gap-4">
-              <Link className="hover:text-blue-700 transition-colors" href="/privacy">Privacy</Link>
-              <Link className="hover:text-blue-700 transition-colors" href="/contact">Contact</Link>
+              <Link href="/privacy" className="hover:text-neutral-200">
+                Privacy
+              </Link>
+              <Link href="/contact" className="hover:text-neutral-200">
+                Contact
+              </Link>
             </div>
           </div>
         </footer>
@@ -57,4 +82,3 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     </html>
   );
 }
-
