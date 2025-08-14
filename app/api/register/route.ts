@@ -1,5 +1,7 @@
+// app/api/register/route.ts
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
 import { google } from "googleapis";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
@@ -7,12 +9,14 @@ import { Readable } from "stream";
 import fs from "node:fs";
 import path from "node:path";
 
-export const runtime = "nodejs";
-
+/* =========================
+   Environment helpers
+   ========================= */
 function getEnv() {
   const sheetId = (process.env.GOOGLE_SHEET_ID || "").trim();
+
   const saEmail = (process.env.GOOGLE_CLIENT_EMAIL || "").trim();
-  const saKey = (process.env.GOOGLE_PRIVATE_KEY || "").replace(/\\n/g, "\n");
+  // We will decode the private key in getGoogleAuth()
 
   const oauthClientId = (process.env.GOOGLE_OAUTH_CLIENT_ID || "").trim();
   const oauthClientSecret = (process.env.GOOGLE_OAUTH_CLIENT_SECRET || "").trim();
@@ -25,7 +29,6 @@ function getEnv() {
   return {
     sheetId,
     saEmail,
-    saKey,
     oauthClientId,
     oauthClientSecret,
     oauthRedirect,
@@ -35,17 +38,44 @@ function getEnv() {
   };
 }
 
-function getSheetsAuth() {
-  const { saEmail, saKey } = getEnv();
-  if (!saEmail || !saKey)
-    throw new Error("Missing service account env (GOOGLE_CLIENT_EMAIL/GOOGLE_PRIVATE_KEY)");
+/* =========================
+   Google Auth (Service Account for Sheets)
+   Robustly decodes GOOGLE_PRIVATE_KEY_B64 or GOOGLE_PRIVATE_KEY
+   ========================= */
+function getGoogleAuth() {
+  const { saEmail } = getEnv();
+
+  // Prefer base64-encoded key if available
+  let key = "";
+  if (process.env.GOOGLE_PRIVATE_KEY_B64) {
+    key = Buffer.from(
+      process.env.GOOGLE_PRIVATE_KEY_B64 as string,
+      "base64"
+    ).toString("utf8");
+  } else if (process.env.GOOGLE_PRIVATE_KEY) {
+    // support \n-escaped plaintext
+    key = (process.env.GOOGLE_PRIVATE_KEY as string).replace(/\\n/g, "\n");
+  }
+
+  if (!saEmail || !key) {
+    throw new Error("Missing GOOGLE_CLIENT_EMAIL or GOOGLE_PRIVATE_KEY(_B64)");
+  }
+
   return new google.auth.JWT({
     email: saEmail,
-    key: saKey,
-    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+    key,
+    scopes: [
+      "https://www.googleapis.com/auth/spreadsheets",
+      // You can add Drive scopes here too if ever needed by the service account
+      // "https://www.googleapis.com/auth/drive.file",
+      // "https://www.googleapis.com/auth/drive.metadata.readonly",
+    ],
   });
 }
 
+/* =========================
+   Google OAuth2 (User) for Drive uploads
+   ========================= */
 function getOAuth2FromEnvOrFile() {
   const { oauthClientId, oauthClientSecret, oauthRedirect, oauthRefresh } = getEnv();
   if (!oauthClientId || !oauthClientSecret || !oauthRedirect)
@@ -69,6 +99,9 @@ function getOAuth2FromEnvOrFile() {
   throw new Error("No refresh token. Visit /api/google/oauth/start and authorize once.");
 }
 
+/* =========================
+   Health (optional)
+   ========================= */
 export async function GET() {
   const { sheetId, folderId, openaiKey } = getEnv();
   return NextResponse.json({
@@ -79,6 +112,9 @@ export async function GET() {
   });
 }
 
+/* =========================
+   Drive upload (OAuth2)
+   ========================= */
 async function uploadToDrive(file: File) {
   const { folderId } = getEnv();
 
@@ -106,25 +142,25 @@ async function uploadToDrive(file: File) {
   };
 }
 
+/* =========================
+   Parse CV (PDF/DOCX/text)
+   ========================= */
 async function extractTextFromCV(buffer: Buffer, mime: string): Promise<string> {
   try {
-    const m = mime.toLowerCase();
+    const m = (mime || "").toLowerCase();
 
-    // PDF
     if (m.includes("pdf")) {
       const pdfParse = (await import("pdf-parse")).default as any;
       const parsed = await pdfParse(buffer);
       return (parsed.text || "").trim();
     }
 
-    // DOCX
     if (m.includes("wordprocessingml") || m.includes("docx")) {
       const mammoth = await import("mammoth");
       const { value } = await mammoth.extractRawText({ buffer });
       return (value || "").trim();
     }
 
-    // Fallback to UTF-8 text
     return buffer.toString("utf8");
   } catch (e) {
     console.error("CV parse error:", e);
@@ -132,6 +168,9 @@ async function extractTextFromCV(buffer: Buffer, mime: string): Promise<string> 
   }
 }
 
+/* =========================
+   AI helper (optional)
+   ========================= */
 function buildAIPrompt(inputs: {
   form: {
     fullName: string;
@@ -214,7 +253,6 @@ async function aiAnalyse(form: any, cvText: string) {
     };
   } catch (err) {
     console.error("OpenAI error:", err);
-    // Fallback so upload + sheet still succeed
     return {
       summary: null,
       tags: [],
@@ -227,17 +265,24 @@ async function aiAnalyse(form: any, cvText: string) {
   }
 }
 
-// LinkedIn Search helper (ensure your sheet has this column after "CV Link")
+/* =========================
+   LinkedIn helper
+   ========================= */
 function linkedInUrl(name: string, market: string) {
   const q = encodeURIComponent(`${name} ${market} Private Banking Wealth Management`);
   return `https://www.linkedin.com/search/results/people/?keywords=${q}`;
 }
 
+/* =========================
+   Append to Candidates sheet (Service Account)
+   ========================= */
 async function appendToSheet(values: any[]) {
   const { sheetId } = getEnv();
   if (!sheetId) throw new Error("GOOGLE_SHEET_ID missing");
-  const auth = getSheetsAuth();
+
+  const auth = getGoogleAuth(); // <— use robust SA auth here
   const sheets = google.sheets({ version: "v4", auth });
+
   await sheets.spreadsheets.values.append({
     spreadsheetId: sheetId,
     range: "Candidates!A1",
@@ -247,6 +292,9 @@ async function appendToSheet(values: any[]) {
   });
 }
 
+/* =========================
+   POST: form handler
+   ========================= */
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
@@ -275,24 +323,22 @@ export async function POST(req: Request) {
     // AI analysis
     const ai = await aiAnalyse({ fullName, email, role, market, aum, mobility, notes }, cvText);
     const timestamp = new Date().toISOString();
-
-    // LinkedIn Search (column right after CV Link)
     const liSearch = linkedInUrl(fullName, market);
 
     await appendToSheet([
-      timestamp,             // 1  Timestamp
-      fullName,              // 2  Name
-      email,                 // 3  Email
-      role,                  // 4  Role
-      market,                // 5  Market
-      aum,                   // 6  AUM
-      mobility,              // 7  Mobility
-      notes,                 // 8  Notes
-      driveLink,             // 9  CV Link
-      liSearch,              // 10 LinkedIn Search
-      ai.summary || "",      // 11 AI Summary
+      timestamp,                  // 1  Timestamp
+      fullName,                   // 2  Name
+      email,                      // 3  Email
+      role,                       // 4  Role
+      market,                     // 5  Market
+      aum,                        // 6  AUM
+      mobility,                   // 7  Mobility
+      notes,                      // 8  Notes
+      driveLink,                  // 9  CV Link
+      liSearch,                   // 10 LinkedIn Search
+      ai.summary || "",           // 11 AI Summary
       (ai.tags || []).join(", "), // 12 Tags
-      ai.match_score ?? "",  // 13 Match Score
+      ai.match_score ?? "",       // 13 Match Score
     ]);
 
     return NextResponse.json({ ok: true });
