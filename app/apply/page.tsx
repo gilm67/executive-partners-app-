@@ -1,105 +1,126 @@
 // app/apply/page.tsx
-// Server component: plain HTML form posts to /api/apply
-
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
-type SearchParams = {
-  [key: string]: string | string[] | undefined;
+export const metadata = {
+  title: "Apply confidentially",
+  description:
+    "Send your details securely. We’ll contact you if there’s a strong fit.",
 };
 
-function pickFirst(v: string | string[] | undefined): string {
+// Keep typing minimal & App-Router friendly
+type SP = Record<string, string | string[] | undefined>;
+
+function getParam(sp: SP, key: string): string {
+  const v = sp?.[key];
   if (Array.isArray(v)) return v[0] ?? "";
-  return v ?? "";
+  return (v as string) ?? "";
 }
 
 export default function ApplyPage({
   searchParams,
 }: {
-  searchParams?: SearchParams;
+  searchParams?: SP;
 }) {
-  const role = pickFirst(searchParams?.role);
-  const market = pickFirst(searchParams?.market);
-  const jobId = pickFirst(searchParams?.jobId);
+  const role = getParam(searchParams ?? {}, "role");
+  const market = getParam(searchParams ?? {}, "market");
+  const jobId = getParam(searchParams ?? {}, "jobId");
 
   return (
-    <section className="max-w-2xl mx-auto py-10">
-      <h1 className="text-2xl font-semibold mb-2">Apply confidentially</h1>
-      <p className="text-sm text-neutral-500 mb-6">
-        Your profile will be reviewed discreetly. We’ll contact you if there’s a strong fit.
+    <section className="space-y-6">
+      <h1 className="text-2xl font-semibold">Apply confidentially</h1>
+      <p className="text-neutral-400">
+        Your profile will be reviewed discreetly. We’ll contact you if there’s
+        a strong fit.
       </p>
 
       <form
-        action="/api/apply"
         method="POST"
-        className="space-y-4 rounded-2xl border bg-white p-6 shadow-sm"
+        action="/api/apply"
+        className="mx-auto w-full max-w-2xl rounded-2xl border bg-white p-6 shadow-sm"
       >
-        {/* Hidden job id if present */}
+        {/* Hidden context (kept in plain inputs so SSR works everywhere) */}
         <input type="hidden" name="jobId" value={jobId} />
+        <input type="hidden" name="__source" value="apply-page" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-neutral-800">Name</label>
+            <label className="mb-1 block text-sm font-medium text-neutral-800">
+              Name
+            </label>
             <input
               name="name"
               required
-              className="mt-1 block w-full rounded-lg border border-neutral-300 bg-white p-2 text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Your full name"
+              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-800">Email</label>
+            <label className="mb-1 block text-sm font-medium text-neutral-800">
+              Email
+            </label>
             <input
               name="email"
               type="email"
               required
-              className="mt-1 block w-full rounded-lg border border-neutral-300 bg-white p-2 text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="you@example.com"
+              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-neutral-800">Role</label>
+            <label className="mb-1 block text-sm font-medium text-neutral-800">
+              Role
+            </label>
             <input
               name="role"
               defaultValue={role}
-              className="mt-1 block w-full rounded-lg border border-neutral-300 bg-white p-2 text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g., Private Banker"
+              placeholder="e.g. Private Banker"
+              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-800">Market</label>
+            <label className="mb-1 block text-sm font-medium text-neutral-800">
+              Market
+            </label>
             <input
               name="market"
               defaultValue={market}
-              className="mt-1 block w-full rounded-lg border border-neutral-300 bg-white p-2 text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g., CH Onshore"
+              placeholder="e.g. CH Onshore"
+              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-neutral-800">Notes (optional)</label>
+        <div className="mt-4">
+          <label className="mb-1 block text-sm font-medium text-neutral-800">
+            Notes (optional)
+          </label>
           <textarea
             name="notes"
             rows={5}
-            className="mt-1 block w-full rounded-lg border border-neutral-300 bg-white p-2 text-neutral-800 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Anything you’d like to add…"
+            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
         </div>
 
-        <button
-          type="submit"
-          className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-        >
-          Submit
-        </button>
+        <div className="mt-6">
+          <button
+            type="submit"
+            className="rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
+          >
+            Submit
+          </button>
+        </div>
+
+        <p className="mt-3 text-xs text-neutral-500">
+          By submitting, you agree your data will be processed to assess role
+          fit. You can request deletion at any time.
+        </p>
       </form>
     </section>
   );
 }
-
