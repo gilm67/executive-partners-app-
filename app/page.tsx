@@ -1,5 +1,6 @@
 // app/page.tsx
 import Link from "next/link";
+import { Suspense } from "react";
 import { getJobs, jobSlug, type Job } from "@/lib/sheets";
 
 export const revalidate = 60;
@@ -14,7 +15,7 @@ function Pill({ children }: { children: React.ReactNode }) {
 
 async function FeaturedJobs() {
   const jobs = await getJobs();
-  const featured = jobs.slice(0, 6); // latest 6
+  const featured = jobs.slice(0, 6);
 
   if (!featured.length) {
     return (
@@ -55,6 +56,14 @@ async function FeaturedJobs() {
           </Link>
         );
       })}
+    </div>
+  );
+}
+
+function JobsFallback() {
+  return (
+    <div className="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-6 text-neutral-400">
+      Loading featured roles…
     </div>
   );
 }
@@ -169,8 +178,11 @@ export default async function HomePage() {
             View all jobs
           </Link>
         </div>
-        {/* @ts-expect-error Async Server Component */}
-        <FeaturedJobs />
+
+        <Suspense fallback={<JobsFallback />}>
+          {/* async Server Component */}
+          <FeaturedJobs />
+        </Suspense>
       </section>
 
       {/* TRUST BAR / FOOTNOTE */}
