@@ -1,37 +1,32 @@
 // app/apply/page.tsx
-import { Suspense } from "react";
 import ApplyClient from "./ApplyClient";
 
 export const dynamic = "force-dynamic";
 
+// Type that matches Next 15's expectation (searchParams is a Promise)
 type SP = Record<string, string | string[] | undefined>;
 
-export default async function ApplyPage({
-  searchParams,
-}: {
-  searchParams: Promise<SP> | SP;
-}) {
-  const sp = (typeof (searchParams as any)?.then === "function")
-    ? await (searchParams as Promise<SP>)
-    : (searchParams as SP);
+export default async function ApplyPage(
+  props: { searchParams?: Promise<SP> }
+) {
+  // Always await the promise; handle missing / failing gracefully
+  let raw: SP = {};
+  try {
+    raw = (await props.searchParams) ?? {};
+  } catch {
+    raw = {};
+  }
 
-  const role = Array.isArray(sp.role) ? sp.role[0] ?? "" : (sp.role ?? "");
-  const market = Array.isArray(sp.market) ? sp.market[0] ?? "" : (sp.market ?? "");
-  const jobId = Array.isArray(sp.jobId) ? sp.jobId[0] ?? "" : (sp.jobId ?? "");
+  const pick = (k: string) => {
+    const v = raw[k];
+    return Array.isArray(v) ? v[0] ?? "" : (v ?? "");
+  };
 
-  return (
-    <Suspense
-      fallback={
-        <section className="space-y-6">
-          <div className="h-6 w-56 rounded bg-neutral-800" />
-          <div className="h-4 w-96 rounded bg-neutral-900" />
-          <div className="mx-auto mt-4 w-full max-w-xl rounded-2xl border border-neutral-800 bg-neutral-900 p-6">
-            <div className="h-32 w-full rounded bg-neutral-800" />
-          </div>
-        </section>
-      }
-    >
-      <ApplyClient role={role} market={market} jobId={jobId} />
-    </Suspense>
-  );
+  const role   = pick("role");
+  const market = pick("market");
+  const jobId  = pick("jobId");
+
+  // Pure client form handles everything else
+  return <ApplyClient role={role} market={market} jobId={jobId} />;
 }
+
