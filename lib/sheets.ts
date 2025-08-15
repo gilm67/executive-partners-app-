@@ -1,485 +1,270 @@
 // lib/sheets.ts
-import { google } from "googleapis";
+import { getSheetsClient } from "./google";
 
 /* =========================
-   Google Sheets Auth
-   ========================= */
-export function getSheetsAuth() {
-  const email = process.env.GOOGLE_CLIENT_EMAIL || "";
-
-  // Prefer base64-encoded key (Vercel); fallback to \n-escaped plaintext locally
-  let key = "";
-  if (process.env.GOOGLE_PRIVATE_KEY_B64) {
-    key = Buffer.from(process.env.GOOGLE_PRIVATE_KEY_B64, "base64").toString("utf8");
-  } else if (process.env.GOOGLE_PRIVATE_KEY) {
-    key = (process.env.GOOGLE_PRIVATE_KEY || "").replace(/\\n/g, "\n");
-  }
-
-  if (!email || !key) {
-    throw new Error("Missing GOOGLE_CLIENT_EMAIL or GOOGLE_PRIVATE_KEY(_B64)");
-  }
-
-  return new google.auth.JWT({
-    email,
-    key,
-    scopes: ["https://www.googleapis.com/auth/spreadsheets"], // read + write
-  });
-}
-
-/* =========================
-   Helpers
-   ========================= */
-function colNumberToLetters(n: number): string {
-  let s = "";
-  while (n > 0) {
-    const m = (n - 1) % 26;
-    s = String.fromCharCode(65 + m) + s;
-    n = Math.floor((n - 1) / 26);
-  }
-  return s;
-}
-
-function toBool(v: unknown): boolean {
-  const s = String(v ?? "").trim().toLowerCase();
-  return s === "true" || s === "yes" || s === "1" || s === "y";
-}
-
-/* =========================
-   Candidates
+   Types
    ========================= */
 export type Candidate = {
-  Timestamp: string;
-  Name: string;
-  Email: string;
-  Role: string;
-  Market: string;
-  AUM: string;
-  Mobility: string;
-  Notes: string;
-  "CV Link": string;
-  "LinkedIn Search": string;
-  "AI Summary": string;
-  Tags: string;
-  "Match Score": string | number;
-  Shortlist?: string;
-};
-
-const CANDIDATES_TAB = "Candidates";
-
-export async function getCandidates(): Promise<Candidate[]> {
-  const sheetId = process.env.GOOGLE_SHEET_ID || "";
-  if (!sheetId) throw new Error("GOOGLE_SHEET_ID missing");
-
-  const auth = getSheetsAuth();
-  const sheets = google.sheets({ version: "v4", auth });
-
-  const resp = await sheets.spreadsheets.values.get({
-    spreadsheetId: sheetId,
-    range: `${CANDIDATES_TAB}!A1:ZZ10000`,
-  });
-
-  const rows = resp.data.values || [];
-  if (rows.length < 2) return [];
-
-  const headers = rows[0] as string[];
-  const data = rows.slice(1);
-
-  return data.map((r) => {
-    const o: Record<string, any> = {};
-    headers.forEach((h, i) => (o[h] = r[i] ?? ""));
-    const ms = Number(o["Match Score"]);
-    o["Match Score"] = Number.isFinite(ms) ? ms : o["Match Score"];
-    return o as Candidate;
-  });
-}
-
-/** Ensure a header exists on the first row; returns its 1-based column index. */
-export async function ensureHeader(headerName: string): Promise<number> {
-  const sheetId = process.env.GOOGLE_SHEET_ID || "";
-  if (!sheetId) throw new Error("GOOGLE_SHEET_ID missing");
-
-  const auth = getSheetsAuth();
-  const sheets = google.sheets({ version: "v4", auth });
-
-  const headersResp = await sheets.spreadsheets.values.get({
-    spreadsheetId: sheetId,
-    range: `${CANDIDATES_TAB}!1:1`,
-  });
-  const headers = (headersResp.data.values?.[0] || []) as string[];
-
-  let idx = headers.findIndex(
-    (h) => (h || "").trim().toLowerCase() === headerName.trim().toLowerCase()
-  );
-  if (idx >= 0) return idx + 1;
-
-  // append new header
-  const newHeaders = [...headers, headerName];
-  await sheets.spreadsheets.values.update({
-    spreadsheetId: sheetId,
-    range: `${CANDIDATES_TAB}!1:1`,
-    valueInputOption: "RAW",
-    requestBody: { values: [newHeaders] },
-  });
-  return newHeaders.length; // 1-based
-}
-
-/** Update the “Shortlist” cell for a row identified by (Timestamp, Email). */
-export async function updateShortlistCell(
-  email: string,
-  timestamp: string,
-  value: "YES" | "NO"
-): Promise<void> {
-  const sheetId = process.env.GOOGLE_SHEET_ID || "";
-  if (!sheetId) throw new Error("GOOGLE_SHEET_ID missing");
-
-  const auth = getSheetsAuth();
-  const sheets = google.sheets({ version: "v4", auth });
-
-  const shortlistCol = await ensureHeader("Shortlist");
-
-  const resp = await sheets.spreadsheets.values.get({
-    spreadsheetId: sheetId,
-    range: `${CANDIDATES_TAB}!A1:ZZ10000`,
-  });
-  const rows = resp.data.values || [];
-  if (rows.length < 2) throw new Error("No candidate rows.");
-
-  const headers = rows[0] as string[];
-  const tsIdx = headers.findIndex((h) => (h || "").toLowerCase() === "timestamp");
-  const emailIdx = headers.findIndex((h) => (h || "").toLowerCase() === "email");
-  if (tsIdx < 0 || emailIdx < 0) throw new Error("Sheet must have 'Timestamp' and 'Email' headers.");
-
-  // find matching row (2+)
-  let rowNumber = -1;
-  for (let i = 1; i < rows.length; i++) {
-    const row = rows[i] || [];
-    const ts = (row[tsIdx] || "").toString().trim();
-    const em = (row[emailIdx] || "").toString().trim();
-    if (ts === timestamp && em === email) {
-      rowNumber = i + 1;
-      break;
-    }
-  }
-  if (rowNumber < 0) throw new Error("Row not found for given email/timestamp.");
-
-  const col = colNumberToLetters(shortlistCol);
-  const a1 = `${CANDIDATES_TAB}!${col}${rowNumber}`;
-  await sheets.spreadsheets.values.update({
-    spreadsheetId: sheetId,
-    range: a1,
-    valueInputOption: "RAW",
-    requestBody: { values: [[value]] },
-  });
-}
-
-/* =========================
-   Jobs
-   ========================= */
-export type Job = {
-  ID?: string;
-  Title?: string;      // some tabs use Title instead of Role
-  Role?: string;
-  Location?: string;
-  Market?: string;
-  Seniority?: string;
-  Summary?: string;
-  Description?: string;
-  Confidential?: string; // "YES"/"NO"
-  Active?: string;       // "TRUE"/"FALSE"
-};
-
-export async function getJobs(): Promise<Job[]> {
-  const sheetId = process.env.GOOGLE_SHEET_ID || "";
-  if (!sheetId) throw new Error("GOOGLE_SHEET_ID missing");
-
-  const auth = getSheetsAuth();
-  const sheets = google.sheets({ version: "v4", auth });
-
-  const resp = await sheets.spreadsheets.values.get({
-    spreadsheetId: sheetId,
-    range: `Jobs!A1:ZZ1000`,
-  });
-
-  const rows = resp.data.values || [];
-  if (rows.length < 2) return [];
-
-  const headers = (rows[0] as string[]).map((h) => (h || "").trim());
-  const data = rows.slice(1);
-
-  // helper: pick the first non-empty among several header variants
-  function pick(map: Record<string, string>, keys: string[]): string {
-    for (const k of keys) {
-      const v = map[k.toLowerCase()] || "";
-      if (v && v.trim()) return v.trim();
-    }
-    return "";
-  }
-
-  const list: Job[] = data.map((r) => {
-    // Build a case/space-insensitive map of header -> value
-    // FIRST-WINS for duplicate headers (e.g., multiple "Description")
-    const rowMap: Record<string, string> = {};
-    headers.forEach((h, i) => {
-      const key = (h || "").trim().toLowerCase();
-      if (!key) return;
-      if (rowMap[key] === undefined) rowMap[key] = (r[i] ?? "").toString().trim();
-    });
-
-    return {
-      ID:          pick(rowMap, ["id", "job id", "ref", "reference"]),
-      Title:       pick(rowMap, ["title", "job title", "position", "role"]),
-      Role:        pick(rowMap, ["role", "position", "title", "job title"]),
-      Location:    pick(rowMap, ["location", "city"]),
-      Market:      pick(rowMap, ["market", "region"]),
-      Seniority:   pick(rowMap, ["seniority", "level"]),
-      Summary:     pick(rowMap, ["summary", "short", "blurb"]),
-      Description: pick(rowMap, ["description", "desc", "details"]),
-      Confidential:pick(rowMap, ["confidential"]),
-      Active:      pick(rowMap, ["active", "is active", "status"]),
-    };
-  });
-
-  // Only active
-  const active = list.filter((j) => toBool(j.Active));
-
-  // Sort newest ID first when numeric; fallback string
-  active.sort((a, b) => {
-    const an = Number(a.ID);
-    const bn = Number(b.ID);
-    if (Number.isFinite(an) && Number.isFinite(bn)) return bn - an;
-    return String(b.ID || "").localeCompare(String(a.ID || ""));
-  });
-
-  return active;
-}
-
-export function jobSlug(j: Job) {
-  const base =
-    (j.ID && String(j.ID).trim().length > 0
-      ? String(j.ID)
-      : `${j.Title || j.Role || ""}-${j.Location || ""}`) || "";
-  return base.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
-
-export async function getJobByIdOrSlug(idOrSlug: string): Promise<Job | null> {
-  const all = await getJobs();
-  // direct ID match
-  let match = all.find((j) => (j.ID || "").toString() === idOrSlug);
-  if (match) return match;
-  // slug match
-  match = all.find((j) => jobSlug(j) === idOrSlug);
-  return match || null;
-}
-
-/** Append a new job row to the Jobs tab (used by API/automation). */
-export type NewJobInput = {
-  Title?: string;        // or use Role if your sheet uses that column
-  Role?: string;
-  Location?: string;
-  Market?: string;
-  Seniority?: string;
-  Summary?: string;
-  Description?: string;
-  Confidential?: string; // "YES"/"NO"
-  Active?: string;       // "TRUE"/"FALSE"
-};
-
-export async function createJob(
-  input: NewJobInput
-): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
-  const sheetId = process.env.GOOGLE_SHEET_ID || "";
-  if (!sheetId) return { ok: false, error: "GOOGLE_SHEET_ID missing" };
-
-  const auth = getSheetsAuth();
-  const sheets = google.sheets({ version: "v4", auth });
-
-  // Read header row to know the column order and the next ID
-  const range = `Jobs!A1:ZZ1`;
-  const headResp = await sheets.spreadsheets.values.get({
-    spreadsheetId: sheetId,
-    range,
-  });
-  const headers = (headResp.data.values?.[0] || []) as string[];
-
-  // Ensure must-have columns exist
-  const required = [
-    "ID","Title","Role","Location","Market","Seniority","Summary","Description","Confidential","Active",
-  ];
-  const merged = Array.from(
-    new Set([...headers.map((h) => (h || "").trim()), ...required])
-  );
-  if (merged.length !== headers.length) {
-    await sheets.spreadsheets.values.update({
-      spreadsheetId: sheetId,
-      range: `Jobs!1:1`,
-      valueInputOption: "RAW",
-      requestBody: { values: [merged] },
-    });
-  }
-  const cols = merged; // final header order
-
-  // Find next numeric ID
-  const idRange = `Jobs!A2:A1000`;
-  const idResp = await sheets.spreadsheets.values.get({
-    spreadsheetId: sheetId,
-    range: idRange,
-  });
-  const ids = (idResp.data.values || [])
-    .map((r) => Number(r?.[0]))
-    .filter((n) => Number.isFinite(n)) as number[];
-  const nextId = ids.length ? Math.max(...ids) + 1 : 101;
-
-  // Build row by header order
-  const row: string[] = cols.map((h) => {
-    if (h === "ID") return String(nextId);
-    const v =
-      (input as any)[h] ??
-      (h === "Title" ? input.Title ?? input.Role ?? "" :
-       h === "Role" ? input.Role ?? input.Title ?? "" :
-       h === "Confidential" ? (input.Confidential ?? "YES") :
-       h === "Active" ? (input.Active ?? "TRUE") : "");
-    return String(v ?? "");
-  });
-
-  await sheets.spreadsheets.values.append({
-    spreadsheetId: sheetId,
-    range: `Jobs!A:A`,
-    valueInputOption: "RAW",
-    insertDataOption: "INSERT_ROWS",
-    requestBody: { values: [row] },
-  });
-
-  return { ok: true, id: String(nextId) };
-}
-
-/* =========================
-   Applications (append + read)
-   ========================= */
-export type Application = {
   Timestamp?: string;
   Name?: string;
   Email?: string;
   Role?: string;
   Market?: string;
+  AUM?: string;
+  Mobility?: string;
   Notes?: string;
-  "Job ID"?: string;
+  CVLink?: string;
+  LinkedInSearch?: string;
+  AISummary?: string;
+  Tags?: string;
+  MatchScore?: string | number;
 };
 
-type ApplicationRow = {
+export type Job = {
+  ID?: string | number;
+  Title?: string;
+  Role?: string;
+  Market?: string;
+  Location?: string;
+  Seniority?: string;
+  Summary?: string;
+  Slug?: string;
+};
+
+export type NewJobInput = {
+  Title: string;
+  Market?: string;
+  Location?: string;
+  Seniority?: string;
+  Summary?: string;
+};
+
+export type NewApplication = {
   Timestamp: string;
   Name: string;
   Email: string;
-  Role: string;
-  Market: string;
-  Notes: string;
+  Role?: string;
+  Market?: string;
+  Notes?: string;
   JobID?: string;
 };
 
-const APPLICATIONS_TAB = "Applications";
+/* =========================
+   Utils
+   ========================= */
+function normalizeHeader(h: string) {
+  return (h || "")
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "");
+}
 
-/** Ensure Applications tab exists and has the expected header. */
-async function ensureApplicationsHeader(
-  sheets: ReturnType<typeof google.sheets>,
-  spreadsheetId: string
-) {
-  const headers = ["Timestamp", "Name", "Email", "Role", "Market", "Notes", "JobID"];
-  try {
-    const read = await sheets.spreadsheets.values.get({
-      spreadsheetId,
-      range: `${APPLICATIONS_TAB}!A1:G1`,
+function parseTable<T = Record<string, any>>(rows: any[][]): T[] {
+  if (!rows || rows.length === 0) return [];
+  const header = (rows[0] || []).map((h: any) => normalizeHeader(String(h || "")));
+  return rows.slice(1).map((r) => {
+    const obj: Record<string, any> = {};
+    header.forEach((key: string, i: number) => {
+      obj[key] = r[i] ?? "";
     });
-    const existing = (read.data.values?.[0] || []) as string[];
-    if (existing.length === 0 || headers.some((h, i) => (existing[i] || "") !== h)) {
-      await sheets.spreadsheets.values.update({
-        spreadsheetId,
-        range: `${APPLICATIONS_TAB}!A1:G1`,
-        valueInputOption: "RAW",
-        requestBody: { values: [headers] },
-      });
-    }
-  } catch (err: any) {
-    // If tab doesn't exist (Unable to parse range), create it then write header
-    if (String(err?.message || "").includes("Unable to parse range")) {
-      await sheets.spreadsheets.batchUpdate({
-        spreadsheetId,
-        requestBody: { requests: [{ addSheet: { properties: { title: APPLICATIONS_TAB } } }] },
-      });
-      await sheets.spreadsheets.values.update({
-        spreadsheetId,
-        range: `${APPLICATIONS_TAB}!A1:G1`,
-        valueInputOption: "RAW",
-        requestBody: { values: [headers] },
-      });
-    } else {
-      throw err;
-    }
+    return obj as T;
+  });
+}
+
+/* =========================
+   Generic helpers (shims for older routes)
+   ========================= */
+export async function appendRow(range: string, values: any[]) {
+  const { sheets, sheetId } = getSheetsClient();
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: sheetId,
+    range,
+    valueInputOption: "USER_ENTERED",
+    insertDataOption: "INSERT_ROWS",
+    requestBody: { values: [values] },
+  });
+}
+
+export async function readRows(range: string): Promise<any[][]> {
+  const { sheets, sheetId } = getSheetsClient();
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: sheetId,
+    range,
+  });
+  return (res.data.values as any[][]) || [];
+}
+
+/* =========================
+   Jobs
+   ========================= */
+export async function getJobs(): Promise<Job[]> {
+  const rows = await readRows("Jobs!A:Z");
+  const parsed = parseTable(rows);
+  return parsed.map((r: any) => ({
+    ID: r.id || r.jobid || r.job_id || "",
+    Title: r.title || r.role || "",
+    Role: r.role || r.title || "",
+    Market: r.market || "",
+    Location: r.location || "",
+    Seniority: r.seniority || "",
+    Summary: r.summary || "",
+    Slug: r.slug || "",
+  }));
+}
+
+export function jobSlug(j: Job) {
+  const base = (j.Title || j.Role || "role")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+  const market = (j.Market || "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  return market ? `${base}-${market}` : base;
+}
+
+export async function getJobByIdOrSlug(idOrSlug: string): Promise<Job | null> {
+  const jobs = await getJobs();
+  const needle = (idOrSlug || "").toString().trim().toLowerCase();
+  return (
+    jobs.find(
+      (j) =>
+        String(j.ID || "").toLowerCase() === needle ||
+        String(j.Slug || "").toLowerCase() === needle ||
+        jobSlug(j) === needle
+    ) || null
+  );
+}
+
+export async function createJob(
+  input: NewJobInput
+): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+  try {
+    const id = String(Date.now());
+    await appendRow("Jobs!A1", [
+      id,
+      input.Title,
+      input.Market || "",
+      input.Location || "",
+      input.Seniority || "",
+      input.Summary || "",
+    ]);
+    return { ok: true, id };
+  } catch (e: any) {
+    return { ok: false, error: e?.message || "Failed to create job" };
   }
 }
 
-/** Append a single application row. */
-export async function appendApplication(row: ApplicationRow): Promise<void> {
-  const sheetId = process.env.GOOGLE_SHEET_ID || "";
-  if (!sheetId) throw new Error("GOOGLE_SHEET_ID missing");
+/* =========================
+   Candidates
+   ========================= */
+export async function getCandidates(): Promise<Candidate[]> {
+  const rows = await readRows("Candidates!A:Z");
+  const parsed = parseTable(rows);
+  return parsed.map((r: any) => ({
+    Timestamp: r.timestamp || "",
+    Name: r.name || "",
+    Email: r.email || "",
+    Role: r.role || "",
+    Market: r.market || "",
+    AUM: r.aum || r.aummillions || "",
+    Mobility: r.mobility || "",
+    Notes: r.notes || "",
+    CVLink: r.cvlink || r.cv || "",
+    LinkedInSearch: r.linkedinsearch || "",
+    AISummary: r.aisummary || "",
+    Tags: r.tags || "",
+    MatchScore: r.matchscore || "",
+  }));
+}
 
-  const auth = getSheetsAuth();
-  const sheets = google.sheets({ version: "v4", auth });
-
-  await ensureApplicationsHeader(sheets, sheetId);
-
-  await sheets.spreadsheets.values.append({
+/** Internal helper: update by row number (Z column as example) */
+async function updateShortlistCellByRow(rowIndex: number, value: string) {
+  const { sheets, sheetId } = getSheetsClient();
+  const targetRange = `Candidates!Z${rowIndex}:Z${rowIndex}`; // adjust if your shortlist column differs
+  await sheets.spreadsheets.values.update({
     spreadsheetId: sheetId,
-    range: `${APPLICATIONS_TAB}!A:A`,
-    valueInputOption: "RAW",
-    insertDataOption: "INSERT_ROWS",
-    requestBody: {
-      values: [[
-        row.Timestamp,
-        row.Name,
-        row.Email,
-        row.Role,
-        row.Market,
-        row.Notes,
-        row.JobID ?? "",
-      ]],
-    },
+    range: targetRange,
+    valueInputOption: "USER_ENTERED",
+    requestBody: { values: [[value]] },
   });
 }
 
-/** Read applications for the dashboard. */
-export async function getApplications(): Promise<Application[]> {
-  const sheetId = process.env.GOOGLE_SHEET_ID || "";
-  if (!sheetId) throw new Error("GOOGLE_SHEET_ID missing");
+/** Internal helper: find row by (email, timestamp) then update Z column */
+async function updateShortlistCellByKeys(email: string, timestamp: string, value: string) {
+  const rows = await readRows("Candidates!A:Z");
+  if (!rows.length) return;
 
-  const auth = getSheetsAuth();
-  const sheets = google.sheets({ version: "v4", auth });
+  // Build a header index for email/timestamp
+  const header = rows[0].map((h) => normalizeHeader(String(h || "")));
+  const emailIdx = header.indexOf("email");
+  const tsIdx = header.indexOf("timestamp");
+  const shortlistColIdx = 25; // Z = 26th col, 0-based index is 25. Change if needed.
 
-  const resp = await sheets.spreadsheets.values.get({
+  if (emailIdx === -1 || tsIdx === -1) return;
+
+  // Find the row (starting from row 2 in sheet, which is index 1 in array)
+  let rowNumber: number | null = null;
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i] || [];
+    const e = String(r[emailIdx] || "").trim().toLowerCase();
+    const t = String(r[tsIdx] || "").trim();
+    if (e === email.trim().toLowerCase() && t === timestamp.trim()) {
+      rowNumber = i + 1; // sheet rows are 1-based and include header
+      break;
+    }
+  }
+  if (!rowNumber) return;
+
+  // Ensure row has at least Z columns when updating via range:
+  const colLetter = "Z"; // adjust if your shortlist column is different
+  const range = `Candidates!${colLetter}${rowNumber}:${colLetter}${rowNumber}`;
+
+  const { sheets, sheetId } = getSheetsClient();
+  await sheets.spreadsheets.values.update({
     spreadsheetId: sheetId,
-    range: `${APPLICATIONS_TAB}!A1:ZZ20000`,
+    range,
+    valueInputOption: "USER_ENTERED",
+    requestBody: { values: [[value]] },
   });
-
-  const rows = resp.data.values || [];
-  if (rows.length < 2) return [];
-
-  const headers = (rows[0] as string[]).map(h => (h || "").trim());
-  const data = rows.slice(1);
-
-  const list = data.map((r) => {
-    const m: Record<string, string> = {};
-    headers.forEach((h, i) => (m[h] = (r[i] ?? "").toString()));
-    // normalize JobID → "Job ID" for UI
-    if (m["JobID"] && !m["Job ID"]) m["Job ID"] = m["JobID"];
-    return m as unknown as Application;
-  });
-
-  // Newest first by Timestamp if parseable
-  list.sort((a, b) => {
-    const at = Date.parse(a.Timestamp || "");
-    const bt = Date.parse(b.Timestamp || "");
-    if (Number.isFinite(at) && Number.isFinite(bt)) return bt - at;
-    return 0;
-  });
-
-  return list;
 }
 
+/**
+ * Public function that supports:
+ *  - updateShortlistCell(rowIndex:number, value:string)
+ *  - updateShortlistCell(email:string, timestamp:string, value:string)
+ */
+export async function updateShortlistCell(
+  a: number | string,
+  b: string,
+  c?: string
+) {
+  if (typeof a === "number" && c === undefined) {
+    // signature: (rowIndex, value)
+    return updateShortlistCellByRow(a, b);
+  }
+  // signature: (email, timestamp, value)
+  const email = String(a);
+  const timestamp = String(b);
+  const value = String(c ?? "");
+  return updateShortlistCellByKeys(email, timestamp, value);
+}
+
+/* =========================
+   Applications (/apply)
+   ========================= */
+export async function appendApplication(app: NewApplication) {
+  await appendRow("Applications!A1", [
+    app.Timestamp,
+    app.Name,
+    app.Email,
+    app.Role || "",
+    app.Market || "",
+    app.Notes || "",
+    app.JobID || "",
+  ]);
+}
+
+export async function getApplications(): Promise<Record<string, any>[]> {
+  const rows = await readRows("Applications!A:Z");
+  return parseTable(rows);
+}
