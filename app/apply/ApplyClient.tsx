@@ -9,12 +9,16 @@ type Props = {
 };
 
 export default function ApplyClient({ role = "", market = "", jobId = "" }: Props) {
-  const [name, setName]     = useState("");
-  const [email, setEmail]   = useState("");
-  const [notes, setNotes]   = useState("");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail]       = useState("");
+  const [notes, setNotes]       = useState("");
+  const [roleState, setRole]    = useState(role);
+  const [marketState, setMarket]= useState(market);
+  const [file, setFile]         = useState<File | null>(null);
+
   const [submitting, setSubmitting] = useState(false);
-  const [ok, setOk]         = useState<null | boolean>(null);
-  const [err, setErr]       = useState<string | null>(null);
+  const [ok, setOk]   = useState<null | boolean>(null);
+  const [err, setErr] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -23,16 +27,34 @@ export default function ApplyClient({ role = "", market = "", jobId = "" }: Prop
     setErr(null);
 
     try {
-      const res = await fetch("/api/apply", {
+      const fd = new FormData();
+      fd.append("fullName", fullName);
+      fd.append("email", email);
+      fd.append("role", roleState);
+      fd.append("market", marketState);
+      fd.append("aum", "");        // optional field expected by /api/register
+      fd.append("mobility", "");   // optional field expected by /api/register
+      fd.append("notes", notes);
+      if (jobId) fd.append("jobId", jobId);
+      if (file)  fd.append("cv", file);
+
+      const res = await fetch("/api/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, role, market, notes, jobId }),
+        body: fd,
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json?.ok !== true) {
+        throw new Error(json?.error || `HTTP ${res.status}`);
+      }
+
       setOk(true);
-      setName("");
+      // Clear only user-typed fields
+      setFullName("");
       setEmail("");
       setNotes("");
+      setFile(null);
+      // Keep role/market values
     } catch (e: any) {
       setOk(false);
       setErr(e?.message || "Submit error");
@@ -58,8 +80,8 @@ export default function ApplyClient({ role = "", market = "", jobId = "" }: Prop
             <input
               className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
               placeholder="Your full name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               required
             />
           </div>
@@ -78,21 +100,35 @@ export default function ApplyClient({ role = "", market = "", jobId = "" }: Prop
 
           <div>
             <label className="block text-sm text-neutral-300">Role</label>
+            {/* Make editable (remove readOnly) */}
             <input
               className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-neutral-100"
-              value={role}
-              readOnly
+              value={roleState}
+              onChange={(e) => setRole(e.target.value)}
+              placeholder="e.g. Private Banker"
             />
           </div>
 
           <div>
             <label className="block text-sm text-neutral-300">Market</label>
+            {/* Make editable (remove readOnly) */}
             <input
               className="mt-1 w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-neutral-100"
-              value={market}
-              readOnly
+              value={marketState}
+              onChange={(e) => setMarket(e.target.value)}
+              placeholder="e.g. CH Onshore"
             />
           </div>
+        </div>
+
+        <div className="mt-4">
+          <label className="block text-sm text-neutral-300">Attach CV (PDF/DOCX)</label>
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            className="mt-1 w-full text-neutral-200 file:mr-3 file:rounded-md file:border-0 file:bg-neutral-700 file:px-3 file:py-2 file:text-neutral-100 hover:file:bg-neutral-600"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+          />
         </div>
 
         <div className="mt-4">
