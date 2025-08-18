@@ -1,32 +1,35 @@
 // app/apply/page.tsx
+import { Suspense } from "react";
 import ApplyClient from "./ApplyClient";
 
 export const dynamic = "force-dynamic";
 
-// Type that matches Next 15's expectation (searchParams is a Promise)
-type SP = Record<string, string | string[] | undefined>;
+type SP = { role?: string; market?: string };
 
-export default async function ApplyPage(
-  props: { searchParams?: Promise<SP> }
+async function Content(
+  props: { searchParams?: SP | Promise<SP> }
 ) {
-  // Always await the promise; handle missing / failing gracefully
-  let raw: SP = {};
-  try {
-    raw = (await props.searchParams) ?? {};
-  } catch {
-    raw = {};
-  }
+  const sp = await Promise.resolve(props.searchParams ?? {});
+  const initialRole = (sp?.role ?? "").toString();
+  const initialMarket = (sp?.market ?? "").toString();
 
-  const pick = (k: string) => {
-    const v = raw[k];
-    return Array.isArray(v) ? v[0] ?? "" : (v ?? "");
-  };
-
-  const role   = pick("role");
-  const market = pick("market");
-  const jobId  = pick("jobId");
-
-  // Pure client form handles everything else
-  return <ApplyClient role={role} market={market} jobId={jobId} />;
+  return (
+    <section className="space-y-6">
+      <h1 className="text-2xl font-semibold">Apply confidentially</h1>
+      <p className="text-neutral-400">
+        Your profile will be reviewed discreetly. We’ll contact you if there’s a strong fit.
+      </p>
+      <ApplyClient initialRole={initialRole} initialMarket={initialMarket} />
+    </section>
+  );
 }
+
+export default function Page(props: any) {
+  return (
+    <Suspense fallback={<div className="text-neutral-400">Loading…</div>}>
+      <Content {...props} />
+    </Suspense>
+  );
+}
+
 

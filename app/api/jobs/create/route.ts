@@ -7,19 +7,24 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    // Accept whatever fields your form sends and pass through to createJob().
-    const payload = await req.json();
+    const body = await req.json();
 
-    // createJob in lib/sheets should accept a plain object and handle header mapping.
-    await createJob(payload);
+    // Normalize expected fields from the sheet schema we use elsewhere
+    const input = {
+      Title: (body.Title || body.Role || "").toString().trim(),
+      Location: (body.Location || "").toString().trim(),
+      Market: (body.Market || "").toString().trim(),
+      Seniority: (body.Seniority || "").toString().trim(),
+      Summary: (body.Summary || "").toString().trim(),
+      Description: (body.Description || "").toString(),
+      Confidential: (body.Confidential || body.confidential || "").toString().trim(),
+    };
 
-    return NextResponse.json({ ok: true });
+    const result = await createJob(input);
+    return NextResponse.json({ ok: true, result });
   } catch (err: any) {
     console.error("jobs/create error:", err?.message || err);
-    return NextResponse.json(
-      { ok: false, error: err?.message || "Unknown error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: false, error: err?.message || "Unknown error" }, { status: 500 });
   }
 }
 

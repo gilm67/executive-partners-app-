@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import ShortlistToggle from "./ShortlistToggle";
 
 type Candidate = {
   Timestamp: string;
@@ -42,8 +43,11 @@ function formatTimestamp(iso: string | undefined): string {
   return `${dd}-${mm}-${yyyy} ${HH}:${MM}:${SS}`;
 }
 
-export default function ClientFilter({ rows }: { rows: Candidate[] }) {
-  const [list, setList] = useState<Candidate[]>(rows);
+export default function ClientFilter({ rows = [] as Candidate[] }: { rows?: Candidate[] }) {
+  // Always work with an array
+  const safeRows = Array.isArray(rows) ? rows : [];
+  const [list] = useState<Candidate[]>(safeRows);
+
   const [market, setMarket] = useState<string>("");
   const [minScore, setMinScore] = useState<number | "">("");
   const [q, setQ] = useState("");
@@ -54,7 +58,7 @@ export default function ClientFilter({ rows }: { rows: Candidate[] }) {
 
   const markets = useMemo(
     () =>
-      Array.from(new Set(list.map((r) => r.Market).filter(Boolean))).sort((a, b) =>
+      Array.from(new Set((list || []).map((r) => r.Market).filter(Boolean))).sort((a, b) =>
         a.localeCompare(b)
       ),
     [list]
@@ -71,7 +75,7 @@ export default function ClientFilter({ rows }: { rows: Candidate[] }) {
 
   const filtered = useMemo(() => {
     const terms = q.toLowerCase().split(/[, ]+/).filter(Boolean);
-    return list.filter((r) => {
+    return (list || []).filter((r) => {
       if (onlyShort && (r.Shortlist || "").toUpperCase() !== "YES") return false;
       if (market && r.Market !== market) return false;
 
@@ -122,32 +126,6 @@ export default function ClientFilter({ rows }: { rows: Candidate[] }) {
     return arr;
   }, [filtered, sortKey, sortDir]);
 
-  async function toggleShortlist(r: Candidate) {
-    const next = (r.Shortlist || "").toUpperCase() === "YES" ? "NO" : "YES";
-    // optimistic UI
-    setList((prev) =>
-      prev.map((x) =>
-        x.Email === r.Email && x.Timestamp === r.Timestamp ? { ...x, Shortlist: next } : x
-      )
-    );
-    try {
-      const res = await fetch("/api/candidates/shortlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: r.Email, timestamp: r.Timestamp, value: next }),
-      });
-      if (!res.ok) throw new Error("API error");
-    } catch {
-      // roll back on error
-      setList((prev) =>
-        prev.map((x) =>
-          x.Email === r.Email && x.Timestamp === r.Timestamp ? { ...x, Shortlist: r.Shortlist } : x
-        )
-      );
-      alert("Failed to update shortlist.");
-    }
-  }
-
   // Client-side CSV export for current view
   function exportCurrentView() {
     const headers = [
@@ -178,7 +156,8 @@ export default function ClientFilter({ rows }: { rows: Candidate[] }) {
     ]);
     const toCsv = (v: any) => {
       const s = String(v ?? "");
-      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+      // NOTE: no template literals/backslashes here—just plain concatenation
+      return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
     };
     const csv = [headers.map(toCsv).join(","), ...rows.map((r) => r.map(toCsv).join(","))].join(
       "\n"
@@ -217,9 +196,7 @@ export default function ClientFilter({ rows }: { rows: Candidate[] }) {
           <select
             className="w-full rounded-lg border px-3 py-2"
             value={String(minScore)}
-            onChange={(e) =>
-              setMinScore(e.target.value === "" ? "" : Number(e.target.value))
-            }
+            onChange={(e) => setMinScore(e.target.value === "" ? "" : Number(e.target.value))}
           >
             <option value="">Any</option>
             {[90, 80, 70, 60, 50, 0].map((s) => (
@@ -241,7 +218,6 @@ export default function ClientFilter({ rows }: { rows: Candidate[] }) {
         </div>
 
         <div className="flex items-end gap-2">
-          {/* Server-side CSVs if you have those routes */}
           <a
             href="/api/candidates/export?type=all"
             className="rounded-lg border px-3 py-2 text-sm hover:bg-white"
@@ -332,24 +308,19 @@ export default function ClientFilter({ rows }: { rows: Candidate[] }) {
             </tr>
           </thead>
 
-          <tbody className="[&>tr:nth-child(even)]:bg-neutral-50/40">
+        <tbody className="[&>tr:nth-child(even)]:bg-neutral-50/40">
             {sorted.map((r, idx) => {
-              const shortlisted = (r.Shortlist || "").toUpperCase() === "YES";
               return (
                 <tr
                   key={`${r.Email}-${r.Timestamp}-${idx}`}
                   className="[&>td]:px-3 [&>td]:py-2 align-top"
                 >
                   <td>
-                    <button
-                      onClick={() => toggleShortlist(r)}
-                      className={`rounded-full px-2 py-1 text-xs ${
-                        shortlisted ? "bg-yellow-200" : "bg-neutral-200"
-                      }`}
-                      title="Toggle shortlist"
-                    >
-                      {shortlisted ? "YES" : "NO"}
-                    </button>
+                    <ShortlistToggle
+                      email={r.Email}
+                      timestamp={r.Timestamp}
+                      initial={(r.Shortlist || "") as "" | "YES" | "NO"}
+                    />
                   </td>
 
                   <td className="whitespace-nowrap">{formatTimestamp(r.Timestamp)}</td>
@@ -387,6 +358,7 @@ export default function ClientFilter({ rows }: { rows: Candidate[] }) {
                       <a
                         href={r["LinkedIn Search"]}
                         target="_blank"
+                        rel="noopener noreferrer"
                         className="text-blue-700 hover:underline"
                       >
                         LinkedIn
@@ -396,6 +368,7 @@ export default function ClientFilter({ rows }: { rows: Candidate[] }) {
                       <a
                         href={r["CV Link"]}
                         target="_blank"
+                        rel="noopener noreferrer"
                         className="text-neutral-700 hover:underline"
                       >
                         CV
@@ -410,6 +383,7 @@ export default function ClientFilter({ rows }: { rows: Candidate[] }) {
                           r.Timestamp
                         )}&email=${encodeURIComponent(r.Email)}`}
                         target="_blank"
+                        rel="noopener noreferrer"
                         className="rounded-lg border px-3 py-1 text-sm hover:bg-white"
                         title="Download one-pager PDF"
                       >

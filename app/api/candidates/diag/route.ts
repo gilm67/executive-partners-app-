@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCandidates } from "../../../../lib/sheets"; // adjust if not using path aliases
+import { getCandidates } from "@/lib/sheets"; // adjust if not using path aliases
 
 export const runtime = "nodejs";
 

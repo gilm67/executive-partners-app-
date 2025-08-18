@@ -20,6 +20,74 @@ function anonymiseName(fullName: string) {
   return `${first} (Anon)`;
 }
 
+/** Format an ISO string in Europe/Zurich as DD.MM.YYYY HH:mm (24h). */
+function localDate(iso: string) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+
+  const fmt = new Intl.DateTimeFormat("de-CH", {
+    timeZone: "Europe/Zurich",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  // Build “DD.MM.YYYY HH:mm”
+  const parts = Object.fromEntries(fmt.formatToParts(d).map(p => [p.type, p.value]));
+  return `${parts.day}.${parts.month}.${parts.year} ${parts.hour}:${parts.minute}`;
+}
+
+type WrapOpts = {
+  x: number;
+  y: number;
+  maxWidth: number;
+  lineHeight: number;
+  font: any;
+  size: number;
+  color: any;
+};
+
+function drawWrapped(page: any, text: string, opts: WrapOpts) {
+  const words = (text || "").split(/\s+/);
+  let line = "";
+  let y = opts.y;
+
+  for (const w of words) {
+    const test = line ? `${line} ${w}` : w;
+    const width = opts.font.widthOfTextAtSize(test, opts.size);
+    if (width > opts.maxWidth) {
+      page.drawText(line, {
+        x: opts.x,
+        y,
+        size: opts.size,
+        font: opts.font,
+        color: opts.color,
+      });
+      y -= opts.lineHeight;
+      line = w;
+    } else {
+      line = test;
+    }
+  }
+
+  if (line) {
+    page.drawText(line, {
+      x: opts.x,
+      y,
+      size: opts.size,
+      font: opts.font,
+      color: opts.color,
+    });
+    y -= opts.lineHeight;
+  }
+
+  return y;
+}
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -42,9 +110,8 @@ export async function GET(req: Request) {
       );
     }
 
-    // Build a simple, elegant one-pager PDF
     const pdf = await PDFDocument.create();
-    const page = pdf.addPage([595.28, 841.89]); // A4 portrait (points)
+    const page = pdf.addPage([595.28, 841.89]); // A4 portrait
     const { width } = page.getSize();
 
     const fontTitle = await pdf.embedFont(StandardFonts.HelveticaBold);
@@ -56,7 +123,7 @@ export async function GET(req: Request) {
     const marginX = 48;
     let y = 780;
 
-    // Header bar / title
+    // Header
     page.drawText("Executive Partners — Top Talent", {
       x: marginX,
       y,
@@ -64,7 +131,7 @@ export async function GET(req: Request) {
       font: fontTitle,
       color: blue,
     });
-    y -= 16 + 8;
+    y -= 24;
 
     // Candidate (anonymised)
     const name = anonymiseName(row.Name);
@@ -72,10 +139,10 @@ export async function GET(req: Request) {
     page.drawText(line1, { x: marginX, y, size: 12, font, color: dark });
     y -= 18;
 
-    // Meta row
+    // Meta row – now using Geneva local format
     const matchScore = row["Match Score"] ? `Match ${row["Match Score"]}` : "Match —";
     const aum = row.AUM ? `AUM ${row.AUM}` : "AUM —";
-    const tsDisplay = row.Timestamp?.replace("T", " ").replace("Z", "") || "—";
+    const tsDisplay = localDate(row.Timestamp || "");
     const meta = `${matchScore}  •  ${aum}  •  Added ${tsDisplay}`;
     page.drawText(meta, { x: marginX, y, size: 10, font, color: gray });
     y -= 24;
@@ -138,13 +205,10 @@ export async function GET(req: Request) {
     });
     y -= 14;
 
-    page.drawText("© Executive Partners — Geneva • Confidential candidate overview (anonymous)", {
-      x: marginX,
-      y,
-      size: 9,
-      font,
-      color: gray,
-    });
+    page.drawText(
+      "© Executive Partners — Geneva • Confidential candidate overview (anonymous)",
+      { x: marginX, y, size: 9, font, color: gray }
+    );
 
     const bytes = await pdf.save();
     const filenameSafe = `${name.replace(/[^\w\-]+/g, "_")}_onepager.pdf`;
@@ -163,47 +227,3 @@ export async function GET(req: Request) {
   }
 }
 
-type WrapOpts = {
-  x: number;
-  y: number;
-  maxWidth: number;
-  lineHeight: number;
-  font: any;
-  size: number;
-  color: any;
-};
-
-function drawWrapped(page: any, text: string, opts: WrapOpts) {
-  const words = text.split(/\s+/);
-  let line = "";
-  let y = opts.y;
-
-  for (const w of words) {
-    const test = line ? `${line} ${w}` : w;
-    const width = opts.font.widthOfTextAtSize(test, opts.size);
-    if (width > opts.maxWidth) {
-      page.drawText(line, {
-        x: opts.x,
-        y,
-        size: opts.size,
-        font: opts.font,
-        color: opts.color,
-      });
-      y -= opts.lineHeight;
-      line = w;
-    } else {
-      line = test;
-    }
-  }
-  if (line) {
-    page.drawText(line, {
-      x: opts.x,
-      y,
-      size: opts.size,
-      font: opts.font,
-      color: opts.color,
-    });
-    y -= opts.lineHeight;
-  }
-  return y;
-}

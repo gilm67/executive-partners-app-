@@ -1,61 +1,41 @@
-// middleware.ts (at the project root)
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-/** Protect these paths with Basic Auth */
-const PROTECTED = ["/hiring-managers"];
-
-function needsAuth(pathname: string) {
-  return PROTECTED.some((p) => pathname.startsWith(p));
-}
-
-/** Safe decode for Basic auth; returns "user:pass" or "" */
-function decodeBasic(b64: string) {
-  try {
-    return atob(b64);
-  } catch {
-    return "";
-  }
-}
-
-function unauthorized() {
-  return new Response("Authentication required.", {
-    status: 401,
-    headers: {
-      "WWW-Authenticate": 'Basic realm="Executive Partners — HM"',
-    },
-  });
-}
-
+/**
+ * Protect /top-talent and its APIs with a simple cookie gate.
+ * Cookie is set by POST /api/top-talent/auth and cleared by /api/top-talent/logout.
+ */
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  if (!needsAuth(pathname)) {
+  // Paths to protect (add/remove as you like)
+  const protectedPaths = [
+    "/top-talent",
+    "/api/candidates", // enables API protection too
+  ];
+  const isProtected = protectedPaths.some((p) => pathname === p || pathname.startsWith(p + "/"));
+
+  if (!isProtected) return NextResponse.next();
+
+  // Allow health checks/public stuff through
+  if (pathname.startsWith("/api/diag") || pathname.startsWith("/health")) {
     return NextResponse.next();
   }
 
-  const user = process.env.HM_USER || "";
-  const pass = process.env.HM_PASS || "";
+  const cookie = req.cookies.get("tt_pass");
+  const authed = !!cookie?.value;
 
-  if (!user || !pass) return unauthorized();
+  if (authed) return NextResponse.next();
 
-  const header = req.headers.get("authorization") || "";
-  const [scheme, credentials] = header.split(" ");
-  if (scheme?.toLowerCase() !== "basic" || !credentials) {
-    return unauthorized();
+  // Not authed: if it's an API request, return 401 JSON; otherwise render the page (it already shows a passcode form)
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  const decoded = decodeBasic(credentials);
-  const idx = decoded.indexOf(":");
-  const u = idx >= 0 ? decoded.slice(0, idx) : "";
-  const p = idx >= 0 ? decoded.slice(idx + 1) : "";
-
-  if (u === user && p === pass) {
-    return NextResponse.next();
-  }
-  return unauthorized();
+  return NextResponse.next();
 }
 
+// Limit the middleware to only the areas we care about (small perf win)
 export const config = {
-  matcher: ["/hiring-managers/:path*"],
+  matcher: ["/top-talent/:path*", "/api/candidates/:path*", "/health", "/api/diag"],
 };
-

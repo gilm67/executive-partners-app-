@@ -1,52 +1,57 @@
 // app/jobs/[id]/page.tsx
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getJobByIdOrSlug, jobSlug, type Job } from "@/lib/sheets";
+import { getJobByIdOrSlug, jobSlug } from "@/lib/sheets";
 
-// keep it server-only (we import googleapis indirectly in lib/sheets)
+// Server-only
 export const revalidate = 60;
 
-// Next.js 15 dynamic routes: params must be awaited
 type Params = { id: string };
 
 export default async function JobDetailPage(
-  props: { params: Promise<Params> } // <- IMPORTANT: Promise here
+  props: { params: Promise<Params> } // Next 15: params is a Promise
 ) {
-  const { id } = await props.params;   // <- and await here
+  const { id } = await props.params;
 
   const job = await getJobByIdOrSlug(id);
   if (!job) {
     notFound();
   }
 
-  // Safe field normalization
+  // Normalize fields safely
   const title = (job.Title || job.Role || "").trim() || "Untitled Role";
   const location = (job.Location || "").trim();
   const market = (job.Market || "").trim();
   const seniority = (job.Seniority || "").trim();
-  const summary = (job.Summary || "").trim();
+  const summary = (job.Summary || "").toString().trim();
   const rawDescription = (job.Description || "").toString();
 
-  // Unescape any "\n" sequences into real newlines (data often pasted that way)
+  // Prepare markdown-ish description (if any)
   const unescaped = rawDescription.replace(/\\n/g, "\n").trim();
-
-  // Make simple “section” headings bold when they appear on a line by themselves
   const bolded = unescaped
-    .replace(/(^|\n)\s*Key Responsibilities\s*\/\s*Tasks\s*(\n|$)/gi, "\n**Key Responsibilities / Tasks**\n")
-    .replace(/(^|\n)\s*Key Qualifications\s*\/\s*Experience\s*(\n|$)/gi, "\n**Key Qualifications / Experience**\n");
-
-  // Convert bullet characters to markdown bullets and collapse excessive blank lines
+    .replace(
+      /(^|\n)\s*Key Responsibilities\s*\/\s*Tasks\s*(\n|$)/gi,
+      "\n**Key Responsibilities / Tasks**\n"
+    )
+    .replace(
+      /(^|\n)\s*Key Qualifications\s*\/\s*Experience\s*(\n|$)/gi,
+      "\n**Key Qualifications / Experience**\n"
+    );
   const mdReady = bolded
     .replace(/(^|\n)\s*•\s*/g, "\n- ")
-    .replace(/\n{3,}/g, "\n\n");
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 
   const idOrSlug = (job.ID && String(job.ID)) || jobSlug(job);
-  const applyHref = `/apply?role=${encodeURIComponent(title)}&market=${encodeURIComponent(market || location || "")}&jobId=${encodeURIComponent(idOrSlug)}`;
+  const applyHref = `/apply?role=${encodeURIComponent(title)}&market=${encodeURIComponent(
+    market || location || ""
+  )}&jobId=${encodeURIComponent(idOrSlug)}`;
 
   return (
     <section className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold">{title}</h1>
+        <h1 className="text-2xl font-semibold text-white">{title}</h1>
         <Link
           href="/jobs"
           className="text-sm text-neutral-400 underline hover:text-neutral-200"
@@ -55,26 +60,48 @@ export default async function JobDetailPage(
         </Link>
       </div>
 
+      {/* Meta line */}
       <p className="text-sm text-neutral-400">
-        {(location || "—")}
+        {location || "—"}
         {market ? ` • ${market}` : ""}
         {seniority ? ` • ${seniority}` : ""}
       </p>
 
+      {/* Summary as a full card (always shows if present) */}
       {summary && (
-        <div className="rounded-xl border border-neutral-700 bg-neutral-900 p-4 text-neutral-200">
+        <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-4 text-neutral-200">
+          <h2 className="mb-2 text-lg font-semibold">Summary</h2>
           <p className="whitespace-pre-wrap">{summary}</p>
         </div>
       )}
 
-      {mdReady && (
-        <div className="rounded-xl border border-neutral-700 bg-neutral-900 p-4 text-neutral-200">
+      {/* Role Description (preferred) OR fallback Details card */}
+      {mdReady ? (
+        <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-4 text-neutral-200">
           <h2 className="mb-2 text-lg font-semibold">Role Description</h2>
-          {/* minimal markdown renderer for headings + bullets */}
           <Article md={mdReady} />
+        </div>
+      ) : (
+        <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-4 text-neutral-200">
+          <h2 className="mb-2 text-lg font-semibold">Details</h2>
+          <ul className="text-sm text-neutral-300 space-y-1">
+            <li><span className="text-neutral-500">Location:</span> {location || "—"}</li>
+            <li><span className="text-neutral-500">Market:</span> {market || "—"}</li>
+            <li><span className="text-neutral-500">Seniority:</span> {seniority || "—"}</li>
+            {summary ? (
+              <li className="pt-2">
+                <span className="text-neutral-500">Summary:</span>{" "}
+                <span className="whitespace-pre-wrap">{summary}</span>
+              </li>
+            ) : null}
+          </ul>
+          <p className="mt-3 text-xs text-neutral-400">
+            More details coming soon. You can still apply confidentially or ask us about the role.
+          </p>
         </div>
       )}
 
+      {/* CTAs */}
       <div className="flex gap-3">
         <Link
           href={applyHref}
@@ -90,19 +117,13 @@ export default async function JobDetailPage(
         </Link>
       </div>
 
-      <p className="text-xs text-neutral-500">
-        Reference: {idOrSlug || "(unassigned)"}
-      </p>
+      {/* Reference */}
+      <p className="text-xs text-neutral-500">Reference: {idOrSlug || "(unassigned)"}</p>
     </section>
   );
 }
 
-/**
- * Tiny Markdown-ish renderer for our limited needs:
- * - **Bold** headings
- * - "- " bullets
- * - Paragraphs & line breaks
- */
+/** Minimal renderer for our markdown-ish text */
 function Article({ md }: { md: string }) {
   const lines = md.split("\n");
   return (
@@ -111,7 +132,6 @@ function Article({ md }: { md: string }) {
         const t = line.trim();
         if (!t) return <div key={i} className="h-2" />;
         if (t.startsWith("- ")) {
-          // bullet
           return (
             <div key={i} className="flex items-start gap-2">
               <div className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-neutral-400" />
@@ -119,11 +139,8 @@ function Article({ md }: { md: string }) {
             </div>
           );
         }
-        // bold headings if wrapped in **...**
         const m = t.match(/^\*\*(.+)\*\*$/);
-        if (m) {
-          return <h3 key={i} className="mt-4 text-base font-semibold">{m[1]}</h3>;
-        }
+        if (m) return <h3 key={i} className="mt-4 text-base font-semibold">{m[1]}</h3>;
         return <p key={i} className="whitespace-pre-wrap">{t}</p>;
       })}
     </div>

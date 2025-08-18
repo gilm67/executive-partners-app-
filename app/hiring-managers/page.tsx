@@ -16,22 +16,27 @@ export default async function HiringManagersPage() {
 
   return (
     <section className="space-y-6">
-      <h1 className="text-2xl font-semibold">Hiring Managers</h1>
-      <p className="text-neutral-400">
+      <h1 className="text-2xl font-semibold text-white">Hiring Managers</h1>
+      <p className="text-neutral-300">
         Post new roles and view active openings.
       </p>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/* LEFT: create a job */}
-        <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5">
+        {/* LEFT: create a job (card with clear header) */}
+        <div className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-5">
+          <h2 className="mb-4 text-lg font-semibold text-white">Post a New Job</h2>
+          {/* The form component renders the inputs; the header above ensures the panel is visible */}
           <CreateJobForm />
         </div>
 
         {/* RIGHT: active jobs */}
-        <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5">
+        <div className="rounded-2xl border border-neutral-800 bg-neutral-900/80 p-5">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Active Jobs</h2>
-            <Link href="/jobs" className="text-sm underline text-neutral-300 hover:text-white">
+            <h2 className="text-lg font-semibold text-white">Active Jobs</h2>
+            <Link
+              href="/jobs"
+              className="text-sm underline text-neutral-300 hover:text-white"
+            >
               View all
             </Link>
           </div>
@@ -49,7 +54,7 @@ export default async function HiringManagersPage() {
                 const meta = [j.Location, j.Market, j.Seniority]
                   .filter(Boolean)
                   .join(" • ");
-                const isConf = (j.Confidential || "").toUpperCase() === "YES";
+                const isConf = (j.Confidential || "").toString().toUpperCase() === "YES";
 
                 return (
                   <li key={`${id}-${i}`} className="py-3">
@@ -69,7 +74,9 @@ export default async function HiringManagersPage() {
                           <div className="text-sm text-neutral-400">{meta}</div>
                         )}
                         {j.Summary && (
-                          <p className="mt-1 text-sm text-neutral-300">{j.Summary}</p>
+                          <p className="mt-1 text-sm text-neutral-300">
+                            {j.Summary}
+                          </p>
                         )}
                       </div>
                       <div className="text-right text-xs text-neutral-500">
@@ -86,4 +93,3 @@ export default async function HiringManagersPage() {
     </section>
   );
 }
-
