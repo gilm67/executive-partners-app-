@@ -15,3 +15,11 @@ __pycache__/
 # Streamlit local secrets (never commit!)
 // local-only secrets live here; production secrets go to Vercel env vars
 .streamlit/
+
+# Secrets / tokens (never commit!)
+.tokens/
+.vercel/
+service_account.json
+
+# Local Streamlit secrets (only for local dev)
+.streamlit/
