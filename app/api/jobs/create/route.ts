@@ -1,47 +1,37 @@
 // app/api/jobs/create/route.ts
 import { NextResponse } from "next/server";
-import { createJob } from "@/lib/sheets";
+import { createJob, type NewJobInput } from "@/lib/sheets";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// very light validation/normalization without importing types
-function norm(v: unknown) {
-  return typeof v === "string" ? v.trim() : "";
-}
-
 export async function POST(req: Request) {
   try {
-    const body = await req.json().catch(() => ({} as any));
+    const body = (await req.json().catch(() => ({}))) as Record<string, any>;
 
-    const input = {
-      Title: norm(body.Title || body.title || body.Role || body.role),
-      Location: norm(body.Location || body.location),
-      Market: norm(body.Market || body.market),
-      Seniority: norm(body.Seniority || body.seniority),
-      Summary: norm(body.Summary || body.summary || ""),
-      Confidential: norm(body.Confidential || body.confidential || "")
-        .toUpperCase()
-        .replace(/\s+/g, "") === "YES"
-        ? "YES"
-        : "",
+    const input: NewJobInput = {
+      title: String(body?.title ?? body?.Title ?? "").trim(),
+      role: String(body?.role ?? body?.Role ?? "").trim(),
+      location: String(body?.location ?? body?.Location ?? "").trim(),
+      market: String(body?.market ?? body?.Market ?? "").trim(),
+      seniority: String(body?.seniority ?? body?.Seniority ?? "").trim(),
+      summary: String(body?.summary ?? body?.Summary ?? "").trim(),
+      description: String(body?.description ?? body?.Description ?? "").trim(),
     };
 
-    if (!input.Title) {
+    if (!input.title) {
       return NextResponse.json(
-        { ok: false, error: "Title is required" },
+        { ok: false, error: "Missing required field: title" },
         { status: 400 }
       );
     }
 
-    // createJob should write to Google Sheet and return some id/row ref
-    const result = await createJob(input as any);
-
-    return NextResponse.json({ ok: true, result });
+    await createJob(input);
+    return NextResponse.json({ ok: true });
   } catch (err: any) {
-    console.error("jobs/create error:", err?.message || err);
+    console.error("jobs/create error:", err);
     return NextResponse.json(
-      { ok: false, error: err?.message || "Internal error" },
+      { ok: false, error: err?.message || String(err) },
       { status: 500 }
     );
   }

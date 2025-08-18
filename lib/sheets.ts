@@ -1,7 +1,8 @@
-// re-export the google sheets client so routes can import from "@/lib/sheets"
-export { getSheetsClient } from "./google";
 // lib/sheets.ts
-import { googleEnvHealth, getSheetsClient } from "./google";
+
+// Import for internal use, and re-export so other files can `import { getSheetsClient } from "@/lib/sheets"`
+import { getSheetsClient, googleEnvHealth } from "./google";
+export { googleEnvHealth, getSheetsClient } from "./google";
 
 /**
  * =================
@@ -18,12 +19,18 @@ export type Job = {
   Summary?: string;
   Description?: string;
   Confidential?: string; // "YES" | "NO"
+  CreatedAt?: string;
 };
 
 export type NewJobInput = {
   title: string;
-  description: string;
+  role?: string;
   location?: string;
+  market?: string;
+  seniority?: string;
+  summary?: string;
+  description?: string;
+  confidential?: string; // optional "YES"/"NO"
 };
 
 export type Candidate = Record<string, string>;
@@ -31,7 +38,7 @@ export type Application = Record<string, string>;
 
 /**
  * =================
- * Sheet names (override via env if needed)
+ * Sheet names
  * =================
  */
 const JOBS_SHEET_NAME = process.env.JOBS_SHEET_NAME?.trim() || "Jobs";
@@ -41,7 +48,9 @@ const APPLICATIONS_SHEET_NAME =
   process.env.APPLICATIONS_SHEET_NAME?.trim() || "Applications";
 
 /**
- * Convert header row + values to array of objects
+ * =================
+ * Utils
+ * =================
  */
 function rowsToObjects<T extends Record<string, any>>(
   headers: string[],
@@ -49,25 +58,19 @@ function rowsToObjects<T extends Record<string, any>>(
 ): T[] {
   return rows.map((r) => {
     const obj: Record<string, any> = {};
-    headers.forEach((h, i) => {
-      obj[h] = r[i] ?? "";
-    });
+    headers.forEach((h, i) => (obj[h] = r[i] ?? ""));
     return obj as T;
   });
 }
 
-/**
- * A1 utils
- */
-function indexToColumn(i: number): string {
-  let s = "";
-  i = Math.max(0, i);
-  while (true) {
-    s = String.fromCharCode((i % 26) + 65) + s;
-    if (i < 26) break;
-    i = Math.floor(i / 26) - 1;
+// 0-based column index (0 = A) → A1 column letters
+function indexToColumn(index: number): string {
+  let col = "";
+  while (index >= 0) {
+    col = String.fromCharCode((index % 26) + 65) + col;
+    index = Math.floor(index / 26) - 1;
   }
-  return s;
+  return col;
 }
 
 /**
@@ -108,23 +111,74 @@ export async function getJobByIdOrSlug(idOrSlug: string): Promise<Job | null> {
   return bySlug || null;
 }
 
+/** Header-safe append that aligns fields by header name, not by fixed column order. */
 export async function createJob(input: NewJobInput): Promise<void> {
   const { sheets, sheetId } = getSheetsClient();
-  const id = String(Date.now());
 
-  // Expected headers in row 1 (at least these): ID, Title, Location, Summary, Description, CreatedAt
-  const row = [
-    id,
-    input.title,
-    input.location || "",
-    "", // Summary (optional)
-    input.description,
-    new Date().toISOString(),
+  // 1) Read the header row (order-agnostic)
+  const read = await sheets.spreadsheets.values.get({
+    spreadsheetId: sheetId,
+    range: `${JOBS_SHEET_NAME}!A1:Z1`,
+    majorDimension: "ROWS",
+  });
+
+  let headers =
+    (read.data.values?.[0] as string[] | undefined)?.map((h) =>
+      String(h).trim()
+    ) || [];
+
+  // 2) Ensure minimum headers exist (we'll add any missing)
+  const required = [
+    "ID",
+    "Title",
+    "Role",
+    "Location",
+    "Market",
+    "Seniority",
+    "Summary",
+    "Description",
+    "Confidential",
+    "CreatedAt",
   ];
+  const have = new Set(headers.map((h) => h.toLowerCase()));
+  const toAdd = required.filter((h) => !have.has(h.toLowerCase()));
+  if (toAdd.length > 0) {
+    headers = [...headers, ...toAdd];
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: sheetId,
+      range: `${JOBS_SHEET_NAME}!A1:${indexToColumn(headers.length - 1)}1`,
+      valueInputOption: "USER_ENTERED",
+      requestBody: { values: [headers] },
+    });
+  }
 
+  // 3) Build values map (accept both camel & Sheet-style keys)
+  const id = String(Date.now());
+  const now = new Date().toISOString();
+
+  const valuesByHeader: Record<string, any> = {
+    ID: id,
+    Title: input.title ?? "",
+    Role: (input.role ?? "").toString(),
+    Location: (input.location ?? "").toString(),
+    Market: (input.market ?? "").toString(),
+    Seniority: (input.seniority ?? "").toString(),
+    Summary: (input.summary ?? "").toString(),
+    Description: (input.description ?? "").toString(),
+    Confidential:
+      (input.confidential ?? "").toString().trim().toUpperCase() === "YES"
+        ? "YES"
+        : "",
+    CreatedAt: now,
+  };
+
+  // 4) Create row matching the *current* header order
+  const row = headers.map((h) => valuesByHeader[h] ?? "");
+
+  // 5) Append in one go using the full width of the header row
   await sheets.spreadsheets.values.append({
     spreadsheetId: sheetId,
-    range: `${JOBS_SHEET_NAME}!A1:F1`,
+    range: `${JOBS_SHEET_NAME}!A1:${indexToColumn(headers.length - 1)}1`,
     valueInputOption: "USER_ENTERED",
     requestBody: { values: [row] },
   });
@@ -149,10 +203,7 @@ export async function getCandidates(): Promise<Candidate[]> {
   return rowsToObjects<Candidate>(headers, rows);
 }
 
-/**
- * Update "Shortlist" for a candidate looked up by Email.
- * Two-argument signature matches your API route.
- */
+/** Update "Shortlist" for a candidate looked up by Email. */
 export async function updateShortlistCell(
   email: string,
   value: "YES" | "NO"
@@ -221,28 +272,26 @@ export async function getApplications(): Promise<Application[]> {
   return rowsToObjects<Application>(headers, rows);
 }
 
-/**
- * Append an application row. We accept a generic record so the API route
- * can pass whatever keys it collects; any missing headers will be added
- * to the right automatically by Sheets.
- */
+/** Append one application row, aligning to whatever headers exist */
 export async function appendApplication(
   fields: Record<string, any>
 ): Promise<void> {
   const { sheets, sheetId } = getSheetsClient();
 
-  // Read headers (row 1). If missing, create a simple default header set.
+  // Read header row
   const read = await sheets.spreadsheets.values.get({
     spreadsheetId: sheetId,
     range: `${APPLICATIONS_SHEET_NAME}!A1:Z1`,
     majorDimension: "ROWS",
   });
 
-  let headers = (read.data.values?.[0] as string[] | undefined)?.map((h) =>
-    String(h).trim()
-  );
+  let headers =
+    (read.data.values?.[0] as string[] | undefined)?.map((h) =>
+      String(h).trim()
+    ) || [];
 
-  if (!headers || headers.length === 0) {
+  // If empty sheet, create a reasonable default header set
+  if (headers.length === 0) {
     headers = [
       "Timestamp",
       "Name",
@@ -253,24 +302,22 @@ export async function appendApplication(
       "LinkedIn",
       "Notes",
     ];
-    // write headers
     await sheets.spreadsheets.values.update({
       spreadsheetId: sheetId,
-      range: `${APPLICATIONS_SHEET_NAME}!A1:${indexToColumn(
-        headers.length - 1
-      )}1`,
+      range: `${APPLICATIONS_SHEET_NAME}!A1:${indexToColumn(headers.length - 1)}1`,
       valueInputOption: "USER_ENTERED",
       requestBody: { values: [headers] },
     });
   }
 
-  // Build row following header order
+  // Build row values in header order
   const row = headers.map((h) =>
     h === "Timestamp"
       ? new Date().toISOString()
       : fields[h] ?? fields[h.replace(/\s+/g, "_")] ?? ""
   );
 
+  // Append
   await sheets.spreadsheets.values.append({
     spreadsheetId: sheetId,
     range: `${APPLICATIONS_SHEET_NAME}!A1:${indexToColumn(headers.length - 1)}1`,
@@ -278,18 +325,4 @@ export async function appendApplication(
     requestBody: { values: [row] },
   });
 }
-
-/**
- * =================
- * Diagnostics & Legacy shim
- * =================
- */
-export { googleEnvHealth };
-
-/** Some older code expected getSheetsAuth(); return the same as getSheetsClient() */
-export function getSheetsAuth() {
-  return getSheetsClient();
-}
-
-
 

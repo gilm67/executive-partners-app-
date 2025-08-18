@@ -1,42 +1,37 @@
 // app/api/apply/route.ts
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
 import { NextResponse } from "next/server";
 import { appendApplication } from "@/lib/sheets";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+/**
+ * Accepts JSON and appends a row to the "Applications" sheet.
+ * We accept either snake/space headers; the helper aligns to your real headers.
+ */
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
-    const name = (body.name || "").toString().trim();
-    const email = (body.email || "").toString().trim();
-    const role = (body.role || "").toString().trim();
-    const market = (body.market || "").toString().trim();
-    const notes = (body.notes || "").toString().trim();
-    const jobId = (body.jobId || "").toString().trim();
 
-    if (!name || !email) {
+    // Basic sanity (optional)
+    if (!body || typeof body !== "object") {
       return NextResponse.json(
-        { ok: false, error: "Name and Email are required" },
+        { ok: false, error: "Invalid JSON body" },
         { status: 400 }
       );
     }
 
-    await appendApplication({
-      Timestamp: new Date().toISOString(),
-      Name: name,
-      Email: email,
-      Role: role,
-      Market: market,
-      Notes: notes,
-      JobID: jobId || undefined,
-    });
+    // Pass straight through. The helper will map to your headers and add Timestamp.
+    await appendApplication(body);
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
+    console.error("❌ /api/apply error:", err?.message || err, err?.stack);
     return NextResponse.json(
-      { ok: false, error: err?.message || "Unknown error" },
+      { ok: false, error: String(err?.message || err) },
       { status: 500 }
     );
   }
 }
+
+
