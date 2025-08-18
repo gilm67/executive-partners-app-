@@ -1,3 +1,5 @@
+// re-export the google sheets client so routes can import from "@/lib/sheets"
+export { getSheetsClient } from "./google";
 // lib/sheets.ts
 import { googleEnvHealth, getSheetsClient } from "./google";
 
@@ -288,4 +290,6 @@ export { googleEnvHealth };
 export function getSheetsAuth() {
   return getSheetsClient();
 }
+
+
 
