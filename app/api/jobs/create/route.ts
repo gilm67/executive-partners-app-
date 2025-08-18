@@ -5,64 +5,22 @@ import { createJob } from "@/lib/sheets";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function norm(v: unknown): string {
-  const s = (v ?? "").toString().trim();
-  return s;
-}
-function yesNo(v: unknown): string {
-  if (typeof v === "string") {
-    return v.trim().toUpperCase().startsWith("Y") ? "YES" : "";
-  }
-  if (typeof v === "boolean") {
-    return v ? "YES" : "";
-  }
-  return "";
-}
-
-/**
- * Expected JSON body (case-insensitive keys tolerated):
- * {
- *   "Title": string,
- *   "Role": string,
- *   "Location": string,
- *   "Market": string,
- *   "Seniority": string,
- *   "Summary": string,
- *   "Confidential": "YES" | "NO" | true | false
- * }
- */
 export async function POST(req: Request) {
   try {
-    const body = await req.json().catch(() => ({} as any));
+    // Accept whatever fields your form sends and pass through to createJob().
+    const payload = await req.json();
 
-    const payload = {
-      Title: norm(body.Title ?? body.title ?? body.Role ?? body.role),
-      Role: norm(body.Role ?? body.role),
-      Location: norm(body.Location ?? body.location),
-      Market: norm(body.Market ?? body.market),
-      Seniority: norm(body.Seniority ?? body.seniority),
-      Summary: norm(body.Summary ?? body.summary),
-      Confidential: yesNo(body.Confidential ?? body.confidential),
-    };
+    // createJob in lib/sheets should accept a plain object and handle header mapping.
+    await createJob(payload);
 
-    // basic guard: at least a title or role
-    if (!payload.Title && !payload.Role) {
-      return NextResponse.json(
-        { ok: false, error: "Missing Title/Role" },
-        { status: 400 }
-      );
-    }
-
-    // create the job via your sheets adapter
-    const result = await createJob(payload as any);
-
-    return NextResponse.json({ ok: true, result });
+    return NextResponse.json({ ok: true });
   } catch (err: any) {
     console.error("jobs/create error:", err?.message || err);
     return NextResponse.json(
-      { ok: false, error: err?.message || "Internal Server Error" },
+      { ok: false, error: err?.message || "Unknown error" },
       { status: 500 }
     );
   }
 }
+
 
