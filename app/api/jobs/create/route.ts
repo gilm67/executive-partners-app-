@@ -1,35 +1,62 @@
 // app/api/jobs/create/route.ts
 import { NextResponse } from "next/server";
-import { createJob, type NewJobInput } from "@/lib/sheets";
+import { createJob } from "@/lib/sheets";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+function norm(v: unknown): string {
+  const s = (v ?? "").toString().trim();
+  return s;
+}
+function yesNo(v: unknown): string {
+  if (typeof v === "string") {
+    return v.trim().toUpperCase().startsWith("Y") ? "YES" : "";
+  }
+  if (typeof v === "boolean") {
+    return v ? "YES" : "";
+  }
+  return "";
+}
+
+/**
+ * Expected JSON body (case-insensitive keys tolerated):
+ * {
+ *   "Title": string,
+ *   "Role": string,
+ *   "Location": string,
+ *   "Market": string,
+ *   "Seniority": string,
+ *   "Summary": string,
+ *   "Confidential": "YES" | "NO" | true | false
+ * }
+ */
 export async function POST(req: Request) {
   try {
-    // Accept both camelCase and Sheet-style Title/Description field names
-    const data = (await req.json().catch(() => ({}))) as Record<string, unknown>;
+    const body = await req.json().catch(() => ({} as any));
 
-    const title = String(data.title ?? data.Title ?? "").trim();
-    const description = String(data.description ?? data.Description ?? "").trim();
-    const locationRaw = data.location ?? data.Location;
-    const location =
-      typeof locationRaw === "string" && locationRaw.trim()
-        ? locationRaw.trim()
-        : undefined;
+    const payload = {
+      Title: norm(body.Title ?? body.title ?? body.Role ?? body.role),
+      Role: norm(body.Role ?? body.role),
+      Location: norm(body.Location ?? body.location),
+      Market: norm(body.Market ?? body.market),
+      Seniority: norm(body.Seniority ?? body.seniority),
+      Summary: norm(body.Summary ?? body.summary),
+      Confidential: yesNo(body.Confidential ?? body.confidential),
+    };
 
-    if (!title || !description) {
+    // basic guard: at least a title or role
+    if (!payload.Title && !payload.Role) {
       return NextResponse.json(
-        { ok: false, error: "Missing required fields: title and description" },
+        { ok: false, error: "Missing Title/Role" },
         { status: 400 }
       );
     }
 
-    const input: NewJobInput = { title, description, location };
+    // create the job via your sheets adapter
+    const result = await createJob(payload as any);
 
-    await createJob(input);
-
-    return NextResponse.json({ ok: true, job: input });
+    return NextResponse.json({ ok: true, result });
   } catch (err: any) {
     console.error("jobs/create error:", err?.message || err);
     return NextResponse.json(
@@ -37,13 +64,5 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
-
-export async function GET() {
-  // This endpoint is write-only
-  return NextResponse.json(
-    { ok: false, error: "Method not allowed. Use POST." },
-    { status: 405 }
-  );
 }
 
