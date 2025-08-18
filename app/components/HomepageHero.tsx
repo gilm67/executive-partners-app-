@@ -1,102 +1,35 @@
 // app/components/HomepageHero.tsx
-import Image from "next/image";
-import Link from "next/link";
-
 export default function HomepageHero() {
   return (
-    <section
-      className="relative overflow-hidden"
-      aria-labelledby="home-hero-heading"
-    >
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-neutral-900 to-black" />
+    <section className="relative bg-gradient-to-b from-[#FF7A00] via-[#FF8C1A] to-[#FF9E42] text-white">
+      <div className="mx-auto max-w-5xl px-6 py-20 text-center">
+        {/* Tagline */}
+        <span className="mb-4 inline-block rounded-full bg-black/30 px-4 py-1 text-sm font-medium text-white shadow-sm">
+          International & Swiss Private Banking — HNW/UHNW
+        </span>
 
-      {/* Optional skyline image (put a file like /hero-city.jpg in /public) */}
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-35"
-        style={{ backgroundImage: "url('/hero-city.jpg')" }}
-        aria-hidden="true"
-      />
+        {/* Title */}
+        <h1 className="text-5xl font-bold drop-shadow-lg">Executive Partners</h1>
 
-      {/* Dark overlay for readability */}
-      <div className="absolute inset-0 bg-black/50" />
-
-      {/* Content */}
-      <div className="relative mx-auto max-w-6xl px-6 py-20 sm:py-24 lg:py-28">
-        {/* Logo + glow */}
-        <div className="flex justify-center">
-          <Image
-            src="/transparent-ep-logo.png" // already added to /public
-            alt="Executive Partners"
-            width={360}
-            height={120}
-            priority
-            className="h-auto w-[240px] sm:w-[300px] md:w-[360px] 
-                       drop-shadow-[0_0_18px_rgba(255,255,255,0.35)]"
-          />
-        </div>
-
-        <h1
-          id="home-hero-heading"
-          className="mt-6 text-center text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl"
-        >
-          Business & Talent — Perfectly Matched
-        </h1>
-
-        <p className="mx-auto mt-4 max-w-3xl text-center text-neutral-300">
-          International & Swiss Private Banking — HNW/UHNW. We connect elite
-          bankers and executives with leading platforms. Discreet, fast,
-          outcome-driven.
+        {/* Subtitle */}
+        <p className="mt-4 text-lg text-white/95 max-w-2xl mx-auto drop-shadow">
+          We connect top Private Bankers, Wealth Managers, and senior executives
+          with leading banks, EAMs, and family offices worldwide.
         </p>
 
-        {/* CTA row */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/bp-simulator"
-            className="rounded-xl px-5 py-3 text-sm font-medium text-white 
-                       shadow-lg ring-1 ring-white/15
-                       bg-gradient-to-r from-emerald-700 to-emerald-600
-                       hover:from-emerald-600 hover:to-emerald-500
-                       transition-colors"
-          >
-            🚀 Open BP Simulator
-          </Link>
-
-          <Link
-            href="/candidates"
-            className="rounded-xl px-5 py-3 text-sm font-medium text-white/90
-                       bg-white/5 hover:bg-white/10
-                       ring-1 ring-white/15
-                       backdrop-blur-sm transition-colors"
-          >
+        {/* CTA Buttons */}
+        <div className="mt-8 flex justify-center gap-4">
+          <button className="rounded-lg bg-blue-600 px-6 py-3 font-medium hover:bg-blue-700 shadow-md">
             I’m a Candidate
-          </Link>
-
-          <Link
-            href="/hiring-managers"
-            className="rounded-xl px-5 py-3 text-sm font-medium text-white/90
-                       bg-white/5 hover:bg-white/10
-                       ring-1 ring-white/15
-                       backdrop-blur-sm transition-colors"
-          >
-            For Hiring Managers
-          </Link>
-
-          <Link
-            href="/jobs"
-            className="rounded-xl px-5 py-3 text-sm font-medium text-white/90
-                       bg-white/5 hover:bg-white/10
-                       ring-1 ring-white/15
-                       backdrop-blur-sm transition-colors"
-          >
-            View Jobs
-          </Link>
+          </button>
+          <button className="rounded-lg bg-black/60 px-6 py-3 font-medium hover:bg-black/80 shadow-md">
+            I’m Hiring
+          </button>
+          <button className="rounded-lg bg-black/60 px-6 py-3 font-medium hover:bg-black/80 shadow-md">
+            View All Jobs
+          </button>
         </div>
       </div>
-
-      {/* Subtle top/bottom vignette rings */}
-      <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/5" />
-      <div className="pointer-events-none absolute inset-0 [box-shadow:inset_0_-120px_160px_-60px_rgba(0,0,0,0.55)]" />
     </section>
   );
 }
