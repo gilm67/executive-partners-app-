@@ -1,20 +1,33 @@
+// app/api/candidates/shortlist/route.ts
 import { NextResponse } from "next/server";
-import { updateShortlistCell } from "../../../../lib/sheets";
-
-export const runtime = "nodejs";
+import { updateShortlistCell } from "@/lib/sheets";
 
 export async function POST(req: Request) {
   try {
-    const { email, timestamp, value } = await req.json();
-    const v = String(value || "").toUpperCase();
-    if (!email || !timestamp || (v !== "YES" && v !== "NO")) {
-      return NextResponse.json({ ok: false, error: "Invalid payload." }, { status: 400 });
+    const body = await req.json().catch(() => ({}));
+    const email = String(body?.email || "").trim();
+    const rawValue = String(body?.value || "").trim().toUpperCase();
+
+    if (!email) {
+      return NextResponse.json(
+        { ok: false, error: "Missing email" },
+        { status: 400 }
+      );
     }
 
-    await updateShortlistCell(String(email), String(timestamp), v as "YES" | "NO");
-    return NextResponse.json({ ok: true });
+    // Normalize value to YES/NO only
+    const value = rawValue === "YES" ? "YES" : "NO";
+
+    // IMPORTANT: call with **two** arguments (email, value)
+    await updateShortlistCell(email, value);
+
+    return NextResponse.json({ ok: true, method: "POST", email, value });
   } catch (err: any) {
     console.error("Shortlist API error:", err?.message || err);
-    return NextResponse.json({ ok: false, error: String(err?.message || "Server error.") }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: err?.message || "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
+
