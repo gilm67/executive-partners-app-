@@ -1,4 +1,16 @@
 // app/page.tsx
+import HomepageHero from "@/app/components/HomepageHero";
+
+export default async function HomePage() {
+  return (
+    <>
+      <HomepageHero />
+
+      {/* …keep your existing sections below (Featured Roles, footer, etc.) */}
+    </>
+  );
+}
+// app/page.tsx
 import Link from "next/link";
 import { Suspense } from "react";
 import { getJobs, jobSlug, type Job } from "@/lib/sheets";
