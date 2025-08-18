@@ -3,45 +3,47 @@ import { NextResponse } from "next/server";
 import { createJob, type NewJobInput } from "@/lib/sheets";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    const body = (await req.json()) as Partial<NewJobInput>;
+    // Accept both camelCase and Sheet-style Title/Description field names
+    const data = (await req.json().catch(() => ({}))) as Record<string, unknown>;
 
-    const input: NewJobInput = {
-      Title: (body.Title || body.Role || "").toString().trim(),
-      Role: (body.Role || "").toString().trim(),
-      Location: (body.Location || "").toString().trim(),
-      Market: (body.Market || "").toString().trim(),
-      Seniority: (body.Seniority || "").toString().trim(),
-      Summary: (body.Summary || "").toString().trim(),
-      Description: (body.Description || "").toString().trim(),
-      Confidential: (body.Confidential || "YES").toString().trim(),
-      Active: (body.Active || "TRUE").toString().trim(),
-    };
+    const title = String(data.title ?? data.Title ?? "").trim();
+    const description = String(data.description ?? data.Description ?? "").trim();
+    const locationRaw = data.location ?? data.Location;
+    const location =
+      typeof locationRaw === "string" && locationRaw.trim()
+        ? locationRaw.trim()
+        : undefined;
 
-    if (!input.Title && !input.Role) {
+    if (!title || !description) {
       return NextResponse.json(
-        { ok: false, error: "Title or Role is required." },
+        { ok: false, error: "Missing required fields: title and description" },
         { status: 400 }
       );
     }
 
-    const result = await createJob(input);
+    const input: NewJobInput = { title, description, location };
 
-    if (!result.ok) {
-      return NextResponse.json(
-        { ok: false, error: result.error || "Failed to create job." },
-        { status: 400 }
-      );
-    }
+    await createJob(input);
 
-    return NextResponse.json({ ok: true, id: result.id });
+    return NextResponse.json({ ok: true, job: input });
   } catch (err: any) {
-    console.error("Create Job API error:", err?.message || err);
+    console.error("jobs/create error:", err?.message || err);
     return NextResponse.json(
-      { ok: false, error: err?.message || "Server error." },
+      { ok: false, error: err?.message || "Internal Server Error" },
       { status: 500 }
     );
   }
 }
+
+export async function GET() {
+  // This endpoint is write-only
+  return NextResponse.json(
+    { ok: false, error: "Method not allowed. Use POST." },
+    { status: 405 }
+  );
+}
+
