@@ -1,3 +1,10 @@
+cd ~/Desktop/executive-partners-app
+
+# BACK UP the current file (just in case)
+mkdir -p .bak && cp app/layout.tsx .bak/layout.tsx.$(date +%s)
+
+# Overwrite with a valid RootLayout + your white/bold top bar + subtle divider
+cat > app/layout.tsx <<'TSX'
 // app/layout.tsx
 import "./globals.css";
 import Link from "next/link";
@@ -66,3 +73,5 @@ export default function RootLayout({
     </html>
   );
 }
+TSX
+

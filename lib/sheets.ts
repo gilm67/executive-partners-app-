@@ -20,6 +20,7 @@ export type Job = {
   Description?: string;
   Confidential?: string; // "YES" | "NO"
   CreatedAt?: string;
+  Active?: string; // ✅ added for jobs filter
 };
 
 export type NewJobInput = {
@@ -325,4 +326,3 @@ export async function appendApplication(
     requestBody: { values: [row] },
   });
 }
-

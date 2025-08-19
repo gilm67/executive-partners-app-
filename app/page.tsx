@@ -192,7 +192,6 @@ export default async function HomePage() {
         </div>
 
         <Suspense>
-          {/* @ts-expect-error Async Server Component */}
           <FeaturedJobs />
         </Suspense>
       </section>

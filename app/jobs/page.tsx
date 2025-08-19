@@ -1,73 +1,64 @@
+// app/jobs/page.tsx
 import Link from "next/link";
 import { getJobs, jobSlug, type Job } from "@/lib/sheets";
 
 export const revalidate = 60;
 
-export default async function JobsPage() {
-  const jobs = await getJobs();
-  // keep only active (anything not an explicit "false")
-  const active = jobs.filter(
-    (j: any) => (j.Active || "").toString().toLowerCase() !== "false"
-  );
-
+function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <section className="space-y-6">
-      <h1 className="text-2xl font-semibold">Current Opportunities</h1>
-      <p className="text-neutral-700">
-        Apply confidentially or register to be matched to upcoming mandates.
-      </p>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        {active.map((j: any) => {
-          const title = (j.Title || j.Role || "Untitled Role").toString();
-          const locationOrMarket = (j.Location || j.Market || "—").toString();
-          const idOrSlug = (j.ID && String(j.ID)) || jobSlug(j as Job);
-          const href = `/jobs/${idOrSlug}`;
-
-          // ✅ NEW: point to the /apply page with id, role, and market prefilled
-          const applyHref = `/apply?id=${encodeURIComponent(
-            idOrSlug
-          )}&role=${encodeURIComponent(title)}&market=${encodeURIComponent(
-            locationOrMarket
-          )}`;
-
-          return (
-            <div
-              key={idOrSlug}
-              className="rounded-2xl border border-neutral-200 p-6"
-            >
-              <Link href={href} className="block group">
-                <h2 className="text-lg font-semibold group-hover:underline">
-                  {title}
-                </h2>
-                <p className="text-sm text-neutral-600">
-                  {locationOrMarket}
-                  {j.Seniority ? ` • ${j.Seniority}` : ""}
-                </p>
-                {j.Summary && (
-                  <p className="mt-3 text-sm text-neutral-700">{j.Summary}</p>
-                )}
-              </Link>
-
-              <div className="mt-4 flex gap-3">
-                <Link
-                  href={applyHref}
-                  className="rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
-                >
-                  Apply confidentially
-                </Link>
-                <Link
-                  href="/contact"
-                  className="rounded-lg border px-4 py-2 hover:bg-white"
-                >
-                  Ask about this role
-                </Link>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </section>
+    <span className="rounded-full border border-neutral-700/60 bg-neutral-900/60 px-3 py-1 text-xs text-neutral-300">
+      {children}
+    </span>
   );
 }
 
+export default async function JobsPage() {
+  // Filter out rows explicitly marked as FALSE in the “Active” column (if present)
+  const rows = (await getJobs()).filter(
+    (j: any) => String(j?.Active ?? "").toUpperCase() !== "FALSE"
+  );
+
+  // Optional debug:
+  // console.log("DEBUG jobs (count):", rows.length, rows.slice(0, 3));
+
+  return (
+    <div className="mx-auto w-full max-w-5xl">
+      <header className="mb-6">
+        <h1 className="text-2xl font-semibold text-white">Open Roles</h1>
+        <p className="mt-1 text-sm text-neutral-400">
+          Discreet mandates across Swiss & international private banking.
+        </p>
+      </header>
+
+      {rows.length === 0 ? (
+        <p className="text-neutral-400">No live roles right now.</p>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-2">
+          {rows.map((job: Job) => {
+            const tags = [job.Location, job.Market, job.Seniority].filter(Boolean) as string[];
+            const href = `/jobs/${jobSlug(job)}`;
+            return (
+              <Link
+                key={job.ID || job.Title}
+                href={href}
+                className="rounded-2xl border border-neutral-800/70 bg-neutral-900/40 p-5 shadow-sm transition-colors hover:border-neutral-700 hover:bg-neutral-900/60"
+              >
+                <div className="mb-3 flex flex-wrap gap-2">
+                  {tags.map((t) => (
+                    <Pill key={t}>{t}</Pill>
+                  ))}
+                </div>
+                <h3 className="text-lg font-semibold text-neutral-100">
+                  {job.Title || job.Role || "Role"}
+                </h3>
+                {job.Summary && (
+                  <p className="mt-1 text-sm text-neutral-400">{job.Summary}</p>
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,34 @@
+// app/page.tsx
+import HomepageHero from "@/app/components/HomepageHero";
+
+export default async function HomePage() {
+  return (
+    <>
+      <HomepageHero />
+
+      {/* Section 2 - Light About Section */}
+      <section className="bg-neutral-100 text-neutral-900">
+        <div className="mx-auto max-w-6xl px-6 py-16 text-center">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Our Mission
+          </h2>
+          <p className="mt-4 max-w-3xl mx-auto text-lg text-neutral-700">
+            We connect top Private Bankers, Wealth Managers, and senior executives
+            with leading banks, EAMs, and family offices worldwide.
+          </p>
+          {/* Trust logos */}
+          <div className="mt-8 flex justify-center gap-8 grayscale opacity-70">
+            <img src="/ubs-logo.png" alt="UBS" className="h-8" />
+            <img src="/pictet-logo.png" alt="Pictet" className="h-8" />
+            <img src="/juliusbaer-logo.png" alt="Julius Baer" className="h-8" />
+          </div>
+        </div>
+      </section>
+
+      {/* Section 3 - back to dark */}
+      <section className="relative bg-black py-16">
+        {/* … Featured Roles component goes here … */}
+      </section>
+    </>
+  );
+}
