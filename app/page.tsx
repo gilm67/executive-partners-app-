@@ -56,7 +56,7 @@ export default async function HomePage() {
       {/* Top badge */}
       <div className="mx-auto max-w-5xl px-6 pt-16">
         <div className="mx-auto w-fit rounded-full border border-neutral-800/60 bg-neutral-900/60 px-4 py-1 text-xs text-neutral-300">
-          International & Swiss Private Banking — HNW/UHNWI
+          International &amp; Swiss Private Banking — HNW/UHNWI
         </div>
       </div>
 
@@ -93,7 +93,7 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* === The two cards section you want back === */}
+      {/* Two cards section */}
       <section className="mx-auto mt-12 max-w-6xl px-6">
         <div className="grid gap-6 md:grid-cols-2">
           {/* Candidates card */}
@@ -170,4 +170,3 @@ export default async function HomePage() {
     </>
   );
 }
-
