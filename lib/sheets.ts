@@ -20,6 +20,13 @@ export type Job = {
   Description?: string;
   Confidential?: string; // "YES" | "NO"
   CreatedAt?: string;
+
+  // Optional columns present in your sheet
+  Active?: string;       // "TRUE" | "FALSE"
+  Posted?: string;
+  API_ID?: string;
+  API_Status?: string;
+  API_Response?: string;
 };
 
 export type NewJobInput = {
@@ -183,7 +190,7 @@ export async function createJob(input: NewJobInput): Promise<string> {
     requestBody: { values: [row] },
   });
 
-  // NEW: return the new ID so callers can use it
+  // Return the new ID so callers (e.g., /api/jobs/create) can use it
   return id;
 }
 
@@ -328,4 +335,3 @@ export async function appendApplication(
     requestBody: { values: [row] },
   });
 }
-
