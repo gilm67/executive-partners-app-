@@ -23,3 +23,6 @@ service_account.json
 
 # Local Streamlit secrets (only for local dev)
 .streamlit/
+
+# local secrets
+private_key.b64
