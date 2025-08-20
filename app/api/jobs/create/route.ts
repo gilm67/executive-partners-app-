@@ -5,21 +5,29 @@ import { createJob, type NewJobInput } from "@/lib/sheets";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function unauthorized(msg = "Unauthorized") {
-  return NextResponse.json({ ok: false, error: msg }, { status: 401 });
+function json(data: any, status = 200) {
+  return NextResponse.json(data, {
+    status,
+    headers: {
+      "Cache-Control": "no-store",
+    },
+  });
 }
 
+function unauthorized(msg = "Unauthorized") {
+  return json({ ok: false, error: msg }, 401);
+}
+
+// POST = create job (requires token)
 export async function POST(req: Request) {
-  // 1) Read expected token from env
   const expected = (process.env.APP_ADMIN_TOKEN || "").trim();
+
+  // Fail CLOSED if misconfigured in prod
   if (!expected) {
-    // Fail closed if misconfigured in prod
     return unauthorized("Missing APP_ADMIN_TOKEN on server");
   }
 
-  // 2) Accept either:
-  //    - Authorization: Bearer <token>
-  //    - OR a `token` query param (handy for quick internal tools)
+  // Allow either Authorization: Bearer <token> OR ?token=<token>
   const auth = req.headers.get("authorization") || "";
   const bearer = auth.toLowerCase().startsWith("bearer ")
     ? auth.slice(7).trim()
@@ -27,7 +35,6 @@ export async function POST(req: Request) {
 
   const url = new URL(req.url);
   const tokenParam = (url.searchParams.get("token") || "").trim();
-
   const provided = bearer || tokenParam;
 
   if (provided !== expected) {
@@ -37,10 +44,7 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json()) as Partial<NewJobInput>;
     if (!body.title || !String(body.title).trim()) {
-      return NextResponse.json(
-        { ok: false, error: "Missing required field: title" },
-        { status: 400 }
-      );
+      return json({ ok: false, error: "Missing required field: title" }, 400);
     }
 
     await createJob({
@@ -54,18 +58,28 @@ export async function POST(req: Request) {
       confidential: body.confidential,
     });
 
-    return NextResponse.json({ ok: true });
+    return json({ ok: true });
   } catch (err: any) {
     console.error("jobs/create error:", err);
-    return NextResponse.json(
-      { ok: false, error: err?.message || "Internal error" },
-      { status: 500 }
-    );
+    return json({ ok: false, error: err?.message || "Internal error" }, 500);
   }
 }
 
-// Optional hard 405 for GET so folks can’t “poke” the endpoint
-export async function GET() {
-  return NextResponse.json({ ok: false, error: "Method not allowed" }, { status: 405 });
+// GET = diagnostics (safe to keep; returns no secret values)
+export async function GET(req: Request) {
+  const expected = (process.env.APP_ADMIN_TOKEN || "").trim();
+  const url = new URL(req.url);
+  const echo = url.searchParams.get("echo") === "1";
+
+  // We never return the actual token. Only lengths and booleans.
+  return json({
+    ok: true,
+    diag: "jobs/create",
+    hasEnv: !!expected,
+    tokenLen: expected.length || 0,
+    echoHint: echo
+      ? "Pass Authorization: Bearer <token> or ?token=… on POST to create jobs."
+      : "Add ?echo=1 to this URL for this hint.",
+  });
 }
 
