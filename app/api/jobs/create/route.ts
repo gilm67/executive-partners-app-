@@ -1,4 +1,28 @@
-// app/api/jobs/create/route.ts
+  const token = getAuthToken(req);
+  const server = (process.env.APP_ADMIN_TOKEN || "").toString();
+
+  if (token !== server) {
+    // TEMP DEBUG — remove after we fix the mismatch
+    const toHex = (s: string) =>
+      Array.from(s).map(ch => ch.charCodeAt(0).toString(16).padStart(2, "0")).join("");
+
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Unauthorized",
+        why: {
+          eq: token === server,
+          suppliedLen: token.length,
+          serverLen: server.length,
+          suppliedFirstLast: [token.slice(0, 4), token.slice(-4)],
+          serverFirstLast: [server.slice(0, 4), server.slice(-4)],
+          suppliedHex: toHex(token).slice(0, 40) + "...",
+          serverHex: toHex(server).slice(0, 40) + "..."
+        }
+      },
+      { status: 401 }
+    );
+  }// app/api/jobs/create/route.ts
 import { NextResponse } from "next/server";
 import { createJob, type NewJobInput } from "@/lib/sheets";
 
