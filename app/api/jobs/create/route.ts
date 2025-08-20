@@ -2,24 +2,19 @@
 import { NextResponse } from "next/server";
 import { createJob, type NewJobInput } from "@/lib/sheets";
 
-/** Env helpers */
+/** Helpers */
 function hasAdminToken() {
   return !!process.env.APP_ADMIN_TOKEN;
 }
-
 function getAuthToken(req: Request) {
-  // 1) Authorization: Bearer <token>
   const auth = req.headers.get("authorization") || "";
-  if (auth.toLowerCase().startsWith("bearer ")) {
-    return auth.slice(7).trim();
-  }
-  // 2) ?token=<token>
+  if (auth.toLowerCase().startsWith("bearer ")) return auth.slice(7).trim();
   const url = new URL(req.url);
   const q = url.searchParams.get("token");
   return q ? q.trim() : "";
 }
 
-/** GET — diagnostics (prevents 405 and lets us confirm env) */
+/** GET — diagnostics (prevents 405) */
 export async function GET(req: Request) {
   return NextResponse.json({
     ok: true,
@@ -38,10 +33,8 @@ export async function POST(req: Request) {
     );
   }
 
-  const supplied = getAuthToken(req);
-  const server = process.env.APP_ADMIN_TOKEN as string;
-
-  if (supplied !== server) {
+  const token = getAuthToken(req);
+  if (token !== process.env.APP_ADMIN_TOKEN) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
@@ -56,7 +49,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "Missing 'title'" }, { status: 400 });
   }
 
-  const newId = await createJob(body);
-  return NextResponse.json({ ok: true, id: newId });
+  // createJob now returns the new ID
+  const id = await createJob(body);
+  return NextResponse.json({ ok: true, id });
 }
-
