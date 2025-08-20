@@ -2,84 +2,60 @@
 import { NextResponse } from "next/server";
 import { createJob, type NewJobInput } from "@/lib/sheets";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
-function json(data: any, status = 200) {
-  return NextResponse.json(data, {
-    status,
-    headers: {
-      "Cache-Control": "no-store",
-    },
-  });
+function hasAdminToken() {
+  return !!process.env.APP_ADMIN_TOKEN;
 }
 
-function unauthorized(msg = "Unauthorized") {
-  return json({ ok: false, error: msg }, 401);
-}
-
-// POST = create job (requires token)
-export async function POST(req: Request) {
-  const expected = (process.env.APP_ADMIN_TOKEN || "").trim();
-
-  // Fail CLOSED if misconfigured in prod
-  if (!expected) {
-    return unauthorized("Missing APP_ADMIN_TOKEN on server");
-  }
-
-  // Allow either Authorization: Bearer <token> OR ?token=<token>
+function getAuthToken(req: Request) {
+  // 1) Authorization: Bearer <token>
   const auth = req.headers.get("authorization") || "";
-  const bearer = auth.toLowerCase().startsWith("bearer ")
-    ? auth.slice(7).trim()
-    : "";
-
+  if (auth.toLowerCase().startsWith("bearer ")) {
+    return auth.slice(7).trim();
+  }
+  // 2) ?token=<token>
   const url = new URL(req.url);
-  const tokenParam = (url.searchParams.get("token") || "").trim();
-  const provided = bearer || tokenParam;
-
-  if (provided !== expected) {
-    return unauthorized();
-  }
-
-  try {
-    const body = (await req.json()) as Partial<NewJobInput>;
-    if (!body.title || !String(body.title).trim()) {
-      return json({ ok: false, error: "Missing required field: title" }, 400);
-    }
-
-    await createJob({
-      title: String(body.title).trim(),
-      role: body.role,
-      location: body.location,
-      market: body.market,
-      seniority: body.seniority,
-      summary: body.summary,
-      description: body.description,
-      confidential: body.confidential,
-    });
-
-    return json({ ok: true });
-  } catch (err: any) {
-    console.error("jobs/create error:", err);
-    return json({ ok: false, error: err?.message || "Internal error" }, 500);
-  }
+  const q = url.searchParams.get("token");
+  return q ? q.trim() : "";
 }
 
-// GET = diagnostics (safe to keep; returns no secret values)
+// --- GET: diagnostics (so you don’t get 405) ---
 export async function GET(req: Request) {
-  const expected = (process.env.APP_ADMIN_TOKEN || "").trim();
   const url = new URL(req.url);
-  const echo = url.searchParams.get("echo") === "1";
-
-  // We never return the actual token. Only lengths and booleans.
-  return json({
+  const echo = url.searchParams.get("echo");
+  return NextResponse.json({
     ok: true,
     diag: "jobs/create",
-    hasEnv: !!expected,
-    tokenLen: expected.length || 0,
-    echoHint: echo
-      ? "Pass Authorization: Bearer <token> or ?token=… on POST to create jobs."
-      : "Add ?echo=1 to this URL for this hint.",
+    hasEnv: hasAdminToken(),
+    tokenLen: (process.env.APP_ADMIN_TOKEN || "").length,
+    ...(echo ? { echoHint: "Send Authorization: Bearer <APP_ADMIN_TOKEN> or ?token=..." } : {}),
   });
 }
 
+// --- POST: secured create ---
+export async function POST(req: Request) {
+  if (!hasAdminToken()) {
+    return NextResponse.json(
+      { ok: false, error: "Server missing APP_ADMIN_TOKEN" },
+      { status: 500 }
+    );
+  }
+
+  const token = getAuthToken(req);
+  if (token !== process.env.APP_ADMIN_TOKEN) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  let body: NewJobInput;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
+  }
+
+  if (!body?.title) {
+    return NextResponse.json({ ok: false, error: "Missing 'title'" }, { status: 400 });
+  }
+
+  await createJob(body);
+  return NextResponse.json({ ok: true });
+}
