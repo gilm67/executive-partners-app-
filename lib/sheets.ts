@@ -20,7 +20,6 @@ export type Job = {
   Description?: string;
   Confidential?: string; // "YES" | "NO"
   CreatedAt?: string;
-  Active?: string; // "TRUE" | "FALSE"
 };
 
 export type NewJobInput = {
@@ -32,7 +31,6 @@ export type NewJobInput = {
   summary?: string;
   description?: string;
   confidential?: string; // optional "YES"/"NO"
-  active?: string | boolean; // optional override ("TRUE"/"FALSE" or boolean)
 };
 
 export type Candidate = Record<string, string>;
@@ -114,7 +112,7 @@ export async function getJobByIdOrSlug(idOrSlug: string): Promise<Job | null> {
 }
 
 /** Header-safe append that aligns fields by header name, not by fixed column order. */
-export async function createJob(input: NewJobInput): Promise<void> {
+export async function createJob(input: NewJobInput): Promise<string> {
   const { sheets, sheetId } = getSheetsClient();
 
   // 1) Read the header row (order-agnostic)
@@ -141,7 +139,6 @@ export async function createJob(input: NewJobInput): Promise<void> {
     "Description",
     "Confidential",
     "CreatedAt",
-    "Active", // 👈 ensure Active exists
   ];
   const have = new Set(headers.map((h) => h.toLowerCase()));
   const toAdd = required.filter((h) => !have.has(h.toLowerCase()));
@@ -159,14 +156,6 @@ export async function createJob(input: NewJobInput): Promise<void> {
   const id = String(Date.now());
   const now = new Date().toISOString();
 
-  // normalize optional "active" field (accept boolean or string)
-  const normalizeActive = (val: unknown): string | "" => {
-    if (typeof val === "boolean") return val ? "TRUE" : "FALSE";
-    if (typeof val === "string" && val.trim() !== "")
-      return val.trim().toUpperCase();
-    return "";
-  };
-
   const valuesByHeader: Record<string, any> = {
     ID: id,
     Title: input.title ?? "",
@@ -181,7 +170,6 @@ export async function createJob(input: NewJobInput): Promise<void> {
         ? "YES"
         : "",
     CreatedAt: now,
-    Active: normalizeActive(input.active) || "TRUE", // 👈 default TRUE
   };
 
   // 4) Create row matching the *current* header order
@@ -194,6 +182,9 @@ export async function createJob(input: NewJobInput): Promise<void> {
     valueInputOption: "USER_ENTERED",
     requestBody: { values: [row] },
   });
+
+  // NEW: return the new ID so callers can use it
+  return id;
 }
 
 /**
@@ -337,3 +328,4 @@ export async function appendApplication(
     requestBody: { values: [row] },
   });
 }
+
