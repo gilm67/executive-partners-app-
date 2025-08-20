@@ -26,3 +26,4 @@ service_account.json
 
 # local secrets
 private_key.b64
+.env.local
