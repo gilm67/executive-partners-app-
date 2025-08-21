@@ -43,9 +43,11 @@ export default async function JobDetailPage(
     .trim();
 
   const idOrSlug = (job.ID && String(job.ID)) || jobSlug(job);
-  const applyHref = `/apply?role=${encodeURIComponent(title)}&market=${encodeURIComponent(
-    market || location || ""
-  )}&jobId=${encodeURIComponent(idOrSlug)}`;
+  const applyHref = `/apply?role=${encodeURIComponent(
+    title
+  )}&market=${encodeURIComponent(market || location || "")}&jobId=${encodeURIComponent(
+    idOrSlug
+  )}`;
 
   return (
     <section className="space-y-6">
@@ -67,7 +69,7 @@ export default async function JobDetailPage(
         {seniority ? ` • ${seniority}` : ""}
       </p>
 
-      {/* Summary as a full card (always shows if present) */}
+      {/* Summary as a full card */}
       {summary && (
         <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-4 text-neutral-200">
           <h2 className="mb-2 text-lg font-semibold">Summary</h2>
@@ -85,9 +87,18 @@ export default async function JobDetailPage(
         <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-4 text-neutral-200">
           <h2 className="mb-2 text-lg font-semibold">Details</h2>
           <ul className="text-sm text-neutral-300 space-y-1">
-            <li><span className="text-neutral-500">Location:</span> {location || "—"}</li>
-            <li><span className="text-neutral-500">Market:</span> {market || "—"}</li>
-            <li><span className="text-neutral-500">Seniority:</span> {seniority || "—"}</li>
+            <li>
+              <span className="text-neutral-500">Location:</span>{" "}
+              {location || "—"}
+            </li>
+            <li>
+              <span className="text-neutral-500">Market:</span>{" "}
+              {market || "—"}
+            </li>
+            <li>
+              <span className="text-neutral-500">Seniority:</span>{" "}
+              {seniority || "—"}
+            </li>
             {summary ? (
               <li className="pt-2">
                 <span className="text-neutral-500">Summary:</span>{" "}
@@ -96,12 +107,13 @@ export default async function JobDetailPage(
             ) : null}
           </ul>
           <p className="mt-3 text-xs text-neutral-400">
-            More details coming soon. You can still apply confidentially or ask us about the role.
+            More details coming soon. You can still apply confidentially or ask
+            us about the role.
           </p>
         </div>
       )}
 
-      {/* CTAs */}
+      {/* ✅ Integrated CTA block */}
       <div className="flex gap-3">
         <Link
           href={applyHref}
@@ -110,15 +122,21 @@ export default async function JobDetailPage(
           Apply confidentially
         </Link>
         <Link
-          href="/contact"
-          className="rounded-lg border border-neutral-700 px-4 py-2 text-neutral-200 hover:bg-neutral-900"
+          href={`/contact?role=${encodeURIComponent(
+            title
+          )}&jobId=${encodeURIComponent(idOrSlug)}&location=${encodeURIComponent(
+            location || ""
+          )}&market=${encodeURIComponent(market || "")}`}
+          className="rounded-lg border border-neutral-700 px-4 py-2 text-neutral-200 hover:bg-neutral-800"
         >
           Ask about this role
         </Link>
       </div>
 
       {/* Reference */}
-      <p className="text-xs text-neutral-500">Reference: {idOrSlug || "(unassigned)"}</p>
+      <p className="text-xs text-neutral-500">
+        Reference: {idOrSlug || "(unassigned)"}
+      </p>
     </section>
   );
 }
@@ -140,10 +158,18 @@ function Article({ md }: { md: string }) {
           );
         }
         const m = t.match(/^\*\*(.+)\*\*$/);
-        if (m) return <h3 key={i} className="mt-4 text-base font-semibold">{m[1]}</h3>;
-        return <p key={i} className="whitespace-pre-wrap">{t}</p>;
+        if (m)
+          return (
+            <h3 key={i} className="mt-4 text-base font-semibold">
+              {m[1]}
+            </h3>
+          );
+        return (
+          <p key={i} className="whitespace-pre-wrap">
+            {t}
+          </p>
+        );
       })}
     </div>
   );
 }
-

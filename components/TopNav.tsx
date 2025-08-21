@@ -15,13 +15,23 @@ export default function TopNav() {
         </Link>
 
         <nav className="flex items-center gap-4 text-sm">
-          <Link href="/jobs" className="text-neutral-300 hover:text-white">Jobs</Link>
-          <Link href="/candidates" className="text-neutral-300 hover:text-white">Candidates</Link>
-          <Link href="/hiring-managers" className="text-neutral-300 hover:text-white">Hiring Managers</Link>
-          <Link href="/bp-simulator" className="text-neutral-300 hover:text-white">BP Simulator</Link>
+          <Link href="/jobs" className="text-neutral-300 hover:text-white">
+            Jobs
+          </Link>
+          <Link href="/candidates" className="text-neutral-300 hover:text-white">
+            Candidates
+          </Link>
+          <Link href="/hiring-managers" className="text-neutral-300 hover:text-white">
+            Hiring Managers
+          </Link>
+          <Link href="/bp-simulator" className="text-neutral-300 hover:text-white">
+            BP Simulator
+          </Link>
+          <Link href="/contact" className="text-neutral-300 hover:text-white">
+            Contact
+          </Link>
         </nav>
       </div>
     </header>
   );
 }
-

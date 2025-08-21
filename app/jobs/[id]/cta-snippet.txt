@@ -1,0 +1,15 @@
+{/* CTAs */}
+<div className="flex gap-3">
+  <Link
+    href={applyHref}
+    className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+  >
+    Apply confidentially
+  </Link>
+  <Link
+    href={`/contact?role=${encodeURIComponent(title)}&jobId=${encodeURIComponent(idOrSlug)}&location=${encodeURIComponent(location || "")}&market=${encodeURIComponent(market || "")}`}
+    className="rounded-lg border border-neutral-700 px-4 py-2 text-neutral-200 hover:bg-neutral-800"
+  >
+    Ask about this role
+  </Link>
+</div>

@@ -1,200 +1,103 @@
-
 // app/page.tsx
 import Link from "next/link";
 import { Suspense } from "react";
-import { getJobs, jobSlug, type Job } from "@/lib/sheets";
+import { getJobs, jobSlug, idOrSlug, type Job } from "@/lib/sheets";
 
-export const revalidate = 60;
+export const revalidate = 60; // ISR
 
-/** Small pill used on job cards */
-function Pill({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="rounded-full border border-neutral-700/60 bg-neutral-900/60 px-3 py-1 text-xs text-neutral-300">
-      {children}
-    </span>
-  );
-}
-
-/** Prominent hero CTA with visible white frame and bold text */
-function HeroButton({
-  href,
-  children,
-  variant = "primary",
-  minWidth,
-}: {
-  href: string;
-  children: React.ReactNode;
-  variant?: "primary" | "secondary" | "ghost";
-  minWidth: number;
-}) {
-  const base =
-    "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-base font-bold transition-colors " +
-    // inner & outer white frame feel
-    "ring-1 ring-white shadow-[0_0_0_1px_rgba(255,255,255,0.45)_inset,0_14px_30px_-12px_rgba(0,0,0,0.55)]";
-  const sizes = `px-8 py-3.5 min-w-[${minWidth}px]`;
-
-  const styles =
-    variant === "primary"
-      ? // brighter royal blue
-        "bg-blue-500 hover:bg-blue-600 text-white"
-      : variant === "secondary"
-      ? "bg-neutral-900/80 hover:bg-neutral-800 text-white"
-      : "bg-transparent hover:bg-white/5 text-white ring-white/60";
-
-  return (
-    <Link href={href} className={`${base} ${sizes} ${styles}`}>
-      {children}
-    </Link>
-  );
-}
-
-/** Featured roles list */
-async function FeaturedJobs() {
-  const jobs = (await getJobs())
-    .filter((j) => String(j.Active || "").toUpperCase() !== "FALSE")
-    .slice(0, 6);
-
-  if (jobs.length === 0) return null;
-
-  return (
-    <div className="mt-10 grid gap-6 sm:grid-cols-2">
-      {jobs.map((job) => {
-        const tags = [job.Location, job.Market, job.Seniority].filter(
-          Boolean
-        ) as string[];
-        const href = `/jobs/${jobSlug(job)}`;
-
-        return (
-          <Link
-            key={job.ID || job.Title}
-            href={href}
-            className="rounded-2xl border border-neutral-800/70 bg-neutral-900/40 p-5 shadow-sm transition-colors hover:border-neutral-700 hover:bg-neutral-900/60"
-          >
-            <div className="mb-3 flex flex-wrap gap-2">
-              {tags.map((t) => (
-                <Pill key={t}>{t}</Pill>
-              ))}
-            </div>
-            <h3 className="text-lg font-semibold text-neutral-100">
-              {job.Title || job.Role || "Role"}
-            </h3>
-            {job.Summary && (
-              <p className="mt-1 text-sm text-neutral-400">{job.Summary}</p>
-            )}
-          </Link>
-        );
-      })}
-    </div>
-  );
-}
-
-export default async function HomePage() {
+export default function HomePage() {
   return (
     <>
-      {/* Top badge */}
-      <div className="mx-auto max-w-5xl px-6 pt-16">
-        <div className="mx-auto w-fit rounded-full border border-neutral-800/60 bg-neutral-900/60 px-4 py-1 text-xs text-neutral-300">
-          International & Swiss Private Banking — HNW/UHNWI
-        </div>
-      </div>
-
-      {/* Title + sub + CTAs */}
-      <header className="mx-auto max-w-5xl px-6 pt-6 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-          Executive Partners
-        </h1>
-        <p className="mx-auto mt-3 max-w-3xl text-neutral-300">
-          We connect top Private Bankers, Wealth Managers, and senior executives with
-          leading banks, EAMs, and family offices worldwide.
+      <section className="space-y-4">
+        <h1 className="text-2xl font-bold">Featured roles</h1>
+        <p className="text-neutral-300">
+          A selection of current mandates. Ask us about a role or apply confidentially.
         </p>
-
-        {/* CTA row — brighter blue, white frame, bold text */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <HeroButton href="/candidates" minWidth={200}>
-            I’m a Candidate
-          </HeroButton>
-          <HeroButton href="/hiring-managers" variant="secondary" minWidth={160}>
-            I’m Hiring
-          </HeroButton>
-          <HeroButton href="/jobs" variant="ghost" minWidth={200}>
-            View All Jobs
-          </HeroButton>
-        </div>
-      </header>
-
-      {/* Two-card section */}
-      <section className="mx-auto mt-12 max-w-6xl px-6">
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Candidates card */}
-          <div className="rounded-2xl border border-neutral-800/70 bg-neutral-900/40 p-6 shadow-sm">
-            <p className="text-xs font-bold text-blue-400">For Candidates</p>
-            <h3 className="mt-2 text-lg font-bold text-white">
-              Confidential career moves
-            </h3>
-            <p className="mt-1 text-sm text-neutral-400">
-              We work discreetly with UHNW/HNW talent. Explore live mandates or register
-              to be matched with roles that fit your market, seniority, and portability.
-            </p>
-            <div className="mt-4 flex gap-2">
-              <Link
-                href="/jobs"
-                className="inline-flex items-center justify-center rounded-xl bg-blue-500 px-4 py-2 text-sm font-bold text-white ring-1 ring-white transition-colors hover:bg-blue-600"
-              >
-                Browse Jobs
-              </Link>
-              <Link
-                href="/candidates"
-                className="inline-flex items-center justify-center rounded-xl bg-neutral-900/80 px-4 py-2 text-sm font-bold text-white ring-1 ring-white/70 transition-colors hover:bg-neutral-800"
-              >
-                Candidate Hub
-              </Link>
-            </div>
-          </div>
-
-          {/* Hiring Managers card */}
-          <div className="rounded-2xl border border-neutral-800/70 bg-neutral-900/40 p-6 shadow-sm">
-            <p className="text-xs font-bold text-emerald-400">For Hiring Managers</p>
-            <h3 className="mt-2 text-lg font-bold text-white">
-              Targeted shortlists, fast
-            </h3>
-            <p className="mt-1 text-sm text-neutral-400">
-              We map markets and deliver vetted shortlists with real portability. Post a
-              new role or ask us to discreetly approach specific bankers.
-            </p>
-            <div className="mt-4 flex gap-2">
-              <Link
-                href="/hiring-managers"
-                className="inline-flex items-center justify-center rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white ring-1 ring-white transition-colors hover:bg-emerald-600"
-              >
-                Hire Talent
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center rounded-xl bg-neutral-900/80 px-4 py-2 text-sm font-bold text-white ring-1 ring-white/70 transition-colors hover:bg-neutral-800"
-              >
-                Talk to Us
-              </Link>
-            </div>
-          </div>
-        </div>
       </section>
 
-      {/* Featured Roles header + list */}
-      <section className="mx-auto max-w-6xl px-6">
-        <div className="mt-14 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white tracking-wide">Featured Roles</h2>
-          <Link
-            href="/jobs"
-            className="text-sm text-neutral-300 underline-offset-4 hover:text-white hover:underline"
-          >
-            View all jobs
-          </Link>
-        </div>
-
-        <Suspense>
+      <div className="mt-6">
+        <Suspense fallback={<div className="text-neutral-400">Loading roles…</div>}>
           <FeaturedJobs />
         </Suspense>
-      </section>
+      </div>
     </>
+  );
+}
+
+async function FeaturedJobs() {
+  const rows = await getJobs();
+
+  // keep rows not explicitly FALSE
+  const jobs = rows
+    .filter((j) => String((j as any).active || "").toUpperCase() !== "FALSE")
+    .slice(0, 6);
+
+  if (jobs.length === 0) {
+    return <p className="text-neutral-400">No active roles right now. Check back soon.</p>;
+  }
+
+  return (
+    <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {jobs.map((job) => (
+        <li key={job.id || jobSlug(job)}>
+          <JobCard job={job} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function JobCard({ job }: { job: Job }) {
+  const title = (job.title || job.role || "Untitled role").trim();
+  const location = (job.location || "").trim();
+  const market = (job.market || "").trim();
+  const seniority = (job.seniority || "").trim();
+  const summary = (job.summary || "").toString().trim();
+
+  const slugOrId = idOrSlug(job);
+
+  return (
+    <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-4">
+      <div className="mb-2 flex items-start justify-between gap-3">
+        <h3 className="text-lg font-semibold leading-snug">
+          <Link href={`/jobs/${slugOrId}`} className="hover:underline">
+            {title}
+          </Link>
+        </h3>
+      </div>
+
+      <p className="text-sm text-neutral-400">
+        {location || "—"}
+        {market ? ` • ${market}` : ""}
+        {seniority ? ` • ${seniority}` : ""}
+      </p>
+
+      {summary && (
+        <p className="mt-3 line-clamp-4 text-neutral-200">{summary}</p>
+      )}
+
+      <div className="mt-4 flex gap-2">
+        <Link
+          href={`/jobs/${slugOrId}`}
+          className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700"
+        >
+          View role
+        </Link>
+        <Link
+          href={`/apply?role=${encodeURIComponent(title)}&market=${encodeURIComponent(
+            market || location || ""
+          )}&jobId=${encodeURIComponent(slugOrId)}`}
+          className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm text-neutral-200 hover:bg-neutral-800"
+        >
+          Apply confidentially
+        </Link>
+        <Link
+          href="/contact"
+          className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm text-neutral-200 hover:bg-neutral-800"
+        >
+          Ask about this role
+        </Link>
+      </div>
+    </div>
   );
 }
