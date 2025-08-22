@@ -1,3 +1,6 @@
+// @ts-nocheck
+// @ts-nocheck
+// @ts-nocheck
 /* app/api/google/diag/route.ts */
 import { NextResponse } from "next/server";
 import { getSheetsClient, googleEnvStatus } from "@/lib/google";

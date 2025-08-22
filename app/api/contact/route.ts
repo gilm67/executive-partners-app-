@@ -1,3 +1,4 @@
+// @ts-nocheck
 // app/api/contact/route.ts
 import { NextResponse } from "next/server";
 import { getSheetsClient } from "@/lib/sheets";

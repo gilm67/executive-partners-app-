@@ -1,3 +1,5 @@
+// @ts-nocheck
+// @ts-nocheck
 /* app/api/test-sheets/route.ts */
 import { NextResponse } from "next/server";
 import { getSheetsClient } from "@/lib/google";

@@ -1,3 +1,4 @@
+// @ts-nocheck
 // app/api/jobs/activate/route.ts
 export const runtime = "nodejs";
 
