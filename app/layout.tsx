@@ -18,7 +18,12 @@ export const metadata: Metadata = {
     url: "https://execpartners.ch",
     siteName: "Executive Partners",
     images: [
-      { url: "/og.png", width: 1200, height: 630, alt: "Executive Partners — Private Banking Recruitment" },
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Executive Partners — Private Banking Recruitment",
+      },
     ],
     locale: "en_US",
     type: "website",
@@ -34,14 +39,18 @@ export const metadata: Metadata = {
   category: "Recruitment",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>
         {children}
-        {/* ✅ GA4 Integration */}
+        {/* ✅ Replace G-XXXXXXXXXX with your real GA4 Measurement ID */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-L6XR4QJ8GX"
+          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
           strategy="afterInteractive"
         />
         <Script id="ga4" strategy="afterInteractive">
@@ -49,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-L6XR4QJ8GX', { anonymize_ip: true });
+            gtag('config', 'G-XXXXXXXXXX', { anonymize_ip: true });
           `}
         </Script>
       </body>

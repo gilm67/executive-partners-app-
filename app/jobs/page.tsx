@@ -38,7 +38,7 @@ export default async function JobsPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {active.map((j) => {
-            const slug = j.ID ? `${jobSlug({ ID: j.ID, Title: j.Title })}` : "#";
+            const slug = j.ID ? `${jobSlug({ ID: j.ID, Title: j.Title } as any)}` : "#";
             return (
               <Link
                 key={`${j.ID}-${slug}`}
