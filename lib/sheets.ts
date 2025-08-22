@@ -1,151 +1,194 @@
-// lib/sheets.ts
-import { z } from "zod";
-import { DateTime } from "luxon";            // Zurich timezone for CreatedAt
-import { getSheetsClient, readEnvSheetId } from "./google";
+import { google } from "googleapis";
+import { DateTime } from "luxon";
 
-/** ===== Sheet & Column Setup ===== */
-const SHEET_ID = readEnvSheetId();           // reads SHEET_ID or GOOGLE_SHEET_ID
-const JOBS_RANGE = "Jobs!A:Z";
+/** ===== Env / Config ===== */
+const SHEET_ID = process.env.SHEET_ID || process.env.GOOGLE_SHEET_ID || "";
+const CLIENT_EMAIL = process.env.GOOGLE_CLIENT_EMAIL || "";
+const PRIVATE_KEY =
+  process.env.GOOGLE_PRIVATE_KEY_B64
+    ? Buffer.from(process.env.GOOGLE_PRIVATE_KEY_B64, "base64").toString("utf8")
+    : (process.env.GOOGLE_PRIVATE_KEY || "");
 
-/** Canonical Job shape (matches headers in the Jobs sheet) */
-export const JobSchema = z.object({
-  ID: z.string(),
-  Title: z.string(),
-  Role: z.string(),
-  Location: z.string(),
-  Market: z.string(),
-  Seniority: z.string(),
-  Summary: z.string(),
-  Description: z.string(),
-  Confidential: z.string(),
-  Active: z.string().optional().default("TRUE"),
-  CreatedAt: z.string(),
-});
-export type Job = z.infer<typeof JobSchema>;
-
-/** Slug helper: "<title-slug>-<ID>" */
-export function jobSlug(job: Pick<Job, "ID" | "Title">) {
-  const base = (job.Title || "").toLowerCase().trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-  return `${base}-${job.ID}`;
+// Basic validation so errors are obvious
+if (!SHEET_ID) {
+  // Don’t throw at import time in Next; routes may still render
+  // eslint-disable-next-line no-console
+  console.warn("SHEET_ID/GOOGLE_SHEET_ID is not set.");
+}
+if (!CLIENT_EMAIL) {
+  // eslint-disable-next-line no-console
+  console.warn("GOOGLE_CLIENT_EMAIL is not set.");
+}
+if (!PRIVATE_KEY) {
+  // eslint-disable-next-line no-console
+  console.warn("GOOGLE_PRIVATE_KEY_B64/GOOGLE_PRIVATE_KEY is not set.");
 }
 
-/** Convenience helper (used by cards/pages) */
+/** ===== Types ===== */
+export type Job = {
+  ID: string;
+  Title: string;
+  Role: string;
+  Location: string;
+  Market: string;
+  Seniority: string;
+  Summary: string;
+  Description: string;
+  Confidential: string;
+  Active: string;
+  CreatedAt: string;
+};
+
+/** ===== Google Sheets client ===== */
+export function getSheetsClient() {
+  if (!SHEET_ID || !CLIENT_EMAIL || !PRIVATE_KEY) {
+    throw new Error(
+      "Missing Google Sheets env (SHEET_ID/CLIENT_EMAIL/PRIVATE_KEY)."
+    );
+  }
+  if (!PRIVATE_KEY.includes("BEGIN PRIVATE KEY")) {
+    throw new Error(
+      "Google private key looks invalid (missing BEGIN PRIVATE KEY)."
+    );
+  }
+
+  const auth = new google.auth.JWT({
+    email: CLIENT_EMAIL,
+    key: PRIVATE_KEY,
+    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+  });
+  const sheets = google.sheets({ version: "v4", auth });
+  return { sheets, sheetId: SHEET_ID };
+}
+
+/** Helper: map headers case-insensitively */
+function headerIndex(headers: string[], name: string) {
+  const lower = name.toLowerCase();
+  return headers.findIndex((h) => String(h || "").trim().toLowerCase() === lower);
+}
+
+/** ===== Read Jobs ===== */
+export async function getJobs(): Promise<Job[]> {
+  const { sheets, sheetId } = getSheetsClient();
+
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: sheetId,
+    range: "Jobs!A1:Z1000",
+    majorDimension: "ROWS",
+  });
+
+  const values = res.data.values || [];
+  if (values.length === 0) return [];
+
+  const headers = values[0].map((h) => String(h || "").trim());
+  const rows = values.slice(1);
+
+  // Find column indices
+  const idx = {
+    ID: headerIndex(headers, "ID"),
+    Title: headerIndex(headers, "Title"),
+    Role: headerIndex(headers, "Role"),
+    Location: headerIndex(headers, "Location"),
+    Market: headerIndex(headers, "Market"),
+    Seniority: headerIndex(headers, "Seniority"),
+    Summary: headerIndex(headers, "Summary"),
+    Description: headerIndex(headers, "Description"),
+    Confidential: headerIndex(headers, "Confidential"),
+    Active: headerIndex(headers, "Active"),
+    CreatedAt: headerIndex(headers, "CreatedAt"),
+  };
+
+  return rows.map((r) => ({
+    ID: String(r[idx.ID] ?? ""),
+    Title: String(r[idx.Title] ?? ""),
+    Role: String(r[idx.Role] ?? ""),
+    Location: String(r[idx.Location] ?? ""),
+    Market: String(r[idx.Market] ?? ""),
+    Seniority: String(r[idx.Seniority] ?? ""),
+    Summary: String(r[idx.Summary] ?? ""),
+    Description: String(r[idx.Description] ?? ""),
+    Confidential: String(r[idx.Confidential] ?? ""),
+    Active: String(r[idx.Active] ?? ""),
+    CreatedAt: String(r[idx.CreatedAt] ?? ""),
+  }));
+}
+
+/** ===== Slug helpers ===== */
+function toKebab(s: string) {
+  return s
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase();
+}
+
+export function jobSlug(job: Pick<Job, "ID" | "Title">) {
+  const base = job.Title ? toKebab(job.Title) : "role";
+  const id = job.ID || "";
+  return `${base}-${id}`; // stable slug with ID baked in
+}
+
+// Convenience: some callers just want "id or slug"
 export function idOrSlug(job: Pick<Job, "ID" | "Title">) {
   return jobSlug(job);
 }
 
-/** Read all jobs from the sheet and parse to typed objects */
-export async function getJobs(): Promise<Job[]> {
-  const { sheets } = getSheetsClient();
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: SHEET_ID,
-    range: JOBS_RANGE,
-  });
-
-  const rows = res.data.values || [];
-  if (rows.length === 0) return [];
-
-  const header = rows[0].map((h) => String(h).trim());
-  const idx = (name: string) => header.findIndex((h) => h.toLowerCase() === name.toLowerCase());
-
-  const iID          = idx("ID");
-  const iTitle       = idx("Title");
-  const iRole        = idx("Role");
-  const iLocation    = idx("Location");
-  const iMarket      = idx("Market");
-  const iSeniority   = idx("Seniority");
-  const iSummary     = idx("Summary");
-  const iDescription = idx("Description");
-  const iConfidential= idx("Confidential");
-  const iActive      = idx("Active");      // may be -1 if column doesn’t exist
-  const iCreatedAt   = idx("CreatedAt");
-
-  const data = rows.slice(1).map((r) => {
-    const row = {
-      ID:          String(r[iID] ?? ""),
-      Title:       String(r[iTitle] ?? ""),
-      Role:        String(r[iRole] ?? ""),
-      Location:    String(r[iLocation] ?? ""),
-      Market:      String(r[iMarket] ?? ""),
-      Seniority:   String(r[iSeniority] ?? ""),
-      Summary:     String(r[iSummary] ?? ""),
-      Description: String(r[iDescription] ?? ""),
-      Confidential:String(r[iConfidential] ?? ""),
-      Active:      iActive >= 0 ? String(r[iActive] ?? "TRUE") : "TRUE",
-      CreatedAt:   String(r[iCreatedAt] ?? ""),
-    };
-    return JobSchema.parse(row);
-  });
-
-  return data;
-}
-
-/** Find a single job by exact ID or by slug "<title>-<ID>" */
-export async function getJobByIdOrSlug(idOr: string): Promise<Job | null> {
+/** ===== Find single job by ID or slug ===== */
+export async function getJobByIdOrSlug(key: string): Promise<Job | null> {
   const all = await getJobs();
-  const byId = all.find((j) => String(j.ID) === idOr);
+  // Exact ID match
+  const byId = all.find((j) => String(j.ID) === key);
   if (byId) return byId;
-  const bySlug = all.find((j) => jobSlug(j) === idOr);
-  return bySlug ?? null;
+
+  // Slug match
+  const bySlug = all.find((j) => jobSlug(j) === key);
+  return bySlug || null;
 }
 
-/** Create (append) a job row; returns the new ID */
+/** ===== Append a new Job =====
+ * Writes a new row with these headers:
+ * ID, Title, Role, Location, Market, Seniority, Summary, Description, Confidential, Active, CreatedAt
+ */
 export async function appendJob(input: {
-  Title: string;
-  Role?: string;
-  Location?: string;
-  Market?: string;
-  Seniority?: string;
-  Summary?: string;
-  Description?: string;
-  Confidential?: string;
+  title: string;
+  role: string;
+  location: string;
+  market: string;
+  seniority: string;
+  summary: string;
+  description: string;
+  confidential: string;
 }): Promise<string> {
-  const { sheets } = getSheetsClient();
+  const { sheets, sheetId } = getSheetsClient();
 
   const id = Date.now().toString();
   const createdAt = DateTime.now().setZone("Europe/Zurich").toFormat("yyyy-MM-dd HH:mm:ss");
 
-  // We’ll write values in a sensible default order. If your sheet has different
-  // column positions, it still works because readers locate by header names.
-  const row: Job = JobSchema.parse({
-    ID: id,
-    Title: input.Title ?? "",
-    Role: input.Role ?? "",
-    Location: input.Location ?? "",
-    Market: input.Market ?? "",
-    Seniority: input.Seniority ?? "",
-    Summary: input.Summary ?? "",
-    Description: input.Description ?? "",
-    Confidential: input.Confidential ?? "",
-    Active: "TRUE",
-    CreatedAt: createdAt,
-  });
+  const row = [
+    id,
+    input.title || "",
+    input.role || "",
+    input.location || "",
+    input.market || "",
+    input.seniority || "",
+    input.summary || "",
+    input.description || "",
+    input.confidential || "",
+    "FALSE", // default inactive; flip with /api/jobs/activate
+    createdAt,
+  ];
 
   await sheets.spreadsheets.values.append({
-    spreadsheetId: SHEET_ID,
-    range: JOBS_RANGE,
+    spreadsheetId: sheetId,
+    range: "Jobs!A1:Z1",
     valueInputOption: "USER_ENTERED",
-    requestBody: {
-      values: [[
-        row.ID,
-        row.Title,
-        row.Role,
-        row.Location,
-        row.Market,
-        row.Seniority,
-        row.Summary,
-        row.Description,
-        row.Confidential,
-        row.Active,      // if “Active” column is later in the sheet, that’s fine
-        row.CreatedAt,   // unused cells will be left blank by Sheets
-      ]],
-    },
+    insertDataOption: "INSERT_ROWS",
+    requestBody: { values: [row] },
   });
 
   return id;
 }
 
-/** Back-compat name used by /api/jobs/create */
+/** Back-compat alias used by /api/jobs/create */
 export const createJob = appendJob;
