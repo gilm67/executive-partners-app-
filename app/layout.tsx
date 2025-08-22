@@ -1,28 +1,58 @@
-// app/layout.tsx
+import type { Metadata } from "next";
 import "./globals.css";
-import TopNav from "@/components/TopNav";
+import Script from "next/script";
 
-// Compute once on the server at module load (UTC to avoid TZ edge cases)
-const YEAR = new Date().getUTCFullYear();
+export const metadata: Metadata = {
+  metadataBase: new URL("https://execpartners.ch"),
+  title: {
+    default: "Executive Partners | Private Banking Recruitment",
+    template: "%s | Executive Partners",
+  },
+  description:
+    "Executive Partners connects leading private banks with top wealth-management talent. Geneva-based; mandates across Switzerland, UK, US, Dubai, Singapore & Hong Kong.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Executive Partners | Private Banking Recruitment",
+    description:
+      "Recruitment for Private Banking & Wealth Management — Geneva, Zurich, London, New York, Dubai, Singapore.",
+    url: "https://execpartners.ch",
+    siteName: "Executive Partners",
+    images: [
+      { url: "/og.png", width: 1200, height: 630, alt: "Executive Partners — Private Banking Recruitment" },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Executive Partners | Private Banking Recruitment",
+    description:
+      "Recruitment for Private Banking & Wealth Management — Geneva, Zurich, London, New York, Dubai, Singapore.",
+    images: ["/og.png"],
+  },
+  applicationName: "Executive Partners",
+  category: "Recruitment",
+};
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="bg-black" suppressHydrationWarning>
-      <body className="min-h-screen bg-black text-white antialiased">
-        <TopNav />
-        <main className="mx-auto w-full max-w-6xl px-6 py-8">{children}</main>
-
-        <footer className="mx-auto mt-10 w-full max-w-6xl px-6 py-10 text-sm text-neutral-400">
-          <span suppressHydrationWarning>
-            © {YEAR} Executive Partners — Geneva
-          </span>
-        </footer>
+    <html lang="en">
+      <body>
+        {children}
+        {/* ✅ GA4 Integration */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-L6XR4QJ8GX"
+          strategy="afterInteractive"
+        />
+        <Script id="ga4" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-L6XR4QJ8GX', { anonymize_ip: true });
+          `}
+        </Script>
       </body>
     </html>
   );
 }
-
