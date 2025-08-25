@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       from: "Executive Partners <recruiter@execpartners.ch>",
       to,
       subject: `New contact form: ${payload.name}`,
-      reply_to: payload.email,
+      replyTo: payload.email,
       text:
         `Source: ${payload.source}\n` +
         `Name: ${payload.name}\n` +
