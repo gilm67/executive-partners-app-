@@ -1,6 +1,5 @@
 // app/page.tsx — landing page
 import Link from "next/link";
-import TopNav from "@/components/TopNav";
 import { getJobs, jobSlug } from "@/lib/sheets";
 
 export const revalidate = 60;
@@ -34,8 +33,6 @@ export default async function Home() {
 
   return (
     <main className="bg-black text-white min-h-screen">
-      <TopNav />
-
       {/* Hero */}
       <section className="mx-auto max-w-5xl px-4 pt-10 pb-14 text-center">
         <div className="mx-auto inline-flex rounded-full border border-neutral-800 bg-neutral-900/60 px-3 py-1 text-xs text-neutral-300">
@@ -64,28 +61,32 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Two cards */}
+      {/* Two cards: equal height + aligned CTAs */}
       <section className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-4 pb-12 sm:grid-cols-2">
-        <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5">
-          <p className="text-xs font-semibold text-blue-300">For Candidates</p>
-          <h3 className="mt-2 text-lg font-semibold">Confidential career moves</h3>
-          <p className="mt-2 text-sm text-neutral-300">
-            We work discreetly with UHNW/HNW talent. Explore live mandates or register to be matched with roles that fit your market,
-            seniority, and portability.
-          </p>
-          <div className="mt-4 flex gap-3">
+        <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5 flex flex-col h-full min-h-[240px]">
+          <div>
+            <p className="text-xs font-semibold text-blue-300">For Candidates</p>
+            <h3 className="mt-2 text-lg font-semibold">Confidential career moves</h3>
+            <p className="mt-2 text-sm text-neutral-300">
+              We work discreetly with UHNW/HNW talent. Explore live mandates or register to be matched with roles that fit your market,
+              seniority, and portability.
+            </p>
+          </div>
+          <div className="mt-auto flex gap-3 pt-4">
             <Link href="/jobs" className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">Browse Jobs</Link>
             <Link href="/candidates" className="rounded-lg border border-neutral-700 px-4 py-2 text-sm text-neutral-200 hover:bg-neutral-800">Candidate Hub</Link>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5">
-          <p className="text-xs font-semibold text-emerald-300">For Hiring Managers</p>
-          <h3 className="mt-2 text-lg font-semibold">Targeted shortlists, fast</h3>
-          <p className="mt-2 text-sm text-neutral-300">
-            We map markets and deliver vetted shortlists with real portability. Post a new role or ask us to discreetly approach specific bankers.
-          </p>
-          <div className="mt-4 flex gap-3">
+        <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-5 flex flex-col h-full min-h-[240px]">
+          <div>
+            <p className="text-xs font-semibold text-emerald-300">For Hiring Managers</p>
+            <h3 className="mt-2 text-lg font-semibold">Targeted shortlists, fast</h3>
+            <p className="mt-2 text-sm text-neutral-300">
+              We map markets and deliver vetted shortlists with real portability. Post a new role or ask us to discreetly approach specific bankers.
+            </p>
+          </div>
+          <div className="mt-auto flex gap-3 pt-4">
             <Link href="/hiring-managers" className="rounded-lg bg-emerald-600 px-4 py-2 text-sm text-white hover:bg-emerald-700">Hire Talent</Link>
             <Link href="/contact" className="rounded-lg border border-neutral-700 px-4 py-2 text-sm text-neutral-200 hover:bg-neutral-800">Talk to Us</Link>
           </div>

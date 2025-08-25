@@ -1,0 +1,38 @@
+[
+  {
+    "slug": "sample",
+    "title": "Private Banker — UHNW (Swiss Onshore)",
+    "summary": "Lead UHNW relationships with a Swiss onshore focus. Portability required; strong RM track record.",
+    "location": "Geneva, CH",
+    "seniority": "Director",
+    "market": "Swiss Onshore",
+    "datePosted": "2025-08-24T16:00:12.558Z",
+    "employmentType": "FULL_TIME",
+    "baseSalaryMin": 180000,
+    "baseSalaryMax": 240000,
+    "currency": "CHF",
+    "validThrough": "2025-10-23T16:00:12.558Z",
+    "directApply": true,
+    "industry": "Private Banking & Wealth Management",
+    "jobLocationType": "ONSITE",
+    "updatedAt": "2025-08-24T16:23:36.449Z"
+  },
+  {
+    "slug": "private-banker-uhnw-zurich",
+    "title": "Private Banker — UHNW (Zurich)",
+    "summary": "Drive new UHNW assets in Zurich; onshore focus; portability a plus.",
+    "location": "Zurich, CH",
+    "seniority": "Director",
+    "market": "Swiss Onshore",
+    "datePosted": "2025-07-01T12:00:00.000Z",
+    "employmentType": "FULL_TIME",
+    "baseSalaryMin": 170000,
+    "baseSalaryMax": 230000,
+    "currency": "CHF",
+    "validThrough": "2025-08-01T00:00:00.000Z",
+    "directApply": true,
+    "industry": "Private Banking & Wealth Management",
+    "jobLocationType": "ONSITE",
+    "updatedAt": "2025-08-10T12:00:00.000Z"
+  }
+]

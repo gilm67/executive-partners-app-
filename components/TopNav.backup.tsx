@@ -3,22 +3,21 @@ import Link from "next/link";
 
 export default function TopNav() {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 
-      bg-gradient-to-r from-black/90 via-neutral-950/80 to-black/90 
-      backdrop-blur-md shadow-lg">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-black/85 backdrop-blur supports-[backdrop-filter]:bg-black/70">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-        
-        {/* Left: Brand (inline with tagline) */}
-        <Link href="/" className="flex items-baseline gap-2">
-          <span className="text-sm font-extrabold tracking-tight text-white drop-shadow">
-            Executive Partners
-          </span>
-          <span className="text-[11px] text-neutral-300 hidden sm:inline">
-            International &amp; Swiss Private Banking — HNW/UHNWI
+        {/* Left: brand on one line */}
+        <Link href="/" className="group flex items-center">
+          <span className="flex items-baseline gap-2 whitespace-nowrap">
+            <span className="font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-neutral-300 drop-shadow-sm">
+              Executive Partners
+            </span>
+            <span className="text-[11px] md:text-xs text-neutral-300">
+              International &amp; Swiss Private Banking — HNW/UHNWI
+            </span>
           </span>
         </Link>
 
-        {/* Right: Nav */}
+        {/* Right: nav */}
         <nav className="flex items-center gap-5 text-sm">
           <Link href="/jobs" className="text-neutral-300 hover:text-white">Jobs</Link>
           <Link href="/candidates" className="text-neutral-300 hover:text-white">Candidates</Link>
