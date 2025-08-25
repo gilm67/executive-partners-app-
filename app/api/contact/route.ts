@@ -57,6 +57,9 @@ export async function POST(req: Request) {
         `${payload.message}\n`,
     });
 
+    // 🔍 Log the full result for debugging in Vercel
+    console.log("Resend response:", JSON.stringify(result, null, 2));
+
     if ((result as any)?.error) {
       console.error("Resend error:", (result as any).error);
       return NextResponse.json(
