@@ -1,211 +1,214 @@
-// app/hiring-managers/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function HiringManagersPage() {
+  // Admin token UI
+  const [token, setToken] = useState("");
+  const [tokenSaved, setTokenSaved] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const t = localStorage.getItem("ep_admin_token") || "";
+      setToken(t);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("ep_admin_token", token || "");
+      setTokenSaved(!!token);
+      const id = setTimeout(() => setTokenSaved(false), 1200);
+      return () => clearTimeout(id);
+    }
+  }, [token]);
+
+  // Form state
+  const [title, setTitle] = useState("");
+  const [role, setRole] = useState("");
+  const [location, setLocation] = useState("");
+  const [market, setMarket] = useState("");
+  const [seniority, setSeniority] = useState("");
+  const [summary, setSummary] = useState("");
+  const [description, setDescription] = useState("");
+  const [confidential, setConfidential] = useState(false);
+
   const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [okMsg, setOkMsg] = useState<string | null>(null);
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitting(true);
-    setMessage(null);
     setError(null);
+    setOkMsg(null);
 
-    const fd = new FormData(e.currentTarget);
-    const payload = {
-      title: String(fd.get("title") || "").trim(),
-      role: String(fd.get("role") || "").trim(),
-      location: String(fd.get("location") || "").trim(),
-      market: String(fd.get("market") || "").trim(),
-      seniority: String(fd.get("seniority") || "").trim(),
-      summary: String(fd.get("summary") || "").trim(),
-      description: String(fd.get("description") || "").trim(),
-      confidential:
-        fd.get("confidential") === "on" ? "YES" : (String(fd.get("confidential") || "") || "NO"),
-    };
-
-    if (!payload.title) {
-      setError("Please provide a Title.");
-      setSubmitting(false);
+    if (!token) {
+      setError("Missing admin token. Paste it above.");
       return;
     }
 
+    setSubmitting(true);
     try {
+      const body = {
+        title: title.trim(),
+        role: role.trim(),
+        location: location.trim(),
+        market: market.trim(),
+        seniority: seniority.trim(),
+        summary: summary.trim(),
+        description: description.trim(),
+        confidential,
+      };
+
       const res = await fetch("/api/jobs/create", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+
+          // Primary (your API accepted this via curl):
+          Authorization: `Bearer ${token}`,
+
+          // Fallback (just in case the route checks this header name):
+          "x-admin-token": token,
+        },
+        body: JSON.stringify(body),
       });
 
       const json = await res.json().catch(() => ({}));
-      if (!res.ok || json?.ok === false) {
-        throw new Error(json?.error || `Request failed (${res.status})`);
+
+      if (!res.ok) {
+        setError(json?.error || `Unauthorized (${res.status})`);
+        return;
       }
 
-      setMessage("✅ Job posted to Google Sheets.");
-      (e.target as HTMLFormElement).reset();
+      setOkMsg("Job posted ✅");
+      // optional: clear the form
+      setTitle("");
+      setRole("");
+      setLocation("");
+      setMarket("");
+      setSeniority("");
+      setSummary("");
+      setDescription("");
+      setConfidential(false);
     } catch (err: any) {
-      setError(err?.message || "Something went wrong.");
+      setError(err?.message || "Network error");
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <main className="min-h-[calc(100vh-64px)] bg-neutral-950 text-neutral-100">
-      {/* Hero */}
-      <section className="border-b border-white/5 bg-gradient-to-b from-neutral-900/60 to-neutral-950">
-        <div className="mx-auto max-w-6xl px-6 py-12 sm:py-16">
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            Hiring Managers
-          </h1>
-          <p className="mt-3 max-w-2xl text-neutral-300">
-            Create a new role. Entries are saved to your <em>Jobs</em> sheet and
-            available instantly on the site.
-          </p>
+    <div className="max-w-3xl mx-auto p-6">
+      <h1 className="text-3xl font-semibold mb-2">Hiring Managers</h1>
+      <p className="text-sm text-neutral-400 mb-6">
+        Create a new role. Entries are saved to your <em>Jobs</em> sheet and
+        available instantly on the site.
+      </p>
+
+      {/* --- Admin Token box --- */}
+      <div className="mb-4">
+        <label className="block text-sm text-neutral-300 mb-1">Admin Token</label>
+        <input
+          className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
+          placeholder="EP_admin_…"
+          value={token}
+          onChange={(e) => setToken(e.target.value)}
+        />
+        <div className="text-xs mt-1">
+          {tokenSaved ? (
+            <span className="text-emerald-400">Saved to this browser</span>
+          ) : (
+            <span className="text-neutral-500">
+              Paste the value you set in Vercel (APP_ADMIN_TOKEN)
+            </span>
+          )}
         </div>
-      </section>
+      </div>
 
-      {/* Form */}
-      <section>
-        <div className="mx-auto max-w-3xl px-6 py-10">
-          <form
-            onSubmit={onSubmit}
-            className="form-dark mx-auto rounded-2xl border border-neutral-800 bg-neutral-900/60 p-6 backdrop-blur space-y-6"
-          >
-            {/* Alerts */}
-            {message && (
-              <div className="rounded-lg border border-teal-700/40 bg-teal-900/20 px-4 py-3 text-sm text-teal-200">
-                {message}
-              </div>
-            )}
-            {error && (
-              <div className="rounded-lg border border-red-700/40 bg-red-900/20 px-4 py-3 text-sm text-red-200">
-                {error}
-              </div>
-            )}
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-200">
-                Title <span className="text-neutral-400">(required)</span>
-              </label>
-              <input
-                name="title"
-                placeholder="e.g. Private Banker – Zurich"
-                required
-                className="w-full rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 placeholder-neutral-400
-                           focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 transition"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-neutral-200">
-                  Role
-                </label>
-                <input
-                  name="role"
-                  placeholder="Private Banker"
-                  className="w-full rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 placeholder-neutral-400
-                             focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 transition"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-neutral-200">
-                  Location
-                </label>
-                <input
-                  name="location"
-                  placeholder="Zurich"
-                  className="w-full rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 placeholder-neutral-400
-                             focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 transition"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-neutral-200">
-                  Market
-                </label>
-                <input
-                  name="market"
-                  placeholder="CH Onshore"
-                  className="w-full rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 placeholder-neutral-400
-                             focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 transition"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-neutral-200">
-                  Seniority
-                </label>
-                <input
-                  name="seniority"
-                  placeholder="Senior"
-                  className="w-full rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 placeholder-neutral-400
-                             focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 transition"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-200">
-                Summary
-              </label>
-              <input
-                name="summary"
-                placeholder="Short one-line summary"
-                className="w-full rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 placeholder-neutral-400
-                           focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 transition"
-              />
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-200">
-                Description
-              </label>
-              <textarea
-                name="description"
-                rows={6}
-                placeholder="Full description…"
-                className="w-full rounded-lg border border-neutral-700 bg-neutral-900 text-neutral-100 placeholder-neutral-400
-                           focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 transition"
-              />
-            </div>
-
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                name="confidential"
-                id="confidential"
-                className="h-4 w-4 rounded border-neutral-700 bg-neutral-900 text-teal-500 focus:ring-teal-400"
-              />
-              <label htmlFor="confidential" className="text-sm text-neutral-200">
-                Confidential
-              </label>
-            </div>
-
-            <div className="pt-1">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="inline-flex items-center justify-center rounded-lg bg-teal-600 px-4 py-2 font-medium text-white
-                           hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-400 disabled:opacity-60 transition"
-              >
-                {submitting ? "Posting…" : "Post Job"}
-              </button>
-            </div>
-          </form>
-
-          <p className="mt-4 text-xs text-neutral-400">
-            Saved to your Google Sheet “Jobs” tab via service account.
-          </p>
+      {error && (
+        <div className="mb-4 rounded border border-red-600 bg-red-950/40 text-red-300 p-3">
+          {error}
         </div>
-      </section>
-    </main>
+      )}
+      {okMsg && (
+        <div className="mb-4 rounded border border-emerald-700 bg-emerald-900/30 text-emerald-300 p-3">
+          {okMsg}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
+          placeholder="e.g. Private Banker – Zurich"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <input
+            className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
+            placeholder="Role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            required
+          />
+          <input
+            className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
+            placeholder="Location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            required
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <input
+            className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
+            placeholder="Market"
+            value={market}
+            onChange={(e) => setMarket(e.target.value)}
+            required
+          />
+          <input
+            className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
+            placeholder="Seniority"
+            value={seniority}
+            onChange={(e) => setSeniority(e.target.value)}
+            required
+          />
+        </div>
+        <input
+          className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
+          placeholder="Short one-line summary"
+          value={summary}
+          onChange={(e) => setSummary(e.target.value)}
+        />
+        <textarea
+          className="w-full p-2 rounded bg-neutral-800 border border-neutral-700"
+          placeholder="Full description…"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={6}
+        />
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={confidential}
+            onChange={(e) => setConfidential(e.target.checked)}
+          />
+          Confidential
+        </label>
+        <button
+          type="submit"
+          disabled={submitting}
+          className="px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60"
+        >
+          {submitting ? "Posting…" : "Post Job"}
+        </button>
+        <p className="text-xs text-neutral-500">
+          Saved to your Google Sheet “Jobs” tab via service account.
+        </p>
+      </form>
+    </div>
   );
 }
-
