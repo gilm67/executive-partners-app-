@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-// import { Resend } from "resend";
-// const resend = new Resend(process.env.RESEND_API_KEY);
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 type ContactPayload = {
   name: string;
@@ -18,7 +19,8 @@ export async function POST(req: Request) {
 
     // --- Anti-spam honeypot ---
     if (data.website) {
-      return NextResponse.json({ ok: true }, { status: 200 }); // bot, drop silently
+      // Bot likely filled the hidden field; accept but do nothing
+      return NextResponse.json({ ok: true }, { status: 200 });
     }
 
     // --- Required fields ---
@@ -26,6 +28,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
+    // Build a clean payload
     const payload: ContactPayload = {
       name: data.name.trim(),
       email: data.email.trim(),
@@ -35,24 +38,31 @@ export async function POST(req: Request) {
       source: data.source || "jobs.execpartners.ch/contact",
     };
 
-    // // Uncomment to send via Resend
-    // const to = process.env.CONTACT_TO_EMAIL;
-    // if (!to) throw new Error("CONTACT_TO_EMAIL env var not set");
-    // await resend.emails.send({
-    //   from: "Executive Partners <no-reply@execpartners.ch>",
-    //   to,
-    //   subject: `New contact form: ${payload.name}`,
-    //   reply_to: payload.email,
-    //   text:
-    //     `Source: ${payload.source}\n` +
-    //     `Name: ${payload.name}\n` +
-    //     `Email: ${payload.email}\n` +
-    //     `Phone: ${payload.phone}\n` +
-    //     `Role: ${payload.role}\n\n` +
-    //     `${payload.message}\n`,
-    // });
+    // --- Send email via Resend ---
+    const to = process.env.CONTACT_TO_EMAIL;
+    if (!to) {
+      throw new Error("CONTACT_TO_EMAIL env var not set");
+    }
 
-    console.log("Contact form submission:", payload);
+    const result = await resend.emails.send({
+      from: "Executive Partners <recruiter@execpartners.ch>",
+      to,
+      subject: `New contact form: ${payload.name}`,
+      reply_to: payload.email,
+      text:
+        `Source: ${payload.source}\n` +
+        `Name: ${payload.name}\n` +
+        `Email: ${payload.email}\n` +
+        `Phone: ${payload.phone}\n` +
+        `Role: ${payload.role}\n\n` +
+        `${payload.message}\n`,
+    });
+
+    if (result.error) {
+      console.error("Resend error:", result.error);
+      return NextResponse.json({ error: "Email send failed" }, { status: 502 });
+    }
+
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (err: any) {
     console.error("Contact API error:", err);
