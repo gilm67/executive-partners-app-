@@ -28,6 +28,7 @@ function ok(data: any, status = 200) {
 
 export async function POST(req: Request) {
   try {
+    // auth (Bearer or x-admin-token)
     const token =
       req.headers.get("authorization")?.replace(/bearer\s+/i, "") ||
       req.headers.get("x-admin-token") ||
@@ -42,17 +43,17 @@ export async function POST(req: Request) {
 
     const redis = await getRedis();
 
+    // id + unique slug
     const id = `job:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
-    const slugBase = slugify(body.title);
-    let slug = slugBase || "job";
-    let i = 1;
-    while (await redis.exists(`jobs:by-slug:${slug}`)) {
-      slug = `${slugBase}-${i++}`;
+    const slugBase = slugify(body.title) || "job";
+    let slug = slugBase;
+    for (let i = 1; await redis.exists(`jobs:by-slug:${slug}`); i++) {
+      slug = `${slugBase}-${i}`;
     }
 
     const job = {
       id,
-      title: body.title,
+      title: body.title || "",
       role: body.role || "",
       location: body.location || "",
       market: body.market || "",
@@ -65,13 +66,19 @@ export async function POST(req: Request) {
       active: true,
     };
 
-    await redis.hSet(id, job as any);
+    // STRINGIFY everything for Redis hashes
+    const jobForRedis: Record<string, string> = Object.fromEntries(
+      Object.entries(job).map(([k, v]) => [k, String(v)])
+    );
+
+    // write
+    await redis.hSet(id, jobForRedis);
     await redis.set(`jobs:by-slug:${slug}`, id);
     await redis.zAdd("jobs:index", [{ score: Date.now(), value: id }]);
 
     return ok({ ok: true, id: { id, title: job.title, location: job.location, slug } });
-  } catch (err) {
-    console.error("jobs/create error:", err);
+  } catch (err: any) {
+    console.error("jobs/create error:", err?.message || err);
     return ok({ ok: false, error: "Server error" }, 500);
   }
 }
