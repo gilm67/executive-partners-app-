@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
 import { getRedis } from "@/lib/redis";
 
 export const dynamic = "force-dynamic";
@@ -10,15 +11,12 @@ async function getJobBySlug(slug: string) {
   if (!id) return null;
   const j = await redis.hGetAll(String(id));
   if (!j?.id || j.active === "false") return null;
-  return j;
+  return j as Record<string, string>;
 }
 
-export default async function JobDetailPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const job = await getJobBySlug(params.slug);
+export default async function Page({ params }: PageProps<{ slug: string }>) {
+  const { slug } = await params; // Next 15: params is a Promise
+  const job = await getJobBySlug(slug);
   if (!job) notFound();
 
   return (
