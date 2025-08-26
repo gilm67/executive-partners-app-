@@ -1,11 +1,35 @@
 import os
 import re
+import base64
+import json
+import tempfile
 from datetime import datetime
 
 import gspread
 import pandas as pd
 import streamlit as st
+# (kept for compatibility, not used directly anymore)
 from google.oauth2.service_account import Credentials
+
+# ===== Load service account from Fly secret (base64) =====
+# If you set GOOGLE_APPLICATION_CREDENTIALS_JSON as a Fly secret (base64 of your JSON),
+# we write it to a temp file and point GOOGLE_APPLICATION_CREDENTIALS to it so
+# gspread.service_account() can pick it up automatically.
+def _ensure_sa_from_env() -> str | None:
+    b64 = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+    if not b64:
+        return None
+    try:
+        data = base64.b64decode(b64)
+        fd, tmp = tempfile.mkstemp(suffix=".json")
+        with os.fdopen(fd, "wb") as f:
+            f.write(data)
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = tmp
+        return tmp
+    except Exception:
+        return None
+
+_SA_PATH = _ensure_sa_from_env()
 
 # ================== CONFIG ==================
 SCOPE = [
@@ -14,6 +38,7 @@ SCOPE = [
 ]
 SHEET_ID = "1A__yEhD_0LYQwBF45wTSbWqdkRe0HAdnnBSj70qgpic"
 WORKSHEET_NAME = "BP_Entries"
+# fallback to local file if no secret is present
 CREDS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "service_account.json")
 
 # Exact header order in your Google Sheet (row 1)
@@ -30,8 +55,16 @@ HEADER_ORDER = [
 # ================== SHEETS ==================
 def connect_sheet():
     try:
-        creds = Credentials.from_service_account_file(CREDS_PATH, scopes=SCOPE)
-        gc = gspread.authorize(creds)
+        # Prefer env-based credentials (set above); fall back to local file if present
+        if os.getenv("GOOGLE_APPLICATION_CREDENTIALS"):
+            gc = gspread.service_account()
+        elif os.path.exists(CREDS_PATH):
+            gc = gspread.service_account(filename=CREDS_PATH)
+        else:
+            raise FileNotFoundError(
+                "No service account found via env (GOOGLE_APPLICATION_CREDENTIALS) or local file."
+            )
+
         sh = gc.open_by_key(SHEET_ID)
         try:
             ws = sh.worksheet(WORKSHEET_NAME)
