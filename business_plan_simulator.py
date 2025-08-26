@@ -205,51 +205,77 @@ with st.container():
             except Exception as e:
                 st.error(f"Import failed: {e}")
 
-    with st.form(key="prospect_form", clear_on_submit=(st.session_state.edit_index == -1)):
+    # ---- Minimal, safe fix: keep inputs, validate, and behave like before ----
+    with st.form(key="prospect_form", clear_on_submit=False):
         f1, f2, f3, f4, f5 = st.columns([2,2,2,2,2])
+
+        # Pre-fill values depending on add vs edit
+        if st.session_state.edit_index == -1:
+            # add mode
+            default_name = ""
+            default_source = "Self Acquired"
+            default_wealth = 0.0
+            default_best = 0.0
+            default_worst = 0.0
+        else:
+            # edit mode
+            rec = st.session_state.prospects_list[st.session_state.edit_index]
+            default_name = rec.get("Name", "")
+            default_source = rec.get("Source", "Self Acquired")
+            default_wealth = float(rec.get("Wealth (M)", 0.0) or 0.0)
+            default_best = float(rec.get("Best NNM (M)", 0.0) or 0.0)
+            default_worst = float(rec.get("Worst NNM (M)", 0.0) or 0.0)
+
         with f1:
-            p_name = st.text_input("Name", value=("" if st.session_state.edit_index == -1
-                                                  else st.session_state.prospects_list[st.session_state.edit_index]["Name"]))
+            p_name = st.text_input("Name", value=default_name)
         with f2:
             options = ["Self Acquired","Inherited","Finder"]
-            p_source = st.selectbox(
-                "Source", options,
-                index=(0 if st.session_state.edit_index == -1
-                       else options.index(st.session_state.prospects_list[st.session_state.edit_index]["Source"]))
-            )
+            try:
+                idx = options.index(default_source)
+            except ValueError:
+                idx = 0
+            p_source = st.selectbox("Source", options, index=idx)
         with f3:
-            p_wealth = st.number_input("Wealth (M)", min_value=0.0, step=0.1,
-                                       value=(0.0 if st.session_state.edit_index == -1
-                                              else float(st.session_state.prospects_list[st.session_state.edit_index]["Wealth (M)"])))
+            p_wealth = st.number_input("Wealth (M)", min_value=0.0, step=0.1, value=default_wealth)
         with f4:
-            p_best = st.number_input("Best NNM (M)", min_value=0.0, step=0.1,
-                                     value=(0.0 if st.session_state.edit_index == -1
-                                            else float(st.session_state.prospects_list[st.session_state.edit_index]["Best NNM (M)"])))
+            p_best = st.number_input("Best NNM (M)", min_value=0.0, step=0.1, value=default_best)
         with f5:
-            p_worst = st.number_input("Worst NNM (M)", min_value=0.0, step=0.1,
-                                      value=(0.0 if st.session_state.edit_index == -1
-                                             else float(st.session_state.prospects_list[st.session_state.edit_index]["Worst NNM (M)"])))
+            p_worst = st.number_input("Worst NNM (M)", min_value=0.0, step=0.1, value=default_worst)
 
         c_add, c_update, c_cancel = st.columns([1,1,1])
         submitted_add = c_add.form_submit_button("➕ Add", disabled=(st.session_state.edit_index != -1))
         submitted_update = c_update.form_submit_button("💾 Update", disabled=(st.session_state.edit_index == -1))
         submitted_cancel = c_cancel.form_submit_button("✖ Cancel Edit", disabled=(st.session_state.edit_index == -1))
 
+    # Button handlers with validation and reliable reset
     if submitted_add:
-        st.session_state.prospects_list.append(
-            {"Name": p_name.strip(), "Source": p_source, "Wealth (M)": p_wealth, "Best NNM (M)": p_best, "Worst NNM (M)": p_worst}
-        )
-        st.success("Prospect added.")
+        if not p_name.strip():
+            st.error("Please provide a Name.")
+        else:
+            st.session_state.prospects_list.append(
+                {"Name": p_name.strip(), "Source": p_source, "Wealth (M)": float(p_wealth),
+                 "Best NNM (M)": float(p_best), "Worst NNM (M)": float(p_worst)}
+            )
+            st.success("Prospect added.")
+            st.rerun()
+
     if submitted_update:
-        idx = st.session_state.edit_index
-        st.session_state.prospects_list[idx] = {
-            "Name": p_name.strip(), "Source": p_source, "Wealth (M)": p_wealth, "Best NNM (M)": p_best, "Worst NNM (M)": p_worst
-        }
-        st.session_state.edit_index = -1
-        st.success("Prospect updated.")
+        if not p_name.strip():
+            st.error("Please provide a Name.")
+        else:
+            idx = st.session_state.edit_index
+            st.session_state.prospects_list[idx] = {
+                "Name": p_name.strip(), "Source": p_source, "Wealth (M)": float(p_wealth),
+                "Best NNM (M)": float(p_best), "Worst NNM (M)": float(p_worst)
+            }
+            st.session_state.edit_index = -1
+            st.success("Prospect updated.")
+            st.rerun()
+
     if submitted_cancel:
         st.session_state.edit_index = -1
         st.info("Edit cancelled.")
+        st.rerun()
 
     df_pros = pd.DataFrame(st.session_state.prospects_list,
                            columns=["Name","Source","Wealth (M)","Best NNM (M)","Worst NNM (M)"])
