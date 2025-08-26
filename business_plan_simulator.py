@@ -17,10 +17,8 @@ SCOPE = [
 ]
 SHEET_ID = "1A__yEhD_0LYQwBF45wTSbWqdkRe0HAdnnBSj70qgpic"
 WORKSHEET_NAME = "BP_Entries"
-# Local fallback if you also keep a JSON file in dev
 LOCAL_CREDS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "service_account.json")
 
-# Exact header order in your Google Sheet (row 1)
 HEADER_ORDER = [
     "Timestamp","Candidate Name","Candidate Email","Current Role","Candidate Location",
     "Current Employer","Current Market","Currency","Base Salary","Last Bonus",
@@ -31,21 +29,13 @@ HEADER_ORDER = [
     "Score","AI Evaluation Notes"
 ]
 
-# Exposed in UI for visibility
 SA_EMAIL = None
 
 
 # ================== SHEETS ==================
 def _credentials_from_env_or_file():
-    """
-    Build Google Credentials in this order:
-      1) From Fly secret GOOGLE_APPLICATION_CREDENTIALS_JSON (base64 of the JSON).
-      2) From a local file (LOCAL_CREDS_PATH).
-    Returns (creds, sa_email) or raises an Exception.
-    """
     b64 = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
     if b64:
-        # Decode base64 → dict
         info = json.loads(base64.b64decode(b64).decode("utf-8"))
         sa_email = info.get("client_email")
         creds = Credentials.from_service_account_info(info, scopes=SCOPE)
@@ -53,7 +43,6 @@ def _credentials_from_env_or_file():
 
     if os.path.exists(LOCAL_CREDS_PATH):
         creds = Credentials.from_service_account_file(LOCAL_CREDS_PATH, scopes=SCOPE)
-        # read email for display
         try:
             with open(LOCAL_CREDS_PATH, "r", encoding="utf-8") as f:
                 info = json.load(f)
@@ -80,7 +69,6 @@ def connect_sheet():
         except gspread.exceptions.WorksheetNotFound:
             ws = sh.add_worksheet(title=WORKSHEET_NAME, rows=2000, cols=50)
 
-        # ensure header row exists and matches expected width (A..W)
         headers = ws.row_values(1)
         if not headers:
             ws.update("A1", [HEADER_ORDER])
@@ -97,7 +85,6 @@ def append_in_header_order(ws, data_dict: dict):
 
 
 def clean_trailing_columns(ws, first_bad_letter="X"):
-    # clear anything to the right of your intended columns
     ws.batch_clear([f"{first_bad_letter}2:ZZ"])
     ws.resize(cols=len(HEADER_ORDER))
 
@@ -120,7 +107,7 @@ with st.expander("🧹 Maintenance"):
         except Exception as e:
             st.error(f"Cleanup failed: {e}")
 
-# ---------- SECTION 1: Basic Candidate Information ----------
+# ---------- SECTION 1 ----------
 with st.container():
     st.markdown("---")
     st.subheader("1️⃣ Basic Candidate Information")
@@ -160,7 +147,7 @@ with st.container():
         current_number_clients = st.number_input("Current Number of Clients *", min_value=0)
         current_assets = st.number_input("Current Assets Under Management (in million CHF) *", min_value=0.0, step=0.1)
 
-# ---------- SECTION 2: Net New Money Projection ----------
+# ---------- SECTION 2 ----------
 with st.container():
     st.markdown("---")
     st.subheader("2️⃣ Net New Money Projection over 3 years")
@@ -174,72 +161,26 @@ with st.container():
     with d2: proj_clients_y2 = st.number_input("Projected Clients Year 2", min_value=0)
     with d3: proj_clients_y3 = st.number_input("Projected Clients Year 3", min_value=0)
 
-# ---------- SECTION 3: Enhanced NNA / Prospects Table ----------
+# ---------- SECTION 3 ----------
 with st.container():
     st.markdown("---")
     st.subheader("3️⃣ Enhanced NNA / Prospects Table")
     st.info("List all clients/prospects; the TOTAL Best Case NNM should match NNM Year 1 for consistency.")
 
-    # --- state init ---
+    # state
     if "prospects_list" not in st.session_state:
         st.session_state.prospects_list = []
     if "edit_index" not in st.session_state:
         st.session_state.edit_index = -1
-
-    # input field state (keys ensure values persist across reruns)
-    if "p_name" not in st.session_state:
-        st.session_state.p_name = ""
-    if "p_source" not in st.session_state:
-        st.session_state.p_source = "Self Acquired"
-    if "p_wealth" not in st.session_state:
-        st.session_state.p_wealth = 0.0
-    if "p_best" not in st.session_state:
-        st.session_state.p_best = 0.0
-    if "p_worst" not in st.session_state:
-        st.session_state.p_worst = 0.0
-
-    # handlers (minimal logic; keeps structure identical)
-    def _reset_fields():
-        st.session_state.p_name = ""
-        st.session_state.p_source = "Self Acquired"
-        st.session_state.p_wealth = 0.0
-        st.session_state.p_best = 0.0
-        st.session_state.p_worst = 0.0
-
-    def _add_prospect():
-        name = (st.session_state.p_name or "").strip()
-        if name == "":
-            # silent allow empty like before (or add a toast); keep behavior minimal
-            pass
-        st.session_state.prospects_list.append({
-            "Name": name,
-            "Source": st.session_state.p_source,
-            "Wealth (M)": float(st.session_state.p_wealth or 0.0),
-            "Best NNM (M)": float(st.session_state.p_best or 0.0),
-            "Worst NNM (M)": float(st.session_state.p_worst or 0.0),
-        })
-        _reset_fields()
-        st.session_state.edit_index = -1
-        st.rerun()
-
-    def _update_prospect():
-        idx = st.session_state.edit_index
-        if 0 <= idx < len(st.session_state.prospects_list):
-            st.session_state.prospects_list[idx] = {
-                "Name": (st.session_state.p_name or "").strip(),
-                "Source": st.session_state.p_source,
-                "Wealth (M)": float(st.session_state.p_wealth or 0.0),
-                "Best NNM (M)": float(st.session_state.p_best or 0.0),
-                "Worst NNM (M)": float(st.session_state.p_worst or 0.0),
-            }
-        st.session_state.edit_index = -1
-        _reset_fields()
-        st.rerun()
-
-    def _cancel_edit():
-        st.session_state.edit_index = -1
-        _reset_fields()
-        st.rerun()
+    # field state (so values persist reliably inside form)
+    for k, v in {
+        "p_name": "",
+        "p_source": "Self Acquired",
+        "p_wealth": 0.0,
+        "p_best": 0.0,
+        "p_worst": 0.0,
+    }.items():
+        st.session_state.setdefault(k, v)
 
     with st.expander("📥 Import prospects from CSV (columns: Name, Source, Wealth (M), Best NNM (M), Worst NNM (M))"):
         up = st.file_uploader("Upload CSV", type=["csv"])
@@ -261,24 +202,15 @@ with st.container():
             except Exception as e:
                 st.error(f"Import failed: {e}")
 
-    # form UI (unchanged visually)
+    # --- form (unchanged visually). We give keys and read from session_state on submit. ---
     with st.form(key="prospect_form", clear_on_submit=False):
         f1, f2, f3, f4, f5 = st.columns([2,2,2,2,2])
         with f1:
-            st.text_input(
-                "Name",
-                key="p_name",
-                placeholder="",
-            )
+            st.text_input("Name", key="p_name")
         with f2:
             options = ["Self Acquired","Inherited","Finder"]
-            # keep previously selected source
-            st.selectbox(
-                "Source",
-                options,
-                key="p_source",
-                index=options.index(st.session_state.p_source) if st.session_state.p_source in options else 0,
-            )
+            st.selectbox("Source", options, key="p_source",
+                         index=options.index(st.session_state.p_source) if st.session_state.p_source in options else 0)
         with f3:
             st.number_input("Wealth (M)", min_value=0.0, step=0.1, key="p_wealth")
         with f4:
@@ -287,24 +219,45 @@ with st.container():
             st.number_input("Worst NNM (M)", min_value=0.0, step=0.1, key="p_worst")
 
         c_add, c_update, c_cancel = st.columns([1,1,1])
-        # use on_click handlers so the list updates reliably
-        c_add.form_submit_button(
-            "➕ Add",
-            on_click=_add_prospect,
-            disabled=(st.session_state.edit_index != -1),
-        )
-        c_update.form_submit_button(
-            "💾 Update",
-            on_click=_update_prospect,
-            disabled=(st.session_state.edit_index == -1),
-        )
-        c_cancel.form_submit_button(
-            "✖ Cancel Edit",
-            on_click=_cancel_edit,
-            disabled=(st.session_state.edit_index == -1),
-        )
+        submitted_add = c_add.form_submit_button("➕ Add", disabled=(st.session_state.edit_index != -1))
+        submitted_update = c_update.form_submit_button("💾 Update", disabled=(st.session_state.edit_index == -1))
+        submitted_cancel = c_cancel.form_submit_button("✖ Cancel Edit", disabled=(st.session_state.edit_index == -1))
 
-    # table & row actions
+    # handle form submit results using values from session_state keys
+    if submitted_add:
+        st.session_state.prospects_list.append({
+            "Name": (st.session_state.p_name or "").strip(),
+            "Source": st.session_state.p_source,
+            "Wealth (M)": float(st.session_state.p_wealth or 0.0),
+            "Best NNM (M)": float(st.session_state.p_best or 0.0),
+            "Worst NNM (M)": float(st.session_state.p_worst or 0.0),
+        })
+        # clear fields only after adding
+        st.session_state.p_name = ""
+        st.session_state.p_source = "Self Acquired"
+        st.session_state.p_wealth = 0.0
+        st.session_state.p_best = 0.0
+        st.session_state.p_worst = 0.0
+        st.rerun()
+
+    if submitted_update:
+        idx = st.session_state.edit_index
+        if 0 <= idx < len(st.session_state.prospects_list):
+            st.session_state.prospects_list[idx] = {
+                "Name": (st.session_state.p_name or "").strip(),
+                "Source": st.session_state.p_source,
+                "Wealth (M)": float(st.session_state.p_wealth or 0.0),
+                "Best NNM (M)": float(st.session_state.p_best or 0.0),
+                "Worst NNM (M)": float(st.session_state.p_worst or 0.0),
+            }
+        st.session_state.edit_index = -1
+        st.rerun()
+
+    if submitted_cancel:
+        st.session_state.edit_index = -1
+        st.rerun()
+
+    # table and row actions (same visuals)
     df_pros = pd.DataFrame(
         st.session_state.prospects_list,
         columns=["Name","Source","Wealth (M)","Best NNM (M)","Worst NNM (M)"],
@@ -321,18 +274,16 @@ with st.container():
             if colE.button("✏️ Edit", key=f"edit_{i}"):
                 st.session_state.edit_index = i
                 sel = st.session_state.prospects_list[i]
-                st.session_state.p_name  = sel["Name"]
+                st.session_state.p_name = sel["Name"]
                 st.session_state.p_source = sel["Source"]
                 st.session_state.p_wealth = float(sel["Wealth (M)"])
-                st.session_state.p_best   = float(sel["Best NNM (M)"])
-                st.session_state.p_worst  = float(sel["Worst NNM (M)"])
+                st.session_state.p_best = float(sel["Best NNM (M)"])
+                st.session_state.p_worst = float(sel["Worst NNM (M)"])
                 st.rerun()
             if colF.button("🗑 Delete", key=f"del_{i}"):
                 del st.session_state.prospects_list[i]
-                # if we were editing this row, cancel edit
                 if st.session_state.edit_index == i:
                     st.session_state.edit_index = -1
-                    _reset_fields()
                 st.rerun()
 
     total_row = pd.DataFrame([{
@@ -349,11 +300,10 @@ with st.container():
 
     st.dataframe(df_display.style.apply(_highlight_total, axis=1), use_container_width=True)
 
-    # Live delta vs NNM Y1
     best_sum = float(df_pros["Best NNM (M)"].sum()) if not df_pros.empty else 0.0
     st.caption(f"Δ Best NNM vs NNM Y1: {best_sum - float(nnm_y1 or 0.0):+.1f} M")
 
-# ---------- SECTION 4: Revenue, Costs & Net Margin Analysis ----------
+# ---------- SECTION 4 ----------
 with st.container():
     st.markdown("---")
     st.subheader("4️⃣ Revenue, Costs & Net Margin Analysis")
@@ -364,18 +314,15 @@ with st.container():
     roa_y2 = roa_cols[1].number_input("ROA % Year 2", min_value=0.0, value=1.0, step=0.1)
     roa_y3 = roa_cols[2].number_input("ROA % Year 3", min_value=0.0, value=1.0, step=0.1)
 
-    # Revenues (from NNM & ROA)
     rev1 = nnm_y1 * roa_y1 / 100 * 1_000_000
     rev2 = nnm_y2 * roa_y2 / 100 * 1_000_000
     rev3 = nnm_y3 * roa_y3 / 100 * 1_000_000
 
-    # Cumulative Gross Revenue
     gross1 = rev1
     gross2 = rev1 + rev2
     gross3 = rev2 + rev3
     gross_total = rev1 + rev2 + rev3
 
-    # Costs & Net Margin
     fixed_cost = base_salary * 1.25
     total_costs = fixed_cost * 3
     nm1 = gross1 - fixed_cost
@@ -399,7 +346,7 @@ with st.container():
     with col_chart:
         st.bar_chart(df_rev.set_index("Year")[["Gross Revenue", "Net Margin"]])
 
-# ---------- SECTION 5: AI Candidate Analysis for Recruiter ----------
+# ---------- SECTION 5 ----------
 with st.container():
     st.markdown("---")
     st.subheader("5️⃣ AI Candidate Analysis for Recruiter")
@@ -413,7 +360,6 @@ with st.container():
     total_nnm_3y = float(nnm_y1 + nnm_y2 + nnm_y3)
     avg_roa = float((roa_y1 + roa_y2 + roa_y3) / 3)
 
-    # AUM thresholds
     if current_market == "CH Onshore":
         aum_min = 200.0
     else:
@@ -424,7 +370,6 @@ with st.container():
     score = 0
     reasons_pos, reasons_neg, flags = [], [], []
 
-    # 1) Experience (2)
     if years_experience >= 7:
         score += 2; reasons_pos.append("Experience ≥7 years in market")
     elif years_experience >= 6:
@@ -432,7 +377,6 @@ with st.container():
     else:
         reasons_neg.append("Experience <6 years")
 
-    # 2) AUM vs threshold (2)
     if current_assets >= aum_min:
         if current_market == "CH Onshore" and current_assets >= 250:
             score += 2; reasons_pos.append("AUM meets CH 250M target")
@@ -441,7 +385,6 @@ with st.container():
     else:
         reasons_neg.append(f"AUM shortfall: {aum_min - current_assets:.0f}M")
 
-    # 3) Compensation signal (2)
     if base_salary > 200_000 and last_bonus > 100_000:
         score += 2; reasons_pos.append("Comp indicates hunter profile")
     elif base_salary <= 150_000 and last_bonus <= 50_000:
@@ -449,7 +392,6 @@ with st.container():
     else:
         flags.append("Comp neutral – clarify origin of book")
 
-    # 4) ROA quality (2)
     if avg_roa >= 1.0:
         score += 2; reasons_pos.append(f"Avg ROA {avg_roa:.2f}% (excellent)")
     elif avg_roa >= 0.8:
@@ -457,7 +399,6 @@ with st.container():
     else:
         reasons_neg.append(f"Avg ROA {avg_roa:.2f}% is low")
 
-    # 5) Client load (1)
     if current_number_clients == 0:
         flags.append("Clients not provided")
     elif current_number_clients > 80:
@@ -465,7 +406,6 @@ with st.container():
     else:
         score += 1; reasons_pos.append("Client load appropriate (≤80)")
 
-    # 6) Prospects consistency vs NNM Y1 (1)
     nnm_y1_val = float(nnm_y1) if nnm_y1 is not None else 0.0
     best_sum = float(df_pros["Best NNM (M)"].sum()) if not df_pros.empty else 0.0
     tol = max(0.0, tolerance_pct) / 100.0
@@ -476,13 +416,11 @@ with st.container():
     else:
         reasons_neg.append(f"Prospects {best_sum:.1f}M vs NNM Y1 {nnm_y1_val:.1f}M (> {tolerance_pct}% dev)")
 
-    # 7) 3Y NNM ambition (2)
     if total_nnm_3y >= nnm_min_3y:
         score += 2; reasons_pos.append(f"3Y NNM {total_nnm_3y:.1f}M ≥ target {nnm_min_3y:.0f}M")
     else:
         reasons_neg.append(f"3Y NNM {total_nnm_3y:.1f}M below {nnm_min_3y:.0f}M")
 
-    # Verdict
     if score >= 7:
         verdict = "🟢 Strong Candidate"
     elif score >= 4:
@@ -517,7 +455,7 @@ with st.container():
     with m3: st.metric("3Y NNM (M)", f"{total_nnm_3y:.1f}")
     with m4: st.metric("Clients", f"{int(current_number_clients)}")
 
-# ---------- SECTION 6: Summary & Save Entry ----------
+# ---------- SECTION 6 ----------
 with st.container():
     st.markdown("---")
     st.subheader("6️⃣ Summary & Save Entry")
@@ -574,7 +512,6 @@ with st.container():
                 append_in_header_order(worksheet, data_dict)
                 st.success("✅ Entry saved to Google Sheet in correct order")
 
-                # confirmation preview
                 preview_cols = [
                     "Candidate Name","Candidate Email","Current Role","Candidate Location",
                     "Current Employer","Current Market","Currency","Base Salary","Last Bonus",
