@@ -1,0 +1,7 @@
+streamlit==1.37.0
+pandas
+numpy
+reportlab
+gspread
+oauth2client
+google-auth
