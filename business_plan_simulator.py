@@ -1,4 +1,7 @@
+# business_plan_simulator.py
+
 import os
+import re
 import json
 import base64
 from datetime import datetime
@@ -16,8 +19,10 @@ SCOPE = [
 ]
 SHEET_ID = "1A__yEhD_0LYQwBF45wTSbWqdkRe0HAdnnBSj70qgpic"
 WORKSHEET_NAME = "BP_Entries"
+# Local fallback if you also keep a JSON file in dev
 LOCAL_CREDS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "service_account.json")
 
+# Exact header order in your Google Sheet (row 1)
 HEADER_ORDER = [
     "Timestamp","Candidate Name","Candidate Email","Current Role","Candidate Location",
     "Current Employer","Current Market","Currency","Base Salary","Last Bonus",
@@ -28,17 +33,21 @@ HEADER_ORDER = [
     "Score","AI Evaluation Notes"
 ]
 
-SA_EMAIL = None  # displayed in UI
+# Exposed in UI for visibility
+SA_EMAIL = None
 
 
 # ================== SHEETS ==================
 def _credentials_from_env_or_file():
     """
-    1) From Fly secret GOOGLE_APPLICATION_CREDENTIALS_JSON (base64 JSON)
-    2) Else from LOCAL_CREDS_PATH
+    Build Google Credentials in this order:
+      1) From Fly secret GOOGLE_APPLICATION_CREDENTIALS_JSON (base64 of the JSON).
+      2) From a local file (LOCAL_CREDS_PATH).
+    Returns (creds, sa_email) or raises an Exception.
     """
     b64 = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
     if b64:
+        # Decode base64 → dict
         info = json.loads(base64.b64decode(b64).decode("utf-8"))
         sa_email = info.get("client_email")
         creds = Credentials.from_service_account_info(info, scopes=SCOPE)
@@ -46,6 +55,7 @@ def _credentials_from_env_or_file():
 
     if os.path.exists(LOCAL_CREDS_PATH):
         creds = Credentials.from_service_account_file(LOCAL_CREDS_PATH, scopes=SCOPE)
+        # read email for display
         try:
             with open(LOCAL_CREDS_PATH, "r", encoding="utf-8") as f:
                 info = json.load(f)
@@ -65,14 +75,18 @@ def connect_sheet():
     try:
         creds, SA_EMAIL = _credentials_from_env_or_file()
         gc = gspread.authorize(creds)
+
         sh = gc.open_by_key(SHEET_ID)
         try:
             ws = sh.worksheet(WORKSHEET_NAME)
         except gspread.exceptions.WorksheetNotFound:
             ws = sh.add_worksheet(title=WORKSHEET_NAME, rows=2000, cols=50)
+
+        # ensure header row exists and matches expected width (A..W)
         headers = ws.row_values(1)
         if not headers:
             ws.update("A1", [HEADER_ORDER])
+
         return ws, "✅ Connected to Google Sheet"
     except Exception as e:
         return None, f"⚠️ Could not connect to Google Sheet: {e}"
@@ -85,6 +99,7 @@ def append_in_header_order(ws, data_dict: dict):
 
 
 def clean_trailing_columns(ws, first_bad_letter="X"):
+    # clear anything to the right of your intended columns
     ws.batch_clear([f"{first_bad_letter}2:ZZ"])
     ws.resize(cols=len(HEADER_ORDER))
 
@@ -161,143 +176,87 @@ with st.container():
     with d2: proj_clients_y2 = st.number_input("Projected Clients Year 2", min_value=0)
     with d3: proj_clients_y3 = st.number_input("Projected Clients Year 3", min_value=0)
 
-# ---------- SECTION 3: Enhanced NNA / Prospects Table ----------
+# ---------- SECTION 3: Enhanced NNA / Prospects Table (FAST INLINE EDITING) ----------
 with st.container():
     st.markdown("---")
     st.subheader("3️⃣ Enhanced NNA / Prospects Table")
-    st.info("List all clients/prospects; the TOTAL Best Case NNM should match NNM Year 1 for consistency.")
+    st.info("Type directly in the table. Use the last empty row to add new prospects. Autosave keeps your edits without extra clicks.")
 
-    # persistent list & edit index
-    if "prospects_list" not in st.session_state:
-        st.session_state.prospects_list = []
-    if "edit_index" not in st.session_state:
-        st.session_state.edit_index = -1
+    # Initialize state as a DataFrame (so we can use st.data_editor smoothly)
+    COLS = ["Name", "Source", "Wealth (M)", "Best NNM (M)", "Worst NNM (M)"]
+    if "prospects_df" not in st.session_state:
+        st.session_state.prospects_df = pd.DataFrame(columns=COLS)
 
-    # defaults for form fields (kept in state to avoid key mutation issues)
-    defaults = {"p_name": "", "p_source": "Self Acquired", "p_wealth": 0.0, "p_best": 0.0, "p_worst": 0.0}
-    for k, v in defaults.items():
-        st.session_state.setdefault(k, v)
-
-    # ---- ACTIONS (process BEFORE rendering inputs) ----
-    if "_do_add" in st.session_state:
-        payload, add_another = st.session_state.pop("_do_add")
-        st.session_state.prospects_list.append(payload)
-        if add_another:
-            for k, v in defaults.items():
-                st.session_state[k] = v
-
-    if "_do_update" in st.session_state:
-        idx, payload = st.session_state.pop("_do_update")
-        if 0 <= idx < len(st.session_state.prospects_list):
-            st.session_state.prospects_list[idx] = payload
-        st.session_state.edit_index = -1
-        for k, v in defaults.items():
-            st.session_state[k] = v
-
-    if st.session_state.pop("_do_cancel", False):
-        st.session_state.edit_index = -1
-        for k, v in defaults.items():
-            st.session_state[k] = v
-
-    # ---- CSV import ----
+    # CSV import (adds rows to the editor)
     with st.expander("📥 Import prospects from CSV (columns: Name, Source, Wealth (M), Best NNM (M), Worst NNM (M))"):
-        up = st.file_uploader("Upload CSV", type=["csv"])
+        up = st.file_uploader("Upload CSV", type=["csv"], key="prospects_csv_uploader")
         if up is not None:
             try:
                 df_up = pd.read_csv(up)
                 df_up = df_up.rename(columns=lambda x: x.strip())
-                needed = ["Name","Source","Wealth (M)","Best NNM (M)","Worst NNM (M)"]
+                needed = COLS
                 for c in needed:
                     if c not in df_up.columns:
                         st.error(f"Missing column in CSV: {c}")
                         df_up = None
                         break
                 if df_up is not None:
-                    for c in ["Wealth (M)","Best NNM (M)","Worst NNM (M)"]:
+                    for c in ["Wealth (M)", "Best NNM (M)", "Worst NNM (M)"]:
                         df_up[c] = pd.to_numeric(df_up[c], errors="coerce").fillna(0.0)
-                    st.session_state.prospects_list += df_up[needed].to_dict(orient="records")
+                    st.session_state.prospects_df = pd.concat(
+                        [st.session_state.prospects_df, df_up[needed]], ignore_index=True
+                    )
                     st.success(f"Imported {len(df_up)} prospects.")
             except Exception as e:
                 st.error(f"Import failed: {e}")
 
-    # ---- Single form (Enter submits) ----
-    with st.form("prospect_form", clear_on_submit=False):
-        f1, f2, f3, f4, f5 = st.columns([2,2,2,2,2])
-        with f1:
-            p_name = st.text_input("Name", key="p_name", placeholder="Type a name and hit Enter")
-        with f2:
-            options = ["Self Acquired","Inherited","Finder"]
-            p_source = st.selectbox("Source", options, key="p_source")
-        with f3:
-            p_wealth = st.number_input("Wealth (M)", min_value=0.0, step=0.1, key="p_wealth")
-        with f4:
-            p_best = st.number_input("Best NNM (M)", min_value=0.0, step=0.1, key="p_best")
-        with f5:
-            p_worst = st.number_input("Worst NNM (M)", min_value=0.0, step=0.1, key="p_worst")
+    # Editor options
+    autosave = st.checkbox("Autosave edits", value=True, help="If on, edits persist immediately.")
+    source_options = ["Self Acquired", "Inherited", "Finder"]
 
-        cols = st.columns([1,1,2])
-        with cols[0]:
-            submit_label = "💾 Update" if st.session_state.edit_index != -1 else "➕ Add"
-        with cols[1]:
-            add_another = st.checkbox(
-                "Add another",
-                value=True if st.session_state.edit_index == -1 else False,
-                help="Keep the form ready for the next entry after submit."
-            )
-        submitted = st.form_submit_button(submit_label)
-
-    if submitted:
-        name = (st.session_state.p_name or "").strip()
-        if not name:
-            st.warning("Please enter a Name.")
-        else:
-            payload = {
-                "Name": name,
-                "Source": st.session_state.p_source,
-                "Wealth (M)": float(st.session_state.p_wealth or 0.0),
-                "Best NNM (M)": float(st.session_state.p_best or 0.0),
-                "Worst NNM (M)": float(st.session_state.p_worst or 0.0),
-            }
-            if st.session_state.edit_index == -1:
-                st.session_state._do_add = (payload, add_another)
-            else:
-                st.session_state._do_update = (st.session_state.edit_index, payload)
-            st.rerun()
-
-    cancel_clicked = st.button("✖ Cancel Edit", disabled=(st.session_state.edit_index == -1))
-    if cancel_clicked:
-        st.session_state._do_cancel = True
-        st.rerun()
-
-    # ---- Table & row actions ----
-    df_pros = pd.DataFrame(
-        st.session_state.prospects_list,
-        columns=["Name","Source","Wealth (M)","Best NNM (M)","Worst NNM (M)"],
+    edited_df = st.data_editor(
+        st.session_state.prospects_df,
+        num_rows="dynamic",
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Name": st.column_config.TextColumn(required=False, width="medium"),
+            "Source": st.column_config.SelectboxColumn(options=source_options, width="small"),
+            "Wealth (M)": st.column_config.NumberColumn(min_value=0.0, step=0.1, format="%.1f", width="small"),
+            "Best NNM (M)": st.column_config.NumberColumn(min_value=0.0, step=0.1, format="%.1f", width="small"),
+            "Worst NNM (M)": st.column_config.NumberColumn(min_value=0.0, step=0.1, format="%.1f", width="small"),
+        },
+        key="prospects_editor",
     )
 
-    if not df_pros.empty:
-        st.write(" ")
-        for i, row in df_pros.iterrows():
-            colA, colB, colC, colD, colE, colF = st.columns([2,2,2,2,1,1])
-            colA.write(row["Name"])
-            colB.write(row["Source"])
-            colC.write(f"{row['Wealth (M)']:,.1f}")
-            colD.write(f"{row['Best NNM (M)']:,.1f} / {row['Worst NNM (M)']:,.1f}")
-            if colE.button("✏️ Edit", key=f"edit_{i}"):
-                st.session_state.edit_index = i
-                sel = st.session_state.prospects_list[i]
-                st.session_state.p_name = sel["Name"]
-                st.session_state.p_source = sel["Source"]
-                st.session_state.p_wealth = float(sel["Wealth (M)"])
-                st.session_state.p_best = float(sel["Best NNM (M)"])
-                st.session_state.p_worst = float(sel["Worst NNM (M)"])
-                st.rerun()
-            if colF.button("🗑 Delete", key=f"del_{i}"):
-                del st.session_state.prospects_list[i]
-                if st.session_state.edit_index == i:
-                    st.session_state.edit_index = -1
-                st.rerun()
+    # Clean rows: drop fully empty rows, coerce numerics
+    def _sanitize(df: pd.DataFrame) -> pd.DataFrame:
+        if df is None or df.empty:
+            return pd.DataFrame(columns=COLS)
+        df = df.copy()
+        for c in ["Wealth (M)", "Best NNM (M)", "Worst NNM (M)"]:
+            df[c] = pd.to_numeric(df[c], errors="coerce").fillna(0.0)
+        # Remove rows with no Name AND no numbers (avoid saving accidental blanks)
+        mask_keep = (df["Name"].fillna("").str.strip() != "") | (
+            (df["Wealth (M)"] > 0) | (df["Best NNM (M)"] > 0) | (df["Worst NNM (M)"] > 0)
+        )
+        df = df[mask_keep].reset_index(drop=True)
+        # Normalize source
+        df["Source"] = df["Source"].where(df["Source"].isin(source_options), None)
+        return df
 
+    cleaned = _sanitize(edited_df)
+
+    if autosave:
+        st.session_state.prospects_df = cleaned
+        st.caption("💾 Edits autosaved.")
+    else:
+        if st.button("Save changes"):
+            st.session_state.prospects_df = cleaned
+            st.success("Saved changes to prospects.")
+
+    # Display totals and delta
+    df_pros = st.session_state.prospects_df
     total_row = pd.DataFrame([{
         "Name": "TOTAL",
         "Source": "",
@@ -312,6 +271,7 @@ with st.container():
 
     st.dataframe(df_display.style.apply(_highlight_total, axis=1), use_container_width=True)
 
+    # Live delta vs NNM Y1
     best_sum = float(df_pros["Best NNM (M)"].sum()) if not df_pros.empty else 0.0
     st.caption(f"Δ Best NNM vs NNM Y1: {best_sum - float(nnm_y1 or 0.0):+.1f} M")
 
@@ -326,15 +286,18 @@ with st.container():
     roa_y2 = roa_cols[1].number_input("ROA % Year 2", min_value=0.0, value=1.0, step=0.1)
     roa_y3 = roa_cols[2].number_input("ROA % Year 3", min_value=0.0, value=1.0, step=0.1)
 
+    # Revenues (from NNM & ROA)
     rev1 = nnm_y1 * roa_y1 / 100 * 1_000_000
     rev2 = nnm_y2 * roa_y2 / 100 * 1_000_000
     rev3 = nnm_y3 * roa_y3 / 100 * 1_000_000
 
+    # Cumulative Gross Revenue
     gross1 = rev1
     gross2 = rev1 + rev2
     gross3 = rev2 + rev3
     gross_total = rev1 + rev2 + rev3
 
+    # Costs & Net Margin
     fixed_cost = base_salary * 1.25
     total_costs = fixed_cost * 3
     nm1 = gross1 - fixed_cost
@@ -372,6 +335,7 @@ with st.container():
     total_nnm_3y = float(nnm_y1 + nnm_y2 + nnm_y3)
     avg_roa = float((roa_y1 + roa_y2 + roa_y3) / 3)
 
+    # AUM thresholds
     if current_market == "CH Onshore":
         aum_min = 200.0
     else:
@@ -382,6 +346,7 @@ with st.container():
     score = 0
     reasons_pos, reasons_neg, flags = [], [], []
 
+    # 1) Experience (2)
     if years_experience >= 7:
         score += 2; reasons_pos.append("Experience ≥7 years in market")
     elif years_experience >= 6:
@@ -389,6 +354,7 @@ with st.container():
     else:
         reasons_neg.append("Experience <6 years")
 
+    # 2) AUM vs threshold (2)
     if current_assets >= aum_min:
         if current_market == "CH Onshore" and current_assets >= 250:
             score += 2; reasons_pos.append("AUM meets CH 250M target")
@@ -397,6 +363,7 @@ with st.container():
     else:
         reasons_neg.append(f"AUM shortfall: {aum_min - current_assets:.0f}M")
 
+    # 3) Compensation signal (2)
     if base_salary > 200_000 and last_bonus > 100_000:
         score += 2; reasons_pos.append("Comp indicates hunter profile")
     elif base_salary <= 150_000 and last_bonus <= 50_000:
@@ -404,6 +371,7 @@ with st.container():
     else:
         flags.append("Comp neutral – clarify origin of book")
 
+    # 4) ROA quality (2)
     if avg_roa >= 1.0:
         score += 2; reasons_pos.append(f"Avg ROA {avg_roa:.2f}% (excellent)")
     elif avg_roa >= 0.8:
@@ -411,6 +379,7 @@ with st.container():
     else:
         reasons_neg.append(f"Avg ROA {avg_roa:.2f}% is low")
 
+    # 5) Client load (1)
     if current_number_clients == 0:
         flags.append("Clients not provided")
     elif current_number_clients > 80:
@@ -418,8 +387,9 @@ with st.container():
     else:
         score += 1; reasons_pos.append("Client load appropriate (≤80)")
 
+    # 6) Prospects consistency vs NNM Y1 (1)
     nnm_y1_val = float(nnm_y1) if nnm_y1 is not None else 0.0
-    best_sum = float(st.session_state.get("prospects_list") and pd.DataFrame(st.session_state.prospects_list)["Best NNM (M)"].sum() or 0.0)
+    best_sum = float(df_pros["Best NNM (M)"].sum()) if not df_pros.empty else 0.0
     tol = max(0.0, tolerance_pct) / 100.0
     if nnm_y1_val == 0.0 and best_sum == 0.0:
         flags.append("Prospects & NNM Y1 both zero")
@@ -428,11 +398,13 @@ with st.container():
     else:
         reasons_neg.append(f"Prospects {best_sum:.1f}M vs NNM Y1 {nnm_y1_val:.1f}M (> {tolerance_pct}% dev)")
 
-    if total_nnm_3y >= (100.0 if target_segment == "HNWI" else 200.0):
-        score += 2; reasons_pos.append(f"3Y NNM {total_nnm_3y:.1f}M ≥ target {(100.0 if target_segment=='HNWI' else 200.0):.0f}M")
+    # 7) 3Y NNM ambition (2)
+    if total_nnm_3y >= nnm_min_3y:
+        score += 2; reasons_pos.append(f"3Y NNM {total_nnm_3y:.1f}M ≥ target {nnm_min_3y:.0f}M")
     else:
-        reasons_neg.append(f"3Y NNM {total_nnm_3y:.1f}M below {(100.0 if target_segment=='HNWI' else 200.0):.0f}M")
+        reasons_neg.append(f"3Y NNM {total_nnm_3y:.1f}M below {nnm_min_3y:.0f}M")
 
+    # Verdict
     if score >= 7:
         verdict = "🟢 Strong Candidate"
     elif score >= 4:
@@ -464,7 +436,7 @@ with st.container():
     m1, m2, m3, m4 = st.columns(4)
     with m1: st.metric("AUM (M)", f"{current_assets:,.0f}")
     with m2: st.metric("Avg ROA %", f"{avg_roa:.2f}")
-    with m3: st.metric("3Y NNM (M)", f"{(nnm_y1+nnm_y2+nnm_y3):.1f}")
+    with m3: st.metric("3Y NNM (M)", f"{total_nnm_3y:.1f}")
     with m4: st.metric("Clients", f"{int(current_number_clients)}")
 
 # ---------- SECTION 6: Summary & Save Entry ----------
@@ -486,7 +458,12 @@ with st.container():
             st.warning("⚠️ Google Sheet connection not available.")
         else:
             total_rev_3y = (nnm_y1 * roa_y1 + nnm_y2 * roa_y2 + nnm_y3 * roa_y3) / 100 * 1_000_000
-            profit_margin_pct = ((total_rev_3y - (base_salary * 1.25 * 3)) / total_rev_3y * 100.0) if total_rev_3y > 0 else 0.0
+            profit_margin_pct = (
+                ((nnm_y1 * roa_y1 / 100 * 1_000_000) +
+                 (nnm_y2 * roa_y2 / 100 * 1_000_000) +
+                 (nnm_y3 * roa_y3 / 100 * 1_000_000))
+            )
+            profit_margin_pct = (((total_rev_3y - (base_salary * 1.25 * 3)) / total_rev_3y) * 100.0) if total_rev_3y > 0 else 0.0
             total_profit_3y = (
                 (nnm_y1 * roa_y1 / 100 * 1_000_000) +
                 (nnm_y2 * roa_y2 / 100 * 1_000_000) +
@@ -523,6 +500,7 @@ with st.container():
                 append_in_header_order(worksheet, data_dict)
                 st.success("✅ Entry saved to Google Sheet in correct order")
 
+                # confirmation preview
                 preview_cols = [
                     "Candidate Name","Candidate Email","Current Role","Candidate Location",
                     "Current Employer","Current Market","Currency","Base Salary","Last Bonus",
