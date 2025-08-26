@@ -1,89 +1,77 @@
 import { NextResponse } from "next/server";
-import { createJob } from "@/lib/sheets"; // must be exported from lib/sheets
+import { getRedis } from "@/lib/redis";
 
-export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function readToken(req: Request) {
-  const h = req.headers.get("authorization") || "";
-  if (h.toLowerCase().startsWith("bearer ")) return h.slice(7).trim();
-  const url = new URL(req.url);
-  const q = url.searchParams.get("token");
-  return q ? q.trim() : "";
+type JobInput = {
+  title: string;
+  role?: string;
+  location?: string;
+  market?: string;
+  seniority?: string;
+  summary?: string;
+  description?: string;
+  confidential?: boolean;
+};
+
+function slugify(s: string) {
+  return s
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
-export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const echo = url.searchParams.get("echo");
-  const hasEnv =
-    !!process.env.APP_ADMIN_TOKEN &&
-    !!process.env.SHEET_ID &&
-    (!!process.env.GOOGLE_PRIVATE_KEY_B64 || !!process.env.GOOGLE_PRIVATE_KEY) &&
-    !!process.env.GOOGLE_CLIENT_EMAIL;
-
-  if (echo) {
-    return NextResponse.json({
-      ok: true,
-      route: "jobs/create",
-      hasEnv,
-      tokenLen: (process.env.APP_ADMIN_TOKEN || "").length,
-    });
-  }
-  return NextResponse.json({ ok: true, route: "jobs/create" });
+function ok(data: any, status = 200) {
+  return NextResponse.json(data, { status });
 }
 
 export async function POST(req: Request) {
   try {
-    // auth
-    const supplied = readToken(req);
-    const server = process.env.APP_ADMIN_TOKEN || "";
-    if (!server) {
-      return NextResponse.json(
-        { ok: false, error: "Server missing APP_ADMIN_TOKEN" },
-        { status: 500 }
-      );
-    }
-    if (!supplied || supplied !== server) {
-      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    const token =
+      req.headers.get("authorization")?.replace(/bearer\s+/i, "") ||
+      req.headers.get("x-admin-token") ||
+      "";
+
+    if (!process.env.APP_ADMIN_TOKEN || token !== process.env.APP_ADMIN_TOKEN) {
+      return ok({ ok: false, error: "Unauthorized" }, 401);
     }
 
-    // body
-    let body: any;
-    try {
-      body = await req.json();
-    } catch {
-      return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
+    const body = (await req.json()) as JobInput;
+    if (!body?.title) return ok({ ok: false, error: "Missing title" }, 400);
+
+    const redis = await getRedis();
+
+    const id = `job:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
+    const slugBase = slugify(body.title);
+    let slug = slugBase || "job";
+    let i = 1;
+    while (await redis.exists(`jobs:by-slug:${slug}`)) {
+      slug = `${slugBase}-${i++}`;
     }
 
-    const title = (body.title ?? "").toString().trim();
-    if (!title) {
-      return NextResponse.json({ ok: false, error: "Missing 'title'" }, { status: 400 });
-    }
-
-    const payload = {
-      title,
-      role: (body.role ?? "").toString(),
-      location: (body.location ?? "").toString(),
-      market: (body.market ?? "").toString(),
-      seniority: (body.seniority ?? "").toString(),
-      summary: (body.summary ?? "").toString(),
-      description: (body.description ?? "").toString(),
-      confidential: (body.confidential ?? "").toString(),
+    const job = {
+      id,
+      title: body.title,
+      role: body.role || "",
+      location: body.location || "",
+      market: body.market || "",
+      seniority: body.seniority || "",
+      summary: body.summary || "",
+      description: body.description || "",
+      confidential: !!body.confidential,
+      slug,
+      createdAt: new Date().toISOString(),
+      active: true,
     };
 
-    // dry-run: skip Sheets call to make sure route/auth/body work
-    const url = new URL(req.url);
-    if (url.searchParams.get("dry") === "1") {
-      const fakeId = Date.now().toString();
-      return NextResponse.json({ ok: true, id: fakeId, dryRun: true });
-    }
+    await redis.hSet(id, job as any);
+    await redis.set(`jobs:by-slug:${slug}`, id);
+    await redis.zAdd("jobs:index", [{ score: Date.now(), value: id }]);
 
-    // real create
-    const id = await createJob(payload);
-    return NextResponse.json({ ok: true, id });
-  } catch (err: any) {
-    const message = err?.message || "Unknown error";
-    const stack = process.env.NODE_ENV !== "production" ? err?.stack : undefined;
-    return NextResponse.json({ ok: false, error: message, stack }, { status: 500 });
+    return ok({ ok: true, id: { id, title: job.title, location: job.location, slug } });
+  } catch (err) {
+    console.error("jobs/create error:", err);
+    return ok({ ok: false, error: "Server error" }, 500);
   }
 }

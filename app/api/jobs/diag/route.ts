@@ -1,21 +1,31 @@
 import { NextResponse } from "next/server";
-import { getJobs, getJobByIdOrSlug } from "@/lib/sheets";
+import { getRedis } from "@/lib/redis";
 
-export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+function ok(data: any, status = 200) {
+  return NextResponse.json(data, { status });
+}
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const id = searchParams.get("id");
-
   try {
-    if (id) {
-      const job = await getJobByIdOrSlug(id);
-      return NextResponse.json({ ok: true, by: "id", id, job });
-    } else {
-      const jobs = await getJobs();
-      return NextResponse.json({ ok: true, count: jobs.length, first: jobs[0] ?? null });
+    const token =
+      req.headers.get("authorization")?.replace(/bearer\s+/i, "") ||
+      req.headers.get("x-admin-token") ||
+      "";
+
+    if (!process.env.APP_ADMIN_TOKEN || token !== process.env.APP_ADMIN_TOKEN) {
+      return ok({ ok: false, error: "Unauthorized" }, 401);
     }
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: String(e?.message || e) }, { status: 500 });
+
+    const redis = await getRedis();
+    const ids = await redis.zRange("jobs:index", 0, -1, { REV: true });
+    let first: any = null;
+    if (ids[0]) first = await redis.hGetAll(ids[0]);
+
+    return ok({ ok: true, count: ids.length, first: first || null });
+  } catch (err) {
+    console.error("jobs/diag error:", err);
+    return ok({ ok: false, error: "Server error" }, 500);
   }
 }
