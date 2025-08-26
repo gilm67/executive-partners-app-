@@ -180,10 +180,66 @@ with st.container():
     st.subheader("3️⃣ Enhanced NNA / Prospects Table")
     st.info("List all clients/prospects; the TOTAL Best Case NNM should match NNM Year 1 for consistency.")
 
+    # --- state init ---
     if "prospects_list" not in st.session_state:
         st.session_state.prospects_list = []
     if "edit_index" not in st.session_state:
         st.session_state.edit_index = -1
+
+    # input field state (keys ensure values persist across reruns)
+    if "p_name" not in st.session_state:
+        st.session_state.p_name = ""
+    if "p_source" not in st.session_state:
+        st.session_state.p_source = "Self Acquired"
+    if "p_wealth" not in st.session_state:
+        st.session_state.p_wealth = 0.0
+    if "p_best" not in st.session_state:
+        st.session_state.p_best = 0.0
+    if "p_worst" not in st.session_state:
+        st.session_state.p_worst = 0.0
+
+    # handlers (minimal logic; keeps structure identical)
+    def _reset_fields():
+        st.session_state.p_name = ""
+        st.session_state.p_source = "Self Acquired"
+        st.session_state.p_wealth = 0.0
+        st.session_state.p_best = 0.0
+        st.session_state.p_worst = 0.0
+
+    def _add_prospect():
+        name = (st.session_state.p_name or "").strip()
+        if name == "":
+            # silent allow empty like before (or add a toast); keep behavior minimal
+            pass
+        st.session_state.prospects_list.append({
+            "Name": name,
+            "Source": st.session_state.p_source,
+            "Wealth (M)": float(st.session_state.p_wealth or 0.0),
+            "Best NNM (M)": float(st.session_state.p_best or 0.0),
+            "Worst NNM (M)": float(st.session_state.p_worst or 0.0),
+        })
+        _reset_fields()
+        st.session_state.edit_index = -1
+        st.rerun()
+
+    def _update_prospect():
+        idx = st.session_state.edit_index
+        if 0 <= idx < len(st.session_state.prospects_list):
+            st.session_state.prospects_list[idx] = {
+                "Name": (st.session_state.p_name or "").strip(),
+                "Source": st.session_state.p_source,
+                "Wealth (M)": float(st.session_state.p_wealth or 0.0),
+                "Best NNM (M)": float(st.session_state.p_best or 0.0),
+                "Worst NNM (M)": float(st.session_state.p_worst or 0.0),
+            }
+        st.session_state.edit_index = -1
+        _reset_fields()
+        st.rerun()
+
+    def _cancel_edit():
+        st.session_state.edit_index = -1
+        _reset_fields()
+        st.rerun()
 
     with st.expander("📥 Import prospects from CSV (columns: Name, Source, Wealth (M), Best NNM (M), Worst NNM (M))"):
         up = st.file_uploader("Upload CSV", type=["csv"])
@@ -205,70 +261,54 @@ with st.container():
             except Exception as e:
                 st.error(f"Import failed: {e}")
 
-    # ---- FIXED: handle form submissions inside the form ----
-    with st.form(key="prospect_form", clear_on_submit=(st.session_state.edit_index == -1)):
+    # form UI (unchanged visually)
+    with st.form(key="prospect_form", clear_on_submit=False):
         f1, f2, f3, f4, f5 = st.columns([2,2,2,2,2])
         with f1:
-            p_name = st.text_input(
+            st.text_input(
                 "Name",
-                value=("" if st.session_state.edit_index == -1
-                       else st.session_state.prospects_list[st.session_state.edit_index]["Name"])
+                key="p_name",
+                placeholder="",
             )
         with f2:
             options = ["Self Acquired","Inherited","Finder"]
-            p_source = st.selectbox(
-                "Source", options,
-                index=(0 if st.session_state.edit_index == -1
-                       else options.index(st.session_state.prospects_list[st.session_state.edit_index]["Source"]))
+            # keep previously selected source
+            st.selectbox(
+                "Source",
+                options,
+                key="p_source",
+                index=options.index(st.session_state.p_source) if st.session_state.p_source in options else 0,
             )
         with f3:
-            p_wealth = st.number_input(
-                "Wealth (M)", min_value=0.0, step=0.1,
-                value=(0.0 if st.session_state.edit_index == -1
-                       else float(st.session_state.prospects_list[st.session_state.edit_index]["Wealth (M)"]))
-            )
+            st.number_input("Wealth (M)", min_value=0.0, step=0.1, key="p_wealth")
         with f4:
-            p_best = st.number_input(
-                "Best NNM (M)", min_value=0.0, step=0.1,
-                value=(0.0 if st.session_state.edit_index == -1
-                       else float(st.session_state.prospects_list[st.session_state.edit_index]["Best NNM (M)"]))
-            )
+            st.number_input("Best NNM (M)", min_value=0.0, step=0.1, key="p_best")
         with f5:
-            p_worst = st.number_input(
-                "Worst NNM (M)", min_value=0.0, step=0.1,
-                value=(0.0 if st.session_state.edit_index == -1
-                       else float(st.session_state.prospects_list[st.session_state.edit_index]["Worst NNM (M)"]))
-            )
+            st.number_input("Worst NNM (M)", min_value=0.0, step=0.1, key="p_worst")
 
         c_add, c_update, c_cancel = st.columns([1,1,1])
-        submitted_add = c_add.form_submit_button("➕ Add", disabled=(st.session_state.edit_index != -1))
-        submitted_update = c_update.form_submit_button("💾 Update", disabled=(st.session_state.edit_index == -1))
-        submitted_cancel = c_cancel.form_submit_button("✖ Cancel Edit", disabled=(st.session_state.edit_index == -1))
+        # use on_click handlers so the list updates reliably
+        c_add.form_submit_button(
+            "➕ Add",
+            on_click=_add_prospect,
+            disabled=(st.session_state.edit_index != -1),
+        )
+        c_update.form_submit_button(
+            "💾 Update",
+            on_click=_update_prospect,
+            disabled=(st.session_state.edit_index == -1),
+        )
+        c_cancel.form_submit_button(
+            "✖ Cancel Edit",
+            on_click=_cancel_edit,
+            disabled=(st.session_state.edit_index == -1),
+        )
 
-        if submitted_add:
-            st.session_state.prospects_list.append(
-                {"Name": p_name.strip(), "Source": p_source, "Wealth (M)": p_wealth, "Best NNM (M)": p_best, "Worst NNM (M)": p_worst}
-            )
-            st.success("Prospect added.")
-            st.rerun()
-
-        if submitted_update:
-            idx = st.session_state.edit_index
-            st.session_state.prospects_list[idx] = {
-                "Name": p_name.strip(), "Source": p_source, "Wealth (M)": p_wealth, "Best NNM (M)": p_best, "Worst NNM (M)": p_worst
-            }
-            st.session_state.edit_index = -1
-            st.success("Prospect updated.")
-            st.rerun()
-
-        if submitted_cancel:
-            st.session_state.edit_index = -1
-            st.info("Edit cancelled.")
-            st.rerun()
-    # ---- end fixed block ----
-
-    df_pros = pd.DataFrame(st.session_state.prospects_list,
-                           columns=["Name","Source","Wealth (M)","Best NNM (M)","Worst NNM (M)"])
+    # table & row actions
+    df_pros = pd.DataFrame(
+        st.session_state.prospects_list,
+        columns=["Name","Source","Wealth (M)","Best NNM (M)","Worst NNM (M)"],
+    )
 
     if not df_pros.empty:
         st.write(" ")
@@ -280,9 +320,19 @@ with st.container():
             colD.write(f"{row['Best NNM (M)']:,.1f} / {row['Worst NNM (M)']:,.1f}")
             if colE.button("✏️ Edit", key=f"edit_{i}"):
                 st.session_state.edit_index = i
+                sel = st.session_state.prospects_list[i]
+                st.session_state.p_name  = sel["Name"]
+                st.session_state.p_source = sel["Source"]
+                st.session_state.p_wealth = float(sel["Wealth (M)"])
+                st.session_state.p_best   = float(sel["Best NNM (M)"])
+                st.session_state.p_worst  = float(sel["Worst NNM (M)"])
                 st.rerun()
             if colF.button("🗑 Delete", key=f"del_{i}"):
                 del st.session_state.prospects_list[i]
+                # if we were editing this row, cancel edit
+                if st.session_state.edit_index == i:
+                    st.session_state.edit_index = -1
+                    _reset_fields()
                 st.rerun()
 
     total_row = pd.DataFrame([{
@@ -486,13 +536,13 @@ with st.container():
             st.warning("⚠️ Google Sheet connection not available.")
         else:
             total_rev_3y = (nnm_y1 * roa_y1 + nnm_y2 * roa_y2 + nnm_y3 * roa_y3) / 100 * 1_000_000
-            profit_margin_pct = ( ( (nnm_y1 * roa_y1 / 100 * 1_000_000) +
-                                    (nnm_y2 * roa_y2 / 100 * 1_000_000) +
-                                    (nnm_y3 * roa_y3 / 100 * 1_000_000) ) )
-            profit_margin_pct = ( ( (total_rev_3y - (base_salary * 1.25 * 3)) / total_rev_3y) * 100.0 ) if total_rev_3y > 0 else 0.0
-            total_profit_3y = ( (nnm_y1 * roa_y1 / 100 * 1_000_000) +
+            profit_margin_pct = (((nnm_y1 * roa_y1 / 100 * 1_000_000) +
+                                  (nnm_y2 * roa_y2 / 100 * 1_000_000) +
+                                  (nnm_y3 * roa_y3 / 100 * 1_000_000)))
+            profit_margin_pct = (((total_rev_3y - (base_salary * 1.25 * 3)) / total_rev_3y) * 100.0) if total_rev_3y > 0 else 0.0
+            total_profit_3y = (((nnm_y1 * roa_y1 / 100 * 1_000_000) +
                                 (nnm_y2 * roa_y2 / 100 * 1_000_000) +
-                                (nnm_y3 * roa_y3 / 100 * 1_000_000) ) - (base_salary * 1.25 * 3)
+                                (nnm_y3 * roa_y3 / 100 * 1_000_000)) - (base_salary * 1.25 * 3))
 
             data_dict = {
                 "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
