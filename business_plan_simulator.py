@@ -1,59 +1,14 @@
 import os
 import re
-import base64
 import json
-import tempfile
+import base64
 from datetime import datetime
 
 import gspread
 import pandas as pd
 import streamlit as st
-# kept for compatibility; not used directly below but available if needed
 from google.oauth2.service_account import Credentials
 
-# ===== Load service account from Fly secret (base64) =====
-# If GOOGLE_APPLICATION_CREDENTIALS_JSON is set (base64-encoded JSON),
-# we write it to a temp file and point GOOGLE_APPLICATION_CREDENTIALS to it
-# so gspread.service_account() can pick it up automatically.
-def _ensure_sa_from_env() -> str | None:
-    b64 = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
-    if not b64:
-        return None
-    try:
-        data = base64.b64decode(b64)
-        fd, tmp = tempfile.mkstemp(suffix=".json")
-        with os.fdopen(fd, "wb") as f:
-            f.write(data)
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = tmp
-        return tmp
-    except Exception:
-        return None
-
-_SA_PATH = _ensure_sa_from_env()  # sets GOOGLE_APPLICATION_CREDENTIALS if secret exists
-
-def _active_sa_email() -> str:
-    """
-    Best-effort: read the client_email from whichever source we're using,
-    purely for display/debug in the UI.
-    """
-    # 1) If we set a temp file from the secret, read it
-    sa_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-    if sa_path and os.path.exists(sa_path):
-        try:
-            with open(sa_path, "r") as f:
-                return json.load(f).get("client_email", "")
-        except Exception:
-            pass
-
-    # 2) Fallback to local file if present
-    if os.path.exists("service_account.json"):
-        try:
-            with open("service_account.json", "r") as f:
-                return json.load(f).get("client_email", "")
-        except Exception:
-            pass
-
-    return ""
 
 # ================== CONFIG ==================
 SCOPE = [
@@ -62,8 +17,8 @@ SCOPE = [
 ]
 SHEET_ID = "1A__yEhD_0LYQwBF45wTSbWqdkRe0HAdnnBSj70qgpic"
 WORKSHEET_NAME = "BP_Entries"
-# fallback to local file if no secret is present
-CREDS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "service_account.json")
+# Local fallback if you also keep a JSON file in dev
+LOCAL_CREDS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "service_account.json")
 
 # Exact header order in your Google Sheet (row 1)
 HEADER_ORDER = [
@@ -76,20 +31,48 @@ HEADER_ORDER = [
     "Score","AI Evaluation Notes"
 ]
 
+# Exposed in UI for visibility
+SA_EMAIL = None
+
+
 # ================== SHEETS ==================
+def _credentials_from_env_or_file():
+    """
+    Build Google Credentials in this order:
+      1) From Fly secret GOOGLE_APPLICATION_CREDENTIALS_JSON (base64 of the JSON).
+      2) From a local file (LOCAL_CREDS_PATH).
+    Returns (creds, sa_email) or raises an Exception.
+    """
+    b64 = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+    if b64:
+        # Decode base64 → dict
+        info = json.loads(base64.b64decode(b64).decode("utf-8"))
+        sa_email = info.get("client_email")
+        creds = Credentials.from_service_account_info(info, scopes=SCOPE)
+        return creds, sa_email
+
+    if os.path.exists(LOCAL_CREDS_PATH):
+        creds = Credentials.from_service_account_file(LOCAL_CREDS_PATH, scopes=SCOPE)
+        # read email for display
+        try:
+            with open(LOCAL_CREDS_PATH, "r", encoding="utf-8") as f:
+                info = json.load(f)
+            sa_email = info.get("client_email")
+        except Exception:
+            sa_email = None
+        return creds, sa_email
+
+    raise FileNotFoundError(
+        "No service account found: set GOOGLE_APPLICATION_CREDENTIALS_JSON (base64) "
+        "or provide a local service_account.json"
+    )
+
+
 def connect_sheet():
+    global SA_EMAIL
     try:
-        # Prefer env-based credentials (set above); fall back to local file if present
-        if os.getenv("GOOGLE_APPLICATION_CREDENTIALS"):
-            gc = gspread.service_account()
-            auth_source = "Fly secret (temp file)"
-        elif os.path.exists(CREDS_PATH):
-            gc = gspread.service_account(filename=CREDS_PATH)
-            auth_source = "Local service_account.json"
-        else:
-            raise FileNotFoundError(
-                "No service account found via env (GOOGLE_APPLICATION_CREDENTIALS) or local file."
-            )
+        creds, SA_EMAIL = _credentials_from_env_or_file()
+        gc = gspread.authorize(creds)
 
         sh = gc.open_by_key(SHEET_ID)
         try:
@@ -102,24 +85,22 @@ def connect_sheet():
         if not headers:
             ws.update("A1", [HEADER_ORDER])
 
-        sa_email = _active_sa_email()
-        status = f"✅ Connected to Google Sheet · Auth: {auth_source}"
-        if sa_email:
-            status += f" · SA: {sa_email}"
-        return ws, status
-
+        return ws, "✅ Connected to Google Sheet"
     except Exception as e:
         return None, f"⚠️ Could not connect to Google Sheet: {e}"
+
 
 def append_in_header_order(ws, data_dict: dict):
     headers = ws.row_values(1) or HEADER_ORDER
     row = [data_dict.get(h, "") for h in headers]
     ws.append_row(row, value_input_option="USER_ENTERED")
 
+
 def clean_trailing_columns(ws, first_bad_letter="X"):
     # clear anything to the right of your intended columns
     ws.batch_clear([f"{first_bad_letter}2:ZZ"])
     ws.resize(cols=len(HEADER_ORDER))
+
 
 # ================== APP ==================
 st.set_page_config(page_title="Business Plan Simulator", layout="wide")
@@ -127,6 +108,8 @@ worksheet, sheet_status = connect_sheet()
 
 st.markdown("# 📊 Business Plan Simulator")
 st.caption(sheet_status)
+if SA_EMAIL:
+    st.caption(f"Using service account: `{SA_EMAIL}`")
 st.info("*Fields marked with an asterisk (*) are mandatory and handled confidentially.")
 
 with st.expander("🧹 Maintenance"):
