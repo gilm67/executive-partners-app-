@@ -161,25 +161,27 @@ with st.container():
     with d2: proj_clients_y2 = st.number_input("Projected Clients Year 2", min_value=0)
     with d3: proj_clients_y3 = st.number_input("Projected Clients Year 3", min_value=0)
 
-# ---------- SECTION 3 ----------
+# ---------- SECTION 3 (Fix: no st.form, stable keys + normal buttons) ----------
 with st.container():
     st.markdown("---")
     st.subheader("3️⃣ Enhanced NNA / Prospects Table")
     st.info("List all clients/prospects; the TOTAL Best Case NNM should match NNM Year 1 for consistency.")
 
-    # state
+    # Persistent state
     if "prospects_list" not in st.session_state:
         st.session_state.prospects_list = []
     if "edit_index" not in st.session_state:
         st.session_state.edit_index = -1
-    # field state (so values persist reliably inside form)
-    for k, v in {
+
+    # Field state (so typing is preserved across reruns)
+    defaults = {
         "p_name": "",
         "p_source": "Self Acquired",
         "p_wealth": 0.0,
         "p_best": 0.0,
         "p_worst": 0.0,
-    }.items():
+    }
+    for k, v in defaults.items():
         st.session_state.setdefault(k, v)
 
     with st.expander("📥 Import prospects from CSV (columns: Name, Source, Wealth (M), Best NNM (M), Worst NNM (M))"):
@@ -202,62 +204,77 @@ with st.container():
             except Exception as e:
                 st.error(f"Import failed: {e}")
 
-    # --- form (unchanged visually). We give keys and read from session_state on submit. ---
-    with st.form(key="prospect_form", clear_on_submit=False):
-        f1, f2, f3, f4, f5 = st.columns([2,2,2,2,2])
-        with f1:
-            st.text_input("Name", key="p_name")
-        with f2:
-            options = ["Self Acquired","Inherited","Finder"]
-            st.selectbox("Source", options, key="p_source",
-                         index=options.index(st.session_state.p_source) if st.session_state.p_source in options else 0)
-        with f3:
-            st.number_input("Wealth (M)", min_value=0.0, step=0.1, key="p_wealth")
-        with f4:
-            st.number_input("Best NNM (M)", min_value=0.0, step=0.1, key="p_best")
-        with f5:
-            st.number_input("Worst NNM (M)", min_value=0.0, step=0.1, key="p_worst")
+    # --- Inputs (same look, no form) ---
+    f1, f2, f3, f4, f5 = st.columns([2,2,2,2,2])
+    with f1:
+        st.text_input("Name", key="p_name")
+    with f2:
+        options = ["Self Acquired","Inherited","Finder"]
+        st.selectbox("Source", options, key="p_source")
+    with f3:
+        st.number_input("Wealth (M)", min_value=0.0, step=0.1, key="p_wealth")
+    with f4:
+        st.number_input("Best NNM (M)", min_value=0.0, step=0.1, key="p_best")
+    with f5:
+        st.number_input("Worst NNM (M)", min_value=0.0, step=0.1, key="p_worst")
 
-        c_add, c_update, c_cancel = st.columns([1,1,1])
-        submitted_add = c_add.form_submit_button("➕ Add", disabled=(st.session_state.edit_index != -1))
-        submitted_update = c_update.form_submit_button("💾 Update", disabled=(st.session_state.edit_index == -1))
-        submitted_cancel = c_cancel.form_submit_button("✖ Cancel Edit", disabled=(st.session_state.edit_index == -1))
+    c_add, c_update, c_cancel = st.columns([1,1,1])
+    add_clicked = c_add.button("➕ Add", disabled=(st.session_state.edit_index != -1))
+    update_clicked = c_update.button("💾 Update", disabled=(st.session_state.edit_index == -1))
+    cancel_clicked = c_cancel.button("✖ Cancel Edit", disabled=(st.session_state.edit_index == -1))
 
-    # handle form submit results using values from session_state keys
-    if submitted_add:
-        st.session_state.prospects_list.append({
-            "Name": (st.session_state.p_name or "").strip(),
-            "Source": st.session_state.p_source,
-            "Wealth (M)": float(st.session_state.p_wealth or 0.0),
-            "Best NNM (M)": float(st.session_state.p_best or 0.0),
-            "Worst NNM (M)": float(st.session_state.p_worst or 0.0),
-        })
-        # clear fields only after adding
+    # --- Button handlers ---
+    if add_clicked:
+        name = (st.session_state.p_name or "").strip()
+        if not name:
+            st.warning("Please enter a Name before adding.")
+        else:
+            st.session_state.prospects_list.append({
+                "Name": name,
+                "Source": st.session_state.p_source,
+                "Wealth (M)": float(st.session_state.p_wealth or 0.0),
+                "Best NNM (M)": float(st.session_state.p_best or 0.0),
+                "Worst NNM (M)": float(st.session_state.p_worst or 0.0),
+            })
+            # reset fields
+            st.session_state.p_name = ""
+            st.session_state.p_source = "Self Acquired"
+            st.session_state.p_wealth = 0.0
+            st.session_state.p_best = 0.0
+            st.session_state.p_worst = 0.0
+            st.success("Prospect added.")
+            st.rerun()
+
+    if update_clicked:
+        idx = st.session_state.edit_index
+        if 0 <= idx < len(st.session_state.prospects_list):
+            name = (st.session_state.p_name or "").strip()
+            if not name:
+                st.warning("Please enter a Name before updating.")
+            else:
+                st.session_state.prospects_list[idx] = {
+                    "Name": name,
+                    "Source": st.session_state.p_source,
+                    "Wealth (M)": float(st.session_state.p_wealth or 0.0),
+                    "Best NNM (M)": float(st.session_state.p_best or 0.0),
+                    "Worst NNM (M)": float(st.session_state.p_worst or 0.0),
+                }
+                st.session_state.edit_index = -1
+                st.success("Prospect updated.")
+                st.rerun()
+
+    if cancel_clicked:
+        st.session_state.edit_index = -1
+        # optional: clear fields
         st.session_state.p_name = ""
         st.session_state.p_source = "Self Acquired"
         st.session_state.p_wealth = 0.0
         st.session_state.p_best = 0.0
         st.session_state.p_worst = 0.0
+        st.info("Edit cancelled.")
         st.rerun()
 
-    if submitted_update:
-        idx = st.session_state.edit_index
-        if 0 <= idx < len(st.session_state.prospects_list):
-            st.session_state.prospects_list[idx] = {
-                "Name": (st.session_state.p_name or "").strip(),
-                "Source": st.session_state.p_source,
-                "Wealth (M)": float(st.session_state.p_wealth or 0.0),
-                "Best NNM (M)": float(st.session_state.p_best or 0.0),
-                "Worst NNM (M)": float(st.session_state.p_worst or 0.0),
-            }
-        st.session_state.edit_index = -1
-        st.rerun()
-
-    if submitted_cancel:
-        st.session_state.edit_index = -1
-        st.rerun()
-
-    # table and row actions (same visuals)
+    # --- Table & row actions (unchanged visuals) ---
     df_pros = pd.DataFrame(
         st.session_state.prospects_list,
         columns=["Name","Source","Wealth (M)","Best NNM (M)","Worst NNM (M)"],
@@ -407,7 +424,11 @@ with st.container():
         score += 1; reasons_pos.append("Client load appropriate (≤80)")
 
     nnm_y1_val = float(nnm_y1) if nnm_y1 is not None else 0.0
-    best_sum = float(df_pros["Best NNM (M)"].sum()) if not df_pros.empty else 0.0
+    # df_pros defined above in Section 3 scope; recompute safely if needed
+    try:
+        best_sum = float(pd.DataFrame(st.session_state.prospects_list)["Best NNM (M)"].sum()) if st.session_state.prospects_list else 0.0
+    except Exception:
+        best_sum = 0.0
     tol = max(0.0, tolerance_pct) / 100.0
     if nnm_y1_val == 0.0 and best_sum == 0.0:
         flags.append("Prospects & NNM Y1 both zero")
