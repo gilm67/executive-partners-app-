@@ -176,87 +176,165 @@ with st.container():
     with d2: proj_clients_y2 = st.number_input("Projected Clients Year 2", min_value=0)
     with d3: proj_clients_y3 = st.number_input("Projected Clients Year 3", min_value=0)
 
-# ---------- SECTION 3: Enhanced NNA / Prospects Table (FAST INLINE EDITING) ----------
+# ---------- SECTION 3: Enhanced NNA / Prospects Table (SIMPLE & RELIABLE) ----------
 with st.container():
     st.markdown("---")
     st.subheader("3️⃣ Enhanced NNA / Prospects Table")
-    st.info("Type directly in the table. Use the last empty row to add new prospects. Autosave keeps your edits without extra clicks.")
+    st.info("Add prospects with the form below. Click ✏️ Edit to modify a row, or 🗑 Delete to remove it.")
 
-    # Initialize state as a DataFrame (so we can use st.data_editor smoothly)
-    COLS = ["Name", "Source", "Wealth (M)", "Best NNM (M)", "Worst NNM (M)"]
-    if "prospects_df" not in st.session_state:
-        st.session_state.prospects_df = pd.DataFrame(columns=COLS)
+    # State setup
+    if "prospects_list" not in st.session_state:
+        st.session_state.prospects_list = []
+    if "edit_index" not in st.session_state:
+        st.session_state.edit_index = -1
 
-    # CSV import (adds rows to the editor)
+    # Form field state (keeps values through reruns)
+    def _init_field(key, default):
+        if key not in st.session_state:
+            st.session_state[key] = default
+
+    _init_field("p_name", "")
+    _init_field("p_source", "Self Acquired")
+    _init_field("p_wealth", 0.0)
+    _init_field("p_best", 0.0)
+    _init_field("p_worst", 0.0)
+
+    # CSV import
     with st.expander("📥 Import prospects from CSV (columns: Name, Source, Wealth (M), Best NNM (M), Worst NNM (M))"):
-        up = st.file_uploader("Upload CSV", type=["csv"], key="prospects_csv_uploader")
+        up = st.file_uploader("Upload CSV", type=["csv"])
         if up is not None:
             try:
                 df_up = pd.read_csv(up)
                 df_up = df_up.rename(columns=lambda x: x.strip())
-                needed = COLS
+                needed = ["Name","Source","Wealth (M)","Best NNM (M)","Worst NNM (M)"]
                 for c in needed:
                     if c not in df_up.columns:
                         st.error(f"Missing column in CSV: {c}")
                         df_up = None
                         break
                 if df_up is not None:
-                    for c in ["Wealth (M)", "Best NNM (M)", "Worst NNM (M)"]:
+                    for c in ["Wealth (M)","Best NNM (M)","Worst NNM (M)"]:
                         df_up[c] = pd.to_numeric(df_up[c], errors="coerce").fillna(0.0)
-                    st.session_state.prospects_df = pd.concat(
-                        [st.session_state.prospects_df, df_up[needed]], ignore_index=True
-                    )
+                    st.session_state.prospects_list += df_up[needed].to_dict(orient="records")
                     st.success(f"Imported {len(df_up)} prospects.")
             except Exception as e:
                 st.error(f"Import failed: {e}")
 
-    # Editor options
-    autosave = st.checkbox("Autosave edits", value=True, help="If on, edits persist immediately.")
-    source_options = ["Self Acquired", "Inherited", "Finder"]
+    # The input form
+    with st.form(key="prospect_form", clear_on_submit=False):
+        f1, f2, f3, f4, f5 = st.columns([2,2,2,2,2])
 
-    edited_df = st.data_editor(
-        st.session_state.prospects_df,
-        num_rows="dynamic",
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "Name": st.column_config.TextColumn(required=False, width="medium"),
-            "Source": st.column_config.SelectboxColumn(options=source_options, width="small"),
-            "Wealth (M)": st.column_config.NumberColumn(min_value=0.0, step=0.1, format="%.1f", width="small"),
-            "Best NNM (M)": st.column_config.NumberColumn(min_value=0.0, step=0.1, format="%.1f", width="small"),
-            "Worst NNM (M)": st.column_config.NumberColumn(min_value=0.0, step=0.1, format="%.1f", width="small"),
-        },
-        key="prospects_editor",
+        with f1:
+            p_name = st.text_input("Name", key="p_name")
+        with f2:
+            options = ["Self Acquired","Inherited","Finder"]
+            p_source = st.selectbox("Source", options, key="p_source")
+        with f3:
+            p_wealth = st.number_input("Wealth (M)", min_value=0.0, step=0.1, key="p_wealth")
+        with f4:
+            p_best = st.number_input("Best NNM (M)", min_value=0.0, step=0.1, key="p_best")
+        with f5:
+            p_worst = st.number_input("Worst NNM (M)", min_value=0.0, step=0.1, key="p_worst")
+
+        c_add, c_update, c_cancel = st.columns([1,1,1])
+        add_disabled = (st.session_state.edit_index != -1)
+        update_disabled = (st.session_state.edit_index == -1)
+
+        submitted_add = c_add.form_submit_button("➕ Add", disabled=add_disabled)
+        submitted_update = c_update.form_submit_button("💾 Update", disabled=update_disabled)
+        submitted_cancel = c_cancel.form_submit_button("✖ Cancel Edit", disabled=update_disabled)
+
+    def _validate_row(name, source, wealth, best, worst):
+        errs = []
+        if not name or not name.strip():
+            errs.append("Name is required.")
+        if source not in ["Self Acquired","Inherited","Finder"]:
+            errs.append("Source must be Self Acquired / Inherited / Finder.")
+        for label, val in [("Wealth (M)", wealth), ("Best NNM (M)", best), ("Worst NNM (M)", worst)]:
+            try:
+                x = float(val)
+                if x < 0:
+                    errs.append(f"{label} must be ≥ 0.")
+            except Exception:
+                errs.append(f"{label} must be a number.")
+        return errs
+
+    def _reset_form():
+        st.session_state.p_name = ""
+        st.session_state.p_source = "Self Acquired"
+        st.session_state.p_wealth = 0.0
+        st.session_state.p_best = 0.0
+        st.session_state.p_worst = 0.0
+
+    if submitted_add:
+        errs = _validate_row(st.session_state.p_name, st.session_state.p_source,
+                             st.session_state.p_wealth, st.session_state.p_best, st.session_state.p_worst)
+        if errs:
+            st.error(" • " + "\n • ".join(errs))
+        else:
+            st.session_state.prospects_list.append(
+                {
+                    "Name": st.session_state.p_name.strip(),
+                    "Source": st.session_state.p_source,
+                    "Wealth (M)": float(st.session_state.p_wealth),
+                    "Best NNM (M)": float(st.session_state.p_best),
+                    "Worst NNM (M)": float(st.session_state.p_worst),
+                }
+            )
+            _reset_form()
+            st.success("Prospect added.")
+
+    if submitted_update:
+        idx = st.session_state.edit_index
+        errs = _validate_row(st.session_state.p_name, st.session_state.p_source,
+                             st.session_state.p_wealth, st.session_state.p_best, st.session_state.p_worst)
+        if errs:
+            st.error(" • " + "\n • ".join(errs))
+        else:
+            st.session_state.prospects_list[idx] = {
+                "Name": st.session_state.p_name.strip(),
+                "Source": st.session_state.p_source,
+                "Wealth (M)": float(st.session_state.p_wealth),
+                "Best NNM (M)": float(st.session_state.p_best),
+                "Worst NNM (M)": float(st.session_state.p_worst),
+            }
+            st.session_state.edit_index = -1
+            _reset_form()
+            st.success("Prospect updated.")
+
+    if submitted_cancel:
+        st.session_state.edit_index = -1
+        _reset_form()
+        st.info("Edit cancelled.")
+
+    # Table + actions
+    df_pros = pd.DataFrame(
+        st.session_state.prospects_list,
+        columns=["Name","Source","Wealth (M)","Best NNM (M)","Worst NNM (M)"]
     )
 
-    # Clean rows: drop fully empty rows, coerce numerics
-    def _sanitize(df: pd.DataFrame) -> pd.DataFrame:
-        if df is None or df.empty:
-            return pd.DataFrame(columns=COLS)
-        df = df.copy()
-        for c in ["Wealth (M)", "Best NNM (M)", "Worst NNM (M)"]:
-            df[c] = pd.to_numeric(df[c], errors="coerce").fillna(0.0)
-        # Remove rows with no Name AND no numbers (avoid saving accidental blanks)
-        mask_keep = (df["Name"].fillna("").str.strip() != "") | (
-            (df["Wealth (M)"] > 0) | (df["Best NNM (M)"] > 0) | (df["Worst NNM (M)"] > 0)
-        )
-        df = df[mask_keep].reset_index(drop=True)
-        # Normalize source
-        df["Source"] = df["Source"].where(df["Source"].isin(source_options), None)
-        return df
+    if not df_pros.empty:
+        st.write(" ")
+        for i, row in df_pros.iterrows():
+            colA, colB, colC, colD, colE, colF = st.columns([2,2,2,2,1,1])
+            colA.write(row["Name"])
+            colB.write(row["Source"])
+            colC.write(f"{row['Wealth (M)']:,.1f}")
+            colD.write(f"{row['Best NNM (M)']:,.1f} / {row['Worst NNM (M)']:,.1f}")
 
-    cleaned = _sanitize(edited_df)
+            if colE.button("✏️ Edit", key=f"edit_{i}"):
+                st.session_state.edit_index = i
+                st.session_state.p_name = row["Name"]
+                st.session_state.p_source = row["Source"] if row["Source"] in ["Self Acquired","Inherited","Finder"] else "Self Acquired"
+                st.session_state.p_wealth = float(row["Wealth (M)"] or 0.0)
+                st.session_state.p_best = float(row["Best NNM (M)"] or 0.0)
+                st.session_state.p_worst = float(row["Worst NNM (M)"] or 0.0)
+                st.rerun()
 
-    if autosave:
-        st.session_state.prospects_df = cleaned
-        st.caption("💾 Edits autosaved.")
-    else:
-        if st.button("Save changes"):
-            st.session_state.prospects_df = cleaned
-            st.success("Saved changes to prospects.")
+            if colF.button("🗑 Delete", key=f"del_{i}"):
+                del st.session_state.prospects_list[i]
+                st.rerun()
 
-    # Display totals and delta
-    df_pros = st.session_state.prospects_df
     total_row = pd.DataFrame([{
         "Name": "TOTAL",
         "Source": "",
@@ -388,6 +466,7 @@ with st.container():
         score += 1; reasons_pos.append("Client load appropriate (≤80)")
 
     # 6) Prospects consistency vs NNM Y1 (1)
+    df_pros = pd.DataFrame(st.session_state.prospects_list, columns=["Name","Source","Wealth (M)","Best NNM (M)","Worst NNM (M)"])
     nnm_y1_val = float(nnm_y1) if nnm_y1 is not None else 0.0
     best_sum = float(df_pros["Best NNM (M)"].sum()) if not df_pros.empty else 0.0
     tol = max(0.0, tolerance_pct) / 100.0
@@ -399,10 +478,11 @@ with st.container():
         reasons_neg.append(f"Prospects {best_sum:.1f}M vs NNM Y1 {nnm_y1_val:.1f}M (> {tolerance_pct}% dev)")
 
     # 7) 3Y NNM ambition (2)
-    if total_nnm_3y >= nnm_min_3y:
-        score += 2; reasons_pos.append(f"3Y NNM {total_nnm_3y:.1f}M ≥ target {nnm_min_3y:.0f}M")
+    total_nnm_3y = float(nnm_y1 + nnm_y2 + nnm_y3)
+    if total_nnm_3y >= (100.0 if target_segment == "HNWI" else 200.0):
+        score += 2; reasons_pos.append(f"3Y NNM {total_nnm_3y:.1f}M ≥ target {(100.0 if target_segment == 'HNWI' else 200.0):.0f}M")
     else:
-        reasons_neg.append(f"3Y NNM {total_nnm_3y:.1f}M below {nnm_min_3y:.0f}M")
+        reasons_neg.append(f"3Y NNM {total_nnm_3y:.1f}M below {(100.0 if target_segment == 'HNWI' else 200.0):.0f}M")
 
     # Verdict
     if score >= 7:
