@@ -13,9 +13,27 @@ async function getJobBySlug(slug: string) {
   return j as Record<string, string>;
 }
 
-export default async function Page(
-  { params }: { params: Promise<{ slug: string }> }
-) {
+// (Optional) Better SEO metadata per job
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const job = await getJobBySlug(slug);
+  if (!job) return { title: "Job not found | Executive Partners" };
+  return {
+    title: `${job.title} | Executive Partners`,
+    description: job.summary || `${job.title} in ${job.location || "Switzerland"}`,
+    alternates: { canonical: `/jobs/${job.slug}` },
+  };
+}
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params; // Next 15: params is a Promise
   const job = await getJobBySlug(slug);
   if (!job) notFound();
@@ -69,6 +87,20 @@ export default async function Page(
           .
         </p>
       )}
+
+      {/* Apply CTA */}
+      <div className="mt-8">
+        <a
+          href={`mailto:recruiter@execpartners.ch?subject=Application%20—%20${encodeURIComponent(
+            job.title
+          )}&body=Hello%20Executive%20Partners,%0D%0A%0D%0AI'd%20like%20to%20apply%20for%20${encodeURIComponent(
+            job.title
+          )}%20(${job.slug}).%0D%0A%0D%0A•%20Name:%0D%0A•%20Phone:%0D%0A•%20LinkedIn:%0D%0A•%20Current%20AUM/Book%20(approx.):%0D%0A%0D%0ARegards,%0D%0A`}
+          className="inline-block rounded-lg border border-neutral-700 px-4 py-2 text-sm hover:bg-neutral-800"
+        >
+          Apply via Email
+        </a>
+      </div>
     </div>
   );
 }
