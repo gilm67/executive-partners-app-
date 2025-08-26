@@ -1,64 +1,72 @@
-// app/jobs/page.tsx
 import Link from "next/link";
-import { getJobs, jobSlug, type Job } from "@/lib/sheets";
+import { getRedis } from "@/lib/redis";
 
-export const revalidate = 60;
+type JobRow = {
+  id: string;
+  title: string;
+  location?: string;
+  summary?: string;
+  slug: string;
+  createdAt?: string;
+  active?: string;
+};
 
-function normalize(job: any) {
-  const Title = (job.Title ?? job.title ?? job.Role ?? "").toString().trim();
-  const Location = (job.Location ?? job.location ?? "").toString().trim();
-  const Market = (job.Market ?? job.market ?? "").toString().trim();
-  const Seniority = (job.Seniority ?? job.seniority ?? "").toString().trim();
-  const Summary = (job.Summary ?? job.summary ?? "").toString().trim();
-  const Active = (job.Active ?? job.active ?? "").toString().trim();
-  const ID = (job.ID ?? job.id ?? "").toString().trim();
-  return { ID, Title, Location, Market, Seniority, Summary, Active };
+async function getJobs() {
+  const redis = await getRedis();
+  const ids = await redis.zRange("jobs:index", 0, 50, { REV: true });
+  const rows = await Promise.all(ids.map((id) => redis.hGetAll(id)));
+  return rows
+    .filter((j) => j && j.active !== "false")
+    .map((j) => ({
+      id: String(j.id),
+      title: String(j.title),
+      location: j.location ? String(j.location) : "",
+      summary: j.summary ? String(j.summary) : "",
+      slug: String(j.slug),
+      createdAt: j.createdAt ? String(j.createdAt) : "",
+    })) as JobRow[];
 }
 
-function isActive(job: any) {
-  const v = (job.Active ?? job.active ?? "").toString().trim().toUpperCase();
-  return v !== "FALSE";
-}
-
-function short(s: string, n = 110) {
-  if (!s) return "";
-  return s.length > n ? s.slice(0, n - 1) + "…" : s;
-}
+export const dynamic = "force-dynamic";
 
 export default async function JobsPage() {
-  const all: Job[] = await getJobs();
-  const active = all.map(normalize).filter(isActive);
+  const jobs = await getJobs();
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-2xl font-semibold text-white mb-4">Open Roles</h1>
+    <div className="max-w-5xl mx-auto px-4 py-12">
+      <h1 className="text-3xl font-semibold tracking-tight mb-6">Open Roles</h1>
 
-      {active.length === 0 ? (
-        <p className="text-neutral-400">No active roles available at this time.</p>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {active.map((j) => {
-            const slug = j.ID ? `${jobSlug({ ID: j.ID, Title: j.Title } as any)}` : "#";
-            return (
-              <Link
-                key={`${j.ID}-${slug}`}
-                href={`/jobs/${encodeURIComponent(slug)}`}
-                className="rounded-xl border border-neutral-800 bg-neutral-900 p-4 hover:border-neutral-700"
-              >
-                <h3 className="text-white font-semibold">{short(j.Title || "Untitled", 60)}</h3>
-                <p className="mt-1 text-sm text-neutral-400">
-                  {j.Location || "—"}
-                  {j.Market ? ` • ${j.Market}` : ""}
-                  {j.Seniority ? ` • ${j.Seniority}` : ""}
-                </p>
-                {j.Summary ? (
-                  <p className="mt-3 text-sm text-neutral-300">{short(j.Summary, 120)}</p>
-                ) : null}
-              </Link>
-            );
-          })}
+      {jobs.length === 0 ? (
+        <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-6 text-neutral-300">
+          No roles posted yet. Please check back soon.
         </div>
+      ) : (
+        <ul className="grid gap-4 sm:grid-cols-2">
+          {jobs.map((job) => (
+            <li key={job.id}>
+              <Link
+                href={`/jobs/${job.slug}`}
+                className="block rounded-xl border border-neutral-800 bg-neutral-900 p-5 hover:border-neutral-700 transition"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <h2 className="text-lg font-medium text-white">{job.title}</h2>
+                  {job.location ? (
+                    <span className="shrink-0 text-xs px-2 py-1 rounded-md border border-neutral-800 text-neutral-300">
+                      {job.location}
+                    </span>
+                  ) : null}
+                </div>
+                {job.summary ? (
+                  <p className="mt-2 text-sm text-neutral-300 line-clamp-3">
+                    {job.summary}
+                  </p>
+                ) : null}
+                <div className="mt-3 text-xs text-neutral-400">View details →</div>
+              </Link>
+            </li>
+          ))}
+        </ul>
       )}
-    </main>
+    </div>
   );
 }
