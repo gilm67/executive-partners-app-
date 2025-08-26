@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getRedis } from "@/lib/redis";
 
+export const dynamic = "force-dynamic";
+
 type JobRow = {
   id: string;
   title: string;
@@ -11,7 +13,7 @@ type JobRow = {
   active?: string;
 };
 
-async function getJobs() {
+async function getJobs(): Promise<JobRow[]> {
   const redis = await getRedis();
   const ids = await redis.zRange("jobs:index", 0, 50, { REV: true });
   const rows = await Promise.all(ids.map((id) => redis.hGetAll(id)));
@@ -24,12 +26,11 @@ async function getJobs() {
       summary: j.summary ? String(j.summary) : "",
       slug: String(j.slug),
       createdAt: j.createdAt ? String(j.createdAt) : "",
-    })) as JobRow[];
+      active: j.active ? String(j.active) : "true",
+    }));
 }
 
-export const dynamic = "force-dynamic";
-
-export default async function JobsPage() {
+export default async function Page() {
   const jobs = await getJobs();
 
   return (

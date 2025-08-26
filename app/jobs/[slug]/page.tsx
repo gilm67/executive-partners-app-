@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
 import { getRedis } from "@/lib/redis";
 
 export const dynamic = "force-dynamic";
+
+type Awaitable<T> = T | Promise<T>;
 
 async function getJobBySlug(slug: string) {
   const redis = await getRedis();
@@ -14,8 +15,13 @@ async function getJobBySlug(slug: string) {
   return j as Record<string, string>;
 }
 
-export default async function Page({ params }: PageProps<{ slug: string }>) {
-  const { slug } = await params; // Next 15: params is a Promise
+export default async function Page({
+  params,
+}: {
+  // Next 15: params can be a Promise; handle both
+  params: Awaitable<{ slug: string }>;
+}) {
+  const { slug } = await Promise.resolve(params);
   const job = await getJobBySlug(slug);
   if (!job) notFound();
 
