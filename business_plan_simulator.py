@@ -19,10 +19,8 @@ SCOPE = [
 ]
 SHEET_ID = "1A__yEhD_0LYQwBF45wTSbWqdkRe0HAdnnBSj70qgpic"
 WORKSHEET_NAME = "BP_Entries"
-# Local fallback if you also keep a JSON file in dev
 LOCAL_CREDS_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "service_account.json")
 
-# Exact header order in your Google Sheet (row 1)
 HEADER_ORDER = [
     "Timestamp","Candidate Name","Candidate Email","Current Role","Candidate Location",
     "Current Employer","Current Market","Currency","Base Salary","Last Bonus",
@@ -33,21 +31,17 @@ HEADER_ORDER = [
     "Score","AI Evaluation Notes"
 ]
 
-# Exposed in UI for visibility
 SA_EMAIL = None
 
 
 # ================== SHEETS ==================
 def _credentials_from_env_or_file():
     """
-    Build Google Credentials in this order:
-      1) From Fly secret GOOGLE_APPLICATION_CREDENTIALS_JSON (base64 of the JSON).
-      2) From a local file (LOCAL_CREDS_PATH).
-    Returns (creds, sa_email) or raises an Exception.
+    1) From Fly secret GOOGLE_APPLICATION_CREDENTIALS_JSON (base64 of JSON)
+    2) From local file (LOCAL_CREDS_PATH)
     """
     b64 = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
     if b64:
-        # Decode base64 → dict
         info = json.loads(base64.b64decode(b64).decode("utf-8"))
         sa_email = info.get("client_email")
         creds = Credentials.from_service_account_info(info, scopes=SCOPE)
@@ -55,7 +49,6 @@ def _credentials_from_env_or_file():
 
     if os.path.exists(LOCAL_CREDS_PATH):
         creds = Credentials.from_service_account_file(LOCAL_CREDS_PATH, scopes=SCOPE)
-        # read email for display
         try:
             with open(LOCAL_CREDS_PATH, "r", encoding="utf-8") as f:
                 info = json.load(f)
@@ -75,18 +68,14 @@ def connect_sheet():
     try:
         creds, SA_EMAIL = _credentials_from_env_or_file()
         gc = gspread.authorize(creds)
-
         sh = gc.open_by_key(SHEET_ID)
         try:
             ws = sh.worksheet(WORKSHEET_NAME)
         except gspread.exceptions.WorksheetNotFound:
             ws = sh.add_worksheet(title=WORKSHEET_NAME, rows=2000, cols=50)
-
-        # ensure header row exists and matches expected width (A..W)
         headers = ws.row_values(1)
         if not headers:
             ws.update("A1", [HEADER_ORDER])
-
         return ws, "✅ Connected to Google Sheet"
     except Exception as e:
         return None, f"⚠️ Could not connect to Google Sheet: {e}"
@@ -99,7 +88,6 @@ def append_in_header_order(ws, data_dict: dict):
 
 
 def clean_trailing_columns(ws, first_bad_letter="X"):
-    # clear anything to the right of your intended columns
     ws.batch_clear([f"{first_bad_letter}2:ZZ"])
     ws.resize(cols=len(HEADER_ORDER))
 
@@ -176,30 +164,29 @@ with st.container():
     with d2: proj_clients_y2 = st.number_input("Projected Clients Year 2", min_value=0)
     with d3: proj_clients_y3 = st.number_input("Projected Clients Year 3", min_value=0)
 
-# ---------- SECTION 3: Enhanced NNA / Prospects Table (SIMPLE & RELIABLE) ----------
+# ---------- SECTION 3: Enhanced NNA / Prospects Table (NO FORMS, SUPER RELIABLE) ----------
 with st.container():
     st.markdown("---")
     st.subheader("3️⃣ Enhanced NNA / Prospects Table")
-    st.info("Add prospects with the form below. Click ✏️ Edit to modify a row, or 🗑 Delete to remove it.")
+    st.info("Add prospects with the fields below. Use ✏️ Edit to modify a row, or 🗑 Delete to remove it.")
 
-    # State setup
+    # --- Session state setup ---
     if "prospects_list" not in st.session_state:
         st.session_state.prospects_list = []
     if "edit_index" not in st.session_state:
         st.session_state.edit_index = -1
 
-    # Form field state (keeps values through reruns)
-    def _init_field(key, default):
+    for key, default in [
+        ("p_name", ""),
+        ("p_source", "Self Acquired"),
+        ("p_wealth", 0.0),
+        ("p_best", 0.0),
+        ("p_worst", 0.0),
+    ]:
         if key not in st.session_state:
             st.session_state[key] = default
 
-    _init_field("p_name", "")
-    _init_field("p_source", "Self Acquired")
-    _init_field("p_wealth", 0.0)
-    _init_field("p_best", 0.0)
-    _init_field("p_worst", 0.0)
-
-    # CSV import
+    # --- CSV import ---
     with st.expander("📥 Import prospects from CSV (columns: Name, Source, Wealth (M), Best NNM (M), Worst NNM (M))"):
         up = st.file_uploader("Upload CSV", type=["csv"])
         if up is not None:
@@ -220,29 +207,26 @@ with st.container():
             except Exception as e:
                 st.error(f"Import failed: {e}")
 
-    # The input form
-    with st.form(key="prospect_form", clear_on_submit=False):
-        f1, f2, f3, f4, f5 = st.columns([2,2,2,2,2])
-
-        with f1:
-            p_name = st.text_input("Name", key="p_name")
-        with f2:
-            options = ["Self Acquired","Inherited","Finder"]
-            p_source = st.selectbox("Source", options, key="p_source")
-        with f3:
-            p_wealth = st.number_input("Wealth (M)", min_value=0.0, step=0.1, key="p_wealth")
-        with f4:
-            p_best = st.number_input("Best NNM (M)", min_value=0.0, step=0.1, key="p_best")
-        with f5:
-            p_worst = st.number_input("Worst NNM (M)", min_value=0.0, step=0.1, key="p_worst")
-
-        c_add, c_update, c_cancel = st.columns([1,1,1])
-        add_disabled = (st.session_state.edit_index != -1)
-        update_disabled = (st.session_state.edit_index == -1)
-
-        submitted_add = c_add.form_submit_button("➕ Add", disabled=add_disabled)
-        submitted_update = c_update.form_submit_button("💾 Update", disabled=update_disabled)
-        submitted_cancel = c_cancel.form_submit_button("✖ Cancel Edit", disabled=update_disabled)
+    # --- Input fields (no form) ---
+    f1, f2, f3, f4, f5 = st.columns([2,2,2,2,2])
+    with f1:
+        st.session_state.p_name = st.text_input("Name", value=st.session_state.p_name, key="p_name_input") or st.session_state.p_name
+        # Keep state in sync
+        st.session_state.p_name = st.session_state.p_name_input
+    with f2:
+        st.session_state.p_source = st.selectbox(
+            "Source",
+            ["Self Acquired","Inherited","Finder"],
+            index=["Self Acquired","Inherited","Finder"].index(st.session_state.p_source) if st.session_state.p_source in ["Self Acquired","Inherited","Finder"] else 0,
+            key="p_source_input"
+        )
+        st.session_state.p_source = st.session_state.p_source_input
+    with f3:
+        st.session_state.p_wealth = st.number_input("Wealth (M)", min_value=0.0, step=0.1, value=float(st.session_state.p_wealth), key="p_wealth_input")
+    with f4:
+        st.session_state.p_best = st.number_input("Best NNM (M)", min_value=0.0, step=0.1, value=float(st.session_state.p_best), key="p_best_input")
+    with f5:
+        st.session_state.p_worst = st.number_input("Worst NNM (M)", min_value=0.0, step=0.1, value=float(st.session_state.p_worst), key="p_worst_input")
 
     def _validate_row(name, source, wealth, best, worst):
         errs = []
@@ -266,11 +250,17 @@ with st.container():
         st.session_state.p_best = 0.0
         st.session_state.p_worst = 0.0
 
-    if submitted_add:
+    # --- Action buttons (no form submit needed) ---
+    c_add, c_update, c_cancel = st.columns([1,1,1])
+    add_clicked = c_add.button("➕ Add", disabled=(st.session_state.edit_index != -1), type="primary")
+    update_clicked = c_update.button("💾 Update", disabled=(st.session_state.edit_index == -1))
+    cancel_clicked = c_cancel.button("✖ Cancel Edit", disabled=(st.session_state.edit_index == -1))
+
+    if add_clicked:
         errs = _validate_row(st.session_state.p_name, st.session_state.p_source,
                              st.session_state.p_wealth, st.session_state.p_best, st.session_state.p_worst)
         if errs:
-            st.error(" • " + "\n • ".join(errs))
+            st.error("\n".join(f"• {e}" for e in errs))
         else:
             st.session_state.prospects_list.append(
                 {
@@ -284,12 +274,12 @@ with st.container():
             _reset_form()
             st.success("Prospect added.")
 
-    if submitted_update:
+    if update_clicked:
         idx = st.session_state.edit_index
         errs = _validate_row(st.session_state.p_name, st.session_state.p_source,
                              st.session_state.p_wealth, st.session_state.p_best, st.session_state.p_worst)
         if errs:
-            st.error(" • " + "\n • ".join(errs))
+            st.error("\n".join(f"• {e}" for e in errs))
         else:
             st.session_state.prospects_list[idx] = {
                 "Name": st.session_state.p_name.strip(),
@@ -302,12 +292,12 @@ with st.container():
             _reset_form()
             st.success("Prospect updated.")
 
-    if submitted_cancel:
+    if cancel_clicked:
         st.session_state.edit_index = -1
         _reset_form()
         st.info("Edit cancelled.")
 
-    # Table + actions
+    # --- Existing rows with actions ---
     df_pros = pd.DataFrame(
         st.session_state.prospects_list,
         columns=["Name","Source","Wealth (M)","Best NNM (M)","Worst NNM (M)"]
@@ -580,7 +570,6 @@ with st.container():
                 append_in_header_order(worksheet, data_dict)
                 st.success("✅ Entry saved to Google Sheet in correct order")
 
-                # confirmation preview
                 preview_cols = [
                     "Candidate Name","Candidate Email","Current Role","Candidate Location",
                     "Current Employer","Current Market","Currency","Base Salary","Last Bonus",
