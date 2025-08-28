@@ -2,12 +2,6 @@
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 
-/**
- * Returns active jobs by trying 3 strategies:
- *  1) sets: jobs:ids / jobs:index / jobs:all
- *  2) SCAN jobs:<id> hashes
- *  3) SCAN jobs:by-slug:* -> resolve id -> HGETALL
- */
 type Job = Record<string, string>;
 
 function normalize(raw: Job | null): Job | null {
@@ -17,11 +11,24 @@ function normalize(raw: Job | null): Job | null {
   return raw;
 }
 
+async function scanKeys(redis: ReturnType<typeof getRedis> extends Promise<infer T> ? T : never, pattern: string) {
+  // Upstash supports SCAN. We'll iterate cursor until 0.
+  let cursor = 0;
+  const keys: string[] = [];
+  do {
+    // @ts-ignore upstash returns [cursor, keys]
+    const [next, batch] = await redis.scan(cursor, { match: pattern, count: 200 });
+    cursor = Number(next);
+    if (Array.isArray(batch)) keys.push(...batch);
+  } while (cursor !== 0);
+  return keys;
+}
+
 export async function GET() {
   try {
     const redis = await getRedis();
 
-    // 1) Known sets
+    // 1) Known sets first
     for (const key of ["jobs:ids", "jobs:index", "jobs:all"]) {
       try {
         const ids = await redis.sMembers(key);
@@ -32,37 +39,32 @@ export async function GET() {
             const n = normalize(j as Job);
             if (n) jobs.push(n);
           }
-          if (jobs.length) {
-            return NextResponse.json({ ok: true, jobs });
-          }
+          if (jobs.length) return NextResponse.json({ ok: true, jobs });
         }
       } catch {}
     }
 
-    // 2) Scan jobs:<id>
+    // 2) Scan hash keys jobs:<id>
     try {
-      // @ts-ignore upstash supports scanIterator
-      const it = redis.scanIterator({ match: "jobs:*" });
+      const keys = await scanKeys(redis, "jobs:*");
       const jobs: Job[] = [];
-      for await (const key of it as AsyncIterable<string>) {
-        if (/^jobs:\d+/.test(key)) {
-          const j = await redis.hGetAll(key);
+      for (const k of keys) {
+        // only bare hashes like jobs:<timestamp>:<rand> or jobs:<number>
+        if (/^jobs:(\d|[0-9]{4,})/.test(k)) {
+          const j = await redis.hGetAll(k);
           const n = normalize(j as Job);
           if (n) jobs.push(n);
         }
       }
-      if (jobs.length) {
-        return NextResponse.json({ ok: true, jobs });
-      }
+      if (jobs.length) return NextResponse.json({ ok: true, jobs });
     } catch {}
 
-    // 3) Follow slug indexes
+    // 3) Follow slug indexes jobs:by-slug:*
     try {
-      // @ts-ignore
-      const it = redis.scanIterator({ match: "jobs:by-slug:*" });
+      const bySlug = await scanKeys(redis, "jobs:by-slug:*");
       const jobs: Job[] = [];
-      for await (const bySlug of it as AsyncIterable<string>) {
-        const id = await redis.get(bySlug);
+      for (const idxKey of bySlug) {
+        const id = await redis.get(idxKey);
         if (!id) continue;
         const j = await redis.hGetAll(String(id));
         const n = normalize(j as Job);
