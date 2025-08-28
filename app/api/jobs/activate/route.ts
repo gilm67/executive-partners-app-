@@ -27,8 +27,6 @@ export async function OPTIONS() {
       Allow: "GET, HEAD, OPTIONS, POST",
       "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST",
       "Access-Control-Allow-Headers": "Content-Type, x-admin-token, authorization",
-      // If you plan to call this from a browser (e.g., WP admin tool), enable CORS:
-      "Access-Control-Allow-Origin": "*",
     },
   });
 }
@@ -57,16 +55,17 @@ export async function POST(req: Request) {
   const redis = await getRedis();
 
   // Resolve id via slug if needed
-  let id = body.id;
+  let id: string | undefined = body.id;
   if (!id && body.slug) {
     const key = `jobs:by-slug:${body.slug}`;
-    id = await redis.get(key);
-    if (!id) {
+    const resolved = await redis.get(key); // string | null
+    if (!resolved) {
       return NextResponse.json(
         { ok: false, error: `No job found for slug '${body.slug}'` },
         { status: 404 }
       );
     }
+    id = resolved; // now definitely a string
   }
 
   if (!id) {
@@ -77,7 +76,7 @@ export async function POST(req: Request) {
   }
 
   // Update hash
-  await redis.hSet(String(id), { active: desired ? "true" : "false" });
+  const wrote = await redis.hSet(String(id), { active: desired ? "true" : "false" });
 
   const updated = await redis.hGetAll(String(id));
 
