@@ -1,8 +1,9 @@
 // app/jobs/page.tsx
 import Link from "next/link";
-import { getRedis } from "@/lib/redis";
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type Job = {
   id?: string;
@@ -16,92 +17,33 @@ type Job = {
   active?: string; // "true" | "false"
 };
 
-/**
- * Fetch all jobs from Redis with fallback strategies and support for both
- * singular (job:*) and plural (jobs:*) key namespaces:
- * 1) sets: *:ids / *:index / *:all
- * 2) scan for job(s):<id> hashes (skip helper/index keys)
- * 3) scan *:by-slug:* → resolve ID → HGETALL
- */
-async function getAllJobs(): Promise<Job[]> {
-  const redis = await getRedis();
+async function fetchJobsViaApi(): Promise<Job[]> {
+  // Build absolute URL so this works on any domain/preview
+  const h = headers();
+  const host = h.get("x-forwarded-host") || h.get("host") || "";
+  const proto = (h.get("x-forwarded-proto") || "https").split(",")[0].trim();
+  const base = host ? `${proto}://${host}` : ""; // fallback if needed
 
-  const normalize = (raw: Record<string, string>): Job | null => {
-    if (!raw) return null;
-    if (raw.active === "false") return null; // default active if missing
-    if (!raw.title || !raw.slug) return null;
-    return raw as unknown as Job;
-  };
-
-  // 1) Known ID sets (both singular & plural)
-  for (const key of [
-    "jobs:ids", "jobs:index", "jobs:all",
-    "job:ids",  "job:index",  "job:all",
-  ]) {
-    try {
-      const ids = await redis.sMembers(key);
-      if (ids?.length) {
-        const jobs: Job[] = [];
-        for (const id of ids) {
-          const j = await redis.hGetAll(String(id));
-          const norm = normalize(j);
-          if (norm) jobs.push(norm);
-        }
-        if (jobs.length) return jobs;
-      }
-    } catch {
-      // ignore and try next
-    }
-  }
-
-  // 2) Scan for job hashes under both namespaces
   try {
-    const collected: Job[] = [];
-    for (const pattern of ["job:*", "jobs:*"]) {
-      // @ts-ignore Upstash client supports scanIterator
-      const it = redis.scanIterator({ match: pattern });
-      for await (const key of it as AsyncIterable<string>) {
-        // Skip helper/index keys
-        if (/(^|:)by-slug:/i.test(key)) continue;
-        if (/(^|:)(ids|index|all)$/i.test(key)) continue;
-
-        // Heuristic: likely a job hash
-        if (/^jobs?:/i.test(key)) {
-          const j = await redis.hGetAll(key);
-          const norm = normalize(j);
-          if (norm) collected.push(norm);
-        }
-      }
-    }
-    if (collected.length) return collected;
+    const res = await fetch(`${base}/api/jobs/list`, {
+      // ensure we always hit the API at request time
+      cache: "no-store",
+      // helps when behind proxies
+      headers: { "x-requested-from": "jobs-page" },
+      // Avoid Next automatically caching in some edge cases
+      next: { revalidate: 0 },
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (data?.ok && Array.isArray(data.jobs)) return data.jobs as Job[];
+    return [];
   } catch {
-    // ignore and try next
+    return [];
   }
-
-  // 3) Slug index fallback (both singular & plural)
-  try {
-    const jobs: Job[] = [];
-    for (const pattern of ["job:by-slug:*", "jobs:by-slug:*"]) {
-      // @ts-ignore
-      const it = redis.scanIterator({ match: pattern });
-      for await (const bySlugKey of it as AsyncIterable<string>) {
-        const id = await redis.get(bySlugKey);
-        if (!id) continue;
-        const j = await redis.hGetAll(String(id));
-        const norm = normalize(j);
-        if (norm) jobs.push(norm);
-      }
-    }
-    if (jobs.length) return jobs;
-  } catch {
-    // ignore
-  }
-
-  return [];
 }
 
 export default async function JobsPage() {
-  const jobs = await getAllJobs();
+  const jobs = await fetchJobsViaApi();
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-12">
