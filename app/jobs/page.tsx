@@ -12,19 +12,14 @@ type Job = {
   seniority?: string;
   summary?: string;
   description?: string;
-  active?: string; // "true" | "false"
+  active?: string;
 };
 
 async function fetchJobs(): Promise<Job[]> {
   try {
-    // Always call our local API (it will proxy or read Redis safely)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/jobs/list`, {
-      // If NEXT_PUBLIC_SITE_URL isn’t set, relative URL still works in RSC on Vercel.
-      cache: "no-store",
-    }).catch(() => null as any);
-
-    if (!res || !res.ok) return [];
-
+    // Relative URL so it always hits the current origin
+    const res = await fetch("/api/jobs/list", { cache: "no-store" });
+    if (!res.ok) return [];
     const data = await res.json().catch(() => null as any);
     if (!data || data.ok !== true || !Array.isArray(data.jobs)) return [];
     return data.jobs as Job[];
@@ -56,10 +51,7 @@ export default async function JobsPage() {
             >
               <div className="flex items-start justify-between gap-4">
                 <h2 className="text-lg font-medium text-white">
-                  <Link
-                    href={`/jobs/${job.slug}`}
-                    className="hover:underline underline-offset-4"
-                  >
+                  <Link href={`/jobs/${job.slug}`} className="hover:underline underline-offset-4">
                     {job.title}
                   </Link>
                 </h2>
