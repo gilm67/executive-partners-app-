@@ -2,6 +2,8 @@
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 
+type RawJob = Record<string, string>;
+
 type Job = {
   id?: string;
   slug?: string;
@@ -12,93 +14,101 @@ type Job = {
   summary?: string;
   description?: string;
   active?: string; // "true" | "false"
+  createdAt?: string;
 };
 
-function normalize(raw: Record<string, string>): Job | null {
+function isActive(v: string | undefined) {
+  // default to true if missing, but respect explicit "false"
+  return v !== "false";
+}
+
+function normalize(id: string, raw: RawJob): Job | null {
   if (!raw) return null;
-  // only show active jobs
-  if (raw.active === "false") return null;
-  // require basics
+  if (!isActive(raw.active)) return null;
   if (!raw.title || !raw.slug) return null;
-  // return small public shape
-  return {
-    id: raw.id,
-    slug: raw.slug,
-    title: raw.title,
-    location: raw.location,
-    market: raw.market,
-    seniority: raw.seniority,
-    summary: raw.summary,
-    active: raw.active,
-  };
+  return { id, ...(raw as unknown as Job) };
+}
+
+async function fetchFromIdSets(redis: any): Promise<Job[] | null> {
+  for (const key of ["jobs:ids", "jobs:index", "jobs:all"]) {
+    try {
+      const ids: string[] = await redis.sMembers(key);
+      if (ids && ids.length) {
+        const out: Job[] = [];
+        for (const id of ids) {
+          const raw = await redis.hGetAll(String(id));
+          const j = normalize(String(id), raw);
+          if (j) out.push(j);
+        }
+        if (out.length) return out;
+      }
+    } catch {
+      // try next strategy
+    }
+  }
+  return null;
+}
+
+async function fetchByScan(redis: any): Promise<Job[] | null> {
+  try {
+    // Upstash supports scanIterator
+    // We look for *singular* job:* because your IDs look like "job:1756386694812:siwf4f"
+    // (not "jobs:*")
+    // @ts-ignore
+    const it = redis.scanIterator({ match: "job:*" });
+    const out: Job[] = [];
+    for await (const key of it as AsyncIterable<string>) {
+      // Loose check: any key starting with "job:" is treated as a job hash
+      if (!key.toLowerCase().startsWith("job:")) continue;
+      const raw = await redis.hGetAll(key);
+      const j = normalize(key, raw);
+      if (j) out.push(j);
+    }
+    return out.length ? out : null;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchViaSlugIndex(redis: any): Promise<Job[] | null> {
+  try {
+    // @ts-ignore
+    const it = redis.scanIterator({ match: "jobs:by-slug:*" });
+    const out: Job[] = [];
+    for await (const bySlugKey of it as AsyncIterable<string>) {
+      const id = await redis.get(bySlugKey);
+      if (!id) continue;
+      const raw = await redis.hGetAll(String(id));
+      const j = normalize(String(id), raw);
+      if (j) out.push(j);
+    }
+    return out.length ? out : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function GET() {
   try {
     const redis = await getRedis();
 
-    // Strategy 1: Known ID sets
-    for (const key of ["jobs:ids", "jobs:index", "jobs:all"]) {
-      try {
-        const ids = await redis.sMembers(key);
-        if (ids?.length) {
-          const jobs: Job[] = [];
-          for (const id of ids) {
-            const h = await redis.hGetAll(String(id));
-            const norm = normalize(h);
-            if (norm) jobs.push(norm);
-          }
-          if (jobs.length) {
-            return NextResponse.json({ ok: true, jobs });
-          }
-        }
-      } catch {
-        // ignore and fall through
-      }
+    // 1) Try known ID sets
+    const fromSets = await fetchFromIdSets(redis);
+    if (fromSets && fromSets.length) {
+      return NextResponse.json({ ok: true, jobs: fromSets });
     }
 
-    // Strategy 2: Scan for hash keys like jobs:<id>
-    try {
-      // @ts-ignore upstash has scanIterator
-      const it = redis.scanIterator({ match: "jobs:*" });
-      const jobs: Job[] = [];
-      for await (const key of it as AsyncIterable<string>) {
-        if (/^jobs:\d+/.test(key)) {
-          const h = await redis.hGetAll(key);
-          const norm = normalize(h);
-          if (norm) jobs.push(norm);
-        }
-      }
-      if (jobs.length) {
-        return NextResponse.json({ ok: true, jobs });
-      }
-    } catch {
-      // ignore
+    // 2) Scan for job:* hashes
+    const fromScan = await fetchByScan(redis);
+    if (fromScan && fromScan.length) {
+      return NextResponse.json({ ok: true, jobs: fromScan });
     }
 
-    // Strategy 3: Follow slug index jobs:by-slug:*
-    try {
-      // @ts-ignore
-      const it = redis.scanIterator({ match: "jobs:by-slug:*" });
-      const jobs: Job[] = [];
-      for await (const bySlugKey of it as AsyncIterable<string>) {
-        const id = await redis.get(bySlugKey);
-        if (!id) continue;
-        const h = await redis.hGetAll(String(id));
-        const norm = normalize(h);
-        if (norm) jobs.push(norm);
-      }
-      if (jobs.length) {
-        return NextResponse.json({ ok: true, jobs });
-      }
-    } catch {
-      // ignore
-    }
-
-    // Nothing found
-    return NextResponse.json({ ok: true, jobs: [] });
+    // 3) Fallback via slug index
+    const fromSlugIdx = await fetchViaSlugIndex(redis);
+    return NextResponse.json({ ok: true, jobs: fromSlugIdx ?? [] });
   } catch (err) {
-    console.error("jobs/list error", err);
+    console.error("jobs/list error:", err);
     return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
   }
 }
