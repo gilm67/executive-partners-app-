@@ -2,92 +2,134 @@
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 
-// Normalize a Redis hash into a Job-like object and filter inactive/malformed ones
-function normalize(raw: Record<string, string> | null) {
-  if (!raw) return null;
-  // only include active (default true if missing)
-  if (raw.active === "false") return null;
-  // require slug + title for listing
-  if (!raw.slug || !raw.title) return null;
+type Job = {
+  id?: string;
+  slug?: string;
+  title?: string;
+  location?: string;
+  market?: string;
+  seniority?: string;
+  summary?: string;
+  description?: string;
+  active?: string; // "true" | "false"
+  createdAt?: string;
+};
 
-  return {
-    id: raw.id ?? undefined,
-    slug: raw.slug,
-    title: raw.title,
-    location: raw.location ?? undefined,
-    market: raw.market ?? undefined,
-    seniority: raw.seniority ?? undefined,
-    summary: raw.summary ?? undefined,
-    active: raw.active ?? "true",
-  };
+function normalize(raw: Record<string, string> | null): Job | null {
+  if (!raw) return null;
+  // Skip hard-deactivated roles
+  if (raw.active === "false") return null;
+  // Require minimum fields to list
+  if (!raw.slug || !raw.title) return null;
+  return raw as unknown as Job;
+}
+
+async function fetchAllJobs(): Promise<Job[]> {
+  const redis = await getRedis();
+
+  // Strategy 1: known ID sets
+  for (const key of ["jobs:index", "jobs:ids", "jobs:all"]) {
+    try {
+      const ids = await redis.sMembers(key);
+      if (ids?.length) {
+        const jobs: Job[] = [];
+        for (const id of ids) {
+          const j = await redis.hGetAll(String(id));
+          const n = normalize(j);
+          if (n) {
+            if (!n.id) n.id = String(id);
+            jobs.push(n);
+          }
+        }
+        if (jobs.length) return jobs;
+      }
+    } catch {
+      // continue
+    }
+  }
+
+  // Strategy 2: scan for jobs:<id> hashes
+  try {
+    // @ts-ignore upstash supports scanIterator
+    const it = (await getRedis()).scanIterator({ match: "jobs:*" });
+    const jobs: Job[] = [];
+    for await (const key of it as AsyncIterable<string>) {
+      if (/^jobs:\d+/.test(key)) {
+        const j = await redis.hGetAll(key);
+        const n = normalize(j);
+        if (n) {
+          if (!n.id) n.id = key;
+          jobs.push(n);
+        }
+      }
+    }
+    if (jobs.length) return jobs;
+  } catch {
+    // continue
+  }
+
+  // Strategy 3: slug index -> id -> HGETALL
+  try {
+    // @ts-ignore
+    const it = (await getRedis()).scanIterator({ match: "jobs:by-slug:*" });
+    const jobs: Job[] = [];
+    for await (const bySlug of it as AsyncIterable<string>) {
+      const id = await redis.get(bySlug);
+      if (!id) continue;
+      const j = await redis.hGetAll(String(id));
+      const n = normalize(j);
+      if (n) {
+        if (!n.id) n.id = String(id);
+        jobs.push(n);
+      }
+    }
+    if (jobs.length) return jobs;
+  } catch {
+    // continue
+  }
+
+  return [];
 }
 
 export async function GET() {
   try {
-    const redis = await getRedis();
+    const jobs = await fetchAllJobs();
 
-    // Strategy 1: known sets of IDs
-    for (const key of ["jobs:ids", "jobs:index", "jobs:all"]) {
-      try {
-        const ids = await redis.sMembers(key);
-        if (ids && ids.length) {
-          const out: any[] = [];
-          for (const id of ids) {
-            const h = await redis.hGetAll(String(id));
-            const n = normalize(h);
-            if (n) out.push(n);
-          }
-          if (out.length) {
-            return NextResponse.json({ ok: true, jobs: out });
-          }
-        }
-      } catch {
-        // ignore and try the next strategy
-      }
-    }
+    // Optional: stable ordering (newest first if createdAt present; then by title)
+    jobs.sort((a, b) => {
+      const at = a.createdAt ? Date.parse(a.createdAt) : 0;
+      const bt = b.createdAt ? Date.parse(b.createdAt) : 0;
+      if (bt !== at) return bt - at;
+      return (a.title || "").localeCompare(b.title || "");
+    });
 
-    // Strategy 2: scan for job hashes like "jobs:<timestamp>:<rand>" OR numeric ids
-    try {
-      // @ts-ignore upstash supports scanIterator
-      const it = redis.scanIterator({ match: "job:*" }); // your create endpoint seems to store hashes with id "job:<...>"
-      const jobs: any[] = [];
-      for await (const key of it as AsyncIterable<string>) {
-        // Heuristic: only fetch hashes, skip by-slug/index keys
-        if (key.startsWith("jobs:by-slug:")) continue;
-        const h = await redis.hGetAll(key);
-        const n = normalize(h);
-        if (n) jobs.push(n);
-      }
-      if (jobs.length) {
-        return NextResponse.json({ ok: true, jobs });
-      }
-    } catch {
-      // continue to next
-    }
-
-    // Strategy 3: follow slug index → resolve id → HGETALL
-    try {
-      // @ts-ignore
-      const it = redis.scanIterator({ match: "jobs:by-slug:*" });
-      const jobs: any[] = [];
-      for await (const bySlug of it as AsyncIterable<string>) {
-        const id = await redis.get(bySlug);
-        if (!id) continue;
-        const h = await redis.hGetAll(String(id));
-        const n = normalize(h);
-        if (n) jobs.push(n);
-      }
-      if (jobs.length) {
-        return NextResponse.json({ ok: true, jobs });
-      }
-    } catch {
-      // ignore
-    }
-
-    // Nothing found
-    return NextResponse.json({ ok: true, jobs: [] });
+    return NextResponse.json({
+      ok: true,
+      jobs: jobs.map((j) => ({
+        id: j.id,
+        slug: j.slug,
+        title: j.title,
+        location: j.location,
+        market: j.market,
+        seniority: j.seniority,
+        summary: j.summary,
+        active: j.active, // will be "true" or undefined if never set
+      })),
+    });
   } catch (err) {
     console.error("jobs/list error:", err);
     return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
   }
+}
+
+// CORS preflight (public endpoint)
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      Allow: "GET, HEAD, OPTIONS",
+      "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
 }
