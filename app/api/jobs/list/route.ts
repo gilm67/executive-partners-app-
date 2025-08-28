@@ -18,12 +18,11 @@ function normalize(raw: Record<string, string> | null): Job | null {
   if (!raw) return null;
   // Only list active jobs
   if (raw.active === "false") return null;
-  // Require at least title + slug
+  // Require title & slug
   if (!raw.title || !raw.slug) return null;
 
-  // Attach the redis key as id if missing
   const j: Job = {
-    id: raw.id, // may be empty; we’ll set later from the key we used
+    id: raw.id,
     slug: raw.slug,
     title: raw.title,
     location: raw.location,
@@ -47,13 +46,30 @@ export async function OPTIONS() {
   });
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    // 1) Prefer proxying to your dedicated jobs host, if configured and different from current host.
+    const API_BASE = process.env.NEXT_PUBLIC_JOBS_API_BASE?.replace(/\/$/, "");
+    if (API_BASE) {
+      try {
+        const targetHost = new URL(API_BASE).host.toLowerCase();
+        const currentHost = new URL(req.url).host.toLowerCase();
+        if (targetHost && targetHost !== currentHost) {
+          const r = await fetch(`${API_BASE}/api/jobs/list`, { next: { revalidate: 10 } });
+          const data = await r.json().catch(() => null);
+          if (data) return NextResponse.json(data, { status: r.status });
+        }
+      } catch {
+        // if proxy fails, fall through to Redis scan
+      }
+    }
+
+    // 2) Direct Redis scan (works on jobs.execpartners.ch and as fallback)
     const redis = await getRedis();
 
-    // 1) Try well-known sets of IDs (if you ever add them)
-    const setKeys = ["jobs:ids", "jobs:index", "jobs:all"];
-    for (const setKey of setKeys) {
+    // 2a) If you ever populate sets, try them first (cheap)
+    const sets = ["jobs:ids", "jobs:index", "jobs:all"];
+    for (const setKey of sets) {
       try {
         const ids = await redis.sMembers(setKey);
         if (ids?.length) {
@@ -66,29 +82,26 @@ export async function GET() {
               out.push(j);
             }
           }
-          if (out.length) {
-            return NextResponse.json({ ok: true, jobs: out });
-          }
+          if (out.length) return NextResponse.json({ ok: true, jobs: out });
         }
       } catch {
-        // ignore and try next
+        // ignore
       }
     }
 
-    // 2) Scan for actual job hashes.
-    // Your created hashes look like "job:<timestamp>:<rand>" (no 's'), so scan "job:*"
+    // 2b) Your hashes are named "job:<timestamp>:<rand>" (no "s"), so scan "job:*"
     try {
-      // @ts-ignore upstash supports scanIterator
+      // @ts-ignore Upstash client supports scanIterator
       const it = redis.scanIterator({ match: "job:*" });
-      const foundKeys: string[] = [];
+      const keys: string[] = [];
       for await (const key of it as AsyncIterable<string>) {
-        // Heuristic: only include hashes whose name starts with "job:" (already matched)
-        // You can tighten further with: /^job:\d+:[a-z0-9]+$/i.test(key)
-        foundKeys.push(key);
+        // Optionally validate with a stricter pattern:
+        // if (/^job:\d+:[a-z0-9]+$/i.test(key)) keys.push(key);
+        keys.push(key);
       }
-      if (foundKeys.length) {
+      if (keys.length) {
         const out: Job[] = [];
-        for (const key of foundKeys) {
+        for (const key of keys) {
           const raw = await redis.hGetAll(key);
           const j = normalize(raw);
           if (j) {
@@ -96,15 +109,13 @@ export async function GET() {
             out.push(j);
           }
         }
-        if (out.length) {
-          return NextResponse.json({ ok: true, jobs: out });
-        }
+        if (out.length) return NextResponse.json({ ok: true, jobs: out });
       }
     } catch {
-      // ignore; fall through
+      // ignore
     }
 
-    // 3) Fallback via slug index: jobs:by-slug:* -> ID -> HGETALL
+    // 2c) Fallback: slug index -> ID -> hash
     try {
       // @ts-ignore
       const it = redis.scanIterator({ match: "jobs:by-slug:*" });
@@ -124,6 +135,7 @@ export async function GET() {
       // ignore
     }
 
+    // No jobs found
     return NextResponse.json({ ok: true, jobs: [] });
   } catch (err) {
     console.error("jobs/list error", err);
