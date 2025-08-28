@@ -2,6 +2,7 @@
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type Job = {
   id?: string;
@@ -11,30 +12,23 @@ type Job = {
   market?: string;
   seniority?: string;
   summary?: string;
-  description?: string;
   active?: string; // "true" | "false"
 };
 
 async function fetchJobs(): Promise<Job[]> {
-  const API_BASE = "https://jobs.execpartners.ch"; // hard-set to avoid env/header issues
   try {
-    const res = await fetch(`${API_BASE}/api/jobs/list`, {
-      method: "GET",
-      // no-store to avoid caching surprises
+    // Hit our local proxy which forwards to jobs.execpartners.ch
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/jobs/list`, {
       cache: "no-store",
-      // this is a server component fetch; CORS doesn’t apply
-      next: { revalidate: 0 },
-    });
-    if (!res.ok) {
-      console.error("Jobs list fetch failed:", res.status, await res.text());
-      return [];
-    }
-    const data = await res.json().catch(() => ({ ok: false }));
-    if (!data?.ok || !Array.isArray(data?.jobs)) return [];
-    // Only include active jobs (active is a string "true"/"false" in your data)
-    return (data.jobs as Job[]).filter(j => j.active !== "false");
-  } catch (e) {
-    console.error("Jobs list fetch error:", e);
+      // Works both locally and on prod; Next will ignore absolute here if blank
+    }).catch(() => fetch("/api/jobs/list", { cache: "no-store" }));
+
+    if (!res?.ok) return [];
+    const data = await res.json().catch(() => null);
+    const jobs: Job[] = Array.isArray(data?.jobs) ? data.jobs : [];
+    // Only show active (or missing active defaults to visible)
+    return jobs.filter((j) => j && j.title && j.slug && j.active !== "false");
+  } catch {
     return [];
   }
 }
@@ -62,10 +56,7 @@ export default async function JobsPage() {
             >
               <div className="flex items-start justify-between gap-4">
                 <h2 className="text-lg font-medium text-white">
-                  <Link
-                    href={`/jobs/${job.slug}`}
-                    className="hover:underline underline-offset-4"
-                  >
+                  <Link href={`/jobs/${job.slug}`} className="hover:underline underline-offset-4">
                     {job.title}
                   </Link>
                 </h2>
@@ -98,8 +89,7 @@ export default async function JobsPage() {
                   href={`/jobs/${job.slug}`}
                   className="inline-flex items-center gap-2 rounded-lg border border-neutral-700 px-3 py-1.5 text-sm text-neutral-200 hover:bg-neutral-800"
                 >
-                  View role
-                  <span aria-hidden>→</span>
+                  View role <span aria-hidden>→</span>
                 </Link>
               </div>
             </li>
