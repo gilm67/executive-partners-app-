@@ -17,23 +17,27 @@ type Job = {
 };
 
 /**
- * Fetch all jobs from Redis with fallback strategies:
- * 1) sets: jobs:ids / jobs:index / jobs:all
- * 2) scan for jobs:<id> hashes
- * 3) scan jobs:by-slug:* → resolve ID → HGETALL
+ * Fetch all jobs from Redis with fallback strategies and support for both
+ * singular (job:*) and plural (jobs:*) key namespaces:
+ * 1) sets: *:ids / *:index / *:all
+ * 2) scan for job(s):<id> hashes (skip helper/index keys)
+ * 3) scan *:by-slug:* → resolve ID → HGETALL
  */
 async function getAllJobs(): Promise<Job[]> {
   const redis = await getRedis();
 
   const normalize = (raw: Record<string, string>): Job | null => {
     if (!raw) return null;
-    if (raw.active === "false") return null;
+    if (raw.active === "false") return null; // default active if missing
     if (!raw.title || !raw.slug) return null;
     return raw as unknown as Job;
   };
 
-  // 1) Known ID sets
-  for (const key of ["jobs:ids", "jobs:index", "jobs:all"]) {
+  // 1) Known ID sets (both singular & plural)
+  for (const key of [
+    "jobs:ids", "jobs:index", "jobs:all",
+    "job:ids",  "job:index",  "job:all",
+  ]) {
     try {
       const ids = await redis.sMembers(key);
       if (ids?.length) {
@@ -46,38 +50,47 @@ async function getAllJobs(): Promise<Job[]> {
         if (jobs.length) return jobs;
       }
     } catch {
-      // ignore
+      // ignore and try next
     }
   }
 
-  // 2) Scan for jobs:<id>
+  // 2) Scan for job hashes under both namespaces
   try {
-    // @ts-ignore Upstash client supports scanIterator
-    const it = redis.scanIterator({ match: "jobs:*" });
+    const collected: Job[] = [];
+    for (const pattern of ["job:*", "jobs:*"]) {
+      // @ts-ignore Upstash client supports scanIterator
+      const it = redis.scanIterator({ match: pattern });
+      for await (const key of it as AsyncIterable<string>) {
+        // Skip helper/index keys
+        if (/(^|:)by-slug:/i.test(key)) continue;
+        if (/(^|:)(ids|index|all)$/i.test(key)) continue;
+
+        // Heuristic: likely a job hash
+        if (/^jobs?:/i.test(key)) {
+          const j = await redis.hGetAll(key);
+          const norm = normalize(j);
+          if (norm) collected.push(norm);
+        }
+      }
+    }
+    if (collected.length) return collected;
+  } catch {
+    // ignore and try next
+  }
+
+  // 3) Slug index fallback (both singular & plural)
+  try {
     const jobs: Job[] = [];
-    for await (const key of it as AsyncIterable<string>) {
-      if (/^jobs:\d+$/i.test(key)) {
-        const j = await redis.hGetAll(key);
+    for (const pattern of ["job:by-slug:*", "jobs:by-slug:*"]) {
+      // @ts-ignore
+      const it = redis.scanIterator({ match: pattern });
+      for await (const bySlugKey of it as AsyncIterable<string>) {
+        const id = await redis.get(bySlugKey);
+        if (!id) continue;
+        const j = await redis.hGetAll(String(id));
         const norm = normalize(j);
         if (norm) jobs.push(norm);
       }
-    }
-    if (jobs.length) return jobs;
-  } catch {
-    // ignore
-  }
-
-  // 3) Slug index fallback
-  try {
-    // @ts-ignore
-    const it = redis.scanIterator({ match: "jobs:by-slug:*" });
-    const jobs: Job[] = [];
-    for await (const bySlugKey of it as AsyncIterable<string>) {
-      const id = await redis.get(bySlugKey);
-      if (!id) continue;
-      const j = await redis.hGetAll(String(id));
-      const norm = normalize(j);
-      if (norm) jobs.push(norm);
     }
     if (jobs.length) return jobs;
   } catch {
