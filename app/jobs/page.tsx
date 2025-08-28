@@ -11,39 +11,35 @@ type Job = {
   market?: string;
   seniority?: string;
   summary?: string;
-  active?: string; // "true"|"false"
+  description?: string;
+  active?: string; // "true" | "false"
 };
 
-async function fetchJobsSafe(): Promise<Job[]> {
+async function getAllJobs(): Promise<Job[]> {
   const base =
     process.env.NEXT_PUBLIC_JOBS_API_BASE?.replace(/\/+$/, "") ||
     "https://jobs.execpartners.ch";
 
-  try {
-    const res = await fetch(`${base}/api/jobs/list`, {
-      // show fresh listings; if API hiccups we still render gracefully
-      cache: "no-store",
-      // if you want mild caching uncomment:
-      // next: { revalidate: 15 },
-    });
+  const res = await fetch(`${base}/api/jobs/list`, {
+    method: "GET",
+    cache: "no-store",
+  });
 
-    if (!res.ok) {
-      console.error("Jobs API failed:", res.status, await res.text().catch(() => ""));
-      return [];
-    }
-
-    const data = (await res.json()) as { ok?: boolean; jobs?: Job[] };
-    if (!data?.ok || !Array.isArray(data.jobs)) return [];
-    // Filter only active (or missing flag defaults to show)
-    return data.jobs.filter((j) => j.active !== "false" && j.slug && j.title);
-  } catch (err) {
-    console.error("Jobs API error:", err);
+  if (!res.ok) {
+    // Log and return empty list rather than throwing so the page still loads
+    console.error("Failed to fetch jobs:", res.status, await res.text());
     return [];
   }
+
+  const data = (await res.json()) as { ok: boolean; jobs?: Job[] };
+  if (!data.ok || !Array.isArray(data.jobs)) return [];
+
+  // Only show active (or missing active) jobs
+  return data.jobs.filter((j) => j.active !== "false");
 }
 
 export default async function JobsPage() {
-  const jobs = await fetchJobsSafe();
+  const jobs = await getAllJobs();
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-12">
