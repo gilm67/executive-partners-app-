@@ -11,70 +11,73 @@ function normalize(raw: Job | null): Job | null {
   return raw;
 }
 
-async function scanKeys(redis: ReturnType<typeof getRedis> extends Promise<infer T> ? T : never, pattern: string) {
-  // Upstash supports SCAN. We'll iterate cursor until 0.
-  let cursor = 0;
-  const keys: string[] = [];
-  do {
-    // @ts-ignore upstash returns [cursor, keys]
-    const [next, batch] = await redis.scan(cursor, { match: pattern, count: 200 });
-    cursor = Number(next);
-    if (Array.isArray(batch)) keys.push(...batch);
-  } while (cursor !== 0);
-  return keys;
-}
-
 export async function GET() {
   try {
     const redis = await getRedis();
 
-    // 1) Known sets first
+    // 1) Try known ID sets first (fast path)
     for (const key of ["jobs:ids", "jobs:index", "jobs:all"]) {
       try {
         const ids = await redis.sMembers(key);
         if (ids?.length) {
           const jobs: Job[] = [];
           for (const id of ids) {
-            const j = await redis.hGetAll(String(id));
-            const n = normalize(j as Job);
+            const j = (await redis.hGetAll(String(id))) as Job;
+            const n = normalize(j);
             if (n) jobs.push(n);
           }
           if (jobs.length) return NextResponse.json({ ok: true, jobs });
         }
-      } catch {}
+      } catch {
+        /* ignore and continue */
+      }
     }
 
-    // 2) Scan hash keys jobs:<id>
-    try {
-      const keys = await scanKeys(redis, "jobs:*");
-      const jobs: Job[] = [];
-      for (const k of keys) {
-        // only bare hashes like jobs:<timestamp>:<rand> or jobs:<number>
-        if (/^jobs:(\d|[0-9]{4,})/.test(k)) {
-          const j = await redis.hGetAll(k);
-          const n = normalize(j as Job);
-          if (n) jobs.push(n);
-        }
-      }
-      if (jobs.length) return NextResponse.json({ ok: true, jobs });
-    } catch {}
+    // 2) Scan for job hashes using scanIterator (Upstash supports this)
+    const jobsFromHashes: Job[] = [];
 
-    // 3) Follow slug indexes jobs:by-slug:*
-    try {
-      const bySlug = await scanKeys(redis, "jobs:by-slug:*");
-      const jobs: Job[] = [];
-      for (const idxKey of bySlug) {
-        const id = await redis.get(idxKey);
-        if (!id) continue;
-        const j = await redis.hGetAll(String(id));
-        const n = normalize(j as Job);
-        if (n) jobs.push(n);
+    // @ts-ignore - upstash client provides scanIterator
+    const it = redis.scanIterator({ match: "job:*", count: 200 });
+    for await (const key of it as AsyncIterable<string>) {
+      // Accept typical job hash keys: job:<ts>:<rand> or job:<id>
+      if (/^job:/.test(key)) {
+        const j = (await redis.hGetAll(key)) as Job;
+        const n = normalize(j);
+        if (n) jobsFromHashes.push(n);
       }
-      return NextResponse.json({ ok: true, jobs });
-    } catch {}
+    }
 
-    return NextResponse.json({ ok: true, jobs: [] });
+    // Also support plural prefix "jobs:*" (some older writes used that)
+    // @ts-ignore
+    const it2 = redis.scanIterator({ match: "jobs:*", count: 200 });
+    for await (const key of it2 as AsyncIterable<string>) {
+      // Heuristic: include hashes that look like jobs:<number> or jobs:<ts>:<rand>
+      if (/^jobs:\d+/.test(key) || /^jobs:\d+:/.test(key)) {
+        const j = (await redis.hGetAll(key)) as Job;
+        const n = normalize(j);
+        if (n) jobsFromHashes.push(n);
+      }
+    }
+
+    if (jobsFromHashes.length) {
+      return NextResponse.json({ ok: true, jobs: jobsFromHashes });
+    }
+
+    // 3) Last resort: follow slug index -> id -> hash
+    // @ts-ignore
+    const slugIt = redis.scanIterator({ match: "jobs:by-slug:*", count: 200 });
+    const viaSlug: Job[] = [];
+    for await (const bySlugKey of slugIt as AsyncIterable<string>) {
+      const id = await redis.get(bySlugKey);
+      if (!id) continue;
+      const j = (await redis.hGetAll(String(id))) as Job;
+      const n = normalize(j);
+      if (n) viaSlug.push(n);
+    }
+
+    return NextResponse.json({ ok: true, jobs: viaSlug });
   } catch (e) {
+    // Never throw raw errors to client
     return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
   }
 }
