@@ -12,97 +12,93 @@ type Job = {
   summary?: string;
   description?: string;
   active?: string; // "true" | "false"
-  createdAt?: string;
 };
 
 function normalize(raw: Record<string, string>): Job | null {
   if (!raw) return null;
-  // only list active
+  // only show active jobs
   if (raw.active === "false") return null;
+  // require basics
   if (!raw.title || !raw.slug) return null;
-  return raw as unknown as Job;
-}
-
-async function loadAllJobs(redis: ReturnType<typeof getRedis> extends Promise<infer R> ? R : never): Promise<Job[]> {
-  // Strategy 1: known ID sets
-  for (const key of ["jobs:ids", "jobs:index", "jobs:all"]) {
-    try {
-      const ids = await redis.sMembers(key);
-      if (ids?.length) {
-        const out: Job[] = [];
-        for (const id of ids) {
-          const j = await redis.hGetAll(String(id));
-          const norm = normalize(j);
-          if (norm) out.push(norm);
-        }
-        if (out.length) return out;
-      }
-    } catch {}
-  }
-
-  // Strategy 2: SCAN jobs:<id> hashes
-  try {
-    // @ts-ignore upstash has scanIterator
-    const it = redis.scanIterator({ match: "jobs:*" });
-    const out: Job[] = [];
-    for await (const key of it as AsyncIterable<string>) {
-      if (/^jobs:\d+/.test(key)) {
-        const j = await redis.hGetAll(key);
-        const norm = normalize(j);
-        if (norm) out.push(norm);
-      }
-    }
-    if (out.length) return out;
-  } catch {}
-
-  // Strategy 3: follow slug index → ID → HGETALL
-  try {
-    // @ts-ignore
-    const it = redis.scanIterator({ match: "jobs:by-slug:*" });
-    const out: Job[] = [];
-    for await (const bySlug of it as AsyncIterable<string>) {
-      const id = await redis.get(bySlug);
-      if (!id) continue;
-      const j = await redis.hGetAll(String(id));
-      const norm = normalize(j);
-      if (norm) out.push(norm);
-    }
-    if (out.length) return out;
-  } catch {}
-
-  return [];
+  // return small public shape
+  return {
+    id: raw.id,
+    slug: raw.slug,
+    title: raw.title,
+    location: raw.location,
+    market: raw.market,
+    seniority: raw.seniority,
+    summary: raw.summary,
+    active: raw.active,
+  };
 }
 
 export async function GET() {
   try {
     const redis = await getRedis();
-    const jobs = await loadAllJobs(redis);
 
-    // sort newest first if createdAt exists; otherwise by slug
-    jobs.sort((a, b) => {
-      const ad = a.createdAt ? Date.parse(a.createdAt) : 0;
-      const bd = b.createdAt ? Date.parse(b.createdAt) : 0;
-      if (ad !== bd) return bd - ad;
-      return (a.slug || "").localeCompare(b.slug || "");
-    });
+    // Strategy 1: Known ID sets
+    for (const key of ["jobs:ids", "jobs:index", "jobs:all"]) {
+      try {
+        const ids = await redis.sMembers(key);
+        if (ids?.length) {
+          const jobs: Job[] = [];
+          for (const id of ids) {
+            const h = await redis.hGetAll(String(id));
+            const norm = normalize(h);
+            if (norm) jobs.push(norm);
+          }
+          if (jobs.length) {
+            return NextResponse.json({ ok: true, jobs });
+          }
+        }
+      } catch {
+        // ignore and fall through
+      }
+    }
 
-    // Only expose safe fields
-    const safe = jobs.map((j) => ({
-      id: j.id,
-      slug: j.slug,
-      title: j.title,
-      location: j.location,
-      market: j.market,
-      seniority: j.seniority,
-      summary: j.summary,
-      active: j.active,
-    }));
+    // Strategy 2: Scan for hash keys like jobs:<id>
+    try {
+      // @ts-ignore upstash has scanIterator
+      const it = redis.scanIterator({ match: "jobs:*" });
+      const jobs: Job[] = [];
+      for await (const key of it as AsyncIterable<string>) {
+        if (/^jobs:\d+/.test(key)) {
+          const h = await redis.hGetAll(key);
+          const norm = normalize(h);
+          if (norm) jobs.push(norm);
+        }
+      }
+      if (jobs.length) {
+        return NextResponse.json({ ok: true, jobs });
+      }
+    } catch {
+      // ignore
+    }
 
-    return NextResponse.json({ ok: true, jobs: safe });
+    // Strategy 3: Follow slug index jobs:by-slug:*
+    try {
+      // @ts-ignore
+      const it = redis.scanIterator({ match: "jobs:by-slug:*" });
+      const jobs: Job[] = [];
+      for await (const bySlugKey of it as AsyncIterable<string>) {
+        const id = await redis.get(bySlugKey);
+        if (!id) continue;
+        const h = await redis.hGetAll(String(id));
+        const norm = normalize(h);
+        if (norm) jobs.push(norm);
+      }
+      if (jobs.length) {
+        return NextResponse.json({ ok: true, jobs });
+      }
+    } catch {
+      // ignore
+    }
+
+    // Nothing found
+    return NextResponse.json({ ok: true, jobs: [] });
   } catch (err) {
-    return NextResponse.json(
-      { ok: false, error: "Server error" },
-      { status: 500 }
-    );
+    console.error("jobs/list error", err);
+    return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
   }
 }
