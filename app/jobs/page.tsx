@@ -17,29 +17,26 @@ type Job = {
 };
 
 /**
- * Attempts to fetch all jobs from Redis using a few common layouts:
- * 1) A set of IDs in jobs:ids / jobs:index / jobs:all  -> then HGETALL per id
- * 2) SCAN keys that look like jobs:<id> hashes          -> HGETALL each
- * 3) As a last resort, follow slug index jobs:by-slug:* -> resolve ID, then HGETALL
+ * Fetch all jobs from Redis with fallback strategies:
+ * 1) sets: jobs:ids / jobs:index / jobs:all
+ * 2) scan for jobs:<id> hashes
+ * 3) scan jobs:by-slug:* → resolve ID → HGETALL
  */
 async function getAllJobs(): Promise<Job[]> {
   const redis = await getRedis();
 
-  // Helper to filter & normalize a job hash
   const normalize = (raw: Record<string, string>): Job | null => {
     if (!raw) return null;
-    // Only include active (default true if field missing)
     if (raw.active === "false") return null;
-    // Require at least a title & slug to show on the list
     if (!raw.title || !raw.slug) return null;
     return raw as unknown as Job;
   };
 
-  // 1) Try known ID sets
+  // 1) Known ID sets
   for (const key of ["jobs:ids", "jobs:index", "jobs:all"]) {
     try {
       const ids = await redis.sMembers(key);
-      if (ids && ids.length) {
+      if (ids?.length) {
         const jobs: Job[] = [];
         for (const id of ids) {
           const j = await redis.hGetAll(String(id));
@@ -49,33 +46,28 @@ async function getAllJobs(): Promise<Job[]> {
         if (jobs.length) return jobs;
       }
     } catch {
-      /* ignore and try next strategy */
+      // ignore
     }
   }
 
-  // 2) Try scanning for hash keys that look like "jobs:<id>"
+  // 2) Scan for jobs:<id>
   try {
     // @ts-ignore Upstash client supports scanIterator
     const it = redis.scanIterator({ match: "jobs:*" });
-    const keys: string[] = [];
+    const jobs: Job[] = [];
     for await (const key of it as AsyncIterable<string>) {
-      // Heuristic: include bare "jobs:<id>" hashes (skip helper keys e.g. jobs:by-slug:*)
-      if (/^jobs:\d+$/i.test(key)) keys.push(key);
-    }
-    if (keys.length) {
-      const jobs: Job[] = [];
-      for (const key of keys) {
+      if (/^jobs:\d+$/i.test(key)) {
         const j = await redis.hGetAll(key);
         const norm = normalize(j);
         if (norm) jobs.push(norm);
       }
-      if (jobs.length) return jobs;
     }
+    if (jobs.length) return jobs;
   } catch {
-    /* ignore and try next strategy */
+    // ignore
   }
 
-  // 3) Last resort: follow slug index "jobs:by-slug:*" -> resolve to ID -> HGETALL
+  // 3) Slug index fallback
   try {
     // @ts-ignore
     const it = redis.scanIterator({ match: "jobs:by-slug:*" });
@@ -89,17 +81,17 @@ async function getAllJobs(): Promise<Job[]> {
     }
     if (jobs.length) return jobs;
   } catch {
-    /* ignore */
+    // ignore
   }
 
   return [];
 }
 
-export default async function Page() {
+export default async function JobsPage() {
   const jobs = await getAllJobs();
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12">
+    <main className="max-w-5xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-semibold text-white">Explore Jobs</h1>
       <p className="mt-2 text-neutral-300">
         Private Banking &amp; Wealth Management roles curated by Executive Partners.
@@ -133,21 +125,21 @@ export default async function Page() {
               </div>
 
               <div className="mt-2 flex flex-wrap gap-2 text-sm text-neutral-300">
-                {job.location ? (
+                {job.location && (
                   <span className="rounded-md border border-neutral-800 px-2 py-0.5">
                     {job.location}
                   </span>
-                ) : null}
-                {job.market ? (
+                )}
+                {job.market && (
                   <span className="rounded-md border border-neutral-800 px-2 py-0.5">
                     {job.market}
                   </span>
-                ) : null}
+                )}
               </div>
 
-              {job.summary ? (
+              {job.summary && (
                 <p className="mt-3 line-clamp-3 text-neutral-300">{job.summary}</p>
-              ) : null}
+              )}
 
               <div className="mt-4">
                 <Link
@@ -162,6 +154,6 @@ export default async function Page() {
           ))}
         </ul>
       )}
-    </div>
+    </main>
   );
 }
