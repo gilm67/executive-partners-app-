@@ -18,19 +18,21 @@ type Job = {
 };
 
 async function fetchJobsViaApi(): Promise<Job[]> {
-  // Build absolute URL so this works on any domain/preview
-  const h = headers();
-  const host = h.get("x-forwarded-host") || h.get("host") || "";
-  const proto = (h.get("x-forwarded-proto") || "https").split(",")[0].trim();
-  const base = host ? `${proto}://${host}` : ""; // fallback if needed
+  // Build absolute URL so it works on any domain/preview
+  const h = await headers(); // <-- await is the fix
+  const hostHeader =
+    h.get("x-forwarded-host") || h.get("host") || process.env.VERCEL_URL || "";
+  const protoHeader = (h.get("x-forwarded-proto") || "https").split(",")[0].trim();
+
+  // Allow explicit override if you ever want it:
+  const base =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    (hostHeader ? `${protoHeader}://${hostHeader}` : "");
 
   try {
     const res = await fetch(`${base}/api/jobs/list`, {
-      // ensure we always hit the API at request time
       cache: "no-store",
-      // helps when behind proxies
       headers: { "x-requested-from": "jobs-page" },
-      // Avoid Next automatically caching in some edge cases
       next: { revalidate: 0 },
     });
     if (!res.ok) return [];
