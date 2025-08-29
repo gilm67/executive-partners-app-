@@ -1,44 +1,52 @@
 // lib/admin-auth.ts
+import { headers as nextHeaders } from "next/headers";
+
+const ADMIN_TOKEN =
+  process.env.JOBS_ADMIN_TOKEN ?? process.env.APP_ADMIN_TOKEN ?? "";
+
 /**
- * Admin auth helpers for API routes.
- * Reads token from request headers or JSON body and compares with env.
+ * Returns true if the provided token matches the configured admin token.
+ * Accepts a raw token or a "Bearer <token>" string.
  */
+export function isAdmin(token?: string | null): boolean {
+  if (!ADMIN_TOKEN) return false;
+  if (!token) return false;
 
-export function readIncomingTokenFromReq(req: Request): string | null {
-  // 1) Custom header
-  const headerToken = req.headers.get("x-admin-token");
-  if (headerToken) return headerToken.trim();
+  const t = token.trim();
+  if (!t) return false;
 
-  // 2) Authorization: Bearer <token>
-  const auth = req.headers.get("authorization");
-  if (auth && auth.toLowerCase().startsWith("bearer ")) {
-    return auth.slice(7).trim();
+  if (t.toLowerCase().startsWith("bearer ")) {
+    return t.slice(7).trim() === ADMIN_TOKEN;
+  }
+  return t === ADMIN_TOKEN;
+}
+
+/**
+ * Reads the admin token from incoming request headers, if available.
+ * Looks for:
+ *   - x-admin-token: <token>
+ *   - authorization: Bearer <token>
+ *
+ * Works around Next 15 typing where headers() may appear Promise-like.
+ */
+export function readIncomingToken(): string | null {
+  try {
+    const hOrPromise = nextHeaders() as any;
+
+    // If headers() returned a Headers-like object (normal case)
+    if (hOrPromise && typeof hOrPromise.get === "function") {
+      const headerToken =
+        hOrPromise.get("x-admin-token") ?? hOrPromise.get("X-Admin-Token");
+      if (headerToken) return headerToken.trim();
+
+      const auth =
+        hOrPromise.get("authorization") ?? hOrPromise.get("Authorization");
+      if (typeof auth === "string" && auth.toLowerCase().startsWith("bearer ")) {
+        return auth.slice(7).trim();
+      }
+    }
+  } catch {
+    // next/headers not available (e.g., called outside request) – ignore
   }
   return null;
-}
-
-export async function readBodyToken(req: Request): Promise<string | null> {
-  try {
-    // clone so downstream can still read the body if needed
-    const data = await req.clone().json().catch(() => null);
-    if (data && typeof data.token === "string") return data.token.trim();
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-export async function assertAdmin(req: Request) {
-  const envToken = process.env.JOBS_ADMIN_TOKEN;
-  if (!envToken) {
-    return { ok: false as const, status: 500, message: "Server auth not configured" };
-  }
-
-  const headTok = readIncomingTokenFromReq(req);
-  if (headTok && headTok === envToken) return { ok: true as const };
-
-  const bodyTok = await readBodyToken(req);
-  if (bodyTok && bodyTok === envToken) return { ok: true as const };
-
-  return { ok: false as const, status: 401, message: "Unauthorized" };
 }
