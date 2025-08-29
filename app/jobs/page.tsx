@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { getJobsPublic } from "@/lib/jobs-public";
+import { getAllJobsPublic } from "@/lib/jobs-public";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function JobsPage() {
-  const jobs = await getJobsPublic();
+  const jobs = await getAllJobsPublic();
 
   if (!jobs?.length) {
     return (
