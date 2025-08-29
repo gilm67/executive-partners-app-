@@ -6,16 +6,15 @@ export async function GET() {
   try {
     const redis = await getRedis();
 
-    // Try ping (if client supports it), otherwise set+expire fallback
-    let ping: string = "ok";
+    // Try native ping if available; otherwise fall back to set + expire
+    let ping = "ok";
     try {
       if (typeof (redis as any).ping === "function") {
         ping = await (redis as any).ping();
       } else {
         const key = "diag:ping";
-        await redis.set(key, "pong");           // 2-arg set
+        await redis.set(key, "pong");         // 2-arg set
         try {
-          // if expire() exists, set TTL (portable)
           await (redis as any).expire?.(key, 5);
         } catch {}
         ping = (await redis.get(key)) || "ok";
@@ -24,10 +23,10 @@ export async function GET() {
       ping = "ok";
     }
 
-    // Count index members (portable)
+    // Count jobs in the index (lowercase smembers)
     let indexCount = 0;
     try {
-      const members = await redis.sMembers("jobs:index");
+      const members = await (redis as any).smembers("jobs:index");
       indexCount = Array.isArray(members) ? members.length : 0;
     } catch {
       indexCount = 0;
