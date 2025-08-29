@@ -10,63 +10,76 @@ type JobOut = {
   location?: string;
   market?: string;
   seniority?: string;
-  active?: string; // "true" | "false"
+  active?: string; // "true"/"false"
 };
 
 export async function GET() {
   try {
     const redis = await getRedis();
 
-    // Prefer the curated index if it exists
+    // 1) Try the fast set-based index first
     let ids: string[] = [];
     try {
-      ids = await redis.smembers("jobs:index");
+      const members = await redis.smembers("jobs:index");
+      if (Array.isArray(members)) ids = members;
     } catch {
       ids = [];
     }
 
-    // If no index, scan keys as a fallback (non-fatal)
+    // 2) Fallback: SCAN Redis for stored job hashes
     if (!ids.length) {
-      try {
-        let cursor = "0";
-        const found: string[] = [];
-        do {
-          const res = await redis.scan(cursor, { match: "job:*", count: 200 });
-          cursor = res.cursor;
-          if (Array.isArray(res.keys)) found.push(...res.keys);
-        } while (cursor !== "0");
-        ids = found;
-      } catch {
-        // ignore scan failure; we’ll just return []
-      }
+      const found: string[] = [];
+      let cursor = "0";
+      do {
+        // IMPORTANT: scan returns a tuple: [nextCursor, keys[]]
+        const [next, keys] = (await redis.scan(cursor, {
+          match: "job:*",
+          count: 200,
+        })) as unknown as [string, string[]];
+
+        cursor = next || "0";
+        if (Array.isArray(keys) && keys.length) found.push(...keys);
+      } while (cursor !== "0");
+
+      ids = found;
     }
 
-    const jobs: JobOut[] = [];
+    // 3) Read each job hash and build output
+    const out: JobOut[] = [];
     for (const id of ids) {
       try {
-        const h = await redis.hgetall(id);
-        if (!h || !h.slug || !h.title) continue;
-        // keep inactive out of the public list
+        const h = (await redis.hgetall(id)) as Record<string, string> | null;
+        if (!h) continue;
+
+        // Skip if explicitly inactive
         if (h.active === "false") continue;
 
-        jobs.push({
+        // Require minimum fields to show on list
+        if (!h.slug || !h.title) continue;
+
+        out.push({
           id,
-          slug: String(h.slug),
-          title: String(h.title),
-          summary: h.summary ? String(h.summary) : undefined,
-          location: h.location ? String(h.location) : undefined,
-          market: h.market ? String(h.market) : undefined,
-          seniority: h.seniority ? String(h.seniority) : undefined,
-          active: h.active ? String(h.active) : undefined,
+          slug: h.slug,
+          title: h.title,
+          summary: h.summary,
+          location: h.location,
+          market: h.market,
+          seniority: h.seniority,
+          active: h.active,
         });
       } catch {
-        // skip bad hash
+        // ignore a single bad hash
       }
     }
 
-    return NextResponse.json({ ok: true, jobs });
+    // Optional: sort newest-first if you encode a timestamp in the id
+    out.sort((a, b) => (a.id > b.id ? -1 : 1));
+
+    return NextResponse.json({ ok: true, jobs: out });
   } catch (err: any) {
-    // Never 500 — return a clean, empty list
-    return NextResponse.json({ ok: true, jobs: [], note: "list fallback", detail: err?.message ?? "" });
+    return NextResponse.json(
+      { ok: false, error: err?.message || "Server error" },
+      { status: 500 }
+    );
   }
 }
