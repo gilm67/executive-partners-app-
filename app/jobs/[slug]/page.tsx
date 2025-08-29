@@ -1,25 +1,41 @@
+// app/jobs/[slug]/page.tsx
 import { notFound } from "next/navigation";
 import { getJobBySlugPublic } from "@/lib/jobs-public";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-// Next 15 PageProps: params is a Promise in dynamic routes
-export default async function JobDetailPage(props: { params: Promise<{ slug: string }> }) {
-  const { slug } = await props.params;
+// Next.js 15 passes params as a Promise
+type Params = { slug: string };
+type PageProps = { params: Promise<Params> };
 
-  const job = await getJobBySlugPublic(slug);
-  if (!job) {
-    notFound();
+export default async function JobPage({ params }: PageProps) {
+  const { slug } = await params;
+
+  let job = null as Awaited<ReturnType<typeof getJobBySlugPublic>> | null;
+  try {
+    job = await getJobBySlugPublic(slug);
+  } catch {
+    job = null;
   }
+
+  if (!job) return notFound();
 
   return (
     <main className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-semibold">{job.title}</h1>
-      <div className="text-sm text-gray-600">
-        {job.location} {job.market ? `• ${job.market}` : ""} {job.seniority ? `• ${job.seniority}` : ""}
-      </div>
-      {job.summary && <p className="mt-4">{job.summary}</p>}
+      <p className="text-sm text-gray-600 mb-2">
+        {job.location} · {job.seniority}
+        {job.market ? ` · ${job.market}` : ""}
+      </p>
+      <h1 className="text-3xl font-semibold mb-4">{job.title}</h1>
+      {job.summary ? <p className="mb-6">{job.summary}</p> : null}
+      <article className="prose">
+        <p>
+          {/* Replace with the real description if you store it. This keeps page
+             robust even if description is missing in the public API. */}
+          {job.description ?? "Full role description coming soon."}
+        </p>
+      </article>
     </main>
   );
 }
