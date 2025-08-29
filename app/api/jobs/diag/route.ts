@@ -6,17 +6,18 @@ export async function GET() {
   try {
     const redis = await getRedis();
 
-    // ping with TTL (no 3rd-arg SET options, no expire())
+    // Minimal ping using only methods your compat layer exposes
     let ping = "ok";
     try {
       const key = "diag:ping";
-      await redis.setex(key, 5, "pong");   // <- set value and TTL in one call
-      ping = (await redis.get(key)) || "ok";
+      await redis.set(key, "pong");     // write
+      ping = (await redis.get(key)) || "ok"; // read
+      // no TTL here; keep it simple and compatible
     } catch {
-      /* ignore */
+      /* ignore ping failures, still return diag ok:false below if needed */
     }
 
-    // index size
+    // Count current index entries (also only using exposed methods)
     let indexCount = 0;
     try {
       const members = await redis.smembers("jobs:index");
@@ -27,6 +28,6 @@ export async function GET() {
 
     return NextResponse.json({ ok: true, msg: "jobs diag alive", ping, indexCount });
   } catch (err: any) {
-    return NextResponse.json({ ok: true, msg: "diag fallback", detail: err?.message ?? "" });
+    return NextResponse.json({ ok: false, error: err?.message || "Server error" }, { status: 500 });
   }
 }
