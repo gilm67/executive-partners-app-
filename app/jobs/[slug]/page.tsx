@@ -5,33 +5,30 @@ import { getJobBySlugPublic } from "@/lib/jobs-public";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-type PageProps = { params: { slug: string } };
+type Params = { slug: string };
 
-export default async function JobDetailPage({ params }: PageProps) {
+export default async function JobDetailPage({ params }: { params: Params }) {
   const job = await getJobBySlugPublic(params.slug);
-  if (!job) return notFound();
-
-  const facts = [job.location, job.market, job.seniority].filter(Boolean).join(" • ");
+  if (!job) notFound();
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12">
+    <main className="max-w-3xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-semibold">{job.title}</h1>
-      {facts && <p className="mt-2 text-sm text-neutral-600">{facts}</p>}
+      <div className="text-sm text-gray-600 mt-2">
+        {[job.location, job.seniority, job.market].filter(Boolean).join(" • ")}
+      </div>
 
-      {job.summary && (
-        <p className="mt-6 text-neutral-800 leading-relaxed">{job.summary}</p>
-      )}
-
+      {job.summary && <p className="mt-6">{job.summary}</p>}
       {job.description && (
-        <article className="prose prose-neutral mt-6" dangerouslySetInnerHTML={{ __html: job.description }} />
+        <article className="prose mt-6 whitespace-pre-wrap">{job.description}</article>
       )}
 
-      <div className="mt-10">
+      <div className="mt-8">
         <a
-          href="/contact"
-          className="inline-flex items-center rounded-md border border-blue-600 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+          href="/apply"
+          className="inline-block rounded-md border px-4 py-2 hover:bg-gray-50"
         >
-          Apply / Contact Us
+          Apply
         </a>
       </div>
     </main>
