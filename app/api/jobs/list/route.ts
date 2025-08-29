@@ -81,14 +81,14 @@ export async function GET() {
         return true;
       });
 
-      // Best-effort: repopulate jobs:index with IDs we know
+      // Best-effort: repopulate jobs:index with IDs we know (add one-by-one to satisfy types)
       const idsToAdd: string[] = [];
       for (const j of jobs) {
         if (j.id) idsToAdd.push(String(j.id));
       }
-      if (idsToAdd.length) {
+      for (const id of idsToAdd) {
         try {
-          await redis.sAdd("jobs:index", ...idsToAdd);
+          await redis.sAdd("jobs:index", id);
         } catch {}
       }
     }

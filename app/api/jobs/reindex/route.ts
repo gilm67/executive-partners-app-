@@ -14,7 +14,6 @@ async function scanAll(redis: any, pattern: string, count = 500): Promise<string
   let cursor: string = "0";
   try {
     do {
-      // Upstash returns [nextCursor, keys[]]
       const res = await redis.scan(cursor, { match: pattern, count });
       const next = Array.isArray(res) ? String(res[0]) : "0";
       const batch = Array.isArray(res) ? (res[1] as string[]) : [];
@@ -75,17 +74,28 @@ export async function POST(req: Request) {
       }
     }
 
+    // Rebuild the set (simple approach)
+    try {
+      await redis.del("jobs:index");
+    } catch (e) {
+      console.error("del jobs:index error:", e);
+    }
+
     let added = 0;
-    if (verified.length) {
+    for (const id of verified) {
       try {
-        const n = await redis.sAdd("jobs:index", ...verified);
-        added = Number(n) || 0;
+        const n = await redis.sAdd("jobs:index", id);
+        added += Number(n) || 0;
       } catch (e) {
-        console.error("sAdd jobs:index error:", e);
+        console.error("sAdd jobs:index error for", id, e);
       }
     }
 
-    const total = await redis.sCard("jobs:index").catch(() => 0);
+    let total = 0;
+    try {
+      total = await redis.sCard("jobs:index");
+    } catch {}
+
     return json({ ok: true, scanned: candidateIds.size, verified: verified.length, added, total });
   } catch (err) {
     console.error("reindex fatal:", err);
