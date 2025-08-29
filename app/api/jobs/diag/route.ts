@@ -6,15 +6,14 @@ export async function GET() {
   try {
     const redis = await getRedis();
 
-    // ping (tolerate clients that don't accept SET options)
+    // ping with TTL (no 3rd-arg SET options, no expire())
     let ping = "ok";
     try {
       const key = "diag:ping";
-      await redis.set(key, "pong");        // <= just 2 args
-      await redis.expire(key, 5);          // <= set TTL separately
+      await redis.setex(key, 5, "pong");   // <- set value and TTL in one call
       ping = (await redis.get(key)) || "ok";
     } catch {
-      // ignore
+      /* ignore */
     }
 
     // index size
