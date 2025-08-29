@@ -28,3 +28,5 @@ service_account.json
 private_key.b64
 .env.local
 .vercel
+.env*.local
+!public/*.json
