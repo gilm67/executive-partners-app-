@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { fetchJobBySlugPublic } from "@/lib/jobs-public";
+import { getJobBySlugPublic } from "@/lib/jobs-public";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -8,7 +8,7 @@ export const revalidate = 0;
 export default async function JobDetailPage(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
 
-  const job = await fetchJobBySlugPublic(slug);
+  const job = await getJobBySlugPublic(slug);
   if (!job) {
     notFound();
   }
