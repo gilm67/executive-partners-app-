@@ -1,20 +1,12 @@
-import { createClient, type RedisClientType } from "redis";
+// lib/redis.ts
+import { Redis } from "@upstash/redis";
 
-let _client: RedisClientType | null = null;
+let client: Redis | null = null;
 
-export async function getRedis(): Promise<RedisClientType> {
-  if (_client) return _client;
+export function getRedis() {
+  if (client) return client;
   const url = process.env.REDIS_URL;
-  if (!url) throw new Error("Missing REDIS_URL env");
-
-  _client = createClient({ url });
-
-  _client.on("error", (err) => {
-    console.error("Redis error:", err);
-  });
-
-  if (!_client.isOpen) {
-    await _client.connect();
-  }
-  return _client;
+  if (!url) throw new Error("Missing REDIS_URL");
+  client = new Redis({ url });
+  return client;
 }

@@ -1,84 +1,80 @@
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
+import { assertAdmin } from "@/lib/admin-auth";
 
-export const dynamic = "force-dynamic";
-
-type JobInput = {
+type Body = {
   title: string;
-  role?: string;
+  slug: string;
+  summary?: string;
+  description?: string;
   location?: string;
   market?: string;
   seniority?: string;
-  summary?: string;
-  description?: string;
-  confidential?: boolean;
+  active?: string | boolean;
 };
 
-function slugify(s: string) {
-  return s
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+function boolString(v: Body["active"]) {
+  if (typeof v === "boolean") return v ? "true" : "false";
+  if (typeof v === "string") {
+    const s = v.trim().toLowerCase();
+    if (["1", "true", "yes", "on"].includes(s)) return "true";
+    if (["0", "false", "no", "off"].includes(s)) return "false";
+  }
+  return "true"; // default show
 }
 
-function ok(data: any, status = 200) {
-  return NextResponse.json(data, { status });
+async function uniqueSlug(redis: any, base: string): Promise<string> {
+  let slug = base;
+  let n = 1;
+  // keep trying slug, slug-1, slug-2...
+  while (await redis.get(`jobs:by-slug:${slug}`)) {
+    n += 1;
+    slug = `${base}-${n}`;
+  }
+  return slug;
 }
 
 export async function POST(req: Request) {
-  try {
-    // auth (Bearer or x-admin-token)
-    const token =
-      req.headers.get("authorization")?.replace(/bearer\s+/i, "") ||
-      req.headers.get("x-admin-token") ||
-      "";
-
-    if (!process.env.APP_ADMIN_TOKEN || token !== process.env.APP_ADMIN_TOKEN) {
-      return ok({ ok: false, error: "Unauthorized" }, 401);
-    }
-
-    const body = (await req.json()) as JobInput;
-    if (!body?.title) return ok({ ok: false, error: "Missing title" }, 400);
-
-    const redis = await getRedis();
-
-    // id + unique slug
-    const id = `job:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
-    const slugBase = slugify(body.title) || "job";
-    let slug = slugBase;
-    for (let i = 1; await redis.exists(`jobs:by-slug:${slug}`); i++) {
-      slug = `${slugBase}-${i}`;
-    }
-
-    const job = {
-      id,
-      title: body.title || "",
-      role: body.role || "",
-      location: body.location || "",
-      market: body.market || "",
-      seniority: body.seniority || "",
-      summary: body.summary || "",
-      description: body.description || "",
-      confidential: !!body.confidential,
-      slug,
-      createdAt: new Date().toISOString(),
-      active: true,
-    };
-
-    // STRINGIFY everything for Redis hashes
-    const jobForRedis: Record<string, string> = Object.fromEntries(
-      Object.entries(job).map(([k, v]) => [k, String(v)])
-    );
-
-    // write
-    await redis.hSet(id, jobForRedis);
-    await redis.set(`jobs:by-slug:${slug}`, id);
-    await redis.zAdd("jobs:index", [{ score: Date.now(), value: id }]);
-
-    return ok({ ok: true, id: { id, title: job.title, location: job.location, slug } });
-  } catch (err: any) {
-    console.error("jobs/create error:", err?.message || err);
-    return ok({ ok: false, error: "Server error" }, 500);
+  const auth = await assertAdmin(req);
+  if (!auth.ok) {
+    return NextResponse.json({ ok: false, error: auth.message }, { status: auth.status });
   }
+
+  let body: Body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
+  }
+
+  if (!body.title || !body.slug) {
+    return NextResponse.json({ ok: false, error: "Missing title or slug" }, { status: 400 });
+  }
+
+  const redis = await getRedis();
+  const finalSlug = await uniqueSlug(redis, body.slug.trim());
+  const id = `job:${Date.now()}:${Math.random().toString(36).slice(2, 6)}`;
+
+  const doc = {
+    id,
+    title: body.title,
+    slug: finalSlug,
+    summary: body.summary ?? "",
+    description: body.description ?? "",
+    location: body.location ?? "",
+    market: body.market ?? "",
+    seniority: body.seniority ?? "",
+    active: boolString(body.active),
+    createdAt: new Date().toISOString(),
+  };
+
+  // write
+  await redis.hSet(id, doc);
+  await redis.set(`jobs:by-slug:${finalSlug}`, id);
+  await redis.sAdd("jobs:index", id); // <-- CRITICAL: keep the index updated
+
+  return NextResponse.json({
+    ok: true,
+    id: { id, title: doc.title, location: doc.location, slug: doc.slug },
+  });
 }
