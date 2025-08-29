@@ -29,22 +29,24 @@ export async function GET(req: Request) {
     const redis = await getRedis();
 
     // Resolve ID if slug was given
-    let id = idParam;
+    let id: string | undefined = idParam;
     if (!id && slugParam) {
       const resolved = await redis.get(`jobs:by-slug:${slugParam}`);
-      if (!resolved) {
+      if (!resolved || typeof resolved !== "string" || !resolved.trim()) {
         return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
       }
-      id = resolved;
+      id = resolved.trim(); // now definitely a string
     }
 
     // Read the job hash
-    const h = (await redis.hgetall(id!)) as unknown as JobHash;
+    const hash = await redis.hgetall(id as string);
+    const h = hash as unknown as JobHash;
+
     if (!h || !h.title) {
       return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
     }
 
-    // Normalize booleans
+    // Normalize booleans and shape
     const job = {
       id,
       slug: h.slug,
