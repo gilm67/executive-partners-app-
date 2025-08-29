@@ -7,8 +7,15 @@ export const revalidate = 0;
 
 type Params = { slug: string };
 
-export default async function JobDetailPage({ params }: { params: Params }) {
-  const job = await getJobBySlugPublic(params.slug);
+export default async function JobDetailPage({
+  params,
+}: {
+  // In Next.js 15, params is a Promise
+  params: Promise<Params>;
+}) {
+  const { slug } = await params;
+
+  const job = await getJobBySlugPublic(slug);
   if (!job) notFound();
 
   return (
