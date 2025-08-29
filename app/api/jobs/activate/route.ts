@@ -1,80 +1,78 @@
 // app/api/jobs/activate/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
+import { readIncomingToken, isAdmin } from "@/lib/admin-auth";
 
-type Payload = {
+const ALLOWED_ORIGINS = [
+  "https://www.execpartners.ch",
+  "https://execpartners.ch",
+  "https://jobs.execpartners.ch",
+  "http://localhost:3000",
+];
+
+function corsHeaders(req: NextRequest) {
+  const origin = req.headers.get("origin") || "";
+  const allow =
+    ALLOWED_ORIGINS.includes(origin) || origin.endsWith(".vercel.app");
+  return {
+    "Access-Control-Allow-Origin": allow ? origin : "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, x-admin-token, authorization",
+    "Access-Control-Max-Age": "86400",
+  };
+}
+
+export async function OPTIONS(req: NextRequest) {
+  return new NextResponse(null, { status: 204, headers: corsHeaders(req) as any });
+}
+
+type Body = {
   id?: string;
   slug?: string;
-  active?: boolean | "true" | "false" | string | number;
+  active?: boolean | string;
 };
 
-function toBool(v: Payload["active"]): boolean | null {
-  if (typeof v === "boolean") return v;
-  if (typeof v === "number") return v !== 0;
-  if (typeof v === "string") {
-    const s = v.trim().toLowerCase();
-    if (["1", "true", "yes", "on"].includes(s)) return true;
-    if (["0", "false", "no", "off"].includes(s)) return false;
-  }
-  return null;
-}
-
-function isAuthorized(req: NextRequest) {
-  const env = process.env.JOBS_ADMIN_TOKEN || "";
-  const head = req.headers.get("x-admin-token") || "";
-  const auth = req.headers.get("authorization") || "";
-  if (!env) return false;
-  if (head && head === env) return true;
-  if (auth.toLowerCase().startsWith("bearer ") && auth.slice(7).trim() === env) return true;
-  return false;
-}
-
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      Allow: "GET, HEAD, OPTIONS, POST",
-      "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST",
-      "Access-Control-Allow-Headers": "Content-Type, x-admin-token, authorization",
-    },
-  });
-}
-
 export async function POST(req: NextRequest) {
-  if (!isAuthorized(req)) {
-    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
-  }
+  const headers = corsHeaders(req);
 
-  let body: Payload;
-  try {
-    body = (await req.json()) as Payload;
-  } catch {
-    return NextResponse.json({ ok: false, error: "Invalid JSON body" }, { status: 400 });
-  }
-
-  const desired = toBool(body.active);
-  if (desired === null) {
+  // Auth
+  const token = readIncomingToken();
+  if (!isAdmin(token)) {
     return NextResponse.json(
-      { ok: false, error: "Missing/invalid 'active' (expected boolean-like)" },
-      { status: 400 }
+      { ok: false, error: "Unauthorized" },
+      { status: 401, headers }
     );
   }
 
-  const redis = getRedis();
+  // Parse body
+  let body: Body;
+  try {
+    body = (await req.json()) as Body;
+  } catch {
+    return NextResponse.json(
+      { ok: false, error: "Invalid JSON body" },
+      { status: 400, headers }
+    );
+  }
 
-  // Resolve ID
-  let id: string | undefined =
-    typeof body.id === "string" && body.id.trim() ? body.id.trim() : undefined;
+  // Get a redis client (IMPORTANT: await getRedis() once)
+  const redis = await getRedis();
+
+  // Resolve id by id or slug
+  let id: string | undefined = body.id;
 
   if (!id && body.slug) {
-    const slug = body.slug.trim();
-    // Try both legacy and new slug pointers
-    const candidates = [`jobs:by-slug:${slug}`, `slug:${slug}`];
+    const slug = String(body.slug).trim();
+    // Try known slug→id keys
+    const candidates = [
+      `jobs:by-slug:${slug}`,
+      `job:by-slug:${slug}`,
+    ];
+    let resolved: string | undefined;
 
-    let resolved: string | null = null;
     for (const key of candidates) {
       try {
-        const v = (await redis.get(key)) as string | null;
+        const v = await redis.get(key); // ← now on the resolved client
         if (typeof v === "string" && v) {
           resolved = v;
           break;
@@ -87,42 +85,60 @@ export async function POST(req: NextRequest) {
     if (!resolved) {
       return NextResponse.json(
         { ok: false, error: `No job found for slug '${slug}'` },
-        { status: 404 }
+        { status: 404, headers }
       );
     }
-
-    id = resolved; // <- now definitely a string
+    id = resolved;
   }
 
   if (!id) {
     return NextResponse.json(
-      { ok: false, error: "Missing 'id' or 'slug' in body" },
-      { status: 400 }
+      { ok: false, error: "Provide job 'id' or 'slug'" },
+      { status: 400, headers }
     );
   }
 
-  // Write the flag
-  try {
-    await redis.hset(id, { active: desired ? "true" : "false" });
-  } catch (e: any) {
+  // Load current job hash
+  const h = await redis.hgetall(id);
+  if (!h || Object.keys(h).length === 0) {
     return NextResponse.json(
-      { ok: false, error: "Failed to update job", detail: String(e?.message ?? e) },
-      { status: 500 }
+      { ok: false, error: `Job not found: ${id}` },
+      { status: 404, headers }
     );
   }
 
-  // Read back a few fields for confirmation
-  const updated = (await redis.hgetall(id)) as Record<string, string>;
+  // Decide new active state
+  let nextActive: boolean;
+  if (typeof body.active === "string") {
+    nextActive = body.active.toLowerCase() !== "false";
+  } else if (typeof body.active === "boolean") {
+    nextActive = body.active;
+  } else {
+    // default: toggle to true if missing, or keep current if present
+    nextActive = (h.active ?? "true") !== "false";
+  }
 
-  return NextResponse.json({
-    ok: true,
-    id,
-    active: updated?.active ?? (desired ? "true" : "false"),
-    job: {
-      slug: updated?.slug ?? null,
-      title: updated?.title ?? null,
-      location: updated?.location ?? null,
-      active: updated?.active ?? null,
+  // Persist
+  h.active = nextActive ? "true" : "false";
+  await redis.hset(id, h);
+
+  // Maintain index membership
+  if (nextActive) {
+    await redis.sadd("jobs:index", id);
+  }
+
+  return NextResponse.json(
+    {
+      ok: true,
+      id,
+      active: h.active,
+      job: {
+        slug: h.slug,
+        title: h.title,
+        location: h.location,
+        active: h.active,
+      },
     },
-  });
+    { status: 200, headers }
+  );
 }
