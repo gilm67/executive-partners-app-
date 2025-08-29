@@ -1,29 +1,22 @@
-import { NextResponse, type NextRequest } from "next/server";
+// middleware.ts
+import { NextResponse } from "next/server";
 
-/**
- * Run on every path and skip excluded ones at runtime.
- * (No regex capturing groups in config.matcher anymore.)
- */
-export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+export const config = {
+  // Only protect admin (mutating) routes
+  matcher: [
+    "/api/jobs/create",
+    "/api/jobs/activate",
+    "/api/jobs/reindex",
+  ],
+};
 
-  // Skip Next internals, API routes, and common static assets
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api") ||
-    pathname === "/favicon.ico" ||
-    pathname === "/robots.txt" ||
-    pathname === "/sitemap.xml" ||
-    /\.(?:png|jpg|jpeg|gif|webp|svg|ico|css|js|map)$/.test(pathname)
-  ) {
-    return NextResponse.next();
+export default async function middleware(req: Request) {
+  const url = new URL(req.url);
+  const token = req.headers.get("x-admin-token") || "";
+  const expected = process.env.JOBS_ADMIN_TOKEN || "";
+
+  if (!expected || token !== expected) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
-
-  // your logic here (currently pass-through)
   return NextResponse.next();
 }
-
-/** IMPORTANT: no capturing groups here */
-export const config = {
-  matcher: ["/:path*"],
-};
