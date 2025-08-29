@@ -4,7 +4,7 @@ applypatch <<'PATCH'
 @@
 -      .map(j => ({
 -        url: `${base}/jobs/${j.slug}`,
--        lastModified: j.updatedAt ? new Date(j.updatedAt) : now,
+-        lastModified: now,
 -        changeFrequency: "daily" as const,
 -        priority: 0.8,
 -      }));
