@@ -1,38 +1,42 @@
-// lib/jobs-public.ts
-// Minimal client for fetching jobs from the external public API (jobs.execpartners.ch)
-
-export type Job = {
-  id: string;
+export type PublicJob = {
   slug: string;
   title: string;
   summary?: string;
-  description?: string;
   location?: string;
-  market?: string;
   seniority?: string;
-  active?: boolean | string;
+  market?: string;
+  description?: string;
+  active?: string | boolean;
 };
 
-const API_BASE = "https://jobs.execpartners.ch/api/jobs";
-
-export async function getAllJobs(): Promise<Job[]> {
-  const res = await fetch(`${API_BASE}/list`, { cache: "no-store" });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return Array.isArray(data.jobs) ? data.jobs : [];
+function jobsApiBase() {
+  return process.env.NEXT_PUBLIC_JOBS_API_BASE?.replace(/\/$/, "") || "https://jobs.execpartners.ch";
 }
 
-export async function getJobBySlug(slug: string): Promise<Job | null> {
-  const res = await fetch(`${API_BASE}/get?slug=${encodeURIComponent(slug)}`, {
-    cache: "no-store",
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data?.job ?? null;
+async function safeJson(res: Response) {
+  try { return await res.json(); } catch { return {}; }
 }
 
-// Alias for compatibility with sitemap.ts and pages
-export const getAllJobsPublic = getAllJobs;
-export const getJobBySlugPublic = getJobBySlug;
-export const fetchJobs = getAllJobs;
-export const fetchJob = getJobBySlug;
+export async function getAllJobsPublic(): Promise<PublicJob[]> {
+  try {
+    const url = `${jobsApiBase()}/api/jobs/list`;
+    const res = await fetch(url, { cache: "no-store", next: { revalidate: 0 } });
+    const data = await safeJson(res);
+    const arr: any[] = Array.isArray(data?.jobs) ? data.jobs : Array.isArray(data) ? data : [];
+    return arr.filter(j => j && j.slug);
+  } catch {
+    return [];
+  }
+}
+
+export async function getJobBySlugPublic(slug: string): Promise<PublicJob | null> {
+  try {
+    const url = `${jobsApiBase()}/api/jobs/get?slug=${encodeURIComponent(slug)}`;
+    const res = await fetch(url, { cache: "no-store", next: { revalidate: 0 } });
+    const data: any = await safeJson(res);
+    const job = data?.job || (data && data.slug ? data : null);
+    return job && job.slug ? job as PublicJob : null;
+  } catch {
+    return null;
+  }
+}
