@@ -30,3 +30,4 @@ private_key.b64
 .vercel
 .env*.local
 !public/*.json
+!public/*.json
