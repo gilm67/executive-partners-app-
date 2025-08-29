@@ -9,6 +9,24 @@ function json(data: unknown, status = 200) {
   return NextResponse.json(data, { status, headers: { "Cache-Control": "no-store" } });
 }
 
+async function scanAll(redis: any, pattern: string, count = 500): Promise<string[]> {
+  const keys: string[] = [];
+  let cursor: string = "0";
+  try {
+    do {
+      // Upstash returns [nextCursor, keys[]]
+      const res = await redis.scan(cursor, { match: pattern, count });
+      const next = Array.isArray(res) ? String(res[0]) : "0";
+      const batch = Array.isArray(res) ? (res[1] as string[]) : [];
+      keys.push(...batch);
+      cursor = next;
+    } while (cursor !== "0");
+  } catch (e) {
+    console.error("scanAll error for", pattern, e);
+  }
+  return keys;
+}
+
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
@@ -28,50 +46,49 @@ export async function POST(req: Request) {
 
     const redis = await getRedis();
 
-    const toAdd = new Set<string>();
+    const candidateIds = new Set<string>();
 
-    // Collect all job hashes (two common patterns: "job:*" and "jobs:*" numeric ids)
-    // @ts-ignore Upstash supports scanIterator
-    for await (const k of redis.scanIterator({ match: "job:*" }) as AsyncIterable<string>) {
-      // We only want hashes that actually contain a job (have a title/slug)
-      toAdd.add(String(k));
-    }
-    // Some projects stored as "jobs:<number>"
-    // @ts-ignore
-    for await (const k of redis.scanIterator({ match: "jobs:[0-9]*" }) as AsyncIterable<string>) {
-      toAdd.add(String(k));
-    }
+    // Collect job:* keys (hashes)
+    for (const k of await scanAll(redis, "job:*")) candidateIds.add(k);
+
+    // Some projects use jobs:<number>
+    for (const k of await scanAll(redis, "jobs:[0-9]*")) candidateIds.add(k);
+
     // Resolve slug pointers
-    // @ts-ignore
-    for await (const k of redis.scanIterator({ match: "jobs:by-slug:*" }) as AsyncIterable<string>) {
-      const id = await redis.get(k);
-      if (id) toAdd.add(String(id));
+    for (const slugKey of await scanAll(redis, "jobs:by-slug:*")) {
+      try {
+        const id = await redis.get(slugKey);
+        if (id) candidateIds.add(String(id));
+      } catch (e) {
+        console.error("read slug ptr error:", slugKey, e);
+      }
+    }
+
+    // Verify real jobs (must have title+slug)
+    const verified: string[] = [];
+    for (const id of candidateIds) {
+      try {
+        const h = await redis.hGetAll(id);
+        if (h && h.title && h.slug) verified.push(id);
+      } catch (e) {
+        console.error("hGetAll error:", id, e);
+      }
     }
 
     let added = 0;
-    if (toAdd.size) {
-      const ids = Array.from(toAdd);
-      // add only those that are real job hashes (heuristic: they have "title" and "slug")
-      const verified: string[] = [];
-      for (const id of ids) {
-        const h = await redis.hGetAll(id);
-        if (h && h.title && h.slug) verified.push(id);
-      }
-      if (verified.length) {
-        try {
-          // @ts-ignore
-          const n = await redis.sAdd("jobs:index", ...verified);
-          added = Number(n) || 0;
-        } catch (e) {
-          console.error("reindex sAdd error:", e);
-        }
+    if (verified.length) {
+      try {
+        const n = await redis.sAdd("jobs:index", ...verified);
+        added = Number(n) || 0;
+      } catch (e) {
+        console.error("sAdd jobs:index error:", e);
       }
     }
 
-    const total = await redis.sCard("jobs:index");
-    return json({ ok: true, added, total, scanned: toAdd.size });
+    const total = await redis.sCard("jobs:index").catch(() => 0);
+    return json({ ok: true, scanned: candidateIds.size, verified: verified.length, added, total });
   } catch (err) {
-    console.error("reindex fatal error:", err);
+    console.error("reindex fatal:", err);
     return json({ ok: false, error: "Server error in reindex" }, 500);
   }
 }

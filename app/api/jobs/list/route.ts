@@ -10,21 +10,38 @@ function json(data: unknown, status = 200) {
   return NextResponse.json(data, { status, headers: { "Cache-Control": "no-store" } });
 }
 
+async function scanAll(redis: any, pattern: string, count = 500): Promise<string[]> {
+  const keys: string[] = [];
+  let cursor: string = "0";
+  try {
+    do {
+      const res = await redis.scan(cursor, { match: pattern, count });
+      const next = Array.isArray(res) ? String(res[0]) : "0";
+      const batch = Array.isArray(res) ? (res[1] as string[]) : [];
+      keys.push(...batch);
+      cursor = next;
+    } while (cursor !== "0");
+  } catch (e) {
+    console.error("scanAll error for", pattern, e);
+  }
+  return keys;
+}
+
 export async function GET() {
   try {
     const redis = await getRedis();
 
     const normalize = (raw: Job | null): Job | null => {
       if (!raw) return null;
-      if (raw.active === "false") return null;  // hide deactivated
-      if (!raw.title || !raw.slug) return null; // require basics
+      if (raw.active === "false") return null;
+      if (!raw.title || !raw.slug) return null;
       return raw;
     };
 
     let jobs: Job[] = [];
-    let ids: string[] = [];
 
-    // Fast path: try the index set
+    // Try index set first
+    let ids: string[] = [];
     try {
       ids = await redis.sMembers("jobs:index");
     } catch {
@@ -38,16 +55,17 @@ export async function GET() {
         if (norm) jobs.push(norm);
       }
     } else {
-      // Self-healing scan
-      // @ts-ignore
-      for await (const key of redis.scanIterator({ match: "job:*" }) as AsyncIterable<string>) {
+      // Fallback: scan job:* and jobs:by-slug:*
+      const jobKeys = await scanAll(redis, "job:*");
+      for (const key of jobKeys) {
         const j = await redis.hGetAll(key);
         const norm = normalize((j as unknown) as Job);
         if (norm) jobs.push(norm);
       }
-      // @ts-ignore
-      for await (const bySlug of redis.scanIterator({ match: "jobs:by-slug:*" }) as AsyncIterable<string>) {
-        const id = await redis.get(bySlug);
+
+      const slugKeys = await scanAll(redis, "jobs:by-slug:*");
+      for (const bySlugKey of slugKeys) {
+        const id = await redis.get(bySlugKey);
         if (!id) continue;
         const j = await redis.hGetAll(String(id));
         const norm = normalize((j as unknown) as Job);
@@ -63,19 +81,15 @@ export async function GET() {
         return true;
       });
 
-      // Best-effort: repopulate jobs:index with actual IDs when available
-      // Prefer the real stored ID if present; else fall back to the key-like fields we saw
+      // Best-effort: repopulate jobs:index with IDs we know
       const idsToAdd: string[] = [];
       for (const j of jobs) {
         if (j.id) idsToAdd.push(String(j.id));
       }
       if (idsToAdd.length) {
         try {
-          // @ts-ignore
           await redis.sAdd("jobs:index", ...idsToAdd);
-        } catch {
-          // ignore
-        }
+        } catch {}
       }
     }
 
