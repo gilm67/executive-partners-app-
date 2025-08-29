@@ -11,19 +11,26 @@ type Job = {
   market?: string;
   seniority?: string;
   summary?: string;
-  description?: string;
   active?: string;
 };
 
 async function fetchJobs(): Promise<Job[]> {
+  const base =
+    process.env.NEXT_PUBLIC_JOBS_API_BASE?.trim() ||
+    "https://jobs.execpartners.ch";
+
+  const url = `${base.replace(/\/+$/, "")}/api/jobs/list`;
   try {
-    // Relative URL so it always hits the current origin
-    const res = await fetch("/api/jobs/list", { cache: "no-store" });
-    if (!res.ok) return [];
-    const data = await res.json().catch(() => null as any);
-    if (!data || data.ok !== true || !Array.isArray(data.jobs)) return [];
-    return data.jobs as Job[];
-  } catch {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) {
+      console.error("jobs list non-200:", res.status, await res.text().catch(() => ""));
+      return [];
+    }
+    const data = (await res.json()) as { ok?: boolean; jobs?: Job[] };
+    if (!data?.ok || !Array.isArray(data.jobs)) return [];
+    return data.jobs;
+  } catch (e) {
+    console.error("jobs list fetch error:", e);
     return [];
   }
 }
@@ -51,7 +58,10 @@ export default async function JobsPage() {
             >
               <div className="flex items-start justify-between gap-4">
                 <h2 className="text-lg font-medium text-white">
-                  <Link href={`/jobs/${job.slug}`} className="hover:underline underline-offset-4">
+                  <Link
+                    href={`/jobs/${job.slug}`}
+                    className="hover:underline underline-offset-4"
+                  >
                     {job.title}
                   </Link>
                 </h2>
