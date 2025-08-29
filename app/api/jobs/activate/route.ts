@@ -1,7 +1,6 @@
 // app/api/jobs/activate/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
-import { assertAdmin } from "@/lib/admin-auth";
 
 type Payload = {
   id?: string;
@@ -20,6 +19,16 @@ function toBool(v: Payload["active"]): boolean | null {
   return null;
 }
 
+function isAuthorized(req: NextRequest) {
+  const env = process.env.JOBS_ADMIN_TOKEN || "";
+  const head = req.headers.get("x-admin-token") || "";
+  const auth = req.headers.get("authorization") || "";
+  if (!env) return false;
+  if (head && head === env) return true;
+  if (auth.toLowerCase().startsWith("bearer ") && auth.slice(7).trim() === env) return true;
+  return false;
+}
+
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
@@ -31,15 +40,14 @@ export async function OPTIONS() {
   });
 }
 
-export async function POST(req: Request) {
-  const auth = await assertAdmin(req);
-  if (!auth.ok) {
-    return NextResponse.json({ ok: false, error: auth.message }, { status: auth.status });
+export async function POST(req: NextRequest) {
+  if (!isAuthorized(req)) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
   let body: Payload;
   try {
-    body = await req.json();
+    body = (await req.json()) as Payload;
   } catch {
     return NextResponse.json({ ok: false, error: "Invalid JSON body" }, { status: 400 });
   }
@@ -52,20 +60,38 @@ export async function POST(req: Request) {
     );
   }
 
-  const redis = await getRedis();
+  const redis = getRedis();
 
-  // Resolve id via slug if needed
-  let id: string | undefined = body.id;
+  // Resolve ID
+  let id: string | undefined =
+    typeof body.id === "string" && body.id.trim() ? body.id.trim() : undefined;
+
   if (!id && body.slug) {
-    const key = `jobs:by-slug:${body.slug}`;
-    const resolved = await redis.get(key); // string | null
+    const slug = body.slug.trim();
+    // Try both legacy and new slug pointers
+    const candidates = [`jobs:by-slug:${slug}`, `slug:${slug}`];
+
+    let resolved: string | null = null;
+    for (const key of candidates) {
+      try {
+        const v = (await redis.get(key)) as string | null;
+        if (typeof v === "string" && v) {
+          resolved = v;
+          break;
+        }
+      } catch {
+        // ignore and try next
+      }
+    }
+
     if (!resolved) {
       return NextResponse.json(
-        { ok: false, error: `No job found for slug '${body.slug}'` },
+        { ok: false, error: `No job found for slug '${slug}'` },
         { status: 404 }
       );
     }
-    id = resolved; // now definitely a string
+
+    id = resolved; // <- now definitely a string
   }
 
   if (!id) {
@@ -75,20 +101,28 @@ export async function POST(req: Request) {
     );
   }
 
-  // Update hash
-  const wrote = await redis.hSet(String(id), { active: desired ? "true" : "false" });
+  // Write the flag
+  try {
+    await redis.hset(id, { active: desired ? "true" : "false" });
+  } catch (e: any) {
+    return NextResponse.json(
+      { ok: false, error: "Failed to update job", detail: String(e?.message ?? e) },
+      { status: 500 }
+    );
+  }
 
-  const updated = await redis.hGetAll(String(id));
+  // Read back a few fields for confirmation
+  const updated = (await redis.hgetall(id)) as Record<string, string>;
 
   return NextResponse.json({
     ok: true,
     id,
     active: updated?.active ?? (desired ? "true" : "false"),
     job: {
-      slug: updated?.slug,
-      title: updated?.title,
-      location: updated?.location,
-      active: updated?.active,
+      slug: updated?.slug ?? null,
+      title: updated?.title ?? null,
+      location: updated?.location ?? null,
+      active: updated?.active ?? null,
     },
   });
 }
