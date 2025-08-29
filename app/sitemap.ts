@@ -4,87 +4,52 @@ import { getRedis } from "@/lib/redis";
 
 type JobHash = {
   slug?: string;
-  active?: string; // "true" | "false" | undefined
+  title?: string;
   updatedAt?: string;
   createdAt?: string;
+  active?: string; // "true" | "false"
 };
 
-const CANON = process.env.SITEMAP_CANON || "https://execpartners.ch";
+const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://execpartners.ch";
 
-/**
- * Collect slugs from Redis. We try two strategies:
- * 1) scan jobs:* hashes and read slug/active/updatedAt
- * 2) fallback to the slug index keys jobs:by-slug:*
- */
-async function getJobEntries(): Promise<
-  { slug: string; lastMod?: Date }[]
-> {
-  const redis = await getRedis();
-  const out = new Map<string, Date | undefined>();
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const staticRoutes: MetadataRoute.Sitemap = [
+    { url: `${BASE}/`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/about`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/jobs`, changeFrequency: "hourly", priority: 0.8 },
+    { url: `${BASE}/candidates`, changeFrequency: "weekly", priority: 0.6 },
+    { url: `${BASE}/hiring-managers`, changeFrequency: "weekly", priority: 0.6 },
+    { url: `${BASE}/bp-simulator`, changeFrequency: "weekly", priority: 0.5 },
+    { url: `${BASE}/contact`, changeFrequency: "monthly", priority: 0.5 },
+  ];
 
-  // 1) Scan job hashes like jobs:<id>
   try {
-    // @ts-ignore Upstash supports scanIterator
-    const it = redis.scanIterator({ match: "jobs:*" });
-    for await (const key of it as AsyncIterable<string>) {
-      if (!/^jobs:\d+/i.test(key)) continue;
-      const h = (await redis.hGetAll(key)) as unknown as JobHash;
+    const redis = await getRedis();
+
+    // Prefer the index you maintain when creating/updating jobs
+    const ids: string[] = (await redis.smembers("jobs:index")) || [];
+
+    const jobRoutes: MetadataRoute.Sitemap = [];
+    for (const id of ids) {
+      const h = (await redis.hgetall(id)) as unknown as JobHash;
       if (!h?.slug) continue;
       // include only if not explicitly inactive
       if (h.active === "false") continue;
 
-      const last =
-        (h.updatedAt && new Date(h.updatedAt)) ||
-        (h.createdAt && new Date(h.createdAt)) ||
-        undefined;
-      out.set(h.slug, last);
+      const lastmod =
+        h.updatedAt || h.createdAt || new Date().toISOString();
+
+      jobRoutes.push({
+        url: `${BASE}/jobs/${h.slug}`,
+        lastModified: lastmod,
+        changeFrequency: "daily",
+        priority: 0.8,
+      });
     }
+
+    return [...staticRoutes, ...jobRoutes];
   } catch {
-    // ignore and try fallback
+    // On any Redis error, at least return the static pages
+    return staticRoutes;
   }
-
-  // 2) Fallback: slug index keys
-  if (out.size === 0) {
-    try {
-      // @ts-ignore
-      const it = redis.scanIterator({ match: "jobs:by-slug:*" });
-      for await (const bySlugKey of it as AsyncIterable<string>) {
-        const slug = bySlugKey.replace(/^jobs:by-slug:/, "");
-        if (slug) out.set(slug, undefined);
-      }
-    } catch {
-      // ignore
-    }
-  }
-
-  return Array.from(out.entries()).map(([slug, lastMod]) => ({
-    slug,
-    lastMod,
-  }));
 }
-
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
-
-  const staticPages: MetadataRoute.Sitemap = [
-    { url: `${CANON}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },
-    { url: `${CANON}/jobs`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
-    { url: `${CANON}/candidates`, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${CANON}/hiring-managers`, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${CANON}/contact`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${CANON}/privacy`, changeFrequency: "yearly", priority: 0.3 },
-  ];
-
-  const jobs = await getJobEntries();
-  const jobPages: MetadataRoute.Sitemap = jobs.map(({ slug, lastMod }) => ({
-    url: `${CANON}/jobs/${slug}`,
-    lastModified: lastMod ?? now,
-    changeFrequency: "daily",
-    priority: 0.8,
-  }));
-
-  return [...staticPages, ...jobPages];
-}
-
-// Rebuild sitemap frequently to pick up new roles
-export const revalidate = 60; // seconds
