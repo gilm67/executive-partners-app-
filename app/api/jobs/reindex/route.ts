@@ -2,8 +2,8 @@
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 
-function ok(json: any, init?: number) {
-  return NextResponse.json({ ok: true, ...json }, { status: init ?? 200 });
+function ok(json: any, status = 200) {
+  return NextResponse.json({ ok: true, ...json }, { status });
 }
 function err(message: string, status = 500) {
   return NextResponse.json({ ok: false, error: message }, { status });
@@ -30,58 +30,48 @@ export async function OPTIONS() {
 }
 
 export async function POST(req: Request) {
-  // --- Auth ---
+  // Auth
   const envToken = process.env.JOBS_ADMIN_TOKEN;
   if (!envToken) return err("Server auth not configured", 500);
-
   const token = readAdminToken(req);
   if (!token || token !== envToken) return err("Unauthorized", 401);
 
   const redis = await getRedis();
 
-  // --- SCAN all potential job hash keys: "job:*"
-  const candidateIds: string[] = [];
-  let cursor = "0";
+  // Scan job hashes
   const MATCH = "job:*";
   const COUNT = 300;
+  let cursor = "0";
+  const candidateIds: string[] = [];
 
   try {
     do {
-      // node-redis v4: scan returns [nextCursor, keys[]]
-      const [next, keys] = await redis.scan(cursor, "MATCH", MATCH, "COUNT", COUNT);
+      // node-redis v4: scan(cursor, { MATCH, COUNT }) -> [nextCursor, keys[]]
+      const [next, keys] = (await redis.scan(cursor, { MATCH, COUNT })) as [string, string[]];
       cursor = next || "0";
-      if (Array.isArray(keys) && keys.length) {
-        for (const k of keys) candidateIds.push(k);
-      }
+      if (Array.isArray(keys) && keys.length) candidateIds.push(...keys);
     } while (cursor !== "0");
   } catch (e) {
     console.error("SCAN error:", e);
     return err("Server error during scan");
   }
 
-  // --- Verify each candidate looks like a job (has title & slug)
+  // Verify each candidate looks like a job (has title & slug)
   const verified: string[] = [];
-  let verifiedCount = 0;
-
   for (const id of candidateIds) {
     try {
       const h = await redis.hgetall(id);
-      if (h && h.title && h.slug) {
-        verified.push(id);
-        verifiedCount++;
-      }
+      if (h && h.title && h.slug) verified.push(id);
     } catch (e) {
       console.error("hgetall error:", id, e);
     }
   }
 
-  // --- Add to index set
+  // Add to index set
   let added = 0;
   if (verified.length) {
     try {
-      // sadd accepts (...members)
       const addedCount = await redis.sadd("jobs:index", ...verified);
-      // node-redis returns number of new elements added
       added = typeof addedCount === "number" ? addedCount : 0;
     } catch (e) {
       console.error("sadd error:", e);
@@ -89,13 +79,10 @@ export async function POST(req: Request) {
     }
   }
 
-  // (Optional) De-duplicate by ensuring each verified key is present in the by-slug index
-  // Not strictly required for listing, so skipping for speed.
-
   return ok({
     scanned: candidateIds.length,
-    verified: verifiedCount,
+    verified: verified.length,
     added,
-    total: verifiedCount, // number of job-like hashes encountered this run
+    total: verified.length,
   });
-}
+} s
