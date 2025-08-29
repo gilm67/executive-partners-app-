@@ -1,4 +1,7 @@
 // app/api/jobs/get/route.ts
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 
@@ -9,54 +12,64 @@ export async function GET(req: Request) {
     const slugParam = url.searchParams.get("slug");
 
     if (!idParam && !slugParam) {
-      return NextResponse.json({ ok: false, error: "Missing id or slug" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "id or slug is required" },
+        { status: 400 }
+      );
     }
 
     const redis = await getRedis();
 
-    // Resolve id from slug if needed
     let id = idParam || "";
     if (!id && slugParam) {
+      // Fast path: direct slug index
+      let resolved: string | null = null;
       try {
-        const bySlug = await redis.get(`jobs:by-slug:${slugParam}`);
-        if (typeof bySlug === "string" && bySlug) id = bySlug;
-      } catch {
-        // ignore
+        resolved = await redis.get(`jobs:by-slug:${slugParam}`);
+      } catch {}
+      // Slow path: scan for any job whose hash has this slug
+      if (!resolved) {
+        let cursor = "0";
+        do {
+          const [next, keys] = (await redis.scan(cursor, {
+            match: "job:*",
+            count: 200,
+          })) as unknown as [string, string[]];
+          cursor = next || "0";
+          for (const k of keys || []) {
+            try {
+              const h = (await redis.hgetall(k)) as Record<string, string> | null;
+              if (h?.slug === slugParam) {
+                resolved = k;
+                break;
+              }
+            } catch {}
+          }
+          if (resolved) break;
+        } while (cursor !== "0");
       }
+      if (!resolved) {
+        return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
+      }
+      id = resolved;
     }
 
-    if (!id) {
-      return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
-    }
-
-    // Load the job hash
-    let h: Record<string, string> | null = null;
-    try {
-      h = await redis.hgetall(id);
-    } catch {
-      h = null;
-    }
-
+    const h = (await redis.hgetall(id)) as Record<string, string> | null;
     if (!h || !h.slug || !h.title) {
       return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
     }
 
-    const job = {
-      id,
-      slug: String(h.slug),
-      title: String(h.title),
-      summary: h.summary ? String(h.summary) : undefined,
-      description: h.description ? String(h.description) : undefined,
-      location: h.location ? String(h.location) : undefined,
-      market: h.market ? String(h.market) : undefined,
-      seniority: h.seniority ? String(h.seniority) : undefined,
-      active: h.active ? String(h.active) : undefined,
-      createdAt: h.createdAt ? String(h.createdAt) : undefined,
-    };
-
-    return NextResponse.json({ ok: true, job });
+    return NextResponse.json({
+      ok: true,
+      job: {
+        id,
+        ...h,
+      },
+    });
   } catch (err: any) {
-    // Clean failure
-    return NextResponse.json({ ok: false, error: "Lookup failed", detail: err?.message ?? "" });
+    return NextResponse.json(
+      { ok: false, error: err?.message || "Server error" },
+      { status: 500 }
+    );
   }
 }

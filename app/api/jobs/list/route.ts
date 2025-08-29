@@ -1,4 +1,7 @@
 // app/api/jobs/list/route.ts
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 
@@ -17,7 +20,7 @@ export async function GET() {
   try {
     const redis = await getRedis();
 
-    // 1) Try the fast set-based index first
+    // Prefer index set
     let ids: string[] = [];
     try {
       const members = await redis.smembers("jobs:index");
@@ -26,12 +29,11 @@ export async function GET() {
       ids = [];
     }
 
-    // 2) Fallback: SCAN Redis for stored job hashes
+    // Fallback: SCAN job:* keys
     if (!ids.length) {
       const found: string[] = [];
       let cursor = "0";
       do {
-        // IMPORTANT: scan returns a tuple: [nextCursor, keys[]]
         const [next, keys] = (await redis.scan(cursor, {
           match: "job:*",
           count: 200,
@@ -40,21 +42,15 @@ export async function GET() {
         cursor = next || "0";
         if (Array.isArray(keys) && keys.length) found.push(...keys);
       } while (cursor !== "0");
-
       ids = found;
     }
 
-    // 3) Read each job hash and build output
     const out: JobOut[] = [];
     for (const id of ids) {
       try {
         const h = (await redis.hgetall(id)) as Record<string, string> | null;
         if (!h) continue;
-
-        // Skip if explicitly inactive
         if (h.active === "false") continue;
-
-        // Require minimum fields to show on list
         if (!h.slug || !h.title) continue;
 
         out.push({
@@ -68,13 +64,11 @@ export async function GET() {
           active: h.active,
         });
       } catch {
-        // ignore a single bad hash
+        // skip bad hash
       }
     }
 
-    // Optional: sort newest-first if you encode a timestamp in the id
     out.sort((a, b) => (a.id > b.id ? -1 : 1));
-
     return NextResponse.json({ ok: true, jobs: out });
   } catch (err: any) {
     return NextResponse.json(
