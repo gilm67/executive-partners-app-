@@ -1,26 +1,12 @@
+// app/api/jobs/get/route.ts
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 
-type JobHash = {
-  id?: string;
-  slug?: string;
-  title?: string;
-  summary?: string;
-  description?: string;
-  location?: string;
-  market?: string;
-  seniority?: string;
-  active?: string;       // "true"/"false"
-  createdAt?: string;
-  role?: string;
-  confidential?: string; // "true"/"false"
-};
-
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const idParam = searchParams.get("id")?.trim() || undefined;
-    const slugParam = searchParams.get("slug")?.trim() || undefined;
+    const url = new URL(req.url);
+    const idParam = url.searchParams.get("id");
+    const slugParam = url.searchParams.get("slug");
 
     if (!idParam && !slugParam) {
       return NextResponse.json({ ok: false, error: "Missing id or slug" }, { status: 400 });
@@ -28,43 +14,49 @@ export async function GET(req: Request) {
 
     const redis = await getRedis();
 
-    // Resolve ID if slug was given
-    let id: string | undefined = idParam;
+    // Resolve id from slug if needed
+    let id = idParam || "";
     if (!id && slugParam) {
-      const resolved = await redis.get(`jobs:by-slug:${slugParam}`);
-      if (!resolved || typeof resolved !== "string" || !resolved.trim()) {
-        return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
+      try {
+        const bySlug = await redis.get(`jobs:by-slug:${slugParam}`);
+        if (typeof bySlug === "string" && bySlug) id = bySlug;
+      } catch {
+        // ignore
       }
-      id = resolved.trim(); // now definitely a string
     }
 
-    // Read the job hash
-    const hash = await redis.hgetall(id as string);
-    const h = hash as unknown as JobHash;
-
-    if (!h || !h.title) {
+    if (!id) {
       return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
     }
 
-    // Normalize booleans and shape
+    // Load the job hash
+    let h: Record<string, string> | null = null;
+    try {
+      h = await redis.hgetall(id);
+    } catch {
+      h = null;
+    }
+
+    if (!h || !h.slug || !h.title) {
+      return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
+    }
+
     const job = {
       id,
-      slug: h.slug,
-      title: h.title,
-      summary: h.summary,
-      description: h.description,
-      location: h.location,
-      market: h.market,
-      seniority: h.seniority,
-      active: h.active === "true" ? "true" : "false",
-      createdAt: h.createdAt,
-      role: h.role,
-      confidential: h.confidential === "true" ? "true" : "false",
+      slug: String(h.slug),
+      title: String(h.title),
+      summary: h.summary ? String(h.summary) : undefined,
+      description: h.description ? String(h.description) : undefined,
+      location: h.location ? String(h.location) : undefined,
+      market: h.market ? String(h.market) : undefined,
+      seniority: h.seniority ? String(h.seniority) : undefined,
+      active: h.active ? String(h.active) : undefined,
+      createdAt: h.createdAt ? String(h.createdAt) : undefined,
     };
 
     return NextResponse.json({ ok: true, job });
-  } catch (e) {
-    console.error("GET /api/jobs/get error:", e);
-    return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
+  } catch (err: any) {
+    // Clean failure
+    return NextResponse.json({ ok: false, error: "Lookup failed", detail: err?.message ?? "" });
   }
 }

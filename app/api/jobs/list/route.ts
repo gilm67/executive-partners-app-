@@ -1,68 +1,72 @@
+// app/api/jobs/list/route.ts
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 
-type JobHash = {
-  id?: string;
-  slug?: string;
-  title?: string;
+type JobOut = {
+  id: string;
+  slug: string;
+  title: string;
   summary?: string;
-  description?: string;
   location?: string;
   market?: string;
   seniority?: string;
-  active?: string; // "true"/"false"
+  active?: string; // "true" | "false"
 };
 
 export async function GET() {
   try {
     const redis = await getRedis();
 
-    // Main index of job IDs; if empty, we still return ok:true with [].
-    const ids = await redis.smembers("jobs:index");
+    // Prefer the curated index if it exists
+    let ids: string[] = [];
+    try {
+      ids = await redis.smembers("jobs:index");
+    } catch {
+      ids = [];
+    }
 
-    const jobs = [] as Array<{
-      id: string;
-      slug?: string;
-      title?: string;
-      summary?: string;
-      location?: string;
-      market?: string;
-      seniority?: string;
-      active: "true" | "false";
-    }>;
-
-    if (ids && ids.length) {
-      // Fetch hashes in parallel (in chunks to be safe)
-      const chunk = 50;
-      for (let i = 0; i < ids.length; i += chunk) {
-        const slice = ids.slice(i, i + chunk);
-        const results = await Promise.all(slice.map((id) => redis.hgetall(id)));
-        results.forEach((h, idx) => {
-          const id = slice[idx];
-          const hh = h as unknown as JobHash;
-          if (hh && hh.title) {
-            jobs.push({
-              id,
-              slug: hh.slug,
-              title: hh.title,
-              summary: hh.summary,
-              location: hh.location,
-              market: hh.market,
-              seniority: hh.seniority,
-              active: hh.active === "true" ? "true" : "false",
-            });
-          }
-        });
+    // If no index, scan keys as a fallback (non-fatal)
+    if (!ids.length) {
+      try {
+        let cursor = "0";
+        const found: string[] = [];
+        do {
+          const res = await redis.scan(cursor, { match: "job:*", count: 200 });
+          cursor = res.cursor;
+          if (Array.isArray(res.keys)) found.push(...res.keys);
+        } while (cursor !== "0");
+        ids = found;
+      } catch {
+        // ignore scan failure; we’ll just return []
       }
     }
 
-    // (Optional) Only return active jobs on the public list:
-    const activeOnly = true;
-    const list = activeOnly ? jobs.filter((j) => j.active === "true") : jobs;
+    const jobs: JobOut[] = [];
+    for (const id of ids) {
+      try {
+        const h = await redis.hgetall(id);
+        if (!h || !h.slug || !h.title) continue;
+        // keep inactive out of the public list
+        if (h.active === "false") continue;
 
-    return NextResponse.json({ ok: true, jobs: list });
-  } catch (e) {
-    console.error("GET /api/jobs/list error:", e);
-    return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
+        jobs.push({
+          id,
+          slug: String(h.slug),
+          title: String(h.title),
+          summary: h.summary ? String(h.summary) : undefined,
+          location: h.location ? String(h.location) : undefined,
+          market: h.market ? String(h.market) : undefined,
+          seniority: h.seniority ? String(h.seniority) : undefined,
+          active: h.active ? String(h.active) : undefined,
+        });
+      } catch {
+        // skip bad hash
+      }
+    }
+
+    return NextResponse.json({ ok: true, jobs });
+  } catch (err: any) {
+    // Never 500 — return a clean, empty list
+    return NextResponse.json({ ok: true, jobs: [], note: "list fallback", detail: err?.message ?? "" });
   }
 }
