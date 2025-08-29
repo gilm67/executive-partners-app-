@@ -1,51 +1,31 @@
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
 import { NextResponse } from "next/server";
-import { getRedis } from "@/lib/redis";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url);
-    let id = searchParams.get("id");
-    const slug = searchParams.get("slug");
+  const { searchParams } = new URL(req.url);
+  const slug = searchParams.get("slug") || "";
 
-    const redis = await getRedis();
-
-    if (!id) {
-      if (!slug) {
-        return NextResponse.json(
-          { ok: false, error: "Missing id or slug" },
-          { status: 400 }
-        );
-      }
-      // resolve slug -> id
-      let resolved: unknown = null;
-      try {
-        resolved = await redis.get(`jobs:by-slug:${slug}`);
-      } catch {}
-      if (typeof resolved !== "string" || !resolved) {
-        return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
-      }
-      id = resolved; // definitely a string
+  if (!slug) {
+    return NextResponse.json({ ok: false, error: "Missing slug" }, { status: 400 });
     }
+  try {
+    const upstream = await fetch(
+      `https://jobs.execpartners.ch/api/jobs/get?slug=${encodeURIComponent(slug)}`,
+      { cache: "no-store", next: { revalidate: 0 } }
+    );
 
-    // Read job hash
-    let h: Record<string, string> | null = null;
-    try {
-      h = await redis.hgetall(id);
-    } catch {}
-    if (!h || !h.slug || !h.title) {
+    if (!upstream.ok) {
       return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
     }
 
-    const job = {
-      id,
-      ...h,
-    };
-
-    return NextResponse.json({ ok: true, job });
+    const data = await upstream.json().catch(() => null);
+    if (data?.ok && data?.job) {
+      return NextResponse.json({ ok: true, job: data.job }, { status: 200 });
+    }
+    return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
   } catch (err: any) {
-    return NextResponse.json({ ok: false, error: err?.message || "Server error" }, { status: 500 });
+    return NextResponse.json({ ok: false, error: err?.message }, { status: 500 });
   }
 }

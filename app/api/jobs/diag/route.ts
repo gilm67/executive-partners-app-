@@ -1,31 +1,18 @@
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
 import { NextResponse } from "next/server";
-import { getRedis } from "@/lib/redis";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
   try {
-    const redis = await getRedis();
-
-    // Light ping without fancy options (compat across redis clients)
-    const key = "diag:ping";
-    await redis.set(key, "pong");      // set value
-    // Optional TTL if your client supports it via PEXPIRE/EXPIRE:
-    try { await (redis as any).pexpire?.(key, 5000); } catch {}
-
-    let ping = "ok";
-    try { ping = (await redis.get(key)) || "ok"; } catch {}
-
-    // Index size (if exists)
-    let indexCount = 0;
-    try {
-      const members = await redis.smembers("jobs:index");
-      indexCount = Array.isArray(members) ? members.length : 0;
-    } catch {}
-
-    return NextResponse.json({ ok: true, msg: "jobs diag alive", ping, indexCount });
-  } catch (err: any) {
-    return NextResponse.json({ ok: false, error: err?.message || "Server error" }, { status: 500 });
+    const r = await fetch("https://jobs.execpartners.ch/api/jobs/list", {
+      cache: "no-store",
+      next: { revalidate: 0 },
+    });
+    const upstreamOk = r.ok;
+    return NextResponse.json({ ok: true, msg: "jobs diag alive", upstreamOk }, { status: 200 });
+  } catch {
+    // still return ok:true so this endpoint never blocks the pages
+    return NextResponse.json({ ok: true, msg: "jobs diag alive", upstreamOk: false }, { status: 200 });
   }
 }
