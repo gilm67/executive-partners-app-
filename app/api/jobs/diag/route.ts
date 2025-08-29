@@ -4,24 +4,27 @@ import { getRedis } from "@/lib/redis";
 
 export async function GET() {
   try {
-    const redis = await getRedis(); // <-- await the client
+    const redis = await getRedis();
 
-    // Try ping (if supported); fall back to a quick write/read
+    // Try ping (if client supports it), otherwise set+expire fallback
     let ping: string = "ok";
     try {
-      // @ts-ignore - some clients have ping()
       if (typeof (redis as any).ping === "function") {
         ping = await (redis as any).ping();
       } else {
         const key = "diag:ping";
-        await redis.set(key, "pong", { EX: 5 } as any);
+        await redis.set(key, "pong");           // 2-arg set
+        try {
+          // if expire() exists, set TTL (portable)
+          await (redis as any).expire?.(key, 5);
+        } catch {}
         ping = (await redis.get(key)) || "ok";
       }
     } catch {
       ping = "ok";
     }
 
-    // Check jobs index size in a portable way
+    // Count index members (portable)
     let indexCount = 0;
     try {
       const members = await redis.sMembers("jobs:index");
@@ -30,12 +33,7 @@ export async function GET() {
       indexCount = 0;
     }
 
-    return NextResponse.json({
-      ok: true,
-      msg: "jobs diag alive",
-      ping,
-      indexCount,
-    });
+    return NextResponse.json({ ok: true, msg: "jobs diag alive", ping, indexCount });
   } catch (err: any) {
     return NextResponse.json(
       { ok: false, error: err?.message || "diag error" },
