@@ -1,4 +1,3 @@
-// app/api/jobs/diag/route.ts
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -9,20 +8,16 @@ export async function GET() {
   try {
     const redis = await getRedis();
 
-    // simple ping via set/get (works across redis variants)
-    let ping = "ok";
-    try {
-      const key = "diag:ping";
-      await redis.set(key, "pong"); // 2-arg version for broad compat
-      ping = (await redis.get(key)) || "ok";
-      // best-effort TTL
-      try {
-        await (redis as any).expire?.(key, 5);
-      } catch {}
-    } catch {
-      /* ignore */
-    }
+    // Light ping without fancy options (compat across redis clients)
+    const key = "diag:ping";
+    await redis.set(key, "pong");      // set value
+    // Optional TTL if your client supports it via PEXPIRE/EXPIRE:
+    try { await (redis as any).pexpire?.(key, 5000); } catch {}
 
+    let ping = "ok";
+    try { ping = (await redis.get(key)) || "ok"; } catch {}
+
+    // Index size (if exists)
     let indexCount = 0;
     try {
       const members = await redis.smembers("jobs:index");
@@ -31,9 +26,6 @@ export async function GET() {
 
     return NextResponse.json({ ok: true, msg: "jobs diag alive", ping, indexCount });
   } catch (err: any) {
-    return NextResponse.json(
-      { ok: false, error: err?.message || "Server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: false, error: err?.message || "Server error" }, { status: 500 });
   }
 }

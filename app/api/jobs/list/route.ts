@@ -1,11 +1,10 @@
-// app/api/jobs/list/route.ts
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 
-type JobOut = {
+type JobItem = {
   id: string;
   slug: string;
   title: string;
@@ -13,47 +12,40 @@ type JobOut = {
   location?: string;
   market?: string;
   seniority?: string;
-  active?: string; // "true"/"false"
+  active?: string;
 };
 
 export async function GET() {
   try {
     const redis = await getRedis();
 
-    // Prefer index set
+    // Try the set index first for speed.
     let ids: string[] = [];
     try {
-      const members = await redis.smembers("jobs:index");
-      if (Array.isArray(members)) ids = members;
-    } catch {
-      ids = [];
-    }
+      const s = await redis.smembers("jobs:index");
+      if (Array.isArray(s) && s.length) ids = s;
+    } catch {}
 
-    // Fallback: SCAN job:* keys
+    // Fallback: SCAN Redis keys if the index is missing/empty.
     if (!ids.length) {
-      const found: string[] = [];
       let cursor = "0";
+      const found: string[] = [];
       do {
-        const [next, keys] = (await redis.scan(cursor, {
-          match: "job:*",
-          count: 200,
-        })) as unknown as [string, string[]];
-
+        const [next, keys] = await (redis as any).scan(cursor, { match: "job:*", count: 200 });
         cursor = next || "0";
-        if (Array.isArray(keys) && keys.length) found.push(...keys);
+        if (Array.isArray(keys) && keys.length) {
+          for (const k of keys) if (typeof k === "string" && k.startsWith("job:")) found.push(k);
+        }
       } while (cursor !== "0");
       ids = found;
     }
 
-    const out: JobOut[] = [];
+    const jobs: JobItem[] = [];
     for (const id of ids) {
       try {
-        const h = (await redis.hgetall(id)) as Record<string, string> | null;
-        if (!h) continue;
-        if (h.active === "false") continue;
-        if (!h.slug || !h.title) continue;
-
-        out.push({
+        const h = await redis.hgetall(id);
+        if (!h || !h.slug || !h.title) continue;
+        jobs.push({
           id,
           slug: h.slug,
           title: h.title,
@@ -63,17 +55,14 @@ export async function GET() {
           seniority: h.seniority,
           active: h.active,
         });
-      } catch {
-        // skip bad hash
-      }
+      } catch {}
     }
 
-    out.sort((a, b) => (a.id > b.id ? -1 : 1));
-    return NextResponse.json({ ok: true, jobs: out });
+    // Sort newest first by ID timestamp if present
+    jobs.sort((a, b) => (a.id > b.id ? -1 : 1));
+
+    return NextResponse.json({ ok: true, jobs });
   } catch (err: any) {
-    return NextResponse.json(
-      { ok: false, error: err?.message || "Server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: false, error: err?.message || "Server error" }, { status: 500 });
   }
 }
