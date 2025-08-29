@@ -1,88 +1,92 @@
 // app/api/jobs/reindex/route.ts
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
+import { headers } from "next/headers";
 
-function ok(json: any, status = 200) {
-  return NextResponse.json({ ok: true, ...json }, { status });
+function ok(data: any, status = 200) {
+  return NextResponse.json({ ok: true, ...data }, { status });
 }
 function err(message: string, status = 500) {
   return NextResponse.json({ ok: false, error: message }, { status });
 }
 
-function readAdminToken(req: Request): string | null {
-  const h = req.headers;
-  const headerToken = h.get("x-admin-token");
-  if (headerToken) return headerToken.trim();
-  const auth = h.get("authorization");
-  if (auth?.toLowerCase().startsWith("bearer ")) return auth.slice(7).trim();
-  return null;
+function requireAdmin() {
+  const h = headers();
+  const tok = h.get("x-admin-token") || h.get("authorization")?.replace(/^Bearer\s+/i, "");
+  const env = process.env.JOBS_ADMIN_TOKEN || "";
+  return tok && env && tok === env;
 }
 
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      Allow: "GET, HEAD, OPTIONS, POST",
-      "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST",
-      "Access-Control-Allow-Headers": "Content-Type, x-admin-token, authorization",
-    },
-  });
-}
-
-export async function POST(req: Request) {
-  // Auth
-  const envToken = process.env.JOBS_ADMIN_TOKEN;
-  if (!envToken) return err("Server auth not configured", 500);
-  const token = readAdminToken(req);
-  if (!token || token !== envToken) return err("Unauthorized", 401);
-
-  const redis = await getRedis();
-
-  // Scan job hashes
-  const MATCH = "job:*";
-  const COUNT = 300;
-  let cursor = "0";
-  const candidateIds: string[] = [];
-
+export async function POST() {
   try {
+    if (!requireAdmin()) return err("Unauthorized", 401);
+
+    const redis = await getRedis();
+
+    const MATCH = "job:*";
+    const COUNT = 500;
+
+    let cursor = "0";
+    const candidateIds: string[] = [];
+
+    // Use low-level SCAN to avoid TS option mismatches across redis clients
     do {
-      // node-redis v4: scan(cursor, { MATCH, COUNT }) -> [nextCursor, keys[]]
-      const [next, keys] = (await redis.scan(cursor, { MATCH, COUNT })) as [string, string[]];
+      const res = (await (redis as any).sendCommand([
+        "SCAN",
+        cursor,
+        "MATCH",
+        MATCH,
+        "COUNT",
+        String(COUNT),
+      ])) as [string, string[]] | any;
+
+      // Some clients return array, others return objects — normalize defensively
+      let next = "0";
+      let keys: string[] = [];
+
+      if (Array.isArray(res) && res.length === 2 && Array.isArray(res[1])) {
+        next = String(res[0] ?? "0");
+        keys = res[1] as string[];
+      } else if (res && typeof res === "object" && Array.isArray(res.keys)) {
+        next = String(res.cursor ?? "0");
+        keys = res.keys as string[];
+      }
+
       cursor = next || "0";
-      if (Array.isArray(keys) && keys.length) candidateIds.push(...keys);
+      if (keys?.length) candidateIds.push(...keys);
     } while (cursor !== "0");
-  } catch (e) {
-    console.error("SCAN error:", e);
-    return err("Server error during scan");
-  }
 
-  // Verify each candidate looks like a job (has title & slug)
-  const verified: string[] = [];
-  for (const id of candidateIds) {
-    try {
-      const h = await redis.hgetall(id);
-      if (h && h.title && h.slug) verified.push(id);
-    } catch (e) {
-      console.error("hgetall error:", id, e);
+    const verified: string[] = [];
+    for (const id of candidateIds) {
+      try {
+        const h = await (redis as any).hgetall(id);
+        if (h && h.title && h.slug) verified.push(id);
+      } catch {
+        // ignore bad hash
+      }
     }
-  }
 
-  // Add to index set
-  let added = 0;
-  if (verified.length) {
-    try {
-      const addedCount = await redis.sadd("jobs:index", ...verified);
-      added = typeof addedCount === "number" ? addedCount : 0;
-    } catch (e) {
-      console.error("sadd error:", e);
-      return err("Server error while updating index set");
+    let added = 0;
+    if (verified.length) {
+      try {
+        await (redis as any).sadd("jobs:index", ...verified);
+        added = verified.length;
+      } catch {
+        // if spread is not supported, add one by one
+        for (const id of verified) await (redis as any).sadd("jobs:index", id);
+        added = verified.length;
+      }
     }
-  }
 
-  return ok({
-    scanned: candidateIds.length,
-    verified: verified.length,
-    added,
-    total: verified.length,
-  });
-} s
+    const total = (await (redis as any).scard("jobs:index")) || 0;
+
+    return ok({
+      scanned: candidateIds.length,
+      verified: verified.length,
+      added,
+      total,
+    });
+  } catch (e: any) {
+    return err("Server error in reindex");
+  }
+}
