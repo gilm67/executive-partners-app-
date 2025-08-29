@@ -34,3 +34,5 @@ export async function getJobBySlug(slug: string): Promise<Job | null> {
 // Alias for compatibility with sitemap.ts and pages
 export const getAllJobsPublic = getAllJobs;
 export const getJobBySlugPublic = getJobBySlug;
+export const fetchJobs = getAllJobs;
+export const fetchJob = getJobBySlug;
