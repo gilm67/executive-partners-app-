@@ -1,27 +1,39 @@
+// app/jobs/[slug]/page.tsx
 import { notFound } from "next/navigation";
 import { getJobBySlugPublic } from "@/lib/jobs-public";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-type Params = { slug: string };
-type PageProps = { params: Promise<Params> };
+type PageProps = { params: { slug: string } };
 
-export default async function JobPage({ params }: PageProps) {
-  const { slug } = await params;
-  const job = await getJobBySlugPublic(slug);
+export default async function JobDetailPage({ params }: PageProps) {
+  const job = await getJobBySlugPublic(params.slug);
   if (!job) return notFound();
 
+  const facts = [job.location, job.market, job.seniority].filter(Boolean).join(" • ");
+
   return (
-    <main className="max-w-3xl mx-auto p-6">
-      <p className="text-sm text-gray-600 mb-2">
-        {[job.location, job.seniority, job.market].filter(Boolean).join(" · ")}
-      </p>
-      <h1 className="text-3xl font-semibold mb-4">{job.title}</h1>
-      {job.summary ? <p className="mb-6">{job.summary}</p> : null}
-      <article className="prose">
-        <p>{job.description ?? "Full role description coming soon."}</p>
-      </article>
+    <main className="mx-auto max-w-3xl px-4 py-12">
+      <h1 className="text-3xl font-semibold">{job.title}</h1>
+      {facts && <p className="mt-2 text-sm text-neutral-600">{facts}</p>}
+
+      {job.summary && (
+        <p className="mt-6 text-neutral-800 leading-relaxed">{job.summary}</p>
+      )}
+
+      {job.description && (
+        <article className="prose prose-neutral mt-6" dangerouslySetInnerHTML={{ __html: job.description }} />
+      )}
+
+      <div className="mt-10">
+        <a
+          href="/contact"
+          className="inline-flex items-center rounded-md border border-blue-600 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+        >
+          Apply / Contact Us
+        </a>
+      </div>
     </main>
   );
 }
