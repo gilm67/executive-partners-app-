@@ -1,9 +1,9 @@
-// middleware.ts
+// middleware.ts (WWW project)
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 export const config = {
-  // Only protect these paths:
+  // Only protect the mutating admin endpoints:
   matcher: [
     "/api/jobs/create",
     "/api/jobs/activate",
