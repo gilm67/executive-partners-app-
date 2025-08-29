@@ -6,11 +6,12 @@ export async function GET() {
   try {
     const redis = await getRedis();
 
-    // ping (tolerate missing PING on some proxies)
+    // ping (tolerate clients that don't accept SET options)
     let ping = "ok";
     try {
       const key = "diag:ping";
-      await redis.set(key, "pong", { ex: 5 });
+      await redis.set(key, "pong");        // <= just 2 args
+      await redis.expire(key, 5);          // <= set TTL separately
       ping = (await redis.get(key)) || "ok";
     } catch {
       // ignore
@@ -27,7 +28,6 @@ export async function GET() {
 
     return NextResponse.json({ ok: true, msg: "jobs diag alive", ping, indexCount });
   } catch (err: any) {
-    // Still no 500
     return NextResponse.json({ ok: true, msg: "diag fallback", detail: err?.message ?? "" });
   }
 }
