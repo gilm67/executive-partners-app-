@@ -1,6 +1,6 @@
 // app/jobs/[slug]/page.tsx
 import { notFound } from "next/navigation";
-import { getJobBySlugPublic } from "@/lib/jobs-public";
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -10,13 +10,32 @@ type Params = { slug: string };
 export default async function JobDetailPage({
   params,
 }: {
-  // In Next.js 15, params is a Promise
+  // Next 15 passes params as a Promise in RSC
   params: Promise<Params>;
 }) {
   const { slug } = await params;
 
-  const job = await getJobBySlugPublic(slug);
-  if (!job) notFound();
+  // Build an absolute base URL from the current request (works on Vercel & locally)
+  const h = await headers();
+  const host = h.get("x-forwarded-host") || h.get("host") || "localhost:3000";
+  const proto = (h.get("x-forwarded-proto") || (process.env.VERCEL ? "https" : "http")) as
+    | "http"
+    | "https";
+  const base = `${proto}://${host}`;
+
+  let job: any = null;
+  try {
+    const res = await fetch(
+      `${base}/api/jobs/get?slug=${encodeURIComponent(slug)}`,
+      { cache: "no-store", next: { revalidate: 0 } }
+    );
+    const data = await res.json();
+    job = data?.job ?? (data?.slug ? data : null);
+  } catch {
+    // fall through to notFound
+  }
+
+  if (!job?.slug) notFound();
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-10">
@@ -27,7 +46,9 @@ export default async function JobDetailPage({
 
       {job.summary && <p className="mt-6">{job.summary}</p>}
       {job.description && (
-        <article className="prose mt-6 whitespace-pre-wrap">{job.description}</article>
+        <article className="prose mt-6 whitespace-pre-wrap">
+          {job.description}
+        </article>
       )}
 
       <div className="mt-8">
