@@ -1,38 +1,46 @@
 @import "tailwindcss";
-
-/* Base light theme */
-:root {
-  --background: #ffffff;
-  --foreground: #0f172a; /* slate-900 */
-}
-
-/* Optional dark scheme (comment out if you want light only) */
-@media (prefers-color-scheme: dark) {
+/* ---------- Base: readable light theme by default ---------- */
+@layer base {
   :root {
-    --background: #0b0f19; /* near black */
-    --foreground: #e5e7eb; /* zinc-200 */
+    --bg: #ffffff;
+    --fg: #0f172a;
+    --muted: #475569;
+    --border: #e5e7eb;
+    --ring: #2563eb;
   }
+  .dark {
+    --bg: #0b0f1a;
+    --fg: #e5e7eb;
+    --muted: #9ca3af;
+    --border: #1f2937;
+    --ring: #60a5fa;
+  }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  a { @apply text-blue-700 hover:text-blue-800 underline-offset-4; }
+  ::selection { background: #bfdbfe; color: #111827; }
 }
-
-html, body {
-  height: 100%;
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-}
-
-/* Job detail typography (Tailwind v4) */
+/* ---------- Components ---------- */
 @layer components {
-  .prose-job {
-    @apply prose prose-neutral max-w-none leading-relaxed;
-  }
-  .prose-job h1, .prose-job h2, .prose-job h3 {
-    @apply text-gray-900 font-semibold;
-  }
-  .prose-job p { @apply my-4; }
-  .prose-job ul { @apply list-disc pl-6 my-4; }
-  .prose-job li { @apply mb-1; }
-  .prose-job a { @apply text-blue-600 underline hover:no-underline; }
+  .container-page { @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8; }
+  .card { @apply rounded-2xl border border-[var(--border)] bg-white shadow-sm; }
+  .section { @apply py-10 sm:py-14; }
+  .section-muted { @apply bg-gray-50; }
+  .prose-job { @apply prose prose-neutral max-w-none; }
+  .dark .prose-job { @apply prose-invert; }
+  .prose-job h1, .prose-job h2, .prose-job h3 { @apply text-neutral-900; }
+  .dark .prose-job h1, .dark .prose-job h2, .dark .prose-job h3 { @apply text-white; }
+  .prose-job p { @apply leading-relaxed; }
+  .prose-job ul, .prose-job ol { @apply pl-6; }
+  .prose-job a { @apply text-blue-700 no-underline hover:underline; }
+}
+/* ---------- Utilities ---------- */
+@layer utilities {
+  .ring-focus { box-shadow: 0 0 0 3px var(--ring, #2563eb); }
 }
