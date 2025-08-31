@@ -3,10 +3,36 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import Link from "next/link";
-import { getAllJobsPublic } from "@/lib/jobs-public";
+
+type PublicJob = {
+  slug: string;
+  title: string;
+  summary?: string;
+  location?: string;
+  seniority?: string;
+  market?: string;
+  description?: string;
+  active?: string | boolean;
+};
+
+async function fetchJobs(): Promise<PublicJob[]> {
+  // Canonical origin in production to avoid any base-url ambiguity
+  const ORIGIN =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+    "https://www.execpartners.ch";
+
+  const res = await fetch(`${ORIGIN}/api/jobs/list`, {
+    cache: "no-store",
+    next: { revalidate: 0 },
+  });
+  if (!res.ok) return [];
+  const data = await res.json().catch(() => ({}));
+  const arr = Array.isArray(data?.jobs) ? data.jobs : [];
+  return arr.filter((j: any) => j && j.slug);
+}
 
 export default async function JobsPage() {
-  const jobs = await getAllJobsPublic();
+  const jobs = await fetchJobs();
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-10">
