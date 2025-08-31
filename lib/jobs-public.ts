@@ -1,5 +1,4 @@
 // lib/jobs-public.ts
-
 export type PublicJob = {
   slug: string;
   title: string;
@@ -11,110 +10,99 @@ export type PublicJob = {
   active?: string | boolean;
 };
 
-function jobsApiBase() {
-  // External source (your Jobs microservice)
-  const base =
-    process.env.NEXT_PUBLIC_JOBS_API_BASE?.replace(/\/$/, "") ||
-    "https://jobs.execpartners.ch";
-  return base;
+function jobsApiBases() {
+  // 1) Same-origin is first (this deployment)
+  const bases: string[] = [""];
+
+  // 2) Optional external base, if you still set it
+  const ext = process.env.NEXT_PUBLIC_JOBS_API_BASE?.replace(/\/$/, "");
+  if (ext) bases.push(ext);
+
+  return bases;
 }
 
-async function safeJson<T = any>(res: Response): Promise<T | {}> {
+async function safeJson(res: Response) {
   try {
-    return (await res.json()) as T;
+    return await res.json();
   } catch {
     return {};
   }
 }
 
-/**
- * Try to read from /public/jobs.json on the SAME site as the page.
- * We attempt a relative URL first (works in most Next.js server contexts),
- * then fall back to environment/domain guesses.
- */
-async function fetchFallback(): Promise<PublicJob[]> {
-  const candidates: string[] = [
-    // relative (preferred; works on both server & client in Next 13+/RSC)
-    "/jobs.json",
-    // env-provided absolute base
-    ...(process.env.NEXT_PUBLIC_SITE_URL
-      ? [new URL("/jobs.json", process.env.NEXT_PUBLIC_SITE_URL).toString()]
-      : []),
-    // last resort: your production domain
-    "https://www.execpartners.ch/jobs.json",
-  ];
+function normalizeArray(data: any): PublicJob[] {
+  const arr: any[] = Array.isArray(data?.jobs)
+    ? data.jobs
+    : Array.isArray(data)
+    ? data
+    : [];
+  return arr.filter((j: any) => j && j.slug);
+}
 
-  for (const url of candidates) {
+export async function getAllJobsPublic(): Promise<PublicJob[]> {
+  // Try: same-origin → external base → static fallback
+  const bases = jobsApiBases();
+
+  for (const base of bases) {
     try {
+      const url = `${base}/api/jobs/list`;
       const res = await fetch(url, { cache: "no-store", next: { revalidate: 0 } });
       if (!res.ok) continue;
-      const data: any = await res.json();
-      const arr = Array.isArray(data?.jobs) ? (data.jobs as PublicJob[]) : [];
-      if (arr.length) return arr.filter((j) => j && j.slug && j.title);
+      const data = await safeJson(res);
+      const jobs = normalizeArray(data);
+      if (jobs.length) return jobs;
+      // if response shape is ok but empty, return it (don’t keep falling through)
+      if (Array.isArray(data?.jobs)) return jobs;
     } catch {
-      // try next candidate
+      // ignore and try next base
     }
   }
-  return [];
-}
 
-function normalizeJobs(input: unknown): PublicJob[] {
-  if (Array.isArray((input as any)?.jobs)) {
-    return ((input as any).jobs as unknown[]).filter(Boolean) as PublicJob[];
-  }
-  if (Array.isArray(input)) {
-    return (input as unknown[]).filter(Boolean) as PublicJob[];
-  }
-  if (input && typeof input === "object" && (input as any).slug) {
-    return [input as PublicJob];
-  }
-  return [];
-}
-
-/**
- * Public list loader:
- * 1) try external microservice /api/jobs/list
- * 2) if empty or failed, fall back to /jobs.json
- */
-export async function getAllJobsPublic(): Promise<PublicJob[]> {
-  // 1) external API
+  // Static fallback under /public
   try {
-    const url = `${jobsApiBase()}/api/jobs/list`;
-    const res = await fetch(url, { cache: "no-store", next: { revalidate: 0 } });
-    if (res.ok) {
-      const data: any = await safeJson(res);
-      const list = normalizeJobs(data).filter((j) => j?.slug);
-      if (list.length) return list;
-    }
+    const res = await fetch("/jobs.json", { cache: "no-store", next: { revalidate: 0 } });
+    const data = await safeJson(res);
+    return normalizeArray(data);
   } catch {
-    // ignore; we’ll try fallback
+    return [];
   }
-
-  // 2) fallback JSON
-  return await fetchFallback();
 }
 
-/**
- * Public detail loader by slug:
- * 1) try external microservice /api/jobs/get?slug=...
- * 2) if not found or failed, search the fallback list
- */
 export async function getJobBySlugPublic(slug: string): Promise<PublicJob | null> {
-  // 1) external API
-  try {
-    const url = `${jobsApiBase()}/api/jobs/get?slug=${encodeURIComponent(slug)}`;
-    const res = await fetch(url, { cache: "no-store", next: { revalidate: 0 } });
-    if (res.ok) {
+  const bases = jobsApiBases();
+
+  // Try GET endpoint on each base
+  for (const base of bases) {
+    try {
+      const url = `${base}/api/jobs/get?slug=${encodeURIComponent(slug)}`;
+      const res = await fetch(url, { cache: "no-store", next: { revalidate: 0 } });
+      if (!res.ok) continue;
       const data: any = await safeJson(res);
-      const job: any =
-        (data && (data.job ?? data)) && (data.job?.slug || data.slug) ? (data.job ?? data) : null;
-      if (job && job.slug) return job as PublicJob;
+      const job = data?.job || (data && data.slug ? data : null);
+      if (job?.slug) return job as PublicJob;
+    } catch {
+      // ignore and continue
     }
-  } catch {
-    // ignore; try fallback
   }
 
-  // 2) fallback JSON
-  const fallbackJobs = await fetchFallback();
-  return fallbackJobs.find((j) => j.slug === slug) ?? null;
+  // Fallback: search the list from any base that responds
+  try {
+    const all = await getAllJobsPublic();
+    const found = all.find((j) => j.slug === slug);
+    if (found) return found;
+  } catch {
+    // ignore and continue
+  }
+
+  // Final fallback: search /jobs.json directly
+  try {
+    const res = await fetch("/jobs.json", { cache: "no-store", next: { revalidate: 0 } });
+    const data: any = await safeJson(res);
+    const all = normalizeArray(data);
+    const found = all.find((j) => j.slug === slug);
+    if (found) return found;
+  } catch {
+    // ignore
+  }
+
+  return null;
 }

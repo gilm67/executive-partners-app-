@@ -1,9 +1,9 @@
 // app/jobs/page.tsx
-import Link from "next/link";
-import { getAllJobsPublic } from "@/lib/jobs-public";
-
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+import Link from "next/link";
+import { getAllJobsPublic } from "@/lib/jobs-public";
 
 export default async function JobsPage() {
   const jobs = await getAllJobsPublic();
