@@ -1,10 +1,14 @@
 @import "tailwindcss";
+/* Enable the official typography plugin in Tailwind v4 */
+@plugin "@tailwindcss/typography";
 
+/* Design tokens */
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
+/* Map tokens into Tailwind theme with v4 inline theme syntax */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -12,6 +16,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Dark mode tokens */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -19,8 +24,21 @@
   }
 }
 
+/* Global base styles via Tailwind utilities */
+html, body { min-height: 100%; }
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-background text-foreground font-sans antialiased;
 }
+
+/* --- Nice readable typography for job descriptions --- */
+.prose-job {
+  @apply prose prose-neutral max-w-none;
+}
+.prose-job :where(h1) { @apply text-3xl font-semibold; }
+.prose-job :where(h2) { @apply text-2xl font-semibold mt-6; }
+.prose-job :where(h3) { @apply text-xl font-semibold mt-4; }
+.prose-job :where(p)  { @apply leading-7; }
+.prose-job :where(ul) { @apply list-disc pl-6; }
+.prose-job :where(ol) { @apply list-decimal pl-6; }
+.prose-job :where(li) { @apply my-1; }
+.prose-job :where(a)  { @apply underline; }
