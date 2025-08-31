@@ -1,32 +1,50 @@
 // components/TopNav.tsx
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function TopNav() {
+  const pathname = usePathname();
+
+  const navItems = [
+    { href: "/jobs", label: "Jobs" },
+    { href: "/candidates", label: "Candidates" },
+    { href: "/hiring-managers", label: "Hiring Managers" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
+  ];
+
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 
-      bg-gradient-to-r from-black/90 via-neutral-950/80 to-black/90 
-      backdrop-blur-md shadow-lg">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-        
-        {/* Left: Brand (inline with tagline) */}
-        <Link href="/" className="flex items-baseline gap-2">
-          <span className="text-sm font-extrabold tracking-tight text-white drop-shadow">
-            Executive Partners
-          </span>
-          <span className="text-[11px] text-neutral-300 hidden sm:inline">
-            International &amp; Swiss Private Banking — HNW/UHNWI
-          </span>
+    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-neutral-200">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+        {/* Logo / Home link */}
+        <Link href="/" className="font-semibold text-lg tracking-tight text-neutral-900">
+          Executive Partners
         </Link>
 
-        {/* Right: Nav */}
-        <nav className="flex items-center gap-5 text-sm">
-          <Link href="/jobs" className="text-neutral-300 hover:text-white">Jobs</Link>
-          <Link href="/candidates" className="text-neutral-300 hover:text-white">Candidates</Link>
-          <Link href="/hiring-managers" className="text-neutral-300 hover:text-white">Hiring Managers</Link>
-          <Link href="/bp-simulator" className="text-neutral-300 hover:text-white">BP Simulator</Link>
-          <Link href="/contact" className="text-neutral-300 hover:text-white">Contact</Link>
-        </nav>
+        {/* Navigation links */}
+        <div className="flex items-center gap-5 text-sm">
+          {navItems.map(({ href, label }) => {
+            const isActive =
+              href === "/"
+                ? pathname === href
+                : pathname.startsWith(href);
+
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`transition-colors hover:text-blue-600 ${
+                  isActive ? "font-semibold underline underline-offset-4 text-blue-700" : "text-neutral-700"
+                }`}
+              >
+                {label}
+              </Link>
+            );
+          })}
+        </div>
       </div>
-    </header>
+    </nav>
   );
 }
