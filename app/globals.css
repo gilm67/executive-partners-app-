@@ -1,47 +1,38 @@
 @import "tailwindcss";
 
+/* Base light theme */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a; /* slate-900 */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* Optional dark scheme (comment out if you want light only) */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0b0f19; /* near black */
+    --foreground: #e5e7eb; /* zinc-200 */
   }
+}
+
+html, body {
+  height: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
-/* 🔹 New custom typography layer for job postings */
+/* Job detail typography (Tailwind v4) */
 @layer components {
   .prose-job {
-    @apply prose prose-neutral max-w-none;
+    @apply prose prose-neutral max-w-none leading-relaxed;
   }
-
-  .prose-job h1,
-  .prose-job h2,
-  .prose-job h3 {
+  .prose-job h1, .prose-job h2, .prose-job h3 {
     @apply text-gray-900 font-semibold;
   }
-
-  .prose-job p {
-    @apply leading-relaxed;
-  }
-
-  .prose-job ul {
-    @apply list-disc pl-6;
-  }
+  .prose-job p { @apply my-4; }
+  .prose-job ul { @apply list-disc pl-6 my-4; }
+  .prose-job li { @apply mb-1; }
+  .prose-job a { @apply text-blue-600 underline hover:no-underline; }
 }
