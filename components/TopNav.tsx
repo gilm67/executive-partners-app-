@@ -17,7 +17,7 @@ export default function TopNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close sheet on route change
+  // Close menu on route change
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -35,7 +35,7 @@ export default function TopNav() {
 
   return (
     <header
-      className={`sticky top-0 z-50 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-neutral-200 transition-shadow ${
+      className={`sticky top-0 z-[70] bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-neutral-200 transition-shadow ${
         scrolled ? "shadow-sm" : ""
       }`}
     >
@@ -80,6 +80,7 @@ export default function TopNav() {
           <Link
             href="/candidates/register"
             className="inline-flex items-center rounded-md border border-blue-600 px-2.5 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-50"
+            onClick={() => setOpen(false)}
           >
             Submit CV
           </Link>
@@ -114,10 +115,12 @@ export default function TopNav() {
         </div>
       </nav>
 
-      {/* Mobile sheet */}
+      {/* Mobile sheet: fixed, above backdrop, with pointer-events control */}
       <div
-        className={`md:hidden overflow-hidden transition-[max-height,opacity] duration-300 ease-out ${
-          open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        className={`md:hidden fixed top-14 left-0 right-0 z-[60] bg-white border-b border-neutral-200 transition-[max-height,opacity] duration-300 ease-out overflow-hidden ${
+          open
+            ? "max-h-96 opacity-100 pointer-events-auto"
+            : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-3">
@@ -125,6 +128,7 @@ export default function TopNav() {
           <Link
             href="/candidates/register"
             className="mb-2 inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+            onClick={() => setOpen(false)}
           >
             Submit CV
           </Link>
@@ -134,6 +138,7 @@ export default function TopNav() {
               <Link
                 key={href}
                 href={href}
+                onClick={() => setOpen(false)}
                 className={`rounded-md px-3 py-2 text-base transition-colors ${
                   isActive(href)
                     ? "bg-blue-50 text-blue-700 font-semibold"
@@ -147,11 +152,11 @@ export default function TopNav() {
         </div>
       </div>
 
-      {/* Click-away backdrop */}
+      {/* Backdrop: sits below the sheet */}
       {open && (
         <button
           aria-hidden
-          className="fixed inset-0 z-40 md:hidden bg-black/10"
+          className="fixed inset-0 z-50 md:hidden bg-black/30"
           onClick={() => setOpen(false)}
         />
       )}
