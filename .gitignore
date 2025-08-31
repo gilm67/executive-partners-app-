@@ -31,3 +31,4 @@ private_key.b64
 .env*.local
 !public/*.json
 !public/*.json
+.github/workflows/fly-deploy.yml
