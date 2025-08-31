@@ -1,6 +1,1 @@
-{
-  "redirects": [
-    { "source": "/jobs", "destination": "https://jobs.execpartners.ch/jobs", "permanent": false },
-    { "source": "/jobs/:slug", "destination": "https://jobs.execpartners.ch/jobs/:slug", "permanent": false }
-  ]
-}
+{}

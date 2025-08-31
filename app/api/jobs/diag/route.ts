@@ -5,7 +5,7 @@ export const revalidate = 0;
 
 export async function GET() {
   try {
-    const r = await fetch("https://jobs.execpartners.ch/api/jobs/list", {
+    const r = await fetch("https://www.execpartners.ch/api/jobs/list", {
       cache: "no-store",
       next: { revalidate: 0 },
     });
