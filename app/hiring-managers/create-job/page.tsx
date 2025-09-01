@@ -1,15 +1,14 @@
+cat > app/hiring-managers/create-job/page.tsx <<'TSX'
 // app/hiring-managers/create-job/page.tsx
 "use client";
 
 import { useState } from "react";
 
 const normalizeSlug = (title: string) =>
-  title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+  title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 export default function CreateJobPage() {
+  // Read token if exposed as public env; keep editable so it works either way
   const defaultToken =
     (process.env.NEXT_PUBLIC_JOBS_ADMIN_TOKEN as string | undefined) || "";
 
@@ -62,7 +61,7 @@ export default function CreateJobPage() {
           seniority: "",
         });
       } else {
-        setStatus(`❌ Error: ${data.error}`);
+        setStatus(`❌ Error: ${data.error || "Unknown error"}`);
       }
     } catch (err: any) {
       setStatus(`❌ Error: ${err.message}`);
@@ -70,32 +69,40 @@ export default function CreateJobPage() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
+    <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-10">
       <div className="rounded-2xl bg-white text-neutral-900 shadow-xl ring-1 ring-black/10">
+        {/* Header */}
         <div className="border-b border-neutral-200 px-6 py-5">
-          <h1 className="text-2xl font-semibold">Create a Job</h1>
+          <h1 className="text-2xl font-semibold">Hiring Managers</h1>
           <p className="mt-1 text-sm text-neutral-600">
-            Create a new role. Entries are saved to your <em>Jobs</em> sheet and available instantly on the site.
+            Create a new role. Entries are added instantly to the site.
           </p>
         </div>
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="px-6 py-6">
           {/* Admin Token */}
-          <div className="mb-5">
+          <div className="mb-6">
             <label className="block text-sm font-medium text-neutral-800">
               Admin Token
             </label>
             <input
               value={adminToken}
               onChange={(e) => setAdminToken(e.target.value)}
-              placeholder="Paste the value set in Vercel (JOBS_ADMIN_TOKEN)"
+              placeholder="Paste the value set in Vercel (JOBS_ADMIN_TOKEN)."
               className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            <p className="mt-1 text-xs text-neutral-500">
+              We send this as <code>x-admin-token</code> to <code>/api/jobs/admin-create</code>.
+            </p>
           </div>
 
+          {/* Two-column fields */}
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-neutral-800">Title</label>
+              <label className="block text-sm font-medium text-neutral-800">
+                Title
+              </label>
               <input
                 name="title"
                 value={form.title}
@@ -119,7 +126,9 @@ export default function CreateJobPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-800">Location</label>
+              <label className="block text-sm font-medium text-neutral-800">
+                Location
+              </label>
               <input
                 name="location"
                 value={form.location}
@@ -130,7 +139,9 @@ export default function CreateJobPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-800">Seniority</label>
+              <label className="block text-sm font-medium text-neutral-800">
+                Seniority
+              </label>
               <input
                 name="seniority"
                 value={form.seniority}
@@ -141,7 +152,9 @@ export default function CreateJobPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-800">Market</label>
+              <label className="block text-sm font-medium text-neutral-800">
+                Market
+              </label>
               <input
                 name="market"
                 value={form.market}
@@ -152,7 +165,9 @@ export default function CreateJobPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-800">Summary</label>
+              <label className="block text-sm font-medium text-neutral-800">
+                Short one-line summary
+              </label>
               <input
                 name="summary"
                 value={form.summary}
@@ -163,8 +178,11 @@ export default function CreateJobPage() {
             </div>
           </div>
 
+          {/* Description */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-neutral-800">Full description</label>
+            <label className="block text-sm font-medium text-neutral-800">
+              Full description
+            </label>
             <textarea
               name="description"
               value={form.description}
@@ -175,6 +193,7 @@ export default function CreateJobPage() {
             />
           </div>
 
+          {/* Submit */}
           <div className="mt-6">
             <button
               type="submit"
