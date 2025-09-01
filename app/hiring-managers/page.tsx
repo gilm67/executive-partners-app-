@@ -1,9 +1,18 @@
-cat > app/hiring-managers/page.tsx <<'TSX'
 // app/hiring-managers/page.tsx
 "use client";
+
 import { useState } from "react";
-import slugify from "@/lib/slugify"; // if you don't have this, we can inline a simple slugify
 import { useRouter } from "next/navigation";
+
+function slugify(input: string) {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/—/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-");
+}
 
 export default function HiringManagersPage() {
   const [token, setToken] = useState("");
@@ -22,15 +31,7 @@ export default function HiringManagersPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const slug =
-        slugify?.(title) ??
-        title
-          .toLowerCase()
-          .trim()
-          .replace(/—/g, "-")
-          .replace(/\s+/g, "-")
-          .replace(/[^a-z0-9-]/g, "")
-          .replace(/-+/g, "-");
+      const finalSlug = slugify(title);
 
       const res = await fetch("/api/jobs/admin-create", {
         method: "POST",
@@ -40,7 +41,7 @@ export default function HiringManagersPage() {
         },
         body: JSON.stringify({
           title,
-          slug,
+          slug: finalSlug,
           location,
           market,
           seniority,
@@ -53,8 +54,7 @@ export default function HiringManagersPage() {
 
       const data = await res.json();
       if (!res.ok || !data.ok) throw new Error(data.error || "Failed to create job");
-
-      router.push(`/jobs/${slug}`);
+      router.push(`/jobs/${finalSlug}`);
     } catch (err) {
       alert((err as Error).message);
     } finally {
@@ -166,4 +166,3 @@ export default function HiringManagersPage() {
     </div>
   );
 }
-TSX

@@ -1,6 +1,6 @@
-cat > app/contact/page.tsx <<'TSX'
 // app/contact/page.tsx
 "use client";
+
 import { useState } from "react";
 
 export default function ContactPage() {
@@ -11,7 +11,6 @@ export default function ContactPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // send to your existing /api/contact route
     const res = await fetch("/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,4 +54,3 @@ export default function ContactPage() {
     </div>
   );
 }
-TSX
