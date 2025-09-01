@@ -1,26 +1,32 @@
 @import "tailwindcss";
 
+/* Force light UI (no auto-dark). Keep it simple & readable. */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #0a0a0a;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff !important;
+  color: #0a0a0a !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
+
+/* Helpers used across pages */
+.container-page { max-width: 72rem; margin: 0 auto; padding: 2rem 1rem; }
+.card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb; /* gray-200 */
+  border-radius: 1rem;        /* rounded-2xl */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.card-pad { padding: 1.25rem; } /* p-5 */
+.heading-hero { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; } /* text-3xl */
+.subtle { color: #4b5563; } /* gray-600 */
+.link-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background:#0ea5e9; color:#fff; padding:.5rem .875rem; border-radius:.5rem;
+}
+.link-btn:hover { background:#0284c7; }
