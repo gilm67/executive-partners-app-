@@ -1,122 +1,110 @@
+cat > app/page.tsx <<'TSX'
 // app/page.tsx
-export default function HomePage() {
-  return (
-    <div className="max-w-5xl mx-auto">
-      {/* Top badge */}
-      <div className="mt-6 flex justify-center">
-        <span className="inline-flex items-center rounded-full bg-neutral-900/5 px-3 py-1 text-xs font-medium text-neutral-600 ring-1 ring-inset ring-neutral-900/10">
-          International & Swiss Private Banking — HNW/UHNW
-        </span>
-      </div>
+import Link from "next/link";
 
-      {/* Hero */}
-      <header className="text-center pt-10 pb-8">
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
+export default function Home() {
+  return (
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      {/* HERO PANEL */}
+      <section className="mx-auto my-10 md:my-14 rounded-3xl bg-neutral-900/70 ring-1 ring-white/10 shadow-xl backdrop-blur px-6 py-10 md:px-14 md:py-14 text-center text-white">
+        <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/80">
+          International &amp; Swiss Private Banking — HNW/UHNW
+        </div>
+
+        <h1 className="mt-4 text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight">
           Executive Partners
         </h1>
-        <p className="mt-4 text-base sm:text-lg text-neutral-600 max-w-3xl mx-auto">
+
+        <p className="mx-auto mt-5 max-w-3xl text-base sm:text-lg text-white/80">
           We connect top Private Bankers, Wealth Managers, and senior executives with
           leading banks, EAMs, and family offices worldwide.
         </p>
 
-        {/* CTAs */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <a
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+          <Link
             href="/candidates"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700"
           >
             I’m a Candidate
-          </a>
-          <a
+          </Link>
+          <Link
             href="/hiring-managers"
-            className="inline-flex items-center rounded-md bg-neutral-800 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-900"
+            className="inline-flex items-center rounded-md bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 ring-1 ring-white/20"
           >
             I’m Hiring
-          </a>
-          <a
+          </Link>
+          <Link
             href="/jobs"
-            className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-800 hover:bg-neutral-50"
+            className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow hover:bg-neutral-100"
           >
             View All Jobs
-          </a>
+          </Link>
         </div>
-      </header>
 
-      {/* Two cards */}
-      <section className="grid gap-6 sm:grid-cols-2">
-        <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
-          <div className="p-5">
-            <div className="text-xs font-semibold text-blue-700">For Candidates</div>
-            <h3 className="mt-2 text-lg font-semibold">Confidential career moves</h3>
-            <p className="mt-2 text-sm leading-6 text-neutral-600">
-              We work discreetly with UHNW/HNW talent. Explore live mandates or
-              register to be matched with roles that fit your market, seniority, and
-              portability.
+        {/* CARDS ROW */}
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
+          <article className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 md:p-7 text-left">
+            <p className="text-xs font-semibold text-blue-300">For Candidates</p>
+            <h3 className="mt-1 text-lg font-semibold text-white">
+              Confidential career moves
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-white/80">
+              We work discreetly with UHNWI/HNW talent. Explore live mandates or
+              register to be matched with roles that fit your market, seniority, and portability.
             </p>
-            <div className="mt-4 flex gap-3">
-              <a
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link
                 href="/jobs"
-                className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+                className="inline-flex items-center rounded-md bg-blue-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-blue-700"
               >
                 Browse Jobs
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/candidates"
-                className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-800 hover:bg-neutral-50"
+                className="inline-flex items-center rounded-md bg-white/10 px-3.5 py-2 text-sm font-semibold text-white hover:bg-white/20 ring-1 ring-white/20"
               >
                 Candidate Hub
-              </a>
+              </Link>
             </div>
-          </div>
-        </div>
+          </article>
 
-        <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
-          <div className="p-5">
-            <div className="text-xs font-semibold text-emerald-700">
-              For Hiring Managers
-            </div>
-            <h3 className="mt-2 text-lg font-semibold">Targeted shortlists, fast</h3>
-            <p className="mt-2 text-sm leading-6 text-neutral-600">
+          <article className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-6 md:p-7 text-left">
+            <p className="text-xs font-semibold text-emerald-300">For Hiring Managers</p>
+            <h3 className="mt-1 text-lg font-semibold text-white">
+              Targeted shortlists, fast
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-white/80">
               We map markets and deliver vetted shortlists with real portability.
               Post a new role or ask us to discreetly approach specific bankers.
             </p>
-            <div className="mt-4 flex gap-3">
-              <a
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link
                 href="/hiring-managers"
-                className="inline-flex items-center rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+                className="inline-flex items-center rounded-md bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
               >
                 Hire Talent
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/contact"
-                className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-800 hover:bg-neutral-50"
+                className="inline-flex items-center rounded-md bg-white/10 px-3.5 py-2 text-sm font-semibold text-white hover:bg-white/20 ring-1 ring-white/20"
               >
                 Talk to Us
-              </a>
+              </Link>
             </div>
-          </div>
+          </article>
         </div>
       </section>
 
-      {/* Featured Roles header */}
-      <section className="mt-10 flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Featured Roles</h2>
-        <a
-          href="/jobs"
-          className="text-sm font-medium text-neutral-600 hover:text-neutral-900"
-        >
+      {/* FEATURED / FOOTER SPACER */}
+      <section className="mb-6 flex items-center justify-between text-sm text-white/70">
+        <h4 className="font-semibold">Featured Roles</h4>
+        <Link href="/jobs" className="hover:underline">
           View all jobs
-        </a>
+        </Link>
       </section>
 
-      <p className="mt-2 text-sm text-neutral-500">
-        No active roles available at this time.
-      </p>
-
-      <div className="h-16" />
-      <footer className="py-6 text-center text-xs text-neutral-500">
-        © {new Date().getFullYear()} Executive Partners. All rights reserved.
-      </footer>
+      {/* If there are no jobs, we leave the space clean. Your jobs list page still handles listings. */}
     </div>
   );
 }
+TSX
