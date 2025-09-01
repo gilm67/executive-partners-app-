@@ -34,7 +34,6 @@ export function GET() {
   const url = process.env.NEXT_PUBLIC_BP_SIM_URL || "STREAMLIT_URL_PLACEHOLDER";
   return NextResponse.redirect(url, 308);
 }
-TS
 # Bake your URL into the file so it works without extra env var setup.
 perl -0777 -pe "s|STREAMLIT_URL_PLACEHOLDER|$STREAMLIT_URL|g" -i app/bp-simulator/route.ts
 

@@ -11,7 +11,6 @@ const nav: Item[] = [
   { href: "/jobs", label: "Jobs" },
   { href: "/candidates", label: "Candidates" },
   { href: "/hiring-managers", label: "Hiring Managers" },
-  // 👇 BP Simulator is in the menu (opens new tab)
   { href: "/bp-simulator", label: "BP Simulator", external: true },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
