@@ -1,78 +1,26 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/typography";
 
-/* ---- Base theme (light + dark) ---- */
 :root {
-  --bg: #ffffff;
-  --fg: #0a0a0a;
+  --background: #ffffff;
+  --foreground: #171717;
 }
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0b0b0c;
-    --fg: #f1f1f1;
+    --background: #0a0a0a;
+    --foreground: #ededed;
   }
 }
 
-html { color-scheme: light dark; }
 body {
-  background: var(--bg);
-  color: var(--fg);
-}
-
-/* Link/focus states for readability */
-a { @apply underline underline-offset-4 hover:no-underline; }
-:focus-visible { @apply outline-none ring-2 ring-blue-500 ring-offset-2 ring-offset-transparent; }
-
-/* ---- Layout helpers used across pages ---- */
-.container-page { @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8; }
-.section-narrow  { @apply max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8; }
-
-/* Panels / cards */
-.ep-panel { @apply rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:bg-neutral-900 dark:border-neutral-800; }
-
-/* Headings */
-.ep-title    { @apply text-3xl font-semibold tracking-tight; }
-.ep-subtitle { @apply mt-2 text-neutral-600 dark:text-neutral-300; }
-
-/* Forms (readable on dark and light) */
-.ep-label { @apply block text-sm font-medium text-neutral-700 dark:text-neutral-300; }
-.ep-input {
-  @apply mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-neutral-900
-         placeholder-neutral-400 shadow-sm
-         focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30
-         dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-100;
-}
-.ep-textarea { @apply ep-input min-h-[160px]; }
-.ep-btn {
-  @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium
-         bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800
-         disabled:opacity-60 disabled:cursor-not-allowed;
-}
-
-/* Typography for long content — use `prose prose-neutral` in JSX, not @apply */
-.prose-article {
-  @apply prose prose-neutral max-w-none;
-}
-.dark .prose-article {
-  @apply prose-invert;
-}
-.prose-article p { @apply leading-7; }
-
-/* Job “meta” row */
-.job-meta { @apply mt-2 text-sm text-neutral-600 dark:text-neutral-300; }
-
-/* List page cards */
-.job-card {
-  @apply rounded-xl border border-neutral-200 bg-white p-5 shadow-sm transition
-         hover:shadow-md hover:-translate-y-[1px]
-         dark:bg-neutral-900 dark:border-neutral-800;
-}
-.job-card h3 { @apply text-lg font-semibold; }
-.job-card .meta { @apply mt-1 text-sm text-neutral-600 dark:text-neutral-300; }
-
-/* About page hero */
-.about-hero {
-  @apply rounded-2xl bg-gradient-to-br from-neutral-100 to-white
-         dark:from-neutral-900 dark:to-neutral-950
-         border border-neutral-200/70 dark:border-neutral-800 p-8;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
 }
