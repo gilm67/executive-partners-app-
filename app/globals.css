@@ -1,11 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+cat >> app/globals.css <<'CSS'
 
-/* Optional: nice long-form text for job/about pages */
-.prose-job {
-  @apply prose prose-neutral max-w-none;
+/* ---------- Readable form UI (light & dark) ---------- */
+@layer components {
+  .ep-section {
+    @apply mx-auto max-w-3xl md:max-w-4xl px-4 md:px-0 py-8 md:py-12;
+  }
+  .ep-panel {
+    @apply rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 md:p-8 shadow-sm;
+  }
+  .ep-title {
+    @apply text-2xl md:text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100;
+  }
+  .ep-subtitle {
+    @apply mt-2 text-neutral-600 dark:text-neutral-300;
+  }
+  .ep-label {
+    @apply block text-sm font-medium text-neutral-800 dark:text-neutral-200 mb-1.5;
+  }
+  .ep-input {
+    @apply w-full rounded-lg border border-neutral-300 dark:border-neutral-700
+           bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100
+           placeholder-neutral-400
+           px-3.5 py-2.5 shadow-sm
+           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  }
+  .ep-textarea {
+    @apply ep-input min-h-[160px];
+  }
+  .ep-help {
+    @apply mt-1 text-xs text-neutral-500 dark:text-neutral-400;
+  }
+  .ep-btn-primary {
+    @apply inline-flex items-center rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700;
+  }
+  .ep-checkbox {
+    @apply h-4 w-4 rounded border-neutral-300 dark:border-neutral-700 text-blue-600 focus:ring-blue-500;
+  }
 }
-.dark .prose-job {
-  @apply prose-invert;
-}
+CSS
