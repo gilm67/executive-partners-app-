@@ -1,16 +1,11 @@
 import type { Config } from "tailwindcss";
 import typography from "@tailwindcss/typography";
 
-const config: Config = {
-  darkMode: "class", // ← enable class-based dark mode
+export default {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  theme: {
-    extend: {},
-  },
+  theme: { extend: {} },
   plugins: [typography],
-};
-
-export default config;
+} satisfies Config;
