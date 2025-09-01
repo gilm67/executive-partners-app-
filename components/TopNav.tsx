@@ -16,8 +16,6 @@ const nav: NavItem[] = [
   { href: "/candidates", label: "Candidates" },
   { href: "/hiring-managers", label: "Hiring Managers" },
       { href: "/bp-simulator", label: "BP Simulator" },
-  { href: "/bp-simulator", label: "BP Simulator" },
-  { href: "/bp-simulator", label: "BP Simulator", external: true }, // opens new tab
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
