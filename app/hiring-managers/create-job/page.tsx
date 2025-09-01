@@ -10,6 +10,11 @@ const normalizeSlug = (title: string) =>
     .replace(/(^-|-$)/g, "");
 
 export default function CreateJobPage() {
+  const defaultToken =
+    (process.env.NEXT_PUBLIC_JOBS_ADMIN_TOKEN as string | undefined) || "";
+
+  const [adminToken, setAdminToken] = useState(defaultToken);
+
   const [form, setForm] = useState({
     slug: "",
     title: "",
@@ -21,7 +26,9 @@ export default function CreateJobPage() {
   });
   const [status, setStatus] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -37,7 +44,7 @@ export default function CreateJobPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-admin-token": process.env.NEXT_PUBLIC_JOBS_ADMIN_TOKEN!,
+          "x-admin-token": adminToken,
         },
         body: JSON.stringify({ ...form, slug: safeSlug }),
       });
@@ -63,19 +70,124 @@ export default function CreateJobPage() {
   };
 
   return (
-    <main className="max-w-2xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-semibold mb-6">Create a Job</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input name="title" value={form.title} onChange={handleChange} placeholder="Title" className="w-full border px-3 py-2 rounded" />
-        <input name="slug" value={form.slug} onChange={handleChange} placeholder="Slug (optional, will auto-generate)" className="w-full border px-3 py-2 rounded" />
-        <input name="location" value={form.location} onChange={handleChange} placeholder="Location" className="w-full border px-3 py-2 rounded" />
-        <input name="market" value={form.market} onChange={handleChange} placeholder="Market" className="w-full border px-3 py-2 rounded" />
-        <input name="seniority" value={form.seniority} onChange={handleChange} placeholder="Seniority" className="w-full border px-3 py-2 rounded" />
-        <input name="summary" value={form.summary} onChange={handleChange} placeholder="Summary" className="w-full border px-3 py-2 rounded" />
-        <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" className="w-full border px-3 py-2 rounded" />
-        <button type="submit" className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Save</button>
-      </form>
-      {status && <p className="mt-4">{status}</p>}
-    </main>
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
+      <div className="rounded-2xl bg-white text-neutral-900 shadow-xl ring-1 ring-black/10">
+        <div className="border-b border-neutral-200 px-6 py-5">
+          <h1 className="text-2xl font-semibold">Create a Job</h1>
+          <p className="mt-1 text-sm text-neutral-600">
+            Create a new role. Entries are saved to your <em>Jobs</em> sheet and available instantly on the site.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="px-6 py-6">
+          {/* Admin Token */}
+          <div className="mb-5">
+            <label className="block text-sm font-medium text-neutral-800">
+              Admin Token
+            </label>
+            <input
+              value={adminToken}
+              onChange={(e) => setAdminToken(e.target.value)}
+              placeholder="Paste the value set in Vercel (JOBS_ADMIN_TOKEN)"
+              className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-neutral-800">Title</label>
+              <input
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                placeholder="e.g. Private Banker — Zurich"
+                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-800">
+                Slug <span className="text-neutral-500">(optional)</span>
+              </label>
+              <input
+                name="slug"
+                value={form.slug}
+                onChange={handleChange}
+                placeholder="auto-generated from title if empty"
+                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-800">Location</label>
+              <input
+                name="location"
+                value={form.location}
+                onChange={handleChange}
+                placeholder="Geneva"
+                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-800">Seniority</label>
+              <input
+                name="seniority"
+                value={form.seniority}
+                onChange={handleChange}
+                placeholder="Director"
+                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-800">Market</label>
+              <input
+                name="market"
+                value={form.market}
+                onChange={handleChange}
+                placeholder="CH Onshore"
+                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-800">Summary</label>
+              <input
+                name="summary"
+                value={form.summary}
+                onChange={handleChange}
+                placeholder="Onshore Geneva book development"
+                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-neutral-800">Full description</label>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              placeholder="Write the full role description..."
+              rows={8}
+              className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="mt-6">
+            <button
+              type="submit"
+              className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700"
+            >
+              Post Job
+            </button>
+          </div>
+
+          {status && <p className="mt-4 text-sm">{status}</p>}
+        </form>
+      </div>
+    </div>
   );
 }
+TSX
