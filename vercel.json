@@ -1,1 +1,14 @@
-{}
+{
+  "redirects": [
+    {
+      "source": "/bp-simulator",
+      "destination": "https://executive-partners-bp-simulator.streamlit.app",
+      "permanent": true
+    },
+    {
+      "source": "/bp-simulator/",
+      "destination": "https://executive-partners-bp-simulator.streamlit.app",
+      "permanent": true
+    }
+  ]
+}
