@@ -2,8 +2,8 @@
 
 import React from "react";
 
-const STREAMLIT_URL =
-  "https://bp-simulator-j6q3pisfuvx8cpb57jtnnh.streamlit.app/?embed=true";
+// 1) swap to the public URL you confirmed works:
+const STREAMLIT_URL = "https://ep-bp-simulator.streamlit.app/?embed=true";
 
 export default function BpSimulatorEmbed() {
   return (
@@ -20,17 +20,16 @@ export default function BpSimulatorEmbed() {
           </p>
         </div>
 
-        {/* Embed iframe */}
-        <div className="relative w-full" style={{ paddingTop: "75vh" }}>
+        {/* 2) use a fixed height so it fits nicely */}
+        <div className="relative w-full" style={{ height: "85vh" }}>
           <iframe
             src={STREAMLIT_URL}
-            className="absolute top-0 left-0 w-full h-full rounded-xl shadow-lg border border-gray-200"
+            className="absolute inset-0 w-full h-full rounded-xl shadow-lg border border-gray-200"
             frameBorder="0"
             allowFullScreen
           />
         </div>
 
-        {/* Disclaimer */}
         <p className="mt-4 text-center text-sm text-gray-500">
           Powered by Executive Partners · All data handled confidentially.
         </p>
