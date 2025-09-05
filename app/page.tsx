@@ -115,7 +115,7 @@ function FeatureCard({
   title: string;
   copy: string;
   leftAction: { label: string; href: string; tone: "blue" | "green" | "neutral" };
-  rightAction: { label: string; href: string; tone: "neutral" }; // 🔧 narrowed to match CardBtn
+  rightAction: { label: string; href: string; tone: "neutral" }; // ← removed "dark"
 }) {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
