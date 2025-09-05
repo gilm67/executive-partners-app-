@@ -1,122 +1,168 @@
 // app/page.tsx
+import Link from "next/link";
+
+export const metadata = {
+  title: "Executive Partners — International & Swiss Private Banking",
+  description:
+    "We connect top Private Bankers, Wealth Managers, and senior executives with leading banks, EAMs, and family offices worldwide.",
+};
+
 export default function HomePage() {
   return (
-    <div className="max-w-5xl mx-auto">
-      {/* Top badge */}
-      <div className="mt-6 flex justify-center">
-        <span className="inline-flex items-center rounded-full bg-neutral-900/5 px-3 py-1 text-xs font-medium text-neutral-600 ring-1 ring-inset ring-neutral-900/10">
+    <main className="relative min-h-screen bg-[#0B0E13] text-white">
+      {/* subtle luxe glow background */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(1200px 400px at 20% -10%, rgba(14,165,233,.18) 0%, rgba(14,165,233,0) 60%), radial-gradient(900px 380px at 110% 0%, rgba(34,197,94,.16) 0%, rgba(34,197,94,0) 60%)",
+        }}
+      />
+      <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-14 relative">
+        {/* badge */}
+        <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           International & Swiss Private Banking — HNW/UHNW
-        </span>
-      </div>
+        </div>
 
-      {/* Hero */}
-      <header className="text-center pt-10 pb-8">
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
+        {/* hero */}
+        <h1 className="mx-auto mt-6 text-center text-5xl font-extrabold tracking-tight md:text-6xl">
           Executive Partners
         </h1>
-        <p className="mt-4 text-base sm:text-lg text-neutral-600 max-w-3xl mx-auto">
+        <p className="mx-auto mt-4 max-w-3xl text-center text-neutral-300">
           We connect top Private Bankers, Wealth Managers, and senior executives with
           leading banks, EAMs, and family offices worldwide.
         </p>
 
-        {/* CTAs */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href="/candidates"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
-          >
+        {/* primary CTAs */}
+        <div className="mx-auto mt-6 flex w-full max-w-xl items-center justify-center gap-3">
+          <PrimaryBtn href="/candidates" variant="blue">
             I’m a Candidate
-          </a>
-          <a
-            href="/hiring-managers"
-            className="inline-flex items-center rounded-md bg-neutral-800 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-neutral-900"
-          >
+          </PrimaryBtn>
+          <PrimaryBtn href="/hiring-managers" variant="outline">
             I’m Hiring
-          </a>
-          <a
-            href="/jobs"
-            className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-800 hover:bg-neutral-50"
-          >
+          </PrimaryBtn>
+          <PrimaryBtn href="/jobs" variant="ghost">
             View All Jobs
-          </a>
-        </div>
-      </header>
-
-      {/* Two cards */}
-      <section className="grid gap-6 sm:grid-cols-2">
-        <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
-          <div className="p-5">
-            <div className="text-xs font-semibold text-blue-700">For Candidates</div>
-            <h3 className="mt-2 text-lg font-semibold">Confidential career moves</h3>
-            <p className="mt-2 text-sm leading-6 text-neutral-600">
-              We work discreetly with UHNW/HNW talent. Explore live mandates or
-              register to be matched with roles that fit your market, seniority, and
-              portability.
-            </p>
-            <div className="mt-4 flex gap-3">
-              <a
-                href="/jobs"
-                className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                Browse Jobs
-              </a>
-              <a
-                href="/candidates"
-                className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-800 hover:bg-neutral-50"
-              >
-                Candidate Hub
-              </a>
-            </div>
-          </div>
+          </PrimaryBtn>
         </div>
 
-        <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
-          <div className="p-5">
-            <div className="text-xs font-semibold text-emerald-700">
-              For Hiring Managers
-            </div>
-            <h3 className="mt-2 text-lg font-semibold">Targeted shortlists, fast</h3>
-            <p className="mt-2 text-sm leading-6 text-neutral-600">
-              We map markets and deliver vetted shortlists with real portability.
-              Post a new role or ask us to discreetly approach specific bankers.
-            </p>
-            <div className="mt-4 flex gap-3">
-              <a
-                href="/hiring-managers"
-                className="inline-flex items-center rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
-              >
-                Hire Talent
-              </a>
-              <a
-                href="/contact"
-                className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-800 hover:bg-neutral-50"
-              >
-                Talk to Us
-              </a>
-            </div>
-          </div>
+        {/* two feature cards */}
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
+          <FeatureCard
+            badge="For Candidates"
+            title="Confidential career moves"
+            copy="We work discreetly with UHNW/HNW talent. Explore live mandates or register to be matched with roles that fit your market, seniority, and portability."
+            leftAction={{ label: "Browse Jobs", href: "/jobs", tone: "blue" }}
+            rightAction={{ label: "Candidate Hub", href: "/candidates", tone: "neutral" }}
+          />
+          <FeatureCard
+            badge="For Hiring Managers"
+            title="Targeted shortlists, fast"
+            copy="We map markets and deliver vetted shortlists with real portability. Post a new role or ask us to discreetly approach specific bankers."
+            leftAction={{ label: "Hire Talent", href: "/hiring-managers", tone: "green" }}
+            rightAction={{ label: "Talk to Us", href: "/contact", tone: "neutral" }}
+          />
         </div>
-      </section>
 
-      {/* Featured Roles header */}
-      <section className="mt-10 flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Featured Roles</h2>
-        <a
-          href="/jobs"
-          className="text-sm font-medium text-neutral-600 hover:text-neutral-900"
-        >
-          View all jobs
-        </a>
-      </section>
+        {/* footer row (optional: “Featured Roles”) */}
+        <div className="mt-10 flex items-center justify-between text-sm text-neutral-400">
+          <span>© {new Date().getFullYear()} Executive Partners. All rights reserved.</span>
+          <Link href="/jobs" className="underline-offset-4 hover:underline">
+            View all jobs
+          </Link>
+        </div>
+      </div>
+    </main>
+  );
+}
 
-      <p className="mt-2 text-sm text-neutral-500">
-        No active roles available at this time.
-      </p>
+/* ---------------- components ---------------- */
 
-      <div className="h-16" />
-      <footer className="py-6 text-center text-xs text-neutral-500">
-        © {new Date().getFullYear()} Executive Partners. All rights reserved.
-      </footer>
+function PrimaryBtn({
+  href,
+  children,
+  variant = "blue",
+}: {
+  href: string;
+  children: React.ReactNode;
+  variant?: "blue" | "outline" | "ghost";
+}) {
+  const cls =
+    variant === "blue"
+      ? "bg-[#1D4ED8] hover:bg-[#1E40AF] text-white shadow-[0_8px_30px_rgba(29,78,216,.35)]"
+      : variant === "outline"
+      ? "border border-white/15 bg-white/5 hover:bg-white/10 text-white"
+      : "border border-white/10 bg-transparent hover:bg-white/5 text-white";
+  return (
+    <Link
+      href={href}
+      className={`w-full rounded-xl px-4 py-3 text-center text-sm font-semibold transition ${cls}`}
+    >
+      {children}
+    </Link>
+  );
+}
+
+function FeatureCard({
+  badge,
+  title,
+  copy,
+  leftAction,
+  rightAction,
+}: {
+  badge: string;
+  title: string;
+  copy: string;
+  leftAction: { label: string; href: string; tone: "blue" | "green" | "neutral" };
+  rightAction: { label: string; href: string; tone: "neutral" | "dark" };
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
+      {/* inner soft glow */}
+      <div className="pointer-events-none absolute inset-0 opacity-[.18] [background:radial-gradient(600px_120px_at_10%_0%,rgba(14,165,233,1),transparent_60%),radial-gradient(600px_120px_at_100%_0%,rgba(34,197,94,1),transparent_60%)]" />
+      <div className="relative">
+        <div className="text-xs font-semibold text-[#6EE7B7]">{badge}</div>
+        <h3 className="mt-2 text-xl font-bold">{title}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-neutral-300">{copy}</p>
+
+        {/* perfectly aligned button row */}
+        <div className="mt-4 flex items-stretch gap-3">
+          <CardBtn href={leftAction.href} tone={leftAction.tone}>
+            {leftAction.label}
+          </CardBtn>
+          <CardBtn href={rightAction.href} tone={rightAction.tone}>
+            {rightAction.label}
+          </CardBtn>
+        </div>
+      </div>
     </div>
+  );
+}
+
+function CardBtn({
+  href,
+  children,
+  tone,
+}: {
+  href: string;
+  children: React.ReactNode;
+  tone: "blue" | "green" | "neutral";
+}) {
+  const tones = {
+    blue:
+      "bg-[#2563EB] hover:bg-[#1D4ED8] text-white shadow-[0_8px_24px_rgba(37,99,235,.35)]",
+    green:
+      "bg-[#16A34A] hover:bg-[#15803D] text-white shadow-[0_8px_24px_rgba(22,163,74,.35)]",
+    neutral: "border border-white/15 bg-white/5 hover:bg-white/10 text-white",
+  } as const;
+
+  return (
+    <Link
+      href={href}
+      className={`flex-1 rounded-lg px-4 py-2 text-center text-sm font-semibold transition ${tones[tone]}`}
+    >
+      {children}
+    </Link>
   );
 }
