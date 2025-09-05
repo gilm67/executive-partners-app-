@@ -1,9 +1,7 @@
 // app/page.tsx
 import Link from "next/link";
-import type { Metadata } from "next";
-import type { ReactNode } from "react";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Executive Partners — International & Swiss Private Banking",
   description:
     "We connect top Private Bankers, Wealth Managers, and senior executives with leading banks, EAMs, and family offices worldwide.",
@@ -67,7 +65,7 @@ export default function HomePage() {
           />
         </div>
 
-        {/* footer row (optional: “Featured Roles”) */}
+        {/* footer row */}
         <div className="mt-10 flex items-center justify-between text-sm text-neutral-400">
           <span>© {new Date().getFullYear()} Executive Partners. All rights reserved.</span>
           <Link href="/jobs" className="underline-offset-4 hover:underline">
@@ -87,7 +85,7 @@ function PrimaryBtn({
   variant = "blue",
 }: {
   href: string;
-  children: ReactNode;
+  children: React.ReactNode;
   variant?: "blue" | "outline" | "ghost";
 }) {
   const cls =
@@ -117,7 +115,7 @@ function FeatureCard({
   title: string;
   copy: string;
   leftAction: { label: string; href: string; tone: "blue" | "green" | "neutral" };
-  rightAction: { label: string; href: string; tone: "neutral" | "dark" };
+  rightAction: { label: string; href: string; tone: "neutral" }; // 🔧 narrowed to match CardBtn
 }) {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
@@ -148,7 +146,7 @@ function CardBtn({
   tone,
 }: {
   href: string;
-  children: ReactNode;
+  children: React.ReactNode;
   tone: "blue" | "green" | "neutral";
 }) {
   const tones = {
