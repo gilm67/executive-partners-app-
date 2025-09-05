@@ -1,7 +1,9 @@
 // app/page.tsx
 import Link from "next/link";
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Executive Partners — International & Swiss Private Banking",
   description:
     "We connect top Private Bankers, Wealth Managers, and senior executives with leading banks, EAMs, and family offices worldwide.",
@@ -85,7 +87,7 @@ function PrimaryBtn({
   variant = "blue",
 }: {
   href: string;
-  children: React.ReactNode;
+  children: ReactNode;
   variant?: "blue" | "outline" | "ghost";
 }) {
   const cls =
@@ -146,7 +148,7 @@ function CardBtn({
   tone,
 }: {
   href: string;
-  children: React.ReactNode;
+  children: ReactNode;
   tone: "blue" | "green" | "neutral";
 }) {
   const tones = {
