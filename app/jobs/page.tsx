@@ -1,5 +1,4 @@
 // app/jobs/page.tsx
-import Link from "next/link";
 import { headers } from "next/headers";
 
 export const runtime = "nodejs";
@@ -13,41 +12,52 @@ type Job = {
   location?: string;
   seniority?: string;
   summary?: string;
+  confidential?: boolean;
+  active?: boolean;
+  createdAt?: string;
   slug?: string;
 };
 
 function getBaseUrl() {
-  // 1) Explicit env (recommended for Vercel): https://www.execpartners.ch
+  // Try explicit env first
   if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
-
-  // 2) Infer from request headers at runtime (works server-side)
+  // Derive from request headers (works on Vercel)
   try {
     const h = headers();
     const host = h.get("x-forwarded-host") || h.get("host");
     const proto = (h.get("x-forwarded-proto") || "https").split(",")[0].trim();
     if (host) return `${proto}://${host}`;
-  } catch {
-    // headers() unavailable at build time; fall through
-  }
-
-  // 3) Last resort (keeps dev working)
-  return process.env.NODE_ENV === "development"
-    ? "http://localhost:3000"
-    : "https://www.execpartners.ch";
+  } catch {}
+  // Safe default for prod
+  return "https://www.execpartners.ch";
 }
 
 async function getJobs(): Promise<Job[]> {
   const base = getBaseUrl();
+
   try {
     const res = await fetch(`${base}/api/jobs/list`, {
-      // still ISR-cached by Next (since this is a server component)
-      next: { revalidate: 60 },
+      // Allow ISR to keep page fresh, but don’t cache the inner call
       cache: "no-store",
+      next: { revalidate: 60 },
     });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return Array.isArray(data.jobs) ? data.jobs : [];
-  } catch {
+
+    if (!res.ok) {
+      console.error("GET /api/jobs/list failed:", res.status, await res.text());
+      return [];
+    }
+
+    const data = await res.json().catch(() => ({ ok: false, jobs: [] as Job[] }));
+    const jobs: Job[] = Array.isArray(data?.jobs) ? data.jobs : [];
+
+    // Sort newest first (by createdAt if present)
+    return jobs.slice().sort((a, b) => {
+      const ta = a.createdAt ? Date.parse(a.createdAt) : 0;
+      const tb = b.createdAt ? Date.parse(b.createdAt) : 0;
+      return tb - ta;
+    });
+  } catch (err) {
+    console.error("Jobs fetch threw:", err);
     return [];
   }
 }
@@ -68,34 +78,31 @@ export default async function JobsPage() {
         <p className="text-neutral-400">No jobs available right now. Check back soon.</p>
       ) : (
         <ul className="space-y-4">
-          {jobs.map((job) => {
-            const href = job.slug ? `/jobs/${job.slug}` : "#";
-            return (
-              <li
-                key={job.id}
-                className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-4"
-              >
-                <h2 className="text-lg font-semibold">
-                  <Link
-                    href={href}
-                    className="text-white hover:text-neutral-200 underline-offset-4 hover:underline focus:underline focus:outline-none"
-                    aria-disabled={!job.slug}
-                    onClick={(e) => {
-                      if (!job.slug) e.preventDefault();
-                    }}
-                  >
-                    {job.title ?? "Untitled Role"}
-                  </Link>
+          {jobs.map((job) => (
+            <li
+              key={job.id}
+              className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-4"
+            >
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-white">
+                  {job.title ?? "Untitled Role"}
                 </h2>
-                <p className="text-sm text-neutral-400">
-                  {[job.market, job.location, job.seniority].filter(Boolean).join(" — ")}
-                </p>
-                {job.summary && (
-                  <p className="mt-1 text-sm text-neutral-300">{job.summary}</p>
+                {job.confidential && (
+                  <span className="rounded-full border border-neutral-700 px-2 py-0.5 text-xs text-neutral-300">
+                    Confidential
+                  </span>
                 )}
-              </li>
-            );
-          })}
+              </div>
+
+              <p className="mt-1 text-sm text-neutral-400">
+                {[job.market, job.location, job.seniority].filter(Boolean).join(" — ")}
+              </p>
+
+              {job.summary && (
+                <p className="mt-2 text-sm text-neutral-300">{job.summary}</p>
+              )}
+            </li>
+          ))}
         </ul>
       )}
     </main>
