@@ -6,12 +6,12 @@
 // Exposes a lowercase API compatible with your routes:
 //   hgetall, hset, smembers, sadd, get, set, scan
 //
-// Implementation notes:
-// - For the REST backends we store "hashes" as a JSON string at the key.
+// Notes for REST backends:
+// - "Hashes" are stored as a JSON string at the key.
 //   hset(key, map) => set key => JSON.stringify(map)
 //   hgetall(key)   => JSON.parse(get key) || {}
-// - Sets use REST endpoints /sadd and /smembers when available; if not, we emulate with JSON under key "<name>:__set__".
-// - scan is a no-op on REST (returns ["0", []]) unless you later add an index to iterate.
+// - Sets: try native /sadd and /smembers; otherwise emulate with JSON under "<name>:__set__".
+// - Upstash/Vercel KV REST responses are wrapped as { "result": <value> } — we unwrap on reads.
 
 import { createClient, type RedisClientType } from "redis";
 
@@ -43,10 +43,29 @@ function hasNodeRedis(): boolean {
   return Boolean(process.env.REDIS_URL);
 }
 
+// Unwrap Upstash/Vercel KV REST wrapper.
+// If text is JSON like {"result": ...} return String(result) or null.
+// Otherwise return the original text (string literal stored by /set).
+function unwrapResult(text: string | null): string | null {
+  if (!text) return null;
+  try {
+    const obj = JSON.parse(text);
+    if (obj && typeof obj === "object" && "result" in obj) {
+      const v = (obj as any).result;
+      if (v === null || v === undefined) return null;
+      // If the stored value was an object/array, upstream returns it as raw JSON.
+      // We return it stringified so callers can JSON.parse as needed.
+      return typeof v === "string" ? v : JSON.stringify(v);
+    }
+  } catch {
+    // not JSON, that's fine (plain string path-encoded set)
+  }
+  return text;
+}
+
 /* ---------------- REST client (KV / Upstash) ------------- */
 
 function restBackend(): RedisCompat {
-  // Prefer Vercel KV first; else Upstash Redis REST
   const base =
     (process.env.KV_REST_API_URL && trimSlash(process.env.KV_REST_API_URL)) ||
     (process.env.UPSTASH_REDIS_REST_URL && trimSlash(process.env.UPSTASH_REDIS_REST_URL));
@@ -58,7 +77,7 @@ function restBackend(): RedisCompat {
     throw new Error("Missing KV/Upstash REST config (URL/TOKEN).");
   }
 
-  // Use the built-in Web Fetch types (Next.js supplies DOM lib)
+  // Use Web Fetch (Next.js provides DOM lib types)
   async function restGet(
     path: string,
     init?: RequestInit & { headers?: Record<string, string> }
@@ -74,15 +93,16 @@ function restBackend(): RedisCompat {
     return res;
   }
 
-  // Emulate hash via JSON
   return {
+    // Hash emulated as a JSON string at key
     async hgetall(key) {
       const res = await restGet(`/get/${encodeURIComponent(key)}`);
       if (!res.ok) return {};
-      const text = await res.text();
-      if (!text) return {};
+      const raw = await res.text();
+      const val = unwrapResult(raw);
+      if (!val) return {};
       try {
-        const obj = JSON.parse(text);
+        const obj = JSON.parse(val);
         if (obj && typeof obj === "object") {
           const out: Record<string, string> = {};
           for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
@@ -90,44 +110,51 @@ function restBackend(): RedisCompat {
           }
           return out;
         }
-        return {};
       } catch {
-        return {};
+        // not JSON — treat as empty hash
       }
+      return {};
     },
 
     async hset(key, map) {
-      // overwrite whole doc (simpler + safe for your use)
       const payload = JSON.stringify(map);
-      // try path-encoded first
+      // Prefer short path encoding
+      let ok = false;
       const res = await restGet(
         `/set/${encodeURIComponent(key)}/${encodeURIComponent(payload)}`,
         { method: "POST" }
       );
-      if (!res.ok) {
-        // attempt body POST for long values
+      ok = res.ok;
+      if (!ok) {
+        // Fallback: send body (handles long values)
         const res2 = await restGet(`/set/${encodeURIComponent(key)}`, {
           method: "POST",
           body: payload,
           headers: { "Content-Type": "text/plain" },
         });
-        if (!res2.ok) throw new Error(`KV hset failed for ${key}`);
+        ok = res2.ok;
       }
+      if (!ok) throw new Error(`KV hset failed for ${key}`);
       return 1;
     },
 
     async smembers(key) {
-      // Prefer native SMEMBERS when supported
+      // Try native SMEMBERS first
       const res = await restGet(`/smembers/${encodeURIComponent(key)}`);
       if (res.ok) {
+        // Upstash returns { "result": [...] }
         try {
-          const arr = await res.json();
-          return Array.isArray(arr) ? arr.map(String) : [];
+          const asText = await res.text();
+          const unwrapped = unwrapResult(asText);
+          if (!unwrapped) return [];
+          const parsed = JSON.parse(unwrapped);
+          return Array.isArray(parsed) ? parsed.map(String) : [];
         } catch {
           // fall through to emulation
         }
       }
-      // Fallback: emulate set via JSON array under "<key>:__set__"
+
+      // Emulated set under "<key>:__set__"
       const alt = await this.get(`${key}:__set__`);
       if (!alt) return [];
       try {
@@ -139,15 +166,8 @@ function restBackend(): RedisCompat {
     },
 
     async sadd(key, ...members) {
-      // Try native SADD
-      if (members.length === 1) {
-        const res = await restGet(
-          `/sadd/${encodeURIComponent(key)}/${encodeURIComponent(members[0])}`,
-          { method: "POST" }
-        );
-        if (res.ok) return 1;
-      } else if (members.length > 1) {
-        // No multi-member endpoint via simple path; loop
+      // Try native SADD one-by-one (simple and reliable)
+      if (members.length > 0) {
         let added = 0;
         for (const m of members) {
           const res = await restGet(
@@ -159,7 +179,7 @@ function restBackend(): RedisCompat {
         if (added) return added;
       }
 
-      // Fallback: emulate via JSON array under "<key>:__set__"
+      // Emulated set under "<key>:__set__"
       const curr = await this.get(`${key}:__set__`);
       let arr: string[] = [];
       if (curr) {
@@ -167,7 +187,7 @@ function restBackend(): RedisCompat {
           const parsed = JSON.parse(curr);
           if (Array.isArray(parsed)) arr = parsed.map(String);
         } catch {
-          // ignore corrupt value; reset below
+          // ignore and reset
         }
       }
       const set = new Set<string>(arr);
@@ -179,29 +199,33 @@ function restBackend(): RedisCompat {
     async get(key) {
       const res = await restGet(`/get/${encodeURIComponent(key)}`);
       if (!res.ok) return null;
-      const text = await res.text();
-      return text || null;
+      const raw = await res.text();
+      return unwrapResult(raw);
     },
 
     async set(key, value) {
+      // Try path encoding
+      let ok = false;
       const res = await restGet(
         `/set/${encodeURIComponent(key)}/${encodeURIComponent(value)}`,
         { method: "POST" }
       );
-      if (!res.ok) {
-        // try body POST for long values
+      ok = res.ok;
+      if (!ok) {
+        // Fallback to body for long values
         const res2 = await restGet(`/set/${encodeURIComponent(key)}`, {
           method: "POST",
           body: value,
           headers: { "Content-Type": "text/plain" },
         });
-        if (!res2.ok) throw new Error(`KV set failed for ${key}`);
+        ok = res2.ok;
       }
+      if (!ok) throw new Error(`KV set failed for ${key}`);
       return "OK";
     },
 
     async scan(_cursor, _opts) {
-      // Not supported via REST in a generic way. Return empty.
+      // Not generically supported by REST; return empty.
       return ["0", []];
     },
   };
@@ -255,7 +279,6 @@ async function nodeBackend(): Promise<RedisCompat> {
 /* ---------------- Public factory ------------------------- */
 
 export async function getRedis(): Promise<RedisCompat> {
-  // Prefer KV REST, then Upstash Redis REST, else node-redis
   if (hasKV() || hasUpstashRedisRest()) {
     return restBackend();
   }
