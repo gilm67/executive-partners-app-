@@ -8,12 +8,8 @@ export const metadata = {
     "We connect top Private Bankers, Wealth Managers, and senior executives with leading banks, EAMs, and family offices worldwide.",
 };
 
-// Site-level tone can include 'dark' (future-proof)
-type Tone = "blue" | "green" | "neutral" | "dark";
-// CardBtn supports only these:
+// Button tones supported by CardBtn
 type BtnTone = "blue" | "green" | "neutral";
-// Normalize any 'dark' to a supported tone
-const toBtnTone = (t: Tone): BtnTone => (t === "dark" ? "neutral" : t);
 
 export default function HomePage() {
   return (
@@ -122,8 +118,8 @@ function FeatureCard({
   badge: string;
   title: string;
   copy: string;
-  leftAction: { label: string; href: string; tone: Tone };
-  rightAction: { label: string; href: string; tone: Tone };
+  leftAction: { label: string; href: string; tone: BtnTone };
+  rightAction: { label: string; href: string; tone: BtnTone };
 }) {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
@@ -136,10 +132,10 @@ function FeatureCard({
 
         {/* perfectly aligned button row */}
         <div className="mt-4 flex items-stretch gap-3">
-          <CardBtn href={leftAction.href} tone={toBtnTone(leftAction.tone)}>
+          <CardBtn href={leftAction.href} tone={leftAction.tone}>
             {leftAction.label}
           </CardBtn>
-          <CardBtn href={rightAction.href} tone={toBtnTone(rightAction.tone)}>
+          <CardBtn href={rightAction.href} tone={rightAction.tone}>
             {rightAction.label}
           </CardBtn>
         </div>
