@@ -10,18 +10,35 @@ type Incoming = {
   location?: string;
   market?: string;
   seniority?: string;
+  role?: string;
+  confidential?: boolean | "true" | "false" | "yes" | "no" | string | number;
   active?: boolean | "true" | "false" | string | number;
 };
 
-function toBoolString(v: Incoming["active"]): "true" | "false" {
-  if (typeof v === "boolean") return v ? "true" : "false";
-  if (typeof v === "number") return v !== 0 ? "true" : "false";
+export const runtime = "nodejs";
+
+/* ---------------- helpers ---------------- */
+
+function truthy(v: unknown): boolean {
+  if (typeof v === "boolean") return v;
+  if (typeof v === "number") return v !== 0;
   if (typeof v === "string") {
     const s = v.trim().toLowerCase();
-    if (["1", "true", "yes", "on"].includes(s)) return "true";
-    if (["0", "false", "no", "off"].includes(s)) return "false";
+    return ["1", "true", "yes", "on"].includes(s);
   }
-  return "true"; // default to active
+  return false;
+}
+function falsy(v: unknown): boolean {
+  if (typeof v === "boolean") return !v;
+  if (typeof v === "number") return v === 0;
+  if (typeof v === "string") {
+    const s = v.trim().toLowerCase();
+    return ["0", "false", "no", "off"].includes(s);
+  }
+  return false;
+}
+function toBoolString(v: Incoming["active"]): "true" | "false" {
+  return truthy(v) ? "true" : falsy(v) ? "false" : "true"; // default active=true
 }
 
 function randIdPart() {
@@ -46,7 +63,6 @@ async function ensureUniqueSlug(
   const baseSlug = slugify(base);
   let candidate = baseSlug;
   let n = 1;
-  // Check existence via the by-slug index
   while (true) {
     const exists = await redis.get(`jobs:by-slug:${candidate}`);
     if (!exists) return candidate;
@@ -55,58 +71,85 @@ async function ensureUniqueSlug(
   }
 }
 
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      Allow: "GET, HEAD, OPTIONS, POST",
-      "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST",
-      "Access-Control-Allow-Headers": "Content-Type, x-admin-token, authorization",
-    },
-  });
+/* ---------------- auth ---------------- */
+
+function expectedToken(): string {
+  return (
+    process.env.JOBS_ADMIN_TOKEN ||
+    process.env.EP_ADMIN_TOKEN ||
+    // casing safety in case the var was created with a capitalized second segment
+    (process.env as any).EP_Admin_Token ||
+    ""
+  );
 }
 
-export async function POST(req: Request) {
-  // --- Auth ---
-  const token =
-    req.headers.get("x-admin-token") ||
-    (req.headers.get("authorization")?.toLowerCase().startsWith("bearer ")
-      ? req.headers.get("authorization")!.slice(7).trim()
-      : "");
+function providedToken(req: Request): string {
+  const hAuth = req.headers.get("authorization");
+  const hX = req.headers.get("x-admin-token");
+  if (hAuth && hAuth.toLowerCase().startsWith("bearer ")) {
+    return hAuth.slice(7).trim();
+  }
+  return (hAuth || hX || "").trim();
+}
 
-  if (!process.env.JOBS_ADMIN_TOKEN) {
+/* ---------------- CORS ---------------- */
+
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST",
+  "Access-Control-Allow-Headers": "Content-Type, x-admin-token, authorization",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
+}
+
+/* ---------------- POST ---------------- */
+
+export async function POST(req: Request) {
+  // Auth
+  const exp = expectedToken();
+  if (!exp) {
     return NextResponse.json(
       { ok: false, error: "Server auth not configured" },
-      { status: 500 }
+      { status: 500, headers: CORS_HEADERS }
     );
   }
-  if (!token || token !== process.env.JOBS_ADMIN_TOKEN) {
-    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  const got = providedToken(req);
+  if (!got || got !== exp) {
+    return NextResponse.json(
+      { ok: false, error: "Unauthorized" },
+      { status: 401, headers: CORS_HEADERS }
+    );
   }
 
-  // --- Parse body ---
+  // Parse body
   let body: Incoming;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
+    return NextResponse.json(
+      { ok: false, error: "Invalid JSON" },
+      { status: 400, headers: CORS_HEADERS }
+    );
   }
 
   if (!body.title && !body.slug) {
     return NextResponse.json(
       { ok: false, error: "Missing 'title' or 'slug'" },
-      { status: 400 }
+      { status: 400, headers: CORS_HEADERS }
     );
   }
 
   const redis = await getRedis();
 
-  // --- Slug ---
+  // Slug
   const desiredBase = body.slug ? String(body.slug) : String(body.title);
   const finalSlug = await ensureUniqueSlug(redis, desiredBase);
 
-  // --- ID & doc ---
+  // ID & doc
   const id = `job:${Date.now()}:${randIdPart()}`;
+
   const doc: Record<string, string> = {
     id,
     title: body.title ?? "",
@@ -116,19 +159,19 @@ export async function POST(req: Request) {
     location: body.location ?? "",
     market: body.market ?? "",
     seniority: body.seniority ?? "",
+    role: body.role ?? "",
     active: toBoolString(body.active),
-    confidential: "false",
-    role: "",
+    confidential: truthy(body.confidential) ? "true" : "false",
     createdAt: new Date().toISOString(),
   };
 
-  // --- Write to Redis (lowercase commands) ---
+  // Persist
   await redis.hset(id, doc);
   await redis.set(`jobs:by-slug:${finalSlug}`, id);
   await redis.sadd("jobs:index", id);
 
-  return NextResponse.json({
-    ok: true,
-    id: { id, title: doc.title, location: doc.location, slug: finalSlug },
-  });
+  return NextResponse.json(
+    { ok: true, id: { id, title: doc.title, location: doc.location, slug: finalSlug } },
+    { headers: CORS_HEADERS }
+  );
 }
