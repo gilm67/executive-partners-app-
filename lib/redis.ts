@@ -13,7 +13,6 @@
 // - Sets use REST endpoints /sadd and /smembers when available; if not, we emulate with JSON under key "<name>:__set__".
 // - scan is a no-op on REST (returns ["0", []]) unless you later add a list index you want to iterate.
 
-import type { RequestInit } from "node-fetch"; // TS only; not required at runtime
 import { createClient, type RedisClientType } from "redis";
 
 type RedisCompat = {
@@ -80,7 +79,6 @@ function restBackend(): RedisCompat {
       if (!text) return {};
       try {
         const obj = JSON.parse(text);
-        // ensure Record<string,string>
         if (obj && typeof obj === "object") {
           const out: Record<string, string> = {};
           for (const [k, v] of Object.entries(obj)) {
@@ -95,7 +93,6 @@ function restBackend(): RedisCompat {
     },
 
     async hset(key, map) {
-      // overwrite whole doc (simpler + safe for your use)
       const payload = JSON.stringify(map);
       const res = await restGet(
         `/set/${encodeURIComponent(key)}/${encodeURIComponent(payload)}`,
@@ -116,7 +113,6 @@ function restBackend(): RedisCompat {
     },
 
     async smembers(key) {
-      // Prefer native SMEMBERS when supported
       const res = await restGet(`/smembers/${encodeURIComponent(key)}`);
       if (res.ok) {
         try {
@@ -126,7 +122,6 @@ function restBackend(): RedisCompat {
           // fall through
         }
       }
-      // Fallback: emulate set via JSON array under "<key>:__set__"
       const alt = await this.get(`${key}:__set__`);
       if (!alt) return [];
       try {
@@ -138,7 +133,6 @@ function restBackend(): RedisCompat {
     },
 
     async sadd(key, ...members) {
-      // Try native SADD
       if (members.length === 1) {
         const res = await restGet(
           `/sadd/${encodeURIComponent(key)}/${encodeURIComponent(members[0])}`,
@@ -146,7 +140,6 @@ function restBackend(): RedisCompat {
         );
         if (res.ok) return 1;
       } else if (members.length > 1) {
-        // No multi-member endpoint via simple path; loop
         let added = 0;
         for (const m of members) {
           const res = await restGet(
@@ -157,10 +150,10 @@ function restBackend(): RedisCompat {
         }
         if (added) return added;
       }
-
-      // Fallback: emulate via JSON array under "<key>:__set__"
       const curr = await this.get(`${key}:__set__`);
-      const set = new Set<string>(Array.isArray(curr ? JSON.parse(curr) : []) ? JSON.parse(curr) : []);
+      const set = new Set<string>(
+        Array.isArray(curr ? JSON.parse(curr) : []) ? JSON.parse(curr) : []
+      );
       for (const m of members) set.add(String(m));
       await this.set(`${key}:__set__`, JSON.stringify(Array.from(set)));
       return members.length || 1;
@@ -179,7 +172,6 @@ function restBackend(): RedisCompat {
         { method: "POST" }
       );
       if (!res.ok) {
-        // try body POST for long values
         const res2 = await restGet(`/set/${encodeURIComponent(key)}`, {
           method: "POST",
           body: value,
@@ -191,7 +183,6 @@ function restBackend(): RedisCompat {
     },
 
     async scan(_cursor, _opts) {
-      // Not supported via REST in a generic way. Return empty.
       return ["0", []];
     },
   };
@@ -245,7 +236,6 @@ async function nodeBackend(): Promise<RedisCompat> {
 /* ---------------- Public factory ------------------------- */
 
 export async function getRedis(): Promise<RedisCompat> {
-  // Prefer KV REST, then Upstash Redis REST, else node-redis
   if (hasKV() || hasUpstashRedisRest()) {
     return restBackend();
   }
