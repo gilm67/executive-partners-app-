@@ -2,6 +2,8 @@
 import { NextResponse } from "next/server";
 import { getRedis } from "@/lib/redis";
 
+export const runtime = "nodejs";
+
 type Incoming = {
   title?: string;
   slug?: string;
@@ -11,34 +13,19 @@ type Incoming = {
   market?: string;
   seniority?: string;
   role?: string;
-  confidential?: boolean | "true" | "false" | "yes" | "no" | string | number;
+  confidential?: boolean | "true" | "false" | string | number;
   active?: boolean | "true" | "false" | string | number;
 };
 
-export const runtime = "nodejs";
-
-/* ---------------- helpers ---------------- */
-
-function truthy(v: unknown): boolean {
-  if (typeof v === "boolean") return v;
-  if (typeof v === "number") return v !== 0;
-  if (typeof v === "string") {
-    const s = v.trim().toLowerCase();
-    return ["1", "true", "yes", "on"].includes(s);
-  }
-  return false;
-}
-function falsy(v: unknown): boolean {
-  if (typeof v === "boolean") return !v;
-  if (typeof v === "number") return v === 0;
-  if (typeof v === "string") {
-    const s = v.trim().toLowerCase();
-    return ["0", "false", "no", "off"].includes(s);
-  }
-  return false;
-}
 function toBoolString(v: Incoming["active"]): "true" | "false" {
-  return truthy(v) ? "true" : falsy(v) ? "false" : "true"; // default active=true
+  if (typeof v === "boolean") return v ? "true" : "false";
+  if (typeof v === "number") return v !== 0 ? "true" : "false";
+  if (typeof v === "string") {
+    const s = v.trim().toLowerCase();
+    if (["1", "true", "yes", "on"].includes(s)) return "true";
+    if (["0", "false", "no", "off"].includes(s)) return "false";
+  }
+  return "true";
 }
 
 function randIdPart() {
@@ -71,85 +58,59 @@ async function ensureUniqueSlug(
   }
 }
 
-/* ---------------- auth ---------------- */
-
-function expectedToken(): string {
-  return (
-    process.env.JOBS_ADMIN_TOKEN ||
-    process.env.EP_ADMIN_TOKEN ||
-    // casing safety in case the var was created with a capitalized second segment
-    (process.env as any).EP_Admin_Token ||
-    ""
-  );
-}
-
-function providedToken(req: Request): string {
-  const hAuth = req.headers.get("authorization");
-  const hX = req.headers.get("x-admin-token");
-  if (hAuth && hAuth.toLowerCase().startsWith("bearer ")) {
-    return hAuth.slice(7).trim();
-  }
-  return (hAuth || hX || "").trim();
-}
-
-/* ---------------- CORS ---------------- */
-
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST",
-  "Access-Control-Allow-Headers": "Content-Type, x-admin-token, authorization",
-};
-
 export async function OPTIONS() {
-  return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      Allow: "GET, HEAD, OPTIONS, POST",
+      "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST",
+      "Access-Control-Allow-Headers": "Content-Type, x-admin-token, authorization",
+    },
+  });
 }
-
-/* ---------------- POST ---------------- */
 
 export async function POST(req: Request) {
-  // Auth
-  const exp = expectedToken();
-  if (!exp) {
+  // --- Auth ---
+  const tokenHeader =
+    req.headers.get("x-admin-token") ||
+    (req.headers.get("authorization")?.toLowerCase().startsWith("bearer ")
+      ? req.headers.get("authorization")!.slice(7).trim()
+      : "");
+
+  const serverToken = process.env.JOBS_ADMIN_TOKEN;
+  if (!serverToken) {
     return NextResponse.json(
       { ok: false, error: "Server auth not configured" },
-      { status: 500, headers: CORS_HEADERS }
+      { status: 500 }
     );
   }
-  const got = providedToken(req);
-  if (!got || got !== exp) {
-    return NextResponse.json(
-      { ok: false, error: "Unauthorized" },
-      { status: 401, headers: CORS_HEADERS }
-    );
+  if (!tokenHeader || tokenHeader !== serverToken) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  // Parse body
+  // --- Parse body ---
   let body: Incoming;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json(
-      { ok: false, error: "Invalid JSON" },
-      { status: 400, headers: CORS_HEADERS }
-    );
+    return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
   }
 
   if (!body.title && !body.slug) {
     return NextResponse.json(
       { ok: false, error: "Missing 'title' or 'slug'" },
-      { status: 400, headers: CORS_HEADERS }
+      { status: 400 }
     );
   }
 
   const redis = await getRedis();
 
-  // Slug
+  // --- Slug ---
   const desiredBase = body.slug ? String(body.slug) : String(body.title);
   const finalSlug = await ensureUniqueSlug(redis, desiredBase);
 
-  // ID & doc
+  // --- ID & doc ---
   const id = `job:${Date.now()}:${randIdPart()}`;
-
   const doc: Record<string, string> = {
     id,
     title: body.title ?? "",
@@ -160,18 +121,31 @@ export async function POST(req: Request) {
     market: body.market ?? "",
     seniority: body.seniority ?? "",
     role: body.role ?? "",
+    confidential: toBoolString(body.confidential),
     active: toBoolString(body.active),
-    confidential: truthy(body.confidential) ? "true" : "false",
     createdAt: new Date().toISOString(),
   };
 
-  // Persist
+  // --- Write to Redis ---
   await redis.hset(id, doc);
   await redis.set(`jobs:by-slug:${finalSlug}`, id);
   await redis.sadd("jobs:index", id);
 
-  return NextResponse.json(
-    { ok: true, id: { id, title: doc.title, location: doc.location, slug: finalSlug } },
-    { headers: CORS_HEADERS }
-  );
+  // --- Ensure JSON index for KV fallback ---
+  const indexKey = "jobs:index:__set__";
+  try {
+    const current = await redis.get(indexKey);
+    const arr: string[] = current ? (JSON.parse(current) as string[]) : [];
+    if (!arr.includes(id)) {
+      arr.push(id);
+      await redis.set(indexKey, JSON.stringify(arr));
+    }
+  } catch (e) {
+    console.error("Failed to update JSON index", e);
+  }
+
+  return NextResponse.json({
+    ok: true,
+    id: { id, title: doc.title, location: doc.location, slug: finalSlug },
+  });
 }
