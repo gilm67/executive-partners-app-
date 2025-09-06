@@ -1,168 +1,42 @@
 // app/hiring-managers/page.tsx
-"use client";
+import HiringManagersForm from "./HiringManagersForm";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
-function slugify(input: string) {
-  return input
-    .toLowerCase()
-    .trim()
-    .replace(/—/g, "-")
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-");
-}
+export const metadata = {
+  title: "Hiring Managers | Executive Partners",
+  description:
+    "Create a new private banking or wealth management role. Secure, instant publishing to the site.",
+};
 
 export default function HiringManagersPage() {
-  const [token, setToken] = useState("");
-  const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
-  const [role, setRole] = useState("");
-  const [market, setMarket] = useState("");
-  const [seniority, setSeniority] = useState("");
-  const [summary, setSummary] = useState("");
-  const [description, setDescription] = useState("");
-  const [confidential, setConfidential] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const finalSlug = slugify(title);
-
-      const res = await fetch("/api/jobs/admin-create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-token": token,
-        },
-        body: JSON.stringify({
-          title,
-          slug: finalSlug,
-          location,
-          market,
-          seniority,
-          summary,
-          description,
-          confidential,
-          active: "true",
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data.error || "Failed to create job");
-      router.push(`/jobs/${finalSlug}`);
-    } catch (err) {
-      alert((err as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
-    <div className="ep-section">
-      <h1 className="ep-title">Hiring Managers</h1>
-      <p className="ep-subtitle">Create a new role. Entries are added instantly to the site.</p>
+    <main className="mx-auto max-w-5xl px-4 py-12">
+      <header className="mb-8">
+        <h1 className="text-2xl font-semibold tracking-tight text-white">Hiring Managers</h1>
+        <p className="mt-2 text-sm text-neutral-400">
+          Create a confidential role. Entries publish instantly to your jobs board.
+        </p>
+      </header>
 
-      <form onSubmit={onSubmit} className="ep-panel mt-6 space-y-5">
-        <div>
-          <label className="ep-label">Admin Token</label>
-          <input
-            className="ep-input"
-            placeholder="EP_admin_…"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-          />
-          <p className="ep-help">Paste the value set in Vercel (JOBS_ADMIN_TOKEN).</p>
-        </div>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-5">
+        <section className="md:col-span-3">
+          <HiringManagersForm />
+        </section>
 
-        <div>
-          <label className="ep-label">Title</label>
-          <input
-            className="ep-input"
-            placeholder="e.g. Private Banker — Zurich"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="ep-label">Role</label>
-            <input className="ep-input" value={role} onChange={(e) => setRole(e.target.value)} />
+        <aside className="md:col-span-2">
+          <div className="sticky top-6 space-y-4 rounded-2xl border border-neutral-800 bg-neutral-900/50 p-5">
+            <h2 className="text-sm font-semibold text-neutral-200">Posting Guidelines</h2>
+            <ul className="list-disc space-y-2 pl-5 text-sm text-neutral-400">
+              <li>Be precise on market (CH Onshore, MEA, UK, APAC).</li>
+              <li>Indicate expected AUM profile and booking centres.</li>
+              <li>Mention product scope (public &amp; private markets).</li>
+              <li>State regulatory must-haves (FINMA, DFSA, SFC, etc.).</li>
+            </ul>
+            <p className="text-xs text-neutral-500">
+              Need help? Contact us and we’ll draft the brief in minutes.
+            </p>
           </div>
-          <div>
-            <label className="ep-label">Location</label>
-            <input
-              className="ep-input"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Geneva"
-            />
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="ep-label">Market</label>
-            <input
-              className="ep-input"
-              value={market}
-              onChange={(e) => setMarket(e.target.value)}
-              placeholder="CH Onshore"
-            />
-          </div>
-          <div>
-            <label className="ep-label">Seniority</label>
-            <input
-              className="ep-input"
-              value={seniority}
-              onChange={(e) => setSeniority(e.target.value)}
-              placeholder="Director"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="ep-label">Short one-line summary</label>
-          <input
-            className="ep-input"
-            value={summary}
-            onChange={(e) => setSummary(e.target.value)}
-            placeholder="Onshore Geneva book development"
-          />
-        </div>
-
-        <div>
-          <label className="ep-label">Full description</label>
-          <textarea
-            className="ep-textarea"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Write the full role description…"
-          />
-        </div>
-
-        <div className="flex items-center gap-3">
-          <input
-            id="confidential"
-            type="checkbox"
-            className="ep-checkbox"
-            checked={confidential}
-            onChange={(e) => setConfidential(e.target.checked)}
-          />
-          <label htmlFor="confidential" className="text-sm text-neutral-800 dark:text-neutral-200">
-            Confidential
-          </label>
-        </div>
-
-        <button type="submit" className="ep-btn-primary" disabled={loading}>
-          {loading ? "Posting…" : "Post Job"}
-        </button>
-      </form>
-    </div>
+        </aside>
+      </div>
+    </main>
   );
 }

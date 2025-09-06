@@ -4,10 +4,7 @@
 import { useState } from "react";
 
 const normalizeSlug = (title: string) =>
-  title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+  title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 export default function CreateJobPage() {
   const [form, setForm] = useState({
@@ -21,7 +18,9 @@ export default function CreateJobPage() {
   });
   const [status, setStatus] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -29,7 +28,6 @@ export default function CreateJobPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("Saving...");
-
     const safeSlug = form.slug ? normalizeSlug(form.slug) : normalizeSlug(form.title);
 
     try {
@@ -62,20 +60,125 @@ export default function CreateJobPage() {
     }
   };
 
+  const Label = ({ children }: { children: React.ReactNode }) => (
+    <label className="mb-1 block text-[13px] font-semibold tracking-wide text-neutral-800 dark:text-neutral-200">
+      {children}
+    </label>
+  );
+
+  const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
+    <input
+      {...props}
+      className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-[15px] leading-6 text-neutral-900 placeholder-neutral-400 outline-none ring-blue-600/10 focus:ring-4 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
+    />
+  );
+
+  const Textarea = (
+    props: React.TextareaHTMLAttributes<HTMLTextAreaElement>
+  ) => (
+    <textarea
+      {...props}
+      className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-[15px] leading-6 text-neutral-900 placeholder-neutral-400 outline-none ring-blue-600/10 focus:ring-4 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
+    />
+  );
+
   return (
-    <main className="max-w-2xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-semibold mb-6">Create a Job</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input name="title" value={form.title} onChange={handleChange} placeholder="Title" className="w-full border px-3 py-2 rounded" />
-        <input name="slug" value={form.slug} onChange={handleChange} placeholder="Slug (optional, will auto-generate)" className="w-full border px-3 py-2 rounded" />
-        <input name="location" value={form.location} onChange={handleChange} placeholder="Location" className="w-full border px-3 py-2 rounded" />
-        <input name="market" value={form.market} onChange={handleChange} placeholder="Market" className="w-full border px-3 py-2 rounded" />
-        <input name="seniority" value={form.seniority} onChange={handleChange} placeholder="Seniority" className="w-full border px-3 py-2 rounded" />
-        <input name="summary" value={form.summary} onChange={handleChange} placeholder="Summary" className="w-full border px-3 py-2 rounded" />
-        <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" className="w-full border px-3 py-2 rounded" />
-        <button type="submit" className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Save</button>
+    <main className="mx-auto max-w-2xl">
+      <div className="rounded-2xl bg-neutral-950 px-6 py-8 ring-1 ring-white/10">
+        <h1 className="text-2xl font-extrabold tracking-tight text-white">
+          Create a Role
+        </h1>
+        <p className="mt-2 text-sm text-neutral-300">
+          Provide the basics. You can refine with our team after submission.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+        <div>
+          <Label>Title</Label>
+          <Input
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            placeholder="e.g. Senior Private Banker (Zurich)"
+          />
+        </div>
+
+        <div>
+          <Label>Slug (optional)</Label>
+          <Input
+            name="slug"
+            value={form.slug}
+            onChange={handleChange}
+            placeholder="auto-generated from title if empty"
+          />
+        </div>
+
+        <div className="grid gap-5 sm:grid-cols-3">
+          <div>
+            <Label>Location</Label>
+            <Input
+              name="location"
+              value={form.location}
+              onChange={handleChange}
+              placeholder="Zurich"
+            />
+          </div>
+          <div>
+            <Label>Market</Label>
+            <Input
+              name="market"
+              value={form.market}
+              onChange={handleChange}
+              placeholder="Swiss / LATAM / MENA / Asia..."
+            />
+          </div>
+          <div>
+            <Label>Seniority</Label>
+            <Input
+              name="seniority"
+              value={form.seniority}
+              onChange={handleChange}
+              placeholder="VP / Director / MD"
+            />
+          </div>
+        </div>
+
+        <div>
+          <Label>Summary</Label>
+          <Input
+            name="summary"
+            value={form.summary}
+            onChange={handleChange}
+            placeholder="1–2 lines about the role"
+          />
+        </div>
+
+        <div>
+          <Label>Description</Label>
+          <Textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            rows={6}
+            placeholder="Responsibilities, coverage, book expectations, portability, remuneration..."
+          />
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="submit"
+            className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+          >
+            Save Role
+          </button>
+          {status && (
+            <span className="text-sm text-neutral-600 dark:text-neutral-300">
+              {status}
+            </span>
+          )}
+        </div>
       </form>
-      {status && <p className="mt-4">{status}</p>}
     </main>
   );
 }

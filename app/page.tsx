@@ -1,11 +1,21 @@
 // app/page.tsx
 import Link from "next/link";
+import { CardBtn } from "./components/CardBtn";
 
 export const metadata = {
   title: "Executive Partners — International & Swiss Private Banking",
   description:
     "We connect top Private Bankers, Wealth Managers, and senior executives with leading banks, EAMs, and family offices worldwide.",
 };
+
+// Site-level tone (can include 'dark' for future use)
+type Tone = "blue" | "green" | "neutral" | "dark";
+
+// Button component tone (what CardBtn supports in your project build)
+type BtnTone = "blue" | "green" | "neutral";
+
+// Normalize any 'dark' to a supported CardBtn tone
+const toBtnTone = (t: Tone): BtnTone => (t === "dark" ? "neutral" : t);
 
 export default function HomePage() {
   return (
@@ -114,8 +124,8 @@ function FeatureCard({
   badge: string;
   title: string;
   copy: string;
-  leftAction: { label: string; href: string; tone: "blue" | "green" | "neutral" };
-  rightAction: { label: string; href: string; tone: "neutral" }; // ← removed "dark"
+  leftAction: { label: string; href: string; tone: Tone };
+  rightAction: { label: string; href: string; tone: Tone };
 }) {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
@@ -128,41 +138,14 @@ function FeatureCard({
 
         {/* perfectly aligned button row */}
         <div className="mt-4 flex items-stretch gap-3">
-          <CardBtn href={leftAction.href} tone={leftAction.tone}>
+          <CardBtn href={leftAction.href} tone={toBtnTone(leftAction.tone)}>
             {leftAction.label}
           </CardBtn>
-          <CardBtn href={rightAction.href} tone={rightAction.tone}>
+          <CardBtn href={rightAction.href} tone={toBtnTone(rightAction.tone)}>
             {rightAction.label}
           </CardBtn>
         </div>
       </div>
     </div>
-  );
-}
-
-function CardBtn({
-  href,
-  children,
-  tone,
-}: {
-  href: string;
-  children: React.ReactNode;
-  tone: "blue" | "green" | "neutral";
-}) {
-  const tones = {
-    blue:
-      "bg-[#2563EB] hover:bg-[#1D4ED8] text-white shadow-[0_8px_24px_rgba(37,99,235,.35)]",
-    green:
-      "bg-[#16A34A] hover:bg-[#15803D] text-white shadow-[0_8px_24px_rgba(22,163,74,.35)]",
-    neutral: "border border-white/15 bg-white/5 hover:bg-white/10 text-white",
-  } as const;
-
-  return (
-    <Link
-      href={href}
-      className={`flex-1 rounded-lg px-4 py-2 text-center text-sm font-semibold transition ${tones[tone]}`}
-    >
-      {children}
-    </Link>
   );
 }
