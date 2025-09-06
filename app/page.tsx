@@ -8,13 +8,11 @@ export const metadata = {
     "We connect top Private Bankers, Wealth Managers, and senior executives with leading banks, EAMs, and family offices worldwide.",
 };
 
-// Site-level tone (can include 'dark' for future use)
+// Site-level tone can include 'dark' (future-proof)
 type Tone = "blue" | "green" | "neutral" | "dark";
-
-// Button component tone (what CardBtn supports in your project build)
+// CardBtn supports only these:
 type BtnTone = "blue" | "green" | "neutral";
-
-// Normalize any 'dark' to a supported CardBtn tone
+// Normalize any 'dark' to a supported tone
 const toBtnTone = (t: Tone): BtnTone => (t === "dark" ? "neutral" : t);
 
 export default function HomePage() {
