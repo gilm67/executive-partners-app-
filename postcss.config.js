@@ -1,7 +1,6 @@
-/** Tailwind CSS v4 + Next.js */
 module.exports = {
   plugins: {
-    '@tailwindcss/postcss': {},
+    tailwindcss: {},
     autoprefixer: {},
   },
 };
