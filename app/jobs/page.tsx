@@ -1,5 +1,6 @@
 // app/jobs/page.tsx
 import Link from "next/link";
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
@@ -19,21 +20,40 @@ type Job = {
   seniority: string;
 };
 
-async function getJobs(): Promise<Job[]> {
-  // Render fresh each time so new jobs appear immediately
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/api/jobs/list`, {
-    cache: "no-store",
-  }).catch(() => null);
-
-  if (!res?.ok) {
-    // Fallback to relative fetch (works in prod)
-    const res2 = await fetch("/api/jobs/list", { cache: "no-store" });
-    const data2 = await res2.json().catch(() => ({}));
-    return data2?.jobs ?? [];
+function getBaseUrl() {
+  // Prefer request headers (Vercel) → fallback to NEXT_PUBLIC_BASE_URL → final hardcoded domain
+  try {
+    const h = headers();
+    const host = h.get("x-forwarded-host") ?? h.get("host");
+    const proto =
+      (h.get("x-forwarded-proto") ?? "https").split(",")[0].trim() || "https";
+    if (host) return `${proto}://${host}`;
+  } catch {
+    // ignore; use fallbacks below
   }
+  return (
+    process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/+$/, "") ||
+    "https://www.execpartners.ch"
+  );
+}
 
-  const data = await res.json().catch(() => ({}));
-  return data?.jobs ?? [];
+async function getJobs(): Promise<Job[]> {
+  const base = getBaseUrl();
+
+  try {
+    const res = await fetch(`${base}/api/jobs/list`, { cache: "no-store" });
+    if (!res.ok) {
+      // surface text for easier debugging rather than throwing opaque digest
+      const t = await res.text();
+      console.error("[/jobs] fetch list failed:", res.status, t);
+      return [];
+    }
+    const data = (await res.json()) as { ok?: boolean; jobs?: Job[] };
+    return data?.ok && Array.isArray(data.jobs) ? data.jobs : [];
+  } catch (e) {
+    console.error("[/jobs] fetch threw:", e);
+    return [];
+  }
 }
 
 export default async function JobsPage() {
@@ -59,14 +79,14 @@ export default async function JobsPage() {
             href={`/jobs/${j.slug}`}
             className="block rounded-xl border px-4 py-4 hover:bg-neutral-50 transition-colors dark:hover:bg-neutral-900"
           >
-            <div className="flex items-start justify-between gap-4">
-              <h2 className="text-base font-medium">{j.title}</h2>
-            </div>
+            <h2 className="text-base font-medium">{j.title}</h2>
             <div className="mt-1 text-sm text-neutral-500">
               {j.market} — {j.location} — {j.seniority}
             </div>
             {j.summary ? (
-              <p className="mt-2 text-sm text-neutral-600 line-clamp-2">{j.summary}</p>
+              <p className="mt-2 text-sm text-neutral-600 line-clamp-2">
+                {j.summary}
+              </p>
             ) : null}
           </Link>
         ))}
