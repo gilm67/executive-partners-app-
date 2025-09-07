@@ -1,28 +1,29 @@
 // app/apply/page.tsx
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
 export const dynamic = 'force-dynamic';
 
-export default function ApplyPage() {
-  const sp = useSearchParams();
-  const prefilledJob = sp.get('job') ?? '';
+function ApplyFormInner() {
+  const sp = useSearchParams();                   // ✅ inside Suspense
+  const prefill = sp.get('job') || '';
 
   const [form, setForm] = useState({
+    job: prefill,
     name: '',
     email: '',
     phone: '',
-    role: prefilledJob,
     message: '',
   });
-  const [sending, setSending] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
-  async function submit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSending(true);
+    setSubmitting(true);
     setMsg(null);
     try {
       const res = await fetch('/api/apply', {
@@ -35,89 +36,90 @@ export default function ApplyPage() {
       setMsg('Application sent. Thank you!');
       setForm((s) => ({ ...s, name: '', email: '', phone: '', message: '' }));
     } catch (e: any) {
-      setMsg(`Submit failed: ${e?.message || String(e)}`);
+      setMsg(`Failed: ${e?.message || String(e)}`);
     } finally {
-      setSending(false);
+      setSubmitting(false);
     }
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <main className="mx-auto max-w-3xl px-4 py-10 space-y-6">
       <h1 className="text-2xl font-semibold">Submit your CV</h1>
-      <p className="mt-2 text-sm text-neutral-600">
-        Apply confidentially. We’ll get back to you shortly.
-      </p>
 
-      <form onSubmit={submit} className="mt-6 space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Role</label>
-          <input
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-            value={form.role}
-            onChange={(e) => setForm((s) => ({ ...s, role: e.target.value }))}
-            placeholder="e.g., Senior Relationship Manager — Brazil"
-          />
+      {msg && (
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm">
+          {msg}
         </div>
+      )}
 
+      <form onSubmit={onSubmit} className="grid gap-4">
         <div>
-          <label className="block text-sm font-medium">Full name</label>
+          <label className="text-sm font-medium">Role (optional)</label>
           <input
             className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-            value={form.name}
-            onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
-            placeholder="Your name"
-            required
+            value={form.job}
+            onChange={(e) => setForm((s) => ({ ...s, job: e.target.value }))}
+            placeholder="e.g., Private Banker — MEA"
           />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium">Email</label>
+            <label className="text-sm font-medium">Name</label>
+            <input
+              className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+              value={form.name}
+              onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
+              required
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium">Email</label>
             <input
               type="email"
               className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
               value={form.email}
               onChange={(e) => setForm((s) => ({ ...s, email: e.target.value }))}
-              placeholder="you@company.com"
               required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Phone</label>
-            <input
-              className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-              value={form.phone}
-              onChange={(e) => setForm((s) => ({ ...s, phone: e.target.value }))}
-              placeholder="+41 ..."
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Message</label>
+          <label className="text-sm font-medium">Phone</label>
+          <input
+            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            value={form.phone}
+            onChange={(e) => setForm((s) => ({ ...s, phone: e.target.value }))}
+          />
+        </div>
+
+        <div>
+          <label className="text-sm font-medium">Message</label>
           <textarea
             rows={6}
             className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
             value={form.message}
             onChange={(e) => setForm((s) => ({ ...s, message: e.target.value }))}
-            placeholder="A short note about your experience and goals…"
           />
         </div>
 
         <button
           type="submit"
-          className="rounded-lg bg-black px-4 py-2 text-sm text-white disabled:opacity-60"
-          disabled={sending}
+          className="rounded-lg bg-black px-4 py-2 text-white text-sm disabled:opacity-60"
+          disabled={submitting}
         >
-          {sending ? 'Sending…' : 'Submit'}
+          {submitting ? 'Sending…' : 'Send Application'}
         </button>
       </form>
-
-      {msg && (
-        <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm">
-          {msg}
-        </div>
-      )}
     </main>
+  );
+}
+
+export default function ApplyPage() {
+  return (
+    <Suspense fallback={<main className="mx-auto max-w-3xl px-4 py-10">Loading…</main>}>
+      <ApplyFormInner />
+    </Suspense>
   );
 }
