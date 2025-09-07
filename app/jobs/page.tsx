@@ -20,16 +20,16 @@ type Job = {
   seniority: string;
 };
 
-function getBaseUrl() {
+async function getBaseUrl(): Promise<string> {
   // Prefer request headers (Vercel) → fallback to NEXT_PUBLIC_BASE_URL → final hardcoded domain
   try {
-    const h = headers();
+    const h = await headers(); // ← await fixes the TS error in your build
     const host = h.get("x-forwarded-host") ?? h.get("host");
     const proto =
       (h.get("x-forwarded-proto") ?? "https").split(",")[0].trim() || "https";
     if (host) return `${proto}://${host}`;
   } catch {
-    // ignore; use fallbacks below
+    // ignore; fallbacks below
   }
   return (
     process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/+$/, "") ||
@@ -38,12 +38,11 @@ function getBaseUrl() {
 }
 
 async function getJobs(): Promise<Job[]> {
-  const base = getBaseUrl();
+  const base = await getBaseUrl();
 
   try {
     const res = await fetch(`${base}/api/jobs/list`, { cache: "no-store" });
     if (!res.ok) {
-      // surface text for easier debugging rather than throwing opaque digest
       const t = await res.text();
       console.error("[/jobs] fetch list failed:", res.status, t);
       return [];
