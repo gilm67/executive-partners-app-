@@ -1,47 +1,65 @@
 // app/api/jobs/get/route.ts
 import { NextResponse } from "next/server";
+import { getRedis } from "@/lib/redis";
 
-const BASE = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+function normalize(d: Record<string, string>) {
+  return {
+    id: d.id,
+    title: d.title,
+    slug: (d.slug || "").trim(),
+    summary: d.summary || "",
+    description: d.description || "",
+    location: d.location || "",
+    market: d.market || "",
+    seniority: d.seniority || "",
+    role: d.role || "",
+    confidential: d.confidential === "true" || (d as any).confidential === true,
+    active: d.active === "true" || (d as any).active === true,
+    createdAt: d.createdAt,
+  };
+}
 
-async function kvGet<T = any>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    headers: { Authorization: `Bearer ${TOKEN}` },
-    cache: "no-store",
-  });
-  return res.json();
+async function findJobBySlug(slug: string) {
+  const want = slug.trim();
+  const redis = await getRedis();
+
+  try {
+    const id = await redis.get(`jobs:by-slug:${want}`);
+    if (id) {
+      const data = await redis.hgetall(id);
+      if (data?.slug?.trim() === want) return normalize(data);
+    }
+  } catch {}
+
+  try {
+    const ids = await redis.smembers("jobs:index");
+    for (const id of ids) {
+      const data = await redis.hgetall(id);
+      if (data?.slug?.trim() === want) return normalize(data);
+    }
+  } catch {}
+
+  try {
+    const raw = await redis.get("jobs:index:__set__");
+    if (raw) {
+      const arr = JSON.parse(raw);
+      if (Array.isArray(arr)) {
+        for (const id of arr) {
+          const data = await redis.hgetall(String(id));
+          if (data?.slug?.trim() === want) return normalize(data);
+        }
+      }
+    }
+  } catch {}
+
+  return null;
 }
 
 export async function GET(req: Request) {
-  try {
-    if (!BASE || !TOKEN) {
-      return NextResponse.json({ ok: false, error: "KV not configured" }, { status: 500 });
-    }
-
-    const { searchParams } = new URL(req.url);
-    const slug = searchParams.get("slug") || "";
-    if (!slug) return NextResponse.json({ ok: false, error: "Missing slug" }, { status: 400 });
-
-    const h = await kvGet<{ result: string[] }>(`/hgetall/job:${encodeURIComponent(slug)}`);
-    const arr = Array.isArray(h?.result) ? h.result : [];
-    if (!arr.length) return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
-
-    const obj: Record<string, string> = {};
-    for (let i = 0; i < arr.length; i += 2) obj[arr[i]] = arr[i + 1];
-
-    const job = {
-      slug: obj.slug,
-      title: obj.title,
-      summary: obj.summary,
-      location: obj.location,
-      market: obj.market,
-      seniority: obj.seniority,
-      description: obj.description,
-      active: obj.active === "true" || obj.active === "1" || obj.active === "yes",
-    };
-
-    return NextResponse.json({ ok: true, job });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message || "get failed" }, { status: 500 });
-  }
+  const url = new URL(req.url);
+  const slug = url.searchParams.get("slug");
+  if (!slug) return NextResponse.json({ ok: false, error: "Missing slug" }, { status: 400 });
+  const job = await findJobBySlug(slug);
+  if (!job) return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
+  return NextResponse.json({ ok: true, job });
 }

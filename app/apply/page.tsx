@@ -1,35 +1,25 @@
 // app/apply/page.tsx
-import { Suspense } from "react";
-import ApplyClient from "./ApplyClient";
-
-export const dynamic = "force-dynamic";
-
-type SP = { role?: string; market?: string };
-
-async function Content(
-  props: { searchParams?: SP | Promise<SP> }
-) {
-  const sp = await Promise.resolve(props.searchParams ?? {});
-  const initialRole = (sp?.role ?? "").toString();
-  const initialMarket = (sp?.market ?? "").toString();
+export default function ApplyPage({ searchParams }: { searchParams: { job?: string } }) {
+  const prefill = searchParams?.job ?? "";
 
   return (
-    <section className="space-y-6">
-      <h1 className="text-2xl font-semibold">Apply confidentially</h1>
-      <p className="text-neutral-400">
-        Your profile will be reviewed discreetly. We’ll contact you if there’s a strong fit.
-      </p>
-      <ApplyClient initialRole={initialRole} initialMarket={initialMarket} />
-    </section>
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+      <h1 className="text-3xl font-bold tracking-tight">Submit your CV</h1>
+
+      <form action="/api/apply" method="post" className="space-y-4">
+        <input type="hidden" name="job" value={prefill} />
+        <div>
+          <label className="block text-sm font-medium">Role of interest (optional)</label>
+          <input
+            name="role"
+            defaultValue={prefill}
+            placeholder="e.g., Senior Relationship Manager — CH Onshore"
+            className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2"
+          />
+        </div>
+        {/* … your existing fields for name, email, cv link, message etc … */}
+        <button className="rounded-lg bg-black text-white px-4 py-2">Send</button>
+      </form>
+    </div>
   );
 }
-
-export default function Page(props: any) {
-  return (
-    <Suspense fallback={<div className="text-neutral-400">Loading…</div>}>
-      <Content {...props} />
-    </Suspense>
-  );
-}
-
-

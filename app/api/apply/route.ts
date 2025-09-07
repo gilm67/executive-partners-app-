@@ -1,37 +1,25 @@
 // app/api/apply/route.ts
 import { NextResponse } from "next/server";
-import { appendApplication } from "@/lib/sheets";
 
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
 
-/**
- * Accepts JSON and appends a row to the "Applications" sheet.
- * We accept either snake/space headers; the helper aligns to your real headers.
- */
 export async function POST(req: Request) {
   try {
-    const body = await req.json().catch(() => ({}));
+    const form = await req.formData();
+    const payload = Object.fromEntries(form.entries());
 
-    // Basic sanity (optional)
-    if (!body || typeof body !== "object") {
-      return NextResponse.json(
-        { ok: false, error: "Invalid JSON body" },
-        { status: 400 }
-      );
+    // OPTIONAL: forward to Google Apps Script / Zapier / Manatal webhook
+    const url = process.env.APPLICANT_WEBHOOK_URL;
+    if (url) {
+      await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }).catch(() => {});
     }
 
-    // Pass straight through. The helper will map to your headers and add Timestamp.
-    await appendApplication(body);
-
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, received: payload });
   } catch (err: any) {
-    console.error("❌ /api/apply error:", err?.message || err, err?.stack);
-    return NextResponse.json(
-      { ok: false, error: String(err?.message || err) },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: false, error: err?.message ?? "apply failed" }, { status: 500 });
   }
 }
-
-
