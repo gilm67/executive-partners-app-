@@ -28,6 +28,18 @@ const FIELDS = [
   { name: 'seniority', label: 'Seniority', placeholder: 'Director / Executive Director' },
 ] as const;
 
+// Helpers to build HeadersInit safely (avoid unions with possibly-undefined)
+function jsonAuthHeaders(token: string): HeadersInit {
+  const h: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) h.Authorization = `Bearer ${token}`;
+  return h;
+}
+function authHeaders(token: string): HeadersInit {
+  const h: Record<string, string> = {};
+  if (token) h.Authorization = `Bearer ${token}`;
+  return h;
+}
+
 export default function AdminJobsPage() {
   const [token, setToken] = useState('');
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -57,11 +69,9 @@ export default function AdminJobsPage() {
     } catch {}
   }, []);
 
-  // simple helper
-  const headersAuth = useMemo(
-    () => (token ? { Authorization: `Bearer ${token}` } : {}),
-    [token],
-  );
+  // keep this if you want to render UI conditionally on auth,
+  // but don't spread it into fetch headers (that caused the TS error)
+  const hasAuth = useMemo(() => Boolean(token), [token]);
 
   async function loadJobs() {
     setLoading(true);
@@ -92,10 +102,7 @@ export default function AdminJobsPage() {
     try {
       const res = await fetch('/api/jobs/create', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...headersAuth,
-        },
+        headers: jsonAuthHeaders(token),
         body: JSON.stringify(form),
       });
       const data = await res.json();
@@ -118,7 +125,7 @@ export default function AdminJobsPage() {
     try {
       const res = await fetch('/api/revalidate-jobs', {
         method: 'POST',
-        headers: { ...headersAuth },
+        headers: authHeaders(token),
       });
       const data = await res.json();
       if (!res.ok || !data?.ok) throw new Error(data?.error || `HTTP ${res.status}`);
@@ -150,6 +157,8 @@ export default function AdminJobsPage() {
           <button
             onClick={revalidate}
             className="rounded-lg border px-3 py-2 text-sm"
+            disabled={!hasAuth}
+            title={!hasAuth ? 'Paste admin token first' : undefined}
           >
             Revalidate /jobs
           </button>
