@@ -52,7 +52,7 @@ export default function HomePage() {
         </div>
 
         {/* two feature cards */}
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
+        <div className="mt-10 grid gap-6 md:grid-cols-2 items-stretch">
           <FeatureCard
             badge="For Candidates"
             title="Confidential career moves"
@@ -122,16 +122,16 @@ function FeatureCard({
   rightAction: { label: string; href: string; tone: BtnTone };
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
+    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)] flex flex-col h-full">
       {/* inner soft glow */}
       <div className="pointer-events-none absolute inset-0 opacity-[.18] [background:radial-gradient(600px_120px_at_10%_0%,rgba(14,165,233,1),transparent_60%),radial-gradient(600px_120px_at_100%_0%,rgba(34,197,94,1),transparent_60%)]" />
-      <div className="relative">
+      <div className="relative flex flex-col h-full">
         <div className="text-xs font-semibold text-[#6EE7B7]">{badge}</div>
         <h3 className="mt-2 text-xl font-bold">{title}</h3>
         <p className="mt-2 text-sm leading-relaxed text-neutral-300">{copy}</p>
 
         {/* perfectly aligned button row */}
-        <div className="mt-4 flex items-stretch gap-3">
+        <div className="mt-auto flex items-center gap-3">
           <CardBtn href={leftAction.href} tone={leftAction.tone}>
             {leftAction.label}
           </CardBtn>
