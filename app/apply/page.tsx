@@ -14,7 +14,7 @@ export default function ApplyPage() {
     name: '',
     email: '',
     phone: '',
-    role: prefilledJob, // prefill from ?job=
+    role: prefilledJob,
     message: '',
   });
   const [sending, setSending] = useState(false);
@@ -31,12 +31,11 @@ export default function ApplyPage() {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok || !data?.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+      if (!res.ok || !data?.ok) throw new Error(data?.error || \`HTTP \${res.status}\`);
       setMsg('Application sent. Thank you!');
-      // optionally clear message but keep role prefill
       setForm((s) => ({ ...s, name: '', email: '', phone: '', message: '' }));
     } catch (e: any) {
-      setMsg(`Submit failed: ${e?.message || String(e)}`);
+      setMsg(\`Submit failed: \${e?.message || String(e)}\`);
     } finally {
       setSending(false);
     }
