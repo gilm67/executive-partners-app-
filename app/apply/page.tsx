@@ -31,11 +31,11 @@ export default function ApplyPage() {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok || !data?.ok) throw new Error(data?.error || \`HTTP \${res.status}\`);
+      if (!res.ok || !data?.ok) throw new Error(data?.error || `HTTP ${res.status}`);
       setMsg('Application sent. Thank you!');
       setForm((s) => ({ ...s, name: '', email: '', phone: '', message: '' }));
     } catch (e: any) {
-      setMsg(\`Submit failed: \${e?.message || String(e)}\`);
+      setMsg(`Submit failed: ${e?.message || String(e)}`);
     } finally {
       setSending(false);
     }
