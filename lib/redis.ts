@@ -24,6 +24,30 @@ function hasNodeRedis() {
   return Boolean(process.env.REDIS_URL);
 }
 
+/** Normalize HeadersInit → plain Record<string,string> */
+function toHeaderRecord(h?: HeadersInit): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!h) return out;
+
+  if (Array.isArray(h)) {
+    for (const [k, v] of h) out[String(k)] = String(v);
+    return out;
+  }
+  if (typeof (h as any)?.forEach === "function") {
+    (h as Headers).forEach((v, k) => (out[String(k)] = String(v)));
+    return out;
+  }
+  if (typeof h === "object") {
+    for (const [k, v] of Object.entries(h as Record<string, any>)) {
+      out[String(k)] = String(v);
+    }
+  }
+  return out;
+}
+
+/** Keep one RequestInit shape everywhere */
+type ReqInit = RequestInit & { headers?: Record<string, string> };
+
 /* ---------- unwrap Upstash/Vercel KV { "result": ... } ---------- */
 function unwrapResult(text: string | null): string | null {
   if (!text) return null;
@@ -49,19 +73,19 @@ function restBackend(): RedisCompat {
     process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || "";
   if (!base || !token) throw new Error("Missing KV/Upstash REST config (URL/TOKEN).");
 
-  async function rest(
-    path: string,
-    init?: RequestInit & { headers?: Record<string, string> }
-  ) {
+  async function rest(path: string, init?: ReqInit) {
     return fetch(`${base}${path}`, {
       ...init,
-      headers: { ...(init?.headers || {}), Authorization: `Bearer ${token}` },
+      headers: {
+        ...toHeaderRecord(init?.headers),
+        Authorization: `Bearer ${token}`,
+      },
       cache: "no-store",
     });
   }
 
   // Try UPPERCASE first, then lowercase fallback for each command.
-  async function cmd(pathUpper: string, pathLower: string, init?: RequestInit) {
+  async function cmd(pathUpper: string, pathLower: string, init?: ReqInit) {
     let r = await rest(pathUpper, init);
     if (r.ok) return r;
     return rest(pathLower, init);
@@ -153,7 +177,9 @@ function restBackend(): RedisCompat {
         try {
           const parsed = JSON.parse(curr);
           if (Array.isArray(parsed)) arr = parsed.map(String);
-        } catch {/* reset */}
+        } catch {
+          /* reset */
+        }
       }
       const set = new Set<string>(arr);
       for (const m of members) set.add(String(m));
