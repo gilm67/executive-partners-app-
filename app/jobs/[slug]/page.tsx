@@ -1,3 +1,4 @@
+// app/jobs/[slug]/page.tsx
 import Link from "next/link";
 import MarkdownLite from "../MarkdownLite";
 
@@ -14,6 +15,70 @@ type Job = {
   createdAt?: string;
   body?: string;
 };
+
+// ✅ Known good roles as a safety net (used only if the API returns nothing)
+const FALLBACK_JOBS: Job[] = [
+  {
+    title: "Senior Relationship Manager — MEA",
+    location: "Dubai",
+    market: "Middle East & Africa",
+    seniority: "Director+",
+    summary:
+      "Cover UHNW/HNW MEA clients from Dubai; strong acquisition and cross-border expertise.",
+    slug: "senior-relationship-manager-mea-dubai",
+    active: true,
+  },
+  {
+    title: "Senior Relationship Manager — Brazil",
+    location: "Zurich or Geneva",
+    market: "Brazil / LatAm",
+    seniority: "Executive Director+",
+    summary:
+      "Develop and manage HNW/UHNW Brazilian clients; full private banking advisory and cross-border expertise.",
+    slug: "senior-relationship-manager-brazil-ch",
+    active: true,
+  },
+  {
+    title: "Senior Relationship Manager — CH Onshore",
+    location: "Zurich",
+    market: "Switzerland (Onshore)",
+    seniority: "Director+",
+    summary:
+      "Swiss-domiciled HNW/UHNW coverage in Zurich; strong local network and portability required.",
+    slug: "senior-relationship-manager-ch-onshore-zurich",
+    active: true,
+  },
+  {
+    title: "Senior Relationship Manager — CH Onshore",
+    location: "Lausanne",
+    market: "Switzerland (Onshore)",
+    seniority: "Director+",
+    summary:
+      "Lausanne booking; Swiss-domiciled HNW/UHNW clients; acquisition and advisory track record.",
+    slug: "senior-relationship-manager-ch-onshore-lausanne",
+    active: true,
+  },
+  {
+    title: "Senior Relationship Manager — Portugal",
+    location: "Geneva",
+    market: "Portugal (LatAm/Europe)",
+    seniority: "Executive Director+",
+    summary:
+      "Lead HNW/UHNW Portugal & diaspora coverage from Geneva; full PB platform and open architecture.",
+    slug: "senior-relationship-manager-portugal-geneva",
+    active: true,
+  },
+  {
+    title: "Senior Relationship Manager — MEA",
+    location: "Zurich",
+    market: "Middle East & Africa",
+    seniority: "Director+",
+    summary:
+      "Zurich-based MEA coverage for UHNW/HNW; growth-focused platform and competitive grid.",
+    slug: "senior-relationship-manager-mea-zurich",
+    active: true,
+  },
+];
 
 // Slugs you explicitly want to hide
 const HIDDEN_SLUGS = new Set<string>([
@@ -49,12 +114,19 @@ async function fetchAllJobs(): Promise<Job[]> {
       if (!r.ok) continue;
       const raw = await r.json();
       const list: Job[] = Array.isArray(raw) ? raw : Array.isArray(raw?.jobs) ? raw.jobs : [];
-      if (Array.isArray(list) && list.length) return list;
+      if (Array.isArray(list) && list.length) {
+        // Merge with fallbacks (API takes precedence)
+        const seen = new Set(list.map((j) => norm(j.slug)));
+        const merged = list.concat(FALLBACK_JOBS.filter((j) => !seen.has(norm(j.slug))));
+        return merged;
+      }
     } catch {
       // ignore and try next
     }
   }
-  return [];
+
+  // If API gave nothing, use fallbacks
+  return FALLBACK_JOBS;
 }
 
 /** Find a job by slug with a few robust fallbacks. */
@@ -86,8 +158,14 @@ async function fetchJobBySlug(requestedSlug: string): Promise<Job | null> {
   return found ?? null;
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const job = await fetchJobBySlug(params.slug);
+/* ---------- Next 15: params is a Promise ---------- */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const job = await fetchJobBySlug(slug);
   const title = job?.title ? `${job.title} | Executive Partners` : "Role | Executive Partners";
   const description =
     job?.summary ??
@@ -95,8 +173,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return { title, description };
 }
 
-export default async function JobDetailPage({ params }: { params: { slug: string } }) {
-  const job = await fetchJobBySlug(params.slug);
+export default async function JobDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const job = await fetchJobBySlug(slug);
 
   if (!job || job.active === false || HIDDEN_SLUGS.has(job.slug)) {
     return (
