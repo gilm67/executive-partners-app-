@@ -16,70 +16,6 @@ type Job = {
   body?: string;
 };
 
-// ✅ Known good roles as a safety net (used only if the API returns nothing)
-const FALLBACK_JOBS: Job[] = [
-  {
-    title: "Senior Relationship Manager — MEA",
-    location: "Dubai",
-    market: "Middle East & Africa",
-    seniority: "Director+",
-    summary:
-      "Cover UHNW/HNW MEA clients from Dubai; strong acquisition and cross-border expertise.",
-    slug: "senior-relationship-manager-mea-dubai",
-    active: true,
-  },
-  {
-    title: "Senior Relationship Manager — Brazil",
-    location: "Zurich or Geneva",
-    market: "Brazil / LatAm",
-    seniority: "Executive Director+",
-    summary:
-      "Develop and manage HNW/UHNW Brazilian clients; full private banking advisory and cross-border expertise.",
-    slug: "senior-relationship-manager-brazil-ch",
-    active: true,
-  },
-  {
-    title: "Senior Relationship Manager — CH Onshore",
-    location: "Zurich",
-    market: "Switzerland (Onshore)",
-    seniority: "Director+",
-    summary:
-      "Swiss-domiciled HNW/UHNW coverage in Zurich; strong local network and portability required.",
-    slug: "senior-relationship-manager-ch-onshore-zurich",
-    active: true,
-  },
-  {
-    title: "Senior Relationship Manager — CH Onshore",
-    location: "Lausanne",
-    market: "Switzerland (Onshore)",
-    seniority: "Director+",
-    summary:
-      "Lausanne booking; Swiss-domiciled HNW/UHNW clients; acquisition and advisory track record.",
-    slug: "senior-relationship-manager-ch-onshore-lausanne",
-    active: true,
-  },
-  {
-    title: "Senior Relationship Manager — Portugal",
-    location: "Geneva",
-    market: "Portugal (LatAm/Europe)",
-    seniority: "Executive Director+",
-    summary:
-      "Lead HNW/UHNW Portugal & diaspora coverage from Geneva; full PB platform and open architecture.",
-    slug: "senior-relationship-manager-portugal-geneva",
-    active: true,
-  },
-  {
-    title: "Senior Relationship Manager — MEA",
-    location: "Zurich",
-    market: "Middle East & Africa",
-    seniority: "Director+",
-    summary:
-      "Zurich-based MEA coverage for UHNW/HNW; growth-focused platform and competitive grid.",
-    slug: "senior-relationship-manager-mea-zurich",
-    active: true,
-  },
-];
-
 // Slugs you explicitly want to hide
 const HIDDEN_SLUGS = new Set<string>([
   "senior-relationship-manager-ch-onshore-4",
@@ -114,19 +50,12 @@ async function fetchAllJobs(): Promise<Job[]> {
       if (!r.ok) continue;
       const raw = await r.json();
       const list: Job[] = Array.isArray(raw) ? raw : Array.isArray(raw?.jobs) ? raw.jobs : [];
-      if (Array.isArray(list) && list.length) {
-        // Merge with fallbacks (API takes precedence)
-        const seen = new Set(list.map((j) => norm(j.slug)));
-        const merged = list.concat(FALLBACK_JOBS.filter((j) => !seen.has(norm(j.slug))));
-        return merged;
-      }
+      if (Array.isArray(list) && list.length) return list;
     } catch {
       // ignore and try next
     }
   }
-
-  // If API gave nothing, use fallbacks
-  return FALLBACK_JOBS;
+  return [];
 }
 
 /** Find a job by slug with a few robust fallbacks. */
@@ -158,14 +87,161 @@ async function fetchJobBySlug(requestedSlug: string): Promise<Job | null> {
   return found ?? null;
 }
 
-/* ---------- Next 15: params is a Promise ---------- */
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const job = await fetchJobBySlug(slug);
+/* ------------ Rich fallback bodies (markdown) ------------ */
+
+const FALLBACK_BODIES: Record<string, string> = {
+  // Brazil — Zurich/Geneva
+  "senior-relationship-manager-brazil-ch": md(`
+**Position Overview**  
+The *Senior Relationship Manager* is responsible for acquiring, developing, and managing a portfolio of HNW/UHNW individuals based in **Brazil**, serving as a trusted advisor with comprehensive private banking services and tailored financial solutions (Zurich or Geneva booking).
+
+**Key Responsibilities**
+- Develop and expand a personal client network across Brazil and the Brazilian diaspora.
+- Act as a strategic advisor across investments, lending, and estate planning; coordinate with product specialists.
+- Proactively originate new business via networking, referrals, and targeted events.
+- Ensure rigorous KYC/AML and cross-border compliance.
+- Mentor junior staff and contribute to team best practices.
+
+**Core Requirements**
+- 7–10+ years in private banking with a portable HNW/UHNW Brazil book.
+- Deep markets knowledge; fluency in **Portuguese** and English (French/Swiss German a plus).
+- Entrepreneurial “hunter + farmer” profile; Swiss permit ideal.
+
+**Essential Competencies**
+- Client-centric, ethical approach; strong compliance discipline.
+- Ability to orchestrate internal experts for holistic solutions.
+- High energy, team spirit, and adaptability.
+
+**What Our Client Offer**
+- Advanced platform, collaborative culture, and private markets access.
+- Clear career progression and competitive compensation grid.
+  `),
+
+  // MEA — Dubai
+  "senior-relationship-manager-mea-dubai": md(`
+**Position Overview**  
+Lead and grow relationships with UHNW/HNW clients across **MEA** from a **Dubai** hub, leveraging a full-suite platform and regional reach.
+
+**Key Responsibilities**
+- Originate/grow a MEA portfolio (GCC, Levant, North Africa).
+- Advise across DPM/advisory, credit, and wealth planning (incl. Sharia-compliant where relevant).
+- Activate professional networks, family offices, and referral partners.
+- Maintain strict cross-border and local regulatory compliance.
+- Guide juniors and promote team collaboration.
+
+**Core Requirements**
+- 7–10+ years in private banking with a portable MEA book.
+- Proven acquisition & retention; English fluent (Arabic/French a plus).
+- Robust MEA cross-border understanding.
+
+**What Our Client Offer**
+- Dubai hub with global booking; competitive grid and strong product shelf.
+  `),
+
+  // MEA — Zurich
+  "senior-relationship-manager-mea-zurich": md(`
+**Position Overview**  
+Cover MEA clients booking in **Zurich**, using Switzerland's infrastructure and reputation as a global wealth hub.
+
+**Key Responsibilities**
+- Originate and serve UHNW/HNW clients from GCC, Levant, and Africa.
+- Deliver investment, credit, and succession/structuring solutions with Zurich booking.
+- Work closely with family office, asset management, and private markets teams.
+- Ensure cross-border compliance across MEA jurisdictions.
+
+**Core Requirements**
+- 7+ years Swiss private banking with MEA exposure.
+- Portable UHNW/HNW book; English fluent (Arabic/French valued).
+
+**What Our Client Offer**
+- Swiss booking with global reach, strong platform support.
+  `),
+
+  // CH Onshore — Zurich
+  "senior-relationship-manager-ch-onshore-zurich": md(`
+**Position Overview**  
+Advise **Swiss-domiciled UHNW/HNW** clients in **Zurich**, providing a holistic onshore proposition.
+
+**Key Responsibilities**
+- Acquire and grow a Swiss onshore portfolio in Zurich and surrounding cantons.
+- Provide integrated solutions: investments, mortgages, pension, and succession.
+- Cultivate referral networks with local lawyers, fiduciaries, and entrepreneurs.
+- Maintain FINMA-grade compliance and documentation.
+
+**Core Requirements**
+- 7–10+ years Swiss onshore coverage.
+- Fluent **German/Swiss German** and English (French a plus).
+- Strong local network and commercial drive.
+
+**What Our Client Offer**
+- Entrepreneurial onshore platform and competitive remuneration.
+  `),
+
+  // CH Onshore — Lausanne
+  "senior-relationship-manager-ch-onshore-lausanne": md(`
+**Position Overview**  
+Focus on **Romandie** (Lausanne/Vaud/Geneva), advising local UHNW/HNW individuals and families.
+
+**Key Responsibilities**
+- Acquire and serve clients in Lausanne, Vaud, and Geneva regions.
+- Tailor investment and estate planning to Swiss onshore needs.
+- Build robust referral channels with local professionals.
+
+**Core Requirements**
+- 7+ years Swiss onshore PB.
+- Fluent **French** and English; strong Romandie network.
+
+**What Our Client Offer**
+- Strong brand recognition in Romandie and collaborative culture.
+  `),
+
+  // Portugal — Geneva
+  "senior-relationship-manager-portugal-geneva": md(`
+**Position Overview**  
+Geneva-based role focused on UHNW/HNW **Portuguese** clients and diaspora, leveraging Switzerland’s booking center.
+
+**Key Responsibilities**
+- Grow a client base of Portuguese entrepreneurs and families.
+- Offer global investments, cross-border structuring, and succession planning.
+- Prospect actively and leverage diaspora links across Switzerland and Europe.
+- Ensure KYC/AML and cross-border rules are fully respected.
+
+**Core Requirements**
+- 7–10+ years with Portugal coverage.
+- Fluent **Portuguese** and English (French a plus).
+- Strong acquisition track record and diaspora network.
+
+**What Our Client Offer**
+- Geneva hub with dedicated Portugal/LatAm desk; competitive platform and private markets access.
+  `),
+};
+
+// helper to wrap template strings as markdown (just returns the string)
+function md(s: string) {
+  return s.trim();
+}
+
+/** Pick the best available description for a job. */
+function getBestBody(job: Job): string | null {
+  // 1) API-provided body wins
+  if (job.body && job.body.trim().length > 0) return job.body.trim();
+
+  // 2) slug-based template
+  const bySlug = FALLBACK_BODIES[norm(job.slug)];
+  if (bySlug) return bySlug;
+
+  // 3) minimal fallback from summary
+  if (job.summary) {
+    return `**Overview**\n\n${job.summary}\n\nFor full details, please contact us confidentially.`;
+  }
+
+  return null;
+}
+
+/* ----------------- Metadata & Page ----------------- */
+
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const job = await fetchJobBySlug(params.slug);
   const title = job?.title ? `${job.title} | Executive Partners` : "Role | Executive Partners";
   const description =
     job?.summary ??
@@ -173,13 +249,8 @@ export async function generateMetadata({
   return { title, description };
 }
 
-export default async function JobDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const job = await fetchJobBySlug(slug);
+export default async function JobDetailPage({ params }: { params: { slug: string } }) {
+  const job = await fetchJobBySlug(params.slug);
 
   if (!job || job.active === false || HIDDEN_SLUGS.has(job.slug)) {
     return (
@@ -207,6 +278,8 @@ export default async function JobDetailPage({
         year: "numeric",
       })
     : undefined;
+
+  const body = getBestBody(job);
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
@@ -268,10 +341,8 @@ export default async function JobDetailPage({
 
         {/* Body */}
         <section className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6">
-          {job.body ? (
-            <MarkdownLite text={job.body} />
-          ) : job.summary ? (
-            <MarkdownLite text={job.summary} />
+          {body ? (
+            <MarkdownLite text={body} />
           ) : (
             <p className="text-neutral-300">
               Full description available upon request.{" "}
