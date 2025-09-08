@@ -96,3 +96,45 @@ html, body { height: 100%; margin: 0; }
     border-color: transparent !important;
   }
 }
+
+/* ===== Mobile readability overrides (non-invasive) ===== */
+
+/* Make any "blue text" utilities render white on small screens
+   (fixes mobile menu items that were blue-on-dark). */
+@media (max-width: 768px) {
+  .text-blue-400, .text-blue-500, .text-blue-600,
+  .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover {
+    color: #fff !important;
+    font-weight: 600 !important;
+  }
+}
+
+/* Force white, bold text inside blue buttons everywhere (links or buttons) */
+a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\] {
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+/* Strengthen the brand and top-nav links on dark headers */
+header a[href="/"] {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+/* Typical header nav links (desktop + mobile drawers) */
+header nav a, header nav button {
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+/* Optional: within any off-canvas / drawer menus, keep text white */
+[class*="SheetContent"] a, [class*="SheetContent"] button,
+[class*="DrawerContent"] a, [class*="DrawerContent"] button {
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+/* Candidate/CTA tiles that had blue buttons on dark backgrounds */
+a[role="button"].bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
+  color: #fff !important;
+  font-weight: 600 !important;
+}
