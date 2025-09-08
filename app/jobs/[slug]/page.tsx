@@ -15,91 +15,79 @@ type Job = {
   body?: string;
 };
 
-/* ---------- helpers ---------- */
+// Slugs you explicitly want to hide
+const HIDDEN_SLUGS = new Set<string>([
+  "senior-relationship-manager-ch-onshore-4",
+  "senior-relationship-manager-brazil-2",
+  "private-banker-mea-2",
+]);
 
-function normalizeSlug(s: string | undefined): string {
-  if (!s) return "";
-  return decodeURIComponent(s)
+/** Normalize slugs so small differences still match. */
+function norm(s: string | undefined) {
+  return (s ?? "")
+    .trim()
     .toLowerCase()
-    .replace(/[\u2013\u2014]/g, "-") // en/em dash -> hyphen
-    .replace(/\s+/g, "-") // spaces -> hyphen
-    .replace(/-+/g, "-") // collapse
-    .replace(/^-|-$/g, ""); // trim hyphens
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/--+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
-function matchesSlug(target: string, candidate: string) {
-  const t = normalizeSlug(target);
-  const c = normalizeSlug(candidate);
-  return (
-    c === t ||
-    c.startsWith(t) ||
-    t.startsWith(c) ||
-    c.includes(t) ||
-    t.includes(c)
-  );
-}
+/** Safely read either [{…}] or { jobs:[{…}] } */
+async function fetchAllJobs(): Promise<Job[]> {
+  const abs = process.env.NEXT_PUBLIC_SITE_URL
+    ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`
+    : null;
 
-async function robustJson(url: string) {
-  try {
-    const r = await fetch(url, { cache: "no-store" });
-    if (!r.ok) return null;
-    return await r.json();
-  } catch {
-    return null;
-  }
-}
+  // Try absolute first (prod/preview), then relative (dev)
+  const tries: (RequestInfo | URL)[] = [];
+  if (abs) tries.push(abs);
+  tries.push("/api/jobs");
 
-async function fetchJob(slugParam: string): Promise<Job | null> {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "";
-  const s = encodeURIComponent(slugParam);
-
-  const endpoints = [
-    `${base}/api/jobs/${s}`,
-    `/api/jobs/${s}`,
-    `${base}/api/jobs?slug=${s}`,
-    `/api/jobs?slug=${s}`,
-    `${base}/api/jobs`,
-    `/api/jobs`,
-  ];
-
-  for (const url of endpoints) {
-    const data = await robustJson(url);
-    if (!data) continue;
-
-    // single object
-    if (!Array.isArray(data) && typeof data === "object") {
-      const j = data as Job;
-      if (j?.slug) return j;
-    }
-
-    // array of jobs — try flexible matching
-    if (Array.isArray(data)) {
-      const list = data as Job[];
-      // 1) exact/normalized match
-      let found =
-        list.find((j) => normalizeSlug(j.slug) === normalizeSlug(slugParam)) ||
-        // 2) flexible match
-        list.find((j) => matchesSlug(j.slug, slugParam));
-
-      if (found) return found;
-
-      // 3) one-item arrays sometimes contain the job already filtered
-      if (list.length === 1 && list[0]?.title) return list[0];
+  for (const url of tries) {
+    try {
+      const r = await fetch(url, { cache: "no-store" });
+      if (!r.ok) continue;
+      const raw = await r.json();
+      const list: Job[] = Array.isArray(raw) ? raw : Array.isArray(raw?.jobs) ? raw.jobs : [];
+      if (Array.isArray(list) && list.length) return list;
+    } catch {
+      // ignore and try next
     }
   }
-
-  return null;
+  return [];
 }
 
-/* ---------- metadata ---------- */
+/** Find a job by slug with a few robust fallbacks. */
+async function fetchJobBySlug(requestedSlug: string): Promise<Job | null> {
+  const all = await fetchAllJobs();
+  if (!all.length) return null;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const job = await fetchJob(slug);
+  const wanted = norm(requestedSlug);
+
+  // 1) exact slug match
+  let found = all.find((j) => norm(j.slug) === wanted);
+  if (found) return found;
+
+  // 2) startsWith/endsWith/contains fallback (handles minor differences)
+  found =
+    all.find((j) => norm(j.slug).startsWith(wanted)) ||
+    all.find((j) => wanted.startsWith(norm(j.slug))) ||
+    all.find((j) => norm(j.title).includes(wanted));
+  if (found) return found;
+
+  // 3) market/location heuristic (e.g., "...-mea-dubai")
+  const parts = wanted.split("-");
+  const hints = new Set(parts);
+  found = all.find((j) => {
+    const hay = `${norm(j.title)}-${norm(j.location)}-${norm(j.market)}`;
+    const score = [...hints].reduce((acc, p) => (p && hay.includes(p) ? acc + 1 : acc), 0);
+    return score >= 2; // at least two hints line up
+  });
+  return found ?? null;
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const job = await fetchJobBySlug(params.slug);
   const title = job?.title ? `${job.title} | Executive Partners` : "Role | Executive Partners";
   const description =
     job?.summary ??
@@ -107,17 +95,10 @@ export async function generateMetadata({
   return { title, description };
 }
 
-/* ---------- page ---------- */
+export default async function JobDetailPage({ params }: { params: { slug: string } }) {
+  const job = await fetchJobBySlug(params.slug);
 
-export default async function JobDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const job = await fetchJob(slug);
-
-  if (!job) {
+  if (!job || job.active === false || HIDDEN_SLUGS.has(job.slug)) {
     return (
       <main className="relative min-h-screen bg-[#0B0E13] text-white">
         <div className="mx-auto w-full max-w-5xl px-4 py-16">
@@ -136,7 +117,6 @@ export default async function JobDetailPage({
     );
   }
 
-  const isArchived = job.active === false;
   const createdFmt = job.createdAt
     ? new Date(job.createdAt).toLocaleDateString(undefined, {
         month: "short",
@@ -160,7 +140,7 @@ export default async function JobDetailPage({
       <div className="relative mx-auto w-full max-w-5xl px-4 py-10">
         {/* Header Card */}
         <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-6 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
-          <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-col">
               <div className="flex flex-wrap items-center gap-2">
                 {job.market ? (
@@ -168,19 +148,11 @@ export default async function JobDetailPage({
                     {job.market}
                   </span>
                 ) : null}
-
                 {job.confidential ? (
                   <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-xs font-medium">
                     Confidential
                   </span>
                 ) : null}
-
-                {isArchived ? (
-                  <span className="inline-flex items-center rounded-full border border-yellow-300/30 bg-yellow-300/10 px-2.5 py-1 text-xs font-semibold text-yellow-200">
-                    Archived / Not Currently Active
-                  </span>
-                ) : null}
-
                 {createdFmt ? (
                   <span className="text-xs text-white/70">Posted {createdFmt}</span>
                 ) : null}
