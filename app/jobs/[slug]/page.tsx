@@ -1,190 +1,194 @@
 // app/jobs/[slug]/page.tsx
-import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getRedis } from "@/lib/redis";
+import MarkdownLite from "../MarkdownLite";
 
-export const dynamic = "force-dynamic";
-
-/* ------------ Types (strings because KV stores string values) ----------- */
-type JobDoc = {
-  id: string;
+type Job = {
+  id?: string;
   title: string;
-  slug: string;
-  summary: string;
-  description: string;
   location: string;
-  market: string;
-  seniority: string;
-  role: string;
-  confidential: string; // "true" | "false"
-  active: string;       // "true" | "false"
+  market?: string;
+  seniority?: string;
+  summary?: string;
+  slug: string;
+  confidential?: boolean;
+  active?: boolean;
   createdAt?: string;
+  body?: string; // full description text/markdown
 };
 
-/* ----------------------- Data helpers (server) -------------------------- */
-async function getJobBySlug(slug: string): Promise<JobDoc | null> {
-  const redis = await getRedis();
-  const id = await redis.get(`jobs:by-slug:${slug}`);
-  if (!id) return null;
-  const data = await redis.hgetall(id);
-  if (!data || !data.id) return null;
-  return data as unknown as JobDoc;
-}
+// Hide retired/duplicate slugs if they ever appear
+const HIDDEN_SLUGS = new Set<string>([
+  "senior-relationship-manager-ch-onshore-4",
+  "senior-relationship-manager-brazil-2",
+  "private-banker-mea-2",
+]);
 
-/* ------------------- Minimal markdown-ish rendering --------------------- */
-/** Tiny renderer: supports `## Heading`, bullet lists, and paragraphs. */
-function renderDescription(md: string) {
-  // Normalize line endings
-  md = (md || "").replace(/\r\n/g, "\n").trim();
+async function fetchJob(slug: string): Promise<Job | null> {
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  // try: /api/jobs?slug=..., fall back to relative
+  const qs = new URLSearchParams({ slug }).toString();
 
-  // Split into blocks separated by blank lines
-  const blocks = md.split(/\n{2,}/);
-
-  return blocks.map((block, i) => {
-    const lines = block.split("\n");
-
-    // Heading?
-    if (lines.length === 1 && /^#{2}\s+/.test(lines[0])) {
-      const text = lines[0].replace(/^#{2}\s+/, "");
-      return (
-        <h3 key={`h-${i}`} className="mt-8 text-lg font-semibold tracking-tight">
-          {text}
-        </h3>
-      );
-    }
-
-    // Bullet list? (all lines start with "- ")
-    if (lines.every((l) => /^\-\s+/.test(l))) {
-      return (
-        <ul key={`ul-${i}`} className="mt-4 list-disc pl-5 space-y-1">
-          {lines.map((l, j) => (
-            <li key={`li-${i}-${j}`}>{l.replace(/^\-\s+/, "")}</li>
-          ))}
-        </ul>
-      );
-    }
-
-    // Paragraph (preserve single line breaks)
-    return (
-      <p key={`p-${i}`} className="mt-4 leading-relaxed text-neutral-800">
-        {lines.map((l, j) => (
-          <span key={`span-${i}-${j}`}>
-            {l}
-            {j < lines.length - 1 ? <br /> : null}
-          </span>
-        ))}
-      </p>
-    );
-  });
-}
-
-/* --------------------------- Metadata (loose typing) -------------------- */
-export async function generateMetadata(props: any) {
-  const slug: string = props?.params?.slug ?? "";
-  const job = await getJobBySlug(slug);
-  if (!job) {
-    return { title: "Role not found — Executive Partners" };
+  const try1 = await fetch(`${base}/api/jobs?${qs}`, { cache: "no-store" }).catch(() => null);
+  if (try1?.ok) {
+    const arr = (await try1.json()) as Job[] | Job;
+    const list = Array.isArray(arr) ? arr : [arr];
+    const job = list.find((j) => j?.slug === slug) ?? list[0];
+    return job ?? null;
   }
-  const title = `${job.title} | Executive Partners`;
+
+  const try2 = await fetch(`/api/jobs?${qs}`, { cache: "no-store" }).catch(() => null);
+  if (try2?.ok) {
+    const arr = (await try2.json()) as Job[] | Job;
+    const list = Array.isArray(arr) ? arr : [arr];
+    const job = list.find((j) => j?.slug === slug) ?? list[0];
+    return job ?? null;
+  }
+
+  return null;
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const job = await fetchJob(params.slug);
+  const title = job?.title ? `${job.title} | Executive Partners` : "Role | Executive Partners";
   const description =
-    job.summary || `${job.role} – ${job.market} – ${job.location}`;
-  const url = `https://www.execpartners.ch/jobs/${job.slug}`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      url,
-      type: "article",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-    },
-  };
+    job?.summary ??
+    "Confidential private banking mandate via Executive Partners. Apply discretely.";
+  return { title, description };
 }
 
-/* ------------------------------- Page ----------------------------------- */
-export default async function JobPage(props: any) {
-  const slug: string = props?.params?.slug ?? "";
-  const job = await getJobBySlug(slug);
-  if (!job || job.active === "false") {
-    notFound();
+export default async function JobDetailPage({ params }: { params: { slug: string } }) {
+  const job = await fetchJob(params.slug);
+
+  if (!job || job.active === false || HIDDEN_SLUGS.has(job.slug)) {
+    return (
+      <main className="relative min-h-screen bg-[#0B0E13] text-white">
+        <div className="mx-auto w-full max-w-5xl px-4 py-16">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
+            <h1 className="text-xl font-semibold">Role unavailable</h1>
+            <p className="mt-2 text-neutral-300">
+              This mandate is no longer available or was set to confidential. Browse our{" "}
+              <Link href="/jobs" className="text-blue-400 underline-offset-4 hover:underline">
+                open roles
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
+      </main>
+    );
   }
 
-  const applyHref = `/apply?job=${encodeURIComponent(job.title)}`;
+  const createdFmt = job.createdAt
+    ? new Date(job.createdAt).toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : undefined;
 
   return (
-    <div className="bg-neutral-50">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
-        {/* Breadcrumbs */}
-        <nav className="mb-6 text-sm text-neutral-500">
-          <Link href="/jobs" className="hover:text-neutral-800">
-            ← Back to all roles
-          </Link>
-        </nav>
+    <main className="relative min-h-screen bg-[#0B0E13] text-white">
+      {/* soft ambient background */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(1200px 420px at 18% -10%, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%), radial-gradient(1000px 380px at 110% 0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%)",
+        }}
+      />
 
-        {/* Hero */}
-        <header className="rounded-3xl bg-white p-6 md:p-8 shadow-sm ring-1 ring-neutral-200">
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
-            {job.title}
-          </h1>
+      <div className="relative mx-auto w-full max-w-5xl px-4 py-10">
+        {/* Header Card */}
+        <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-6 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-col">
+              <div className="flex flex-wrap items-center gap-2">
+                {job.market ? (
+                  <span className="inline-flex items-center rounded-full bg-gradient-to-r from-sky-500 to-blue-400 px-2.5 py-1 text-xs font-semibold text-white shadow-sm">
+                    {job.market}
+                  </span>
+                ) : null}
+                {job.confidential ? (
+                  <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-xs font-medium">
+                    Confidential
+                  </span>
+                ) : null}
+                {createdFmt ? (
+                  <span className="text-xs text-white/70">Posted {createdFmt}</span>
+                ) : null}
+              </div>
 
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
-            <span className="rounded-full bg-neutral-100 px-3 py-1">
-              {job.market}
-            </span>
-            <span className="rounded-full bg-neutral-100 px-3 py-1">
-              {job.location}
-            </span>
-            {job.seniority ? (
-              <span className="rounded-full bg-neutral-100 px-3 py-1">
-                {job.seniority}
-              </span>
-            ) : null}
-            {job.confidential === "true" ? (
-              <span className="rounded-full bg-amber-100 px-3 py-1">
-                Confidential
-              </span>
-            ) : null}
+              <h1 className="mt-2 text-2xl font-bold leading-tight md:text-3xl">{job.title}</h1>
+
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/80">
+                {job.location && (
+                  <span className="inline-flex items-center gap-1.5">{job.location}</span>
+                )}
+                {job.seniority && (
+                  <span className="inline-flex items-center gap-1.5">{job.seniority}</span>
+                )}
+              </div>
+            </div>
+
+            <div className="flex w-full items-center gap-3 md:w-auto">
+              <Link
+                href="/apply"
+                className="inline-flex flex-1 items-center justify-center rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#1E40AF] md:flex-none"
+              >
+                Apply / Submit CV
+              </Link>
+              <Link
+                href="/contact"
+                className="hidden items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10 md:inline-flex"
+              >
+                Talk to us
+              </Link>
+            </div>
           </div>
-
-          {job.summary ? (
-            <p className="mt-4 max-w-3xl text-neutral-700">{job.summary}</p>
-          ) : null}
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              href={applyHref}
-              className="inline-flex items-center rounded-xl bg-black px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
-            >
-              Apply / Submit CV
-            </Link>
-            <Link
-              href="/jobs"
-              className="inline-flex items-center rounded-xl border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50"
-            >
-              View all roles
-            </Link>
-          </div>
-        </header>
-
-        {/* Body */}
-        <section className="mt-8 rounded-3xl bg-white p-6 md:p-8 shadow-sm ring-1 ring-neutral-200">
-          <article className="prose prose-neutral max-w-none">
-            {renderDescription(job.description)}
-          </article>
         </section>
 
-        {/* Footer note */}
-        <p className="mt-6 text-xs text-neutral-500">
-          Posted {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : "recently"} ·{" "}
-          {job.active === "true" ? "Active" : "Inactive"}
-        </p>
+        {/* Body */}
+        <section className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6">
+          {job.body ? (
+            <MarkdownLite text={job.body} />
+          ) : job.summary ? (
+            <MarkdownLite text={job.summary} />
+          ) : (
+            <p className="text-neutral-300">
+              Full description available upon request.{" "}
+              <Link href="/contact" className="text-blue-400 underline-offset-4 hover:underline">
+                Contact us confidentially
+              </Link>
+              .
+            </p>
+          )}
+        </section>
+
+        {/* Footer CTA */}
+        <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <p className="text-center text-neutral-300 md:text-left">
+              Not an exact match? We share **confidential** mandates directly with qualified
+              bankers.
+            </p>
+            <div className="flex gap-3">
+              <Link
+                href="/jobs"
+                className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
+              >
+                Browse more roles
+              </Link>
+              <Link
+                href="/apply"
+                className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF]"
+              >
+                Submit CV
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
