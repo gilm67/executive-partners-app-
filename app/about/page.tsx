@@ -1,79 +1,214 @@
-// app/about/page.tsx
-export const metadata = {
-  title: "About Executive Partners",
+/* app/about/page.tsx */
+import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About — Executive Partners | Private Banking & Wealth Management Search",
   description:
-    "International & Swiss Private Banking — HNW & UHNWI. Based in Geneva & Zurich.",
+    "Executive Partners is a specialist search firm for Private Banking & Wealth Management. Swiss discipline, international reach.",
+  openGraph: {
+    title: "About — Executive Partners",
+    description:
+      "Boutique executive search for Private Banking & Wealth Management. Trusted by banks, EAMs and family offices.",
+    url: "https://www.execpartners.ch/about",
+    images: [{ url: "/og.png" }],
+  },
+  alternates: { canonical: "https://www.execpartners.ch/about" },
 };
 
 export default function AboutPage() {
   return (
-    <div className="prose-page py-8 sm:py-10">
-      {/* Page title */}
-      <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
-        About Executive Partners
-      </h1>
+    <main className="relative min-h-screen bg-neutral-950 text-white">
+      {/* background glow */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(1200px 420px at 18% -10%, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%), radial-gradient(1000px 380px at 110% 0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%)",
+        }}
+      />
 
-      {/* Main intro uses typography with dark invert for great contrast */}
-      <article className="prose dark:prose-invert prose-neutral max-w-none text-base leading-7 mt-4">
-        <p>
-          We specialize in International &amp; Swiss Private Banking for HNW &amp; UHNWI
-          clients, partnering with leading institutions and top-tier relationship managers.
+      <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
+        {/* Eyebrow + Hero */}
+        <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
+          Private Banking & Wealth Management — Executive Search
+        </div>
+        <h1 className="mt-3 text-balance text-center text-4xl font-extrabold tracking-tight md:text-5xl">
+          Executive Partners
+        </h1>
+        <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
+          Specialist search for Private Banking & Wealth Management. From Switzerland to the world’s leading hubs,
+          we deliver targeted shortlists and discreet approach work for HNW/UHNW markets.
         </p>
-      </article>
 
-      <section className="mt-6 grid gap-6 md:grid-cols-5">
-        {/* Story + Values */}
-        <article className="md:col-span-3 rounded-2xl border border-neutral-200/70 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 sm:p-6 shadow-sm">
-          <div className="prose dark:prose-invert prose-neutral max-w-none">
-            <h2>Our Story</h2>
-            <p>
-              Executive Partners connects exceptional private bankers with institutions where
-              they can thrive. We focus on long-term relationships, cultural fit, and
-              sustainable client outcomes.
+        {/* Two-column: Who we are / What we do */}
+        <section className="mt-10 grid gap-6 md:grid-cols-2">
+          <article className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-white/[0.03] p-6 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
+            <h2 className="text-xl font-bold">Who we are</h2>
+            <p className="mt-3 text-sm leading-relaxed text-neutral-300">
+              Executive Partners is a boutique executive search firm focused exclusively on Private Banking &
+              Wealth Management. Based in Switzerland with an international footprint, we advise banks, EAMs and
+              family offices on critical hires across Relationship Management, Desk/Market Heads and senior leadership.
             </p>
+          </article>
 
-            <h3>What We Value</h3>
-            <ul>
-              <li>Client trust &amp; discretion</li>
-              <li>Long-term partnerships</li>
-              <li>Excellence in execution</li>
-              <li>Compliance-first approach</li>
+          <article className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-white/[0.03] p-6 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
+            <h2 className="text-xl font-bold">What we do</h2>
+            <ul className="mt-3 grid list-disc gap-2 pl-5 text-sm text-neutral-300">
+              <li><span className="font-medium text-white">Front-office hires:</span> Senior/Executive/Managing Directors, Team Heads, Market Leaders</li>
+              <li><span className="font-medium text-white">Strategic mandates:</span> New-desk builds, market entries, M&A integration, key replacements</li>
+              <li><span className="font-medium text-white">Discreet approach work:</span> Targeted outreach to specific bankers or teams</li>
+              <li><span className="font-medium text-white">Advisory:</span> Portability assessment, compensation benchmarking, succession and team moves</li>
             </ul>
+          </article>
+        </section>
+
+        {/* Why clients trust us */}
+        <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          <h2 className="text-xl font-bold">Why clients trust us</h2>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            {[
+              {
+                title: "True sector specialists",
+                text:
+                  "Former front-office and in-house talent leaders; fluent in cross-border, booking-centre and compliance realities.",
+              },
+              {
+                title: "Portability obsessed",
+                text:
+                  "We validate client coverage, wallet share and realistic transfer potential—before you interview.",
+              },
+              {
+                title: "Targeted, not transactional",
+                text:
+                  "Research-led market mapping and shortlists you can act on—no volume spam.",
+              },
+              {
+                title: "Confidential by design",
+                text:
+                  "Quiet processes that protect brands, teams and careers.",
+              },
+              {
+                title: "Swiss execution, global reach",
+                text:
+                  "Deep roots in Geneva/Zurich with active mandates across MEA, UK, US and APAC.",
+              },
+            ].map((f) => (
+              <div
+                key={f.title}
+                className="rounded-xl border border-white/10 bg-neutral-900/40 p-4"
+              >
+                <div className="text-sm font-semibold text-white">{f.title}</div>
+                <p className="mt-1 text-sm text-neutral-300">{f.text}</p>
+              </div>
+            ))}
           </div>
-        </article>
+        </section>
 
-        {/* Address + CTA */}
-        <div className="md:col-span-2 rounded-2xl border border-neutral-200/70 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 sm:p-6 shadow-sm">
-          <h2 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-            Our Address
-          </h2>
-          <p className="mt-3 text-neutral-700 dark:text-neutral-300">
-            118 rue du Rhône<br />
-            1204 Geneva, Switzerland
+        {/* Coverage chips */}
+        <section className="mt-8 rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.02] p-6">
+          <h2 className="text-xl font-bold">Coverage</h2>
+          <div className="mt-4 grid gap-6 md:grid-cols-3">
+            <div>
+              <div className="text-sm font-semibold text-white">Switzerland (Onshore)</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {["Geneva", "Zurich", "Lausanne"].map((t) => (
+                  <span key={t} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/80">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-white">International hubs</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {["Dubai", "London", "New York", "Singapore", "Hong Kong"].map((t) => (
+                  <span key={t} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/80">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-white">Segments & Booking</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {["HNW", "UHNW", "Entrepreneurs", "Family Offices", "CH / EU / UK / UAE / US / APAC"].map((t) => (
+                  <span key={t} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/80">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* How we work (steps) */}
+        <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          <h2 className="text-xl font-bold">How we work</h2>
+          <ol className="mt-4 grid gap-4 md:grid-cols-5">
+            {[
+              ["Brief & calibration", "Clarify the mandate, success profile and compliance constraints."],
+              ["Market map", "Long-list the viable universe; pressure-test portability."],
+              ["Approach & vet", "Discreet outreach, structured evaluation, reference signals."],
+              ["Shortlist", "3–5 candidates you’d credibly hire."],
+              ["Close & land", "Offer design, risk checks and onboarding support."],
+            ].map(([title, text], i) => (
+              <li key={i} className="rounded-xl border border-white/10 bg-neutral-900/40 p-4">
+                <div className="text-xs font-bold text-white/80">Step {i + 1}</div>
+                <div className="mt-1 text-sm font-semibold text-white">{title}</div>
+                <p className="mt-1 text-sm text-neutral-300">{text}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* Our promise */}
+        <section className="mt-8 grid gap-6 md:grid-cols-3">
+          {[
+            ["Integrity", "Candid advice, even when it’s “not yet.”"],
+            ["Discretion", "Quiet processes; zero market noise."],
+            ["Outcomes", "Hires that perform—and stay."],
+          ].map(([title, text]) => (
+            <div
+              key={title}
+              className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.03] p-6"
+            >
+              <div className="text-lg font-bold">{title}</div>
+              <p className="mt-2 text-sm text-neutral-300">{text}</p>
+            </div>
+          ))}
+        </section>
+
+        {/* CTA */}
+        <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center">
+          <h3 className="text-xl font-bold">Ready to discuss a mandate or a move?</h3>
+          <p className="mx-auto mt-2 max-w-2xl text-sm text-neutral-300">
+            Hiring Manager: share your brief and timelines—expect a calibrated shortlist quickly.
+            Candidates: speak confidentially about your market, portability and next step.
           </p>
-          <a
-            className="mt-5 inline-flex w-fit items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            href="https://maps.google.com/?q=118%20rue%20du%20Rh%C3%B4ne%2C%201204%20Geneva"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Open in Google Maps
-          </a>
-        </div>
-      </section>
-
-      {/* Map card */}
-      <section className="mt-6 rounded-2xl border border-neutral-200/70 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm overflow-hidden">
-        <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-          <iframe
-            title="Executive Partners — 118 rue du Rhône, 1204 Geneva"
-            className="absolute inset-0 h-full w-full"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            src="https://www.google.com/maps?q=118%20rue%20du%20Rh%C3%B4ne%2C%201204%20Geneva&output=embed"
-          />
-        </div>
-      </section>
-    </div>
+          <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/hiring-managers"
+              className="w-full rounded-xl bg-[#1D4ED8] px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-[#1E40AF] sm:w-auto"
+            >
+              Hire Talent
+            </Link>
+            <Link
+              href="/candidates"
+              className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-white/10 sm:w-auto"
+            >
+              I’m a Candidate
+            </Link>
+            <Link
+              href="/contact"
+              className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-white/10 sm:w-auto"
+            >
+              Contact us
+            </Link>
+          </div>
+        </section>
+      </div>
+    </main>
   );
 }
