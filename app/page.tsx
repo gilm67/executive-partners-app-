@@ -235,19 +235,26 @@ function FeaturedRoles({ featured }: { featured: Job[] }) {
         </Link>
       </div>
 
-      {/* Premium row of three cards, aligned bottoms, elegant hover */}
-      <div className="mt-6 grid gap-6 md:grid-cols-3">
+      {/* Equal-height cards with aligned city & summary rows */}
+      <div className="mt-6 grid items-stretch gap-6 md:grid-cols-3">
         {items.map((job) => (
           <article
             key={job.slug}
-            className="group relative flex min-h-[220px] flex-col rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.03] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)] transition hover:shadow-[0_12px_50px_rgba(0,0,0,.50)]"
+            className="group relative flex h-full flex-col rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.03] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)] transition hover:shadow-[0_12px_50px_rgba(0,0,0,.50)]"
           >
             {/* soft beam on hover */}
             <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-20 [background:radial-gradient(120%_60%_at_50%_-10%,rgba(59,130,246,1),transparent_60%)]" />
             <div className="relative">
-              <h3 className="text-lg font-semibold text-white">{job.title}</h3>
-              <p className="mt-1 text-sm text-white/70">{job.location}</p>
-              <p className="mt-2 line-clamp-3 text-sm text-neutral-300">{job.summary}</p>
+              {/* Reserve consistent heights for perfect alignment */}
+              <h3 className="text-lg font-semibold text-white line-clamp-2 min-h-[3.25rem]">
+                {job.title}
+              </h3>
+              <p className="mt-1 text-sm text-white/70 min-h-[1.25rem]">
+                {job.location}
+              </p>
+              <p className="mt-2 text-sm text-neutral-300 line-clamp-3 min-h-[3.75rem]">
+                {job.summary}
+              </p>
             </div>
 
             <div className="mt-auto pt-4">
@@ -255,7 +262,7 @@ function FeaturedRoles({ featured }: { featured: Job[] }) {
                 href={`/jobs/${job.slug}`}
                 className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
               >
-                View details →
+                View details <span className="translate-y-[1px]">→</span>
               </Link>
             </div>
           </article>
