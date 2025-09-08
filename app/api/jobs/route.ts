@@ -1,5 +1,10 @@
 /* app/api/jobs/route.ts */
 import { NextResponse } from "next/server";
+import { promises as fs } from "fs";
+import path from "path";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type Job = {
   id?: string;
@@ -21,73 +26,75 @@ const HIDDEN_SLUGS = new Set<string>([
 ]);
 
 export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const q = (url.searchParams.get("q") || "").trim().toLowerCase();
-  const market = url.searchParams.get("market") || "";
-  const location = url.searchParams.get("location") || "";
-  const seniority = url.searchParams.get("seniority") || "";
-  const sort = url.searchParams.get("sort") || "newest";
-  const activeParam = url.searchParams.get("active");
-  const activeOnly = activeParam !== "false"; // default true
+  try {
+    const url = new URL(req.url);
+    const q = (url.searchParams.get("q") || "").trim().toLowerCase();
+    const market = url.searchParams.get("market") || "";
+    const location = url.searchParams.get("location") || "";
+    const seniority = url.searchParams.get("seniority") || "";
+    const sort = url.searchParams.get("sort") || "newest";
+    const activeParam = url.searchParams.get("active");
+    const activeOnly = activeParam !== "false"; // default true
 
-  // ---- Load jobs from your existing store/API ----
-  // If you already have code to load jobs, replace the next line with it.
-  const jobs: Job[] = await loadJobsFromSameOrigin();
+    // Load all job-*.json files from project root
+    const jobs = await loadJobsFromRepo();
 
-  // ---- Server-side filters (canonical) ----
-  let out = jobs.filter(j =>
-    (!activeOnly || j.active !== false) &&
-    !HIDDEN_SLUGS.has(j.slug) &&
-    (!market || (j.market || "").toLowerCase() === market.toLowerCase()) &&
-    (!location || (j.location || "").toLowerCase() === location.toLowerCase()) &&
-    (!seniority || (j.seniority || "").toLowerCase() === seniority.toLowerCase())
-  );
+    // Filters
+    let out = jobs.filter(j =>
+      (!activeOnly || j.active !== false) &&
+      !HIDDEN_SLUGS.has(j.slug) &&
+      (!market || (j.market || "").toLowerCase() === market.toLowerCase()) &&
+      (!location || (j.location || "").toLowerCase() === location.toLowerCase()) &&
+      (!seniority || (j.seniority || "").toLowerCase() === seniority.toLowerCase())
+    );
 
-  // Text search (title/summary/market/location)
-  if (q) {
-    out = out.filter(j => {
-      const hay = [
-        j.title, j.summary, j.market, j.location, j.seniority, j.slug
-      ].filter(Boolean).join(" ").toLowerCase();
-      return hay.includes(q);
-    });
-  }
-
-  // Sorting
-  out.sort((a, b) => {
-    if (sort === "title") {
-      return (a.title || "").localeCompare(b.title || "");
+    if (q) {
+      out = out.filter(j => {
+        const hay = [
+          j.title, j.summary, j.market, j.location, j.seniority, j.slug
+        ].filter(Boolean).join(" ").toLowerCase();
+        return hay.includes(q);
+      });
     }
-    if (sort === "oldest") {
+
+    // Sorting
+    out.sort((a, b) => {
+      if (sort === "title") return (a.title || "").localeCompare(b.title || "");
       const ta = a.createdAt ? Date.parse(a.createdAt) : 0;
       const tb = b.createdAt ? Date.parse(b.createdAt) : 0;
-      return ta - tb;
-    }
-    // newest (default)
-    const ta = a.createdAt ? Date.parse(a.createdAt) : 0;
-    const tb = b.createdAt ? Date.parse(b.createdAt) : 0;
-    return tb - ta;
-  });
+      if (sort === "oldest") return ta - tb;
+      return tb - ta; // newest
+    });
 
-  return NextResponse.json(out, {
-    headers: { "cache-control": "no-store" },
-  });
+    return NextResponse.json(out, {
+      headers: { "cache-control": "no-store", "content-type": "application/json; charset=utf-8" },
+    });
+  } catch (err) {
+    // Always return an array so clients/JQ don’t break
+    return NextResponse.json([], {
+      headers: { "cache-control": "no-store", "content-type": "application/json; charset=utf-8" },
+    });
+  }
 }
 
 /* ---------- helpers ---------- */
 
-// Fetch from the same project’s existing JSON/API.
-// This mirrors how your front-end calls /api/jobs already.
-async function loadJobsFromSameOrigin(): Promise<Job[]> {
-  // If running on Vercel/Edge, use absolute URL from env; fallback to relative
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "";
-  const res = await fetch(`${base}/api/jobs/raw`, { cache: "no-store" }).catch(() => null);
+async function loadJobsFromRepo(): Promise<Job[]> {
+  const root = process.cwd();              // project root on Vercel and locally
+  const filesDir = root;                   // your job-*.json live at repo root
+  const entries = await fs.readdir(filesDir);
+  const jobFiles = entries.filter(n => n.startsWith("job-") && n.endsWith(".json"));
 
-  // If you don't have /api/jobs/raw, replace with your real loader (DB, KV, file, etc.)
-  if (!res || !res.ok) {
-    // Fallback: try an internal loader if you have one
-    // return await db.job.findMany(); // example
-    return []; // safe fallback
+  const jobs: Job[] = [];
+  for (const file of jobFiles) {
+    try {
+      const full = path.join(filesDir, file);
+      const raw = await fs.readFile(full, "utf8");
+      const j = JSON.parse(raw) as Job;
+      if (j && j.slug && j.title) jobs.push(j);
+    } catch {
+      // ignore malformed file
+    }
   }
-  return res.json();
+  return jobs;
 }
