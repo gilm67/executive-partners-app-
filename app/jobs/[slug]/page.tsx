@@ -1,4 +1,3 @@
-// app/jobs/[slug]/page.tsx
 import Link from "next/link";
 import MarkdownLite from "../MarkdownLite";
 
@@ -13,58 +12,86 @@ type Job = {
   confidential?: boolean;
   active?: boolean;
   createdAt?: string;
-  body?: string; // full description text/markdown
+  body?: string;
 };
 
-// Hide retired/duplicate slugs if they ever appear
-const HIDDEN_SLUGS = new Set<string>([
-  "senior-relationship-manager-ch-onshore-4",
-  "senior-relationship-manager-brazil-2",
-  "private-banker-mea-2",
-]);
+/* ---------- helpers ---------- */
 
-async function fetchJob(slug: string): Promise<Job | null> {
+function normalizeSlug(s: string | undefined): string {
+  if (!s) return "";
+  return decodeURIComponent(s)
+    .toLowerCase()
+    .replace(/[\u2013\u2014]/g, "-") // en/em dash -> hyphen
+    .replace(/\s+/g, "-") // spaces -> hyphen
+    .replace(/-+/g, "-") // collapse
+    .replace(/^-|-$/g, ""); // trim hyphens
+}
+
+function matchesSlug(target: string, candidate: string) {
+  const t = normalizeSlug(target);
+  const c = normalizeSlug(candidate);
+  return (
+    c === t ||
+    c.startsWith(t) ||
+    t.startsWith(c) ||
+    c.includes(t) ||
+    t.includes(c)
+  );
+}
+
+async function robustJson(url: string) {
+  try {
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) return null;
+    return await r.json();
+  } catch {
+    return null;
+  }
+}
+
+async function fetchJob(slugParam: string): Promise<Job | null> {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const s = encodeURIComponent(slugParam);
 
-  // Try multiple API shapes in order of most specific → broadest,
-  // and absolute → relative to work in preview/prod/local
   const endpoints = [
-    `${base}/api/jobs/${encodeURIComponent(slug)}`,
-    `/api/jobs/${encodeURIComponent(slug)}`,
-    `${base}/api/jobs?slug=${encodeURIComponent(slug)}`,
-    `/api/jobs?slug=${encodeURIComponent(slug)}`,
+    `${base}/api/jobs/${s}`,
+    `/api/jobs/${s}`,
+    `${base}/api/jobs?slug=${s}`,
+    `/api/jobs?slug=${s}`,
     `${base}/api/jobs`,
     `/api/jobs`,
   ];
 
   for (const url of endpoints) {
-    try {
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) continue;
+    const data = await robustJson(url);
+    if (!data) continue;
 
-      const data = await res.json();
+    // single object
+    if (!Array.isArray(data) && typeof data === "object") {
+      const j = data as Job;
+      if (j?.slug) return j;
+    }
 
-      // Single job object
-      if (data && !Array.isArray(data) && typeof data === "object") {
-        const j = data as Job;
-        if (j?.slug) return j;
-      }
+    // array of jobs — try flexible matching
+    if (Array.isArray(data)) {
+      const list = data as Job[];
+      // 1) exact/normalized match
+      let found =
+        list.find((j) => normalizeSlug(j.slug) === normalizeSlug(slugParam)) ||
+        // 2) flexible match
+        list.find((j) => matchesSlug(j.slug, slugParam));
 
-      // Array of jobs: find by slug
-      if (Array.isArray(data)) {
-        const list = data as Job[];
-        const found = list.find((j) => j?.slug === slug);
-        if (found) return found;
-        // Sometimes the API returns one-item arrays when filtering
-        if (list.length === 1 && list[0]?.title) return list[0];
-      }
-    } catch {
-      // ignore and try next
+      if (found) return found;
+
+      // 3) one-item arrays sometimes contain the job already filtered
+      if (list.length === 1 && list[0]?.title) return list[0];
     }
   }
 
   return null;
 }
+
+/* ---------- metadata ---------- */
 
 export async function generateMetadata({
   params,
@@ -80,6 +107,8 @@ export async function generateMetadata({
   return { title, description };
 }
 
+/* ---------- page ---------- */
+
 export default async function JobDetailPage({
   params,
 }: {
@@ -88,14 +117,14 @@ export default async function JobDetailPage({
   const { slug } = await params;
   const job = await fetchJob(slug);
 
-  if (!job || HIDDEN_SLUGS.has(job.slug)) {
+  if (!job) {
     return (
       <main className="relative min-h-screen bg-[#0B0E13] text-white">
         <div className="mx-auto w-full max-w-5xl px-4 py-16">
           <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
             <h1 className="text-xl font-semibold">Role unavailable</h1>
             <p className="mt-2 text-neutral-300">
-              This mandate is no longer available or was set to confidential. Browse our{" "}
+              We couldn’t locate this mandate. Browse our{" "}
               <Link href="/jobs" className="text-blue-400 underline-offset-4 hover:underline">
                 open roles
               </Link>
@@ -107,6 +136,7 @@ export default async function JobDetailPage({
     );
   }
 
+  const isArchived = job.active === false;
   const createdFmt = job.createdAt
     ? new Date(job.createdAt).toLocaleDateString(undefined, {
         month: "short",
@@ -130,7 +160,7 @@ export default async function JobDetailPage({
       <div className="relative mx-auto w-full max-w-5xl px-4 py-10">
         {/* Header Card */}
         <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-6 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="flex flex-col">
               <div className="flex flex-wrap items-center gap-2">
                 {job.market ? (
@@ -138,11 +168,19 @@ export default async function JobDetailPage({
                     {job.market}
                   </span>
                 ) : null}
+
                 {job.confidential ? (
                   <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-xs font-medium">
                     Confidential
                   </span>
                 ) : null}
+
+                {isArchived ? (
+                  <span className="inline-flex items-center rounded-full border border-yellow-300/30 bg-yellow-300/10 px-2.5 py-1 text-xs font-semibold text-yellow-200">
+                    Archived / Not Currently Active
+                  </span>
+                ) : null}
+
                 {createdFmt ? (
                   <span className="text-xs text-white/70">Posted {createdFmt}</span>
                 ) : null}
@@ -151,12 +189,8 @@ export default async function JobDetailPage({
               <h1 className="mt-2 text-2xl font-bold leading-tight md:text-3xl">{job.title}</h1>
 
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/80">
-                {job.location && (
-                  <span className="inline-flex items-center gap-1.5">{job.location}</span>
-                )}
-                {job.seniority && (
-                  <span className="inline-flex items-center gap-1.5">{job.seniority}</span>
-                )}
+                {job.location && <span className="inline-flex items-center gap-1.5">{job.location}</span>}
+                {job.seniority && <span className="inline-flex items-center gap-1.5">{job.seniority}</span>}
               </div>
             </div>
 
