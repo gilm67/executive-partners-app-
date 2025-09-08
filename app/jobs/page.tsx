@@ -1,6 +1,6 @@
 // app/page.tsx
 import Link from "next/link";
-import { CardBtn } from "./components/CardBtn";
+import { CardBtn } from "../components/CardBtn";
 
 export const metadata = {
   title: "Executive Partners — International & Swiss Private Banking",
@@ -27,7 +27,10 @@ export default function HomePage() {
 
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-24 pt-14">
         {/* badge */}
-        <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
+        <div
+          className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur"
+          aria-label="Focus: International & Swiss Private Banking — HNW/UHNW"
+        >
           International & Swiss Private Banking — HNW/UHNW
         </div>
 
@@ -40,15 +43,15 @@ export default function HomePage() {
           leading banks, EAMs, and family offices worldwide.
         </p>
 
-        {/* primary CTAs (single row, same height) */}
+        {/* primary CTAs (single row, equal height) */}
         <div className="mx-auto mt-6 flex w-full max-w-xl items-center justify-center gap-3">
           <PrimaryBtn href="/candidates" variant="blue">I’m a Candidate</PrimaryBtn>
           <PrimaryBtn href="/hiring-managers" variant="outline">I’m Hiring</PrimaryBtn>
           <PrimaryBtn href="/jobs" variant="ghost">View All Jobs</PrimaryBtn>
         </div>
 
-        {/* two feature cards — identical height & aligned buttons */}
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
+        {/* two feature cards — equal height & aligned button rows */}
+        <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2">
           <FeatureCard
             badge="For Candidates"
             title="Confidential career moves"
@@ -118,7 +121,7 @@ function FeatureCard({
   rightAction: { label: string; href: string; tone: BtnTone };
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
+    <div className="relative h-full overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
       {/* inner soft glow */}
       <div className="pointer-events-none absolute inset-0 opacity-[.18] [background:radial-gradient(600px_120px_at_10%_0%,rgba(14,165,233,1),transparent_60%),radial-gradient(600px_120px_at_100%_0%,rgba(34,197,94,1),transparent_60%)]" />
       <div className="relative flex min-h-[220px] flex-col">
