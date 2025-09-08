@@ -1,6 +1,7 @@
 // app/layout.tsx
 import "./globals.css";
 import TopNav from "@/components/TopNav";
+import Splash from "@/components/Splash"; // ← add this
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,6 +18,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           selection:bg-white/20 selection:text-white
         "
       >
+        {/* Fullscreen intro image that fades away (once per session) */}
+        <Splash />
+
         {/* Header remains; its links inherit white, giving readable mobile menu */}
         <TopNav />
 
