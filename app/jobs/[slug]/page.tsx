@@ -25,7 +25,6 @@ const HIDDEN_SLUGS = new Set<string>([
 
 async function fetchJob(slug: string): Promise<Job | null> {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "";
-  // try: /api/jobs?slug=..., fall back to relative
   const qs = new URLSearchParams({ slug }).toString();
 
   const try1 = await fetch(`${base}/api/jobs?${qs}`, { cache: "no-store" }).catch(() => null);
@@ -47,8 +46,13 @@ async function fetchJob(slug: string): Promise<Job | null> {
   return null;
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const job = await fetchJob(params.slug);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const job = await fetchJob(slug);
   const title = job?.title ? `${job.title} | Executive Partners` : "Role | Executive Partners";
   const description =
     job?.summary ??
@@ -56,8 +60,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return { title, description };
 }
 
-export default async function JobDetailPage({ params }: { params: { slug: string } }) {
-  const job = await fetchJob(params.slug);
+export default async function JobDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const job = await fetchJob(slug);
 
   if (!job || job.active === false || HIDDEN_SLUGS.has(job.slug)) {
     return (
@@ -169,8 +178,8 @@ export default async function JobDetailPage({ params }: { params: { slug: string
         <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-center text-neutral-300 md:text-left">
-              Not an exact match? We share **confidential** mandates directly with qualified
-              bankers.
+              Not an exact match? We share <span className="font-semibold">confidential</span> mandates
+              directly with qualified bankers.
             </p>
             <div className="flex gap-3">
               <Link
