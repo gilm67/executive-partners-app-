@@ -6,25 +6,20 @@ html, body { height: 100%; margin: 0; }
 
 /* ==== Mobile Contrast Fixes (non-invasive) ==== */
 @media (max-width: 768px) {
-  /* Nav / mobile menu on dark backgrounds */
-  header, nav { 
-    background: #0B0E13 !important;
-  }
+  header, nav { background: #0B0E13 !important; }
   header a, nav a, .mobile-nav a, .mobile-nav button {
     color: #fff !important;
     font-weight: 700 !important;
   }
 
-  /* Any light panels on mobile (e.g., job detail "Apply confidentially") */
   .bg-white, .bg-neutral-50, .bg-zinc-50, .bg-gray-50 {
-    color: #0B0E13 !important;       /* ensure dark text on light bg */
+    color: #0B0E13 !important;
   }
   .bg-white a, .bg-neutral-50 a, .bg-zinc-50 a, .bg-gray-50 a {
-    color: #1D4ED8 !important;       /* readable link color on light bg */
+    color: #1D4ED8 !important;
     font-weight: 600;
   }
 
-  /* If a page uses a dark wrapper, keep cards legible */
   .bg-\[\#0B0E13\] .card, 
   .bg-\[\#0B0E13\] .panel, 
   .bg-\[\#0B0E13\] .section,
@@ -32,19 +27,15 @@ html, body { height: 100%; margin: 0; }
     color: #ffffff !important;
   }
 
-  /* Forms (About/Contact) — better readability on dark */
   form input, form textarea, form select {
     background: rgba(255,255,255,0.06) !important;
     color: #fff !important;
     border-color: rgba(255,255,255,0.15) !important;
   }
-  form ::placeholder {
-    color: rgba(255,255,255,0.65) !important;
-  }
+  form ::placeholder { color: rgba(255,255,255,0.65) !important; }
 
-  /* Generic CTA sections often used for "Apply confidentially" */
   .cta, .apply-cta, [data-cta="apply"] {
-    background: rgba(255,255,255,0.06) !important; /* subtle dark glass */
+    background: rgba(255,255,255,0.06) !important;
     color: #fff !important;
     border: 1px solid rgba(255,255,255,0.12) !important;
   }
@@ -55,9 +46,8 @@ html, body { height: 100%; margin: 0; }
   }
 }
 
-/* ===== Mobile readability & contrast fixes (non-invasive) ===== */
+/* ===== Mobile readability & contrast fixes ===== */
 @media (max-width: 640px) {
-  /* Make the top nav/menu readable on dark backgrounds */
   header a, header nav a, header button,
   nav a, nav button {
     color: #fff !important;
@@ -65,7 +55,6 @@ html, body { height: 100%; margin: 0; }
     text-shadow: 0 1px 2px rgba(0,0,0,.35);
   }
 
-  /* Ensure surface blocks don’t flip to pure white on phone UAs */
   .mobile-dark-surface,
   .card, .panel, .rounded-2xl, .shadow-sm, .shadow,
   .bg-white, .bg-gray-50, .bg-neutral-50 {
@@ -73,7 +62,6 @@ html, body { height: 100%; margin: 0; }
     border-color: rgba(255,255,255,.10) !important;
   }
 
-  /* Body copy readability on About/Contact/Jobs descriptive blocks */
   .mobile-readable, .prose, .content, .content p, .content li,
   .text-neutral-500, .text-neutral-600, .text-gray-500, .text-gray-600 {
     color: rgba(255,255,255,.90) !important;
@@ -82,14 +70,12 @@ html, body { height: 100%; margin: 0; }
     color: rgba(255,255,255,.75) !important;
   }
 
-  /* Buttons with outline/ghost variants on dark */
   .btn-outline, .btn-ghost,
   .border-white\/10, .border-white\/15, .border-gray-200 {
     border-color: rgba(255,255,255,.25) !important;
     color: #fff !important;
   }
 
-  /* “Apply confidentially” / CTA style on small screens */
   .apply-cta, a[href*="apply"], a[href*="contact"] {
     background: #1D4ED8 !important;
     color: #fff !important;
@@ -97,10 +83,7 @@ html, body { height: 100%; margin: 0; }
   }
 }
 
-/* ===== Mobile readability overrides (non-invasive) ===== */
-
-/* Make any "blue text" utilities render white on small screens
-   (fixes mobile menu items that were blue-on-dark). */
+/* ===== Mobile readability overrides ===== */
 @media (max-width: 768px) {
   .text-blue-400, .text-blue-500, .text-blue-600,
   .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover {
@@ -109,105 +92,88 @@ html, body { height: 100%; margin: 0; }
   }
 }
 
-/* Force white, bold text inside blue buttons everywhere (links or buttons) */
+/* Force white, bold text inside blue buttons */
 a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\] {
   color: #fff !important;
   font-weight: 600 !important;
 }
 
-/* Strengthen the brand and top-nav links on dark headers */
-header a[href="/"] {
-  color: #fff !important;
-  font-weight: 700 !important;
-}
-/* Typical header nav links (desktop + mobile drawers) */
-header nav a, header nav button {
-  color: #fff !important;
-  font-weight: 600 !important;
-}
+/* Strengthen brand/top-nav links */
+header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
+header nav a, header nav button { color: #fff !important; font-weight: 600 !important; }
 
-/* Optional: within any off-canvas / drawer menus, keep text white */
 [class*="SheetContent"] a, [class*="SheetContent"] button,
 [class*="DrawerContent"] a, [class*="DrawerContent"] button {
   color: #fff !important;
   font-weight: 600 !important;
 }
 
-/* Candidate/CTA tiles that had blue buttons on dark backgrounds */
 a[role="button"].bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
   color: #fff !important;
   font-weight: 600 !important;
 }
 
-/* ===== Mobile menu readability: force white + bold ===== */
+/* ===== Mobile menu readability ===== */
 @media (max-width: 768px) {
-  /* Brand + any header/nav/menu links */
-  header a,
-  header button,
-  header nav a,
-  header nav button,
+  header a, header button,
+  header nav a, header nav button,
   [class*="Sheet"] a, [class*="Sheet"] button,
   [class*="Drawer"] a, [class*="Drawer"] button,
-  [class*="Menu"] a,  [class*="Menu"]  button {
-    color: #ffffff !important;
+  [class*="Menu"] a, [class*="Menu"] button {
+    color: #fff !important;
     font-weight: 700 !important;
   }
 
-  /* Catch all Tailwind blue text utilities that may appear */
   .text-blue-400, .text-blue-500, .text-blue-600, .text-blue-700,
   .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover,
   .text-primary, .hover\:text-primary:hover {
-    color: #ffffff !important;
+    color: #fff !important;
     font-weight: 700 !important;
   }
 
-  /* Ensure blue CTA buttons always have readable text */
   a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\],
   .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
-    color: #ffffff !important;
+    color: #fff !important;
     font-weight: 700 !important;
   }
 }
 
-/* Strengthen the brand link in the header on all sizes */
-header a[href="/"] {
-  color: #ffffff !important;
-  font-weight: 700 !important;
+header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
+
+/* =========================================================
+   Splash — Ken Burns crossfade (balanced: 3.5s hold + 2s anim)
+   ========================================================= */
+
+/* Optional soft overlay for depth (kept from previous) */
+.splash-gradient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(1200px 420px at 18% -10%, rgba(0,0,0,.35), rgba(0,0,0,0)),
+              linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.15) 40%, rgba(0,0,0,.4));
+  pointer-events: none;
 }
 
-/* ===== Force white + bold text in the Home header & dropdown (mobile) ===== */
-@media (max-width: 768px) {
-  /* Header brand/link + Menu trigger */
-  header a, header button {
-    color: #ffffff !important;
-    font-weight: 700 !important;
-  }
-  header button[aria-haspopup="menu"],
-  header button[aria-controls],
-  header [data-state="open"] button {
-    color: #ffffff !important;
-    font-weight: 700 !important;
-  }
-
-  /* Any link/button inside the opened menu/sheet/drawer/portal */
-  [role="menu"] a, [role="menu"] button,
-  [role="dialog"] a, [role="dialog"] button,
-  [data-radix-portal] a, [data-radix-portal] button,
-  [data-state="open"] a, [data-state="open"] button {
-    color: #ffffff !important;
-    font-weight: 700 !important;
-  }
-
-  /* Nuke Tailwind blue text utilities that leak into the menu */
-  [class*="text-blue-"], .text-primary, .hover\:text-primary:hover,
-  .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover {
-    color: #ffffff !important;
-    font-weight: 700 !important;
-  }
+/* Ken Burns base (at rest) */
+.kenburns {
+  transform: scale(1);
+  opacity: 1;
+  transition:
+    transform 2000ms ease-in-out,
+    opacity 800ms ease-in-out 1600ms; /* fade starts near the end */
 }
 
-/* Always keep the "Executive Partners" brand link white/bold on dark bg */
-header a[href="/"] {
-  color: #ffffff !important;
-  font-weight: 700 !important;
+/* During exit: slight zoom + fade out */
+.kenburns.anim {
+  transform: scale(1.06);
+  opacity: 0;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .kenburns,
+  .kenburns.anim {
+    transform: none !important;
+    transition: opacity 200ms ease-in-out !important;
+  }
 }
