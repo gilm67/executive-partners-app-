@@ -12,18 +12,10 @@ html, body { height: 100%; margin: 0; }
     font-weight: 700 !important;
   }
 
-  .bg-white, .bg-neutral-50, .bg-zinc-50, .bg-gray-50 {
-    color: #0B0E13 !important;
-  }
-  .bg-white a, .bg-neutral-50 a, .bg-zinc-50 a, .bg-gray-50 a {
-    color: #1D4ED8 !important;
-    font-weight: 600;
-  }
+  .bg-white, .bg-neutral-50, .bg-zinc-50, .bg-gray-50 { color: #0B0E13 !important; }
+  .bg-white a, .bg-neutral-50 a, .bg-zinc-50 a, .bg-gray-50 a { color: #1D4ED8 !important; font-weight: 600; }
 
-  .bg-\[\#0B0E13\] .card, 
-  .bg-\[\#0B0E13\] .panel, 
-  .bg-\[\#0B0E13\] .section,
-  .bg-\[\#0B0E13\] .prose {
+  .bg-\[\#0B0E13\] .card, .bg-\[\#0B0E13\] .panel, .bg-\[\#0B0E13\] .section, .bg-\[\#0B0E13\] .prose {
     color: #ffffff !important;
   }
 
@@ -39,123 +31,86 @@ html, body { height: 100%; margin: 0; }
     color: #fff !important;
     border: 1px solid rgba(255,255,255,0.12) !important;
   }
-  .cta a, .apply-cta a, [data-cta="apply"] a {
-    color: #fff !important;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
+  .cta a, .apply-cta a, [data-cta="apply"] a { color: #fff !important; text-decoration: underline; text-underline-offset: 2px; }
 }
 
 /* ===== Mobile readability & contrast fixes ===== */
 @media (max-width: 640px) {
-  header a, header nav a, header button,
-  nav a, nav button {
-    color: #fff !important;
-    font-weight: 700 !important;
-    text-shadow: 0 1px 2px rgba(0,0,0,.35);
+  header a, header nav a, header button, nav a, nav button {
+    color: #fff !important; font-weight: 700 !important; text-shadow: 0 1px 2px rgba(0,0,0,.35);
   }
 
-  .mobile-dark-surface,
-  .card, .panel, .rounded-2xl, .shadow-sm, .shadow,
-  .bg-white, .bg-gray-50, .bg-neutral-50 {
-    background-color: rgba(255,255,255,.06) !important;
-    border-color: rgba(255,255,255,.10) !important;
+  .mobile-dark-surface, .card, .panel, .rounded-2xl, .shadow-sm, .shadow, .bg-white, .bg-gray-50, .bg-neutral-50 {
+    background-color: rgba(255,255,255,.06) !important; border-color: rgba(255,255,255,.10) !important;
   }
 
   .mobile-readable, .prose, .content, .content p, .content li,
-  .text-neutral-500, .text-neutral-600, .text-gray-500, .text-gray-600 {
-    color: rgba(255,255,255,.90) !important;
-  }
-  .mobile-readable-muted, .text-neutral-400, .text-gray-400 {
-    color: rgba(255,255,255,.75) !important;
+  .text-neutral-500, .text-neutral-600, .text-gray-500, .text-gray-600 { color: rgba(255,255,255,.90) !important; }
+  .mobile-readable-muted, .text-neutral-400, .text-gray-400 { color: rgba(255,255,255,.75) !important; }
+
+  .btn-outline, .btn-ghost, .border-white\/10, .border-white\/15, .border-gray-200 {
+    border-color: rgba(255,255,255,.25) !important; color: #fff !important;
   }
 
-  .btn-outline, .btn-ghost,
-  .border-white\/10, .border-white\/15, .border-gray-200 {
-    border-color: rgba(255,255,255,.25) !important;
-    color: #fff !important;
-  }
-
-  .apply-cta, a[href*="apply"], a[href*="contact"] {
-    background: #1D4ED8 !important;
-    color: #fff !important;
-    border-color: transparent !important;
-  }
+  .apply-cta, a[href*="apply"], a[href*="contact"] { background: #1D4ED8 !important; color: #fff !important; border-color: transparent !important; }
 }
 
 /* ===== Mobile readability overrides ===== */
 @media (max-width: 768px) {
   .text-blue-400, .text-blue-500, .text-blue-600,
   .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover {
-    color: #fff !important;
-    font-weight: 600 !important;
+    color: #fff !important; font-weight: 600 !important;
   }
 }
 
 /* Force white, bold text inside blue buttons */
-a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\] {
-  color: #fff !important;
-  font-weight: 600 !important;
-}
+a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\] { color: #fff !important; font-weight: 600 !important; }
 
 /* Strengthen brand/top-nav links */
 header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
 header nav a, header nav button { color: #fff !important; font-weight: 600 !important; }
 
 [class*="SheetContent"] a, [class*="SheetContent"] button,
-[class*="DrawerContent"] a, [class*="DrawerContent"] button {
-  color: #fff !important;
-  font-weight: 600 !important;
-}
+[class*="DrawerContent"] a, [class*="DrawerContent"] button { color: #fff !important; font-weight: 600 !important; }
 
-a[role="button"].bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
-  color: #fff !important;
-  font-weight: 600 !important;
-}
+a[role="button"].bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button { color: #fff !important; font-weight: 600 !important; }
 
 /* ===== Mobile menu readability ===== */
 @media (max-width: 768px) {
-  header a, header button,
-  header nav a, header nav button,
-  [class*="Sheet"] a, [class*="Sheet"] button,
-  [class*="Drawer"] a, [class*="Drawer"] button,
-  [class*="Menu"] a, [class*="Menu"] button {
-    color: #fff !important;
-    font-weight: 700 !important;
-  }
+  header a, header button, header nav a, header nav button,
+  [class*="Sheet"] a, [class*="Sheet"] button, [class*="Drawer"] a, [class*="Drawer"] button,
+  [class*="Menu"] a, [class*="Menu"] button { color: #fff !important; font-weight: 700 !important; }
 
   .text-blue-400, .text-blue-500, .text-blue-600, .text-blue-700,
   .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover,
-  .text-primary, .hover\:text-primary:hover {
-    color: #fff !important;
-    font-weight: 700 !important;
-  }
+  .text-primary, .hover\:text-primary:hover { color: #fff !important; font-weight: 700 !important; }
 
-  a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\],
-  .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
-    color: #fff !important;
-    font-weight: 700 !important;
+  a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
+    color: #fff !important; font-weight: 700 !important;
   }
 }
 
 header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
 
 /* =========================================================
-   Splash — Ken Burns crossfade (slower, text-free)
-   Timings: 4.5s hold, 4s zoom, 3s fade-out (total ~7.5s)
+   Splash — Ken Burns crossfade (desktop & mobile variants)
    ========================================================= */
 
 /* Keyframes */
-@keyframes kbZoomSlow {
+@keyframes kbZoomDesktop {
   0%   { transform: scale(1.04); }
   100% { transform: scale(1.12); }
 }
-@keyframes splashFadeOutSlow {
+@keyframes kbZoomMobile {
+  0%   { transform: scale(1.02); }
+  100% { transform: scale(1.07); }
+}
+@keyframes splashFadeOut {
   0%   { opacity: 0.96; }
   100% { opacity: 0; }
 }
 
-/* Base splash frame (no text, just image) */
+/* Base splash frame (no overlay text) */
 .splash-base {
   position: fixed;
   inset: 0;
@@ -169,15 +124,14 @@ header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
   background-color: #0B0E13;
 }
 
-/* Zoom (Ken Burns) */
-.splash-zoom {
-  animation: kbZoomSlow 4000ms ease-out forwards;
-}
+/* Desktop zoom class (duration set inline from React) */
+.splash-zoom-desktop { animation-name: kbZoomDesktop; animation-timing-function: ease-out; animation-fill-mode: forwards; }
 
-/* Fade out to reveal site */
-.splash-hide {
-  animation: splashFadeOutSlow 3000ms ease-in forwards;
-}
+/* Mobile zoom class (duration set inline from React) */
+.splash-zoom-mobile { animation-name: kbZoomMobile; animation-timing-function: ease-out; animation-fill-mode: forwards; }
+
+/* Fade out to reveal site (duration set inline from React) */
+.splash-hide { animation-name: splashFadeOut; animation-timing-function: ease-in; animation-fill-mode: forwards; }
 
 /* Optional depth overlay */
 .splash-gradient::after {
@@ -192,5 +146,5 @@ header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .splash-zoom, .splash-hide { animation: none !important; }
+  .splash-zoom-desktop, .splash-zoom-mobile, .splash-hide { animation: none !important; }
 }
