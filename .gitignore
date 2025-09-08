@@ -32,3 +32,6 @@ private_key.b64
 !public/*.json
 !public/*.json
 .github/workflows/fly-deploy.yml
+
+# editor backups
+*.bak
