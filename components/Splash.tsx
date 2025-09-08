@@ -2,25 +2,22 @@
 
 import { useEffect, useState } from "react";
 
-/**
- * Gradient Wipe Splash
- * - Hold 3.5s (image still)
- * - 3.0s upward gradient wipe
- * - 1.8s fade out
- * Total ≈ 8.3s (luxury pace, but adjustable)
- */
-
 const SHOWN_KEY = "ep.splash.shown";
 
+/**
+ * Glass Pane Lift:
+ * - Fullscreen splash with your /ep-splash.png as the background.
+ * - A frosted "glass" overlay lifts upward (bottom -> top), revealing the site.
+ * - Shows once per session.
+ */
 export default function Splash() {
   const [visible, setVisible] = useState(true);
-  const [wipe, setWipe] = useState(false);
-  const [hide, setHide] = useState(false);
+  const [lift, setLift] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Skip if already shown this session
+    // Already shown this session? Skip.
     if (sessionStorage.getItem(SHOWN_KEY) === "1") {
       setVisible(false);
       return;
@@ -29,28 +26,23 @@ export default function Splash() {
     const prefersReduced =
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
-    if (prefersReduced) {
-      setVisible(false);
-      sessionStorage.setItem(SHOWN_KEY, "1");
-      return;
-    }
+    // Slightly shorter timings on small screens
+    const isMobile = window.innerWidth < 768;
 
     // Timings (ms)
-    const HOLD_MS = 3500;
-    const WIPE_MS = 3000;
-    const FADE_MS = 1800;
+    const delay = prefersReduced ? 600 : isMobile ? 2200 : 3000;   // hold splash before lift
+    const duration = prefersReduced ? 300 : isMobile ? 1400 : 2200; // lift duration
+    const buffer = 300; // small buffer after lift to remove node
 
-    const wipeTimer = window.setTimeout(() => setWipe(true), HOLD_MS);
-    const hideTimer = window.setTimeout(() => setHide(true), HOLD_MS + WIPE_MS);
-    const removeTimer = window.setTimeout(() => {
+    const liftTimer = window.setTimeout(() => setLift(true), delay);
+    const hideTimer = window.setTimeout(() => {
       setVisible(false);
       sessionStorage.setItem(SHOWN_KEY, "1");
-    }, HOLD_MS + WIPE_MS + FADE_MS);
+    }, delay + duration + buffer);
 
     return () => {
-      clearTimeout(wipeTimer);
-      clearTimeout(hideTimer);
-      clearTimeout(removeTimer);
+      window.clearTimeout(liftTimer);
+      window.clearTimeout(hideTimer);
     };
   }, []);
 
@@ -59,15 +51,20 @@ export default function Splash() {
   return (
     <div
       aria-hidden="true"
-      className={[
-        "splash-base",
-        "splash-gradient",
-        wipe ? "splash-wipe" : "",
-        hide ? "splash-hide" : "",
-      ].join(" ")}
+      className="
+        fixed inset-0 z-[1000]
+        pointer-events-none select-none
+      "
       style={{
-        backgroundImage: `url(/ep-splash.png)`, // ensure in /public
+        backgroundImage: `url(/ep-splash.png)`, // ensure this exists in /public
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundColor: "#0B0E13",
       }}
-    />
+    >
+      {/* The frosted glass pane that lifts away */}
+      <div className={`glass-pane glass-anim ${lift ? "lifted" : ""}`} />
+    </div>
   );
 }

@@ -1,89 +1,70 @@
-/* app/globals.css */
-@import "tailwindcss";
+"use client";
 
-:root { color-scheme: dark; }
-html, body { height: 100%; margin: 0; }
+import { useEffect, useState } from "react";
 
-/* ==== Mobile Contrast Fixes (non-invasive) ==== */
-@media (max-width: 768px) {
-  header, nav { background: #0B0E13 !important; }
-  header a, nav a, .mobile-nav a, .mobile-nav button {
-    color: #fff !important; font-weight: 700 !important;
-  }
-  .bg-white, .bg-neutral-50, .bg-zinc-50, .bg-gray-50 { color: #0B0E13 !important; }
-  .bg-white a, .bg-neutral-50 a, .bg-zinc-50 a, .bg-gray-50 a { color: #1D4ED8 !important; font-weight: 600; }
-  .bg-\[\#0B0E13\] .card, .bg-\[\#0B0E13\] .panel, .bg-\[\#0B0E13\] .section, .bg-\[\#0B0E13\] .prose { color: #fff !important; }
-  form input, form textarea, form select {
-    background: rgba(255,255,255,0.06) !important; color: #fff !important; border-color: rgba(255,255,255,0.15) !important;
-  }
-  form ::placeholder { color: rgba(255,255,255,0.65) !important; }
-}
+const SHOWN_KEY = "ep.splash.shown";
 
-/* =========================================================
-   Splash — Gradient Wipe (bottom → top)
-   ========================================================= */
+/**
+ * Glass Pane Lift:
+ * - Fullscreen splash with your /ep-splash.png as the background.
+ * - A frosted "glass" overlay lifts upward (bottom -> top), revealing the site.
+ * - Shows once per session.
+ */
+export default function Splash() {
+  const [visible, setVisible] = useState(true);
+  const [lift, setLift] = useState(false);
 
-/* Keyframes for gradient wipe */
-@keyframes gradientWipeUp {
-  0% {
-    -webkit-mask-position: 50% 100%;
-    mask-position: 50% 100%;
-  }
-  100% {
-    -webkit-mask-position: 50% 0%;
-    mask-position: 50% 0%;
-  }
-}
-@keyframes fadeOut {
-  0%   { opacity: 1; }
-  100% { opacity: 0; }
-}
+  useEffect(() => {
+    if (typeof window === "undefined") return;
 
-/* Splash base */
-.splash-base {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  pointer-events: none;
-  user-select: none;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-color: #0B0E13;
-  will-change: mask-position, opacity;
-}
+    // Already shown this session? Skip.
+    if (sessionStorage.getItem(SHOWN_KEY) === "1") {
+      setVisible(false);
+      return;
+    }
 
-/* Gradient wipe animation */
-.splash-wipe {
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: 100% 200%;
-  -webkit-mask-position: 50% 100%;
+    const prefersReduced =
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
-  mask-image: linear-gradient(to top, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
-  mask-repeat: no-repeat;
-  mask-size: 100% 200%;
-  mask-position: 50% 100%;
+    // Slightly shorter timings on small screens
+    const isMobile = window.innerWidth < 768;
 
-  animation: gradientWipeUp 3000ms ease-in forwards;
-}
+    // Timings (ms)
+    const delay = prefersReduced ? 600 : isMobile ? 2200 : 3000;   // hold splash before lift
+    const duration = prefersReduced ? 300 : isMobile ? 1400 : 2200; // lift duration
+    const buffer = 300; // small buffer after lift to remove node
 
-/* Fade out after wipe */
-.splash-hide {
-  animation: fadeOut 1800ms ease-in forwards;
-}
+    const liftTimer = window.setTimeout(() => setLift(true), delay);
+    const hideTimer = window.setTimeout(() => {
+      setVisible(false);
+      sessionStorage.setItem(SHOWN_KEY, "1");
+    }, delay + duration + buffer);
 
-/* Overlay depth (optional) */
-.splash-gradient::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(1200px 420px at 18% -10%, rgba(0,0,0,.35), rgba(0,0,0,0)),
-              linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.15) 40%, rgba(0,0,0,.4));
-  pointer-events: none;
-}
+    return () => {
+      window.clearTimeout(liftTimer);
+      window.clearTimeout(hideTimer);
+    };
+  }, []);
 
-/* Reduced motion: skip animation */
-@media (prefers-reduced-motion: reduce) {
-  .splash-wipe, .splash-hide { animation: none !important; }
+  if (!visible) return null;
+
+  return (
+    <div
+      aria-hidden="true"
+      className="
+        fixed inset-0 z-[1000]
+        pointer-events-none select-none
+      "
+      style={{
+        backgroundImage: `url(/ep-splash.png)`, // ensure this exists in /public
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundColor: "#0B0E13",
+      }}
+    >
+      {/* The frosted glass pane that lifts away */}
+      <div className={`glass-pane glass-anim ${lift ? "lifted" : ""}`} />
+    </div>
+  );
 }
