@@ -5,54 +5,48 @@ import { CardBtn } from "./components/CardBtn";
 export const metadata = {
   title: "Executive Partners — International & Swiss Private Banking",
   description:
-    "We connect top Private Bankers, Wealth Managers, and senior executives with leading banks, EAMs, and family offices worldwide.",
+    "We connect top Private Bankers, Wealth Managers,Compliance Officers and senior executives with leading banks, EAMs, and family offices worldwide.",
 };
 
-// Button tones supported by CardBtn
-type BtnTone = "blue" | "green" | "neutral";
+/* ---------------- Page ---------------- */
 
 export default function HomePage() {
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
-      {/* subtle luxe glow background */}
+      {/* background glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(1200px 400px at 20% -10%, rgba(14,165,233,.18) 0%, rgba(14,165,233,0) 60%), radial-gradient(900px 380px at 110% 0%, rgba(34,197,94,.16) 0%, rgba(34,197,94,0) 60%)",
+            "radial-gradient(1200px 420px at 18% -10%, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%), radial-gradient(1000px 380px at 110% 0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%)",
         }}
       />
-      <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-14 relative">
+
+      <div className="relative mx-auto w-full max-w-6xl px-4 pb-24 pt-14">
         {/* badge */}
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           International & Swiss Private Banking — HNW/UHNW
         </div>
 
         {/* hero */}
-        <h1 className="mx-auto mt-6 text-center text-5xl font-extrabold tracking-tight md:text-6xl">
+        <h1 className="mx-auto mt-4 text-center text-5xl font-extrabold tracking-tight md:text-6xl">
           Executive Partners
         </h1>
-        <p className="mx-auto mt-4 max-w-3xl text-center text-neutral-300">
+        <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
           We connect top Private Bankers, Wealth Managers, and senior executives with
           leading banks, EAMs, and family offices worldwide.
         </p>
 
         {/* primary CTAs */}
         <div className="mx-auto mt-6 flex w-full max-w-xl items-center justify-center gap-3">
-          <PrimaryBtn href="/candidates" variant="blue">
-            I’m a Candidate
-          </PrimaryBtn>
-          <PrimaryBtn href="/hiring-managers" variant="outline">
-            I’m Hiring
-          </PrimaryBtn>
-          <PrimaryBtn href="/jobs" variant="ghost">
-            View All Jobs
-          </PrimaryBtn>
+          <PrimaryBtn href="/candidates" variant="blue">I’m a Candidate</PrimaryBtn>
+          <PrimaryBtn href="/hiring-managers" variant="outline">I’m Hiring</PrimaryBtn>
+          <PrimaryBtn href="/jobs" variant="ghost">View All Jobs</PrimaryBtn>
         </div>
 
-        {/* two feature cards */}
-        <div className="mt-10 grid gap-6 md:grid-cols-2 items-stretch">
+        {/* feature cards */}
+        <div className="mt-12 grid items-stretch gap-6 md:grid-cols-2">
           <FeatureCard
             badge="For Candidates"
             title="Confidential career moves"
@@ -69,8 +63,35 @@ export default function HomePage() {
           />
         </div>
 
-        {/* footer row */}
-        <div className="mt-10 flex items-center justify-between text-sm text-neutral-400">
+        {/* featured jobs preview */}
+        <div className="mt-14">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Featured Roles</h2>
+            <Link href="/jobs" className="text-sm font-medium text-blue-400 hover:underline">
+              View all jobs →
+            </Link>
+          </div>
+          <div className="mt-6 grid gap-6 md:grid-cols-3">
+            <FeaturedJobCard
+              title="Senior Relationship Manager — CH Onshore"
+              location="Geneva"
+              summary="UHNW/HNW Swiss-domiciled clients; Geneva booking centre; strong local network required."
+            />
+            <FeaturedJobCard
+              title="Private Banker — MEA"
+              location="Dubai"
+              summary="Cover UHNW/HNW MEA clients from Dubai; strong acquisition and cross-border expertise."
+            />
+            <FeaturedJobCard
+              title="Senior Relationship Manager — Brazil"
+              location="Zurich or Geneva"
+              summary="Develop and manage HNW/UHNW Brazilian clients; full private banking advisory and cross-border expertise."
+            />
+          </div>
+        </div>
+
+        {/* footer */}
+        <div className="mt-16 flex items-center justify-between text-sm text-neutral-400">
           <span>© {new Date().getFullYear()} Executive Partners. All rights reserved.</span>
           <Link href="/jobs" className="underline-offset-4 hover:underline">
             View all jobs
@@ -122,16 +143,14 @@ function FeatureCard({
   rightAction: { label: string; href: string; tone: BtnTone };
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)] flex flex-col h-full">
+    <div className="relative h-full overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
       {/* inner soft glow */}
       <div className="pointer-events-none absolute inset-0 opacity-[.18] [background:radial-gradient(600px_120px_at_10%_0%,rgba(14,165,233,1),transparent_60%),radial-gradient(600px_120px_at_100%_0%,rgba(34,197,94,1),transparent_60%)]" />
-      <div className="relative flex flex-col h-full">
+      <div className="relative flex min-h-[220px] flex-col">
         <div className="text-xs font-semibold text-[#6EE7B7]">{badge}</div>
         <h3 className="mt-2 text-xl font-bold">{title}</h3>
         <p className="mt-2 text-sm leading-relaxed text-neutral-300">{copy}</p>
-
-        {/* perfectly aligned button row */}
-        <div className="mt-auto flex items-center gap-3">
+        <div className="mt-auto flex items-stretch gap-3 pt-3">
           <CardBtn href={leftAction.href} tone={leftAction.tone}>
             {leftAction.label}
           </CardBtn>
@@ -139,6 +158,32 @@ function FeatureCard({
             {rightAction.label}
           </CardBtn>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function FeaturedJobCard({
+  title,
+  location,
+  summary,
+}: {
+  title: string;
+  location: string;
+  summary: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5 hover:bg-white/[0.07] transition">
+      <h3 className="text-lg font-semibold text-white">{title}</h3>
+      <p className="mt-1 text-sm text-neutral-400">{location}</p>
+      <p className="mt-2 text-sm text-neutral-300 line-clamp-3">{summary}</p>
+      <div className="mt-4">
+        <Link
+          href="/jobs"
+          className="text-sm font-medium text-blue-400 hover:underline"
+        >
+          View details →
+        </Link>
       </div>
     </div>
   );
