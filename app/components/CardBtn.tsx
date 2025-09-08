@@ -16,13 +16,13 @@ interface CardBtnProps {
 const TONE_STYLES: Record<Tone, string> = {
   // Rich, branded tones used across landing + jobs
   blue:
-    "bg-[#1D4ED8] hover:bg-[#1E40AF] text-white shadow-[0_8px_30px_rgba(29,78,216,.35)]",
+    "bg-[#1D4ED8] !!text-white text-white !text-white text-white hover:bg-[#1E40AF] !text-white text-white shadow-[0_8px_30px_rgba(29,78,216,.35)]",
   green:
-    "bg-emerald-600 hover:bg-emerald-700 text-white shadow-[0_8px_30px_rgba(16,185,129,.30)]",
+    "bg-emerald-600 hover:bg-emerald-700 !text-white text-white shadow-[0_8px_30px_rgba(16,185,129,.30)]",
   // Neutral = subtle outline/ghost (matches cards)
-  neutral: "border border-white/15 bg-white/5 hover:bg-white/10 text-white",
+  neutral: "border border-white/15 bg-white/5 hover:bg-white/10 !text-white text-white",
   // Dark = compact, high-contrast chip
-  dark: "bg-neutral-950 text-white border border-neutral-800 hover:bg-neutral-900",
+  dark: "bg-neutral-950 !text-white text-white border border-neutral-800 hover:bg-neutral-900",
 };
 
 /**

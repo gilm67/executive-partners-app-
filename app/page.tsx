@@ -143,7 +143,7 @@ function PrimaryBtn({
 }) {
   const cls =
     variant === "blue"
-      ? "bg-[#1D4ED8] hover:bg-[#1E40AF] text-white shadow-[0_8px_30px_rgba(29,78,216,.35)]"
+      ? "bg-[#1D4ED8] !text-white text-white !text-white text-white hover:bg-[#1E40AF] text-white shadow-[0_8px_30px_rgba(29,78,216,.35)]"
       : variant === "outline"
       ? "border border-white/15 bg-white/5 hover:bg-white/10 text-white"
       : "border border-white/10 bg-transparent hover:bg-white/5 text-white";

@@ -397,7 +397,7 @@ export default async function JobsPage({
           <p className="text-neutral-300">Don’t see your exact market? We run confidential mandates continuously.</p>
           <div className="mt-3 flex items-center justify-center gap-3">
             <Link href="/contact" className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10">Contact us</Link>
-            <Link href="/candidates" className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF]">Register confidentially</Link>
+            <Link href="/candidates" className="rounded-xl bg-[#1D4ED8] !text-white text-white px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF]">Register confidentially</Link>
           </div>
         </div>
       </div>
