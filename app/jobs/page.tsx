@@ -306,16 +306,16 @@ function FilterBar({
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams?: Record<string, string | string[]>;
+  // Next.js 15: searchParams is a Promise
+  searchParams?: Promise<Record<string, string | string[]>>;
 }) {
-  const q = typeof searchParams?.q === "string" ? searchParams.q : "";
-  const market =
-    typeof searchParams?.market === "string" ? searchParams.market : "";
-  const location =
-    typeof searchParams?.location === "string" ? searchParams.location : "";
-  const seniority =
-    typeof searchParams?.seniority === "string" ? searchParams.seniority : "";
-  const sort = typeof searchParams?.sort === "string" ? searchParams.sort : "newest";
+  const sp = (await searchParams) ?? {};
+
+  const q = typeof sp.q === "string" ? sp.q : "";
+  const market = typeof sp.market === "string" ? sp.market : "";
+  const location = typeof sp.location === "string" ? sp.location : "";
+  const seniority = typeof sp.seniority === "string" ? sp.seniority : "";
+  const sort = typeof sp.sort === "string" ? sp.sort : "newest";
 
   const filters: Record<string, string> = {};
   if (market) filters.market = market;
@@ -357,7 +357,10 @@ export default async function JobsPage({
         </div>
 
         <div className="mt-8">
-          <FilterBar defaultQuery={q} defaultFilters={{ market, location, seniority }} />
+          <FilterBar
+            defaultQuery={q}
+            defaultFilters={{ market, location, seniority }}
+          />
         </div>
 
         {/* Sort row */}
