@@ -1,6 +1,7 @@
 // app/page.tsx
 import Link from "next/link";
 import { CardBtn } from "./components/CardBtn";
+import { MapPin, ChevronRight } from "lucide-react";
 
 /* ------------ Types & helpers ------------ */
 
@@ -53,7 +54,7 @@ async function getFeaturedJobs(): Promise<Job[]> {
 export const metadata = {
   title: "Executive Partners — International & Swiss Private Banking",
   description:
-    "We connect top Private Bankers, Wealth Managers,Compliance Officers and senior executives with leading banks, EAMs, and family offices worldwide.",
+    "We connect top Private Bankers, Wealth Managers, Compliance Officers and senior executives with leading banks, EAMs, and family offices worldwide.",
 };
 
 /* ---------------- Page ---------------- */
@@ -70,7 +71,7 @@ export default async function HomePage() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(1200px 420px at 18% -10%, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%), radial-gradient(1000px 380px at 110% 0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%)",
+            "radial-gradient(1200px_420px_at_18%_-10%,rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%), radial-gradient(1000px_380px_at_110%_0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%)",
         }}
       />
 
@@ -114,7 +115,7 @@ export default async function HomePage() {
           />
         </div>
 
-        {/* featured jobs – live data with elegant layout */}
+        {/* featured jobs – live data with premium layout */}
         <FeaturedRoles featured={featured} />
 
         {/* footer */}
@@ -192,7 +193,7 @@ function FeatureCard({
   );
 }
 
-/* ---------- Featured Roles (live) ---------- */
+/* ---------- Featured Roles (premium) ---------- */
 
 function FeaturedRoles({ featured }: { featured: Job[] }) {
   const hasLive = featured.length > 0;
@@ -235,39 +236,58 @@ function FeaturedRoles({ featured }: { featured: Job[] }) {
         </Link>
       </div>
 
-      {/* Equal-height cards with aligned city & summary rows */}
       <div className="mt-6 grid items-stretch gap-6 md:grid-cols-3">
         {items.map((job) => (
-          <article
-            key={job.slug}
-            className="group relative flex h-full flex-col rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.03] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)] transition hover:shadow-[0_12px_50px_rgba(0,0,0,.50)]"
-          >
-            {/* soft beam on hover */}
-            <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-20 [background:radial-gradient(120%_60%_at_50%_-10%,rgba(59,130,246,1),transparent_60%)]" />
-            <div className="relative">
-              {/* Reserve consistent heights for perfect alignment */}
-              <h3 className="text-lg font-semibold text-white line-clamp-2 min-h-[3.25rem]">
-                {job.title}
-              </h3>
-              <p className="mt-1 text-sm text-white/70 min-h-[1.25rem]">
-                {job.location}
-              </p>
-              <p className="mt-2 text-sm text-neutral-300 line-clamp-3 min-h-[3.75rem]">
-                {job.summary}
-              </p>
-            </div>
-
-            <div className="mt-auto pt-4">
-              <Link
-                href={`/jobs/${job.slug}`}
-                className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                View details <span className="translate-y-[1px]">→</span>
-              </Link>
-            </div>
-          </article>
+          <JobCard key={job.slug} job={job} />
         ))}
       </div>
     </section>
+  );
+}
+
+function JobCard({ job }: { job: Job }) {
+  return (
+    <article className="group relative h-full rounded-2xl p-[1px] bg-gradient-to-br from-sky-500/35 via-emerald-400/25 to-fuchsia-500/25">
+      {/* inner glass panel */}
+      <div className="relative flex h-full flex-col rounded-2xl border border-white/10 bg-[#0B0E13]/80 p-5 backdrop-blur">
+        {/* soft corner glow */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-8 -right-8 h-36 w-36 rounded-full bg-gradient-to-br from-sky-500/30 to-emerald-400/30 blur-2xl opacity-40"
+        />
+
+        {/* title (fixed height for alignment) */}
+        <h3 className="text-lg font-semibold text-white line-clamp-2 min-h-[3.25rem]">
+          {job.title}
+        </h3>
+
+        {/* location pill (fixed height) */}
+        <div className="mt-2 min-h-[1.6rem]">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs text-white/80">
+            <MapPin className="h-3.5 w-3.5 opacity-80" />
+            {job.location}
+          </span>
+        </div>
+
+        {/* summary (fixed height for alignment) */}
+        <p className="mt-3 text-sm text-neutral-300 line-clamp-3 min-h-[3.75rem]">
+          {job.summary}
+        </p>
+
+        {/* CTA pinned bottom */}
+        <div className="mt-auto pt-4">
+          <Link
+            href={`/jobs/${job.slug}`}
+            className="inline-flex items-center gap-2 rounded-xl bg-white/8 px-3 py-2 text-sm font-semibold text-white outline-none
+                       ring-0 transition
+                       hover:bg-white/12 hover:shadow-[0_10px_30px_rgba(59,130,246,.25)]
+                       focus-visible:ring-2 focus-visible:ring-sky-500/40"
+          >
+            View details
+            <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </div>
+      </div>
+    </article>
   );
 }
