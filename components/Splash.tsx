@@ -1,76 +1,60 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
- * Ken Burns crossfade with mobile tuning:
- * - Desktop: longer, richer zoom
- * - Mobile: slightly shorter & gentler zoom, earlier fade
- * - Text-free
- * - Only shows once per session
+ * Gradient Wipe Splash
+ * - Hold 3.5s (image still)
+ * - 3.0s upward gradient wipe
+ * - 1.8s fade out
+ * Total ≈ 8.3s (luxury pace, but adjustable)
  */
 
 const SHOWN_KEY = "ep.splash.shown";
 
 export default function Splash() {
   const [visible, setVisible] = useState(true);
-  const [startZoom, setStartZoom] = useState(false);
-  const [startHide, setStartHide] = useState(false);
-
-  // Detect mobile once on mount (server-safe)
-  const isMobile = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia?.("(max-width: 640px)").matches ?? false;
-  }, []);
-
-  // Timings (ms) — tuned per device
-  const HOLD_MS   = isMobile ? 2200 : 4500; // still before zoom
-  const ZOOM_MS   = isMobile ? 2200 : 4000; // ken burns duration
-  const FADE_MS   = isMobile ? 1400 : 3000; // fade-out duration
-  const OVERLAP   = isMobile ? 600  : 800;  // fade overlaps zoom end
+  const [wipe, setWipe] = useState(false);
+  const [hide, setHide] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Don’t show again in the same session
+    // Skip if already shown this session
     if (sessionStorage.getItem(SHOWN_KEY) === "1") {
       setVisible(false);
       return;
     }
 
-    // Accessibility: reduce motion
     const prefersReduced =
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
     if (prefersReduced) {
-      const t1 = window.setTimeout(() => setStartHide(true), 600);
-      const t2 = window.setTimeout(() => {
-        setVisible(false);
-        sessionStorage.setItem(SHOWN_KEY, "1");
-      }, 1200);
-      return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
-    }
-
-    const tZoom = window.setTimeout(() => setStartZoom(true), HOLD_MS);
-    const fadeStart = HOLD_MS + Math.max(0, ZOOM_MS - OVERLAP);
-    const tHide = window.setTimeout(() => setStartHide(true), fadeStart);
-    const tRemove = window.setTimeout(() => {
       setVisible(false);
       sessionStorage.setItem(SHOWN_KEY, "1");
-    }, fadeStart + FADE_MS);
+      return;
+    }
+
+    // Timings (ms)
+    const HOLD_MS = 3500;
+    const WIPE_MS = 3000;
+    const FADE_MS = 1800;
+
+    const wipeTimer = window.setTimeout(() => setWipe(true), HOLD_MS);
+    const hideTimer = window.setTimeout(() => setHide(true), HOLD_MS + WIPE_MS);
+    const removeTimer = window.setTimeout(() => {
+      setVisible(false);
+      sessionStorage.setItem(SHOWN_KEY, "1");
+    }, HOLD_MS + WIPE_MS + FADE_MS);
 
     return () => {
-      window.clearTimeout(tZoom);
-      window.clearTimeout(tHide);
-      window.clearTimeout(tRemove);
+      clearTimeout(wipeTimer);
+      clearTimeout(hideTimer);
+      clearTimeout(removeTimer);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [HOLD_MS, ZOOM_MS, FADE_MS, OVERLAP]);
+  }, []);
 
   if (!visible) return null;
-
-  // Choose the zoom class for this device
-  const zoomClass = isMobile ? "splash-zoom-mobile" : "splash-zoom-desktop";
 
   return (
     <div
@@ -78,19 +62,11 @@ export default function Splash() {
       className={[
         "splash-base",
         "splash-gradient",
-        startZoom ? zoomClass : "",
-        startHide ? "splash-hide" : "",
+        wipe ? "splash-wipe" : "",
+        hide ? "splash-hide" : "",
       ].join(" ")}
       style={{
-        backgroundImage: `url(/ep-splash.png)`,
-        // Refined crop on mobile (keeps center mass)
-        backgroundPosition: isMobile ? "center center" : "center",
-        // Drive durations from JS so CSS can share classes
-        animationDuration: startHide
-          ? `${FADE_MS}ms`
-          : startZoom
-          ? `${ZOOM_MS}ms`
-          : undefined,
+        backgroundImage: `url(/ep-splash.png)`, // ensure in /public
       }}
     />
   );
