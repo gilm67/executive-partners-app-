@@ -16,14 +16,14 @@ type Job = {
   body?: string;
 };
 
-/* ---------------- Hide retired/duplicate slugs ---------------- */
+// Slugs you explicitly want to hide
 const HIDDEN_SLUGS = new Set<string>([
   "senior-relationship-manager-ch-onshore-4",
   "senior-relationship-manager-brazil-2",
   "private-banker-mea-2",
 ]);
 
-/* ---------------- Utils ---------------- */
+/** Normalize slugs so small differences still match. */
 function norm(s: string | undefined) {
   return (s ?? "")
     .trim()
@@ -32,135 +32,193 @@ function norm(s: string | undefined) {
     .replace(/--+/g, "-")
     .replace(/^-|-$/g, "");
 }
+
+// helper to wrap template strings as markdown (just returns the string)
 function md(s: string) {
   return s.trim();
 }
 
-/* ---------------- Rich fallback bodies (markdown) ---------------- */
+/* ------------ Rich fallback bodies (markdown) ------------ */
+/* Brazil = EXACT text you provided. Others are region-adapted with the same structure. */
 const FALLBACK_BODIES: Record<string, string> = {
+  // ===== BRAZIL — Zurich or Geneva =====
   "senior-relationship-manager-brazil-ch": md(`
-**Position Overview**  
-The *Senior Relationship Manager* is responsible for acquiring, developing, and managing a portfolio of HNW/UHNW individuals based in **Brazil**, serving as a trusted advisor with comprehensive private banking services and tailored financial solutions (Zurich or Geneva booking).
+**Title:** Senior Relationship Manager Brazil  
+**Location:** Zurich or Geneva
 
-**Key Responsibilities**
-- Develop and expand a personal client network across Brazil and the Brazilian diaspora.
-- Act as a strategic advisor across investments, lending, and estate planning; coordinate with product specialists.
-- Proactively originate new business via networking, referrals, and targeted events.
-- Ensure rigorous KYC/AML and cross-border compliance.
-- Mentor junior staff and contribute to team best practices.
+### Position Overview
+The **Senior Relationship Manager** is responsible for acquiring, developing, and managing a portfolio of high-net-worth (HNW) and ultra-high-net-worth (UHNW) individuals **based in Brazil**, serving as a trusted advisor by providing comprehensive private banking services and tailored financial solutions.
 
-**Core Requirements**
-- 7–10+ years in private banking with a portable HNW/UHNW Brazil book.
-- Deep markets knowledge; fluency in **Portuguese** and English (French/Swiss German a plus).
-- Entrepreneurial “hunter + farmer” profile; Swiss permit ideal.
+### Key Responsibilities
+- Develop and expand a personal client network, especially within the **Brazil** market.  
+- Act as a strategic advisor, offering integrated wealth management solutions across investments, lending, and estate planning.  
+- Deliver full-service banking and facilitate all client transactions, collaborating with product specialists as needed.  
+- Proactively identify business development opportunities and generate new leads through networking and referrals.  
+- Provide consistent, high-value advice with a focus on long-term relationships and client satisfaction.  
+- Maintain rigorous compliance with internal policies and regulatory guidelines, including **KYC and AML** standards.  
+- Mentor junior staff, contribute to team goals, and share best practices within the organization.
 
-**Essential Competencies**
-- Client-centric, ethical approach; strong compliance discipline.
-- Ability to orchestrate internal experts for holistic solutions.
-- High energy, team spirit, and adaptability.
+### Core Requirements
+- University degree in finance, banking, or a related field; advanced education or certifications preferred.  
+- Proven track record of at least **7–10 years** in private banking, with a strong portfolio of **HNW/UHNW clients in Brazil**.  
+- Deep knowledge of financial markets, investment products, and regulatory topics.  
+- Outstanding interpersonal, communication, and negotiation skills, with fluency in **English and Portuguese**; French or Swiss German considered a plus.  
+- Demonstrated entrepreneurial drive, with experience in both client acquisition ("hunter") and client retention ("farmer") roles.  
+- **Swiss residency or valid permit** highly desirable; cross-border experience an advantage.
 
-**What Our Client Offer**
-- Advanced platform, collaborative culture, and private markets access.
-- Clear career progression and competitive compensation grid.
+### Essential Competencies
+- Business acumen with a robust local network and a client-focused, ethical approach.  
+- Ability to leverage internal experts and resources for holistic client solutions.  
+- Strong compliance awareness and attention to detail.  
+- High motivation, team spirit, and adaptability in a dynamic and demanding environment.
+
+### What Our Client Offer
+- Advanced workplace infrastructure, collaborative spaces, and diverse teams.  
+- Opportunities for career progression in a client-focused, entrepreneurial setting.  
+- Competitive compensation, benefits, and ongoing professional development.
 `),
 
+  // ===== MEA — Dubai =====
   "senior-relationship-manager-mea-dubai": md(`
-**Position Overview**  
-Lead and grow relationships with UHNW/HNW clients across **MEA** from a **Dubai** hub, leveraging a full-suite platform and regional reach.
+**Title:** Private Banker / Senior Relationship Manager — MEA  
+**Location:** Dubai
 
-**Key Responsibilities**
-- Originate/grow a MEA portfolio (GCC, Levant, North Africa).
-- Advise across DPM/advisory, credit, and wealth planning (incl. Sharia-compliant where relevant).
-- Activate professional networks, family offices, and referral partners.
-- Maintain strict cross-border and local regulatory compliance.
-- Guide juniors and promote team collaboration.
+### Position Overview
+The **Senior Relationship Manager** will acquire, develop, and manage a portfolio of **HNW/UHNW clients across the Middle East & Africa (MEA)** from a Dubai hub, delivering tailored private banking solutions across investment, credit, and wealth planning.
 
-**Core Requirements**
-- 7–10+ years in private banking with a portable MEA book.
-- Proven acquisition & retention; English fluent (Arabic/French a plus).
-- Robust MEA cross-border understanding.
+### Key Responsibilities
+- Build and expand a personal client network across GCC, Levant, and North Africa.  
+- Act as a strategic advisor, providing integrated wealth solutions (DPM/advisory, structured products, Lombard/real-estate credit, and wealth planning).  
+- Drive new business through referrals, professional networks, and targeted events across the region.  
+- Maintain strict cross-border and local regulatory adherence; ensure comprehensive **KYC/AML**.  
+- Partner with product specialists; mentor juniors and champion best practices.
 
-**What Our Client Offer**
-- Dubai hub with global booking; competitive grid and strong product shelf.
+### Core Requirements
+- 7–10+ years in private banking with **portable MEA relationships** and proven acquisition.  
+- Strong knowledge of regional markets and cross-border frameworks.  
+- Fluency in **English**; **Arabic and/or French** are strong advantages.  
+- Entrepreneurial, results-driven profile; track record of sustainable client retention.
+
+### Essential Competencies
+- High cultural fluency across MEA and strong stakeholder management.  
+- Rigorous compliance mind-set and disciplined execution.  
+- Collaborative, proactive, and client-centric approach.
+
+### What Our Client Offer
+- **Dubai** hub with global booking options, competitive grid, and robust product shelf.  
+- Clear development path, diverse teams, and private markets access.
 `),
 
+  // ===== MEA — Zurich =====
   "senior-relationship-manager-mea-zurich": md(`
-**Position Overview**  
-Cover MEA clients booking in **Zurich**, using Switzerland's infrastructure and reputation as a global wealth hub.
+**Title:** Senior Relationship Manager — MEA  
+**Location:** Zurich
 
-**Key Responsibilities**
-- Originate and serve UHNW/HNW clients from GCC, Levant, and Africa.
-- Deliver investment, credit, and succession/structuring solutions with Zurich booking.
-- Work closely with family office, asset management, and private markets teams.
-- Ensure cross-border compliance across MEA jurisdictions.
+### Position Overview
+Advise **HNW/UHNW MEA** clients via **Zurich booking**, leveraging Switzerland’s stability and depth in global wealth management.
 
-**Core Requirements**
-- 7+ years Swiss private banking with MEA exposure.
-- Portable UHNW/HNW book; English fluent (Arabic/French valued).
+### Key Responsibilities
+- Acquire and grow a MEA portfolio (GCC/Levant/Africa) from a Swiss platform.  
+- Provide integrated investment, credit, and succession solutions with strong cross-border governance.  
+- Build professional referral networks (lawyers, fiduciaries, family offices).  
+- Ensure robust **KYC/AML** and cross-border compliance.
 
-**What Our Client Offer**
-- Swiss booking with global reach, strong platform support.
+### Core Requirements
+- 7+ years in Swiss private banking with **MEA coverage** and portable relationships.  
+- Fluent **English** (Arabic and/or French valued).  
+- Strong acquisition track record and disciplined client care.
+
+### Essential Competencies
+- Client-first advisory, structured problem-solving, and collaboration across teams.  
+- High integrity and compliance discipline.
+
+### What Our Client Offer
+- Swiss booking center with global reach, strong platform support, and competitive remuneration.
 `),
 
+  // ===== CH Onshore — Zurich =====
   "senior-relationship-manager-ch-onshore-zurich": md(`
-**Position Overview**  
-Advise **Swiss-domiciled UHNW/HNW** clients in **Zurich**, providing a holistic onshore proposition.
+**Title:** Senior Relationship Manager — CH Onshore  
+**Location:** Zurich
 
-**Key Responsibilities**
-- Acquire and grow a Swiss onshore portfolio in Zurich and surrounding cantons.
-- Provide integrated solutions: investments, mortgages, pension, and succession.
-- Cultivate referral networks with local lawyers, fiduciaries, and entrepreneurs.
-- Maintain FINMA-grade compliance and documentation.
+### Position Overview
+Serve **Swiss-domiciled HNW/UHNW** clients in **Zurich**, offering holistic onshore private banking solutions aligned with FINMA standards.
 
-**Core Requirements**
-- 7–10+ years Swiss onshore coverage.
-- Fluent **German/Swiss German** and English (French a plus).
-- Strong local network and commercial drive.
+### Key Responsibilities
+- Acquire and grow a Swiss onshore portfolio across Zurich and surrounding cantons.  
+- Deliver integrated advisory across investments, mortgages, pension, and succession planning.  
+- Build referral ecosystems with local lawyers, fiduciaries, and entrepreneurs.  
+- Maintain **FINMA-grade** documentation and compliance.
 
-**What Our Client Offer**
-- Entrepreneurial onshore platform and competitive remuneration.
+### Core Requirements
+- 7–10+ years Swiss onshore coverage with a portable network.  
+- Fluency in **German/Swiss German** and English (French a plus).  
+- Strong commercial drive and client care.
+
+### Essential Competencies
+- Local market credibility, ethical approach, and attention to detail.  
+- Collaborative team player with high standards and resilience.
+
+### What Our Client Offer
+- Entrepreneurial onshore platform, respected brand, and competitive grid.
 `),
 
+  // ===== CH Onshore — Lausanne =====
   "senior-relationship-manager-ch-onshore-lausanne": md(`
-**Position Overview**  
-Focus on **Romandie** (Lausanne/Vaud/Geneva), advising local UHNW/HNW individuals and families.
+**Title:** Senior Relationship Manager — CH Onshore  
+**Location:** Lausanne (Romandie)
 
-**Key Responsibilities**
-- Acquire and serve clients in Lausanne, Vaud, and Geneva regions.
-- Tailor investment and estate planning to Swiss onshore needs.
-- Build robust referral channels with local professionals.
+### Position Overview
+Advise **HNW/UHNW Swiss onshore** clients across **Romandie** (Lausanne/Vaud/Geneva), offering comprehensive local solutions.
 
-**Core Requirements**
-- 7+ years Swiss onshore PB.
-- Fluent **French** and English; strong Romandie network.
+### Key Responsibilities
+- Develop and manage a portfolio across Lausanne, Vaud, and Geneva.  
+- Provide investment advisory, lending, pension, and estate planning tailored to Swiss onshore needs.  
+- Grow referral channels with local professionals; ensure top-tier client service.  
+- Uphold **FINMA** compliance and rigorous **KYC/AML**.
 
-**What Our Client Offer**
-- Strong brand recognition in Romandie and collaborative culture.
+### Core Requirements
+- 7+ years Swiss onshore PB; proven Romandie network.  
+- Fluency in **French** and English; strong local presence.  
+- Acquisition and long-term relationship management skills.
+
+### Essential Competencies
+- Client-first mentality, diligence, and collaborative mindset.  
+- Strong ethics and attention to detail.
+
+### What Our Client Offer
+- Strong Romandie brand, supportive culture, and competitive compensation.
 `),
 
+  // ===== Portugal — Geneva =====
   "senior-relationship-manager-portugal-geneva": md(`
-**Position Overview**  
-Geneva-based role focused on UHNW/HNW **Portuguese** clients and diaspora, leveraging Switzerland’s booking center.
+**Title:** Senior Relationship Manager — Portugal  
+**Location:** Geneva
 
-**Key Responsibilities**
-- Grow a client base of Portuguese entrepreneurs and families.
-- Offer global investments, cross-border structuring, and succession planning.
-- Prospect actively and leverage diaspora links across Switzerland and Europe.
-- Ensure KYC/AML and cross-border rules are fully respected.
+### Position Overview
+Lead relationships with **HNW/UHNW Portuguese** clients and diaspora from **Geneva**, leveraging Switzerland’s booking center and cross-border capabilities.
 
-**Core Requirements**
-- 7–10+ years with Portugal coverage.
-- Fluent **Portuguese** and English (French a plus).
-- Strong acquisition track record and diaspora network.
+### Key Responsibilities
+- Acquire and grow a portfolio of Portuguese entrepreneurs and families in CH/EU.  
+- Provide integrated advisory across investments, credit, and wealth/succession planning.  
+- Build diaspora referral channels; drive new business via events and partnerships.  
+- Ensure stringent **KYC/AML** and cross-border compliance.
 
-**What Our Client Offer**
-- Geneva hub with dedicated Portugal/LatAm desk; competitive platform and private markets access.
+### Core Requirements
+- 7–10+ years covering **Portugal** with portable relationships.  
+- Fluency in **Portuguese** and English (French a strong plus).  
+- Consistent acquisition and retention track record.
+
+### Essential Competencies
+- Cultural fluency, client-centric advisory, and disciplined execution.  
+- Strong compliance awareness and team collaboration.
+
+### What Our Client Offer
+- Geneva hub with dedicated Portugal/LatAm desk, private markets access, and competitive grid.
 `),
 };
 
-/* ---------------- “Always available” job fallbacks ----------------
-   These render even if /api/jobs returns [].
-------------------------------------------------------------------- */
+/* ---------------- “Always available” job fallbacks ---------------- */
 const KNOWN_JOBS: Record<string, Job> = {
   "senior-relationship-manager-brazil-ch": {
     slug: "senior-relationship-manager-brazil-ch",
@@ -251,12 +309,9 @@ async function fetchAllJobs(): Promise<Job[]> {
         ? (raw as any).jobs
         : [];
       if (Array.isArray(list) && list.length) return list;
-    } catch {
-      // ignore and try next
-    }
+    } catch {}
   }
-
-  // 🔁 If API is empty/unavailable, return our known jobs as a fallback source
+  // fallback to our known jobs if API is empty
   return Object.values(KNOWN_JOBS);
 }
 
@@ -267,20 +322,19 @@ async function fetchJobBySlug(requestedSlug: string): Promise<Job | null> {
 
   const wanted = norm(requestedSlug);
 
-  // 1) exact slug match
+  // exact slug
   let found = all.find((j) => norm(j.slug) === wanted);
   if (found) return found;
 
-  // 2) startsWith/endsWith/contains fallback (handles minor differences)
+  // fuzzy
   found =
     all.find((j) => norm(j.slug).startsWith(wanted)) ||
     all.find((j) => wanted.startsWith(norm(j.slug))) ||
     all.find((j) => norm(j.title).includes(wanted));
   if (found) return found;
 
-  // 3) market/location heuristic
-  const parts = wanted.split("-");
-  const hints = new Set(parts);
+  // heuristic
+  const hints = new Set(wanted.split("-"));
   found = all.find((j) => {
     const hay = `${norm(j.title)}-${norm(j.location)}-${norm(j.market)}`;
     const score = [...hints].reduce((acc, p) => (p && hay.includes(p) ? acc + 1 : acc), 0);
@@ -288,9 +342,8 @@ async function fetchJobBySlug(requestedSlug: string): Promise<Job | null> {
   });
   if (found) return found;
 
-  // 4) Final safety: look directly in known jobs map
-  const known = KNOWN_JOBS[wanted] || KNOWN_JOBS[Object.keys(KNOWN_JOBS).find((k) => norm(k) === wanted) ?? ""];
-  return known ?? null;
+  // final fallback
+  return KNOWN_JOBS[wanted] ?? null;
 }
 
 /* ---------------- Metadata & Page ---------------- */
