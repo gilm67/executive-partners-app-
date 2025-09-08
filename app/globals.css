@@ -138,3 +138,39 @@ a[role="button"].bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
   color: #fff !important;
   font-weight: 600 !important;
 }
+
+/* ===== Mobile menu readability: force white + bold ===== */
+@media (max-width: 768px) {
+  /* Brand + any header/nav/menu links */
+  header a,
+  header button,
+  header nav a,
+  header nav button,
+  [class*="Sheet"] a, [class*="Sheet"] button,
+  [class*="Drawer"] a, [class*="Drawer"] button,
+  [class*="Menu"] a,  [class*="Menu"]  button {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+
+  /* Catch all Tailwind blue text utilities that may appear */
+  .text-blue-400, .text-blue-500, .text-blue-600, .text-blue-700,
+  .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover,
+  .text-primary, .hover\:text-primary:hover {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+
+  /* Ensure blue CTA buttons always have readable text */
+  a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\],
+  .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+}
+
+/* Strengthen the brand link in the header on all sizes */
+header a[href="/"] {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
