@@ -16,14 +16,14 @@ type Job = {
   body?: string;
 };
 
-// Slugs you explicitly want to hide
+/* ---------------- Hide retired/duplicate slugs ---------------- */
 const HIDDEN_SLUGS = new Set<string>([
   "senior-relationship-manager-ch-onshore-4",
   "senior-relationship-manager-brazil-2",
   "private-banker-mea-2",
 ]);
 
-/** Normalize slugs so small differences still match. */
+/* ---------------- Utils ---------------- */
 function norm(s: string | undefined) {
   return (s ?? "")
     .trim()
@@ -32,65 +32,12 @@ function norm(s: string | undefined) {
     .replace(/--+/g, "-")
     .replace(/^-|-$/g, "");
 }
-
-/** Safely read either [{…}] or { jobs:[{…}] } */
-async function fetchAllJobs(): Promise<Job[]> {
-  const abs = process.env.NEXT_PUBLIC_SITE_URL
-    ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`
-    : null;
-
-  // Try absolute first (prod/preview), then relative (dev)
-  const tries: (RequestInfo | URL)[] = [];
-  if (abs) tries.push(abs);
-  tries.push("/api/jobs");
-
-  for (const url of tries) {
-    try {
-      const r = await fetch(url, { cache: "no-store" });
-      if (!r.ok) continue;
-      const raw = await r.json();
-      const list: Job[] = Array.isArray(raw) ? raw : Array.isArray((raw as any)?.jobs) ? (raw as any).jobs : [];
-      if (Array.isArray(list) && list.length) return list;
-    } catch {
-      // ignore and try next
-    }
-  }
-  return [];
+function md(s: string) {
+  return s.trim();
 }
 
-/** Find a job by slug with a few robust fallbacks. */
-async function fetchJobBySlug(requestedSlug: string): Promise<Job | null> {
-  const all = await fetchAllJobs();
-  if (!all.length) return null;
-
-  const wanted = norm(requestedSlug);
-
-  // 1) exact slug match
-  let found = all.find((j) => norm(j.slug) === wanted);
-  if (found) return found;
-
-  // 2) startsWith/endsWith/contains fallback (handles minor differences)
-  found =
-    all.find((j) => norm(j.slug).startsWith(wanted)) ||
-    all.find((j) => wanted.startsWith(norm(j.slug))) ||
-    all.find((j) => norm(j.title).includes(wanted));
-  if (found) return found;
-
-  // 3) market/location heuristic (e.g., "...-mea-dubai")
-  const parts = wanted.split("-");
-  const hints = new Set(parts);
-  found = all.find((j) => {
-    const hay = `${norm(j.title)}-${norm(j.location)}-${norm(j.market)}`;
-    const score = [...hints].reduce((acc, p) => (p && hay.includes(p) ? acc + 1 : acc), 0);
-    return score >= 2; // at least two hints line up
-  });
-  return found ?? null;
-}
-
-/* ------------ Rich fallback bodies (markdown) ------------ */
-
+/* ---------------- Rich fallback bodies (markdown) ---------------- */
 const FALLBACK_BODIES: Record<string, string> = {
-  // Brazil — Zurich/Geneva
   "senior-relationship-manager-brazil-ch": md(`
 **Position Overview**  
 The *Senior Relationship Manager* is responsible for acquiring, developing, and managing a portfolio of HNW/UHNW individuals based in **Brazil**, serving as a trusted advisor with comprehensive private banking services and tailored financial solutions (Zurich or Geneva booking).
@@ -115,9 +62,8 @@ The *Senior Relationship Manager* is responsible for acquiring, developing, and 
 **What Our Client Offer**
 - Advanced platform, collaborative culture, and private markets access.
 - Clear career progression and competitive compensation grid.
-  `),
+`),
 
-  // MEA — Dubai
   "senior-relationship-manager-mea-dubai": md(`
 **Position Overview**  
 Lead and grow relationships with UHNW/HNW clients across **MEA** from a **Dubai** hub, leveraging a full-suite platform and regional reach.
@@ -136,9 +82,8 @@ Lead and grow relationships with UHNW/HNW clients across **MEA** from a **Dubai*
 
 **What Our Client Offer**
 - Dubai hub with global booking; competitive grid and strong product shelf.
-  `),
+`),
 
-  // MEA — Zurich
   "senior-relationship-manager-mea-zurich": md(`
 **Position Overview**  
 Cover MEA clients booking in **Zurich**, using Switzerland's infrastructure and reputation as a global wealth hub.
@@ -155,9 +100,8 @@ Cover MEA clients booking in **Zurich**, using Switzerland's infrastructure and 
 
 **What Our Client Offer**
 - Swiss booking with global reach, strong platform support.
-  `),
+`),
 
-  // CH Onshore — Zurich
   "senior-relationship-manager-ch-onshore-zurich": md(`
 **Position Overview**  
 Advise **Swiss-domiciled UHNW/HNW** clients in **Zurich**, providing a holistic onshore proposition.
@@ -175,9 +119,8 @@ Advise **Swiss-domiciled UHNW/HNW** clients in **Zurich**, providing a holistic 
 
 **What Our Client Offer**
 - Entrepreneurial onshore platform and competitive remuneration.
-  `),
+`),
 
-  // CH Onshore — Lausanne
   "senior-relationship-manager-ch-onshore-lausanne": md(`
 **Position Overview**  
 Focus on **Romandie** (Lausanne/Vaud/Geneva), advising local UHNW/HNW individuals and families.
@@ -193,9 +136,8 @@ Focus on **Romandie** (Lausanne/Vaud/Geneva), advising local UHNW/HNW individual
 
 **What Our Client Offer**
 - Strong brand recognition in Romandie and collaborative culture.
-  `),
+`),
 
-  // Portugal — Geneva
   "senior-relationship-manager-portugal-geneva": md(`
 **Position Overview**  
 Geneva-based role focused on UHNW/HNW **Portuguese** clients and diaspora, leveraging Switzerland’s booking center.
@@ -213,34 +155,145 @@ Geneva-based role focused on UHNW/HNW **Portuguese** clients and diaspora, lever
 
 **What Our Client Offer**
 - Geneva hub with dedicated Portugal/LatAm desk; competitive platform and private markets access.
-  `),
+`),
 };
 
-// helper to wrap template strings as markdown (just returns the string)
-function md(s: string) {
-  return s.trim();
-}
+/* ---------------- “Always available” job fallbacks ----------------
+   These render even if /api/jobs returns [].
+------------------------------------------------------------------- */
+const KNOWN_JOBS: Record<string, Job> = {
+  "senior-relationship-manager-brazil-ch": {
+    slug: "senior-relationship-manager-brazil-ch",
+    title: "Senior Relationship Manager — Brazil",
+    location: "Zurich or Geneva",
+    market: "Brazil (LatAm)",
+    seniority: "Director/ED/MD",
+    active: true,
+    summary:
+      "Develop and manage HNW/UHNW Brazilian clients; full private banking advisory and cross-border expertise.",
+    body: FALLBACK_BODIES["senior-relationship-manager-brazil-ch"],
+  },
+  "senior-relationship-manager-mea-dubai": {
+    slug: "senior-relationship-manager-mea-dubai",
+    title: "Private Banker — MEA",
+    location: "Dubai",
+    market: "Middle East & Africa (MEA)",
+    seniority: "Director/ED/MD",
+    active: true,
+    summary:
+      "Cover UHNW/HNW MEA clients from Dubai; strong acquisition and cross-border expertise.",
+    body: FALLBACK_BODIES["senior-relationship-manager-mea-dubai"],
+  },
+  "senior-relationship-manager-mea-zurich": {
+    slug: "senior-relationship-manager-mea-zurich",
+    title: "Senior Relationship Manager — MEA",
+    location: "Zurich",
+    market: "Middle East & Africa (MEA)",
+    seniority: "Director/ED/MD",
+    active: true,
+    summary:
+      "Serve UHNW/HNW MEA clients via Zurich booking; advisory, credit and structuring.",
+    body: FALLBACK_BODIES["senior-relationship-manager-mea-zurich"],
+  },
+  "senior-relationship-manager-ch-onshore-zurich": {
+    slug: "senior-relationship-manager-ch-onshore-zurich",
+    title: "Senior Relationship Manager — CH Onshore",
+    location: "Zurich",
+    market: "Switzerland (Onshore)",
+    seniority: "Director/ED/MD",
+    active: true,
+    summary:
+      "UHNW/HNW Swiss-domiciled clients; Zurich booking centre; strong local network required.",
+    body: FALLBACK_BODIES["senior-relationship-manager-ch-onshore-zurich"],
+  },
+  "senior-relationship-manager-ch-onshore-lausanne": {
+    slug: "senior-relationship-manager-ch-onshore-lausanne",
+    title: "Senior Relationship Manager — CH Onshore",
+    location: "Lausanne",
+    market: "Switzerland (Onshore)",
+    seniority: "Director/ED/MD",
+    active: true,
+    summary:
+      "UHNW/HNW Swiss-domiciled clients; Romandie focus; strong local network required.",
+    body: FALLBACK_BODIES["senior-relationship-manager-ch-onshore-lausanne"],
+  },
+  "senior-relationship-manager-portugal-geneva": {
+    slug: "senior-relationship-manager-portugal-geneva",
+    title: "Senior Relationship Manager — Portugal",
+    location: "Geneva",
+    market: "Portugal (LatAm/Europe)",
+    seniority: "Director/ED/MD",
+    active: true,
+    summary:
+      "UHNW/HNW Portuguese clients and diaspora; Geneva booking centre; cross-border expertise.",
+    body: FALLBACK_BODIES["senior-relationship-manager-portugal-geneva"],
+  },
+};
 
-/** Pick the best available description for a job. */
-function getBestBody(job: Job): string | null {
-  // 1) API-provided body wins
-  if (job.body && job.body.trim().length > 0) return job.body.trim();
+/* ---------------- Data loading ---------------- */
+async function fetchAllJobs(): Promise<Job[]> {
+  const abs = process.env.NEXT_PUBLIC_SITE_URL
+    ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`
+    : null;
 
-  // 2) slug-based template
-  const bySlug = FALLBACK_BODIES[norm(job.slug)];
-  if (bySlug) return bySlug;
+  const tries: (RequestInfo | URL)[] = [];
+  if (abs) tries.push(abs);
+  tries.push("/api/jobs");
 
-  // 3) minimal fallback from summary
-  if (job.summary) {
-    return `**Overview**\n\n${job.summary}\n\nFor full details, please contact us confidentially.`;
+  for (const url of tries) {
+    try {
+      const r = await fetch(url, { cache: "no-store" });
+      if (!r.ok) continue;
+      const raw = await r.json();
+      const list: Job[] = Array.isArray(raw)
+        ? raw
+        : Array.isArray((raw as any)?.jobs)
+        ? (raw as any).jobs
+        : [];
+      if (Array.isArray(list) && list.length) return list;
+    } catch {
+      // ignore and try next
+    }
   }
 
-  return null;
+  // 🔁 If API is empty/unavailable, return our known jobs as a fallback source
+  return Object.values(KNOWN_JOBS);
 }
 
-/* ----------------- Metadata & Page ----------------- */
+/** Find a job by slug with a few robust fallbacks. */
+async function fetchJobBySlug(requestedSlug: string): Promise<Job | null> {
+  const all = await fetchAllJobs();
+  if (!all.length) return null;
 
-// NOTE: In this project, PageProps uses a Promise for params. Await it here.
+  const wanted = norm(requestedSlug);
+
+  // 1) exact slug match
+  let found = all.find((j) => norm(j.slug) === wanted);
+  if (found) return found;
+
+  // 2) startsWith/endsWith/contains fallback (handles minor differences)
+  found =
+    all.find((j) => norm(j.slug).startsWith(wanted)) ||
+    all.find((j) => wanted.startsWith(norm(j.slug))) ||
+    all.find((j) => norm(j.title).includes(wanted));
+  if (found) return found;
+
+  // 3) market/location heuristic
+  const parts = wanted.split("-");
+  const hints = new Set(parts);
+  found = all.find((j) => {
+    const hay = `${norm(j.title)}-${norm(j.location)}-${norm(j.market)}`;
+    const score = [...hints].reduce((acc, p) => (p && hay.includes(p) ? acc + 1 : acc), 0);
+    return score >= 2;
+  });
+  if (found) return found;
+
+  // 4) Final safety: look directly in known jobs map
+  const known = KNOWN_JOBS[wanted] || KNOWN_JOBS[Object.keys(KNOWN_JOBS).find((k) => norm(k) === wanted) ?? ""];
+  return known ?? null;
+}
+
+/* ---------------- Metadata & Page ---------------- */
 export async function generateMetadata({
   params,
 }: {
@@ -290,7 +343,10 @@ export default async function JobDetailPage({
       })
     : undefined;
 
-  const body = getBestBody(job);
+  const body =
+    job.body?.trim() ||
+    FALLBACK_BODIES[norm(job.slug)] ||
+    (job.summary ? `**Overview**\n\n${job.summary}\n\nFor full details, please contact us confidentially.` : "");
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
@@ -352,17 +408,7 @@ export default async function JobDetailPage({
 
         {/* Body */}
         <section className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6">
-          {body ? (
-            <MarkdownLite text={body} />
-          ) : (
-            <p className="text-neutral-300">
-              Full description available upon request.{" "}
-              <Link href="/contact" className="text-blue-400 underline-offset-4 hover:underline">
-                Contact us confidentially
-              </Link>
-              .
-            </p>
-          )}
+          {body ? <MarkdownLite text={body} /> : <p className="text-neutral-300">Details available upon request.</p>}
         </section>
 
         {/* Footer CTA */}
