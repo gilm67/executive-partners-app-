@@ -3,3 +3,54 @@
 
 :root { color-scheme: dark; }
 html, body { height: 100%; margin: 0; }
+
+/* ==== Mobile Contrast Fixes (non-invasive) ==== */
+@media (max-width: 768px) {
+  /* Nav / mobile menu on dark backgrounds */
+  header, nav { 
+    background: #0B0E13 !important;
+  }
+  header a, nav a, .mobile-nav a, .mobile-nav button {
+    color: #fff !important;
+    font-weight: 700 !important;
+  }
+
+  /* Any light panels on mobile (e.g., job detail "Apply confidentially") */
+  .bg-white, .bg-neutral-50, .bg-zinc-50, .bg-gray-50 {
+    color: #0B0E13 !important;       /* ensure dark text on light bg */
+  }
+  .bg-white a, .bg-neutral-50 a, .bg-zinc-50 a, .bg-gray-50 a {
+    color: #1D4ED8 !important;       /* readable link color on light bg */
+    font-weight: 600;
+  }
+
+  /* If a page uses a dark wrapper, keep cards legible */
+  .bg-\[\#0B0E13\] .card, 
+  .bg-\[\#0B0E13\] .panel, 
+  .bg-\[\#0B0E13\] .section,
+  .bg-\[\#0B0E13\] .prose {
+    color: #ffffff !important;
+  }
+
+  /* Forms (About/Contact) — better readability on dark */
+  form input, form textarea, form select {
+    background: rgba(255,255,255,0.06) !important;
+    color: #fff !important;
+    border-color: rgba(255,255,255,0.15) !important;
+  }
+  form ::placeholder {
+    color: rgba(255,255,255,0.65) !important;
+  }
+
+  /* Generic CTA sections often used for "Apply confidentially" */
+  .cta, .apply-cta, [data-cta="apply"] {
+    background: rgba(255,255,255,0.06) !important; /* subtle dark glass */
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+  }
+  .cta a, .apply-cta a, [data-cta="apply"] a {
+    color: #fff !important;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
