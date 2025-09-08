@@ -5,7 +5,7 @@ import { CardBtn } from "./components/CardBtn";
 export const metadata = {
   title: "Executive Partners — International & Swiss Private Banking",
   description:
-    "We connect top Private Bankers, Wealth Managers,Compliance Officers and senior executives with leading banks, EAMs, and family offices worldwide.",
+    "We connect top Private Bankers, Wealth Managers, Compliance Officers and senior executives with leading banks, EAMs, and family offices worldwide.",
 };
 
 /* ---------------- Page ---------------- */
@@ -104,6 +104,8 @@ export default function HomePage() {
 
 /* ---------------- components ---------------- */
 
+type BtnTone = "blue" | "green" | "neutral";
+
 function PrimaryBtn({
   href,
   children,
@@ -173,15 +175,12 @@ function FeaturedJobCard({
   summary: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5 hover:bg-white/[0.07] transition">
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/[0.07]">
       <h3 className="text-lg font-semibold text-white">{title}</h3>
       <p className="mt-1 text-sm text-neutral-400">{location}</p>
-      <p className="mt-2 text-sm text-neutral-300 line-clamp-3">{summary}</p>
+      <p className="mt-2 line-clamp-3 text-sm text-neutral-300">{summary}</p>
       <div className="mt-4">
-        <Link
-          href="/jobs"
-          className="text-sm font-medium text-blue-400 hover:underline"
-        >
+        <Link href="/jobs" className="text-sm font-medium text-blue-400 hover:underline">
           View details →
         </Link>
       </div>
