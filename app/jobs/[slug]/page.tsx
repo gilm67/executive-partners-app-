@@ -49,7 +49,7 @@ async function fetchAllJobs(): Promise<Job[]> {
       const r = await fetch(url, { cache: "no-store" });
       if (!r.ok) continue;
       const raw = await r.json();
-      const list: Job[] = Array.isArray(raw) ? raw : Array.isArray(raw?.jobs) ? raw.jobs : [];
+      const list: Job[] = Array.isArray(raw) ? raw : Array.isArray((raw as any)?.jobs) ? (raw as any).jobs : [];
       if (Array.isArray(list) && list.length) return list;
     } catch {
       // ignore and try next
@@ -240,8 +240,14 @@ function getBestBody(job: Job): string | null {
 
 /* ----------------- Metadata & Page ----------------- */
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const job = await fetchJobBySlug(params.slug);
+// NOTE: In this project, PageProps uses a Promise for params. Await it here.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const job = await fetchJobBySlug(slug);
   const title = job?.title ? `${job.title} | Executive Partners` : "Role | Executive Partners";
   const description =
     job?.summary ??
@@ -249,8 +255,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return { title, description };
 }
 
-export default async function JobDetailPage({ params }: { params: { slug: string } }) {
-  const job = await fetchJobBySlug(params.slug);
+export default async function JobDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const job = await fetchJobBySlug(slug);
 
   if (!job || job.active === false || HIDDEN_SLUGS.has(job.slug)) {
     return (
