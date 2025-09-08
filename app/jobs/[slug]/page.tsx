@@ -25,22 +25,42 @@ const HIDDEN_SLUGS = new Set<string>([
 
 async function fetchJob(slug: string): Promise<Job | null> {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "";
-  const qs = new URLSearchParams({ slug }).toString();
 
-  const try1 = await fetch(`${base}/api/jobs?${qs}`, { cache: "no-store" }).catch(() => null);
-  if (try1?.ok) {
-    const arr = (await try1.json()) as Job[] | Job;
-    const list = Array.isArray(arr) ? arr : [arr];
-    const job = list.find((j) => j?.slug === slug) ?? list[0];
-    return job ?? null;
-  }
+  // Try multiple API shapes in order of most specific → broadest,
+  // and absolute → relative to work in preview/prod/local
+  const endpoints = [
+    `${base}/api/jobs/${encodeURIComponent(slug)}`,
+    `/api/jobs/${encodeURIComponent(slug)}`,
+    `${base}/api/jobs?slug=${encodeURIComponent(slug)}`,
+    `/api/jobs?slug=${encodeURIComponent(slug)}`,
+    `${base}/api/jobs`,
+    `/api/jobs`,
+  ];
 
-  const try2 = await fetch(`/api/jobs?${qs}`, { cache: "no-store" }).catch(() => null);
-  if (try2?.ok) {
-    const arr = (await try2.json()) as Job[] | Job;
-    const list = Array.isArray(arr) ? arr : [arr];
-    const job = list.find((j) => j?.slug === slug) ?? list[0];
-    return job ?? null;
+  for (const url of endpoints) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) continue;
+
+      const data = await res.json();
+
+      // Single job object
+      if (data && !Array.isArray(data) && typeof data === "object") {
+        const j = data as Job;
+        if (j?.slug) return j;
+      }
+
+      // Array of jobs: find by slug
+      if (Array.isArray(data)) {
+        const list = data as Job[];
+        const found = list.find((j) => j?.slug === slug);
+        if (found) return found;
+        // Sometimes the API returns one-item arrays when filtering
+        if (list.length === 1 && list[0]?.title) return list[0];
+      }
+    } catch {
+      // ignore and try next
+    }
   }
 
   return null;
@@ -68,7 +88,7 @@ export default async function JobDetailPage({
   const { slug } = await params;
   const job = await fetchJob(slug);
 
-  if (!job || job.active === false || HIDDEN_SLUGS.has(job.slug)) {
+  if (!job || HIDDEN_SLUGS.has(job.slug)) {
     return (
       <main className="relative min-h-screen bg-[#0B0E13] text-white">
         <div className="mx-auto w-full max-w-5xl px-4 py-16">
