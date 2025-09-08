@@ -174,3 +174,40 @@ header a[href="/"] {
   color: #ffffff !important;
   font-weight: 700 !important;
 }
+
+/* ===== Force white + bold text in the Home header & dropdown (mobile) ===== */
+@media (max-width: 768px) {
+  /* Header brand/link + Menu trigger */
+  header a, header button {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+  header button[aria-haspopup="menu"],
+  header button[aria-controls],
+  header [data-state="open"] button {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+
+  /* Any link/button inside the opened menu/sheet/drawer/portal */
+  [role="menu"] a, [role="menu"] button,
+  [role="dialog"] a, [role="dialog"] button,
+  [data-radix-portal] a, [data-radix-portal] button,
+  [data-state="open"] a, [data-state="open"] button {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+
+  /* Nuke Tailwind blue text utilities that leak into the menu */
+  [class*="text-blue-"], .text-primary, .hover\:text-primary:hover,
+  .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+}
+
+/* Always keep the "Executive Partners" brand link white/bold on dark bg */
+header a[href="/"] {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
