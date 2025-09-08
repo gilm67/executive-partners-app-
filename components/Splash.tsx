@@ -2,16 +2,31 @@
 
 import { useEffect, useState } from "react";
 
+/**
+ * Ken Burns crossfade — slower, text-free.
+ * - 4.5s hold (image still)
+ * - 4.0s gentle zoom (Ken Burns)
+ * - 3.0s fade to homepage
+ * Total ≈ 7.5s. Only shows once per session.
+ */
+
 const SHOWN_KEY = "ep.splash.shown";
+
+// timings (ms)
+const HOLD_MS = 4500;     // still image before animation
+const ZOOM_MS = 4000;     // ken burns zoom duration
+const FADE_MS = 3000;     // fade-out duration
+const OVERLAP_MS = 800;   // start fade slightly before zoom ends
 
 export default function Splash() {
   const [visible, setVisible] = useState(true);
-  const [animate, setAnimate] = useState(false);
+  const [zoom, setZoom] = useState(false);
+  const [hide, setHide] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Skip if already shown in this session
+    // Don’t show again in the same session
     if (sessionStorage.getItem(SHOWN_KEY) === "1") {
       setVisible(false);
       return;
@@ -20,19 +35,36 @@ export default function Splash() {
     const prefersReduced =
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
-    // Balanced: 3.5s hold, then ~2s Ken Burns crossfade
-    const holdMs = prefersReduced ? 500 : 3500;
-    const animMs = prefersReduced ? 200 : 2000;
+    if (prefersReduced) {
+      // Short, accessibility-friendly version
+      const t1 = window.setTimeout(() => setHide(true), 600);
+      const t2 = window.setTimeout(() => {
+        setVisible(false);
+        sessionStorage.setItem(SHOWN_KEY, "1");
+      }, 1200);
+      return () => {
+        window.clearTimeout(t1);
+        window.clearTimeout(t2);
+      };
+    }
 
-    const fadeTimer = window.setTimeout(() => setAnimate(true), holdMs);
-    const hideTimer = window.setTimeout(() => {
+    // Start zoom after the hold
+    const zoomTimer = window.setTimeout(() => setZoom(true), HOLD_MS);
+
+    // Start fade slightly before zoom ends
+    const fadeStart = HOLD_MS + Math.max(0, ZOOM_MS - OVERLAP_MS);
+    const hideTimer = window.setTimeout(() => setHide(true), fadeStart);
+
+    // Fully remove after fade completes
+    const removeTimer = window.setTimeout(() => {
       setVisible(false);
       sessionStorage.setItem(SHOWN_KEY, "1");
-    }, holdMs + animMs);
+    }, fadeStart + FADE_MS);
 
     return () => {
-      window.clearTimeout(fadeTimer);
+      window.clearTimeout(zoomTimer);
       window.clearTimeout(hideTimer);
+      window.clearTimeout(removeTimer);
     };
   }, []);
 
@@ -41,16 +73,14 @@ export default function Splash() {
   return (
     <div
       aria-hidden="true"
-      className={`fixed inset-0 z-[1000] pointer-events-none select-none splash-gradient kenburns ${
-        animate ? "anim" : ""
-      }`}
+      className={[
+        "splash-base",
+        "splash-gradient",      // optional depth overlay
+        zoom ? "splash-zoom" : "",
+        hide ? "splash-hide" : "",
+      ].join(" ")}
       style={{
-        backgroundImage: "url(/ep-splash.png)",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundColor: "#0B0E13",
-        transitionProperty: "transform, opacity",
+        backgroundImage: `url(/ep-splash.png)`, // ensure this file exists in /public
       }}
     />
   );

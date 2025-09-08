@@ -141,39 +141,56 @@ a[role="button"].bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
 header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
 
 /* =========================================================
-   Splash — Ken Burns crossfade (balanced: 3.5s hold + 2s anim)
+   Splash — Ken Burns crossfade (slower, text-free)
+   Timings: 4.5s hold, 4s zoom, 3s fade-out (total ~7.5s)
    ========================================================= */
 
-/* Optional soft overlay for depth (kept from previous) */
+/* Keyframes */
+@keyframes kbZoomSlow {
+  0%   { transform: scale(1.04); }
+  100% { transform: scale(1.12); }
+}
+@keyframes splashFadeOutSlow {
+  0%   { opacity: 0.96; }
+  100% { opacity: 0; }
+}
+
+/* Base splash frame (no text, just image) */
+.splash-base {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #0B0E13;
+}
+
+/* Zoom (Ken Burns) */
+.splash-zoom {
+  animation: kbZoomSlow 4000ms ease-out forwards;
+}
+
+/* Fade out to reveal site */
+.splash-hide {
+  animation: splashFadeOutSlow 3000ms ease-in forwards;
+}
+
+/* Optional depth overlay */
 .splash-gradient::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(1200px 420px at 18% -10%, rgba(0,0,0,.35), rgba(0,0,0,0)),
-              linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.15) 40%, rgba(0,0,0,.4));
+  background:
+    radial-gradient(1200px 420px at 18% -10%, rgba(0,0,0,.35), rgba(0,0,0,0)),
+    linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.15) 40%, rgba(0,0,0,.4));
   pointer-events: none;
 }
 
-/* Ken Burns base (at rest) */
-.kenburns {
-  transform: scale(1);
-  opacity: 1;
-  transition:
-    transform 2000ms ease-in-out,
-    opacity 800ms ease-in-out 1600ms; /* fade starts near the end */
-}
-
-/* During exit: slight zoom + fade out */
-.kenburns.anim {
-  transform: scale(1.06);
-  opacity: 0;
-}
-
-/* Respect reduced motion */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .kenburns,
-  .kenburns.anim {
-    transform: none !important;
-    transition: opacity 200ms ease-in-out !important;
-  }
+  .splash-zoom, .splash-hide { animation: none !important; }
 }
