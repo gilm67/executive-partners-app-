@@ -1,20 +1,32 @@
-// middleware.ts
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+// Slugs to erase permanently
+const GONE = new Set<string>([
+  '/jobs/senior-relationship-manager-ch-onshore-4',
+  '/jobs/senior-relationship-manager-brazil-2',
+  '/jobs/private-banker-mea-2',
+]);
 
 export function middleware(req: NextRequest) {
-  const url = new URL(req.url);
+  const { pathname } = new URL(req.url);
 
-  // 🚫 DO NOT redirect /bp-simulator — let Next.js serve our page
-  if (url.pathname === "/bp-simulator" || url.pathname === "/bp-simulator/") {
-    return NextResponse.next();
+  if (GONE.has(pathname)) {
+    // 410 Gone + noindex so search engines drop it quickly
+    return new NextResponse('Gone', {
+      status: 410,
+      headers: {
+        'content-type': 'text/plain; charset=utf-8',
+        'x-robots-tag': 'noindex, nofollow',
+        'cache-control': 'no-store',
+      },
+    });
   }
 
-  // ✅ Default behavior for everything else
   return NextResponse.next();
 }
 
-// Keep matcher so middleware still runs, but no redirect is applied
+// Only run middleware on /jobs/* routes
 export const config = {
-  matcher: ["/:path*"], // or remove entirely if you don’t need middleware
+  matcher: ['/jobs/:path*'],
 };
