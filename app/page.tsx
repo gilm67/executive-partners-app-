@@ -143,7 +143,7 @@ function PrimaryBtn({
 }) {
   const cls =
     variant === "blue"
-      ? "bg-[#1D4ED8] !text-white text-white !text-white text-white hover:bg-[#1E40AF] text-white shadow-[0_8px_30px_rgba(29,78,216,.35)]"
+      ? "bg-[#1D4ED8] !text-white text-white !text-white text-white hover:bg-[#1E40AF] text-white shadow-[0_8px_30px_rgba(29,78,216,.35)] !text-white text-white font-semibold"
       : variant === "outline"
       ? "border border-white/15 bg-white/5 hover:bg-white/10 text-white"
       : "border border-white/10 bg-transparent hover:bg-white/5 text-white";
@@ -231,7 +231,7 @@ function FeaturedRoles({ featured }: { featured: Job[] }) {
     <section className="mt-14">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Featured Roles</h2>
-        <Link href="/jobs" className="text-sm font-medium text-blue-400 hover:underline">
+        <Link href="/jobs" className="text-sm font-medium text-white hover:underline">
           View all jobs →
         </Link>
       </div>

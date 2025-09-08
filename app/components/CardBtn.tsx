@@ -16,7 +16,7 @@ interface CardBtnProps {
 const TONE_STYLES: Record<Tone, string> = {
   // Rich, branded tones used across landing + jobs
   blue:
-    "bg-[#1D4ED8] !!text-white text-white !text-white text-white hover:bg-[#1E40AF] !text-white text-white shadow-[0_8px_30px_rgba(29,78,216,.35)]",
+    "bg-[#1D4ED8] !!text-white text-white !text-white text-white hover:bg-[#1E40AF] !text-white text-white shadow-[0_8px_30px_rgba(29,78,216,.35)] !text-white text-white font-semibold",
   green:
     "bg-emerald-600 hover:bg-emerald-700 !text-white text-white shadow-[0_8px_30px_rgba(16,185,129,.30)]",
   // Neutral = subtle outline/ghost (matches cards)
