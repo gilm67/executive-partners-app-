@@ -1,6 +1,7 @@
 // app/page.tsx
 import Link from "next/link";
 import { CardBtn } from "./components/CardBtn";
+import { MapPin, ChevronRight } from "lucide-react";
 
 export const metadata = {
   title: "Executive Partners — International & Swiss Private Banking",
@@ -63,32 +64,39 @@ export default function HomePage() {
           />
         </div>
 
-        {/* featured jobs preview */}
-        <div className="mt-14">
+        {/* featured jobs – polished */}
+        <section className="mt-14">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">Featured Roles</h2>
             <Link href="/jobs" className="text-sm font-medium text-blue-400 hover:underline">
               View all jobs →
             </Link>
           </div>
+
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             <FeaturedJobCard
+              href="/jobs"
+              eyebrow="Switzerland (Onshore)"
               title="Senior Relationship Manager — CH Onshore"
               location="Geneva"
               summary="UHNW/HNW Swiss-domiciled clients; Geneva booking centre; strong local network required."
             />
             <FeaturedJobCard
+              href="/jobs"
+              eyebrow="Middle East & Africa (MEA)"
               title="Private Banker — MEA"
               location="Dubai"
               summary="Cover UHNW/HNW MEA clients from Dubai; strong acquisition and cross-border expertise."
             />
             <FeaturedJobCard
+              href="/jobs"
+              eyebrow="Brazil (LatAm)"
               title="Senior Relationship Manager — Brazil"
               location="Zurich or Geneva"
               summary="Develop and manage HNW/UHNW Brazilian clients; full private banking advisory and cross-border expertise."
             />
           </div>
-        </div>
+        </section>
 
         {/* footer */}
         <div className="mt-16 flex items-center justify-between text-sm text-neutral-400">
@@ -165,25 +173,65 @@ function FeatureCard({
   );
 }
 
+/* ---------- Featured Roles cards ---------- */
+
 function FeaturedJobCard({
+  href,
+  eyebrow,
   title,
   location,
   summary,
 }: {
+  href: string;
+  eyebrow: string;
   title: string;
   location: string;
   summary: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/[0.07]">
-      <h3 className="text-lg font-semibold text-white">{title}</h3>
-      <p className="mt-1 text-sm text-neutral-400">{location}</p>
-      <p className="mt-2 line-clamp-3 text-sm text-neutral-300">{summary}</p>
-      <div className="mt-4">
-        <Link href="/jobs" className="text-sm font-medium text-blue-400 hover:underline">
-          View details →
-        </Link>
+    <Link
+      href={href}
+      className="
+        group relative block h-full overflow-hidden rounded-2xl p-[1px]
+        [background:linear-gradient(180deg,rgba(255,255,255,.25),rgba(255,255,255,.08))]
+        hover:[background:linear-gradient(180deg,rgba(99,102,241,.55),rgba(34,197,94,.35))]
+        transition-transform duration-200 hover:-translate-y-1
+      "
+    >
+      {/* card body */}
+      <div className="flex h-full flex-col rounded-[15px] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-sm">
+        {/* accent bar */}
+        <div className="h-1 w-20 rounded-full bg-gradient-to-r from-indigo-400 via-sky-400 to-emerald-400 opacity-80" />
+
+        {/* eyebrow + title */}
+        <div className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-white/70">
+          {eyebrow}
+        </div>
+        <h3 className="mt-1 text-lg font-semibold leading-snug text-white">
+          {title}
+        </h3>
+
+        {/* meta */}
+        <div className="mt-2 inline-flex items-center gap-2 text-sm text-white/80">
+          <MapPin className="h-4 w-4 opacity-80" />
+          <span>{location}</span>
+        </div>
+
+        {/* summary */}
+        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-neutral-300">
+          {summary}
+        </p>
+
+        {/* footer CTA row */}
+        <div className="mt-auto pt-4">
+          <span className="inline-flex items-center gap-1 text-sm font-semibold text-blue-400 group-hover:underline">
+            View details <ChevronRight className="h-4 w-4" />
+          </span>
+        </div>
       </div>
-    </div>
+
+      {/* soft hover glow */}
+      <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 blur-xl transition-opacity duration-200 group-hover:opacity-30 [background:radial-gradient(500px_120px_at_10%_0%,rgba(59,130,246,.6),transparent_60%),radial-gradient(500px_120px_at_100%_0%,rgba(34,197,94,.55),transparent_60%)]" />
+    </Link>
   );
 }
