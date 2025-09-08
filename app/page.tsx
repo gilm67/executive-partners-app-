@@ -1,17 +1,67 @@
 // app/page.tsx
 import Link from "next/link";
 import { CardBtn } from "./components/CardBtn";
-import { MapPin, ChevronRight } from "lucide-react";
+
+/* ------------ Types & helpers ------------ */
+
+type Job = {
+  id?: string;
+  title: string;
+  location: string;
+  market?: string;
+  seniority?: string;
+  summary?: string;
+  slug: string;
+  confidential?: boolean;
+  active?: boolean;
+  createdAt?: string;
+};
+
+// Hide retired/duplicate slugs if they ever appear in the API
+const HIDDEN_SLUGS = new Set<string>([
+  "senior-relationship-manager-ch-onshore-4",
+  "senior-relationship-manager-brazil-2",
+  "private-banker-mea-2",
+]);
+
+async function getFeaturedJobs(): Promise<Job[]> {
+  const qs = new URLSearchParams({
+    active: "true",
+    sort: "newest",
+    limit: "6", // grab a few, we’ll pick the best 3
+  }).toString();
+
+  const abs = (process.env.NEXT_PUBLIC_SITE_URL ?? "") + `/api/jobs?${qs}`;
+
+  // Try absolute first (works in prod/preview), then relative
+  const r1 = await fetch(abs, { cache: "no-store" }).catch(() => null);
+  const data =
+    r1?.ok
+      ? await r1.json()
+      : await (async () => {
+          const r2 = await fetch(`/api/jobs?${qs}`, { cache: "no-store" }).catch(() => null);
+          if (!r2?.ok) return [];
+          return r2.json();
+        })();
+
+  // Filter and pick the top 3
+  return (Array.isArray(data) ? data : [])
+    .filter((j) => j?.active !== false && !HIDDEN_SLUGS.has(j.slug))
+    .slice(0, 3);
+}
 
 export const metadata = {
   title: "Executive Partners — International & Swiss Private Banking",
   description:
-    "We connect top Private Bankers, Wealth Managers, Compliance Officers and senior executives with leading banks, EAMs, and family offices worldwide.",
+    "We connect top Private Bankers, Wealth Managers,Compliance Officers and senior executives with leading banks, EAMs, and family offices worldwide.",
 };
 
 /* ---------------- Page ---------------- */
 
-export default function HomePage() {
+export default async function HomePage() {
+  // load live featured roles (with fallback below if empty)
+  const featured = await getFeaturedJobs();
+
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
       {/* background glow */}
@@ -64,39 +114,8 @@ export default function HomePage() {
           />
         </div>
 
-        {/* featured jobs – polished */}
-        <section className="mt-14">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Featured Roles</h2>
-            <Link href="/jobs" className="text-sm font-medium text-blue-400 hover:underline">
-              View all jobs →
-            </Link>
-          </div>
-
-          <div className="mt-6 grid gap-6 md:grid-cols-3">
-            <FeaturedJobCard
-              href="/jobs"
-              eyebrow="Switzerland (Onshore)"
-              title="Senior Relationship Manager — CH Onshore"
-              location="Geneva"
-              summary="UHNW/HNW Swiss-domiciled clients; Geneva booking centre; strong local network required."
-            />
-            <FeaturedJobCard
-              href="/jobs"
-              eyebrow="Middle East & Africa (MEA)"
-              title="Private Banker — MEA"
-              location="Dubai"
-              summary="Cover UHNW/HNW MEA clients from Dubai; strong acquisition and cross-border expertise."
-            />
-            <FeaturedJobCard
-              href="/jobs"
-              eyebrow="Brazil (LatAm)"
-              title="Senior Relationship Manager — Brazil"
-              location="Zurich or Geneva"
-              summary="Develop and manage HNW/UHNW Brazilian clients; full private banking advisory and cross-border expertise."
-            />
-          </div>
-        </section>
+        {/* featured jobs – live data with elegant layout */}
+        <FeaturedRoles featured={featured} />
 
         {/* footer */}
         <div className="mt-16 flex items-center justify-between text-sm text-neutral-400">
@@ -111,8 +130,6 @@ export default function HomePage() {
 }
 
 /* ---------------- components ---------------- */
-
-type BtnTone = "blue" | "green" | "neutral";
 
 function PrimaryBtn({
   href,
@@ -138,6 +155,8 @@ function PrimaryBtn({
     </Link>
   );
 }
+
+type BtnTone = "blue" | "green" | "neutral";
 
 function FeatureCard({
   badge,
@@ -173,65 +192,75 @@ function FeatureCard({
   );
 }
 
-/* ---------- Featured Roles cards ---------- */
+/* ---------- Featured Roles (live) ---------- */
 
-function FeaturedJobCard({
-  href,
-  eyebrow,
-  title,
-  location,
-  summary,
-}: {
-  href: string;
-  eyebrow: string;
-  title: string;
-  location: string;
-  summary: string;
-}) {
+function FeaturedRoles({ featured }: { featured: Job[] }) {
+  const hasLive = featured.length > 0;
+
+  const items: Job[] = hasLive
+    ? featured
+    : [
+        {
+          title: "Senior Relationship Manager — CH Onshore",
+          location: "Geneva",
+          summary:
+            "UHNW/HNW Swiss-domiciled clients; Geneva booking centre; strong local network required.",
+          slug: "senior-relationship-manager-ch-onshore-geneva",
+          active: true,
+        },
+        {
+          title: "Private Banker — MEA",
+          location: "Dubai",
+          summary:
+            "Cover UHNW/HNW MEA clients from Dubai; strong acquisition and cross-border expertise.",
+          slug: "senior-relationship-manager-mea-dubai",
+          active: true,
+        },
+        {
+          title: "Senior Relationship Manager — Brazil",
+          location: "Zurich or Geneva",
+          summary:
+            "Develop and manage HNW/UHNW Brazilian clients; full private banking advisory and cross-border expertise.",
+          slug: "senior-relationship-manager-brazil-ch",
+          active: true,
+        },
+      ];
+
   return (
-    <Link
-      href={href}
-      className="
-        group relative block h-full overflow-hidden rounded-2xl p-[1px]
-        [background:linear-gradient(180deg,rgba(255,255,255,.25),rgba(255,255,255,.08))]
-        hover:[background:linear-gradient(180deg,rgba(99,102,241,.55),rgba(34,197,94,.35))]
-        transition-transform duration-200 hover:-translate-y-1
-      "
-    >
-      {/* card body */}
-      <div className="flex h-full flex-col rounded-[15px] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-sm">
-        {/* accent bar */}
-        <div className="h-1 w-20 rounded-full bg-gradient-to-r from-indigo-400 via-sky-400 to-emerald-400 opacity-80" />
-
-        {/* eyebrow + title */}
-        <div className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-white/70">
-          {eyebrow}
-        </div>
-        <h3 className="mt-1 text-lg font-semibold leading-snug text-white">
-          {title}
-        </h3>
-
-        {/* meta */}
-        <div className="mt-2 inline-flex items-center gap-2 text-sm text-white/80">
-          <MapPin className="h-4 w-4 opacity-80" />
-          <span>{location}</span>
-        </div>
-
-        {/* summary */}
-        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-neutral-300">
-          {summary}
-        </p>
-
-        {/* footer CTA row */}
-        <div className="mt-auto pt-4">
-          <span className="inline-flex items-center gap-1 text-sm font-semibold text-blue-400 group-hover:underline">
-            View details <ChevronRight className="h-4 w-4" />
-          </span>
-        </div>
+    <section className="mt-14">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Featured Roles</h2>
+        <Link href="/jobs" className="text-sm font-medium text-blue-400 hover:underline">
+          View all jobs →
+        </Link>
       </div>
 
-      {/* soft hover glow */}
-      <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 blur-xl transition-opacity duration-200 group-hover:opacity-30 [background:radial-gradient(500px_120px_at_10%_0%,rgba(59,130,246,.6),transparent_60%),radial-gradient(500px_120px_at_100%_0%,rgba(34,197,94,.55),transparent_60%)]" />
-    </Link>
+      {/* Premium row of three cards, aligned bottoms, elegant hover */}
+      <div className="mt-6 grid gap-6 md:grid-cols-3">
+        {items.map((job) => (
+          <article
+            key={job.slug}
+            className="group relative flex min-h-[220px] flex-col rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.03] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)] transition hover:shadow-[0_12px_50px_rgba(0,0,0,.50)]"
+          >
+            {/* soft beam on hover */}
+            <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-20 [background:radial-gradient(120%_60%_at_50%_-10%,rgba(59,130,246,1),transparent_60%)]" />
+            <div className="relative">
+              <h3 className="text-lg font-semibold text-white">{job.title}</h3>
+              <p className="mt-1 text-sm text-white/70">{job.location}</p>
+              <p className="mt-2 line-clamp-3 text-sm text-neutral-300">{job.summary}</p>
+            </div>
+
+            <div className="mt-auto pt-4">
+              <Link
+                href={`/jobs/${job.slug}`}
+                className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                View details →
+              </Link>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
