@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import ClientInsights from "./ClientInsights";
 
-cat > app/insights/page.tsx <<'TS'
-import type { Metadata } from "next";
-import ClientInsights from "./ClientInsights";
-
 type Item = {
   title: string;
   date: string;
