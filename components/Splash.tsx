@@ -3,10 +3,8 @@
 import { useEffect, useState } from "react";
 
 const SHOWN_KEY = "ep.splash.shown";
-
-// Tweak these two numbers to taste
-const HOLD_MS = 3500;          // how long the splash sits before reveal starts
-const REVEAL_MS = 2600;        // animation length (longer = slower, more luxurious)
+const HOLD_MS = 3500;   // wait before reveal (adjust here)
+const REVEAL_MS = 2600; // animation length (slows near end)
 
 export default function Splash() {
   const [visible, setVisible] = useState(true);
@@ -15,7 +13,6 @@ export default function Splash() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Don’t show twice per session
     if (sessionStorage.getItem(SHOWN_KEY) === "1") {
       setVisible(false);
       return;
@@ -28,16 +25,13 @@ export default function Splash() {
     const hold = prefersReduced ? 500 : HOLD_MS;
     const revealDur = prefersReduced ? 400 : REVEAL_MS;
 
-    const revealTimer = window.setTimeout(() => setReveal(true), hold);
-    const hideTimer = window.setTimeout(() => {
+    const t1 = window.setTimeout(() => setReveal(true), hold);
+    const t2 = window.setTimeout(() => {
       setVisible(false);
       sessionStorage.setItem(SHOWN_KEY, "1");
-    }, hold + revealDur + 200); // small buffer after animation end
+    }, hold + revealDur + 200);
 
-    return () => {
-      window.clearTimeout(revealTimer);
-      window.clearTimeout(hideTimer);
-    };
+    return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
   }, []);
 
   if (!visible) return null;
@@ -54,15 +48,8 @@ export default function Splash() {
         backgroundColor: "#0B0E13",
       }}
     >
-      {/* two “curtains” that animate away */}
-      <div
-        className={`curtain top-half ${reveal ? "slide-up" : ""}`}
-        style={{ animationDuration: `${REVEAL_MS}ms` }}
-      />
-      <div
-        className={`curtain bottom-half ${reveal ? "slide-down" : ""}`}
-        style={{ animationDuration: `${REVEAL_MS}ms` }}
-      />
+      <div className="curtain top-half" style={{ animationDuration: `${REVEAL_MS}ms` }} {...(reveal && { className: "curtain top-half slide-up" })} />
+      <div className="curtain bottom-half" style={{ animationDuration: `${REVEAL_MS}ms` }} {...(reveal && { className: "curtain bottom-half slide-down" })} />
     </div>
   );
 }
