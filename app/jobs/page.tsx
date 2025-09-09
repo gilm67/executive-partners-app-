@@ -320,10 +320,10 @@ function FilterBar({
 export default async function JobsPage({
   searchParams,
 }: {
-  // ✅ Important: do NOT type this as Promise<...>
-  searchParams?: Record<string, string | string[]>;
+  // ✅ Next 15 expects a Promise here; await it below
+  searchParams?: Promise<Record<string, string | string[]>>;
 }) {
-  const sp = searchParams ?? {};
+  const sp = (await searchParams) ?? {};
   const q = typeof sp.q === "string" ? sp.q : "";
   const market = typeof sp.market === "string" ? sp.market : "";
   const location = typeof sp.location === "string" ? sp.location : "";
