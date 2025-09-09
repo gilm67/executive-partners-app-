@@ -30,7 +30,7 @@ html, body { height: 100%; margin: 0; }
     color: #ffffff !important;
   }
 
-  /* Forms (About/Contact) — better readability on dark */
+  /* Forms (About/Contact) */
   form input, form textarea, form select {
     background: rgba(255,255,255,0.06) !important;
     color: #fff !important;
@@ -38,7 +38,7 @@ html, body { height: 100%; margin: 0; }
   }
   form ::placeholder { color: rgba(255,255,255,0.65) !important; }
 
-  /* Generic CTA sections often used for "Apply confidentially" */
+  /* Generic CTA sections */
   .cta, .apply-cta, [data-cta="apply"] {
     background: rgba(255,255,255,0.06) !important;
     color: #fff !important;
@@ -60,7 +60,6 @@ html, body { height: 100%; margin: 0; }
     text-shadow: 0 1px 2px rgba(0,0,0,.35);
   }
 
-  /* Ensure surface blocks don’t flip to pure white on phone UAs */
   .mobile-dark-surface,
   .card, .panel, .rounded-2xl, .shadow-sm, .shadow,
   .bg-white, .bg-gray-50, .bg-neutral-50 {
@@ -68,7 +67,6 @@ html, body { height: 100%; margin: 0; }
     border-color: rgba(255,255,255,.10) !important;
   }
 
-  /* Body copy readability on About/Contact/Jobs descriptive blocks */
   .mobile-readable, .prose, .content, .content p, .content li,
   .text-neutral-500, .text-neutral-600, .text-gray-500, .text-gray-600 {
     color: rgba(255,255,255,.90) !important;
@@ -77,14 +75,12 @@ html, body { height: 100%; margin: 0; }
     color: rgba(255,255,255,.75) !important;
   }
 
-  /* Buttons with outline/ghost variants on dark */
   .btn-outline, .btn-ghost,
   .border-white\/10, .border-white\/15, .border-gray-200 {
     border-color: rgba(255,255,255,.25) !important;
     color: #fff !important;
   }
 
-  /* “Apply confidentially” / CTA style on small screens */
   .apply-cta, a[href*="apply"], a[href*="contact"] {
     background: #1D4ED8 !important;
     color: #fff !important;
@@ -150,9 +146,28 @@ a[role="button"].bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
 header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
 
 /* =========================================================
-   Splash — Cinematic Rise + Deblur + Fade-out (stable)
+   Splash — Cinematic Rise + Deblur (stable)
    ========================================================= */
 
+/* Splash root & image — so we can tune mobile image fit */
+.splash-root {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  background-color: #0B0E13;
+}
+.splash-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* desktop: full-bleed luxury */
+}
+
+/* Cinematic motion on the whole splash */
 .cinematic-rise {
   transform: translateY(8vh);
   filter: blur(8px);
@@ -167,13 +182,8 @@ header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
   filter: blur(0);
   opacity: 1;
 }
-/* Smooth exit after linger */
-.cinematic-rise.exiting {
-  opacity: 0;
-  transition: opacity 1000ms ease-in-out;
-}
 
-/* Subtle splash overlay for depth */
+/* Depth overlay (unchanged) */
 .splash-gradient::after {
   content: "";
   position: absolute;
@@ -184,7 +194,19 @@ header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
   pointer-events: none;
 }
 
-/* Reduced motion: remove animation */
+/* ===== Mobile-only: keep the whole image visible ===== */
+@media (max-width: 640px) {
+  .splash-img {
+    object-fit: contain;      /* show full image on phones */
+    background-color: #0B0E13;/* fill letterbox with brand dark */
+  }
+  .cinematic-rise {
+    transform: translateY(5vh); /* gentler entrance on phones */
+    filter: blur(4px);
+  }
+}
+
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .cinematic-rise {
     transform: translateY(0) !important;
