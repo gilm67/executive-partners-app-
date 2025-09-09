@@ -1,20 +1,36 @@
 /* app/globals.css */
 @import "tailwindcss";
 
-/* keep system dark so mobile UI bars match */
 :root { color-scheme: dark; }
 html, body { height: 100%; margin: 0; }
 
-/* ---------- Mobile contrast & readability (unchanged from before) ---------- */
+/* ==== Mobile Contrast Fixes (non-invasive) ==== */
 @media (max-width: 768px) {
+  /* Nav / mobile menu on dark backgrounds */
   header, nav { background: #0B0E13 !important; }
-  header a, nav a, .mobile-nav a, .mobile-nav button { color: #fff !important; font-weight: 700 !important; }
+  header a, nav a, .mobile-nav a, .mobile-nav button {
+    color: #fff !important;
+    font-weight: 700 !important;
+  }
 
-  .bg-white, .bg-neutral-50, .bg-zinc-50, .bg-gray-50 { color: #0B0E13 !important; }
-  .bg-white a, .bg-neutral-50 a, .bg-zinc-50 a, .bg-gray-50 a { color: #1D4ED8 !important; font-weight: 600; }
+  /* Any light panels on mobile (e.g., job detail "Apply confidentially") */
+  .bg-white, .bg-neutral-50, .bg-zinc-50, .bg-gray-50 {
+    color: #0B0E13 !important;
+  }
+  .bg-white a, .bg-neutral-50 a, .bg-zinc-50 a, .bg-gray-50 a {
+    color: #1D4ED8 !important;
+    font-weight: 600;
+  }
 
-  .bg-\[\#0B0E13\] .card, .bg-\[\#0B0E13\] .panel, .bg-\[\#0B0E13\] .section, .bg-\[\#0B0E13\] .prose { color: #fff !important; }
+  /* If a page uses a dark wrapper, keep cards legible */
+  .bg-\[\#0B0E13\] .card,
+  .bg-\[\#0B0E13\] .panel,
+  .bg-\[\#0B0E13\] .section,
+  .bg-\[\#0B0E13\] .prose {
+    color: #ffffff !important;
+  }
 
+  /* Forms (About/Contact) — better readability on dark */
   form input, form textarea, form select {
     background: rgba(255,255,255,0.06) !important;
     color: #fff !important;
@@ -22,104 +38,153 @@ html, body { height: 100%; margin: 0; }
   }
   form ::placeholder { color: rgba(255,255,255,0.65) !important; }
 
+  /* Generic CTA sections often used for "Apply confidentially" */
   .cta, .apply-cta, [data-cta="apply"] {
     background: rgba(255,255,255,0.06) !important;
     color: #fff !important;
     border: 1px solid rgba(255,255,255,0.12) !important;
   }
-  .cta a, .apply-cta a, [data-cta="apply"] a { color: #fff !important; text-decoration: underline; text-underline-offset: 2px; }
+  .cta a, .apply-cta a, [data-cta="apply"] a {
+    color: #fff !important;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
 }
 
+/* ===== Mobile readability & contrast fixes ===== */
 @media (max-width: 640px) {
-  header a, header nav a, header button, nav a, nav button {
-    color: #fff !important; font-weight: 700 !important; text-shadow: 0 1px 2px rgba(0,0,0,.35);
+  header a, header nav a, header button,
+  nav a, nav button {
+    color: #fff !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,.35);
   }
-  .mobile-dark-surface, .card, .panel, .rounded-2xl, .shadow-sm, .shadow, .bg-white, .bg-gray-50, .bg-neutral-50 {
-    background-color: rgba(255,255,255,.06) !important; border-color: rgba(255,255,255,.10) !important;
+
+  /* Ensure surface blocks don’t flip to pure white on phone UAs */
+  .mobile-dark-surface,
+  .card, .panel, .rounded-2xl, .shadow-sm, .shadow,
+  .bg-white, .bg-gray-50, .bg-neutral-50 {
+    background-color: rgba(255,255,255,.06) !important;
+    border-color: rgba(255,255,255,.10) !important;
   }
-  .mobile-readable, .prose, .content, .content p, .content li, .text-neutral-500, .text-neutral-600, .text-gray-500, .text-gray-600 {
+
+  /* Body copy readability on About/Contact/Jobs descriptive blocks */
+  .mobile-readable, .prose, .content, .content p, .content li,
+  .text-neutral-500, .text-neutral-600, .text-gray-500, .text-gray-600 {
     color: rgba(255,255,255,.90) !important;
   }
-  .mobile-readable-muted, .text-neutral-400, .text-gray-400 { color: rgba(255,255,255,.75) !important; }
-  .btn-outline, .btn-ghost, .border-white\/10, .border-white\/15, .border-gray-200 { border-color: rgba(255,255,255,.25) !important; color: #fff !important; }
-  .apply-cta, a[href*="apply"], a[href*="contact"] { background: #1D4ED8 !important; color: #fff !important; border-color: transparent !important; }
+  .mobile-readable-muted, .text-neutral-400, .text-gray-400 {
+    color: rgba(255,255,255,.75) !important;
+  }
+
+  /* Buttons with outline/ghost variants on dark */
+  .btn-outline, .btn-ghost,
+  .border-white\/10, .border-white\/15, .border-gray-200 {
+    border-color: rgba(255,255,255,.25) !important;
+    color: #fff !important;
+  }
+
+  /* “Apply confidentially” / CTA style on small screens */
+  .apply-cta, a[href*="apply"], a[href*="contact"] {
+    background: #1D4ED8 !important;
+    color: #fff !important;
+    border-color: transparent !important;
+  }
 }
 
+/* ===== Mobile readability overrides ===== */
 @media (max-width: 768px) {
   .text-blue-400, .text-blue-500, .text-blue-600,
   .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover {
-    color: #fff !important; font-weight: 600 !important;
+    color: #fff !important;
+    font-weight: 600 !important;
   }
 }
 
-a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\] { color: #fff !important; font-weight: 600 !important; }
+/* Force white, bold text inside blue buttons */
+a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\] {
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+/* Strengthen brand/top-nav links */
 header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
 header nav a, header nav button { color: #fff !important; font-weight: 600 !important; }
 
 [class*="SheetContent"] a, [class*="SheetContent"] button,
-[class*="DrawerContent"] a, [class*="DrawerContent"] button { color: #fff !important; font-weight: 600 !important; }
-
-a[role="button"].bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button { color: #fff !important; font-weight: 600 !important; }
-
-@media (max-width: 768px) {
-  header a, header button, header nav a, header nav button,
-  [class*="Sheet"] a, [class*="Sheet"] button, [class*="Drawer"] a, [class*="Drawer"] button, [class*="Menu"] a, [class*="Menu"] button {
-    color: #fff !important; font-weight: 700 !important;
-  }
-  .text-blue-400, .text-blue-500, .text-blue-600, .text-blue-700,
-  .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover,
-  .text-primary, .hover\:text-primary:hover { color: #fff !important; font-weight: 700 !important; }
-  a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button { color: #fff !important; font-weight: 700 !important; }
+[class*="DrawerContent"] a, [class*="DrawerContent"] button {
+  color: #fff !important;
+  font-weight: 600 !important;
 }
 
-/* ---------- Splash: Split Reveal with slow end ---------- */
-.split-reveal { position: relative; overflow: hidden; }
+a[role="button"].bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
+  color: #fff !important;
+  font-weight: 600 !important;
+}
 
-/* optional soft vignette over the splash image */
+/* ===== Mobile menu readability ===== */
+@media (max-width: 768px) {
+  header a, header button,
+  header nav a, header nav button,
+  [class*="Sheet"] a, [class*="Sheet"] button,
+  [class*="Drawer"] a, [class*="Drawer"] button,
+  [class*="Menu"] a, [class*="Menu"] button {
+    color: #fff !important;
+    font-weight: 700 !important;
+  }
+
+  .text-blue-400, .text-blue-500, .text-blue-600, .text-blue-700,
+  .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover,
+  .text-primary, .hover\:text-primary:hover {
+    color: #fff !important;
+    font-weight: 700 !important;
+  }
+
+  a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\],
+  .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
+    color: #fff !important;
+    font-weight: 700 !important;
+  }
+}
+
+header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
+
+/* =========================================================
+   Splash — Cinematic Rise + Deblur (stable)
+   ========================================================= */
+
+.cinematic-rise {
+  transform: translateY(8vh);
+  filter: blur(8px);
+  opacity: 0.85;
+  transition:
+    transform 2000ms cubic-bezier(.2,.7,.2,1),
+    filter 2000ms ease-out,
+    opacity 2000ms ease-in-out;
+}
+.cinematic-rise.revealed {
+  transform: translateY(0);
+  filter: blur(0);
+  opacity: 1;
+}
+
+/* Subtle splash overlay for depth */
 .splash-gradient::after {
-  content: ""; position: absolute; inset: 0;
+  content: "";
+  position: absolute;
+  inset: 0;
   background:
     radial-gradient(1200px 420px at 18% -10%, rgba(0,0,0,.35), rgba(0,0,0,0)),
     linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.15) 40%, rgba(0,0,0,.4));
   pointer-events: none;
 }
 
-/* curtains */
-.curtain {
-  position: absolute; left: 0; right: 0; height: 50%;
-  background: rgba(0,0,0,.96);
-  will-change: transform, opacity;
-}
-.top-half { top: 0; transform: translateY(0%); }
-.bottom-half { bottom: 0; transform: translateY(0%); }
-
-.top-half.slide-up {
-  animation-name: curtainUpSlowEnd;
-  animation-timing-function: cubic-bezier(.22,.61,.36,1);
-  animation-fill-mode: forwards;
-}
-.bottom-half.slide-down {
-  animation-name: curtainDownSlowEnd;
-  animation-timing-function: cubic-bezier(.22,.61,.36,1);
-  animation-fill-mode: forwards;
-}
-
-@keyframes curtainUpSlowEnd {
-  0% { transform: translateY(0%); opacity: 1; }
-  65% { transform: translateY(-86%); opacity: .96; }
-  85% { transform: translateY(-96%); opacity: .9; }
-  100% { transform: translateY(-100%); opacity: .85; }
-}
-@keyframes curtainDownSlowEnd {
-  0% { transform: translateY(0%); opacity: 1; }
-  65% { transform: translateY(86%); opacity: .96; }
-  85% { transform: translateY(96%); opacity: .9; }
-  100% { transform: translateY(100%); opacity: .85; }
-}
-
-/* reduced motion */
+/* Reduced motion: remove animation */
 @media (prefers-reduced-motion: reduce) {
-  .curtain { animation: none !important; transform: none !important; }
-  .top-half { transform: translateY(-100%) !important; }
-  .bottom-half { transform: translateY(100%) !important; }
+  .cinematic-rise {
+    transform: translateY(0) !important;
+    filter: none !important;
+    opacity: 0 !important;
+    transition: none !important;
+  }
 }
