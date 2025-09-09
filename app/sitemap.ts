@@ -32,23 +32,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // --- Static pages ---
   const staticPages = [
-    "/",              // home
+    "/", // home
     "/jobs",
     "/apply",
     "/candidates",
     "/hiring-managers",
-    "/insights",
+    "/insights", // insights hub
     "/about",
     "/contact",
-    // ✅ New CH landing
+    // Regional landing pages (SEO)
     "/private-banking-jobs-switzerland",
+    "/private-banking-jobs-dubai",
+    "/private-banking-jobs-singapore",
+    "/private-banking-jobs-london",
+    "/private-banking-jobs-new-york",
+    "/private-banking-jobs-geneva",
+    "/private-banking-jobs-zurich",
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((p) => ({
     url: normalize(base, p),
     lastModified: nowISO,
-    changeFrequency: p === "/" ? "daily" : "weekly",
-    priority: p === "/" ? 1 : 0.7,
+    changeFrequency: p === "/" ? "daily" : p === "/insights" ? "daily" : "weekly",
+    priority: p === "/" ? 1 : p === "/insights" ? 0.8 : 0.7,
   }));
 
   // --- Dynamic job pages ---
@@ -79,9 +85,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
 
+  // --- Insights posts (internal slugs) ---
+  // Extend this list as you publish more on-site posts
+  const INSIGHTS_POSTS: Array<{ slug: string; dateISO?: string }> = [
+    { slug: "swiss-private-banking-weekly-update-sep-2025", dateISO: "2025-09-08" },
+  ];
+
+  const insightsEntries: MetadataRoute.Sitemap = INSIGHTS_POSTS.map((p) => ({
+    url: normalize(base, `/insights/${p.slug}`),
+    lastModified: p.dateISO ? new Date(p.dateISO).toISOString() : nowISO,
+    changeFrequency: "weekly",
+    priority: 0.75,
+  }));
+
   // De-duplicate by URL
   const seen = new Set<string>();
-  const entries = [...staticEntries, ...jobEntries].filter((e) => {
+  const entries = [...staticEntries, ...jobEntries, ...insightsEntries].filter((e) => {
     if (seen.has(e.url)) return false;
     seen.add(e.url);
     return true;

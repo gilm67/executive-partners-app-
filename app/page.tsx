@@ -99,6 +99,16 @@ export default async function HomePage() {
           <PrimaryBtn href="/hiring-managers" variant="outline">I’m Hiring</PrimaryBtn>
           <PrimaryBtn href="/jobs" variant="ghost">View Private Banking Jobs</PrimaryBtn>
         </div>
+        {/* 🔗 SEO internal link to Switzerland page */}
+        <p className="mt-3 text-center text-xs text-neutral-400">
+          Focus market:{" "}
+          <Link
+            href="/private-banking-jobs-switzerland"
+            className="underline underline-offset-4 hover:text-white"
+          >
+            Private Banking jobs in Switzerland
+          </Link>
+        </p>
 
         {/* feature cards */}
         <div className="mt-12 grid items-stretch gap-6 md:grid-cols-2">

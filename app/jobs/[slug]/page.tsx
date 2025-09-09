@@ -1,6 +1,10 @@
 // app/jobs/[slug]/page.tsx
 import Link from "next/link";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import MarkdownLite from "../MarkdownLite";
+
+/* ---------------- Types ---------------- */
 
 type Job = {
   id?: string;
@@ -16,14 +20,18 @@ type Job = {
   body?: string;
 };
 
-// Slugs you explicitly want to hide
+/* ---------------- Constants ---------------- */
+
 const HIDDEN_SLUGS = new Set<string>([
   "senior-relationship-manager-ch-onshore-4",
   "senior-relationship-manager-brazil-2",
   "private-banker-mea-2",
 ]);
 
-/** Normalize slugs so small differences still match. */
+export const revalidate = 900; // cache the page for 15m
+
+/* ---------------- Utils ---------------- */
+
 function norm(s: string | undefined) {
   return (s ?? "")
     .trim()
@@ -33,15 +41,48 @@ function norm(s: string | undefined) {
     .replace(/^-|-$/g, "");
 }
 
-// helper to wrap template strings as markdown (just returns the string)
 function md(s: string) {
   return s.trim();
 }
 
+function siteBase() {
+  const env =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
+    "https://www.execpartners.ch";
+  const url = env.startsWith("http") ? env : `https://${env}`;
+  return url.replace(/\/$/, "");
+}
+
+/** Basic HTML escape (for JSON-LD description) */
+function escapeHTML(s: string) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/** Convert a minimal markdown-ish string to safe HTML lines */
+function toHtmlLines(s: string) {
+  return escapeHTML(s).replace(/\n/g, "<br/>");
+}
+
+/** Map common locations to ISO 3166-1 alpha-2 country codes */
+function countryForLocation(loc?: string): string | undefined {
+  if (!loc) return undefined;
+  const L = loc.toLowerCase();
+  if (/(geneva|zurich|lausanne|switzerland|ch)\b/.test(L)) return "CH";
+  if (/\bdubai|uae|united arab emirates\b/.test(L)) return "AE";
+  if (/\bsingapore\b/.test(L)) return "SG";
+  if (/\bhong\s*kong\b|\bhk\b/.test(L)) return "HK";
+  if (/\blondon\b|\buk\b|united kingdom|gb\b/.test(L)) return "GB";
+  if (/\bnew york\b|\bnyc\b|\busa\b|united states|\bus\b/.test(L)) return "US";
+  if (/\bportugal\b|\blisbon\b|\bporto\b/.test(L)) return "PT";
+  if (/\bbrazil\b|\bsão paulo\b|\bsao paulo\b|\brio\b/.test(L)) return "BR";
+  return undefined;
+}
+
 /* ------------ Rich fallback bodies (markdown) ------------ */
-/* Brazil = EXACT text you provided. Others are region-adapted with the same structure. */
+
 const FALLBACK_BODIES: Record<string, string> = {
-  // ===== BRAZIL — Zurich or Geneva =====
+  // BRAZIL — Zurich or Geneva
   "senior-relationship-manager-brazil-ch": md(`
 **Title:** Senior Relationship Manager Brazil  
 **Location:** Zurich or Geneva
@@ -78,7 +119,7 @@ The **Senior Relationship Manager** is responsible for acquiring, developing, an
 - Competitive compensation, benefits, and ongoing professional development.
 `),
 
-  // ===== MEA — Dubai =====
+  // MEA — Dubai
   "senior-relationship-manager-mea-dubai": md(`
 **Title:** Private Banker / Senior Relationship Manager — MEA  
 **Location:** Dubai
@@ -109,7 +150,7 @@ The **Senior Relationship Manager** will acquire, develop, and manage a portfoli
 - Clear development path, diverse teams, and private markets access.
 `),
 
-  // ===== MEA — Zurich =====
+  // MEA — Zurich
   "senior-relationship-manager-mea-zurich": md(`
 **Title:** Senior Relationship Manager — MEA  
 **Location:** Zurich
@@ -136,7 +177,7 @@ Advise **HNW/UHNW MEA** clients via **Zurich booking**, leveraging Switzerland�
 - Swiss booking center with global reach, strong platform support, and competitive remuneration.
 `),
 
-  // ===== CH Onshore — Zurich =====
+  // CH Onshore — Zurich
   "senior-relationship-manager-ch-onshore-zurich": md(`
 **Title:** Senior Relationship Manager — CH Onshore  
 **Location:** Zurich
@@ -163,7 +204,7 @@ Serve **Swiss-domiciled HNW/UHNW** clients in **Zurich**, offering holistic onsh
 - Entrepreneurial onshore platform, respected brand, and competitive grid.
 `),
 
-  // ===== CH Onshore — Lausanne =====
+  // CH Onshore — Lausanne
   "senior-relationship-manager-ch-onshore-lausanne": md(`
 **Title:** Senior Relationship Manager — CH Onshore  
 **Location:** Lausanne (Romandie)
@@ -190,7 +231,7 @@ Advise **HNW/UHNW Swiss onshore** clients across **Romandie** (Lausanne/Vaud/Gen
 - Strong Romandie brand, supportive culture, and competitive compensation.
 `),
 
-  // ===== Portugal — Geneva =====
+  // Portugal — Geneva
   "senior-relationship-manager-portugal-geneva": md(`
 **Title:** Senior Relationship Manager — Portugal  
 **Location:** Geneva
@@ -219,6 +260,7 @@ Lead relationships with **HNW/UHNW Portuguese** clients and diaspora from **Gene
 };
 
 /* ---------------- “Always available” job fallbacks ---------------- */
+
 const KNOWN_JOBS: Record<string, Job> = {
   "senior-relationship-manager-brazil-ch": {
     slug: "senior-relationship-manager-brazil-ch",
@@ -289,9 +331,10 @@ const KNOWN_JOBS: Record<string, Job> = {
 };
 
 /* ---------------- Data loading ---------------- */
+
 async function fetchAllJobs(): Promise<Job[]> {
   const abs = process.env.NEXT_PUBLIC_SITE_URL
-    ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`
+    ? `${process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")}/api/jobs`
     : null;
 
   const tries: (RequestInfo | URL)[] = [];
@@ -309,20 +352,22 @@ async function fetchAllJobs(): Promise<Job[]> {
         ? (raw as any).jobs
         : [];
       if (Array.isArray(list) && list.length) return list;
-    } catch {}
+    } catch {
+      // ignore and try next
+    }
   }
-  // fallback to our known jobs if API is empty
+  // fall back to known evergreen postings
   return Object.values(KNOWN_JOBS);
 }
 
-/** Find a job by slug with a few robust fallbacks. */
+/** Find a job by slug with robust fallbacks. */
 async function fetchJobBySlug(requestedSlug: string): Promise<Job | null> {
   const all = await fetchAllJobs();
   if (!all.length) return null;
 
   const wanted = norm(requestedSlug);
 
-  // exact slug
+  // exact
   let found = all.find((j) => norm(j.slug) === wanted);
   if (found) return found;
 
@@ -337,29 +382,57 @@ async function fetchJobBySlug(requestedSlug: string): Promise<Job | null> {
   const hints = new Set(wanted.split("-"));
   found = all.find((j) => {
     const hay = `${norm(j.title)}-${norm(j.location)}-${norm(j.market)}`;
-    const score = [...hints].reduce((acc, p) => (p && hay.includes(p) ? acc + 1 : acc), 0);
+    const score = [...hints].reduce(
+      (acc, p) => (p && hay.includes(p) ? acc + 1 : acc),
+      0
+    );
     return score >= 2;
   });
   if (found) return found;
 
-  // final fallback
   return KNOWN_JOBS[wanted] ?? null;
 }
 
-/* ---------------- Metadata & Page ---------------- */
+/* ---------------- Metadata ---------------- */
+
+// Next 15 expects Promise-based params in server components.
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const { slug } = await params;
   const job = await fetchJobBySlug(slug);
-  const title = job?.title ? `${job.title} | Executive Partners` : "Role | Executive Partners";
+  const base = siteBase();
+
+  const title = job?.title
+    ? `${job.title} | Executive Partners`
+    : "Role | Executive Partners";
+
   const description =
     job?.summary ??
     "Confidential private banking mandate via Executive Partners. Apply discretely.";
-  return { title, description };
+
+  const url = `${base}/jobs/${slug}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "article",
+      images: [{ url: `${base}/og.png` }],
+    },
+    robots: job?.active === false || (job && HIDDEN_SLUGS.has(job.slug))
+      ? { index: false, follow: true }
+      : { index: true, follow: true },
+  };
 }
+
+/* ---------------- Page ---------------- */
 
 export default async function JobDetailPage({
   params,
@@ -369,24 +442,95 @@ export default async function JobDetailPage({
   const { slug } = await params;
   const job = await fetchJobBySlug(slug);
 
+  // ✅ Use Next's jobs 404
   if (!job || job.active === false || HIDDEN_SLUGS.has(job.slug)) {
-    return (
-      <main className="relative min-h-screen bg-[#0B0E13] text-white">
-        <div className="mx-auto w-full max-w-5xl px-4 py-16">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
-            <h1 className="text-xl font-semibold">Role unavailable</h1>
-            <p className="mt-2 text-neutral-300">
-              We couldn’t locate this mandate. Browse our{" "}
-              <Link href="/jobs" className="text-blue-400 underline-offset-4 hover:underline">
-                open roles
-              </Link>
-              .
-            </p>
-          </div>
-        </div>
-      </main>
-    );
+    notFound();
   }
+
+  // -------- JSON-LD (JobPosting + Breadcrumb) --------
+  const base = siteBase();
+  const url = `${base}/jobs/${slug}`;
+  const datePostedISO = job.createdAt
+    ? new Date(job.createdAt).toISOString()
+    : new Date().toISOString();
+
+  // Keep postings "fresh" for ~60 days
+  const validThroughISO = (() => {
+    const baseDate = job.createdAt ? new Date(job.createdAt) : new Date();
+    baseDate.setDate(baseDate.getDate() + 60);
+    return baseDate.toISOString();
+  })();
+
+  const country = countryForLocation(job.location);
+
+  const descriptionSource =
+    job.body?.trim() ||
+    FALLBACK_BODIES[norm(job.slug)] ||
+    job.summary ||
+    "Confidential private banking mandate.";
+
+  const jobPosting = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: job.title,
+    description: toHtmlLines(descriptionSource),
+    datePosted: datePostedISO,
+    validThrough: validThroughISO,
+    employmentType: "FULL_TIME",
+    hiringOrganization: {
+      "@type": "Organization",
+      name: "Confidential (via Executive Partners)",
+      url: base,
+      sameAs: base,
+    },
+    employmentAgency: {
+      "@type": "Organization",
+      name: "Executive Partners",
+      url: base,
+      sameAs: base,
+    },
+    ...(job.location && {
+      jobLocation: {
+        "@type": "Place",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: job.location,
+          ...(country ? { addressCountry: country } : {}),
+        },
+      },
+    }),
+    industry: job.market || "Private Banking",
+    directApply: true,
+    ...(country && {
+      applicantLocationRequirements: {
+        "@type": "Country",
+        name: country,
+      },
+    }),
+    jobLocationType: "ON_SITE",
+    identifier: {
+      "@type": "PropertyValue",
+      name: "Executive Partners",
+      value: job.slug,
+    },
+    url,
+    isAccessibleForFree: true,
+    potentialAction: {
+      "@type": "ApplyAction",
+      target: `${base}/apply`,
+    },
+  };
+
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Jobs", item: `${base}/jobs` },
+      { "@type": "ListItem", position: 2, name: job.title, item: url },
+    ],
+  };
+
+  const replacer = (_k: string, v: unknown) => (v === undefined ? undefined : v);
 
   const createdFmt = job.createdAt
     ? new Date(job.createdAt).toLocaleDateString(undefined, {
@@ -399,10 +543,22 @@ export default async function JobDetailPage({
   const body =
     job.body?.trim() ||
     FALLBACK_BODIES[norm(job.slug)] ||
-    (job.summary ? `**Overview**\n\n${job.summary}\n\nFor full details, please contact us confidentially.` : "");
+    (job.summary
+      ? `**Overview**\n\n${job.summary}\n\nFor full details, please contact us confidentially.`
+      : "");
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPosting, replacer) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb, replacer) }}
+      />
+
       {/* soft ambient background */}
       <div
         aria-hidden
@@ -434,11 +590,21 @@ export default async function JobDetailPage({
                 ) : null}
               </div>
 
-              <h1 className="mt-2 text-2xl font-bold leading-tight md:text-3xl">{job.title}</h1>
+              <h1 className="mt-2 text-2xl font-bold leading-tight md:text-3xl">
+                {job.title}
+              </h1>
 
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/80">
-                {job.location && <span className="inline-flex items-center gap-1.5">{job.location}</span>}
-                {job.seniority && <span className="inline-flex items-center gap-1.5">{job.seniority}</span>}
+                {job.location && (
+                  <span className="inline-flex items-center gap-1.5">
+                    {job.location}
+                  </span>
+                )}
+                {job.seniority && (
+                  <span className="inline-flex items-center gap-1.5">
+                    {job.seniority}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -461,7 +627,11 @@ export default async function JobDetailPage({
 
         {/* Body */}
         <section className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6">
-          {body ? <MarkdownLite text={body} /> : <p className="text-neutral-300">Details available upon request.</p>}
+          {body ? (
+            <MarkdownLite text={body} />
+          ) : (
+            <p className="text-neutral-300">Details available upon request.</p>
+          )}
         </section>
 
         {/* Footer CTA */}
