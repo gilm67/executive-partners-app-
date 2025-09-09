@@ -11,32 +11,29 @@ export default function Splash() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Only show once per session
+    // Don’t show twice per session
     if (sessionStorage.getItem(SHOWN_KEY) === "1") {
       setVisible(false);
       return;
     }
 
-    const isMobile = window.matchMedia("(max-width: 640px)").matches;
     const prefersReduced =
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // Timing (you said slow it down + nicer on mobile):
-    // Desktop: 3.5s delay, 2.5s lift
-    // Mobile:  4.5s delay, 3.0s lift
-    const delay = prefersReduced ? 400 : isMobile ? 4500 : 3500;
-    const total = prefersReduced ? 800 : isMobile ? 4500 + 3000 : 3500 + 2500;
+    // Balanced preset: 3.5s hold, 2s reveal
+    const hold = prefersReduced ? 500 : 3500;
+    const reveal = prefersReduced ? 400 : 2000;
 
-    const t1 = window.setTimeout(() => setLift(true), delay);
-    const t2 = window.setTimeout(() => {
+    const liftTimer = window.setTimeout(() => setLift(true), hold);
+    const hideTimer = window.setTimeout(() => {
       setVisible(false);
       sessionStorage.setItem(SHOWN_KEY, "1");
-    }, total);
+    }, hold + reveal + 150); // a tiny buffer after the lift
 
     return () => {
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
+      window.clearTimeout(liftTimer);
+      window.clearTimeout(hideTimer);
     };
   }, []);
 
@@ -45,16 +42,19 @@ export default function Splash() {
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 z-[1000] pointer-events-none select-none splash-gradient"
+      className={`
+        fixed inset-0 z-[1000]
+        pointer-events-none select-none
+        splash-gradient curtain
+        ${lift ? "curtain-up" : ""}
+      `}
       style={{
-        backgroundImage: "url(/ep-splash.png)",
+        backgroundImage: `url(/ep-splash.png)`, // put image at /public/ep-splash.png
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundColor: "#0B0E13",
       }}
-    >
-      <div className={`glass-lift-overlay ${lift ? "lifted" : ""}`} />
-    </div>
+    />
   );
 }
