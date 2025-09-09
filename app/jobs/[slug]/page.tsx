@@ -79,6 +79,19 @@ function countryForLocation(loc?: string): string | undefined {
   return undefined;
 }
 
+/* ---------- Compensation block + helper (injected everywhere) ---------- */
+
+const COMP_BLOCK = md(`
+### Compensation
+Compensation is highly competitive and structured according to seniority, experience, and the business plan presented (AUM, NNM, and client portfolio).
+`);
+
+function withCompensation(text: string) {
+  const t = (text || "").trim();
+  // avoid duplicates if a Compensation section already exists
+  return /(^|\n)###\s+Compensation\b/i.test(t) ? t : `${t}\n\n${COMP_BLOCK}`.trim();
+}
+
 /* ------------ Rich fallback bodies (markdown) ------------ */
 
 const FALLBACK_BODIES: Record<string, string> = {
@@ -334,9 +347,8 @@ const KNOWN_JOBS: Record<string, Job> = {
 
 type SalaryBand = { min: number; max: number; currency: string; unitText?: "YEAR" | "MONTH" | "HOUR" };
 const SALARY_RANGES: Record<string, SalaryBand> = {
-  // Uncomment/add to publish comp and remove “baseSalary” hint:
+  // Example if you ever want to publish:
   // "senior-relationship-manager-mea-dubai": { min: 250000, max: 500000, currency: "USD", unitText: "YEAR" },
-  // "senior-relationship-manager-ch-onshore-zurich": { min: 220000, max: 450000, currency: "CHF", unitText: "YEAR" },
 };
 
 /* ---------------- Data loading ---------------- */
@@ -472,13 +484,16 @@ export default async function JobDetailPage({
 
   const country = countryForLocation(job.location);
 
-  const descriptionSource =
+  const descriptionSourceRaw =
     job.body?.trim() ||
     FALLBACK_BODIES[norm(job.slug)] ||
     job.summary ||
     "Confidential private banking mandate.";
 
-  // Optional compensation block
+  // Inject Compensation disclaimer (also used in JSON-LD)
+  const descriptionSource = withCompensation(descriptionSourceRaw);
+
+  // Optional compensation numbers for JSON-LD (left undefined by default)
   const salary = SALARY_RANGES[norm(job.slug)];
   const compensation = salary
     ? {
@@ -533,7 +548,7 @@ export default async function JobDetailPage({
         name: country,
       },
     }),
-    // ❌ removed jobLocationType to avoid enum warning
+    // jobLocationType omitted to avoid enum warning
     identifier: {
       "@type": "PropertyValue",
       name: "Executive Partners",
@@ -567,12 +582,13 @@ export default async function JobDetailPage({
       })
     : undefined;
 
-  const body =
+  const body = withCompensation(
     job.body?.trim() ||
-    FALLBACK_BODIES[norm(job.slug)] ||
-    (job.summary
-      ? `**Overview**\n\n${job.summary}\n\nFor full details, please contact us confidentially.`
-      : "");
+      FALLBACK_BODIES[norm(job.slug)] ||
+      (job.summary
+        ? `**Overview**\n\n${job.summary}\n\nFor full details, please contact us confidentially.`
+        : "")
+  );
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
