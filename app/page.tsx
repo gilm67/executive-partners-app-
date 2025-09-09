@@ -25,6 +25,12 @@ const HIDDEN_SLUGS = new Set<string>([
   "private-banker-mea-2",
 ]);
 
+function siteBase() {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL || "https://www.execpartners.ch";
+  const url = fromEnv.startsWith("http") ? fromEnv : `https://${fromEnv}`;
+  return url.replace(/\/$/, "");
+}
+
 async function getFeaturedJobs(): Promise<Job[]> {
   const qs = new URLSearchParams({
     active: "true",
@@ -62,9 +68,51 @@ export const metadata = {
 export default async function HomePage() {
   // load live featured roles (with fallback below if empty)
   const featured = await getFeaturedJobs();
+  const base = siteBase();
+
+  // ——— JSON-LD snippets (SEO only; no UI change)
+  const orgJSONLD = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Executive Partners",
+    url: base,
+    logo: `${base}/og.png`,
+    sameAs: [] as string[], // add social URLs when ready
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        contactType: "recruiting",
+        email: "contact@execpartners.ch",
+        areaServed: ["CH", "AE", "GB", "US", "SG", "HK"],
+        availableLanguage: ["en", "fr", "de", "pt"],
+      },
+    ],
+  };
+
+  const webSiteJSONLD = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Executive Partners",
+    url: base,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${base}/jobs?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
+      {/* JSON-LD (invisible; helps rich results) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJSONLD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJSONLD) }}
+      />
+
       {/* background glow */}
       <div
         aria-hidden
