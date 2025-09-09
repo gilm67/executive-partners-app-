@@ -68,14 +68,14 @@ function toHtmlLines(s: string) {
 function countryForLocation(loc?: string): string | undefined {
   if (!loc) return undefined;
   const L = loc.toLowerCase();
-  if (/(geneva|zurich|lausanne|switzerland|ch)\b/.test(L)) return "CH";
-  if (/\bdubai|uae|united arab emirates\b/.test(L)) return "AE";
+  if (/(?:\bgeneva\b|\bzurich\b|\blausanne\b|\bswitzerland\b|\bch\b)/.test(L)) return "CH";
+  if (/(?:\bdubai\b|\buae\b|\bunited arab emirates\b)/.test(L)) return "AE";
   if (/\bsingapore\b/.test(L)) return "SG";
-  if (/\bhong\s*kong\b|\bhk\b/.test(L)) return "HK";
-  if (/\blondon\b|\buk\b|united kingdom|gb\b/.test(L)) return "GB";
-  if (/\bnew york\b|\bnyc\b|\busa\b|united states|\bus\b/.test(L)) return "US";
-  if (/\bportugal\b|\blisbon\b|\bporto\b/.test(L)) return "PT";
-  if (/\bbrazil\b|\bsão paulo\b|\bsao paulo\b|\brio\b/.test(L)) return "BR";
+  if (/(?:\bhong\s*kong\b|\bhk\b)/.test(L)) return "HK";
+  if (/(?:\blondon\b|\buk\b|\bunited kingdom\b|\bgb\b)/.test(L)) return "GB";
+  if (/(?:\bnew york\b|\bnyc\b|\busa\b|\bunited states\b|\bus\b)/.test(L)) return "US";
+  if (/(?:\bportugal\b|\blisbon\b|\bporto\b)/.test(L)) return "PT";
+  if (/(?:\bbrazil\b|\bsão paulo\b|\bsao paulo\b|\brio\b)/.test(L)) return "BR";
   return undefined;
 }
 
@@ -330,6 +330,15 @@ const KNOWN_JOBS: Record<string, Job> = {
   },
 };
 
+/* ---------------- Optional salary bands for JSON-LD ---------------- */
+
+type SalaryBand = { min: number; max: number; currency: string; unitText?: "YEAR" | "MONTH" | "HOUR" };
+const SALARY_RANGES: Record<string, SalaryBand> = {
+  // Uncomment/add to publish comp and remove “baseSalary” hint:
+  // "senior-relationship-manager-mea-dubai": { min: 250000, max: 500000, currency: "USD", unitText: "YEAR" },
+  // "senior-relationship-manager-ch-onshore-zurich": { min: 220000, max: 450000, currency: "CHF", unitText: "YEAR" },
+};
+
 /* ---------------- Data loading ---------------- */
 
 async function fetchAllJobs(): Promise<Job[]> {
@@ -395,7 +404,6 @@ async function fetchJobBySlug(requestedSlug: string): Promise<Job | null> {
 
 /* ---------------- Metadata ---------------- */
 
-// Next 15 expects Promise-based params in server components.
 export async function generateMetadata({
   params,
 }: {
@@ -426,9 +434,10 @@ export async function generateMetadata({
       type: "article",
       images: [{ url: `${base}/og.png` }],
     },
-    robots: job?.active === false || (job && HIDDEN_SLUGS.has(job.slug))
-      ? { index: false, follow: true }
-      : { index: true, follow: true },
+    robots:
+      job?.active === false || (job && HIDDEN_SLUGS.has(job.slug))
+        ? { index: false, follow: true }
+        : { index: true, follow: true },
   };
 }
 
@@ -469,6 +478,23 @@ export default async function JobDetailPage({
     job.summary ||
     "Confidential private banking mandate.";
 
+  // Optional compensation block
+  const salary = SALARY_RANGES[norm(job.slug)];
+  const compensation = salary
+    ? {
+        baseSalary: {
+          "@type": "MonetaryAmount",
+          currency: salary.currency,
+          value: {
+            "@type": "QuantitativeValue",
+            minValue: salary.min,
+            maxValue: salary.max,
+            unitText: salary.unitText ?? "YEAR",
+          },
+        },
+      }
+    : undefined;
+
   const jobPosting = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
@@ -507,7 +533,7 @@ export default async function JobDetailPage({
         name: country,
       },
     }),
-    jobLocationType: "ON_SITE",
+    // ❌ removed jobLocationType to avoid enum warning
     identifier: {
       "@type": "PropertyValue",
       name: "Executive Partners",
@@ -519,6 +545,7 @@ export default async function JobDetailPage({
       "@type": "ApplyAction",
       target: `${base}/apply`,
     },
+    ...(compensation ?? {}),
   };
 
   const breadcrumb = {

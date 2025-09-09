@@ -16,7 +16,7 @@ function siteBase(): string {
 function normalize(base: string, path: string): string {
   const raw = `${base}${path.startsWith("/") ? path : `/${path}`}`;
   const collapsed = raw.replace(/([^:]\/)\/+/g, "$1");
-  return collapsed === base + "/" ? base + "/" : collapsed.replace(/\/+$/, "");
+  return collapsed === `${base}/` ? `${base}/` : collapsed.replace(/\/+$/, "");
 }
 
 type PublicJob = {
@@ -25,6 +25,15 @@ type PublicJob = {
   updatedAt?: string;
   createdAt?: string;
 };
+
+/** If /api/jobs is empty/unavailable, keep these in the sitemap so Jobs stays visible. */
+const FALLBACK_JOB_SLUGS = [
+  "senior-relationship-manager-mea-dubai",
+  "senior-relationship-manager-brazil-ch",
+  "senior-relationship-manager-ch-onshore-zurich",
+  "senior-relationship-manager-ch-onshore-lausanne",
+  "senior-relationship-manager-portugal-geneva",
+];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteBase();
@@ -53,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((p) => ({
     url: normalize(base, p),
     lastModified: nowISO,
-    changeFrequency: p === "/" ? "daily" : p === "/insights" ? "daily" : "weekly",
+    changeFrequency: p === "/" || p === "/insights" ? "daily" : "weekly",
     priority: p === "/" ? 1 : p === "/insights" ? 0.8 : 0.7,
   }));
 
@@ -66,7 +75,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (process.env.NODE_ENV !== "production") {
       console.error("sitemap getAllJobsPublic error:", err);
     }
-    jobs = [];
+  }
+
+  // If jobs API returns nothing, fall back to evergreen slugs
+  if (!jobs.length) {
+    jobs = FALLBACK_JOB_SLUGS.map((slug) => ({
+      slug,
+      active: true,
+      createdAt: nowISO,
+    }));
   }
 
   const jobEntries: MetadataRoute.Sitemap = jobs
@@ -86,7 +103,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
   // --- Insights posts (internal slugs) ---
-  // Extend this list as you publish more on-site posts
   const INSIGHTS_POSTS: Array<{ slug: string; dateISO?: string }> = [
     { slug: "swiss-private-banking-weekly-update-sep-2025", dateISO: "2025-09-08" },
   ];
