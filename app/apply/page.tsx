@@ -1,185 +1,121 @@
 // app/apply/page.tsx
-'use client';
+import type { Metadata } from "next";
+import ApplyForm from "./ApplyForm";
 
-import { Suspense, useMemo, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-
-export const dynamic = 'force-dynamic';
-
-function ApplyFormInner() {
-  const sp = useSearchParams(); // ✅ inside Suspense
-  const prefill = sp.get('job') || '';
-
-  // form state
-  const [form, setForm] = useState({
-    job: prefill,
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-    // honeypot (spam trap)
-    company: '',
-  });
-  const [submitting, setSubmitting] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-
-  const isValidEmail = useMemo(
-    () => /^\S+@\S+\.\S+$/.test(form.email.trim()),
-    [form.email]
-  );
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitting(true);
-    setMsg(null);
-    setErr(null);
-
-    // simple client validation
-    if (!form.name.trim()) {
-      setErr('Please enter your name.');
-      setSubmitting(false);
-      return;
-    }
-    if (!isValidEmail) {
-      setErr('Please enter a valid email address.');
-      setSubmitting(false);
-      return;
-    }
-    // honeypot check
-    if (form.company.trim().length > 0) {
-      setErr('Submission blocked.');
-      setSubmitting(false);
-      return;
-    }
-
-    try {
-      const res = await fetch('/api/apply', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // only send fields we care about
-        body: JSON.stringify({
-          job: form.job,
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          message: form.message,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data?.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-
-      setMsg('Application sent. Thank you!');
-      setForm((s) => ({ ...s, name: '', email: '', phone: '', message: '' }));
-    } catch (e: any) {
-      setErr(`Failed: ${e?.message || String(e)}`);
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  return (
-    <main className="mx-auto max-w-3xl px-4 py-10 space-y-6">
-      <h1 className="text-2xl font-semibold">Submit your CV</h1>
-
-      {msg && (
-        <div className="rounded-xl border border-emerald-300 bg-emerald-50 p-3 text-sm">
-          {msg}
-        </div>
-      )}
-      {err && (
-        <div className="rounded-xl border border-rose-300 bg-rose-50 p-3 text-sm">
-          {err}
-        </div>
-      )}
-
-      <form onSubmit={onSubmit} className="grid gap-4">
-        <div>
-          <label className="text-sm font-medium" htmlFor="job">Role (optional)</label>
-          <input
-            id="job"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-            value={form.job}
-            onChange={(e) => setForm((s) => ({ ...s, job: e.target.value }))}
-            placeholder="e.g., Private Banker — MEA"
-            aria-label="Role you are applying for (optional)"
-          />
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="text-sm font-medium" htmlFor="name">Name</label>
-            <input
-              id="name"
-              className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-              value={form.name}
-              onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
-              required
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium" htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-              value={form.email}
-              onChange={(e) => setForm((s) => ({ ...s, email: e.target.value }))}
-              required
-              aria-invalid={!isValidEmail}
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="text-sm font-medium" htmlFor="phone">Phone</label>
-          <input
-            id="phone"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-            value={form.phone}
-            onChange={(e) => setForm((s) => ({ ...s, phone: e.target.value }))}
-          />
-        </div>
-
-        <div>
-          <label className="text-sm font-medium" htmlFor="message">Message</label>
-          <textarea
-            id="message"
-            rows={6}
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-            value={form.message}
-            onChange={(e) => setForm((s) => ({ ...s, message: e.target.value }))}
-          />
-        </div>
-
-        {/* Honeypot (hidden) */}
-        <div className="hidden">
-          <label htmlFor="company">Company</label>
-          <input
-            id="company"
-            tabIndex={-1}
-            autoComplete="off"
-            value={form.company}
-            onChange={(e) => setForm((s) => ({ ...s, company: e.target.value }))}
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="rounded-lg bg-black px-4 py-2 text-white text-sm disabled:opacity-60"
-          disabled={submitting}
-        >
-          {submitting ? 'Sending…' : 'Send Application'}
-        </button>
-      </form>
-    </main>
-  );
+/* ---------------- helpers ---------------- */
+function siteBase() {
+  const fromEnv =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.VERCEL_URL ||
+    "https://www.execpartners.ch";
+  const url = fromEnv.startsWith("http") ? fromEnv : `https://${fromEnv}`;
+  return url.replace(/\/$/, "");
 }
 
-export default function ApplyPage() {
+const SITE = siteBase();
+const PAGE_URL = `${SITE}/apply`;
+
+export const revalidate = 60;
+
+/* ---------------- SEO metadata ---------------- */
+export const metadata: Metadata = {
+  title: { absolute: "Apply Confidentially | Private Banking & Wealth Management" },
+  description:
+    "Submit your CV securely for Private Banking roles (Relationship Managers, Team Heads, Market Leaders). Geneva-based, global mandates. Discretion guaranteed.",
+  alternates: { canonical: "/apply" },
+  openGraph: {
+    type: "website",
+    url: "/apply",
+    title: "Apply Confidentially — Executive Partners",
+    description:
+      "Confidential submission for Private Banking & Wealth Management roles across Switzerland, UK, US, Dubai, Singapore & Hong Kong.",
+    images: [{ url: "/og.png" }],
+    siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Apply Confidentially — Executive Partners",
+    description:
+      "Private Banking & Wealth Management executive search — submit your profile discreetly.",
+    images: ["/og.png"],
+  },
+  robots: { index: true, follow: true },
+};
+
+/* ---------------- page ---------------- */
+export default async function ApplyPage({
+  searchParams,
+}: {
+  // Next 15: searchParams may be a Promise
+  searchParams?: Promise<Record<string, string | string[]>>;
+}) {
+  const sp = (await searchParams) ?? {};
+  const get = (k: string) =>
+    typeof sp[k] === "string"
+      ? (sp[k] as string)
+      : Array.isArray(sp[k])
+      ? (sp[k] as string[])[0]
+      : "";
+
+  // Support ?job= or ?role=
+  const prefillRole = get("job") || get("role");
+  const prefillMarket = get("market");
+  const prefillJobId = get("jobId");
+
+  // JSON-LD
+  const contactJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: "Apply Confidentially",
+    url: PAGE_URL,
+    description:
+      "Submit your CV securely for Private Banking roles (Relationship Managers, Team Heads, Market Leaders).",
+    publisher: { "@type": "Organization", name: "Executive Partners", url: SITE },
+  };
+
+  const howToJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to Apply Confidentially",
+    totalTime: "PT5M",
+    step: [
+      { "@type": "HowToStep", name: "Share profile", text: "Provide name, email, markets covered, and current location." },
+      { "@type": "HowToStep", name: "Attach CV", text: "Upload a PDF résumé (no contact is made without your consent)." },
+      { "@type": "HowToStep", name: "Optional details", text: "Add AUM portability, booking centres, mobility, and languages." },
+      { "@type": "HowToStep", name: "Submit", text: "We review and respond—typically the same business day." },
+    ],
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Apply", item: PAGE_URL },
+    ],
+  };
+
   return (
-    <Suspense fallback={<main className="mx-auto max-w-3xl px-4 py-10">Loading…</main>}>
-      <ApplyFormInner />
-    </Suspense>
+    <main className="mx-auto max-w-5xl px-4 py-12">
+      {/* JSON-LD */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+
+      <header className="mb-8">
+        <h1 className="text-2xl font-semibold tracking-tight text-white">Apply Confidentially</h1>
+        <p className="mt-2 text-sm text-neutral-400">
+          Private Banking &amp; Wealth Management. We review every submission and only move
+          forward with your consent. Typical response: same business day.
+        </p>
+      </header>
+
+      {/* ✅ Use the actual client component + matching prop names */}
+      <ApplyForm
+        defaultRole={prefillRole}
+        defaultMarket={prefillMarket}
+        defaultJobId={prefillJobId}
+      />
+    </main>
   );
 }

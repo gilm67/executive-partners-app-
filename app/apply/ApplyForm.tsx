@@ -20,12 +20,18 @@ export default function ApplyForm({
   const [loading, setLoading] = useState(false);
   const [okMsg, setOkMsg] = useState<string | null>(null);
   const [errMsg, setErrMsg] = useState<string | null>(null);
+  // simple honeypot
+  const [company, setCompany] = useState("");
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setOkMsg(null);
     setErrMsg(null);
 
+    if (company.trim()) {
+      setErrMsg("Submission blocked.");
+      return;
+    }
     if (!name.trim() || !email.trim()) {
       setErrMsg("Name and Email are required.");
       return;
@@ -46,74 +52,107 @@ export default function ApplyForm({
         }),
       });
 
-      const data = await res.json();
-      if (!res.ok || data.ok === false) {
-        throw new Error(data.error || "Submission failed");
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch {
+        /* no body */
+      }
+
+      if (!res.ok || data?.ok === false) {
+        throw new Error(data?.error || "Submission failed");
       }
 
       setOkMsg("Thanks! Your application has been received.");
-      // reset, but keep job context
+      // reset (keep context fields)
       setName("");
       setEmail("");
       setNotes("");
     } catch (err: any) {
-      setErrMsg(err.message || "Something went wrong.");
+      setErrMsg(err?.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border bg-white p-6">
+    <form
+      onSubmit={onSubmit}
+      className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6 text-white"
+      noValidate
+    >
       {okMsg && (
-        <div className="rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800">
+        <div role="status" className="rounded-md border border-emerald-300/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
           {okMsg}
         </div>
       )}
       {errMsg && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+        <div role="alert" className="rounded-md border border-rose-300/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
           {errMsg}
         </div>
       )}
 
+      {/* Honeypot */}
+      <div className="hidden">
+        <label htmlFor="company">Company</label>
+        <input
+          id="company"
+          name="company"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm text-neutral-700">Name *</label>
+          <label className="block text-sm text-white/80" htmlFor="name">Name *</label>
           <input
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600"
+            id="name"
+            name="name"
+            className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Your full name"
             required
+            aria-required="true"
           />
         </div>
         <div>
-          <label className="block text-sm text-neutral-700">Email *</label>
+          <label className="block text-sm text-white/80" htmlFor="email">Email *</label>
           <input
+            id="email"
+            name="email"
             type="email"
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600"
+            className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
+            aria-required="true"
           />
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm text-neutral-700">Role</label>
+          <label className="block text-sm text-white/80" htmlFor="role">Role</label>
           <input
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600"
+            id="role"
+            name="role"
+            className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
             value={role}
             onChange={(e) => setRole(e.target.value)}
             placeholder="e.g., Private Banker"
           />
         </div>
         <div>
-          <label className="block text-sm text-neutral-700">Market</label>
+          <label className="block text-sm text-white/80" htmlFor="market">Market</label>
           <input
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600"
+            id="market"
+            name="market"
+            className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
             value={market}
             onChange={(e) => setMarket(e.target.value)}
             placeholder="e.g., CH Onshore"
@@ -123,18 +162,22 @@ export default function ApplyForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm text-neutral-700">Job ID (optional)</label>
+          <label className="block text-sm text-white/80" htmlFor="jobId">Job ID (optional)</label>
           <input
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600"
+            id="jobId"
+            name="jobId"
+            className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
             value={jobId}
             onChange={(e) => setJobId(e.target.value)}
             placeholder="e.g., 101"
           />
         </div>
         <div>
-          <label className="block text-sm text-neutral-700">Notes</label>
+          <label className="block text-sm text-white/80" htmlFor="notes">Notes</label>
           <input
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-600"
+            id="notes"
+            name="notes"
+            className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Anything you'd like to add"
@@ -145,12 +188,13 @@ export default function ApplyForm({
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 disabled:opacity-60"
+        className="w-full rounded-lg bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF] disabled:opacity-60"
+        aria-busy={loading}
       >
         {loading ? "Submitting…" : "Submit Application"}
       </button>
 
-      <p className="text-xs text-neutral-500">
+      <p className="text-xs text-white/60">
         We’ll email you from Executive Partners. Your details are confidential.
       </p>
     </form>
