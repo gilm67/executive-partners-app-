@@ -6,7 +6,7 @@ const SHOWN_KEY = "ep.splash.shown";
 
 export default function Splash() {
   const [visible, setVisible] = useState(true);
-  const [lift, setLift] = useState(false);
+  const [reveal, setReveal] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -21,18 +21,18 @@ export default function Splash() {
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // Balanced preset: 3.5s hold, 2s reveal
-    const hold = prefersReduced ? 500 : 4500;
-    const reveal = prefersReduced ? 400 : 2000;
+    // Timing (balanced: 3.5s hold, 2s reveal)
+    const hold = prefersReduced ? 500 : 3500;
+    const revealDuration = prefersReduced ? 400 : 2000;
 
-    const liftTimer = window.setTimeout(() => setLift(true), hold);
+    const revealTimer = window.setTimeout(() => setReveal(true), hold);
     const hideTimer = window.setTimeout(() => {
       setVisible(false);
       sessionStorage.setItem(SHOWN_KEY, "1");
-    }, hold + reveal + 150); // a tiny buffer after the lift
+    }, hold + revealDuration + 200);
 
     return () => {
-      window.clearTimeout(liftTimer);
+      window.clearTimeout(revealTimer);
       window.clearTimeout(hideTimer);
     };
   }, []);
@@ -42,19 +42,17 @@ export default function Splash() {
   return (
     <div
       aria-hidden="true"
-      className={`
-        fixed inset-0 z-[1000]
-        pointer-events-none select-none
-        splash-gradient curtain
-        ${lift ? "curtain-up" : ""}
-      `}
+      className="fixed inset-0 z-[1000] pointer-events-none select-none splash-gradient split-reveal"
       style={{
-        backgroundImage: `url(/ep-splash.png)`, // put image at /public/ep-splash.png
+        backgroundImage: "url(/ep-splash.png)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundColor: "#0B0E13",
       }}
-    />
+    >
+      <div className={`curtain top-half ${reveal ? "slide-up" : ""}`} />
+      <div className={`curtain bottom-half ${reveal ? "slide-down" : ""}`} />
+    </div>
   );
 }
