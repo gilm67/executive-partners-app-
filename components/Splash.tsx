@@ -22,7 +22,7 @@ export default function Splash() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     // Balanced preset: 3.5s hold, 2s reveal
-    const hold = prefersReduced ? 500 : 3500;
+    const hold = prefersReduced ? 500 : 4500;
     const reveal = prefersReduced ? 400 : 2000;
 
     const liftTimer = window.setTimeout(() => setLift(true), hold);
