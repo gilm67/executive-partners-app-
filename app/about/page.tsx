@@ -3,13 +3,13 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About — Executive Partners | Private Banking & Wealth Management Search",
+  title: "About Executive Partners | Private Banking Recruitment in Geneva",
   description:
-    "Executive Partners is a specialist search firm for Private Banking & Wealth Management. Swiss discipline, international reach.",
+    "Executive Partners is Switzerland’s specialist recruiter for Private Banking & Wealth Management. Based in Geneva, delivering discreet search across Zurich, Dubai, Singapore, London & New York.",
   openGraph: {
-    title: "About — Executive Partners",
+    title: "About Executive Partners | Private Banking Recruitment in Geneva",
     description:
-      "Boutique executive search for Private Banking & Wealth Management. Trusted by banks, EAMs and family offices.",
+      "Boutique executive search for Private Banking & Wealth Management. Trusted by banks, EAMs and family offices across Switzerland and global hubs.",
     url: "https://www.execpartners.ch/about",
     images: [{ url: "/og.png" }],
   },
@@ -17,8 +17,35 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Executive Partners",
+    "url": "https://www.execpartners.ch",
+    "logo": "https://www.execpartners.ch/icon.png",
+    "sameAs": [
+      "https://www.linkedin.com/company/executive-partners",
+      "https://www.execpartners.ch"
+    ],
+    "contactPoint": [
+      {
+        "@type": "ContactPoint",
+        "contactType": "Recruitment",
+        "areaServed": ["CH","AE","GB","US","SG","HK"],
+        "availableLanguage": ["en","fr","de","pt","ar"],
+        "url": "https://www.execpartners.ch/contact"
+      }
+    ]
+  };
+
   return (
     <main className="relative min-h-screen bg-neutral-950 text-white">
+      {/* JSON-LD for Organization */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
+
       {/* background glow */}
       <div
         aria-hidden
@@ -34,12 +61,17 @@ export default function AboutPage() {
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           Private Banking & Wealth Management — Executive Search
         </div>
+
+        {/* SEO H1 */}
         <h1 className="mt-3 text-balance text-center text-4xl font-extrabold tracking-tight md:text-5xl">
-          Executive Partners
+          About Executive Partners — Private Banking Recruitment in Geneva
         </h1>
+
         <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
-          Specialist search for Private Banking & Wealth Management. From Switzerland to the world’s leading hubs,
-          we deliver targeted shortlists and discreet approach work for HNW/UHNW markets.
+          Specialist search for <strong>Private Banking</strong> &amp; <strong>Wealth Management</strong>. From{" "}
+          <strong>Geneva</strong> and <strong>Zurich</strong> to global hubs including{" "}
+          <strong>Dubai</strong>, <strong>Singapore</strong>, <strong>London</strong> and{" "}
+          <strong>New York</strong>, we deliver targeted shortlists and discreet approach work for HNW/UHNW markets.
         </p>
 
         {/* Two-column: Who we are / What we do */}
@@ -47,9 +79,10 @@ export default function AboutPage() {
           <article className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-white/[0.03] p-6 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
             <h2 className="text-xl font-bold">Who we are</h2>
             <p className="mt-3 text-sm leading-relaxed text-neutral-300">
-              Executive Partners is a boutique executive search firm focused exclusively on Private Banking &
-              Wealth Management. Based in Switzerland with an international footprint, we advise banks, EAMs and
-              family offices on critical hires across Relationship Management, Desk/Market Heads and senior leadership.
+              Executive Partners is a boutique executive search firm focused exclusively on{" "}
+              <strong>Private Banking</strong> &amp; <strong>Wealth Management</strong>. Headquartered in{" "}
+              <strong>Geneva</strong> with an international footprint, we advise banks, EAMs and family offices on
+              critical hires across Relationship Management, Desk/Market Heads and senior leadership.
             </p>
           </article>
 
@@ -57,7 +90,7 @@ export default function AboutPage() {
             <h2 className="text-xl font-bold">What we do</h2>
             <ul className="mt-3 grid list-disc gap-2 pl-5 text-sm text-neutral-300">
               <li><span className="font-medium text-white">Front-office hires:</span> Senior/Executive/Managing Directors, Team Heads, Market Leaders</li>
-              <li><span className="font-medium text-white">Strategic mandates:</span> New-desk builds, market entries, M&A integration, key replacements</li>
+              <li><span className="font-medium text-white">Strategic mandates:</span> New-desk builds, market entries, M&amp;A integration, key replacements</li>
               <li><span className="font-medium text-white">Discreet approach work:</span> Targeted outreach to specific bankers or teams</li>
               <li><span className="font-medium text-white">Advisory:</span> Portability assessment, compensation benchmarking, succession and team moves</li>
             </ul>
@@ -180,11 +213,11 @@ export default function AboutPage() {
           ))}
         </section>
 
-        {/* CTA */}
+        {/* CTA with internal links (SEO) */}
         <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center">
           <h3 className="text-xl font-bold">Ready to discuss a mandate or a move?</h3>
           <p className="mx-auto mt-2 max-w-2xl text-sm text-neutral-300">
-            Hiring Manager: share your brief and timelines—expect a calibrated shortlist quickly.
+            Hiring Manager: share your brief and timelines—expect a calibrated shortlist quickly.{" "}
             Candidates: speak confidentially about your market, portability and next step.
           </p>
           <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -196,9 +229,15 @@ export default function AboutPage() {
             </Link>
             <Link
               href="/candidates"
-              className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-white/10 sm:w-auto"
+              className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg白/10 sm:w-auto"
             >
               I’m a Candidate
+            </Link>
+            <Link
+              href="/jobs"
+              className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-white/10 sm:w-auto"
+            >
+              View Private Banking Jobs
             </Link>
             <Link
               href="/contact"
