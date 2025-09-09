@@ -3,21 +3,20 @@ import type { MetadataRoute } from "next";
 import { getAllJobsPublic } from "@/lib/jobs-public";
 
 /** Build a clean absolute base URL */
-function siteBase() {
-  if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
-  }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`.replace(/\/$/, "");
-  }
-  return "https://www.execpartners.ch";
+function siteBase(): string {
+  const env =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
+    "https://www.execpartners.ch";
+  const url = env.startsWith("http") ? env : `https://${env}`;
+  return url.replace(/\/+$/, "");
 }
 
-/** Normalize URL (avoid double slashes, remove trailing slash except root) */
-function normalize(url: string) {
-  const cleaned = url.replace(/([^:]\/)\/+/g, "$1");
-  if (cleaned === "https://www.execpartners.ch/") return cleaned;
-  return cleaned.replace(/\/$/, "");
+/** Normalize URL against base: collapse double slashes & drop trailing slash (except root) */
+function normalize(base: string, path: string): string {
+  const raw = `${base}${path.startsWith("/") ? path : `/${path}`}`;
+  const collapsed = raw.replace(/([^:]\/)\/+/g, "$1");
+  return collapsed === base + "/" ? base + "/" : collapsed.replace(/\/+$/, "");
 }
 
 type PublicJob = {
@@ -29,23 +28,25 @@ type PublicJob = {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteBase();
-  const now = new Date();
+  const nowISO = new Date().toISOString();
 
-  // --- Static pages you want indexed ---
+  // --- Static pages ---
   const staticPages = [
-    "/", // home
+    "/",              // home
     "/jobs",
+    "/apply",
     "/candidates",
     "/hiring-managers",
     "/insights",
     "/about",
     "/contact",
+    // ✅ New CH landing
+    "/private-banking-jobs-switzerland",
   ];
 
-  // Start with static entries
-  const entries: MetadataRoute.Sitemap = staticPages.map((p) => ({
-    url: normalize(`${base}${p}`),
-    lastModified: now,
+  const staticEntries: MetadataRoute.Sitemap = staticPages.map((p) => ({
+    url: normalize(base, p),
+    lastModified: nowISO,
     changeFrequency: p === "/" ? "daily" : "weekly",
     priority: p === "/" ? 1 : 0.7,
   }));
@@ -55,36 +56,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const data = await getAllJobsPublic();
     jobs = Array.isArray(data) ? (data as PublicJob[]) : [];
-  } catch {
+  } catch (err) {
+    if (process.env.NODE_ENV !== "production") {
+      console.error("sitemap getAllJobsPublic error:", err);
+    }
     jobs = [];
   }
 
-  for (const j of jobs) {
-    if (!j?.slug) continue;
-    if (j.active === false) continue; // skip inactive
+  const jobEntries: MetadataRoute.Sitemap = jobs
+    .filter((j) => j?.slug && j?.active !== false)
+    .map((j) => {
+      const last =
+        (j.updatedAt && new Date(j.updatedAt).toISOString()) ||
+        (j.createdAt && new Date(j.createdAt).toISOString()) ||
+        nowISO;
 
-    // prefer updatedAt, then createdAt, else now
-    const ts =
-      (j.updatedAt && new Date(j.updatedAt)) ||
-      (j.createdAt && new Date(j.createdAt)) ||
-      now;
-
-    entries.push({
-      url: normalize(`${base}/jobs/${j.slug}`),
-      lastModified: ts,
-      changeFrequency: "weekly",
-      priority: 0.8,
+      return {
+        url: normalize(base, `/jobs/${j.slug!}`),
+        lastModified: last,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      };
     });
-  }
 
-  // De-duplicate (just in case)
+  // De-duplicate by URL
   const seen = new Set<string>();
-  const deduped = entries.filter((e) => {
-    const key = e.url;
-    if (seen.has(key)) return false;
-    seen.add(key);
+  const entries = [...staticEntries, ...jobEntries].filter((e) => {
+    if (seen.has(e.url)) return false;
+    seen.add(e.url);
     return true;
   });
 
-  return deduped;
+  return entries;
 }
