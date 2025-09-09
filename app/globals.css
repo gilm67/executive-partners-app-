@@ -150,7 +150,7 @@ a[role="button"].bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
 header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
 
 /* =========================================================
-   Splash — Cinematic Rise + Deblur (stable)
+   Splash — Cinematic Rise + Deblur + Fade-out (stable)
    ========================================================= */
 
 .cinematic-rise {
@@ -166,6 +166,11 @@ header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
   transform: translateY(0);
   filter: blur(0);
   opacity: 1;
+}
+/* Smooth exit after linger */
+.cinematic-rise.exiting {
+  opacity: 0;
+  transition: opacity 1000ms ease-in-out;
 }
 
 /* Subtle splash overlay for depth */
