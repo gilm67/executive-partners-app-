@@ -52,9 +52,9 @@ async function getFeaturedJobs(): Promise<Job[]> {
 }
 
 export const metadata = {
-  title: "Executive Partners — International & Swiss Private Banking",
+  title: "Private Banking Recruitment in Geneva | Executive Partners",
   description:
-    "We connect top Private Bankers, Wealth Managers, Compliance Officers and senior executives with leading banks, EAMs, and family offices worldwide.",
+    "Executive Partners is Switzerland’s leading financial recruiter in private banking. Based in Geneva, we connect private bankers with confidential opportunities in Zurich, Dubai, Singapore, London, and New York.",
 };
 
 /* ---------------- Page ---------------- */
@@ -81,20 +81,21 @@ export default async function HomePage() {
           International & Swiss Private Banking — HNW/UHNW
         </div>
 
-        {/* hero */}
+        {/* hero (SEO H1) */}
         <h1 className="mx-auto mt-4 text-center text-5xl font-extrabold tracking-tight md:text-6xl">
-          Executive Partners
+          Private Banking Recruitment in Geneva
         </h1>
         <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
-          We connect top Private Bankers, Wealth Managers, and senior executives with
-          leading banks, EAMs, and family offices worldwide.
+          Executive Partners is Switzerland’s leading financial recruiter for private banking and
+          wealth management. From our base in Geneva, we connect seasoned Relationship Managers and
+          senior leaders with confidential opportunities in Zurich, Dubai, Singapore, London, and New York.
         </p>
 
         {/* primary CTAs */}
         <div className="mx-auto mt-6 flex w-full max-w-xl items-center justify-center gap-3">
           <PrimaryBtn href="/candidates" variant="blue">I’m a Candidate</PrimaryBtn>
           <PrimaryBtn href="/hiring-managers" variant="outline">I’m Hiring</PrimaryBtn>
-          <PrimaryBtn href="/jobs" variant="ghost">View All Jobs</PrimaryBtn>
+          <PrimaryBtn href="/jobs" variant="ghost">View Private Banking Jobs</PrimaryBtn>
         </div>
 
         {/* feature cards */}
