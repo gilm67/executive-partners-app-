@@ -3,14 +3,12 @@ import "./globals.css";
 import TopNav from "@/components/TopNav";
 import Splash from "@/components/Splash";
 import type { Metadata, Viewport } from "next";
-import { Analytics } from "@vercel/analytics/react"; // ✅ Vercel Analytics
+import { Analytics } from "@vercel/analytics/react";
 
-/** Resolve absolute site URL from env or fallback */
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.execpartners.ch");
 
-/** —— Global SEO (site-wide defaults) */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
@@ -27,9 +25,7 @@ export const metadata: Metadata = {
     title: "Executive Partners – Private Banking & Wealth Management Search",
     description:
       "Confidential recruitment for private bankers, relationship managers, and wealth managers. Geneva-based, globally connected.",
-    images: [
-      { url: "/og.png", width: 1200, height: 630, alt: "Executive Partners" },
-    ],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Executive Partners" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -44,9 +40,12 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
+  // ✅ Google Search Console verification
+  verification: {
+    google: "WEQvBE0-6FZmOaMbV2oVP9Cm9Zm6A25zU_0Jaghettk",
+  },
 };
 
-// ✅ Next 15+: use a dedicated viewport export (don’t put in metadata)
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -55,17 +54,14 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // JSON-LD: Organization
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Executive Partners",
     url: SITE,
     logo: `${SITE}/logo.png`,
-    // sameAs: ["https://www.linkedin.com/company/executive-partners"],
   };
 
-  // JSON-LD: WebSite + SearchAction (sitelinks search)
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -81,19 +77,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
-        {/* Perf niceties (safe, optional) */}
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-
-        {/* 🔔 RSS autodiscovery */}
         <link
           rel="alternate"
           type="application/rss+xml"
           title="Executive Partners – Private Wealth Pulse"
           href="/rss.xml"
         />
-
-        {/* Structured Data */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       </head>
@@ -101,7 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Splash />
         <TopNav />
         <main className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">{children}</main>
-        <Analytics /> {/* ✅ Sends pageviews to Vercel Analytics */}
+        <Analytics />
       </body>
     </html>
   );
