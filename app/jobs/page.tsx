@@ -1,21 +1,20 @@
 /* app/jobs/page.tsx */
 import Link from "next/link";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import {
   Search, MapPin, Briefcase, Shield, CalendarDays, ChevronRight, Filter, Star,
 } from "lucide-react";
 
-/* ---------------- meta ---------------- */
-
+/* ---------------- meta (SEO) ---------------- */
 export const metadata: Metadata = {
-  title: "Open Roles — Executive Partners | Private Banking & Wealth Management",
+  title: "Private Banking Jobs in Switzerland | Executive Partners",
   description:
-    "Browse confidential mandates across Switzerland and international hubs. Roles for Senior Relationship Managers, Team Heads, and leadership in Private Banking.",
+    "Explore confidential Private Banking jobs across Geneva & Zurich, plus Dubai, Singapore, London and New York. Discreet executive search for HNW/UHNW markets.",
   openGraph: {
-    title: "Open Roles — Executive Partners",
+    title: "Private Banking Jobs in Switzerland | Executive Partners",
     description:
-      "Targeted, confidential private banking mandates across CH, UK, US, Dubai, Singapore, and Hong Kong.",
+      "Confidential Private Banking opportunities in Geneva, Zurich and global hubs. Submit your CV or speak with our search team.",
     url: "https://www.execpartners.ch/jobs",
     images: [{ url: "/og.png" }],
   },
@@ -23,7 +22,6 @@ export const metadata: Metadata = {
 };
 
 /* ---------------- types ---------------- */
-
 type Job = {
   id?: string;
   title: string;
@@ -38,7 +36,6 @@ type Job = {
 };
 
 /* ---------------- data: fallback (keeps page populated) ---------------- */
-
 const CANONICAL_JOBS: Job[] = [
   {
     title: "Senior Relationship Manager — MEA",
@@ -116,7 +113,6 @@ const HIDDEN_SLUGS = new Set<string>([
 ]);
 
 /* ---------------- fetching ---------------- */
-
 async function safeFetchJSON(url: string): Promise<any | null> {
   try {
     const res = await fetch(url, { cache: "no-store" });
@@ -148,8 +144,7 @@ async function getJobs(query: string, filters: Record<string, string>) {
   return CANONICAL_JOBS;
 }
 
-/* ---------------- UI primitives (unchanged) ---------------- */
-
+/* ---------------- UI primitives ---------------- */
 function Chip({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] font-medium text-white/80">
@@ -261,8 +256,7 @@ function EmptyState() {
   );
 }
 
-/* ---------------- Filter Bar (unchanged) ---------------- */
-
+/* ---------------- Filter Bar ---------------- */
 function FilterBar({
   defaultQuery,
   defaultFilters,
@@ -322,14 +316,14 @@ function FilterBar({
   );
 }
 
-/* ---------------- Page (unchanged layout) ---------------- */
-
+/* ---------------- Page ---------------- */
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams?: Promise<Record<string, string | string[]>>;
+  // ✅ Important: do NOT type this as Promise<...>
+  searchParams?: Record<string, string | string[]>;
 }) {
-  const sp = (await searchParams) ?? {};
+  const sp = searchParams ?? {};
   const q = typeof sp.q === "string" ? sp.q : "";
   const market = typeof sp.market === "string" ? sp.market : "";
   const location = typeof sp.location === "string" ? sp.location : "";
@@ -343,10 +337,24 @@ export default async function JobsPage({
   if (sort) filters.sort = sort;
 
   const rawJobs: Job[] = await getJobs(q, filters);
-
   const jobs = rawJobs.filter(
     (j) => j?.active !== false && !HIDDEN_SLUGS.has(j.slug)
   );
+
+  // ------- JSON-LD ItemList for SEO -------
+  const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.execpartners.ch").replace(/\/$/, "");
+  const itemList = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListOrder: "https://schema.org/ItemListOrderDescending",
+    numberOfItems: jobs.length,
+    itemListElement: jobs.map((j, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      url: `${base}/jobs/${j.slug}`,
+      name: j.title,
+    })),
+  };
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
@@ -358,15 +366,37 @@ export default async function JobsPage({
             "radial-gradient(1400px 500px at 10% -10%, rgba(14,165,233,.15) 0%, rgba(14,165,233,0) 60%), radial-gradient(1100px 420px at 110% 0%, rgba(34,197,94,.14) 0%, rgba(34,197,94,0) 60%)",
         }}
       />
+
+      {/* JSON-LD script */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }} />
+
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-14">
         <div className="text-center">
           <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
             Discreet Private Banking Mandates
           </div>
-        <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">Open Roles</h1>
+          {/* ✅ SEO H1 */}
+          <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
+            Private Banking Jobs in Switzerland
+          </h1>
           <p className="mx-auto mt-3 max-w-3xl text-neutral-300">
-            Switzerland first—plus UK, US, Dubai, Singapore &amp; Hong Kong. We publish a subset of live searches; confidential roles are shared directly with qualified bankers.
+            Live mandates across <strong>Geneva</strong> and <strong>Zurich</strong>, with international coverage in{" "}
+            <strong>Dubai</strong>, <strong>Singapore</strong>, <strong>London</strong> &amp; <strong>New York</strong>.
+            We publish a subset of searches; confidential roles are shared directly with qualified bankers.
           </p>
+
+          {/* Quick internal links help SEO & UX */}
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
+            <Link href="/apply" className="rounded-full border border-white/15 bg-white/5 px-3 py-1 hover:bg-white/10">
+              Submit CV
+            </Link>
+            <Link href="/candidates" className="rounded-full border border-white/15 bg-white/5 px-3 py-1 hover:bg-white/10">
+              Candidate Hub
+            </Link>
+            <Link href="/contact" className="rounded-full border border-white/15 bg-white/5 px-3 py-1 hover:bg-white/10">
+              Contact a Recruiter
+            </Link>
+          </div>
         </div>
 
         <div className="mt-8">
@@ -394,10 +424,22 @@ export default async function JobsPage({
 
         {/* Footer CTA */}
         <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center">
-          <p className="text-neutral-300">Don’t see your exact market? We run confidential mandates continuously.</p>
+          <p className="text-neutral-300">
+            Don’t see your exact market? We run confidential mandates continuously.
+          </p>
           <div className="mt-3 flex items-center justify-center gap-3">
-            <Link href="/contact" className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10">Contact us</Link>
-            <Link href="/candidates" className="rounded-xl bg-[#1D4ED8] !text-white text-white px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF] !text-white text-white font-semibold">Register confidentially</Link>
+            <Link
+              href="/contact"
+              className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
+            >
+              Contact us
+            </Link>
+            <Link
+              href="/candidates"
+              className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF]"
+            >
+              Register confidentially
+            </Link>
           </div>
         </div>
       </div>
