@@ -2,49 +2,68 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
+/* Resolve absolute site URL from env or fallback */
+function siteBase() {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL || "https://www.execpartners.ch";
+  const url = raw.startsWith("http") ? raw : `https://${raw}`;
+  return url.replace(/\/$/, "");
+}
+const SITE = siteBase();
+const PAGE_URL = `${SITE}/about`;
+
 export const metadata: Metadata = {
-  title: "About Executive Partners | Private Banking Recruitment in Geneva",
+  title: "About Executive Partners | Connecting Top Talent with Private Banking Excellence – In Switzerland & Beyond",
   description:
-    "Executive Partners is Switzerland’s specialist recruiter for Private Banking & Wealth Management. Based in Geneva, delivering discreet search across Zurich, Dubai, Singapore, London & New York.",
+    "Executive Partners is Switzerland’s specialist recruiter for Private Banking & Wealth Management. Geneva-headquartered, delivering discreet search across Zurich, Dubai, Singapore, London & New York.",
   openGraph: {
-    title: "About Executive Partners | Private Banking Recruitment in Geneva",
+    title: "About Executive Partners | Connecting Top Talent with Private Banking Excellence – In Switzerland & Beyond",
     description:
       "Boutique executive search for Private Banking & Wealth Management. Trusted by banks, EAMs and family offices across Switzerland and global hubs.",
-    url: "https://www.execpartners.ch/about",
+    url: PAGE_URL,
     images: [{ url: "/og.png" }],
+    type: "website",
+    siteName: "Executive Partners",
   },
-  alternates: { canonical: "https://www.execpartners.ch/about" },
+  alternates: { canonical: PAGE_URL },
+  robots: { index: true, follow: true },
 };
 
 export default function AboutPage() {
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Executive Partners",
-    "url": "https://www.execpartners.ch",
-    "logo": "https://www.execpartners.ch/icon.png",
-    "sameAs": [
+    name: "Executive Partners",
+    url: SITE,
+    logo: `${SITE}/icon.png`,
+    sameAs: [
       "https://www.linkedin.com/company/executive-partners",
-      "https://www.execpartners.ch"
+      SITE,
     ],
-    "contactPoint": [
+    contactPoint: [
       {
         "@type": "ContactPoint",
-        "contactType": "Recruitment",
-        "areaServed": ["CH","AE","GB","US","SG","HK"],
-        "availableLanguage": ["en","fr","de","pt","ar"],
-        "url": "https://www.execpartners.ch/contact"
-      }
-    ]
+        contactType: "Recruitment",
+        areaServed: ["CH", "AE", "GB", "US", "SG", "HK"],
+        availableLanguage: ["en", "fr", "de", "pt", "ar"],
+        url: `${SITE}/contact`,
+      },
+    ],
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "About", item: PAGE_URL },
+    ],
   };
 
   return (
     <main className="relative min-h-screen bg-neutral-950 text-white">
-      {/* JSON-LD for Organization */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-      />
+      {/* JSON-LD */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
       {/* background glow */}
       <div
@@ -57,14 +76,14 @@ export default function AboutPage() {
       />
 
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
-        {/* Eyebrow + Hero */}
+        {/* Eyebrow */}
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           Private Banking & Wealth Management — Executive Search
         </div>
 
-        {/* SEO H1 */}
+        {/* SEO H1 (aligned with the new title) */}
         <h1 className="mt-3 text-balance text-center text-4xl font-extrabold tracking-tight md:text-5xl">
-          About Executive Partners — Private Banking Recruitment in Geneva
+          About Executive Partners — Connecting Top Talent with Private Banking Excellence
         </h1>
 
         <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
@@ -229,7 +248,7 @@ export default function AboutPage() {
             </Link>
             <Link
               href="/candidates"
-              className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg白/10 sm:w-auto"
+              className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-white/10 sm:w-auto"
             >
               I’m a Candidate
             </Link>
