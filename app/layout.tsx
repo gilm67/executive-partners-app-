@@ -35,11 +35,20 @@ export const metadata: Metadata = {
     images: ["/og.png"],
   },
   robots: { index: true, follow: true },
+
+  // ✅ Multi-size icons + one-time cache-buster on ICO
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico?v=2" },
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-48x48.png", type: "image/png", sizes: "48x48" },
+      { url: "/favicon-512x512.png", type: "image/png", sizes: "512x512" },
+    ],
+    shortcut: "/favicon.ico?v=2",
     apple: "/apple-touch-icon.png",
   },
+
   // ✅ Google Search Console verification
   verification: {
     google: "WEQvBE0-6FZmOaMbV2oVP9Cm9Zm6A25zU_0Jaghettk",
@@ -79,12 +88,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+
+        {/* 🔔 RSS autodiscovery */}
         <link
           rel="alternate"
           type="application/rss+xml"
           title="Executive Partners – Private Wealth Pulse"
           href="/rss.xml"
         />
+
+        {/* 🧭 Safari pinned tab (optional but nice) */}
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0B0E13" />
+        {/* Windows tile color nicety */}
+        <meta name="msapplication-TileColor" content="#0B0E13" />
+
+        {/* Structured Data */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       </head>
