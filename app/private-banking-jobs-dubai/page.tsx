@@ -24,7 +24,8 @@ type Job = {
   active?: boolean;
 };
 
-const DUBAI_WORDS = /(dubai|uae|abu dhabi|middle\s*east|mea|gulf|gcc)/i;
+const DUBAI_WORDS =
+  /(dubai|uae|abu dhabi|middle\s*east|\bmea\b|gulf|\bgcc\b)/i;
 
 async function fetchDubaiJobs(): Promise<Job[]> {
   const qs = new URLSearchParams({ active: "true", limit: "12" }).toString();
@@ -55,14 +56,14 @@ async function fetchDubaiJobs(): Promise<Job[]> {
 export const metadata: Metadata = {
   title: { absolute: "Private Banking Jobs in Dubai | Executive Partners" },
   description:
-    "Explore Private Banking & Wealth Management jobs in Dubai. MEA mandates for Relationship Managers, Team Heads and Market Leaders covering UHNW/HNW clients.",
+    "Explore Private Banking & Wealth Management jobs in Dubai (UAE). MEA mandates for Relationship Managers, Team Heads and Market Leaders serving UHNW/HNW clients.",
   alternates: { canonical: PAGE_PATH },
   openGraph: {
     type: "website",
     url: PAGE_PATH,
     title: "Private Banking Jobs in Dubai | Executive Partners",
     description:
-      "Live MEA mandates from Dubai. Discreet search for HNW/UHNW Relationship Managers and senior leaders across the Middle East.",
+      "Live MEA mandates from Dubai: Relationship Managers, Team Heads, Market Leaders. Discreet recruitment for UHNW/HNW private banking in the UAE.",
     images: [{ url: "/og.png" }],
     siteName: "Executive Partners",
   },
@@ -74,7 +75,7 @@ export const revalidate = 3600;
 export default async function DubaiLandingPage() {
   const jobs = await fetchDubaiJobs();
 
-  /* JSON-LD: FAQ (Dubai/MEA) */
+  /* ---------- JSON-LD ---------- */
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -118,7 +119,6 @@ export default async function DubaiLandingPage() {
     ],
   };
 
-  /* JSON-LD: CollectionPage + Breadcrumb + ItemList (if we have jobs) */
   const collectionJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -184,60 +184,47 @@ export default async function DubaiLandingPage() {
           Private Banking Jobs in Dubai
         </h1>
 
-        {/* ~750 words */}
+        {/* Intent-rich copy */}
         <section className="mx-auto mt-4 max-w-3xl space-y-4 text-sm leading-6 text-neutral-300">
           <p>
-            Executive Partners partners with leading banks and family offices in{" "}
+            Executive Partners works with leading private banks, EAMs and family offices in{" "}
             <strong>Dubai</strong>, the Gulf’s premier hub for{" "}
-            <strong>Private Banking &amp; Wealth Management</strong>. With its strategic position between
-            Europe and Asia, Dubai is the launchpad for MEA client coverage and a magnet for global UHNW
-            and HNW flows.
+            <strong>Private Banking &amp; Wealth Management</strong>. With its position between Europe and Asia,
+            Dubai anchors UHNW and HNW coverage across GCC, Levant, Africa and India—and remains a key booking and advisory centre for MEA.
           </p>
+
           <p>
-            Banks in Dubai seek Relationship Managers and Team Heads who can serve clients across the
-            GCC, Levant, Africa, and India. Successful candidates typically demonstrate a blend of
-            <em> portable client books</em>, deep regional ties, and a strong compliance culture aligned
-            with DFSA and international standards.
+            Current mandates prioritise Relationship Managers and Team Heads with <em>portable</em> client books,
+            proven revenue, and a strong compliance culture. We calibrate on booking options, credit appetite, and product
+            shelf (advisory/DPM, Lombard &amp; real estate lending, private markets) to ensure business plans are realistic and durable.
           </p>
 
           <h2 className="mt-4 text-lg font-semibold text-white">What makes a strong Dubai RM profile?</h2>
           <ul className="list-disc space-y-2 pl-5">
-            <li>Proven coverage of UHNW/HNW clients across MEA with referenceable history.</li>
-            <li>
-              <strong>Portability</strong>: evidence of client retention, realistic wallet share, and adherence to
-              cross-border regulations.
-            </li>
-            <li>
-              Languages: Arabic, English, French, Hindi or Urdu add competitive advantage for regional
-              coverage.
-            </li>
-            <li>
-              Multi-product expertise: advisory, DPM, Lombard lending, real estate financing, and access
-              to private markets.
-            </li>
+            <li>Referenceable UHNW/HNW coverage across GCC, Levant, Africa or India.</li>
+            <li><strong>Portability</strong> with credible wallet share and retention history.</li>
+            <li>Languages: Arabic and English (plus French, Hindi or Urdu depending on desk).</li>
+            <li>Multi-product execution: advisory/DPM, Lombard, real estate, and private markets access.</li>
           </ul>
 
           <h2 className="mt-4 text-lg font-semibold text-white">Hiring themes in Dubai</h2>
           <p>
-            Demand is strong for RMs covering GCC and North Africa, India-focused bankers, and team
-            leaders able to drive regional strategy. Employers prize candidates who balance revenue
-            generation with regulatory discipline. A growing trend is the integration of{" "}
-            <strong>Sharia-compliant solutions</strong> and private market access into advisory platforms.
+            Demand is healthy for GCC and North Africa coverage, India-focused desks, and team leaders who can drive regional strategy.
+            Employers value cycle-time to decision, disciplined onboarding, and cross-border governance—often blending
+            conventional and <strong>Sharia-compliant</strong> solutions.
           </p>
 
           <h2 className="mt-4 text-lg font-semibold text-white">Relocating to Dubai</h2>
           <p>
-            Dubai attracts senior bankers from Europe, Asia and beyond. Packages often include tax-free
-            compensation, relocation support, housing allowance and education benefits. We advise
-            candidates on licensing requirements, onboarding timelines and realistic ramp-up periods.
+            Packages frequently include tax-free compensation, relocation support, housing and education benefits.
+            We advise candidates on DFSA licensing, immigration steps, and realistic ramp-up timelines.
           </p>
 
           <h2 className="mt-4 text-lg font-semibold text-white">How we work</h2>
           <p>
-            We map the market discreetly, validate portability, and present actionable shortlists.
-            Candidates move only with consent, and clients receive calibrated, compliance-checked
-            profiles aligned with strategic goals. Our Geneva base and Dubai partnerships give us a
-            unique vantage point on cross-border talent flows.
+            We map the market discreetly, validate portability, and present shortlists you can act on. Candidates move only with consent.
+            Hiring managers get calibrated, compliance-checked profiles aligned to desk strategy. Our Geneva base and Dubai partnerships
+            give us a clear view of cross-border talent flows.
           </p>
         </section>
 
@@ -246,36 +233,20 @@ export default async function DubaiLandingPage() {
           <h2 className="text-2xl font-bold mb-4">Frequently Asked Questions</h2>
           <div className="space-y-6">
             <div>
-              <h3 className="font-semibold text-white">
-                Which client segments are most in demand in Dubai?
-              </h3>
-              <p className="mt-1 text-sm">
-                UHNW/HNW coverage across GCC, Levant, Africa and India with referenceable revenue.
-              </p>
+              <h3 className="font-semibold text-white">Which client segments are most in demand in Dubai?</h3>
+              <p className="mt-1 text-sm">UHNW/HNW coverage across GCC, Levant, Africa and India with referenceable revenue.</p>
             </div>
             <div>
-              <h3 className="font-semibold text-white">
-                What languages are valued for Dubai private banking roles?
-              </h3>
-              <p className="mt-1 text-sm">
-                Arabic and English are core; French, Hindi and Urdu can strengthen candidacy.
-              </p>
+              <h3 className="font-semibold text-white">What languages are valued for Dubai private banking roles?</h3>
+              <p className="mt-1 text-sm">Arabic and English are core; French, Hindi and Urdu can strengthen candidacy.</p>
             </div>
             <div>
-              <h3 className="font-semibold text-white">
-                What portability is required?
-              </h3>
-              <p className="mt-1 text-sm">
-                Credible portable wallet share, clean compliance record, and cross-border alignment.
-              </p>
+              <h3 className="font-semibold text-white">What portability is required?</h3>
+              <p className="mt-1 text-sm">Credible portable wallet share, clean compliance record, and cross-border alignment.</p>
             </div>
             <div>
-              <h3 className="font-semibold text-white">
-                Do you support relocations to Dubai?
-              </h3>
-              <p className="mt-1 text-sm">
-                Yes—package advice, licensing guidance and onboarding timelines.
-              </p>
+              <h3 className="font-semibold text-white">Do you support relocations to Dubai?</h3>
+              <p className="mt-1 text-sm">Yes—package advice, licensing guidance and onboarding timelines.</p>
             </div>
           </div>
         </section>
@@ -317,6 +288,29 @@ export default async function DubaiLandingPage() {
                 to be notified first.
               </div>
             )}
+          </div>
+        </section>
+
+        {/* CTAs */}
+        <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <p className="text-neutral-300">
+              Ready to discuss a Dubai mandate or a move?
+            </p>
+            <div className="flex gap-3">
+              <Link
+                href="/apply"
+                className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF]"
+              >
+                Candidates — Apply
+              </Link>
+              <Link
+                href="/contact"
+                className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
+              >
+                Talk to us
+              </Link>
+            </div>
           </div>
         </section>
 

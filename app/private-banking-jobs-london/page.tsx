@@ -24,9 +24,9 @@ type Job = {
   active?: boolean;
 };
 
-/* Basic London/UK filter */
+/* London/UK filter (expanded) */
 const LONDON_WORDS =
-  /(london|mayfair|canary wharf|city of london|uk|united kingdom|great britain|england|gb)/i;
+  /(london|mayfair|canary wharf|city of london|westminster|kensington|chelsea|marylebone|knightsbridge|belgravia|soho|the square mile|uk|united kingdom|great britain|\bgb\b|england)/i;
 
 async function fetchLondonJobs(): Promise<Job[]> {
   const qs = new URLSearchParams({ active: "true", limit: "12" }).toString();
@@ -179,7 +179,7 @@ export default async function LondonLandingPage() {
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
         {/* Eyebrow */}
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
-          London — UK Onshore & Cross-Border Private Banking
+          London — UK Onshore &amp; Cross-Border Private Banking
         </div>
 
         {/* H1 */}
@@ -187,12 +187,12 @@ export default async function LondonLandingPage() {
           Private Banking Jobs in London
         </h1>
 
-        {/* ~750 words */}
+        {/* Intent-rich copy */}
         <section className="mx-auto mt-4 max-w-3xl space-y-4 text-sm leading-6 text-neutral-300">
           <p>
             Executive Partners supports leading banks, EAMs and family offices in{" "}
             <strong>London</strong>, one of the world’s deepest hubs for{" "}
-            <strong>Private Banking & Wealth Management</strong>. The UK market blends
+            <strong>Private Banking &amp; Wealth Management</strong>. The UK market blends
             onshore UHNW/HNW needs with international flows from Europe, the Middle East,
             the Americas and Asia, creating high demand for seasoned Relationship Managers,
             Team Heads and Market Leaders.
@@ -336,6 +336,27 @@ export default async function LondonLandingPage() {
                 to be notified first.
               </div>
             )}
+          </div>
+        </section>
+
+        {/* CTAs */}
+        <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <p className="text-neutral-300">Ready to discuss a London mandate or a move?</p>
+            <div className="flex gap-3">
+              <Link
+                href="/apply"
+                className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF]"
+              >
+                Candidates — Apply
+              </Link>
+              <Link
+                href="/contact"
+                className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
+              >
+                Talk to us
+              </Link>
+            </div>
           </div>
         </section>
 

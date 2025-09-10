@@ -24,9 +24,9 @@ type Job = {
   active?: boolean;
 };
 
-/* Basic New York / US filter */
+/* New York / US filter (expanded) */
 const NEW_YORK_WORDS =
-  /(new york|nyc|manhattan|wall street|park avenue|\bny\b|\bny,?\s*usa\b|\bus\b|\busa\b|\bunited states\b)/i;
+  /(new york|nyc|manhattan|midtown|downtown|wall street|park avenue|madison avenue|tribeca|soho|upper east side|upper west side|brooklyn|queens|bronx|staten island|\bny\b|\bny,?\s*usa\b|\bus\b|\busa\b|\bunited states\b)/i;
 
 async function fetchNewYorkJobs(): Promise<Job[]> {
   const qs = new URLSearchParams({ active: "true", limit: "12" }).toString();
@@ -44,9 +44,7 @@ async function fetchNewYorkJobs(): Promise<Job[]> {
         : [];
       const filtered = (list as Job[])
         .filter((j) => j?.active !== false)
-        .filter((j) =>
-          NEW_YORK_WORDS.test(`${j.location ?? ""} ${j.market ?? ""}`)
-        );
+        .filter((j) => NEW_YORK_WORDS.test(`${j.location ?? ""} ${j.market ?? ""}`));
       if (filtered.length) return filtered.slice(0, 9);
     } catch {
       /* ignore */
@@ -181,7 +179,7 @@ export default async function NewYorkLandingPage() {
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
         {/* Eyebrow */}
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
-          New York — US Onshore & Cross-Border Private Banking
+          New York — US Onshore &amp; Cross-Border Private Banking
         </div>
 
         {/* H1 */}
@@ -189,7 +187,7 @@ export default async function NewYorkLandingPage() {
           Private Banking Jobs in New York
         </h1>
 
-        {/* ~750 words */}
+        {/* Intent-rich copy */}
         <section className="mx-auto mt-4 max-w-3xl space-y-4 text-sm leading-6 text-neutral-300">
           <p>
             Executive Partners supports leading banks, EAMs and family offices in{" "}
@@ -258,7 +256,7 @@ export default async function NewYorkLandingPage() {
           </p>
         </section>
 
-        {/* Visible FAQ Section (mirrors JSON-LD topics) */}
+        {/* Visible FAQ (mirrors JSON-LD topics) */}
         <section className="mt-12 max-w-3xl mx-auto text-neutral-300">
           <h2 className="text-2xl font-bold mb-4">Frequently Asked Questions</h2>
           <div className="space-y-6">
@@ -307,18 +305,13 @@ export default async function NewYorkLandingPage() {
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {jobs.length > 0 ? (
               jobs.map((j) => (
-                <article
-                  key={j.slug}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-5"
-                >
+                <article key={j.slug} className="rounded-2xl border border-white/10 bg-white/5 p-5">
                   <h3 className="font-semibold">{j.title}</h3>
                   <p className="mt-1 text-xs text-white/70">
                     {j.location || "New York"} {j.market ? `• ${j.market}` : ""}
                   </p>
                   {j.summary ? (
-                    <p className="mt-2 line-clamp-3 text-sm text-neutral-300">
-                      {j.summary}
-                    </p>
+                    <p className="mt-2 line-clamp-3 text-sm text-neutral-300">{j.summary}</p>
                   ) : null}
                   <Link
                     href={`/jobs/${j.slug}`}
@@ -337,6 +330,27 @@ export default async function NewYorkLandingPage() {
                 to be notified first.
               </div>
             )}
+          </div>
+        </section>
+
+        {/* CTAs */}
+        <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <p className="text-neutral-300">Ready to discuss a New York mandate or a move?</p>
+            <div className="flex gap-3">
+              <Link
+                href="/apply"
+                className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF]"
+              >
+                Candidates — Apply
+              </Link>
+              <Link
+                href="/contact"
+                className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
+              >
+                Talk to us
+              </Link>
+            </div>
           </div>
         </section>
 

@@ -24,9 +24,9 @@ type Job = {
   active?: boolean;
 };
 
-/* Geneva/Romandie filter */
+/* Geneva/Romandie filter (expanded) */
 const GENEVA_WORDS =
-  /(geneva|genève|romandie|lausanne|vaud|vevey|nyon|switzerland|suisse|\bch\b)/i;
+  /(geneva|genève|romandie|lausanne|vaud|vevey|nyon|morges|carouge|léman|switzerland|suisse|\bch\b)/i;
 
 async function fetchGenevaJobs(): Promise<Job[]> {
   const qs = new URLSearchParams({ active: "true", limit: "12" }).toString();
@@ -55,14 +55,14 @@ async function fetchGenevaJobs(): Promise<Job[]> {
 export const metadata: Metadata = {
   title: { absolute: "Private Banking Jobs in Geneva | Executive Partners" },
   description:
-    "Explore Private Banking & Wealth Management jobs in Geneva. Romandie mandates for Relationship Managers, Team Heads and Market Leaders (HNW/UHNW).",
+    "Explore Private Banking & Wealth Management jobs in Geneva (Romandie). Mandates for Relationship Managers, Team Heads and Market Leaders serving HNW/UHNW clients.",
   alternates: { canonical: PAGE_PATH },
   openGraph: {
     type: "website",
     url: PAGE_PATH,
     title: "Private Banking Jobs in Geneva | Executive Partners",
     description:
-      "Live Geneva/Romandie mandates. Discreet search for HNW/UHNW Relationship Managers and senior leaders.",
+      "Live Geneva & Romandie mandates. Discreet search for HNW/UHNW Relationship Managers and senior leaders in Switzerland.",
     images: [{ url: "/og.png" }],
     siteName: "Executive Partners",
   },
@@ -164,20 +164,27 @@ export default async function GenevaLandingPage() {
       ) : null}
 
       {/* bg */}
-      <div aria-hidden className="pointer-events-none absolute inset-0" style={{
-        background:
-          "radial-gradient(1200px 420px at 18% -10%, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%), radial-gradient(1000px 380px at 110% 0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%)",
-      }}/>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(1200px 420px at 18% -10%, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%), radial-gradient(1000px 380px at 110% 0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%)",
+        }}
+      />
 
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
+        {/* Eyebrow */}
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           Geneva — Switzerland (Romandie) Private Banking
         </div>
 
+        {/* H1 */}
         <h1 className="mt-3 text-center text-4xl font-extrabold tracking-tight md:text-5xl">
           Private Banking Jobs in Geneva
         </h1>
 
+        {/* Intent-rich copy */}
         <section className="mx-auto mt-4 max-w-3xl space-y-4 text-sm leading-6 text-neutral-300">
           <p>
             Executive Partners supports banks, EAMs and family offices in <strong>Geneva</strong>, a core
@@ -262,6 +269,27 @@ export default async function GenevaLandingPage() {
                 We’re curating Geneva roles now. <Link href="/apply" className="underline underline-offset-4">Submit your profile</Link> to be notified first.
               </div>
             )}
+          </div>
+        </section>
+
+        {/* CTAs */}
+        <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <p className="text-neutral-300">Ready to discuss a Geneva mandate or a move?</p>
+            <div className="flex gap-3">
+              <Link
+                href="/apply"
+                className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF]"
+              >
+                Candidates — Apply
+              </Link>
+              <Link
+                href="/contact"
+                className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
+              >
+                Talk to us
+              </Link>
+            </div>
           </div>
         </section>
 

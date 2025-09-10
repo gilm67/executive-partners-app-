@@ -53,14 +53,14 @@ export const metadata: Metadata = {
   title: { absolute: "Private Banking Jobs in Switzerland | Executive Partners" },
   description:
     "Explore Private Banking & Wealth Management jobs in Switzerland. Geneva, Zurich & Romandie mandates for Relationship Managers, Team Heads and Market Leaders.",
-  alternates: { canonical: "/private-banking-jobs-switzerland" },
+  alternates: { canonical: PAGE_URL },
   openGraph: {
     type: "website",
-    url: "/private-banking-jobs-switzerland",
+    url: PAGE_URL,
     title: "Private Banking Jobs in Switzerland | Executive Partners",
     description:
       "Live Swiss mandates across Geneva, Zurich & Romandie. Discreet search for HNW/UHNW Relationship Managers and leaders.",
-    images: [{ url: "/og.png" }],
+    images: [{ url: `${SITE}/og.png` }],
     siteName: "Executive Partners",
   },
   robots: { index: true, follow: true },
@@ -180,6 +180,11 @@ export default async function CHLandingPage() {
         <h1 className="mt-3 text-center text-4xl font-extrabold tracking-tight md:text-5xl">
           Private Banking Jobs in Switzerland
         </h1>
+
+        {/* Keyword-supporting line just under H1 */}
+        <p className="mt-2 text-center text-white/80">
+          Search current <strong>private banking jobs in Switzerland</strong> across Geneva, Zurich and Romandie — updated regularly.
+        </p>
 
         {/* ~700 words of targeted copy */}
         <section className="mx-auto mt-4 max-w-3xl space-y-4 text-sm leading-6 text-neutral-300">
