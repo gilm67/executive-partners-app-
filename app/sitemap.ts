@@ -35,6 +35,14 @@ const FALLBACK_JOB_SLUGS = [
   "senior-relationship-manager-portugal-geneva",
 ];
 
+/** Curate on-site Insights you’ve published */
+const INSIGHTS_POSTS: Array<{ slug: string; dateISO?: string; priority?: number }> = [
+  { slug: "swiss-private-banking-weekly-update-sep-2025", dateISO: "2025-09-08", priority: 0.75 },
+  // ✅ New article
+  // Set dateISO to the article’s publish date in YYYY-MM-DD (or omit to default to now)
+  { slug: "agility-small-bankers-win", dateISO: "2025-09-09", priority: 0.80 },
+];
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteBase();
   const nowISO = new Date().toISOString();
@@ -102,16 +110,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
 
-  // --- Insights posts (internal slugs) ---
-  const INSIGHTS_POSTS: Array<{ slug: string; dateISO?: string }> = [
-    { slug: "swiss-private-banking-weekly-update-sep-2025", dateISO: "2025-09-08" },
-  ];
-
+  // --- Insights posts (your long-form articles) ---
   const insightsEntries: MetadataRoute.Sitemap = INSIGHTS_POSTS.map((p) => ({
     url: normalize(base, `/insights/${p.slug}`),
     lastModified: p.dateISO ? new Date(p.dateISO).toISOString() : nowISO,
     changeFrequency: "weekly",
-    priority: 0.75,
+    priority: (p.priority ?? 0.75) as 0.75 | 0.8 | 0.7 | 1,
   }));
 
   // De-duplicate by URL
