@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   defaultRole?: string;
@@ -24,10 +24,29 @@ export default function ApplyForm({
   const [ok, setOk] = useState<boolean | null>(null);
   const [errMsg, setErrMsg] = useState<string | null>(null);
 
-  // CV state + ref to trigger native picker
+  // Context fields (useful in your email/webhook)
+  const [currentUrl, setCurrentUrl] = useState("");
+  const [userAgent, setUserAgent] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setCurrentUrl(window.location.href);
+      setUserAgent(window.navigator.userAgent);
+    }
+  }, []);
+
+  // CV state + input ref
   const cvInputRef = useRef<HTMLInputElement | null>(null);
   const [cvName, setCvName] = useState<string | null>(null);
   const [cvError, setCvError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+
+  function validateFile(f: File): string | null {
+    if (f.size > MAX_CV_BYTES) return "File too large (max 10 MB).";
+    const okMime = ACCEPTED_MIME.includes(f.type) || /\.(pdf|doc|docx)$/i.test(f.name || "");
+    if (!okMime) return "Unsupported file type. Please upload PDF, DOC, or DOCX.";
+    return null;
+  }
 
   function handlePickCv() {
     setCvError(null);
@@ -41,21 +60,50 @@ export default function ApplyForm({
       setCvName(null);
       return;
     }
-    if (f.size > MAX_CV_BYTES) {
-      setCvError("File too large (max 10 MB).");
+    const problem = validateFile(f);
+    if (problem) {
+      setCvError(problem);
       e.currentTarget.value = "";
       setCvName(null);
       return;
     }
-    // Type hint: allow by extension even if some browsers don’t set strict MIME for doc/docx
-    const okMime =
-      ACCEPTED_MIME.includes(f.type) ||
-      /\.(pdf|doc|docx)$/i.test(f.name || "");
-    if (!okMime) {
-      setCvError("Unsupported file type. Please upload PDF, DOC, or DOCX.");
-      e.currentTarget.value = "";
-      setCvName(null);
+    setCvName(f.name);
+  }
+
+  function clearCv() {
+    if (cvInputRef.current) {
+      cvInputRef.current.value = "";
+    }
+    setCvName(null);
+    setCvError(null);
+  }
+
+  // Drag & drop handlers
+  function onDragOver(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(true);
+  }
+  function onDragLeave() {
+    setDragOver(false);
+  }
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    setCvError(null);
+
+    const f = e.dataTransfer.files?.[0];
+    if (!f) return;
+    const problem = validateFile(f);
+    if (problem) {
+      setCvError(problem);
+      clearCv();
       return;
+    }
+    // push into the hidden input so FormData includes it
+    if (cvInputRef.current) {
+      const dt = new DataTransfer();
+      dt.items.add(f);
+      cvInputRef.current.files = dt.files;
     }
     setCvName(f.name);
   }
@@ -70,15 +118,11 @@ export default function ApplyForm({
       const form = e.currentTarget;
       const fd = new FormData(form); // ✅ multipart/form-data
 
-      // If there is a CV error, block submission
-      if (cvError) {
-        throw new Error(cvError);
-      }
+      if (cvError) throw new Error(cvError);
 
       const res = await fetch("/api/apply", {
         method: "POST",
         body: fd,
-        // ⛔️ Do NOT set Content-Type — browser sets boundary
       });
 
       if (!res.ok) {
@@ -88,8 +132,7 @@ export default function ApplyForm({
 
       setOk(true);
       form.reset();
-      setCvName(null);
-      setCvError(null);
+      clearCv();
     } catch (err: any) {
       setOk(false);
       setErrMsg(err?.message || "Submission failed. Please try again.");
@@ -116,7 +159,12 @@ export default function ApplyForm({
         onSubmit={onSubmit}
         encType="multipart/form-data"
         className="grid gap-4 rounded-2xl border border-white/10 bg-white/5 p-6"
+        noValidate
       >
+        {/* Hidden context (not shown to users) */}
+        <input type="hidden" name="sourceUrl" value={currentUrl} />
+        <input type="hidden" name="ua" value={userAgent} />
+
         <div className="grid gap-3 md:grid-cols-2">
           <div>
             <label htmlFor="name" className="block text-sm text-white/80">
@@ -128,6 +176,7 @@ export default function ApplyForm({
               required
               placeholder="Your full name"
               className="mt-1 w-full rounded-md bg-white/5 px-3 py-2"
+              aria-required="true"
             />
           </div>
           <div>
@@ -141,6 +190,7 @@ export default function ApplyForm({
               required
               placeholder="you@example.com"
               className="mt-1 w-full rounded-md bg-white/5 px-3 py-2"
+              aria-required="true"
             />
           </div>
 
@@ -182,29 +232,58 @@ export default function ApplyForm({
             />
           </div>
 
-          {/* CV Upload */}
+          {/* CV Upload (Button + Drag & Drop) */}
           <div className="md:col-span-2">
             <label className="block text-sm text-white/80">CV / Résumé</label>
-            <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-center">
-              <input
-                ref={cvInputRef}
-                name="cv"
-                type="file"
-                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                className="hidden"
-                onChange={handleCvChange}
-              />
+
+            {/* Hidden native input (used for FormData) */}
+            <input
+              ref={cvInputRef}
+              name="cv"
+              type="file"
+              accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              className="hidden"
+              onChange={handleCvChange}
+            />
+
+            <div className="mt-2 flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={handlePickCv}
                 className="inline-flex items-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold hover:bg-white/15"
+                aria-label="Upload CV (browse files)"
               >
-                Upload CV (PDF/DOC)
+                Upload / Import CV (PDF/DOC)
               </button>
+
               {cvName && (
-                <span className="text-xs text-white/70">Selected: {cvName}</span>
+                <>
+                  <span className="text-xs text-white/70">Selected: {cvName}</span>
+                  <button
+                    type="button"
+                    onClick={clearCv}
+                    className="rounded-md border border-white/20 px-2 py-1 text-xs hover:bg-white/10"
+                    aria-label="Remove selected file"
+                  >
+                    Remove
+                  </button>
+                </>
               )}
             </div>
+
+            {/* Drag & drop area */}
+            <div
+              onDragOver={onDragOver}
+              onDragLeave={onDragLeave}
+              onDrop={onDrop}
+              className={`mt-3 rounded-md border border-dashed px-4 py-6 text-center text-xs ${
+                dragOver ? "border-white/60 bg-white/10" : "border-white/20 bg-white/5"
+              }`}
+              aria-label="Drag and drop your CV here"
+            >
+              Drag & drop your CV here (PDF, DOC, DOCX) — max 10 MB
+            </div>
+
             <p className="mt-1 text-xs text-white/50">
               Accepted: PDF, DOC, DOCX. Max size: 10 MB.
             </p>
@@ -233,6 +312,7 @@ export default function ApplyForm({
           type="submit"
           disabled={submitting}
           className="mt-2 w-full rounded-md bg-[#1D4ED8] px-4 py-2 font-semibold hover:bg-[#1E40AF] disabled:opacity-60"
+          aria-busy={submitting}
         >
           {submitting ? "Submitting..." : "Submit Application"}
         </button>
