@@ -1,146 +1,125 @@
 // app/api/apply/route.ts
 import { NextResponse } from "next/server";
+import { Resend } from "resend";
 
 export const runtime = "nodejs";
 
-type Payload = {
-  name?: string;
-  email?: string;
-  role?: string;
-  market?: string;
-  jobId?: string;
-  notes?: string;
-  // If a file is ever sent, we’ll serialize its meta safely:
-  cvFile?: { name: string; type: string; size: number } | null;
-  _meta?: Record<string, unknown>;
-};
+const resendApiKey = process.env.RESEND_API_KEY;
+const recruiterTo = process.env.RECRUITER_TO || "recruiter@execpartners.ch";
+const LOG = process.env.LOG_SUBMISSIONS === "true" || process.env.NODE_ENV !== "production";
 
-async function parseRequest(req: Request): Promise<Payload> {
-  const ct = (req.headers.get("content-type") || "").toLowerCase();
-
-  // --- JSON body ---
-  if (ct.includes("application/json")) {
-    const json = (await req.json()) as Record<string, unknown>;
-    return {
-      name: String(json.name ?? ""),
-      email: String(json.email ?? ""),
-      role: String(json.role ?? json.job ?? ""),
-      market: String(json.market ?? ""),
-      jobId: String(json.jobId ?? ""),
-      notes: String(json.notes ?? ""),
-      cvFile: null,
-      _meta: { contentType: ct, transport: "json" },
-    };
-  }
-
-  // --- Form submissions (multipart or urlencoded) ---
-  if (
-    ct.includes("multipart/form-data") ||
-    ct.includes("application/x-www-form-urlencoded")
-  ) {
-    const form = await req.formData();
-
-    // If a file is present, capture lightweight meta (don’t forward raw bytes here)
-    const file = form.get("cv") as File | null;
-    const cvFile =
-      file instanceof File
-        ? { name: file.name, type: file.type, size: file.size }
-        : null;
-
-    const get = (k: string) => {
-      const v = form.get(k);
-      return typeof v === "string" ? v : "";
-    };
-
-    return {
-      name: get("name"),
-      email: get("email"),
-      role: get("role") || get("job"),
-      market: get("market"),
-      jobId: get("jobId"),
-      notes: get("notes"),
-      cvFile,
-      _meta: { contentType: ct, transport: "form" },
-    };
-  }
-
-  // --- Fallback: try JSON first, then form ---
-  try {
-    const json = (await req.json()) as Record<string, unknown>;
-    return {
-      name: String(json.name ?? ""),
-      email: String(json.email ?? ""),
-      role: String(json.role ?? json.job ?? ""),
-      market: String(json.market ?? ""),
-      jobId: String(json.jobId ?? ""),
-      notes: String(json.notes ?? ""),
-      cvFile: null,
-      _meta: { contentType: ct, transport: "fallback-json" },
-    };
-  } catch {
-    const form = await req.formData().catch(() => null);
-    if (form) {
-      const get = (k: string) => {
-        const v = form.get(k);
-        return typeof v === "string" ? v : "";
-      };
-      return {
-        name: get("name"),
-        email: get("email"),
-        role: get("role") || get("job"),
-        market: get("market"),
-        jobId: get("jobId"),
-        notes: get("notes"),
-        cvFile: null,
-        _meta: { contentType: ct, transport: "fallback-form" },
-      };
-    }
-  }
-
-  // If truly unknown content-type:
-  throw new Error(
-    'Unsupported Content-Type. Send JSON (application/json) or form data (multipart/form-data or application/x-www-form-urlencoded).'
-  );
+function redacted(s?: string | null) {
+  if (!s) return "";
+  // show first 2 and last 2 chars
+  if (s.length <= 4) return "****";
+  return `${s.slice(0, 2)}****${s.slice(-2)}`;
 }
 
 export async function POST(req: Request) {
   try {
-    const payload = await parseRequest(req);
+    // Must be multipart/form-data (our client sends FormData)
+    const form = await req.formData();
 
-    // Basic sanity (optional — keeps UX nice)
-    if (!payload.name || !payload.email) {
-      return NextResponse.json(
-        { ok: false, error: "Name and email are required." },
-        { status: 400 }
-      );
-    }
+    const name = (form.get("name") as string | null) || "";
+    const email = (form.get("email") as string | null) || "";
+    const role = (form.get("role") as string | null) || "";
+    const market = (form.get("market") as string | null) || "";
+    const jobId = (form.get("jobId") as string | null) || "";
+    const notes = (form.get("notes") as string | null) || "";
+    const cv = form.get("cv") as File | null;
 
-    // OPTIONAL: Forward to your webhook (Google Apps Script / Zapier / Manatal)
-    const url = process.env.APPLICANT_WEBHOOK_URL;
-    if (url) {
-      // We forward as JSON; receivers can parse the fields they need
-      await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...payload,
-          receivedAt: new Date().toISOString(),
-          source: "execpartners.ch/apply",
-        }),
-      }).catch(() => {
-        /* mute downstream errors to not break UX */
+    const payload = {
+      name,
+      email,
+      role,
+      market,
+      jobId,
+      notes,
+      cv: cv
+        ? {
+            name: cv.name,
+            type: cv.type,
+            size: cv.size,
+          }
+        : null,
+      ts: new Date().toISOString(),
+    };
+
+    // ---- Development / debug logging (safe, redacted) ----
+    if (LOG) {
+      console.log("[apply] submission received", {
+        name,
+        email: redacted(email),
+        role,
+        market,
+        jobId,
+        notesPreview: notes ? `${notes.slice(0, 40)}${notes.length > 40 ? "…" : ""}` : "",
+        cv: payload.cv,
       });
     }
 
-    return NextResponse.json({ ok: true, received: payload });
+    // ---- Optional: forward to webhook (e.g., Zapier/Manatal/Apps Script) ----
+    const webhookUrl = process.env.APPLICANT_WEBHOOK_URL;
+    if (webhookUrl) {
+      try {
+        await fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } catch (e) {
+        if (LOG) console.warn("[apply] webhook failed:", (e as Error)?.message);
+      }
+    }
+
+    // ---- Optional: Email notification via Resend ----
+    if (resendApiKey) {
+      const resend = new Resend(resendApiKey);
+
+      // Build HTML body
+      const html = `
+        <h2>New Apply submission</h2>
+        <p><b>Name:</b> ${name || "-"}</p>
+        <p><b>Email:</b> ${email || "-"}</p>
+        <p><b>Role:</b> ${role || "-"}</p>
+        <p><b>Market:</b> ${market || "-"}</p>
+        <p><b>Job ID:</b> ${jobId || "-"}</p>
+        <p><b>Notes:</b> ${notes ? notes.replace(/\n/g, "<br/>") : "-"}</p>
+        <p><b>CV:</b> ${cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"}</p>
+        <hr/>
+        <small>Sent ${new Date().toISOString()}</small>
+      `;
+
+      // Attach CV if provided (Resend accepts base64 content)
+      let attachments: { filename: string; content: string }[] | undefined;
+      if (cv) {
+        const buf = Buffer.from(await cv.arrayBuffer());
+        attachments = [
+          {
+            filename: cv.name || "cv",
+            content: buf.toString("base64"),
+          },
+        ];
+      }
+
+      try {
+        await resend.emails.send({
+          from: "Executive Partners <no-reply@execpartners.ch>",
+          to: recruiterTo,
+          subject: `Apply — ${name || "Unknown"} (${market || "Market"})`,
+          html,
+          attachments,
+        });
+      } catch (e) {
+        if (LOG) console.warn("[apply] email send failed:", (e as Error)?.message);
+      }
+    }
+
+    return NextResponse.json({ ok: true, received: { ...payload, email: redacted(email) } });
   } catch (err: any) {
+    if (LOG) console.error("[apply] error:", err?.message, err);
     return NextResponse.json(
-      {
-        ok: false,
-        error:
-          err?.message ||
-          "Apply endpoint failed. Please retry or email info@execpartners.ch.",
-      },
+      { ok: false, error: err?.message ?? "apply failed" },
       { status: 500 }
     );
   }
