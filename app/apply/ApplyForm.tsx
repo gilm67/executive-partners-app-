@@ -23,7 +23,7 @@ export default function ApplyForm({
   // simple honeypot
   const [company, setCompany] = useState("");
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setOkMsg(null);
     setErrMsg(null);
@@ -39,24 +39,21 @@ export default function ApplyForm({
 
     try {
       setLoading(true);
+
+      // ✅ Build multipart FormData directly from the form element
+      const formEl = e.currentTarget;
+      const fd = new FormData(formEl);
+
       const res = await fetch("/api/apply", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          email: email.trim(),
-          role: role.trim(),
-          market: market.trim(),
-          notes: notes.trim(),
-          jobId: jobId.trim(),
-        }),
+        body: fd, // <-- let the browser set Content-Type with boundary
       });
 
       let data: any = {};
       try {
         data = await res.json();
       } catch {
-        /* no body */
+        /* ignore */
       }
 
       if (!res.ok || data?.ok === false) {
@@ -64,10 +61,14 @@ export default function ApplyForm({
       }
 
       setOkMsg("Thanks! Your application has been received.");
-      // reset (keep context fields)
+      // reset visible fields (preserve defaults)
+      formEl.reset();
       setName("");
       setEmail("");
       setNotes("");
+      setRole(defaultRole);
+      setMarket(defaultMarket);
+      setJobId(defaultJobId);
     } catch (err: any) {
       setErrMsg(err?.message || "Something went wrong.");
     } finally {
@@ -78,16 +79,23 @@ export default function ApplyForm({
   return (
     <form
       onSubmit={onSubmit}
+      encType="multipart/form-data" // ✅ important for file upload
       className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6 text-white"
       noValidate
     >
       {okMsg && (
-        <div role="status" className="rounded-md border border-emerald-300/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
+        <div
+          role="status"
+          className="rounded-md border border-emerald-300/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200"
+        >
           {okMsg}
         </div>
       )}
       {errMsg && (
-        <div role="alert" className="rounded-md border border-rose-300/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+        <div
+          role="alert"
+          className="rounded-md border border-rose-300/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200"
+        >
           {errMsg}
         </div>
       )}
@@ -107,8 +115,10 @@ export default function ApplyForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm text-white/80" htmlFor="name">Name *</label>
-          <input
+          <label className="block text-sm text-white/80" htmlFor="name">
+            Name *
+          </label>
+        <input
             id="name"
             name="name"
             className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
@@ -120,7 +130,9 @@ export default function ApplyForm({
           />
         </div>
         <div>
-          <label className="block text-sm text-white/80" htmlFor="email">Email *</label>
+          <label className="block text-sm text-white/80" htmlFor="email">
+            Email *
+          </label>
           <input
             id="email"
             name="email"
@@ -137,7 +149,9 @@ export default function ApplyForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm text-white/80" htmlFor="role">Role</label>
+          <label className="block text-sm text-white/80" htmlFor="role">
+            Role
+          </label>
           <input
             id="role"
             name="role"
@@ -148,7 +162,9 @@ export default function ApplyForm({
           />
         </div>
         <div>
-          <label className="block text-sm text-white/80" htmlFor="market">Market</label>
+          <label className="block text-sm text-white/80" htmlFor="market">
+            Market
+          </label>
           <input
             id="market"
             name="market"
@@ -162,7 +178,9 @@ export default function ApplyForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm text-white/80" htmlFor="jobId">Job ID (optional)</label>
+          <label className="block text-sm text-white/80" htmlFor="jobId">
+            Job ID (optional)
+          </label>
           <input
             id="jobId"
             name="jobId"
@@ -172,17 +190,35 @@ export default function ApplyForm({
             placeholder="e.g., 101"
           />
         </div>
+
+        {/* ✅ CV Upload */}
         <div>
-          <label className="block text-sm text-white/80" htmlFor="notes">Notes</label>
+          <label className="block text-sm text-white/80" htmlFor="cv">
+            Upload CV (PDF or Word)
+          </label>
           <input
-            id="notes"
-            name="notes"
-            className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Anything you'd like to add"
+            id="cv"
+            name="cv"
+            type="file"
+            accept=".pdf,.doc,.docx"
+            className="mt-1 block w-full text-sm text-neutral-300 file:mr-4 file:rounded-lg file:border-0 file:bg-[#1D4ED8] file:px-3 file:py-2 file:font-semibold file:text-white hover:file:bg-[#1E40AF]"
           />
+          <p className="mt-1 text-xs text-white/50">Max 10MB. Formats: .pdf, .doc, .docx</p>
         </div>
+      </div>
+
+      <div>
+        <label className="block text-sm text-white/80" htmlFor="notes">
+          Notes
+        </label>
+        <input
+          id="notes"
+          name="notes"
+          className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Anything you'd like to add"
+        />
       </div>
 
       <button
