@@ -1,326 +1,119 @@
-"use client";
+// app/apply/page.tsx
+import type { Metadata } from "next";
+import ApplyForm from "./ApplyForm";
 
-import { useEffect, useRef, useState } from "react";
+/* ---------------- helpers ---------------- */
+function siteBase() {
+  const fromEnv =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.VERCEL_URL ||
+    "https://www.execpartners.ch";
+  const url = fromEnv.startsWith("http") ? fromEnv : `https://${fromEnv}`;
+  return url.replace(/\/$/, "");
+}
 
-type Props = {
-  defaultRole?: string;
-  defaultMarket?: string;
-  defaultJobId?: string;
+const SITE = siteBase();
+const PAGE_URL = `${SITE}/apply`;
+
+export const revalidate = 60;
+
+/* ---------------- SEO metadata ---------------- */
+export const metadata: Metadata = {
+  title: { absolute: "Apply Confidentially | Private Banking & Wealth Management" },
+  description:
+    "Submit your CV securely for Private Banking roles (Relationship Managers, Team Heads, Market Leaders). Geneva-based, global mandates. Discretion guaranteed.",
+  alternates: { canonical: "/apply" },
+  openGraph: {
+    type: "website",
+    url: "/apply",
+    title: "Apply Confidentially — Executive Partners",
+    description:
+      "Confidential submission for Private Banking & Wealth Management roles across Switzerland, UK, US, Dubai, Singapore & Hong Kong.",
+    images: [{ url: "/og.png" }],
+    siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Apply Confidentially — Executive Partners",
+    description:
+      "Private Banking & Wealth Management executive search — submit your profile discreetly.",
+    images: ["/og.png"],
+  },
+  robots: { index: true, follow: true },
 };
 
-const MAX_CV_BYTES = 10 * 1024 * 1024; // 10 MB
-const ACCEPTED_MIME = [
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
+/* ---------------- page ---------------- */
+export default async function ApplyPage({
+  // ✅ Next 15 expects a Promise here
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[]>>;
+}) {
+  // ✅ Await it before use
+  const sp = (await searchParams) ?? {};
+  const get = (k: string): string => {
+    const v = sp[k];
+    return Array.isArray(v) ? v[0] ?? "" : (v as string) ?? "";
+  };
 
-export default function ApplyForm({
-  defaultRole = "",
-  defaultMarket = "",
-  defaultJobId = "",
-}: Props) {
-  const [submitting, setSubmitting] = useState(false);
-  const [ok, setOk] = useState<boolean | null>(null);
-  const [errMsg, setErrMsg] = useState<string | null>(null);
+  // Support ?job= or ?role=
+  const prefillRole = get("job") || get("role");
+  const prefillMarket = get("market");
+  const prefillJobId = get("jobId");
 
-  // Context fields (useful in your email/webhook)
-  const [currentUrl, setCurrentUrl] = useState("");
-  const [userAgent, setUserAgent] = useState("");
+  // JSON-LD
+  const contactJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: "Apply Confidentially",
+    url: PAGE_URL,
+    description:
+      "Submit your CV securely for Private Banking roles (Relationship Managers, Team Heads, Market Leaders).",
+    publisher: { "@type": "Organization", name: "Executive Partners", url: SITE },
+  };
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setCurrentUrl(window.location.href);
-      setUserAgent(window.navigator.userAgent);
-    }
-  }, []);
+  const howToJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to Apply Confidentially",
+    totalTime: "PT5M",
+    step: [
+      { "@type": "HowToStep", name: "Share profile", text: "Provide name, email, markets covered, and current location." },
+      { "@type": "HowToStep", name: "Attach CV", text: "Upload a PDF résumé (no contact is made without your consent)." },
+      { "@type": "HowToStep", name: "Optional details", text: "Add AUM portability, booking centres, mobility, and languages." },
+      { "@type": "HowToStep", name: "Submit", text: "We review and respond—typically the same business day." },
+    ],
+  };
 
-  // CV state + input ref
-  const cvInputRef = useRef<HTMLInputElement | null>(null);
-  const [cvName, setCvName] = useState<string | null>(null);
-  const [cvError, setCvError] = useState<string | null>(null);
-  const [dragOver, setDragOver] = useState(false);
-
-  function validateFile(f: File): string | null {
-    if (f.size > MAX_CV_BYTES) return "File too large (max 10 MB).";
-    const okMime = ACCEPTED_MIME.includes(f.type) || /\.(pdf|doc|docx)$/i.test(f.name || "");
-    if (!okMime) return "Unsupported file type. Please upload PDF, DOC, or DOCX.";
-    return null;
-  }
-
-  function handlePickCv() {
-    setCvError(null);
-    cvInputRef.current?.click();
-  }
-
-  function handleCvChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setCvError(null);
-    const f = e.currentTarget.files?.[0];
-    if (!f) {
-      setCvName(null);
-      return;
-    }
-    const problem = validateFile(f);
-    if (problem) {
-      setCvError(problem);
-      e.currentTarget.value = "";
-      setCvName(null);
-      return;
-    }
-    setCvName(f.name);
-  }
-
-  function clearCv() {
-    if (cvInputRef.current) {
-      cvInputRef.current.value = "";
-    }
-    setCvName(null);
-    setCvError(null);
-  }
-
-  // Drag & drop handlers
-  function onDragOver(e: React.DragEvent) {
-    e.preventDefault();
-    setDragOver(true);
-  }
-  function onDragLeave() {
-    setDragOver(false);
-  }
-  function onDrop(e: React.DragEvent) {
-    e.preventDefault();
-    setDragOver(false);
-    setCvError(null);
-
-    const f = e.dataTransfer.files?.[0];
-    if (!f) return;
-    const problem = validateFile(f);
-    if (problem) {
-      setCvError(problem);
-      clearCv();
-      return;
-    }
-    // push into the hidden input so FormData includes it
-    if (cvInputRef.current) {
-      const dt = new DataTransfer();
-      dt.items.add(f);
-      cvInputRef.current.files = dt.files;
-    }
-    setCvName(f.name);
-  }
-
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setSubmitting(true);
-    setOk(null);
-    setErrMsg(null);
-
-    try {
-      const form = e.currentTarget;
-      const fd = new FormData(form); // ✅ multipart/form-data
-
-      if (cvError) throw new Error(cvError);
-
-      const res = await fetch("/api/apply", {
-        method: "POST",
-        body: fd,
-      });
-
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(text || `Request failed (${res.status})`);
-      }
-
-      setOk(true);
-      form.reset();
-      clearCv();
-    } catch (err: any) {
-      setOk(false);
-      setErrMsg(err?.message || "Submission failed. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  }
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Apply", item: PAGE_URL },
+    ],
+  };
 
   return (
-    <>
-      {/* Inline status banners */}
-      {ok === false && (
-        <div className="mb-4 rounded-md border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm">
-          {errMsg}
-        </div>
-      )}
-      {ok === true && (
-        <div className="mb-4 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-sm">
-          Thank you — we’ve received your application.
-        </div>
-      )}
+    <main className="mx-auto max-w-5xl px-4 py-12">
+      {/* JSON-LD */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
-      <form
-        onSubmit={onSubmit}
-        encType="multipart/form-data"
-        className="grid gap-4 rounded-2xl border border-white/10 bg-white/5 p-6"
-        noValidate
-      >
-        {/* Hidden context (not shown to users) */}
-        <input type="hidden" name="sourceUrl" value={currentUrl} />
-        <input type="hidden" name="ua" value={userAgent} />
-
-        <div className="grid gap-3 md:grid-cols-2">
-          <div>
-            <label htmlFor="name" className="block text-sm text-white/80">
-              Name *
-            </label>
-            <input
-              id="name"
-              name="name"
-              required
-              placeholder="Your full name"
-              className="mt-1 w-full rounded-md bg-white/5 px-3 py-2"
-              aria-required="true"
-            />
-          </div>
-          <div>
-            <label htmlFor="email" className="block text-sm text-white/80">
-              Email *
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              placeholder="you@example.com"
-              className="mt-1 w-full rounded-md bg-white/5 px-3 py-2"
-              aria-required="true"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="role" className="block text-sm text-white/80">
-              Role
-            </label>
-            <input
-              id="role"
-              name="role"
-              defaultValue={defaultRole}
-              placeholder="e.g., Senior RM"
-              className="mt-1 w-full rounded-md bg-white/5 px-3 py-2"
-            />
-          </div>
-          <div>
-            <label htmlFor="market" className="block text-sm text-white/80">
-              Market
-            </label>
-            <input
-              id="market"
-              name="market"
-              defaultValue={defaultMarket}
-              placeholder="e.g., Dubai / CH Onshore"
-              className="mt-1 w-full rounded-md bg-white/5 px-3 py-2"
-            />
-          </div>
-
-          <div className="md:col-span-2">
-            <label htmlFor="jobId" className="block text-sm text-white/80">
-              Job ID (optional)
-            </label>
-            <input
-              id="jobId"
-              name="jobId"
-              defaultValue={defaultJobId}
-              placeholder="e.g., 101"
-              className="mt-1 w-full rounded-md bg-white/5 px-3 py-2"
-            />
-          </div>
-
-          {/* CV Upload (Button + Drag & Drop) */}
-          <div className="md:col-span-2">
-            <label className="block text-sm text-white/80">CV / Résumé</label>
-
-            {/* Hidden native input (used for FormData) */}
-            <input
-              ref={cvInputRef}
-              name="cv"
-              type="file"
-              accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              className="hidden"
-              onChange={handleCvChange}
-            />
-
-            <div className="mt-2 flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={handlePickCv}
-                className="inline-flex items-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold hover:bg-white/15"
-                aria-label="Upload CV (browse files)"
-              >
-                Upload / Import CV (PDF/DOC)
-              </button>
-
-              {cvName && (
-                <>
-                  <span className="text-xs text-white/70">Selected: {cvName}</span>
-                  <button
-                    type="button"
-                    onClick={clearCv}
-                    className="rounded-md border border-white/20 px-2 py-1 text-xs hover:bg-white/10"
-                    aria-label="Remove selected file"
-                  >
-                    Remove
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Drag & drop area */}
-            <div
-              onDragOver={onDragOver}
-              onDragLeave={onDragLeave}
-              onDrop={onDrop}
-              className={`mt-3 rounded-md border border-dashed px-4 py-6 text-center text-xs ${
-                dragOver ? "border-white/60 bg-white/10" : "border-white/20 bg-white/5"
-              }`}
-              aria-label="Drag and drop your CV here"
-            >
-              Drag & drop your CV here (PDF, DOC, DOCX) — max 10 MB
-            </div>
-
-            <p className="mt-1 text-xs text-white/50">
-              Accepted: PDF, DOC, DOCX. Max size: 10 MB.
-            </p>
-            {cvError && (
-              <p className="mt-1 text-xs text-rose-300" role="alert">
-                {cvError}
-              </p>
-            )}
-          </div>
-
-          <div className="md:col-span-2">
-            <label htmlFor="notes" className="block text-sm text-white/80">
-              Notes
-            </label>
-            <textarea
-              id="notes"
-              name="notes"
-              placeholder="Anything you'd like to add (AUM portability, booking centres, mobility, languages)…"
-              className="mt-1 w-full rounded-md bg-white/5 px-3 py-2"
-              rows={4}
-            />
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          disabled={submitting}
-          className="mt-2 w-full rounded-md bg-[#1D4ED8] px-4 py-2 font-semibold hover:bg-[#1E40AF] disabled:opacity-60"
-          aria-busy={submitting}
-        >
-          {submitting ? "Submitting..." : "Submit Application"}
-        </button>
-
-        <p className="text-xs text-white/60">
-          We review every submission and move only with your consent.
+      <header className="mb-8">
+        <h1 className="text-2xl font-semibold tracking-tight text-white">Apply Confidentially</h1>
+        <p className="mt-2 text-sm text-neutral-400">
+          Private Banking &amp; Wealth Management. We review every submission and only move
+          forward with your consent. Typical response: same business day.
         </p>
-      </form>
-    </>
+      </header>
+
+      <ApplyForm
+        defaultRole={prefillRole}
+        defaultMarket={prefillMarket}
+        defaultJobId={prefillJobId}
+      />
+    </main>
   );
 }
