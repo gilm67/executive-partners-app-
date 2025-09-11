@@ -8,14 +8,25 @@ export const runtime = "nodejs";
 const resendApiKey = process.env.RESEND_API_KEY || "";
 
 // Sanitize RESEND_FROM to avoid Resend 422 errors on bad formatting.
-const rawFrom = (process.env.RESEND_FROM || "").trim();
-// allow "Name <email@domain>" or plain "email@domain"
-const validAngleAddr = /.+<\s*[^<>@\s]+@[^<>@\s]+\s*>/;
-const validPlainAddr = /^[^<>@\s]+@[^<>@\s]+$/;
-const FROM =
-  validAngleAddr.test(rawFrom) || validPlainAddr.test(rawFrom)
-    ? rawFrom
-    : "onboarding@resend.dev"; // Switch later to: "Executive Partners <noreply@execpartners.ch>"
+function normalizeFrom(v?: string) {
+  let s = (v || "").trim();
+
+  // strip surrounding quotes if user pasted with quotes
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+    s = s.slice(1, -1).trim();
+  }
+
+  // collapse multiple spaces
+  s = s.replace(/\s+/g, " ");
+
+  // allow "Name <email@domain.tld>" or plain "email@domain.tld"
+  const validNamed = /^.+\s<[^<>\s@]+@[^<>\s@]+\.[^<>\s@]+>$/;
+  const validPlain = /^[^<>\s@]+@[^<>\s@]+\.[^<>\s@]+$/;
+
+  return validNamed.test(s) || validPlain.test(s) ? s : "";
+}
+
+const FROM = normalizeFrom(process.env.RESEND_FROM) || "onboarding@resend.dev"; // switch later to: "Executive Partners <noreply@execpartners.ch>"
 
 // allow multiple recipients via comma/semicolon
 const splitList = (v?: string) =>
@@ -26,8 +37,7 @@ const splitList = (v?: string) =>
 
 const TO_LIST = splitList(process.env.RECRUITER_TO) || ["recruiter@execpartners.ch"];
 const CC_LIST = splitList(process.env.RECRUITER_CC);
-const LOG =
-  process.env.LOG_SUBMISSIONS === "true" || process.env.NODE_ENV !== "production";
+const LOG = process.env.LOG_SUBMISSIONS === "true" || process.env.NODE_ENV !== "production";
 
 // Secure webhook (Google Apps Script, Zapier, ATS…)
 const WEBHOOK_URL = process.env.APPLICANT_WEBHOOK_URL || "";
@@ -51,7 +61,7 @@ function str(form: FormData, key: string, max = 5000) {
 export async function POST(req: Request) {
   const ts = new Date().toISOString();
   const url = new URL(req.url);
-  const diag = url.searchParams.get("diag") === "1"; // show extra debug only if requested
+  const diag = url.searchParams.get("diag") === "1"; // extra debug only if requested
 
   try {
     const form = await req.formData();
@@ -67,17 +77,11 @@ export async function POST(req: Request) {
     const cv = form.get("cv") as File | null;
 
     if (!name || !email) {
-      return NextResponse.json(
-        { ok: false, error: "Name and Email are required." },
-        { status: 400 }
-      );
+      return NextResponse.json({ ok: false, error: "Name and Email are required." }, { status: 400 });
     }
 
     if (cv && cv.size > MAX_CV_BYTES) {
-      return NextResponse.json(
-        { ok: false, error: "File too large (max 10 MB)." },
-        { status: 413 }
-      );
+      return NextResponse.json({ ok: false, error: "File too large (max 10 MB)." }, { status: 413 });
     }
 
     const safe = {
@@ -129,7 +133,7 @@ export async function POST(req: Request) {
           "Total Profit 3Y (CHF)": "",
           "Score": "",
           "AI Evaluation Notes": notes || "",
-          // not in sheet, but handy if you add later:
+          // optional extras (not in BP_Entries)
           "Job ID": jobId || "",
           "Source": "execpartners.ch/apply",
         };
@@ -151,11 +155,7 @@ export async function POST(req: Request) {
         webhookStatus = res.status;
         webhookBody = await res.text().catch(() => null);
 
-        if (LOG)
-          console.log("[apply] webhook response", {
-            status: webhookStatus,
-            body: webhookBody?.slice(0, 300),
-          });
+        if (LOG) console.log("[apply] webhook response", { status: webhookStatus, body: webhookBody?.slice(0, 300) });
       } catch (e) {
         if (LOG) console.warn("[apply] webhook failed:", (e as Error)?.message || e);
       }
@@ -183,9 +183,7 @@ export async function POST(req: Request) {
           <p><strong>Market:</strong> ${market || "-"}</p>
           <p><strong>Job ID:</strong> ${jobId || "-"}</p>
           <p><strong>Notes:</strong><br>${notes ? notes.replace(/\n/g, "<br/>") : "—"}</p>
-          <p><strong>CV:</strong> ${
-            cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"
-          }</p>
+          <p><strong>CV:</strong> ${cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"}</p>
           <hr/>
           <small>Sent ${ts}</small>
         `;
@@ -202,7 +200,6 @@ export async function POST(req: Request) {
           `Notes:\n${notes || "—"}\n` +
           `CV: ${cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"}\n`;
 
-        // Resend expects replyTo as string or string[]
         const replyTo = email ? (name ? `${name} <${email}>` : email) : undefined;
 
         let attachments:
@@ -220,7 +217,6 @@ export async function POST(req: Request) {
           ];
         }
 
-        // ensure at least one recipient
         const to = TO_LIST.length ? TO_LIST : ["recruiter@execpartners.ch"];
         const cc = CC_LIST.length ? CC_LIST : undefined;
 
@@ -258,7 +254,13 @@ export async function POST(req: Request) {
             ok: webhookStatus ? webhookStatus >= 200 && webhookStatus < 300 : null,
             body: webhookBody,
           },
-          email: { id: emailId, error: emailError, fromUsed: FROM },
+          email: {
+            id: emailId,
+            error: emailError,
+            fromUsed: FROM,
+            toUsed: TO_LIST.length ? TO_LIST : ["recruiter@execpartners.ch"],
+            ccUsed: CC_LIST.length ? CC_LIST : undefined,
+          },
         }
       : undefined;
 
@@ -269,9 +271,6 @@ export async function POST(req: Request) {
     });
   } catch (err: any) {
     if (LOG) console.error("[apply] error:", err?.message, err);
-    return NextResponse.json(
-      { ok: false, error: err?.message || "apply failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: false, error: err?.message || "apply failed" }, { status: 500 });
   }
 }
