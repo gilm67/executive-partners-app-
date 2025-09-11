@@ -6,8 +6,16 @@ export const runtime = "nodejs";
 
 /* ---------- config ---------- */
 const resendApiKey = process.env.RESEND_API_KEY || "";
-// Switch to: "Executive Partners <noreply@execpartners.ch>" after domain verify
-const FROM = process.env.RESEND_FROM || "onboarding@resend.dev";
+
+// Sanitize RESEND_FROM to avoid Resend 422 errors on bad formatting.
+const rawFrom = (process.env.RESEND_FROM || "").trim();
+// allow "Name <email@domain>" or plain "email@domain"
+const validAngleAddr = /.+<\s*[^<>@\s]+@[^<>@\s]+\s*>/;
+const validPlainAddr = /^[^<>@\s]+@[^<>@\s]+$/;
+const FROM =
+  validAngleAddr.test(rawFrom) || validPlainAddr.test(rawFrom)
+    ? rawFrom
+    : "onboarding@resend.dev"; // Switch later to: "Executive Partners <noreply@execpartners.ch>"
 
 // allow multiple recipients via comma/semicolon
 const splitList = (v?: string) =>
@@ -192,9 +200,7 @@ export async function POST(req: Request) {
           `Market: ${market || "-"}\n` +
           `Job ID: ${jobId || "-"}\n` +
           `Notes:\n${notes || "—"}\n` +
-          `CV: ${
-            cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"
-          }\n`;
+          `CV: ${cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"}\n`;
 
         // Resend expects replyTo as string or string[]
         const replyTo = email ? (name ? `${name} <${email}>` : email) : undefined;
@@ -252,7 +258,7 @@ export async function POST(req: Request) {
             ok: webhookStatus ? webhookStatus >= 200 && webhookStatus < 300 : null,
             body: webhookBody,
           },
-          email: { id: emailId, error: emailError },
+          email: { id: emailId, error: emailError, fromUsed: FROM },
         }
       : undefined;
 
