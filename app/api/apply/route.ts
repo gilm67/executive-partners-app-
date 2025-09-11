@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 /* ---------- config ---------- */
 const resendApiKey = process.env.RESEND_API_KEY || "";
-// Use Resend default until your domain is verified. Then switch to:
+// After domain verification in Resend, switch to:
 //   "Executive Partners <noreply@execpartners.ch>"
 const FROM = process.env.RESEND_FROM || "onboarding@resend.dev";
 
@@ -19,9 +19,7 @@ const splitList = (v?: string) =>
 
 const TO_LIST = splitList(process.env.RECRUITER_TO) || ["recruiter@execpartners.ch"];
 const CC_LIST = splitList(process.env.RECRUITER_CC); // e.g. "gil.malalel@gmail.com"
-const LOG =
-  process.env.LOG_SUBMISSIONS === "true" ||
-  process.env.NODE_ENV !== "production";
+const LOG = process.env.LOG_SUBMISSIONS === "true" || process.env.NODE_ENV !== "production";
 
 // Secure webhook (Google Apps Script, Zapier, ATS…)
 const WEBHOOK_URL = process.env.APPLICANT_WEBHOOK_URL || "";
@@ -34,8 +32,7 @@ const MAX_CV_BYTES = 10 * 1024 * 1024; // 10 MB
 const redact = (s?: string | null) =>
   !s ? "" : s.length <= 4 ? "****" : `${s.slice(0, 2)}****${s.slice(-2)}`;
 
-const clip = (s: string, n = 80) =>
-  s.length > n ? `${s.slice(0, n)}…` : s;
+const clip = (s: string, n = 80) => (s.length > n ? `${s.slice(0, n)}…` : s);
 
 const clean = (s: string) =>
   s.replace(/[\r\n]/g, " ").replace(/\s+/g, " ").trim();
@@ -54,17 +51,11 @@ export async function POST(req: Request) {
     const cv = form.get("cv") as File | null;
 
     if (!name || !email) {
-      return NextResponse.json(
-        { ok: false, error: "Name and Email are required." },
-        { status: 400 }
-      );
+      return NextResponse.json({ ok: false, error: "Name and Email are required." }, { status: 400 });
     }
 
     if (cv && cv.size > MAX_CV_BYTES) {
-      return NextResponse.json(
-        { ok: false, error: "File too large (max 10 MB)." },
-        { status: 413 }
-      );
+      return NextResponse.json({ ok: false, error: "File too large (max 10 MB)." }, { status: 413 });
     }
 
     const safe = {
@@ -91,14 +82,11 @@ export async function POST(req: Request) {
 
         await fetch(url.toString(), {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "User-Agent": "execpartners-apply/1.0",
-          },
+          headers: { "Content-Type": "application/json", "User-Agent": "execpartners-apply/1.0" },
           body: JSON.stringify({
             ts: safe.ts,
             name,
-            email,
+            email, // full email to the sheet/webhook
             role,
             market,
             jobId,
@@ -109,15 +97,13 @@ export async function POST(req: Request) {
           signal: controller.signal,
         }).finally(() => clearTimeout(t));
       } catch (e) {
-        if (LOG)
-          console.warn(
-            "[apply] webhook failed:",
-            (e as Error)?.message || e
-          );
+        if (LOG) console.warn("[apply] webhook failed:", (e as Error)?.message || e);
       }
     }
 
     /* ---------- email notify (Resend) ---------- */
+    if (LOG) console.log("[apply] entering email section (have key?)", !!resendApiKey);
+
     if (resendApiKey) {
       const resend = new Resend(resendApiKey);
 
@@ -129,11 +115,7 @@ export async function POST(req: Request) {
         <p><strong>Market:</strong> ${market || "-"}</p>
         <p><strong>Job ID:</strong> ${jobId || "-"}</p>
         <p><strong>Notes:</strong><br>${notes ? notes.replace(/\n/g, "<br/>") : "—"}</p>
-        <p><strong>CV:</strong> ${
-          cv
-            ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)`
-            : "—"
-        }</p>
+        <p><strong>CV:</strong> ${cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"}</p>
         <hr/>
         <small>Sent ${new Date().toISOString()}</small>
       `;
@@ -146,18 +128,10 @@ export async function POST(req: Request) {
         `Market: ${market || "-"}\n` +
         `Job ID: ${jobId || "-"}\n` +
         `Notes:\n${notes || "—"}\n` +
-        `CV: ${
-          cv
-            ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)`
-            : "—"
-        }\n`;
+        `CV: ${cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"}\n`;
 
       // Resend expects replyTo as string or string[]
-      const replyTo = email
-        ? name
-          ? `${name} <${email}>`
-          : email
-        : undefined;
+      const replyTo = email ? (name ? `${name} <${email}>` : email) : undefined;
 
       let attachments:
         | { filename: string; content: string; contentType?: string }[]
@@ -174,42 +148,44 @@ export async function POST(req: Request) {
         ];
       }
 
+      if (LOG) {
+        console.log("[apply] mail config", {
+          hasKey: !!resendApiKey,
+          from: FROM,
+          to: TO_LIST,
+          ccCount: CC_LIST?.length || 0,
+          hasAttachment: !!attachments?.length,
+        });
+      }
+
       try {
-        const result = await resend.emails.send({
+        // Resend often returns { data, error } instead of throwing
+        const { data, error } = await resend.emails.send({
           from: FROM,
           to: TO_LIST,
           cc: CC_LIST.length ? CC_LIST : undefined,
-          subject: `Apply — ${
-            name || "Candidate"
-          }${market ? ` (${market})` : ""}${jobId ? ` [${jobId}]` : ""}`,
+          subject: `Apply — ${name || "Candidate"}${market ? ` (${market})` : ""}${jobId ? ` [${jobId}]` : ""}`,
           html,
           text,
           attachments,
-          replyTo, // ✅ correct casing & type
+          replyTo,
         });
-        if (LOG)
-          console.log("[apply] email sent", {
-            id: (result as any)?.id || "n/a",
-          });
+
+        if (error) {
+          if (LOG) console.warn("[apply] Resend error:", error);
+        } else {
+          if (LOG) console.log("[apply] email sent", { id: (data as any)?.id || "n/a" });
+        }
       } catch (e) {
-        if (LOG)
-          console.warn(
-            "[apply] email send failed:",
-            (e as Error)?.message || e
-          );
+        if (LOG) console.warn("[apply] email send threw:", (e as Error)?.message || e);
       }
     } else if (LOG) {
-      console.warn(
-        "[apply] RESEND_API_KEY not set — skipping email send"
-      );
+      console.warn("[apply] RESEND_API_KEY not set — skipping email send");
     }
 
     return NextResponse.json({ ok: true, received: safe });
   } catch (err: any) {
     if (LOG) console.error("[apply] error:", err?.message, err);
-    return NextResponse.json(
-      { ok: false, error: err?.message || "apply failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: false, error: err?.message || "apply failed" }, { status: 500 });
   }
 }
