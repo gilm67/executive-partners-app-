@@ -5,12 +5,12 @@ import ClientInsights from "./ClientInsights";
 
 type Item = {
   title: string;
-  date: string; // human-readable (e.g., "Sep 1, 2025")
-  href: string; // can be on LinkedIn (external) or on your site
+  date: string; // e.g., "Sep 1, 2025"
+  href: string; // external (LinkedIn) or internal
   tag: "Private Wealth Pulse" | "Article";
 };
 
-/* ---------------- SEO metadata ---------------- */
+/* ---------------- helpers ---------------- */
 function siteBase() {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
@@ -20,7 +20,9 @@ function siteBase() {
   return url.replace(/\/$/, "");
 }
 const SITE = siteBase();
+const PAGE_URL = `${SITE}/insights`;
 
+/* ---------------- SEO metadata ---------------- */
 export const metadata: Metadata = {
   title: { absolute: "Private Wealth Pulse — Insights | Executive Partners" },
   description:
@@ -261,8 +263,7 @@ const articles: Item[] = [
     tag: "Article",
   },
   {
-    title:
-      "Dubai: The Rising Star of Private Banking and Wealth Management",
+    title: "Dubai: The Rising Star of Private Banking and Wealth Management",
     date: "Jan 3, 2025",
     href: "https://www.linkedin.com/pulse/dubai-rising-star-private-banking-wealth-management-gil-m-chalem--ag9xe/?trackingId=G%2FjgEiXPSSSO33kg6d6pdA%3D%3D",
     tag: "Article",
@@ -313,30 +314,37 @@ export const revalidate = 1800;
 
 /* ---------------- Page ---------------- */
 export default function InsightsPage() {
-  // Build JSON-LD (Blog + ItemList) for better discovery
-  const blogUrl = `${SITE}/insights`;
   const items = [...newsletter, ...articles];
 
-  const itemList = items.map((it, i) => ({
-    "@type": "ListItem",
-    position: i + 1,
-    url: it.href.startsWith("http") ? it.href : `${SITE}${it.href}`,
-    name: it.title,
-  }));
-
+  // JSON-LD (Blog + ItemList + Breadcrumb)
   const blogJsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
     name: "Private Wealth Pulse — Insights",
-    url: blogUrl,
+    url: PAGE_URL,
     description:
       "Private Banking & Wealth Management market pulse and hiring insights.",
+    isPartOf: { "@type": "WebSite", name: "Executive Partners", url: SITE },
   };
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    itemListElement: itemList,
+    itemListElement: items.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: it.href.startsWith("http") ? it.href : `${SITE}${it.href}`,
+      name: it.title,
+    })),
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Insights", item: PAGE_URL },
+    ],
   };
 
   // Optional: Article JSON-LD for your most recent internal post
@@ -347,17 +355,11 @@ export default function InsightsPage() {
         "@type": "Article",
         headline: latestInternal.title,
         datePublished: toISO(latestInternal.date),
-        mainEntityOfPage: {
-          "@type": "WebPage",
-          "@id": `${SITE}${latestInternal.href}`,
-        },
+        mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE}${latestInternal.href}` },
         publisher: {
           "@type": "Organization",
           name: "Executive Partners",
-          logo: {
-            "@type": "ImageObject",
-            url: `${SITE}/icon.png`,
-          },
+          logo: { "@type": "ImageObject", url: `${SITE}/icon.png` },
         },
       }
     : null;
@@ -365,19 +367,11 @@ export default function InsightsPage() {
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
       {/* JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       {articleJsonLd ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       ) : null}
 
       {/* Background glow */}
@@ -393,7 +387,7 @@ export default function InsightsPage() {
       {/* Header */}
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
-          Weekly market pulse — Private Banking & Wealth Management
+          Weekly market pulse — Private Banking &amp; Wealth Management
         </div>
 
         <h1 className="mt-3 text-center text-4xl font-extrabold tracking-tight md:text-5xl">
@@ -404,7 +398,7 @@ export default function InsightsPage() {
           Dubai, Singapore, London &amp; New York.
         </p>
 
-        {/* Render your existing UI */}
+        {/* Your existing client-side list UI */}
         <div className="mt-8">
           <ClientInsights newsletter={newsletter} articles={articles} />
         </div>
@@ -413,40 +407,25 @@ export default function InsightsPage() {
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <h3 className="text-lg font-semibold">Explore related pages</h3>
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
-            <Link
-              href="/private-banking-jobs-switzerland"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-switzerland" className="underline hover:text-white">
               See open Private Banking jobs in Switzerland
             </Link>
-            <Link
-              href="/private-banking-jobs-dubai"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-dubai" className="underline hover:text-white">
               Private Banking roles in Dubai
             </Link>
-            <Link
-              href="/private-banking-jobs-singapore"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-singapore" className="underline hover:text-white">
               Private Banking roles in Singapore
             </Link>
-            <Link
-              href="/private-banking-jobs-london"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-london" className="underline hover:text-white">
               Private Banking roles in London
             </Link>
-            <Link
-              href="/private-banking-jobs-new-york"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-new-york" className="underline hover:text-white">
               Private Banking roles in New York
             </Link>
           </div>
         </section>
 
-        {/* ✅ RSS link (footer area) */}
+        {/* RSS */}
         <p className="mt-6 text-center text-sm text-neutral-400">
           Subscribe via{" "}
           <a href="/rss.xml" className="underline hover:text-white">

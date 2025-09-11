@@ -4,123 +4,161 @@ import { Resend } from "resend";
 
 export const runtime = "nodejs";
 
-const resendApiKey = process.env.RESEND_API_KEY;
-const recruiterTo = process.env.RECRUITER_TO || "recruiter@execpartners.ch";
+/* ---------- config ---------- */
+const resendApiKey = process.env.RESEND_API_KEY || "";
+// Use Resend default until your domain is verified. Then switch to:
+//   "Executive Partners <noreply@execpartners.ch>"
+const FROM = process.env.RESEND_FROM || "onboarding@resend.dev";
+
+// allow multiple recipients via comma/semicolon
+const splitList = (v?: string) =>
+  (v || "")
+    .split(/[;,]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+const TO_LIST = splitList(process.env.RECRUITER_TO) || ["recruiter@execpartners.ch"];
+const CC_LIST = splitList(process.env.RECRUITER_CC); // e.g. "gil.malalel@gmail.com"
 const LOG = process.env.LOG_SUBMISSIONS === "true" || process.env.NODE_ENV !== "production";
 
-function redacted(s?: string | null) {
-  if (!s) return "";
-  // show first 2 and last 2 chars
-  if (s.length <= 4) return "****";
-  return `${s.slice(0, 2)}****${s.slice(-2)}`;
-}
+// Secure webhook (Google Apps Script, Zapier, ATS…)
+const WEBHOOK_URL = process.env.APPLICANT_WEBHOOK_URL || "";
+const WEBHOOK_TOKEN = process.env.APPLICANT_WEBHOOK_TOKEN || "";
 
+// server-side safety limits
+const MAX_CV_BYTES = 10 * 1024 * 1024; // 10 MB
+
+/* ---------- helpers ---------- */
+const redact = (s?: string | null) =>
+  !s ? "" : s.length <= 4 ? "****" : `${s.slice(0, 2)}****${s.slice(-2)}`;
+
+const clip = (s: string, n = 80) => (s.length > n ? `${s.slice(0, n)}…` : s);
+
+const clean = (s: string) =>
+  s.replace(/[\r\n]/g, " ").replace(/\s+/g, " ").trim(); // remove newlines, collapse spaces
+
+/* ---------- POST ---------- */
 export async function POST(req: Request) {
   try {
-    // Must be multipart/form-data (our client sends FormData)
     const form = await req.formData();
 
-    const name = (form.get("name") as string | null) || "";
-    const email = (form.get("email") as string | null) || "";
-    const role = (form.get("role") as string | null) || "";
-    const market = (form.get("market") as string | null) || "";
-    const jobId = (form.get("jobId") as string | null) || "";
-    const notes = (form.get("notes") as string | null) || "";
+    const name = clean(((form.get("name") as string) || "").slice(0, 200));
+    const email = ((form.get("email") as string) || "").slice(0, 320);
+    const role = clean(((form.get("role") as string) || "").slice(0, 200));
+    const market = clean(((form.get("market") as string) || "").slice(0, 200));
+    const jobId = clean(((form.get("jobId") as string) || "").slice(0, 50));
+    const notes = ((form.get("notes") as string) || "").slice(0, 5000);
     const cv = form.get("cv") as File | null;
 
-    const payload = {
+    if (!name || !email) {
+      return NextResponse.json({ ok: false, error: "Name and Email are required." }, { status: 400 });
+    }
+
+    if (cv && cv.size > MAX_CV_BYTES) {
+      return NextResponse.json({ ok: false, error: "File too large (max 10 MB)." }, { status: 413 });
+    }
+
+    const safe = {
       name,
-      email,
+      email: redact(email),
       role,
       market,
       jobId,
-      notes,
-      cv: cv
-        ? {
-            name: cv.name,
-            type: cv.type,
-            size: cv.size,
-          }
-        : null,
+      notesPreview: notes ? clip(notes, 120) : "",
+      cv: cv ? { name: cv.name, type: cv.type, size: cv.size } : null,
       ts: new Date().toISOString(),
     };
 
-    // ---- Development / debug logging (safe, redacted) ----
-    if (LOG) {
-      console.log("[apply] submission received", {
-        name,
-        email: redacted(email),
-        role,
-        market,
-        jobId,
-        notesPreview: notes ? `${notes.slice(0, 40)}${notes.length > 40 ? "…" : ""}` : "",
-        cv: payload.cv,
-      });
-    }
+    if (LOG) console.log("[apply] received", safe);
 
-    // ---- Optional: forward to webhook (e.g., Zapier/Manatal/Apps Script) ----
-    const webhookUrl = process.env.APPLICANT_WEBHOOK_URL;
-    if (webhookUrl) {
+    /* ---------- webhook (with secret token) ---------- */
+    if (WEBHOOK_URL) {
       try {
-        await fetch(webhookUrl, {
+        const url = new URL(WEBHOOK_URL);
+        if (WEBHOOK_TOKEN) url.searchParams.set("token", WEBHOOK_TOKEN);
+
+        const controller = new AbortController();
+        const t = setTimeout(() => controller.abort(), 6000);
+
+        await fetch(url.toString(), {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+          headers: { "Content-Type": "application/json", "User-Agent": "execpartners-apply/1.0" },
+          body: JSON.stringify({
+            ts: safe.ts,
+            name,
+            email, // send full email to the sheet/webhook
+            role,
+            market,
+            jobId,
+            notes,
+            cv: safe.cv,
+            source: "execpartners.ch/apply",
+          }),
+          signal: controller.signal,
+        }).finally(() => clearTimeout(t));
       } catch (e) {
-        if (LOG) console.warn("[apply] webhook failed:", (e as Error)?.message);
+        if (LOG) console.warn("[apply] webhook failed:", (e as Error)?.message || e);
       }
     }
 
-    // ---- Optional: Email notification via Resend ----
+    /* ---------- email notify (Resend) ---------- */
     if (resendApiKey) {
       const resend = new Resend(resendApiKey);
 
-      // Build HTML body
       const html = `
-        <h2>New Apply submission</h2>
-        <p><b>Name:</b> ${name || "-"}</p>
-        <p><b>Email:</b> ${email || "-"}</p>
-        <p><b>Role:</b> ${role || "-"}</p>
-        <p><b>Market:</b> ${market || "-"}</p>
-        <p><b>Job ID:</b> ${jobId || "-"}</p>
-        <p><b>Notes:</b> ${notes ? notes.replace(/\n/g, "<br/>") : "-"}</p>
-        <p><b>CV:</b> ${cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"}</p>
+        <h2>New candidate application</h2>
+        <p><strong>Name:</strong> ${name || "-"}</p>
+        <p><strong>Email:</strong> ${email || "-"}</p>
+        <p><strong>Role:</strong> ${role || "-"}</p>
+        <p><strong>Market:</strong> ${market || "-"}</p>
+        <p><strong>Job ID:</strong> ${jobId || "-"}</p>
+        <p><strong>Notes:</strong><br>${notes ? notes.replace(/\n/g, "<br/>") : "—"}</p>
+        <p><strong>CV:</strong> ${cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"}</p>
         <hr/>
         <small>Sent ${new Date().toISOString()}</small>
       `;
 
-      // Attach CV if provided (Resend accepts base64 content)
-      let attachments: { filename: string; content: string }[] | undefined;
+      const text =
+        `New candidate application\n\n` +
+        `Name: ${name || "-"}\n` +
+        `Email: ${email || "-"}\n` +
+        `Role: ${role || "-"}\n` +
+        `Market: ${market || "-"}\n` +
+        `Job ID: ${jobId || "-"}\n` +
+        `Notes:\n${notes || "—"}\n` +
+        `CV: ${cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"}\n`;
+
+      let attachments:
+        | { filename: string; content: string }[]
+        | undefined;
+
       if (cv) {
         const buf = Buffer.from(await cv.arrayBuffer());
-        attachments = [
-          {
-            filename: cv.name || "cv",
-            content: buf.toString("base64"),
-          },
-        ];
+        attachments = [{ filename: cv.name || "cv", content: buf.toString("base64") }];
       }
 
       try {
-        await resend.emails.send({
-          from: "Executive Partners <no-reply@execpartners.ch>",
-          to: recruiterTo,
-          subject: `Apply — ${name || "Unknown"} (${market || "Market"})`,
+        const result = await resend.emails.send({
+          from: FROM,
+          to: TO_LIST,
+          cc: CC_LIST.length ? CC_LIST : undefined,
+          subject: `Apply — ${name || "Candidate"}${market ? ` (${market})` : ""}`,
           html,
+          text,
           attachments,
+          reply_to: email ? [{ email, name: name || undefined }] : undefined,
         });
+        if (LOG) console.log("[apply] email sent", { id: (result as any)?.id || "n/a" });
       } catch (e) {
-        if (LOG) console.warn("[apply] email send failed:", (e as Error)?.message);
+        if (LOG) console.warn("[apply] email send failed:", (e as Error)?.message || e);
       }
+    } else if (LOG) {
+      console.warn("[apply] RESEND_API_KEY not set — skipping email send");
     }
 
-    return NextResponse.json({ ok: true, received: { ...payload, email: redacted(email) } });
+    return NextResponse.json({ ok: true, received: safe });
   } catch (err: any) {
     if (LOG) console.error("[apply] error:", err?.message, err);
-    return NextResponse.json(
-      { ok: false, error: err?.message ?? "apply failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: false, error: err?.message || "apply failed" }, { status: 500 });
   }
 }
