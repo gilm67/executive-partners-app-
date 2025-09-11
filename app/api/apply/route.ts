@@ -19,7 +19,9 @@ const splitList = (v?: string) =>
 
 const TO_LIST = splitList(process.env.RECRUITER_TO) || ["recruiter@execpartners.ch"];
 const CC_LIST = splitList(process.env.RECRUITER_CC); // e.g. "gil.malalel@gmail.com"
-const LOG = process.env.LOG_SUBMISSIONS === "true" || process.env.NODE_ENV !== "production";
+const LOG =
+  process.env.LOG_SUBMISSIONS === "true" ||
+  process.env.NODE_ENV !== "production";
 
 // Secure webhook (Google Apps Script, Zapier, ATS…)
 const WEBHOOK_URL = process.env.APPLICANT_WEBHOOK_URL || "";
@@ -32,10 +34,11 @@ const MAX_CV_BYTES = 10 * 1024 * 1024; // 10 MB
 const redact = (s?: string | null) =>
   !s ? "" : s.length <= 4 ? "****" : `${s.slice(0, 2)}****${s.slice(-2)}`;
 
-const clip = (s: string, n = 80) => (s.length > n ? `${s.slice(0, n)}…` : s);
+const clip = (s: string, n = 80) =>
+  s.length > n ? `${s.slice(0, n)}…` : s;
 
 const clean = (s: string) =>
-  s.replace(/[\r\n]/g, " ").replace(/\s+/g, " ").trim(); // remove newlines, collapse spaces
+  s.replace(/[\r\n]/g, " ").replace(/\s+/g, " ").trim();
 
 /* ---------- POST ---------- */
 export async function POST(req: Request) {
@@ -51,11 +54,17 @@ export async function POST(req: Request) {
     const cv = form.get("cv") as File | null;
 
     if (!name || !email) {
-      return NextResponse.json({ ok: false, error: "Name and Email are required." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "Name and Email are required." },
+        { status: 400 }
+      );
     }
 
     if (cv && cv.size > MAX_CV_BYTES) {
-      return NextResponse.json({ ok: false, error: "File too large (max 10 MB)." }, { status: 413 });
+      return NextResponse.json(
+        { ok: false, error: "File too large (max 10 MB)." },
+        { status: 413 }
+      );
     }
 
     const safe = {
@@ -82,11 +91,14 @@ export async function POST(req: Request) {
 
         await fetch(url.toString(), {
           method: "POST",
-          headers: { "Content-Type": "application/json", "User-Agent": "execpartners-apply/1.0" },
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": "execpartners-apply/1.0",
+          },
           body: JSON.stringify({
             ts: safe.ts,
             name,
-            email, // send full email to the sheet/webhook
+            email,
             role,
             market,
             jobId,
@@ -97,7 +109,11 @@ export async function POST(req: Request) {
           signal: controller.signal,
         }).finally(() => clearTimeout(t));
       } catch (e) {
-        if (LOG) console.warn("[apply] webhook failed:", (e as Error)?.message || e);
+        if (LOG)
+          console.warn(
+            "[apply] webhook failed:",
+            (e as Error)?.message || e
+          );
       }
     }
 
@@ -113,7 +129,11 @@ export async function POST(req: Request) {
         <p><strong>Market:</strong> ${market || "-"}</p>
         <p><strong>Job ID:</strong> ${jobId || "-"}</p>
         <p><strong>Notes:</strong><br>${notes ? notes.replace(/\n/g, "<br/>") : "—"}</p>
-        <p><strong>CV:</strong> ${cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"}</p>
+        <p><strong>CV:</strong> ${
+          cv
+            ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)`
+            : "—"
+        }</p>
         <hr/>
         <small>Sent ${new Date().toISOString()}</small>
       `;
@@ -126,15 +146,32 @@ export async function POST(req: Request) {
         `Market: ${market || "-"}\n` +
         `Job ID: ${jobId || "-"}\n` +
         `Notes:\n${notes || "—"}\n` +
-        `CV: ${cv ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)` : "—"}\n`;
+        `CV: ${
+          cv
+            ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)`
+            : "—"
+        }\n`;
+
+      // Resend expects replyTo as string or string[]
+      const replyTo = email
+        ? name
+          ? `${name} <${email}>`
+          : email
+        : undefined;
 
       let attachments:
-        | { filename: string; content: string }[]
+        | { filename: string; content: string; contentType?: string }[]
         | undefined;
 
       if (cv) {
         const buf = Buffer.from(await cv.arrayBuffer());
-        attachments = [{ filename: cv.name || "cv", content: buf.toString("base64") }];
+        attachments = [
+          {
+            filename: cv.name || "cv",
+            content: buf.toString("base64"),
+            contentType: cv.type || "application/octet-stream",
+          },
+        ];
       }
 
       try {
@@ -142,23 +179,37 @@ export async function POST(req: Request) {
           from: FROM,
           to: TO_LIST,
           cc: CC_LIST.length ? CC_LIST : undefined,
-          subject: `Apply — ${name || "Candidate"}${market ? ` (${market})` : ""}`,
+          subject: `Apply — ${
+            name || "Candidate"
+          }${market ? ` (${market})` : ""}${jobId ? ` [${jobId}]` : ""}`,
           html,
           text,
           attachments,
-          reply_to: email ? [{ email, name: name || undefined }] : undefined,
+          replyTo, // ✅ correct casing & type
         });
-        if (LOG) console.log("[apply] email sent", { id: (result as any)?.id || "n/a" });
+        if (LOG)
+          console.log("[apply] email sent", {
+            id: (result as any)?.id || "n/a",
+          });
       } catch (e) {
-        if (LOG) console.warn("[apply] email send failed:", (e as Error)?.message || e);
+        if (LOG)
+          console.warn(
+            "[apply] email send failed:",
+            (e as Error)?.message || e
+          );
       }
     } else if (LOG) {
-      console.warn("[apply] RESEND_API_KEY not set — skipping email send");
+      console.warn(
+        "[apply] RESEND_API_KEY not set — skipping email send"
+      );
     }
 
     return NextResponse.json({ ok: true, received: safe });
   } catch (err: any) {
     if (LOG) console.error("[apply] error:", err?.message, err);
-    return NextResponse.json({ ok: false, error: err?.message || "apply failed" }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: err?.message || "apply failed" },
+      { status: 500 }
+    );
   }
 }
