@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Apply Test</title>
+</head>
+<body>
+  <h2>Candidate Application Test</h2>
+  <form action="https://www.execpartners.ch/api/apply" method="POST" enctype="multipart/form-data">
+    <label>
+      Name:
+      <input type="text" name="name" value="Jane Candidate" required />
+    </label>
+    <br/><br/>
+    <label>
+      Email:
+      <input type="email" name="email" value="jane.candidate@example.com" required />
+    </label>
+    <br/><br/>
+    <label>
+      Role:
+      <input type="text" name="role" value="Senior RM" />
+    </label>
+    <br/><br/>
+    <label>
+      Market:
+      <input type="text" name="market" value="Zurich" />
+    </label>
+    <br/><br/>
+    <label>
+      Location:
+      <input type="text" name="location" value="Geneva" />
+    </label>
+    <br/><br/>
+    <label>
+      Current Employer:
+      <input type="text" name="currentEmployer" value="Bank ABC" />
+    </label>
+    <br/><br/>
+    <label>
+      Job ID:
+      <input type="text" name="jobId" value="RM-CV-TEST" />
+    </label>
+    <br/><br/>
+    <label>
+      Notes:
+      <textarea name="notes">Submitting CV from browser test</textarea>
+    </label>
+    <br/><br/>
+    <label>
+      CV Upload:
+      <input type="file" name="cv" accept=".pdf,.doc,.docx" />
+    </label>
+    <br/><br/>
+    <button type="submit">Submit Application</button>
+  </form>
+</body>
+</html>

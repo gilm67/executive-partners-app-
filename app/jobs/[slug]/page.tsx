@@ -414,6 +414,33 @@ async function fetchJobBySlug(requestedSlug: string): Promise<Job | null> {
   return KNOWN_JOBS[wanted] ?? null;
 }
 
+/* ---------------- Prefill helpers ---------------- */
+
+function inferMarket(job: Job): string | undefined {
+  if (job.market && job.market.trim()) return job.market.trim();
+  const h = `${norm(job.slug)}-${norm(job.title)}-${norm(job.location)}`;
+  if (h.includes("ch-onshore")) return "Switzerland (Onshore)";
+  if (h.includes("mea")) return "Middle East & Africa (MEA)";
+  if (h.includes("brazil")) return "Brazil (LatAm)";
+  if (h.includes("portugal")) return "Portugal (LatAm/Europe)";
+  if (h.includes("hong-kong") || h.includes("hk") || h.includes("greater-china"))
+    return "Hong Kong / Greater China";
+  if (h.includes("singapore") || h.includes("apac")) return "APAC";
+  return undefined;
+}
+
+function buildApplyHref(job: Job) {
+  const params = new URLSearchParams();
+  // Role = the job title
+  if (job.title) params.set("role", job.title);
+  // Market = explicit or inferred
+  const m = inferMarket(job);
+  if (m) params.set("market", m);
+  // Job ID = use slug to track source
+  if (job.slug) params.set("jobId", job.slug);
+  return `/apply?${params.toString()}`;
+}
+
 /* ---------------- Metadata ---------------- */
 
 export async function generateMetadata({
@@ -435,6 +462,10 @@ export async function generateMetadata({
 
   const url = `${base}/jobs/${slug}`;
 
+  // include prefilled apply target in JSON-LD
+  const applyTarget =
+    job ? `${base}${buildApplyHref(job)}` : `${base}/apply`;
+
   return {
     title,
     description,
@@ -450,6 +481,9 @@ export async function generateMetadata({
       job?.active === false || (job && HIDDEN_SLUGS.has(job.slug))
         ? { index: false, follow: true }
         : { index: true, follow: true },
+    other: {
+      // keep nothing extra
+    },
   };
 }
 
@@ -540,7 +574,7 @@ export default async function JobDetailPage({
         },
       },
     }),
-    industry: job.market || "Private Banking",
+    industry: job.market || inferMarket(job) || "Private Banking",
     directApply: true,
     ...(country && {
       applicantLocationRequirements: {
@@ -548,7 +582,6 @@ export default async function JobDetailPage({
         name: country,
       },
     }),
-    // jobLocationType omitted to avoid enum warning
     identifier: {
       "@type": "PropertyValue",
       name: "Executive Partners",
@@ -558,7 +591,7 @@ export default async function JobDetailPage({
     isAccessibleForFree: true,
     potentialAction: {
       "@type": "ApplyAction",
-      target: `${base}/apply`,
+      target: `${base}${buildApplyHref(job)}`, // ✅ prefilled apply link
     },
     ...(compensation ?? {}),
   };
@@ -590,6 +623,9 @@ export default async function JobDetailPage({
         : "")
   );
 
+  // ✅ Build prefilled /apply URL (works for all current & future jobs)
+  const applyHref = buildApplyHref(job);
+
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
       {/* JSON-LD */}
@@ -618,9 +654,9 @@ export default async function JobDetailPage({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-col">
               <div className="flex flex-wrap items-center gap-2">
-                {job.market ? (
+                {job.market || inferMarket(job) ? (
                   <span className="inline-flex items-center rounded-full bg-gradient-to-r from-sky-500 to-blue-400 px-2.5 py-1 text-xs font-semibold text-white shadow-sm">
-                    {job.market}
+                    {job.market || inferMarket(job)}
                   </span>
                 ) : null}
                 {job.confidential ? (
@@ -652,8 +688,9 @@ export default async function JobDetailPage({
             </div>
 
             <div className="flex w-full items-center gap-3 md:w-auto">
+              {/* ✅ Prefilled apply */}
               <Link
-                href="/apply"
+                href={applyHref}
                 className="inline-flex flex-1 items-center justify-center rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#1E40AF] md:flex-none"
               >
                 Apply / Submit CV
@@ -691,8 +728,9 @@ export default async function JobDetailPage({
               >
                 Browse more roles
               </Link>
+              {/* ✅ Prefilled apply (footer) */}
               <Link
-                href="/apply"
+                href={applyHref}
                 className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF]"
               >
                 Submit CV

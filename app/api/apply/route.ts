@@ -1,14 +1,16 @@
 // app/api/apply/route.ts
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
 export const runtime = "nodejs";
 
-/* ---------- config ---------- */
-const resendApiKey = process.env.RESEND_API_KEY || "";
-
-// 👉 For sandbox: force FROM to Gmail. Switch back to recruiter@execpartners.ch after domain verify.
-const FROM = (process.env.RESEND_FROM || "Executive Partners <gil.malalel@gmail.com>").trim();
+/* -------------------- ENV / CONFIG -------------------- */
+const resendApiKey = (process.env.RESEND_API_KEY || "").trim();
+const FROM = (
+  process.env.RESEND_FROM ||
+  'Executive Partners <recruiter@execpartners.ch>'
+).trim();
 
 // allow multiple recipients via comma/semicolon
 const splitList = (v?: string) =>
@@ -17,21 +19,35 @@ const splitList = (v?: string) =>
     .map((s) => s.trim())
     .filter(Boolean);
 
-// 👉 Sandbox: force TO to Gmail as well
-const TO_LIST = splitList(process.env.RECRUITER_TO) || ["gil.malalel@gmail.com"];
-const CC_LIST = splitList(process.env.RECRUITER_CC);
+// default notifications
+const TO_LIST = splitList(process.env.RECRUITER_TO).length
+  ? splitList(process.env.RECRUITER_TO)
+  : ["recruiter@execpartners.ch"];
+
+// always CC your Gmail (plus anything you add in env)
+const CC_LIST = (() => {
+  const base = splitList(process.env.RECRUITER_CC);
+  if (!base.includes("gil.malalel@gmail.com")) base.push("gil.malalel@gmail.com");
+  return base;
+})();
 
 const LOG =
   process.env.LOG_SUBMISSIONS === "true" || process.env.NODE_ENV !== "production";
 
-// Secure webhook (Google Apps Script, Zapier, ATS…)
-const WEBHOOK_URL = process.env.APPLICANT_WEBHOOK_URL || "";
-const WEBHOOK_TOKEN = process.env.APPLICANT_WEBHOOK_TOKEN || "";
+// Optional webhook (Google Apps Script / Zapier / ATS)
+const WEBHOOK_URL = (process.env.APPLICANT_WEBHOOK_URL || "").trim();
+const WEBHOOK_TOKEN = (process.env.APPLICANT_WEBHOOK_TOKEN || "").trim();
 
-// server-side safety limits
+// SMTP fallback (PlanetHoster)
+const SMTP_HOST = (process.env.SMTP_HOST || "mail.execpartners.ch").trim();
+const SMTP_PORT = Number(process.env.SMTP_PORT || 465); // 465=SSL, 587=STARTTLS
+const SMTP_USER = (process.env.SMTP_USER || "recruiter@execpartners.ch").trim();
+const SMTP_PASS = (process.env.SMTP_PASS || "").trim();
+const SMTP_SECURE = (process.env.SMTP_SECURE || "true").toLowerCase() === "true";
+
 const MAX_CV_BYTES = 10 * 1024 * 1024; // 10 MB
 
-/* ---------- helpers ---------- */
+/* -------------------- HELPERS -------------------- */
 const redact = (s?: string | null) =>
   !s ? "" : s.length <= 4 ? "****" : `${s.slice(0, 2)}****${s.slice(-2)}`;
 const clip = (s: string, n = 80) => (s.length > n ? `${s.slice(0, n)}…` : s);
@@ -43,7 +59,74 @@ function str(form: FormData, key: string, max = 5000) {
   return clean(v).slice(0, max);
 }
 
-/* ---------- POST ---------- */
+function renderHtml(payload: {
+  name: string;
+  email: string;
+  role: string;
+  market: string;
+  location: string;
+  currentEmployer: string;
+  jobId: string;
+  notes: string;
+  cv: File | null;
+  ts: string;
+}) {
+  const { name, email, role, market, location, currentEmployer, jobId, notes, cv, ts } =
+    payload;
+  return `
+    <h2>New candidate application</h2>
+    <p><strong>Name:</strong> ${name || "-"}</p>
+    <p><strong>Email:</strong> ${email || "-"}</p>
+    <p><strong>Role:</strong> ${role || "-"}</p>
+    <p><strong>Location:</strong> ${location || "-"}</p>
+    <p><strong>Current Employer:</strong> ${currentEmployer || "-"}</p>
+    <p><strong>Market:</strong> ${market || "-"}</p>
+    <p><strong>Job ID:</strong> ${jobId || "-"}</p>
+    <p><strong>Notes:</strong><br>${notes ? notes.replace(/\n/g, "<br/>") : "—"}</p>
+    <p><strong>CV:</strong> ${
+      cv
+        ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)`
+        : "—"
+    }</p>
+    <hr/>
+    <small>Sent ${ts}</small>
+  `;
+}
+
+function renderText(payload: {
+  name: string;
+  email: string;
+  role: string;
+  market: string;
+  location: string;
+  currentEmployer: string;
+  jobId: string;
+  notes: string;
+  cv: File | null;
+  ts: string;
+}) {
+  const { name, email, role, market, location, currentEmployer, jobId, notes, cv, ts } =
+    payload;
+  return (
+    `New candidate application\n\n` +
+    `Name: ${name || "-"}\n` +
+    `Email: ${email || "-"}\n` +
+    `Role: ${role || "-"}\n` +
+    `Location: ${location || "-"}\n` +
+    `Current Employer: ${currentEmployer || "-"}\n` +
+    `Market: ${market || "-"}\n` +
+    `Job ID: ${jobId || "-"}\n` +
+    `Notes:\n${notes || "—"}\n` +
+    `CV: ${
+      cv
+        ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)`
+        : "—"
+    }\n` +
+    `\nSent ${ts}\n`
+  );
+}
+
+/* -------------------- POST -------------------- */
 export async function POST(req: Request) {
   const ts = new Date().toISOString();
   const url = new URL(req.url);
@@ -52,6 +135,7 @@ export async function POST(req: Request) {
   try {
     const form = await req.formData();
 
+    // form fields
     const name = str(form, "name", 200);
     const email = ((form.get("email") as string) || "").slice(0, 320);
     const role = str(form, "role", 200);
@@ -60,7 +144,7 @@ export async function POST(req: Request) {
     const currentEmployer = str(form, "currentEmployer", 200);
     const jobId = str(form, "jobId", 50);
     const notes = ((form.get("notes") as string) || "").slice(0, 5000);
-    const cv = form.get("cv") as File | null;
+    const cv = (form.get("cv") as File) || null;
 
     if (!name || !email) {
       return NextResponse.json(
@@ -68,7 +152,6 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-
     if (cv && cv.size > MAX_CV_BYTES) {
       return NextResponse.json(
         { ok: false, error: "File too large (max 10 MB)." },
@@ -88,10 +171,9 @@ export async function POST(req: Request) {
       cv: cv ? { name: cv.name, type: cv.type, size: cv.size } : null,
       ts,
     };
-
     if (LOG) console.log("[apply] received", safe);
 
-    /* ---------- webhook ---------- */
+    /* ---------- webhook (optional) ---------- */
     let webhookStatus: number | null = null;
     let webhookBody: string | null = null;
 
@@ -101,14 +183,14 @@ export async function POST(req: Request) {
         if (WEBHOOK_TOKEN) wurl.searchParams.set("token", WEBHOOK_TOKEN);
 
         const payload = {
-          "Timestamp": ts,
+          Timestamp: ts,
           "Candidate Name": name,
           "Candidate Email": email,
           "Current Role": role,
           "Candidate Location": location,
           "Current Employer": currentEmployer,
           "Current Market": market,
-          "Currency": "",
+          Currency: "",
           "Base Salary": "",
           "Last Bonus": "",
           "Current Number of Clients": "",
@@ -122,10 +204,10 @@ export async function POST(req: Request) {
           "Total Revenue 3Y (CHF)": "",
           "Profit Margin (%)": "",
           "Total Profit 3Y (CHF)": "",
-          "Score": "",
+          Score: "",
           "AI Evaluation Notes": notes || "",
           "Job ID": jobId || "",
-          "Source": "execpartners.ch/apply",
+          Source: "execpartners.ch/apply",
         };
 
         const controller = new AbortController();
@@ -155,52 +237,37 @@ export async function POST(req: Request) {
       }
     }
 
-    /* ---------- email notify ---------- */
+    /* ---------- email notify (Resend → SMTP fallback) ---------- */
+    const mailSubject = `Apply — ${name || "Candidate"}${
+      market ? ` (${market})` : ""
+    }${jobId ? ` [${jobId}]` : ""}`;
+
+    const basePayload = {
+      name,
+      email,
+      role,
+      market,
+      location,
+      currentEmployer,
+      jobId,
+      notes,
+      cv,
+      ts,
+    };
+    const html = renderHtml(basePayload);
+    const text = renderText(basePayload);
+    const replyTo = email ? (name ? `${name} <${email}>` : email) : undefined;
+    const to = TO_LIST.length ? TO_LIST : ["recruiter@execpartners.ch"];
+    const cc = CC_LIST.length ? CC_LIST : undefined;
+
     let emailId: string | null = null;
     let emailError: unknown = null;
+    let channel: "resend" | "smtp" | "none" = "none";
 
+    // Attempt Resend first (if API key provided)
     if (resendApiKey) {
       try {
         const resend = new Resend(resendApiKey);
-
-        const html = `
-          <h2>New candidate application</h2>
-          <p><strong>Name:</strong> ${name || "-"}</p>
-          <p><strong>Email:</strong> ${email || "-"}</p>
-          <p><strong>Role:</strong> ${role || "-"}</p>
-          <p><strong>Location:</strong> ${location || "-"}</p>
-          <p><strong>Current Employer:</strong> ${currentEmployer || "-"}</p>
-          <p><strong>Market:</strong> ${market || "-"}</p>
-          <p><strong>Job ID:</strong> ${jobId || "-"}</p>
-          <p><strong>Notes:</strong><br>${
-            notes ? notes.replace(/\n/g, "<br/>") : "—"
-          }</p>
-          <p><strong>CV:</strong> ${
-            cv
-              ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)`
-              : "—"
-          }</p>
-          <hr/>
-          <small>Sent ${ts}</small>
-        `;
-
-        const text =
-          `New candidate application\n\n` +
-          `Name: ${name || "-"}\n` +
-          `Email: ${email || "-"}\n` +
-          `Role: ${role || "-"}\n` +
-          `Location: ${location || "-"}\n` +
-          `Current Employer: ${currentEmployer || "-"}\n` +
-          `Market: ${market || "-"}\n` +
-          `Job ID: ${jobId || "-"}\n` +
-          `Notes:\n${notes || "—"}\n` +
-          `CV: ${
-            cv
-              ? `${cv.name} (${cv.type || "application/octet-stream"}, ${cv.size} bytes)`
-              : "—"
-          }\n`;
-
-        const replyTo = email ? (name ? `${name} <${email}>` : email) : undefined;
 
         let attachments:
           | { filename: string; content: string; contentType?: string }[]
@@ -217,16 +284,11 @@ export async function POST(req: Request) {
           ];
         }
 
-        const to = TO_LIST.length ? TO_LIST : ["gil.malalel@gmail.com"];
-        const cc = CC_LIST.length ? CC_LIST : undefined;
-
         const { data, error } = await resend.emails.send({
           from: FROM,
           to,
           cc,
-          subject: `Apply — ${name || "Candidate"}${market ? ` (${market})` : ""}${
-            jobId ? ` [${jobId}]` : ""
-          }`,
+          subject: mailSubject,
           html,
           text,
           attachments,
@@ -237,12 +299,58 @@ export async function POST(req: Request) {
           emailError = error;
           if (LOG) console.warn("[apply] Resend error:", error);
         } else {
+          channel = "resend";
           emailId = (data as any)?.id || null;
-          if (LOG) console.log("[apply] email sent", { id: emailId });
+          if (LOG) console.log("[apply] email sent via Resend", { id: emailId });
         }
       } catch (e) {
         emailError = (e as Error)?.message || e;
-        if (LOG) console.warn("[apply] email send threw:", emailError);
+        if (LOG) console.warn("[apply] Resend threw:", emailError);
+      }
+    }
+
+    // Fallback to SMTP if Resend failed or not configured
+    if (channel !== "resend") {
+      try {
+        const transporter = nodemailer.createTransport({
+          host: SMTP_HOST,
+          port: SMTP_PORT,
+          secure: SMTP_SECURE, // true=465 SSL, false=587 STARTTLS
+          auth: { user: SMTP_USER, pass: SMTP_PASS },
+        });
+
+        let attachments:
+          | { filename: string; content: Buffer; contentType?: string }[]
+          | undefined;
+
+        if (cv) {
+          const buf = Buffer.from(await cv.arrayBuffer());
+          attachments = [
+            {
+              filename: cv.name || "cv",
+              content: buf,
+              contentType: cv.type || "application/octet-stream",
+            },
+          ];
+        }
+
+        const info = await transporter.sendMail({
+          from: FROM,
+          to,
+          cc,
+          subject: mailSubject,
+          html,
+          text,
+          attachments,
+          ...(replyTo ? { replyTo } : {}),
+        });
+
+        channel = "smtp";
+        emailId = info.messageId || null;
+        if (LOG) console.log("[apply] email sent via SMTP", { id: emailId });
+      } catch (e) {
+        if (!emailError) emailError = e;
+        if (LOG) console.warn("[apply] SMTP failed:", (e as Error)?.message || e);
       }
     }
 
@@ -257,17 +365,19 @@ export async function POST(req: Request) {
             id: emailId,
             error: emailError,
             fromUsed: FROM,
-            toUsed: TO_LIST,
-            ccUsed: CC_LIST,
+            toUsed: to,
+            ccUsed: cc,
+            channel,
           },
         }
       : undefined;
 
-    return NextResponse.json({
-      ok: true,
-      received: safe,
-      ...(debug ? { diag: debug } : {}),
-    });
+    // Final response
+    const ok = !!emailId;
+    return NextResponse.json(
+      { ok, received: { ...safe, replyTo: redact(email) }, ...(debug ? { diag: debug } : {}) },
+      { status: ok ? 200 : 500 }
+    );
   } catch (err: any) {
     if (LOG) console.error("[apply] error:", err?.message, err);
     return NextResponse.json(
