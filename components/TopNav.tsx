@@ -8,11 +8,14 @@ import { usePathname } from "next/navigation";
 type NavItem = { href: string; label: string; external?: boolean };
 
 const nav: NavItem[] = [
+  { href: "/", label: "Executive Partners" },
+  { href: "/markets", label: "Markets" },
   { href: "/jobs", label: "Jobs" },
-  { href: "/insights", label: "Insights" },                 // ✅ new
   { href: "/candidates", label: "Candidates" },
   { href: "/hiring-managers", label: "Hiring Managers" },
-  { href: "/bp-simulator", label: "BP Simulator", external: true }, // new tab
+  { href: "https://ep-bp-simulator.streamlit.app/", label: "BP Simulator", external: true },
+  { href: "/portability-score", label: "Portability" },
+  { href: "/insights", label: "Insights" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
@@ -22,7 +25,7 @@ export default function TopNav() {
   const pathname = usePathname();
 
   const ItemLink = ({ item }: { item: NavItem }) => {
-    const isActive = pathname === item.href;
+    const isActive = !item.external && pathname === item.href;
 
     if (item.external) {
       return (
@@ -51,7 +54,7 @@ export default function TopNav() {
   };
 
   const ItemLinkMobile = ({ item }: { item: NavItem }) => {
-    const isActive = pathname === item.href;
+    const isActive = !item.external && pathname === item.href;
 
     if (item.external) {
       return (
@@ -72,10 +75,8 @@ export default function TopNav() {
         href={item.href}
         onClick={() => setOpen(false)}
         aria-current={isActive ? "page" : undefined}
-        className={`block rounded-lg px-4 py-3 text-base font-bold text-white ring-1 ring-white/15 ${
-          isActive
-            ? "bg-blue-600"
-            : "bg-neutral-900/90 hover:bg-neutral-800"
+        className={`block rounded-lg px-4 py-3 text-base font-bold bg-neutral-900/90 text-white ring-1 ring-white/15 ${
+          isActive ? "outline outline-1 outline-white/30" : ""
         }`}
       >
         {item.label}
@@ -84,62 +85,53 @@ export default function TopNav() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-neutral-800 bg-neutral-950/85 backdrop-blur supports-[backdrop-filter]:bg-neutral-950/60">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-        <Link
-          href="/"
-          className="text-sm font-extrabold tracking-tight text-white hover:text-white/90"
-        >
-          Executive Partners
-        </Link>
-
-        {/* Desktop */}
-        <ul className="hidden gap-6 md:flex">
-          {nav.map((item) => (
-            <li key={item.href}>
-              <ItemLink item={item} />
-            </li>
-          ))}
-        </ul>
-
-        <div className="hidden md:block">
-          <Link
-            href="/apply"
-            className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-bold text-white hover:bg-[#1E40AF]"
-          >
-            Submit CV
+    <header className="sticky top-0 z-50 w-full bg-black/60 backdrop-blur supports-[backdrop-filter]:bg-black/40">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        {/* Left: brand */}
+        <div className="flex items-center gap-3">
+          <Link href="/" className="text-white font-bold text-lg hover:text-white/90">
+            Exec Partners
           </Link>
+        </div>
+
+        {/* Desktop menu */}
+        <div className="hidden items-center gap-6 md:flex">
+          {nav.map((item) => (
+            <ItemLink key={item.label} item={item} />
+          ))}
         </div>
 
         {/* Mobile burger */}
         <button
-          className="md:hidden rounded-md border border-neutral-700 px-3 py-2 text-sm font-semibold text-white"
-          onClick={() => setOpen((v) => !v)}
+          type="button"
           aria-label="Toggle menu"
+          className="inline-flex items-center justify-center rounded-md p-2 text-white hover:bg-white/10 md:hidden"
+          onClick={() => setOpen((v) => !v)}
         >
-          Menu
+          <svg
+            className="h-6 w-6"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            {open ? (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
         </button>
       </nav>
 
-      {/* Mobile drawer */}
+      {/* Mobile panel */}
       {open && (
-        <div className="md:hidden border-t border-neutral-800 bg-neutral-950/95 backdrop-blur">
-          <ul className="space-y-2 px-4 py-4">
+        <div className="md:hidden border-t border-white/10 bg-black/85 backdrop-blur">
+          <div className="mx-auto grid max-w-7xl gap-2 px-4 py-3 sm:px-6 lg:px-8">
             {nav.map((item) => (
-              <li key={item.href}>
-                <ItemLinkMobile item={item} />
-              </li>
+              <ItemLinkMobile key={item.label} item={item} />
             ))}
-            <li>
-              <Link
-                href="/apply"
-                onClick={() => setOpen(false)}
-                className="block text-center rounded-lg px-4 py-3 text-base font-bold bg-blue-600 text-white hover:bg-blue-700"
-              >
-                Submit CV
-              </Link>
-            </li>
-          </ul>
+          </div>
         </div>
       )}
     </header>
