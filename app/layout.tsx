@@ -1,7 +1,6 @@
 // app/layout.tsx
 import "./globals.css";
 import TopNav from "@/components/TopNav";
-import Splash from "@/components/Splash";
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -125,7 +124,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
 
-        <Splash />
+        
         <TopNav />
 
         <main id="main" className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">

@@ -1,155 +1,12 @@
-/* app/globals.css */
 @import "tailwindcss";
 
+/* Base */
 :root { color-scheme: dark; }
 html, body { height: 100%; margin: 0; }
 
-/* ==== Mobile Contrast Fixes (non-invasive) ==== */
-@media (max-width: 768px) {
-  /* Nav / mobile menu on dark backgrounds */
-  header, nav { background: #0B0E13 !important; }
-  header a, nav a, .mobile-nav a, .mobile-nav button {
-    color: #fff !important;
-    font-weight: 700 !important;
-  }
-
-  /* Any light panels on mobile (e.g., job detail "Apply confidentially") */
-  .bg-white, .bg-neutral-50, .bg-zinc-50, .bg-gray-50 {
-    color: #0B0E13 !important;
-  }
-  .bg-white a, .bg-neutral-50 a, .bg-zinc-50 a, .bg-gray-50 a {
-    color: #1D4ED8 !important;
-    font-weight: 600;
-  }
-
-  /* If a page uses a dark wrapper, keep cards legible */
-  .bg-\[\#0B0E13\] .card,
-  .bg-\[\#0B0E13\] .panel,
-  .bg-\[\#0B0E13\] .section,
-  .bg-\[\#0B0E13\] .prose {
-    color: #ffffff !important;
-  }
-
-  /* Forms (About/Contact) */
-  form input, form textarea, form select {
-    background: rgba(255,255,255,0.06) !important;
-    color: #fff !important;
-    border-color: rgba(255,255,255,0.15) !important;
-  }
-  form ::placeholder { color: rgba(255,255,255,0.65) !important; }
-
-  /* Generic CTA sections */
-  .cta, .apply-cta, [data-cta="apply"] {
-    background: rgba(255,255,255,0.06) !important;
-    color: #fff !important;
-    border: 1px solid rgba(255,255,255,0.12) !important;
-  }
-  .cta a, .apply-cta a, [data-cta="apply"] a {
-    color: #fff !important;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-}
-
-/* ===== Mobile readability & contrast fixes ===== */
-@media (max-width: 640px) {
-  header a, header nav a, header button,
-  nav a, nav button {
-    color: #fff !important;
-    font-weight: 700 !important;
-    text-shadow: 0 1px 2px rgba(0,0,0,.35);
-  }
-
-  .mobile-dark-surface,
-  .card, .panel, .rounded-2xl, .shadow-sm, .shadow,
-  .bg-white, .bg-gray-50, .bg-neutral-50 {
-    background-color: rgba(255,255,255,.06) !important;
-    border-color: rgba(255,255,255,.10) !important;
-  }
-
-  .mobile-readable, .prose, .content, .content p, .content li,
-  .text-neutral-500, .text-neutral-600, .text-gray-500, .text-gray-600 {
-    color: rgba(255,255,255,.90) !important;
-  }
-  .mobile-readable-muted, .text-neutral-400, .text-gray-400 {
-    color: rgba(255,255,255,.75) !important;
-  }
-
-  .btn-outline, .btn-ghost,
-  .border-white\/10, .border-white\/15, .border-gray-200 {
-    border-color: rgba(255,255,255,.25) !important;
-    color: #fff !important;
-  }
-
-  .apply-cta, a[href*="apply"], a[href*="contact"] {
-    background: #1D4ED8 !important;
-    color: #fff !important;
-    border-color: transparent !important;
-  }
-}
-
-/* ===== Mobile readability overrides ===== */
-@media (max-width: 768px) {
-  .text-blue-400, .text-blue-500, .text-blue-600,
-  .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover {
-    color: #fff !important;
-    font-weight: 600 !important;
-  }
-}
-
-/* Force white, bold text inside blue buttons */
-a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\] {
-  color: #fff !important;
-  font-weight: 600 !important;
-}
-
-/* Strengthen brand/top-nav links */
-header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
-header nav a, header nav button { color: #fff !important; font-weight: 600 !important; }
-
-[class*="SheetContent"] a, [class*="SheetContent"] button,
-[class*="DrawerContent"] a, [class*="DrawerContent"] button {
-  color: #fff !important;
-  font-weight: 600 !important;
-}
-
-a[role="button"].bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
-  color: #fff !important;
-  font-weight: 600 !important;
-}
-
-/* ===== Mobile menu readability ===== */
-@media (max-width: 768px) {
-  header a, header button,
-  header nav a, header nav button,
-  [class*="Sheet"] a, [class*="Sheet"] button,
-  [class*="Drawer"] a, [class*="Drawer"] button,
-  [class*="Menu"] a, [class*="Menu"] button {
-    color: #fff !important;
-    font-weight: 700 !important;
-  }
-
-  .text-blue-400, .text-blue-500, .text-blue-600, .text-blue-700,
-  .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover,
-  .text-primary, .hover\:text-primary:hover {
-    color: #fff !important;
-    font-weight: 700 !important;
-  }
-
-  a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\],
-  .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
-    color: #fff !important;
-    font-weight: 700 !important;
-  }
-}
-
-header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
-
-/* =========================================================
-   Splash — Cinematic Rise + Deblur (stable)
-   ========================================================= */
-
-/* Splash root & image — so we can tune mobile image fit */
+/* ===============================
+   Splash — Cinematic Rise + Deblur
+   =============================== */
 .splash-root {
   position: fixed;
   inset: 0;
@@ -166,8 +23,6 @@ header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
   height: 100%;
   object-fit: cover; /* desktop: full-bleed luxury */
 }
-
-/* Cinematic motion on the whole splash */
 .cinematic-rise {
   transform: translateY(8vh);
   filter: blur(8px);
@@ -182,8 +37,6 @@ header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
   filter: blur(0);
   opacity: 1;
 }
-
-/* Depth overlay (unchanged) */
 .splash-gradient::after {
   content: "";
   position: absolute;
@@ -193,19 +46,17 @@ header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
     linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.15) 40%, rgba(0,0,0,.4));
   pointer-events: none;
 }
-
-/* ===== Mobile-only: keep the whole image visible ===== */
+/* Mobile: keep whole image visible */
 @media (max-width: 640px) {
   .splash-img {
-    object-fit: contain;      /* show full image on phones */
-    background-color: #0B0E13;/* fill letterbox with brand dark */
+    object-fit: contain;
+    background-color: #0B0E13;
   }
   .cinematic-rise {
-    transform: translateY(5vh); /* gentler entrance on phones */
+    transform: translateY(5vh);
     filter: blur(4px);
   }
 }
-
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .cinematic-rise {
@@ -214,4 +65,57 @@ header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
     opacity: 0 !important;
     transition: none !important;
   }
+}
+
+/* ===============================
+   Mobile contrast & form tweaks
+   =============================== */
+@media (max-width: 768px) {
+  header, nav { background: #0B0E13 !important; }
+  header a, nav a, .mobile-nav a, .mobile-nav button {
+    color: #fff !important;
+    font-weight: 700 !important;
+  }
+  .bg-white, .bg-neutral-50, .bg-zinc-50, .bg-gray-50 {
+    color: #0B0E13 !important;
+  }
+  .bg-white a, .bg-neutral-50 a, .bg-zinc-50 a, .bg-gray-50 a {
+    color: #1D4ED8 !important;
+    font-weight: 600;
+  }
+  .bg-\[\#0B0E13\] .card,
+  .bg-\[\#0B0E13\] .panel,
+  .bg-\[\#0B0E13\] .section,
+  .bg-\[\#0B0E13\] .prose {
+    color: #ffffff !important;
+  }
+  form input, form textarea, form select {
+    background: rgba(255,255,255,0.06) !important;
+    color: #fff !important;
+    border-color: rgba(255,255,255,0.15) !important;
+  }
+  form ::placeholder { color: rgba(255,255,255,0.65) !important; }
+  .cta, .apply-cta, [data-cta="apply"] {
+    background: rgba(255,255,255,0.06) !important;
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+  }
+  .cta a, .apply-cta a, [data-cta="apply"] a {
+    color: #fff !important;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+/* ===============================
+   Markets helpers (optional)
+   =============================== */
+.market-card {
+  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  box-shadow: 0 0 1px rgba(255,255,255,0.2);
+}
+.market-card .panel {
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.3);
 }

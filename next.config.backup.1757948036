@@ -1,0 +1,51 @@
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // keep URLs without trailing slash
+  trailingSlash: false,
+
+  async redirects() {
+    return [
+      // ✅ Existing redirect (keep)
+      {
+        source: "/jobs/senior-relationship-manager-portugal",
+        destination: "/jobs/senior-relationship-manager-portugal-geneva",
+        permanent: true,
+      },
+
+      // ---------- Markets: canonical slugs (no locale in final url) ----------
+      // Geneva
+      { source: "/markets/Geneva", destination: "/markets/geneva", permanent: true },
+      { source: "/:locale(en|fr|de)/markets/Geneva", destination: "/markets/geneva", permanent: true },
+
+      // Zurich
+      { source: "/markets/Zurich", destination: "/markets/zurich", permanent: true },
+      { source: "/:locale(en|fr|de)/markets/Zurich", destination: "/markets/zurich", permanent: true },
+
+      // Dubai
+      { source: "/markets/Dubai", destination: "/markets/dubai", permanent: true },
+      { source: "/:locale(en|fr|de)/markets/Dubai", destination: "/markets/dubai", permanent: true },
+
+      // Singapore
+      { source: "/markets/Singapore", destination: "/markets/singapore", permanent: true },
+      { source: "/:locale(en|fr|de)/markets/Singapore", destination: "/markets/singapore", permanent: true },
+
+      // Hong Kong (often linked as Hong-kong)
+      { source: "/markets/Hong-kong", destination: "/markets/hong-kong", permanent: true },
+      { source: "/:locale(en|fr|de)/markets/Hong-kong", destination: "/markets/hong-kong", permanent: true },
+
+      // London
+      { source: "/markets/London", destination: "/markets/london", permanent: true },
+      { source: "/:locale(en|fr|de)/markets/London", destination: "/markets/london", permanent: true },
+
+      // New York (often linked as New-york)
+      { source: "/markets/New-york", destination: "/markets/new-york", permanent: true },
+      { source: "/:locale(en|fr|de)/markets/New-york", destination: "/markets/new-york", permanent: true },
+
+      // Miami
+      { source: "/markets/Miami", destination: "/markets/miami", permanent: true },
+      { source: "/:locale(en|fr|de)/markets/Miami", destination: "/markets/miami", permanent: true },
+    ];
+  },
+};
+
+module.exports = nextConfig;
