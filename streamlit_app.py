@@ -181,7 +181,7 @@ ADMIN_DEFAULT = _truthy(qp.get("admin"))
 ADMIN_MODE = st.sidebar.checkbox("🔑 Admin Mode", value=ADMIN_DEFAULT)
 
 # ================== HERO ==================
-st.markdown("# 📊 Business Plan Simulator")
+st.markdown("# 📊 Business Plan Simulator — vNOW (streamlit_app.py)")
 st.markdown(
     '<p class="ep-sub" style="text-align:center;max-width:820px;margin:0 auto">'
     "Confidential, high-contrast planning for RM & PB hires — aligned with the Executive Partners site."
