@@ -7,8 +7,8 @@ import { usePathname } from "next/navigation";
 
 type NavItem = { href: string; label: string; external?: boolean };
 
-// ✅ Hardcode the correct Streamlit URL to avoid any env issues
-const BP_SIM_URL = "https://business-plan-simulator.streamlit.app/";
+// ✅ Hardcode the NEW Streamlit URL
+const BP_SIM_URL = "https://ep-bp-simulator.streamlit.app/";
 
 const nav: NavItem[] = [
   { href: "/jobs", label: "Jobs" },
