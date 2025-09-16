@@ -7,11 +7,14 @@ import { usePathname } from "next/navigation";
 
 type NavItem = { href: string; label: string; external?: boolean };
 
+// ✅ Hardcode the correct Streamlit URL to avoid any env issues
+const BP_SIM_URL = "https://business-plan-simulator.streamlit.app/";
+
 const nav: NavItem[] = [
   { href: "/jobs", label: "Jobs" },
   { href: "/candidates", label: "Candidates" },
   { href: "/hiring-managers", label: "Hiring Managers" },
-  { href: "/bp-simulator", label: "BP Simulator", external: true },
+  { href: BP_SIM_URL, label: "BP Simulator", external: true }, // always new tab
   { href: "/markets", label: "Markets" },
   { href: "/portability", label: "Portability" },
   { href: "/insights", label: "Insights" },
@@ -24,7 +27,8 @@ export default function TopNav() {
   const pathname = usePathname();
 
   const ItemLink = ({ item }: { item: NavItem }) => {
-    const isActive = pathname === item.href;
+    const isActive =
+      !item.external && (pathname === item.href || pathname.startsWith(item.href + "/"));
 
     if (item.external) {
       return (
@@ -33,6 +37,7 @@ export default function TopNav() {
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm font-semibold text-white hover:text-white/90"
+          aria-label={`${item.label} (opens in a new tab)`}
         >
           {item.label}
         </a>
@@ -56,11 +61,13 @@ export default function TopNav() {
     <header className="sticky top-0 z-50 bg-neutral-900/85 backdrop-blur supports-[backdrop-filter]:bg-neutral-900/60">
       <nav className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-14 items-center justify-between">
-          <Link href="/" className="text-white font-semibold">Executive Partners</Link>
+          <Link href="/" className="text-white font-semibold" aria-label="Executive Partners — Home">
+            Executive Partners
+          </Link>
 
           <div className="hidden md:flex items-center gap-5">
             {nav.map((item) => (
-              <ItemLink key={item.href} item={item} />
+              <ItemLink key={`${item.label}-${item.href}`} item={item} />
             ))}
           </div>
 
@@ -78,18 +85,19 @@ export default function TopNav() {
             {nav.map((item) =>
               item.external ? (
                 <a
-                  key={item.href}
+                  key={`${item.label}-${item.href}`}
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setOpen(false)}
                   className="block rounded-lg px-4 py-3 text-base font-bold bg-neutral-900/90 text-white ring-1 ring-white/15"
+                  aria-label={`${item.label} (opens in a new tab)`}
                 >
                   {item.label}
                 </a>
               ) : (
                 <Link
-                  key={item.href}
+                  key={`${item.label}-${item.href}`}
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className="block rounded-lg px-4 py-3 text-base font-bold bg-neutral-900/90 text-white ring-1 ring-white/15"

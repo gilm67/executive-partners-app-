@@ -1,12 +1,10 @@
 // app/page.tsx
 import Link from "next/link";
-import { CardBtn } from "./components/CardBtn";
-import { MapPin, ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
-import Splash from "@/components/Splash"; // ✅ splash component
+import { MapPin, ChevronRight } from "lucide-react";
+import Splash from "@/components/Splash";
 
 /* ------------ Types & helpers ------------ */
-
 type Job = {
   id?: string;
   title: string;
@@ -27,15 +25,10 @@ const HIDDEN_SLUGS = new Set<string>([
 ]);
 
 async function getFeaturedJobs(): Promise<Job[]> {
-  const qs = new URLSearchParams({
-    active: "true",
-    sort: "newest",
-    limit: "6",
-  }).toString();
-
+  const qs = new URLSearchParams({ active: "true", sort: "newest", limit: "6" }).toString();
   const abs = (process.env.NEXT_PUBLIC_SITE_URL ?? "") + `/api/jobs?${qs}`;
-  const r1 = await fetch(abs, { cache: "no-store" }).catch(() => null);
 
+  const r1 = await fetch(abs, { cache: "no-store" }).catch(() => null);
   const data =
     r1?.ok
       ? await r1.json()
@@ -57,7 +50,7 @@ export const metadata: Metadata = {
     "Executive Partners is Switzerland’s leading financial recruiter in private banking and wealth management. Based in Geneva, we connect private bankers with confidential opportunities in Zurich, Dubai, Singapore, London, and New York.",
 };
 
-/* ------------ PrimaryBtn (moved above usage) ------------ */
+/* ------------ Buttons (local) ------------ */
 function PrimaryBtn({
   href,
   children,
@@ -69,7 +62,7 @@ function PrimaryBtn({
 }) {
   const cls =
     variant === "blue"
-      ? "bg-[#1D4ED8] text-white hover:bg[#1E40AF] shadow-[0_8px_30px_rgba(29,78,216,.35)] font-semibold"
+      ? "bg-[#1D4ED8] text-white hover:bg-[#1E40AF] shadow-[0_8px_30px_rgba(29,78,216,.35)] font-semibold"
       : variant === "outline"
       ? "border border-white/15 bg-white/5 hover:bg-white/10 text-white"
       : "border border-white/10 bg-transparent hover:bg-white/5 text-white";
@@ -84,13 +77,40 @@ function PrimaryBtn({
   );
 }
 
+/** Inline CardBtn so there’s no missing import */
+function CardBtn({
+  href,
+  tone = "blue",
+  children,
+}: {
+  href: string;
+  tone?: "blue" | "green" | "neutral";
+  children: React.ReactNode;
+}) {
+  const toneClass =
+    tone === "blue"
+      ? "bg-blue-600 hover:bg-blue-700"
+      : tone === "green"
+      ? "bg-emerald-600 hover:bg-emerald-700"
+      : "bg-white/10 hover:bg-white/20";
+
+  return (
+    <Link
+      href={href}
+      className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold text-white transition ${toneClass}`}
+    >
+      {children}
+    </Link>
+  );
+}
+
 /* ---------------- Page ---------------- */
 export default async function HomePage() {
   const featured = await getFeaturedJobs();
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
-      {/* ✅ Splash screen */}
+      {/* Splash screen */}
       <Splash />
 
       {/* background glow */}
@@ -109,7 +129,7 @@ export default async function HomePage() {
           International & Swiss Private Banking — HNW/UHNW
         </div>
 
-        {/* ✅ H1 */}
+        {/* H1 */}
         <h1 className="mx-auto mt-4 text-center text-5xl font-extrabold tracking-tight md:text-6xl">
           Private Banking &amp; Wealth Management Search
         </h1>
@@ -169,7 +189,6 @@ export default async function HomePage() {
 }
 
 /* ---------------- components ---------------- */
-
 type BtnTone = "blue" | "green" | "neutral";
 
 function FeatureCard({
@@ -267,12 +286,12 @@ function JobCard({ job }: { job: Job }) {
           className="pointer-events-none absolute -top-8 -right-8 h-36 w-36 rounded-full bg-gradient-to-br from-sky-500/30 to-emerald-400/30 blur-2xl opacity-40"
         />
 
-        {/* title (fixed height for alignment) */}
+        {/* title */}
         <h3 className="text-lg font-semibold text-white line-clamp-2 min-h-[3.25rem]">
           {job.title}
         </h3>
 
-        {/* location pill (fixed height) */}
+        {/* location pill */}
         <div className="mt-2 min-h-[1.6rem]">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs text-white/80">
             <MapPin className="h-3.5 w-3.5 opacity-80" />
@@ -280,19 +299,16 @@ function JobCard({ job }: { job: Job }) {
           </span>
         </div>
 
-        {/* summary (fixed height for alignment) */}
+        {/* summary */}
         <p className="mt-3 text-sm text-neutral-300 line-clamp-3 min-h-[3.75rem]">
           {job.summary}
         </p>
 
-        {/* CTA pinned bottom */}
+        {/* CTA */}
         <div className="mt-auto pt-4">
           <Link
             href={`/jobs/${job.slug}`}
-            className="inline-flex items-center gap-2 rounded-xl bg-white/8 px-3 py-2 text-sm font-semibold text-white outline-none
-                       ring-0 transition
-                       hover:bg-white/12 hover:shadow-[0_10px_30px_rgba(59,130,246,.25)]
-                       focus-visible:ring-2 focus-visible:ring-sky-500/40"
+            className="inline-flex items-center gap-2 rounded-xl bg-white/8 px-3 py-2 text-sm font-semibold text-white outline-none ring-0 transition hover:bg-white/12 hover:shadow-[0_10px_30px_rgba(59,130,246,.25)] focus-visible:ring-2 focus-visible:ring-sky-500/40"
           >
             View details
             <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

@@ -2,16 +2,12 @@
 const nextConfig = {
   async redirects() {
     return [
-      {
-        source: '/bp-simulator',
-        destination: '/portability',
-        permanent: true, // 308
-      },
-      {
-        source: '/bp-simulator/',
-        destination: '/portability',
-        permanent: true,
-      },
+      // old entry points → new canonical page
+      { source: '/bp-simulator',  destination: '/portability', permanent: true },
+      { source: '/bp-simulator/', destination: '/portability', permanent: true },
+
+      // catch ALL subpaths (e.g., /bp-simulator/foo, /bp-simulator/bar/baz)
+      { source: '/bp-simulator/:path*', destination: '/portability', permanent: true },
     ];
   },
 };

@@ -1,3 +1,4 @@
+// app/markets/[slug]/page.tsx
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import MarketPage from "@/components/MarketPage";
@@ -10,12 +11,11 @@ type Params = { slug: string };
 export async function generateMetadata(
   { params }: { params: Promise<Params> }
 ): Promise<Metadata> {
-  const { slug } = await params; // ✅ fixed
+  const { slug } = await params; // ✅ await the dynamic params
   const market = MARKETS[slug as MarketSlug];
   if (!market) return { title: "Market not found | Executive Partners" };
 
-  const site =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://www.execpartners.ch";
+  const site = process.env.NEXT_PUBLIC_SITE_URL || "https://www.execpartners.ch";
   const url = `${site}/markets/${slug}`;
 
   return {
@@ -40,11 +40,20 @@ export async function generateMetadata(
   };
 }
 
+/* Pre-generate all market pages */
+export async function generateStaticParams() {
+  return Object.keys(MARKETS).map((slug) => ({ slug }));
+}
+
+/* Optional ISR */
+// export const revalidate = 3600;
+
 /* ---------------- Page ---------------- */
 export default async function Page({ params }: { params: Promise<Params> }) {
-  const { slug } = await params; // ✅ fixed
+  const { slug } = await params; // ✅ await the dynamic params
   const market = MARKETS[slug as MarketSlug];
   if (!market) return notFound();
 
-  return <MarketPage market={market} />;
+  // MarketPage expects "data"
+  return <MarketPage data={market} />;
 }

@@ -3,30 +3,59 @@ import type { Metadata } from "next";
 import PortabilityClient from "./portability-client";
 
 export const metadata: Metadata = {
-  title: "Portability Readiness Score™ | Executive Partners",
+  title: "Portability – Private Banking Book Readiness",
   description:
-    "Answer 6 quick questions to estimate your client portability readiness (AUM mix, booking centers, cross-border licenses, product scope, and client concentration).",
-  alternates: { canonical: "/portability" },
-  openGraph: {
-    title: "Portability Readiness Score™",
-    description:
-      "6-question widget for RMs. Instant score + confidential CTA. No data stored without consent.",
-    url: "/portability",
-    siteName: "Executive Partners",
-    type: "website",
-  },
+    "Score your portability across revenue quality, documentation, cross-border compliance, and onboarding readiness. Instant, private, and free.",
 };
 
-export default function Page() {
+export default function PortabilityPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <h1 className="text-3xl font-semibold tracking-tight">Portability Readiness Score™</h1>
-      <p className="mt-2 text-sm text-neutral-500">
-        6 quick questions. Instant score. Confidential — no data stored without your consent.
-      </p>
-      <div className="mt-8">
-        <PortabilityClient />
-      </div>
-    </div>
+    <main className="text-white">
+      {/* Hero (matches site title scale & rhythm) */}
+      <section className="relative">
+        <div className="mx-auto w-full max-w-6xl px-4 pt-14 md:pt-16">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80">
+            Portability Readiness
+          </div>
+
+          <h1 className="mt-4 text-4xl font-extrabold tracking-tight md:text-5xl">
+            Assess your book’s portability
+          </h1>
+
+          <p className="mt-3 max-w-2xl text-neutral-300">
+            A quick, structured assessment of revenue attribution, documentation quality,
+            cross-border compliance, and onboarding speed. Your inputs stay private.
+          </p>
+        </div>
+      </section>
+
+      {/* Content */}
+      <section className="relative pb-20 pt-8">
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 px-4 lg:grid-cols-3">
+          {/* Left: explainer panel */}
+          <aside className="order-last lg:order-first">
+            <div className="sticky top-20 rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur">
+              <h2 className="text-lg font-semibold">How scoring works</h2>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-neutral-300">
+                <li>Weighted across revenue, references, compliance, and onboarding.</li>
+                <li>Higher scores suggest faster offers and smoother transitions.</li>
+                <li>You can export or share your result with us confidentially.</li>
+              </ul>
+              <p className="mt-4 text-xs text-neutral-400">
+                Indicative only; platforms differ in risk appetite and documentation thresholds.
+              </p>
+            </div>
+          </aside>
+
+          {/* Right: the actual questionnaire form */}
+          <div className="lg:col-span-2">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur">
+              {/* This is your existing client form/logic */}
+              <PortabilityClient />
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
