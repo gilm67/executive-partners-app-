@@ -5,7 +5,12 @@ const nextConfig = {
       {
         source: '/bp-simulator',
         destination: '/portability',
-        permanent: true, // 308 redirect
+        permanent: true, // 308
+      },
+      {
+        source: '/bp-simulator/',
+        destination: '/portability',
+        permanent: true,
       },
     ];
   },

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CardBtn } from "./components/CardBtn";
 import { MapPin, ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
+import Splash from "@/components/Splash"; // ✅ splash component
 
 /* ------------ Types & helpers ------------ */
 
@@ -19,7 +20,6 @@ type Job = {
   createdAt?: string;
 };
 
-// Hide retired/duplicate slugs if they ever appear in the API
 const HIDDEN_SLUGS = new Set<string>([
   "senior-relationship-manager-ch-onshore-4",
   "senior-relationship-manager-brazil-2",
@@ -34,9 +34,8 @@ async function getFeaturedJobs(): Promise<Job[]> {
   }).toString();
 
   const abs = (process.env.NEXT_PUBLIC_SITE_URL ?? "") + `/api/jobs?${qs}`;
-
-  // Try absolute first (works in prod/preview), then relative
   const r1 = await fetch(abs, { cache: "no-store" }).catch(() => null);
+
   const data =
     r1?.ok
       ? await r1.json()
@@ -46,27 +45,54 @@ async function getFeaturedJobs(): Promise<Job[]> {
           return r2.json();
         })();
 
-  // Filter and pick the top 3
   return (Array.isArray(data) ? data : [])
     .filter((j) => j?.active !== false && !HIDDEN_SLUGS.has(j.slug))
     .slice(0, 3);
 }
 
-/* ------------ SEO (set absolute to avoid template) ------------ */
+/* ------------ SEO ------------ */
 export const metadata: Metadata = {
   title: { absolute: "Executive Partners – Private Banking & Wealth Management Search" },
   description:
     "Executive Partners is Switzerland’s leading financial recruiter in private banking and wealth management. Based in Geneva, we connect private bankers with confidential opportunities in Zurich, Dubai, Singapore, London, and New York.",
 };
 
-/* ---------------- Page ---------------- */
+/* ------------ PrimaryBtn (moved above usage) ------------ */
+function PrimaryBtn({
+  href,
+  children,
+  variant = "blue",
+}: {
+  href: string;
+  children: React.ReactNode;
+  variant?: "blue" | "outline" | "ghost";
+}) {
+  const cls =
+    variant === "blue"
+      ? "bg-[#1D4ED8] text-white hover:bg[#1E40AF] shadow-[0_8px_30px_rgba(29,78,216,.35)] font-semibold"
+      : variant === "outline"
+      ? "border border-white/15 bg-white/5 hover:bg-white/10 text-white"
+      : "border border-white/10 bg-transparent hover:bg-white/5 text-white";
 
+  return (
+    <Link
+      href={href}
+      className={`w-full rounded-xl px-4 py-3 text-center text-sm font-semibold transition ${cls}`}
+    >
+      {children}
+    </Link>
+  );
+}
+
+/* ---------------- Page ---------------- */
 export default async function HomePage() {
-  // load live featured roles (with fallback below if empty)
   const featured = await getFeaturedJobs();
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
+      {/* ✅ Splash screen */}
+      <Splash />
+
       {/* background glow */}
       <div
         aria-hidden
@@ -83,7 +109,7 @@ export default async function HomePage() {
           International & Swiss Private Banking — HNW/UHNW
         </div>
 
-        {/* ✅ Updated H1 */}
+        {/* ✅ H1 */}
         <h1 className="mx-auto mt-4 text-center text-5xl font-extrabold tracking-tight md:text-6xl">
           Private Banking &amp; Wealth Management Search
         </h1>
@@ -99,7 +125,7 @@ export default async function HomePage() {
           <PrimaryBtn href="/hiring-managers" variant="outline">I’m Hiring</PrimaryBtn>
           <PrimaryBtn href="/jobs" variant="ghost">View Private Banking Jobs</PrimaryBtn>
         </div>
-        {/* 🔗 SEO internal link to Switzerland page */}
+
         <p className="mt-3 text-center text-xs text-neutral-400">
           Focus market:{" "}
           <Link
@@ -128,7 +154,6 @@ export default async function HomePage() {
           />
         </div>
 
-        {/* featured jobs – live data with premium layout */}
         <FeaturedRoles featured={featured} />
 
         {/* footer */}
@@ -144,31 +169,6 @@ export default async function HomePage() {
 }
 
 /* ---------------- components ---------------- */
-
-function PrimaryBtn({
-  href,
-  children,
-  variant = "blue",
-}: {
-  href: string;
-  children: React.ReactNode;
-  variant?: "blue" | "outline" | "ghost";
-}) {
-  const cls =
-    variant === "blue"
-      ? "bg-[#1D4ED8] text-white hover:bg-[#1E40AF] shadow-[0_8px_30px_rgba(29,78,216,.35)] font-semibold"
-      : variant === "outline"
-      ? "border border-white/15 bg-white/5 hover:bg-white/10 text-white"
-      : "border border-white/10 bg-transparent hover:bg-white/5 text-white";
-  return (
-    <Link
-      href={href}
-      className={`w-full rounded-xl px-4 py-3 text-center text-sm font-semibold transition ${cls}`}
-    >
-      {children}
-    </Link>
-  );
-}
 
 type BtnTone = "blue" | "green" | "neutral";
 
@@ -205,8 +205,6 @@ function FeatureCard({
     </div>
   );
 }
-
-/* ---------- Featured Roles (premium) ---------- */
 
 function FeaturedRoles({ featured }: { featured: Job[] }) {
   const hasLive = featured.length > 0;
