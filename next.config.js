@@ -1,9 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  trailingSlash: false,
   async redirects() {
-    // TEMP: disable everything while we debug the /markets pages
-    return [];
+    return [
+      {
+        source: '/bp-simulator',
+        destination: '/portability',
+        permanent: true, // 308 redirect
+      },
+    ];
   },
 };
+
 module.exports = nextConfig;
