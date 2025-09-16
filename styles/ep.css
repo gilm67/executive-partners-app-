@@ -1,0 +1,303 @@
+/* ===== Executive Partners – Streamlit Skin (refined) ===== */
+
+/* Typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --ep-bg:#0B0E13;
+  --ep-bg-2:#111827;
+  --ep-text:#ffffff;
+  --ep-text-dim:rgba(255,255,255,.86);
+  --ep-text-mute:rgba(255,255,255,.68);
+  --ep-primary:#1D4ED8;         /* blue 700 */
+  --ep-primary-600:#2563EB;
+  --ep-primary-800:#1E40AF;
+  --ep-border:rgba(255,255,255,.12);
+  --ep-border-2:rgba(255,255,255,.18);
+  --ep-card:rgba(255,255,255,.04);
+  --ep-card-2:rgba(255,255,255,.065);
+  --ep-elev:0 18px 45px rgba(37,99,235,.28);
+  --ep-elev-2:0 22px 55px rgba(37,99,235,.36);
+  --ep-radius:16px;
+  --ep-radius-sm:12px;
+  --ep-focus:0 0 0 3px rgba(37,99,235,.25), 0 0 0 1px rgba(37,99,235,.55) inset;
+}
+
+/* Base */
+html, body, [data-testid="stAppViewContainer"]{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol" !important;
+  color: var(--ep-text);
+}
+[data-testid="stAppViewContainer"]{
+  background:
+    radial-gradient(1200px 420px at 18% -10%, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%),
+    radial-gradient(1000px 380px at 110% 0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%),
+    var(--ep-bg);
+}
+
+/* Layout container widths */
+main.block-container{
+  padding-top: 2.25rem;
+  padding-bottom: 3.25rem;
+  max-width: 1080px;
+}
+
+/* Headings – match site scale */
+h1, h2, h3{
+  letter-spacing:-0.01em;
+  line-height:1.06;
+  color: var(--ep-text);
+}
+h1{
+  font-weight:800;
+  font-size: clamp(2.25rem, 5.4vw, 3.5rem);
+  text-align:center;
+  margin: .25rem 0 1.1rem;
+}
+h2{
+  font-weight:700;
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  margin: 1.4rem 0 .9rem;
+}
+h3{
+  font-weight:700;
+  font-size: 1.125rem;
+  margin: 1rem 0 .6rem;
+}
+p, li, label, span{
+  color: var(--ep-text-dim);
+}
+
+/* Cards / sections */
+.ep-card, .element-container:has(.stMarkdown.ep-card){
+  background: linear-gradient(180deg, var(--ep-card), var(--ep-card-2));
+  border: 1px solid var(--ep-border);
+  border-radius: var(--ep-radius);
+  padding: 16px 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  backdrop-filter: blur(6px);
+}
+
+/* Buttons */
+.stButton>button, [data-testid="baseButton-secondary"]{
+  border-radius: var(--ep-radius-sm);
+  border: 1px solid var(--ep-border);
+  font-weight: 600;
+  padding: .7rem 1rem;
+  transition: all .18s ease;
+  background: color-mix(in srgb, var(--ep-primary) 86%, transparent);
+  color: #fff;
+  box-shadow: var(--ep-elev);
+}
+.stButton>button:hover, [data-testid="baseButton-secondary"]:hover{
+  transform: translateY(-1px);
+  background: var(--ep-primary-600);
+  box-shadow: var(--ep-elev-2);
+}
+.stButton>button:active, [data-testid="baseButton-secondary"]:active{
+  transform: translateY(0);
+  background: var(--ep-primary-800);
+}
+
+/* Secondary button (opt-in class on label text) */
+button.secondary, .stButton.secondary > button{
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 1px solid var(--ep-border) !important;
+  color: var(--ep-text) !important;
+}
+button.secondary:hover, .stButton.secondary > button:hover{
+  background: rgba(255,255,255,.08) !important;
+}
+
+/* Links */
+a{
+  color: var(--ep-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+a:hover{ color:#fff; }
+
+/* Inputs & Focus */
+input, select, textarea,
+.stTextInput>div>div>input,
+.stTextArea textarea,
+.stNumberInput input,
+[data-baseweb="input"] input{
+  background: rgba(17,24,39,.55) !important;
+  color: var(--ep-text) !important;
+  border: 1px solid var(--ep-border) !important;
+  border-radius: var(--ep-radius-sm) !important;
+}
+.stDateInput input{
+  background: rgba(17,24,39,.55) !important;
+  color: var(--ep-text) !important;
+  border: 1px solid var(--ep-border) !important;
+  border-radius: var(--ep-radius-sm) !important;
+}
+input:focus, select:focus, textarea:focus,
+.stTextInput:focus-within input,
+.stTextArea:focus-within textarea,
+.stNumberInput:focus-within input{
+  outline: none !important;
+  box-shadow: var(--ep-focus) !important;
+}
+
+/* Radio / Checkbox */
+.stRadio > label, .stCheckbox > label{ color: var(--ep-text-dim); }
+.stRadio div[role="radiogroup"] label, .stCheckbox label{
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--ep-border);
+  border-radius: 10px;
+  padding: .45rem .6rem;
+}
+.stRadio div[role="radiogroup"] label:hover,
+.stCheckbox label:hover{
+  background: rgba(255,255,255,.08);
+}
+
+/* Selectbox & multiselect menus */
+[data-baseweb="select"]>div{
+  background: rgba(17,24,39,.55) !important;
+  border-color: var(--ep-border) !important;
+  border-radius: var(--ep-radius-sm) !important;
+}
+[data-baseweb="popover"] [role="listbox"]{
+  background: var(--ep-bg-2) !important;
+  border: 1px solid var(--ep-border) !important;
+  border-radius: 12px !important;
+}
+
+/* Slider color */
+.stSlider>div>div>div{
+  color: var(--ep-primary) !important;
+}
+.stSlider [role="slider"]{
+  box-shadow: var(--ep-focus) !important;
+}
+
+/* File Uploader */
+.stFileUploader{
+  border: 1px dashed var(--ep-border) !important;
+  border-radius: var(--ep-radius);
+  background: rgba(255,255,255,.03);
+}
+
+/* Tabs */
+.stTabs [data-baseweb="tab"]{
+  color: var(--ep-text-mute);
+  font-weight: 600;
+}
+.stTabs [aria-selected="true"]{
+  color: #fff !important;
+  border-bottom: 2px solid var(--ep-primary) !important;
+}
+
+/* Expanders */
+.streamlit-expanderHeader{
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid var(--ep-border) !important;
+  border-radius: var(--ep-radius-sm) !important;
+}
+.streamlit-expanderContent{
+  border-left: 1px solid var(--ep-border);
+  border-right: 1px solid var(--ep-border);
+  border-bottom: 1px solid var(--ep-border);
+  border-radius: 0 0 var(--ep-radius-sm) var(--ep-radius-sm);
+  background: rgba(255,255,255,.03);
+}
+
+/* Alerts */
+.alert, .stAlert{
+  border-radius: var(--ep-radius-sm);
+  border: 1px solid var(--ep-border);
+}
+.stAlert > div{
+  color: var(--ep-text);
+}
+
+/* Tables */
+.dataframe, .stTable table{
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  overflow: hidden;
+  border-radius: 14px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--ep-border);
+}
+.stTable table thead th{
+  background: rgba(255,255,255,.06) !important;
+  color: var(--ep-text);
+  font-weight: 700;
+}
+.stTable table td, .stTable table th{
+  padding: 12px 14px !important;
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+}
+.stTable table tr:last-child td{
+  border-bottom: 0 !important;
+}
+
+/* Metrics / KPIs */
+[data-testid="stMetric"]{
+  background: linear-gradient(180deg, var(--ep-card), var(--ep-card-2));
+  border: 1px solid var(--ep-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+[data-testid="stMetric"] > div{ color: var(--ep-text-mute); }
+[data-testid="stMetricValue"]{
+  color: var(--ep-text) !important;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  font-size: 1.35rem;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"]{
+  background: var(--ep-bg-2);
+  border-right: 1px solid var(--ep-border);
+}
+section[data-testid="stSidebar"] .stButton>button{
+  width: 100%;
+}
+
+/* Download button */
+.stDownloadButton > button{
+  border-radius: var(--ep-radius-sm);
+  border: 1px solid var(--ep-border);
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  font-weight: 600;
+}
+.stDownloadButton > button:hover{
+  background: rgba(255,255,255,.12);
+}
+
+/* Pills */
+.ep-pill{
+  display:inline-flex;align-items:center;gap:.5rem;
+  border:1px solid var(--ep-border);
+  background: rgba(255,255,255,.06);
+  color: var(--ep-text);
+  border-radius:999px;
+  padding:.35rem .65rem;
+  font-size:.8rem;font-weight:600;
+}
+
+/* Spacing helpers */
+.mt-0{margin-top:0}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}
+.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}
+.mb-0{margin-bottom:0}.mb-2{margin-bottom:.5rem}.mb-4{margin-bottom:1rem}
+
+/* Hero band */
+.ep-hero{ text-align:center; margin-top:.25rem; margin-bottom:1.25rem; }
+.ep-sub{
+  color: var(--ep-text-mute);
+  max-width: 820px;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+
+/* Optional: Hide Streamlit footer */
+/* footer {visibility:hidden} */

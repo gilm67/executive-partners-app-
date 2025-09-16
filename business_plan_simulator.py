@@ -1,39 +1,52 @@
 # business_plan_simulator.py
+# --- Executive Partners • Business Plan Simulator (styled, robust) ---
 
-# ---------- keep the UI alive, even if anything fails ----------
-import streamlit as st
-st.set_page_config(page_title="Business Plan Simulator", page_icon="📈", layout="wide")
-st.write("✅ App booted")  # prove the script rendered
-
-# ---------- quiet the LibreSSL warning (optional) ----------
+import os
+import json
 import warnings
+from datetime import datetime
+from pathlib import Path
+
+import streamlit as st
+import pandas as pd
+
+# ---------------- App shell (safe) ----------------
+st.set_page_config(
+    page_title="Executive Partners – BP Simulator",
+    page_icon="📈",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+# Quiet the LibreSSL warning (optional)
 try:
     from urllib3.exceptions import NotOpenSSLWarning
     warnings.filterwarnings("ignore", category=NotOpenSSLWarning)
 except Exception:
     pass
 
-# ---------- hard-disable GOOGLE creds from env (we use a local file) ----------
+# Hard-disable GOOGLE creds from env (we use a local file)
 import os as _os
 _os.environ.pop("GOOGLE_APPLICATION_CREDENTIALS_JSON", None)
 _os.environ.pop("GOOGLE_APPLICATION_CREDENTIALS", None)
 
-# ---------- standard imports ----------
-import os
-import json
-from datetime import datetime
-from pathlib import Path
-import pandas as pd
+# Load Streamlit skin (non-destructive). If styles/ep.css exists, inject it.
+_css_path = Path("styles/ep.css")
+if _css_path.exists():
+    try:
+        css = _css_path.read_text(encoding="utf-8")
+        st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+    except Exception:
+        pass
 
-# Third-party (installed via pip)
+# ---------------- Third-party (optional) ----------------
 try:
     import gspread
-except Exception as e:
-    st.warning("gspread is not installed correctly. Run: "
-               "`pip install --upgrade gspread google-auth`")
-    gspread = None  # allow UI to continue
+except Exception:
+    st.warning("gspread not installed. Run: `pip install --upgrade gspread google-auth`")
+    gspread = None
 
-# ================== CONFIG ==================
+# ---------------- Config ----------------
 SHEET_ID = "1A__yEhD_0LYQwBF45wTSbWqdkRe0HAdnnBSj70qgpic"
 WORKSHEET_NAME = "BP_Entries"
 
@@ -50,8 +63,11 @@ HEADER_ORDER = [
 SA_EMAIL = None
 SA_SOURCE = ""
 
+
+# ---------------- Helpers ----------------
 def _service_account_path() -> Path:
     return Path(__file__).parent / "service_account.json"
+
 
 def _read_sa_email_from_file(p: Path) -> str:
     try:
@@ -60,16 +76,19 @@ def _read_sa_email_from_file(p: Path) -> str:
     except Exception:
         return ""
 
+
 def _make_highlighter(df_len: int):
     def _highlight(row):
+        # Style the TOTAL row
         return [
-            "background-color: lightblue; font-weight: bold;"
+            "background-color: rgba(59,130,246,.18); font-weight: 700;"
             if (row.name == df_len - 1) else ""
             for _ in row
         ]
     return _highlight
 
-# ================== SHEETS (robust) ==================
+
+# ---------------- Sheets (robust) ----------------
 def connect_sheet():
     """
     Returns: (worksheet or None, human_message)
@@ -118,41 +137,61 @@ def connect_sheet():
         # Do NOT kill the app — just report nicely
         return None, f"⚠️ Could not connect to Google Sheet: {e}"
 
+
 def append_in_header_order(ws, data_dict: dict):
     headers = ws.row_values(1) or HEADER_ORDER
     row = [data_dict.get(h, "") for h in headers]
     ws.append_row(row, value_input_option="USER_ENTERED")
 
+
 def clean_trailing_columns(ws, first_bad_letter="X"):
     ws.batch_clear([f"{first_bad_letter}2:ZZ"])
     ws.resize(cols=len(HEADER_ORDER))
 
-# ================== TOP DIAGNOSTICS ==================
-st.caption(f"Running file: {os.path.abspath(__file__)}")
-st.caption(
-    "ENV — GAC: "
-    f"{'set' if os.getenv('GOOGLE_APPLICATION_CREDENTIALS') else 'unset'} | "
-    "GAC_JSON: "
-    f"{'set' if os.getenv('GOOGLE_APPLICATION_CREDENTIALS_JSON') else 'unset'}"
-)
 
+# ---------------- Top band (hero + diagnostics) ----------------
 worksheet, sheet_status = connect_sheet()
 
-st.markdown("# 📊 Business Plan Simulator")
-st.caption(sheet_status)
+st.markdown(
+    """
+    <div class="ep-hero">
+      <h1>Business Plan Simulator</h1>
+      <p class="ep-sub">
+        Model NNM, revenue and net margin, then save a clean entry for your internal pipeline.
+        Data is confidential and stored securely.
+      </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
+# Subtle diagnostics (kept, but compact)
 with st.expander("🔎 Connection diagnostics"):
+    st.caption(f"Running file: {os.path.abspath(__file__)}")
+    st.caption(
+        "ENV — GAC: "
+        f"{'set' if os.getenv('GOOGLE_APPLICATION_CREDENTIALS') else 'unset'} | "
+        "GAC_JSON: "
+        f"{'set' if os.getenv('GOOGLE_APPLICATION_CREDENTIALS_JSON') else 'unset'}"
+    )
+    st.caption(sheet_status)
     st.caption(f"Cred source (forced local): {SA_SOURCE or 'unknown'}")
     st.caption(f"Service account email: `{SA_EMAIL or 'n/a'}`")
 
 st.info("*Fields marked with an asterisk (*) are mandatory and handled confidentially.")
 
-# ================== MAIN UI (wrapped to avoid crashes) ==================
+
+# ---------------- Main UI (guarded) ----------------
 try:
     # ---------- SECTION 1 ----------
     st.markdown("---")
-    st.subheader("1️⃣ Basic Candidate Information")
-    st.info("Please complete all required fields (*) before proceeding.")
+    st.markdown("### 1️⃣ Basic Candidate Information")
+    st.markdown(
+        '<div class="ep-card">',
+        unsafe_allow_html=True,
+    )
+    st.caption("Please complete all required fields (*) before proceeding.")
+
     col1, col2 = st.columns(2)
     with col1:
         candidate_name = st.text_input("Candidate Name")
@@ -187,11 +226,14 @@ try:
         last_bonus = st.number_input(f"Last Bonus ({currency}) *", min_value=0, step=1000)
         current_number_clients = st.number_input("Current Number of Clients *", min_value=0)
         current_assets = st.number_input("Current Assets Under Management (in million CHF) *", min_value=0.0, step=0.1)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # ---------- SECTION 2 ----------
     st.markdown("---")
-    st.subheader("2️⃣ Net New Money Projection over 3 years")
-    st.info("Please complete all fields in this section for accurate projections.")
+    st.markdown("### 2️⃣ Net New Money Projection over 3 years")
+    st.markdown('<div class="ep-card">', unsafe_allow_html=True)
+    st.caption("Please complete all fields in this section for accurate projections.")
+
     c1, c2, c3 = st.columns(3)
     with c1:
         nnm_y1 = st.number_input("NNM Year 1 (in M CHF)", min_value=0.0, step=0.1)
@@ -199,6 +241,7 @@ try:
         nnm_y2 = st.number_input("NNM Year 2 (in M CHF)", min_value=0.0, step=0.1)
     with c3:
         nnm_y3 = st.number_input("NNM Year 3 (in M CHF)", min_value=0.0, step=0.1)
+
     d1, d2, d3 = st.columns(3)
     with d1:
         proj_clients_y1 = st.number_input("Projected Clients Year 1", min_value=0)
@@ -206,11 +249,13 @@ try:
         proj_clients_y2 = st.number_input("Projected Clients Year 2", min_value=0)
     with d3:
         proj_clients_y3 = st.number_input("Projected Clients Year 3", min_value=0)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # ---------- SECTION 3 ----------
     st.markdown("---")
-    st.subheader("3️⃣ Enhanced NNA / Prospects Table")
-    st.info("Add prospects with the fields below. Use ✏️ Edit to modify a row, or 🗑 Delete to remove it.")
+    st.markdown("### 3️⃣ Enhanced NNA / Prospects Table")
+    st.markdown('<div class="ep-card">', unsafe_allow_html=True)
+    st.caption("Add prospects below. Use ✏️ Edit to modify a row, or 🗑 Delete to remove it.")
 
     if "prospects_list" not in st.session_state:
         st.session_state.prospects_list = []
@@ -350,6 +395,7 @@ try:
         columns=["Name","Source","Wealth (M)","Best NNM (M)","Worst NNM (M)"]
     )
 
+    # Pretty list rows
     if not df_pros.empty:
         st.write(" ")
         for i, row in df_pros.iterrows():
@@ -372,6 +418,7 @@ try:
                 del st.session_state.prospects_list[i]
                 st.rerun()
 
+    # Typed DF + TOTAL row
     cols = ["Name", "Source", "Wealth (M)", "Best NNM (M)", "Worst NNM (M)"]
     if df_pros.empty:
         df_pros = pd.DataFrame(columns=cols).astype({
@@ -402,11 +449,13 @@ try:
 
     best_sum = float(df_pros["Best NNM (M)"].sum()) if not df_pros.empty else 0.0
     st.caption(f"Δ Best NNM vs NNM Y1: {best_sum - float((locals().get('nnm_y1') or 0.0)):+.1f} M")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # ---------- SECTION 4 ----------
     st.markdown("---")
-    st.subheader("4️⃣ Revenue, Costs & Net Margin Analysis")
-    st.info("Ensure all inputs above are filled before analysis.")
+    st.markdown("### 4️⃣ Revenue, Costs & Net Margin Analysis")
+    st.markdown('<div class="ep-card">', unsafe_allow_html=True)
+    st.caption("Ensure all inputs above are filled before analysis.")
 
     roa_cols = st.columns(3)
     roa_y1 = roa_cols[0].number_input("ROA % Year 1", min_value=0.0, value=1.0, step=0.1)
@@ -444,10 +493,12 @@ try:
         )
     with cchart:
         st.bar_chart(df_rev.set_index("Year")[["Gross Revenue", "Net Margin"]])
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # ---------- SECTION 5 ----------
     st.markdown("---")
-    st.subheader("5️⃣ AI Candidate Analysis for Recruiter")
+    st.markdown("### 5️⃣ AI Candidate Analysis for Recruiter")
+    st.markdown('<div class="ep-card">', unsafe_allow_html=True)
 
     seg_col1, seg_col2 = st.columns(2)
     with seg_col1:
@@ -547,10 +598,12 @@ try:
     with m2: st.metric("Avg ROA %", f"{avg_roa:.2f}")
     with m3: st.metric("3Y NNM (M)", f"{total_nnm_3y:.1f}")
     with m4: st.metric("Clients", f"{int(current_number_clients)}")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # ---------- SECTION 6 ----------
     st.markdown("---")
-    st.subheader("6️⃣ Summary & Save Entry")
+    st.markdown("### 6️⃣ Summary & Save Entry")
+    st.markdown('<div class="ep-card">', unsafe_allow_html=True)
 
     if st.button("Save to Google Sheet"):
         def _email_valid(e: str) -> bool:
@@ -641,6 +694,8 @@ try:
                 )
             except Exception as e:
                 st.exception(e)
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 except Exception as e:
     st.error("An unexpected error occurred while building the UI.")
