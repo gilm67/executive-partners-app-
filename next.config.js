@@ -1,15 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  async redirects() {
-    return [
-      // old entry points → new canonical page
-      { source: '/bp-simulator',  destination: '/portability', permanent: true },
-      { source: '/bp-simulator/', destination: '/portability', permanent: true },
+const createNextIntlPlugin = require('next-intl/plugin');
 
-      // catch ALL subpaths (e.g., /bp-simulator/foo, /bp-simulator/bar/baz)
-      { source: '/bp-simulator/:path*', destination: '/portability', permanent: true },
-    ];
-  },
-};
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
-module.exports = nextConfig;
+module.exports = withNextIntl({
+  reactStrictMode: true,
+  // keep any other Next.js options you had here
+});

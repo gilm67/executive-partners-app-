@@ -1,0 +1,16 @@
+{
+  "topnav": {
+    "jobs": "Offres",
+    "insights": "Analyses",
+    "candidates": "Candidats",
+    "hiringManagers": "Recruteurs",
+    "contact": "Contact",
+    "bpSimulator": "Simulateur BP"
+  },
+  "footer": {
+    "marketsWeServe": "Marchés couverts",
+    "company": "Société",
+    "viewAllMarkets": "Voir tous les marchés →",
+    "copyright": "Tous droits réservés."
+  }
+}

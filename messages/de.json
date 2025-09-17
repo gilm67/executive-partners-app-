@@ -1,0 +1,20 @@
+{
+  "home": {
+    "title": "Executive Partners",
+    "subtitle": "Private Banking & Wealth-Management Recruiting"
+  },
+  "nav": {
+    "jobs": "Stellen",
+    "insights": "Insights",
+    "candidates": "Kandidaten",
+    "hiringManagers": "Arbeitgeber",
+    "contact": "Kontakt",
+    "toggleMenu": "Menü umschalten"
+  },
+  "footer": {
+    "marketsWeServe": "Märkte, die wir abdecken",
+    "company": "Unternehmen",
+    "viewAllMarkets": "Alle Märkte ansehen →",
+    "copyright": "Alle Rechte vorbehalten."
+  }
+}

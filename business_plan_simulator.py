@@ -1,4 +1,5 @@
-# business_plan_simulator.py
+# 
+
 
 # ---------- core setup ----------
 import streamlit as st

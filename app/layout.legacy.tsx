@@ -3,7 +3,10 @@ import "./globals.css";
 import TopNav from "@/components/TopNav";
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
-import Splash from "@/components/Splash"; // ✅ Import splash
+import Splash from "@/components/Splash";
+
+import { cookies } from "next/headers";
+import { NextIntlClientProvider } from "next-intl";
 
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -17,7 +20,16 @@ export const metadata: Metadata = {
   },
   description:
     "Executive Partners is Geneva’s leading recruiter for private banking and wealth management. Apply confidentially for Senior Relationship Manager and Private Banker roles in Switzerland, Dubai, Singapore, London, and New York.",
-  alternates: { canonical: "/" },
+  // canonical for the default locale
+  alternates: {
+    canonical: "/",
+    languages: {
+      en: `${SITE}/`,
+      fr: `${SITE}/fr`,
+      de: `${SITE}/de`,
+      "x-default": `${SITE}/`,
+    },
+  },
   openGraph: {
     type: "website",
     url: "/",
@@ -35,7 +47,6 @@ export const metadata: Metadata = {
     images: ["/og.png"],
   },
   robots: { index: true, follow: true },
-
   icons: {
     icon: [
       { url: "/favicon.ico?v=2" },
@@ -47,7 +58,6 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico?v=2",
     apple: "/apple-touch-icon.png",
   },
-
   verification: {
     google: "WEQvBE0-6FZmOaMbV2oVP9Cm9Zm6A25zU_0Jaghettk",
   },
@@ -60,16 +70,66 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const orgJsonLd = { /* … unchanged … */ };
-  const websiteJsonLd = { /* … unchanged … */ };
+// -------- i18n helpers (server) --------
+async function loadMessagesFromCookie() {
+  const cookieStore = cookies();
+  const cookieLocale = cookieStore.get("NEXT_LOCALE")?.value || "en";
+  const locale = ["en", "fr", "de"].includes(cookieLocale) ? cookieLocale : "en";
+
+  // Try to import the chosen locale; fall back to English if missing/broken
+  let messages: Record<string, any>;
+  try {
+    messages = (await import(`@/messages/${locale}.json`)).default;
+  } catch {
+    messages = (await import("@/messages/en.json")).default;
+  }
+  return { locale, messages };
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const { locale, messages } = await loadMessagesFromCookie();
+
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Executive Partners",
+    url: SITE,
+    logo: `${SITE}/logo.png`,
+    sameAs: ["https://www.linkedin.com/company/executive-partners/"],
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        contactType: "customer support",
+        email: "contact@execpartners.ch",
+        areaServed: ["CH", "AE", "GB", "SG", "US"],
+        availableLanguage: ["en", "fr", "de"],
+      },
+    ],
+  };
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Executive Partners",
+    url: SITE,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${SITE}/jobs?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
 
   return (
-    <html lang="en" className="h-full" suppressHydrationWarning>
+    <html lang={locale} className="h-full" suppressHydrationWarning>
       <head>
+        {/* hreflang tags */}
+        <link rel="alternate" href={`${SITE}/`} hrefLang="en" />
+        <link rel="alternate" href={`${SITE}/fr`} hrefLang="fr" />
+        <link rel="alternate" href={`${SITE}/de`} hrefLang="de" />
+        <link rel="alternate" href={`${SITE}/`} hrefLang="x-default" />
+
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-
         <link
           rel="alternate"
           type="application/rss+xml"
@@ -82,10 +142,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       </head>
+
       <body className="min-h-screen bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white">
-        {/* ✅ Splash image on load */}
+        {/* Splash on load */}
         <Splash />
 
+        {/* Skip link */}
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white/10 focus:px-3 focus:py-2"
@@ -93,17 +155,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
 
-        <div className="relative z-[1]">
-          <TopNav />
-          <main id="main" className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
-            {children}
-          </main>
-          <footer className="border-t border-white/10">
-            {/* … footer unchanged … */}
-          </footer>
-        </div>
-
-        <Analytics />
+        {/* Provide translations to the whole app */}
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <div className="relative z-[1]">
+            <TopNav />
+            <main id="main" className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
+              {children}
+            </main>
+            <footer className="border-t border-white/10">
+              {/* … footer unchanged … */}
+            </footer>
+          </div>
+          <Analytics />
+        </NextIntlClientProvider>
       </body>
     </html>
   );
