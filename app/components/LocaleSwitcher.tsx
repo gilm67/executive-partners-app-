@@ -1,7 +1,8 @@
 "use client";
 
 import {useTransition} from "react";
-import {useLocale, usePathname, useRouter} from "next-intl";
+// ✅ next-intl hooks must come from the client entry
+import {useLocale, usePathname, useRouter} from "next-intl/client";
 import {useSearchParams} from "next/navigation";
 
 const LOCALES = [
@@ -18,21 +19,25 @@ export default function LocaleSwitcher() {
   const [isPending, startTransition] = useTransition();
 
   function switchTo(nextLocale: string) {
-    const qs = searchParams ? `?${searchParams.toString()}` : "";
-    // next-intl router understands locale option
+    const qsString = searchParams?.toString();
+    const qs = qsString ? `?${qsString}` : "";
+    // next-intl router understands the { locale } option
     startTransition(() => {
-      router.replace(pathname + qs, {locale: nextLocale as any});
+      router.replace(`${pathname}${qs}`, {locale: nextLocale as "en" | "fr" | "de"});
     });
   }
 
   return (
     <div className="flex items-center gap-2">
-      {LOCALES.map(l => (
+      {LOCALES.map((l) => (
         <button
           key={l.code}
           onClick={() => switchTo(l.code)}
-          className={`rounded px-2 py-1 text-xs border transition
-            ${locale === l.code ? "border-emerald-400 text-emerald-400" : "border-white/20 text-white/70 hover:text-white"}`}
+          className={`rounded px-2 py-1 text-xs border transition ${
+            locale === l.code
+              ? "border-emerald-400 text-emerald-400"
+              : "border-white/20 text-white/70 hover:text-white"
+          }`}
           disabled={isPending}
           aria-current={locale === l.code ? "true" : "false"}
         >
