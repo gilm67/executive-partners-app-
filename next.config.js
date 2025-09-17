@@ -1,9 +1,15 @@
-/** @type {import('next').NextConfig} */
-const createNextIntlPlugin = require('next-intl/plugin');
+/** Make next-intl optional so we can deploy mobile fixes even if i18n misconfig exists */
+const enableI18N = process.env.ENABLE_I18N === "1";
 
-const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+let withNextIntl = (cfg) => cfg;
+if (enableI18N) {
+  const createNextIntlPlugin = require("next-intl/plugin");
+  withNextIntl = createNextIntlPlugin("./i18n/request.ts");
+}
 
-module.exports = withNextIntl({
+/** @type {import("next").NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
-  // keep any other Next.js options you had here
-});
+};
+
+module.exports = withNextIntl(nextConfig);
