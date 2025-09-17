@@ -1,47 +1,51 @@
 "use client";
 
 import {useTransition} from "react";
-// ✅ next-intl hooks must come from the client entry
-import {useLocale, usePathname, useRouter} from "next-intl/client";
-import {useSearchParams} from "next/navigation";
+import {usePathname, useRouter, useSearchParams} from "next/navigation";
 
-const LOCALES = [
-  {code: "en", label: "EN"},
-  {code: "fr", label: "FR"},
-  {code: "de", label: "DE"}
-];
+const LOCALES = ["en", "fr", "de"] as const;
+type Locale = (typeof LOCALES)[number];
 
 export default function LocaleSwitcher() {
-  const locale = useLocale();
-  const pathname = usePathname();
   const router = useRouter();
+  const pathname = usePathname() || "/";
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  function switchTo(nextLocale: string) {
-    const qsString = searchParams?.toString();
-    const qs = qsString ? `?${qsString}` : "";
-    // next-intl router understands the { locale } option
+  // Detect current locale from the first URL segment
+  const seg1 = pathname.split("/")[1];
+  const currentLocale: Locale = (LOCALES as readonly string[]).includes(seg1)
+    ? (seg1 as Locale)
+    : "en";
+
+  function switchTo(nextLocale: Locale) {
+    const qs = searchParams?.toString();
+    const rest = (LOCALES as readonly string[]).includes(seg1)
+      ? pathname.split("/").slice(2).join("/") // strip current locale
+      : pathname.replace(/^\//, ""); // no locale segment yet
+
+    const newPath = `/${nextLocale}${rest ? `/${rest}` : ""}${qs ? `?${qs}` : ""}`;
+
     startTransition(() => {
-      router.replace(`${pathname}${qs}`, {locale: nextLocale as "en" | "fr" | "de"});
+      router.replace(newPath);
     });
   }
 
   return (
     <div className="flex items-center gap-2">
-      {LOCALES.map((l) => (
+      {LOCALES.map((code) => (
         <button
-          key={l.code}
-          onClick={() => switchTo(l.code)}
+          key={code}
+          onClick={() => switchTo(code)}
           className={`rounded px-2 py-1 text-xs border transition ${
-            locale === l.code
+            currentLocale === code
               ? "border-emerald-400 text-emerald-400"
               : "border-white/20 text-white/70 hover:text-white"
           }`}
           disabled={isPending}
-          aria-current={locale === l.code ? "true" : "false"}
+          aria-current={currentLocale === code ? "true" : "false"}
         >
-          {l.label}
+          {code.toUpperCase()}
         </button>
       ))}
     </div>
