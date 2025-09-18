@@ -1,3 +1,4 @@
+import HydratedSplash from "@/components/HydratedSplash";
 import "../globals.css";
 
 // Import the client-only wrapper (safe to import from a Server Component)
@@ -14,6 +15,7 @@ export default function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
+        <HydratedSplash />
         style={{
           margin: 0,
           background: "#ffffff",

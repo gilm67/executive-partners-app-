@@ -1,36 +1,39 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Splash from "@/components/Splash";
+import { useEffect, useState } from 'react';
 
-/**
- * Shows Splash once, then unmounts after ~1.6s (fail-safe),
- * so it can never block the page.
- */
 export default function HydratedSplash() {
-  const [visible, setVisible] = useState(true);
+  const [hidden, setHidden] = useState(false);
 
+  // Auto-hide splash after 1.6s (fail-safe)
   useEffect(() => {
-    // Fail-safe hide: even if Splash’s own animation fails,
-    // we remove the overlay so the page is usable.
-    const timeout = window.setTimeout(() => setVisible(false), 1600);
-    return () => clearTimeout(timeout);
+    const timer = setTimeout(() => setHidden(true), 1600);
+    return () => clearTimeout(timer);
   }, []);
 
-  if (!visible) return null;
+  if (hidden) return null;
 
   return (
     <div
-      aria-hidden="true"
+      aria-hidden
       style={{
-        position: "fixed",
+        position: 'fixed',
         inset: 0,
-        zIndex: 50,
-        pointerEvents: "none",
-        background: "#0B0E13",
+        zIndex: 9999,
+        background: '#0B0E13', // brand background
+        display: 'grid',
+        placeItems: 'center',
+        opacity: 1,
+        transition: 'opacity 600ms ease',
+        pointerEvents: 'none', // never block clicks
       }}
+      className={hidden ? 'opacity-0' : undefined}
     >
-      <Splash />
+      <img
+        src="/logo.svg"
+        alt="Executive Partners"
+        style={{ width: 180, height: 'auto' }}
+      />
     </div>
   );
 }
