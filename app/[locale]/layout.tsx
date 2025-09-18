@@ -1,4 +1,4 @@
-import "./globals.css";
+import "../globals.css";
 
 // Import the client-only wrapper (safe to import from a Server Component)
 import TopNavClient from "@/components/TopNavClient";
