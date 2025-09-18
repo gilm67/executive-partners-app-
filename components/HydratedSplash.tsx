@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 // Use the image that exists in /public
 const BG_IMAGE = '/imageep2.png';   // <-- your file
-const HIDE_AFTER_MS = 1300;         // auto-hide after ~1.3s
+const HIDE_AFTER_MS = 3000;
 
 export default function HydratedSplash() {
   const [hidden, setHidden] = useState(false);
