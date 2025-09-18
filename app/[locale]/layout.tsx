@@ -1,6 +1,3 @@
-import "../globals.css";
-import TopNavSafe from "@/components/TopNavSafe";
-
 export default function RootLayout({
   children,
   params,
@@ -11,15 +8,30 @@ export default function RootLayout({
   const locale = params?.locale ?? "en";
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className="bg-neutral-950 text-white antialiased">
-        <TopNavSafe />
+      <body
+        style={{
+          margin: 0,
+          background: "#ffffff",
+          color: "#111111",
+          fontFamily:
+            'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+        }}
+      >
         <div
-          id="safe-test-banner"
-          className="bg-yellow-100 text-neutral-900 border-b-2 border-yellow-300 py-3 text-center font-semibold"
+          style={{
+            background: "#FFFAE6",
+            color: "#1A1A1A",
+            borderBottom: "2px solid #F5D56E",
+            padding: "16px",
+            textAlign: "center",
+            fontWeight: 600,
+          }}
         >
-          ✅ SAFE TEST BANNER — layout + TopNavSafe
+          ✅ Temporary safe layout (no Splash, no providers).
         </div>
-        <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
+        <div style={{ maxWidth: 1100, margin: "24px auto", padding: "0 16px" }}>
+          {children}
+        </div>
       </body>
     </html>
   );
