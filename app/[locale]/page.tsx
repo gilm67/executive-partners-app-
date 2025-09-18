@@ -1,18 +1,18 @@
-export const dynamic = 'force-static';
-
 export default function Home() {
   return (
-    <main className="min-h-[60vh] p-6">
-      <h1 className="text-3xl font-semibold">Executive Partners</h1>
-      <p className="mt-4 opacity-80">
-        Welcome. We’re temporarily showing a simplified homepage while we finalize an update.
+    <main>
+      <h1 style={{ fontSize: 28, margin: "16px 0" }}>
+        👋 Hello from /[locale]/page.tsx
+      </h1>
+      <p style={{ fontSize: 16 }}>
+        If you see this along with the yellow banner above, routing & rendering work.
       </p>
-      <ul className="mt-6 space-y-2 underline">
-        <li><a href="/jobs">Browse Jobs</a></li>
-        <li><a href="/candidates">Candidates</a></li>
-        <li><a href="/hiring-managers">Hiring Managers</a></li>
-        <li><a href="/contact">Contact</a></li>
-      </ul>
+      <p style={{ marginTop: 12 }}>
+        Links:{" "}
+        <a href="/jobs">/jobs</a> · <a href="/candidates">/candidates</a> ·{" "}
+        <a href="/hiring-managers">/hiring-managers</a> ·{" "}
+        <a href="/contact">/contact</a>
+      </p>
     </main>
   );
 }
