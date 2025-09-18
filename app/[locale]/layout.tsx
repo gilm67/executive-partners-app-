@@ -1,3 +1,5 @@
+import "../globals.css";
+
 export default function RootLayout({
   children,
   params,
@@ -8,31 +10,14 @@ export default function RootLayout({
   const locale = params?.locale ?? "en";
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body
-        style={{
-          margin: 0,
-          background: "#ffffff",
-          color: "#111111",
-          fontFamily:
-            'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-        }}
-      >
+      <body className="bg-white text-neutral-900 antialiased">
         <div
           id="safe-test-banner"
-          style={{
-            background: "#FFFAE6",
-            color: "#1A1A1A",
-            borderBottom: "2px solid #F5D56E",
-            padding: "16px",
-            textAlign: "center",
-            fontWeight: 600,
-          }}
+          className="bg-yellow-100 text-neutral-900 border-b-2 border-yellow-300 py-4 text-center font-semibold"
         >
-          ✅ SAFE TEST BANNER (layout.tsx) — if you can read this, layout rendered.
+          ✅ SAFE TEST BANNER — layout rendered (with globals.css)
         </div>
-        <div style={{ maxWidth: 1100, margin: "24px auto", padding: "0 16px" }}>
-          {children}
-        </div>
+        <div className="max-w-5xl mx-auto px-4 py-6">{children}</div>
       </body>
     </html>
   );
