@@ -1,8 +1,6 @@
-import HydratedSplash from "@/components/HydratedSplash";
-import "../globals.css";
-
-// Import the client-only wrapper (safe to import from a Server Component)
+import "./globals.css";
 import TopNavClient from "@/components/TopNavClient";
+import HydratedSplash from "@/components/HydratedSplash";
 
 export default function RootLayout({
   children,
@@ -15,7 +13,6 @@ export default function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        <HydratedSplash />
         style={{
           margin: 0,
           background: "#ffffff",
@@ -34,10 +31,13 @@ export default function RootLayout({
             fontWeight: 600,
           }}
         >
-          ✅ Temporary safe layout (Splash off, providers off).
+          ✅ Temporary safe layout (Splash on, TopNav client-only).
         </div>
 
-        {/* Top navigation via client-only wrapper */}
+        {/* Splash must be a child of <body>, not inside its opening tag */}
+        <HydratedSplash />
+
+        {/* Client-only nav */}
         <TopNavClient />
 
         <div style={{ maxWidth: 1100, margin: "24px auto", padding: "0 16px" }}>
