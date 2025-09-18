@@ -1,11 +1,7 @@
 import "./globals.css";
-import dynamic from "next/dynamic";
 
-// Client-only TopNav (won't run on the server, so it can't crash SSR)
-const TopNav = dynamic(() => import("@/components/TopNav"), {
-  ssr: false,
-  loading: () => null,
-});
+// Import the client-only wrapper (safe to import from a Server Component)
+import TopNavClient from "@/components/TopNavClient";
 
 export default function RootLayout({
   children,
@@ -39,8 +35,8 @@ export default function RootLayout({
           ✅ Temporary safe layout (Splash off, providers off).
         </div>
 
-        {/* Top navigation is now client-only */}
-        <TopNav />
+        {/* Top navigation via client-only wrapper */}
+        <TopNavClient />
 
         <div style={{ maxWidth: 1100, margin: "24px auto", padding: "0 16px" }}>
           {children}
