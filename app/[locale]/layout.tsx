@@ -73,5 +73,5 @@ export default async function Layout({
   params: { locale: Locale };
 }) {
   // …the rest of your file stays the same…
-  // keep your <Splash /> where it already is in the JSX
+  // keep your <HydratedSplash /> where it already is in the JSX
 }
