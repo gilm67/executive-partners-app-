@@ -1,6 +1,6 @@
 import "../globals.css";
 import TopNav from "@/components/TopNav";
-import HydratedSplash from "@/components/HydratedSplash";
+// import HydratedSplash from "@/components/HydratedSplash";
 
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
