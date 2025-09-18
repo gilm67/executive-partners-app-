@@ -1,4 +1,4 @@
-console.log('>> next.config.js loaded'); // shows in Vercel logs
+console.log(">> next.config.js loaded");
 /** @type {import('next').NextConfig} */
 module.exports = {
   eslint: { ignoreDuringBuilds: true },
