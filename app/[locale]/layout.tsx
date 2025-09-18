@@ -1,9 +1,15 @@
 import "../globals.css";
 import TopNav from "@/components/TopNav";
-import Splash from "@/components/Splash";
-import type {Metadata, Viewport} from "next";
-import {Analytics} from "@vercel/analytics/react";
-import {NextIntlClientProvider} from "next-intl";
+// ⬇️ replace the direct import with a dynamic one
+import dynamic from "next/dynamic";
+const Splash = dynamic(() => import("@/components/Splash"), {
+  ssr: false,
+  loading: () => null, // render nothing while the client bundle loads
+});
+
+import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/react";
+import { NextIntlClientProvider } from "next-intl";
 
 type Locale = "en" | "fr" | "de";
 
@@ -13,9 +19,12 @@ const SITE =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
-  title: { default: "Executive Partners – Private Banking & Wealth Management Search", template: "%s | Executive Partners" },
+  title: {
+    default: "Executive Partners – Private Banking & Wealth Management Search",
+    template: "%s | Executive Partners",
+  },
   description:
-    "Executive Partners is Geneva’s leading recruiter for private banking and wealth management. Apply confidentially for Senior Relationship Manager and Private Banker roles in Switzerland, Dubai, Singapore, London, New York and Miami.",
+    "Executive Partners is Geneva’s leading recruiter for private banking and wealth management. Apply confidentially for Senior Relat$",
   alternates: {
     canonical: "/",
     languages: {
@@ -63,48 +72,11 @@ export const viewport: Viewport = {
 
 export default async function Layout({
   children,
-  params
+  params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: Locale }>;
+  params: { locale: Locale };
 }) {
-  const { locale } = await params;
-
-  // Load messages for this locale
-  const messages = (await import(`../../messages/${locale}.json`)).default;
-
-  return (
-    <html lang={locale} className="h-full" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-        <link rel="alternate" type="application/rss+xml" title="Executive Partners – Private Wealth Pulse" href="/rss.xml" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0B0E13" />
-        <meta name="msapplication-TileColor" content="#0B0E13" />
-      </head>
-      <body className="min-h-[100svh] bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white flex flex-col">
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white/10 focus:px-3 focus:py-2"
-        >
-          Skip to content
-        </a>
-
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <Splash />
-          <TopNav />
-          <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 sm:px-6 lg:px-8 py-10">
-            {children}
-          </main>
-          <footer className="border-t border-white/10">
-            <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-10 text-xs text-white/60">
-              © {new Date().getFullYear()} Executive Partners
-            </div>
-          </footer>
-        </NextIntlClientProvider>
-
-        <Analytics />
-      </body>
-    </html>
-  );
+  // …the rest of your file stays the same…
+  // keep your <Splash /> where it already is in the JSX
 }
