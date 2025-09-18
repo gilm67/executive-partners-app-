@@ -1,4 +1,5 @@
 import "../globals.css";
+import TopNavSafe from "@/components/TopNavSafe";
 
 export default function RootLayout({
   children,
@@ -10,14 +11,15 @@ export default function RootLayout({
   const locale = params?.locale ?? "en";
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className="bg-white text-neutral-900 antialiased">
+      <body className="bg-neutral-950 text-white antialiased">
+        <TopNavSafe />
         <div
           id="safe-test-banner"
-          className="bg-yellow-100 text-neutral-900 border-b-2 border-yellow-300 py-4 text-center font-semibold"
+          className="bg-yellow-100 text-neutral-900 border-b-2 border-yellow-300 py-3 text-center font-semibold"
         >
-          ✅ SAFE TEST BANNER — layout rendered (with globals.css)
+          ✅ SAFE TEST BANNER — layout + TopNavSafe
         </div>
-        <div className="max-w-5xl mx-auto px-4 py-6">{children}</div>
+        <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
       </body>
     </html>
   );
