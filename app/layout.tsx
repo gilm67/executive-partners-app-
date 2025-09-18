@@ -1,3 +1,4 @@
+import "./globals.css";
 export default function RootAppLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
