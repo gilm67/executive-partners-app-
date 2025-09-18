@@ -1,4 +1,3 @@
-import "./globals.css";
 import TopNavClient from "@/components/TopNavClient";
 import HydratedSplash from "@/components/HydratedSplash";
 
