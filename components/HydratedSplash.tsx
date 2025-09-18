@@ -2,38 +2,29 @@
 
 import { useEffect, useState } from 'react';
 
+// Use the image that exists in /public
+const BG_IMAGE = '/imageep2.png';   // <-- your file
+const HIDE_AFTER_MS = 1300;         // auto-hide after ~1.3s
+
 export default function HydratedSplash() {
   const [hidden, setHidden] = useState(false);
 
-  // Auto-hide splash after 1.6s (fail-safe)
   useEffect(() => {
-    const timer = setTimeout(() => setHidden(true), 1600);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setHidden(true), HIDE_AFTER_MS);
+    return () => clearTimeout(t);
   }, []);
-
-  if (hidden) return null;
 
   return (
     <div
       aria-hidden
+      className={`fixed inset-0 z-[9999] transition-opacity duration-700 ${hidden ? 'opacity-0 pointer-events-none' : ''}`}
       style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        background: '#0B0E13', // brand background
-        display: 'grid',
-        placeItems: 'center',
-        opacity: 1,
-        transition: 'opacity 600ms ease',
-        pointerEvents: 'none', // never block clicks
+        background: '#0B0E13',               // fallback brand color
+        backgroundImage: `url(${BG_IMAGE})`, // your image
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
-      className={hidden ? 'opacity-0' : undefined}
-    >
-      <img
-        src="/logo.svg"
-        alt="Executive Partners"
-        style={{ width: 180, height: 'auto' }}
-      />
-    </div>
+    />
   );
 }
