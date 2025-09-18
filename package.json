@@ -66,5 +66,11 @@
     "tailwindcss": "^3.4.13",
     "ts-jest": "^29.4.3",
     "typescript": "^5.0.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "ignorePatterns": [
+      "**/*"
+    ]
   }
 }
