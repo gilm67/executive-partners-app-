@@ -1,11 +1,6 @@
 import "../globals.css";
 import TopNav from "@/components/TopNav";
-// ⬇️ replace the direct import with a dynamic one
-import dynamic from "next/dynamic";
-const Splash = dynamic(() => import("@/components/Splash"), {
-  ssr: false,
-  loading: () => null, // render nothing while the client bundle loads
-});
+import HydratedSplash from "@/components/HydratedSplash";
 
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
