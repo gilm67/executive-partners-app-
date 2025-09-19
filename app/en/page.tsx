@@ -1,4 +1,5 @@
-import EnClient from "./page.client";
-export default function EnPage() {
-  return <EnClient />;
+import EnClientLanding from "./page.client";
+export const dynamic = "force-dynamic";
+export default function EnServerPage() {
+  return <EnClientLanding />;
 }
