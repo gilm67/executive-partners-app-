@@ -1,6 +1,6 @@
 export default {
   locales: ['en', 'fr', 'de'],
   defaultLocale: 'en',
-  // Use 'as-needed' if "/" should be English and only non-default locales are prefixed
-  localePrefix: "always"
+  // Keep the locale prefix so /en won't redirect away
+  localePrefix: 'always'
 };

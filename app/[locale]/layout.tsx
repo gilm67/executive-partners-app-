@@ -1,7 +1,5 @@
 import TopNavClient from "@/components/TopNavClient";
 import HydratedSplash from "@/components/HydratedSplash";
-
-// ✅ SAFE NextIntl provider (won't crash if messages are missing)
 import {NextIntlClientProvider} from "next-intl";
 import {getMessages} from "next-intl/server";
 
@@ -14,12 +12,12 @@ export default async function RootLayout({
 }) {
   const locale = params?.locale ?? "en";
 
-  // Try to load locale messages, but never crash if not configured
-  let messages: any = {};
+  // Load messages, but never crash SSR if something goes wrong.
+  let messages: Record<string, any> = {};
   try {
-    messages = await getMessages();
+    messages = (await getMessages()) as any;
   } catch {
-    messages = {}; // fallback to empty messages
+    messages = {};
   }
 
   return (
@@ -43,16 +41,12 @@ export default async function RootLayout({
             fontWeight: 600,
           }}
         >
-          ✅ Temporary safe layout (Splash on, TopNav client-only, NextIntl on).
+          ✅ Temporary safe layout (NextIntl provider restored; Splash & TopNav client-safe).
         </div>
 
-        {/* Splash overlay (client) */}
         <HydratedSplash />
-
-        {/* Client-only navigation */}
         <TopNavClient />
 
-        {/* ✅ Wrap the app with NextIntl so pages using next-intl won't crash */}
         <NextIntlClientProvider locale={locale} messages={messages}>
           <div style={{ maxWidth: 1100, margin: "24px auto", padding: "0 16px" }}>
             {children}
