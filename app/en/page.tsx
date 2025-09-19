@@ -1,9 +1,5 @@
-import LandingClient from "@/components/LandingClient";
-
-// Render on-demand (no prerender). Either of these is fine;
-// using dynamic='force-dynamic' to be explicit.
-export const dynamic = 'force-dynamic';
-
+'use client';
+import LandingClient from '@/components/LandingClient';
 export default function EnHome() {
   return <LandingClient />;
 }
