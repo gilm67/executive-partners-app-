@@ -1,2 +1,6 @@
-import EnHome from "./en/page";
-export default function RootHome() { return <EnHome />; }
+'use client';
+import LandingClient from '@/components/LandingClient';
+
+export default function RootHome() {
+  return <LandingClient />;
+}
