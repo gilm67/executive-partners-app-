@@ -1,5 +1,7 @@
-'use client';
-import LandingClient from '@/components/LandingClient';
-export default function EnHome() {
-  return <LandingClient />;
+export const dynamic = 'force-dynamic';
+
+import EnClient from './page.client';
+
+export default function En() {
+  return <EnClient />;
 }
