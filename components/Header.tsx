@@ -1,10 +1,7 @@
 'use client';
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
-const items = [
-  
+const NAV: { label: string; href: string }[] = [
   { label: "Executive Partners", href: "/en" },
   { label: "Markets", href: "/markets" },
   { label: "Jobs", href: "/jobs" },
@@ -14,30 +11,26 @@ const items = [
   { label: "Portability", href: "/portability" },
   { label: "Insights", href: "/insights" },
   { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" }
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Header() {
-  const pathname = usePathname() || "/en";
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0E13]/80 backdrop-blur">
-      <div className="mx-auto max-w-6xl h-14 px-4 flex items-center gap-6 overflow-x-auto">
-        {items.map((it) => {
-          const active = pathname === it.href || pathname.startsWith(it.href + "/");
-          return (
-            <Link
-              key={it.label}
-              href={it.href}
-              className={[
-                "shrink-0 py-1 text-sm transition",
-                active ? "text-white font-semibold underline underline-offset-8" : "text-white/80 hover:text-white"
-              ].join(" ")}
-            >
-              {it.label}
-            </Link>
-          );
-        })}
-      </div>
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0B0E13]/95 backdrop-blur supports-[backdrop-filter]:bg-[#0B0E13]/80">
+      <nav className="mx-auto w-full max-w-6xl px-4">
+        <ul className="flex flex-wrap items-center justify-center gap-3 py-3">
+          {NAV.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                className="rounded-md px-3 py-1.5 text-sm font-semibold text-white/90 hover:text-white hover:bg-white/10"
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </header>
   );
 }
