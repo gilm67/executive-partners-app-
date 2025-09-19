@@ -1,11 +1,11 @@
-export default function Home() {
+export const dynamic = "force-static";
+
+export default function Page() {
   return (
-    <main className="min-h-[60vh] p-6">
-      <h1 className="text-3xl font-semibold">Executive Partners</h1>
-      <p className="mt-4 opacity-80">
-        Welcome. Temporary homepage while we restore the real layout.
-      </p>
-      <ul className="mt-6 space-y-2 underline">
+    <main style={{padding:'24px', maxWidth: 960, margin: '0 auto'}}>
+      <h1 style={{fontSize: 28, marginBottom: 8}}>Executive Partners</h1>
+      <p style={{opacity:.8}}>Temporary localized homepage (/[locale]/page.tsx). Rendering OK.</p>
+      <ul style={{marginTop:16, lineHeight:1.9}}>
         <li><a href="/jobs">Browse Jobs</a></li>
         <li><a href="/candidates">Candidates</a></li>
         <li><a href="/hiring-managers">Hiring Managers</a></li>
