@@ -1,7 +1,7 @@
 'use client';
 import Link from "next/link";
 
-const NAV: { label: string; href: string }[] = [
+const NAV = [
   { label: "Executive Partners", href: "/en" },
   { label: "Markets", href: "/markets" },
   { label: "Jobs", href: "/jobs" },
@@ -16,9 +16,9 @@ const NAV: { label: string; href: string }[] = [
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0B0E13]/95 backdrop-blur supports-[backdrop-filter]:bg-[#0B0E13]/80">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0B0E13]/95 backdrop-blur">
       <nav className="mx-auto w-full max-w-6xl px-4">
-        <ul className="flex flex-wrap items-center justify-center gap-3 py-3">
+        <ul className="flex flex-wrap items-center justify-center gap-4 py-3">
           {NAV.map((item) => (
             <li key={item.href}>
               <Link
