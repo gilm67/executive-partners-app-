@@ -1,21 +1,16 @@
-import {getTranslations} from 'next-intl/server';
-
-type Locale = 'en'|'fr'|'de';
-
-export default async function LocalizedHome({
-  params
-}: {
-  params: Promise<{locale: Locale}>
-}) {
-  const {locale} = await params;
-  const t = await getTranslations({locale});
-
+export default function Home() {
   return (
-    <div>
-      <h1 className="text-2xl font-semibold">{t('home.title', {default: 'Executive Partners'})}</h1>
-      <p className="text-white/70">
-        {t('home.subtitle', {default: 'Private Banking & Wealth Management Search'})}
+    <main className="min-h-[60vh] p-6">
+      <h1 className="text-3xl font-semibold">Executive Partners</h1>
+      <p className="mt-4 opacity-80">
+        Welcome. Temporary homepage while we restore the real layout.
       </p>
-    </div>
+      <ul className="mt-6 space-y-2 underline">
+        <li><a href="/jobs">Browse Jobs</a></li>
+        <li><a href="/candidates">Candidates</a></li>
+        <li><a href="/hiring-managers">Hiring Managers</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </main>
   );
 }
