@@ -224,8 +224,7 @@ function FeatureCard({
           </CardBtn>
           <CardBtn href={rightAction.href} tone={rightAction.tone}>
             {rightAction.label}
-          </CardBtn}
-        </div>
+          </CardBtn></div>
       </div>
     </div>
   );
