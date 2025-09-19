@@ -55,9 +55,9 @@ export default function LandingClient() {
           </p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            <PrimaryBtn href="/jobs" variant="blue">Browse Jobs</PrimaryBtn>
-            <PrimaryBtn href="/candidates" variant="outline">Candidates</PrimaryBtn>
-            <PrimaryBtn href="/hiring-managers" variant="ghost">Hiring Managers</PrimaryBtn>
+            <PrimaryBtn href="/en/jobs" variant="blue">Browse Jobs</PrimaryBtn>
+            <PrimaryBtn href="/en/candidates" variant="outline">Candidates</PrimaryBtn>
+            <PrimaryBtn href="/en/hiring-managers" variant="ghost">Hiring Managers</PrimaryBtn>
           </div>
         </div>
       </section>
@@ -66,7 +66,7 @@ export default function LandingClient() {
       <section className="mx-auto max-w-6xl px-6 py-14">
         <div className="flex items-end justify-between">
           <h2 className="text-xl sm:text-2xl font-semibold">Featured Roles</h2>
-          <Link className="text-sm underline" href="/jobs">View all jobs</Link>
+          <Link className="text-sm underline" href="/en/jobs">View all jobs</Link>
         </div>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -96,10 +96,10 @@ export default function LandingClient() {
       {/* QUICK LINKS */}
       <section className="mx-auto max-w-6xl px-6 pb-16">
         <div className="flex flex-wrap gap-3">
-          <Link className="underline" href="/portability">Relationship Manager Portability</Link>
-          <Link className="underline" href="/markets">Markets</Link>
-          <Link className="underline" href="/insights">Insights</Link>
-          <Link className="underline" href="/contact">Contact</Link>
+          <Link className="underline" href="/en/portability">Relationship Manager Portability</Link>
+          <Link className="underline" href="/en/markets">Markets</Link>
+          <Link className="underline" href="/en/insights">Insights</Link>
+          <Link className="underline" href="/en/contact">Contact</Link>
         </div>
       </section>
     </main>
