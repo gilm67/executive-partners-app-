@@ -1,72 +1,75 @@
 import Link from "next/link";
 
-export const metadata = {
-  title: "Markets – Executive Partners",
-  description: "Private Banking & Wealth Management markets we serve worldwide.",
-};
-
-type Market = {
+type City = {
   country: string;
   city: string;
-  href: string;
+  slug: string;
+};
+
+const CITIES: City[] = [
+  { country: "Switzerland",     city: "Geneva",    slug: "geneva" },
+  { country: "Switzerland",     city: "Zurich",    slug: "zurich" },
+  { country: "UAE",             city: "Dubai",     slug: "dubai" },
+  { country: "United Kingdom",  city: "London",    slug: "london" },
+  { country: "Singapore",       city: "Singapore", slug: "singapore" },
+  { country: "Hong Kong",       city: "Hong Kong", slug: "hong-kong" },
+  { country: "United States",   city: "New York",  slug: "new-york" },
+  { country: "United States",   city: "Miami",     slug: "miami" },
+];
+
+export const metadata = {
+  title: "Markets | Executive Partners",
+  description:
+    "Private Banking & Wealth Management markets overview: hiring pulse, regulatory notes, compensation & ecosystem.",
 };
 
 export default function MarketsPage() {
-  const markets: Market[] = [
-    { country: "Switzerland",     city: "Geneva",     href: "/en/markets/geneva" },
-    { country: "Switzerland",     city: "Zurich",     href: "/en/markets/zurich" },
-    { country: "UAE",             city: "Dubai",      href: "/en/markets/dubai" },
-    { country: "United Kingdom",  city: "London",     href: "/en/markets/london" },
-    { country: "Singapore",       city: "Singapore",  href: "/en/markets/singapore" },
-    { country: "Hong Kong",       city: "Hong Kong",  href: "/en/markets/hong-kong" },
-    { country: "United States",   city: "New York",   href: "/en/markets/new-york" },
-    { country: "United States",   city: "Miami",      href: "/en/markets/miami" },
-  ];
-
   return (
-    <main className="relative min-h-screen bg-[#0B0E13] text-white">
-      {/* subtle background glow (same vibe as landing) */}
+    <main className="min-h-[70vh]">
+      {/* Header block */}
+      <section className="mb-8">
+        <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight">Markets</h1>
+        <p className="mt-3 text-white/70 max-w-2xl">
+          View hiring pulse, regulatory notes, compensation & ecosystem in leading Private Banking hubs.
+        </p>
+      </section>
+
+      {/* Grid of market cards */}
+      <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {CITIES.map((m) => (
+          <MarketCard key={m.slug} {...m} />
+        ))}
+      </section>
+    </main>
+  );
+}
+
+function MarketCard({ country, city, slug }: City) {
+  return (
+    <article className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-sm">
+      {/* soft corner glow */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(1200px_420px_at_18%_-10%,rgba(59,130,246,.12) 0%, rgba(59,130,246,0) 60%), radial-gradient(1000px_380px_at_110%_0%, rgba(16,185,129,.12) 0%, rgba(16,185,129,0) 60%)",
-        }}
+        className="pointer-events-none absolute -top-8 -right-8 h-36 w-36 rounded-full bg-gradient-to-br from-sky-500/30 to-emerald-400/30 blur-2xl opacity-40"
       />
-
-      <div className="relative mx-auto w-full max-w-6xl px-4 pb-24 pt-14">
-        <h1 className="text-center text-4xl md:text-5xl font-extrabold tracking-tight">
-          Markets We Serve
-        </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-center text-neutral-300">
-          Geneva-based coverage of the world’s leading private banking hubs, with a focus on portability and cultural fit.
+      <div className="relative">
+        <div className="text-xs font-semibold text-emerald-300/80">{country}</div>
+        <h3 className="mt-2 text-xl font-bold">{city}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-white/70">
+          View hiring pulse, regulatory notes, compensation & ecosystem.
         </p>
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {markets.map((m) => (
-            <Link
-              key={`${m.country}-${m.city}`}
-              href={m.href}
-              className="group relative rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-6 shadow-md hover:bg-white/5 transition"
-            >
-              {/* soft glow accent */}
-              <div className="pointer-events-none absolute inset-0 opacity-[.18] group-hover:opacity-30 [background:radial-gradient(400px_120px_at_20%_0%,rgba(14,165,233,1),transparent_60%),radial-gradient(400px_120px_at_80%_0%,rgba(34,197,94,1),transparent_60%)]" />
-
-              <div className="relative flex h-full flex-col">
-                <div className="text-xs font-semibold text-[#6EE7B7]">{m.country}</div>
-                <h2 className="mt-1 text-xl font-semibold">{m.city}</h2>
-                <p className="mt-2 text-sm text-neutral-300 leading-relaxed">
-                  View hiring pulse, regulatory notes, compensation &amp; ecosystem.
-                </p>
-                <span className="mt-auto pt-4 text-sm font-medium text-sky-400 group-hover:underline">
-                  Explore market →
-                </span>
-              </div>
-            </Link>
-          ))}
+        <div className="mt-4">
+          <Link
+            href={`/en/markets/${slug}`}
+            className="inline-flex items-center gap-2 rounded-xl bg-white/8 px-3 py-2 text-sm font-semibold text-white
+                       hover:bg-white/12 hover:shadow-[0_10px_30px_rgba(59,130,246,.25)]
+                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/40 transition"
+          >
+            Explore market →
+          </Link>
         </div>
       </div>
-    </main>
+    </article>
   );
 }
