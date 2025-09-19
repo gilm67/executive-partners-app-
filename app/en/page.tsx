@@ -1,8 +1,8 @@
 import LandingClient from "@/components/LandingClient";
 
-// Ensure no static prerender; render on-demand
+// Render on-demand (no prerender). Either of these is fine;
+// using dynamic='force-dynamic' to be explicit.
 export const dynamic = 'force-dynamic';
-// Or: export const revalidate = 0;  (either is fine; dynamic='force-dynamic' is clearest)
 
 export default function EnHome() {
   return <LandingClient />;
