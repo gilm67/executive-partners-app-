@@ -65,7 +65,7 @@ export default async function HomePage() {
   const featured = await getFeaturedJobs();
 
   return (
-    <main className="relative min-h-screen bg-[#0B0E13] text-white">
+    <main className="relative min-h-screen text-white">
       {/* background glow */}
       <div
         aria-hidden
