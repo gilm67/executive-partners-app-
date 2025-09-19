@@ -1,6 +1,5 @@
-'use client';
-import LandingClient from '@/components/LandingClient';
+import { permanentRedirect } from 'next/navigation';
 
-export default function RootHome() {
-  return <LandingClient />;
+export default function Root() {
+  permanentRedirect('/en');
 }
