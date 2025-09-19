@@ -1,71 +1,53 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 export const metadata = {
-  title: "Markets – Executive Partners",
-  description:
-    "We cover Switzerland and key international hubs for private banking: Geneva, Zurich, Dubai, Singapore, London, and New York.",
+  title: 'Markets – Executive Partners',
+  description: 'Private Banking & Wealth Management markets we serve.',
 };
 
-const HUBS = [
-  { city: "Switzerland", note: "Core onshore market" },
-  { city: "Geneva", note: "UHNW/HNW booking centre" },
-  { city: "Zurich", note: "Brazil, LatAm, Iberia, CH Onshore" },
-  { city: "Dubai", note: "MEA coverage; cross-border expertise" },
-  { city: "Singapore", note: "SEA & Asia coverage" },
-  { city: "London", note: "International booking; UK res non-dom" },
-  { city: "New York", note: "UHNWI/family office connectivity" },
-];
-
 export default function MarketsPage() {
-  return (
-    <div className="min-h-[70vh]">
-      <header className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-          Markets we serve
-        </h1>
-        <p className="mt-3 max-w-3xl text-white/70">
-          We specialise in Private Banking &amp; Wealth Management across
-          Switzerland and key international hubs. We focus on Relationship
-          Managers with real portability and senior hires across front-office.
-        </p>
-      </header>
+  const markets = [
+    { name: 'Switzerland', href: '/en/private-banking-jobs-switzerland', blurb: 'Geneva & Zurich booking centres; CH onshore and cross-border.' },
+    { name: 'Geneva', href: '/en/markets/geneva', blurb: 'UHNW/HNW, independent asset managers, family offices.' },
+    { name: 'Zurich', href: '/en/markets/zurich', blurb: 'Onshore CH & international desks; RMs with portability.' },
+    { name: 'Dubai', href: '/en/markets/dubai', blurb: 'MEA coverage from DIFC; booking and advisory.' },
+    { name: 'Singapore', href: '/en/markets/singapore', blurb: 'SEA wealth hubs; growth & platform moves.' },
+    { name: 'London', href: '/en/markets/london', blurb: 'UK & international desks; UHNW coverage.' },
+    { name: 'New York', href: '/en/markets/new-york', blurb: 'US offshore & onshore private banking.' },
+  ];
 
-      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {HUBS.map((h) => (
-          <article
-            key={h.city}
-            className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)]"
-          >
-            <div className="pointer-events-none absolute inset-0 opacity-[.16] [background:radial-gradient(450px_100px_at_10%_0%,rgba(14,165,233,1),transparent_60%),radial-gradient(450px_100px_at_100%_0%,rgba(34,197,94,1),transparent_60%)]" />
-            <div className="relative">
-              <h3 className="text-xl font-semibold">{h.city}</h3>
-              <p className="mt-1 text-sm text-white/70">{h.note}</p>
-              <div className="mt-4 flex gap-3">
-                <Link
-                  href={`/jobs?market=${encodeURIComponent(h.city.toLowerCase())}`}
-                  className="inline-flex items-center rounded-xl bg-white/8 px-3 py-2 text-sm font-semibold text-white hover:bg-white/12"
-                >
-                  View roles
-                </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10"
-                >
-                  Talk to us
-                </Link>
-              </div>
-            </div>
-          </article>
-        ))}
+  return (
+    <main className="min-h-[70vh]">
+      <section
+        className="relative overflow-hidden text-white"
+        style={{
+          background:
+            'radial-gradient(1200px 400px at 10% -10%, rgba(29,78,216,.25), transparent 60%), radial-gradient(800px 300px at 110% 10%, rgba(16,185,129,.25), transparent 60%), #0B0E13',
+        }}
+      >
+        <div className="mx-auto max-w-6xl px-6 py-16 sm:py-24">
+          <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight">Markets we serve</h1>
+          <p className="mt-4 max-w-2xl text-white/80">
+            Geneva-based executive search across global private banking hubs. We prioritise portability and cultural fit.
+          </p>
+        </div>
       </section>
 
-      <div className="mt-10 text-sm text-white/70">
-        Can’t see your market?{" "}
-        <Link href="/contact" className="underline hover:text-white">
-          Contact us
-        </Link>{" "}
-        for a confidential discussion.
-      </div>
-    </div>
+      <section className="mx-auto max-w-6xl px-6 py-14 text-white">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {markets.map((m) => (
+            <Link
+              key={m.name}
+              href={m.href}
+              className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-sm backdrop-blur hover:bg-white/10 transition"
+            >
+              <div className="text-sm uppercase tracking-wide text-white/60">— {m.name}</div>
+              <div className="mt-2 text-lg font-semibold">{m.name}</div>
+              <p className="mt-2 text-sm text-white/80">{m.blurb}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }
