@@ -1,11 +1,8 @@
 import createMiddleware from 'next-intl/middleware';
+import nextIntlConfig from './next-intl.config.mjs';
 
-export default createMiddleware({
-  // add/remove locales as you need
-  locales: ['en', 'fr'],
-  defaultLocale: 'en'
-});
+export default createMiddleware(nextIntlConfig);
 
 export const config = {
-  matcher: ['/', '/(en|fr)/:path*']
+  matcher: ['/', '/(en|fr|de)/:path*']
 };
