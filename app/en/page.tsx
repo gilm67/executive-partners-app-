@@ -1,8 +1,8 @@
-import dynamic from "next/dynamic";
-export const revalidate = 0;
+import LandingClient from "@/components/LandingClient";
 
-// Render your real landing client-side to avoid any SSR pitfalls.
-const LandingClient = dynamic(() => import("@/components/LandingClient"), { ssr: false });
+// Ensure no static prerender; render on-demand
+export const dynamic = 'force-dynamic';
+// Or: export const revalidate = 0;  (either is fine; dynamic='force-dynamic' is clearest)
 
 export default function EnHome() {
   return <LandingClient />;
