@@ -1,8 +1,6 @@
-import {defineConfig} from 'next-intl';
-
-export default defineConfig({
+export default {
   locales: ['en', 'fr', 'de'],
   defaultLocale: 'en',
-  // Use 'as-needed' if you want "/" to be English and prefixes only for non-default locales
+  // Use 'as-needed' if "/" should be English and only non-default locales are prefixed
   localePrefix: 'as-needed'
-});
+};
