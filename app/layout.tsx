@@ -1,12 +1,11 @@
-// app/layout.tsx — minimal wrapper so the app has a root layout
-export const metadata = {
-  title: "Executive Partners",
-};
+import './globals.css';
 
-export default function RootLayout({children}: {children: React.ReactNode}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" className="h-full bg-[#0B0E13]">
+      <body className="min-h-screen bg-[#0B0E13] text-white antialiased">
+        {children}
+      </body>
     </html>
   );
 }
