@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
-import { lockScroll, unlockScroll } from "@/lib/scrollLock";
 
 type NavItem = { href: string; label: string; external?: boolean };
 
@@ -20,34 +19,71 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/contact", label: "Contact" },
 ];
 
+// Ultra-safe scroll lock that never leaves the page stuck.
+function setScrollLocked(locked: boolean) {
+  const root = document.documentElement;
+  const body = document.body;
+
+  if (locked) {
+    // Save current scroll position so we can restore it precisely.
+    const scrollY = window.scrollY || window.pageYOffset;
+    root.style.setProperty("--ep-scroll-y", String(scrollY));
+    // Prevent scrolling without breaking iOS momentum or layout.
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+    // Extra safety for touch devices
+    root.style.overflow = "hidden";
+    root.style.touchAction = "none";
+  } else {
+    // Restore scroll
+    const y = Number(
+      document.documentElement.style.getPropertyValue("--ep-scroll-y") || "0"
+    );
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    document.body.style.overflow = "";
+    const root = document.documentElement;
+    root.style.overflow = "";
+    root.style.touchAction = "";
+    root.style.removeProperty("--ep-scroll-y");
+    window.scrollTo(0, isNaN(y) ? 0 : y);
+  }
+}
+
 export default function TopNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   const closeMenu = useCallback(() => {
     setOpen(false);
-    unlockScroll();
   }, []);
 
   const toggleMenu = useCallback(() => {
-    setOpen((v) => {
-      const next = !v;
-      if (next) lockScroll();
-      else unlockScroll();
-      return next;
-    });
+    setOpen((v) => !v);
   }, []);
 
-  // Close on route change
+  // Apply / remove scroll lock whenever "open" changes
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setScrollLocked(open);
+    return () => {
+      // In case the component re-renders/unmounts mid-transition
+      setScrollLocked(false);
+    };
+  }, [open]);
+
+  // Close (and unlock) on route change
   useEffect(() => {
     if (open) closeMenu();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
-
-  // Close on unmount (safety)
-  useEffect(() => {
-    return () => unlockScroll();
-  }, []);
 
   // Close on ESC
   useEffect(() => {
@@ -59,12 +95,17 @@ export default function TopNav() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, closeMenu]);
 
-  const NavLinks = ({ className = "", onClick }: { className?: string; onClick?: () => void }) => (
+  const NavLinks = ({
+    className = "",
+    onClick,
+  }: {
+    className?: string;
+    onClick?: () => void;
+  }) => (
     <nav className={`flex flex-col md:flex-row md:flex-wrap items-start md:items-center gap-4 text-sm ${className}`}>
       {NAV_ITEMS.map((item) => {
         const active = pathname === item.href || pathname.startsWith(item.href + "/");
-        const cls =
-          "transition hover:text-emerald-400 " + (active ? "text-emerald-400" : "text-white/70");
+        const cls = "transition hover:text-emerald-400 " + (active ? "text-emerald-400" : "text-white/70");
         return item.external ? (
           <a
             key={item.href}
@@ -130,6 +171,7 @@ export default function TopNav() {
       {/* Mobile overlay + panel */}
       <div
         id="mobile-nav"
+        aria-hidden={!open}
         className={`md:hidden fixed inset-0 z-40 transition-opacity ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
