@@ -1,14 +1,10 @@
-'use client';
-
-import HydratedSplash from "@/components/HydratedSplash";
-import LandingClient from "@/components/LandingClient";
+// app/en/page.tsx
+import LandingClient from "../../components/LandingClient";
 
 export default function EnHome() {
   return (
-    <>
-      {/* Splash shows once; component guards itself with localStorage */}
-      <HydratedSplash />
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
       <LandingClient />
-    </>
+    </div>
   );
 }

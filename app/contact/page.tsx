@@ -119,7 +119,7 @@ export default function ContactPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
       <header className="mb-10">
-        <h1 className="text-2xl font-semibold tracking-tight text-white">
+        <h1 className="page-title">
           Contact Executive Partners
         </h1>
         <p className="mt-2 text-sm text-neutral-400">
