@@ -2,64 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
-.container-ep { @apply mx-auto w-full max-w-6xl px-4; }
-.card-ep { @apply rounded-2xl border border-white/10 bg-white/[0.05] backdrop-blur; }
-
-/* --- Executive polish --- */
-.h1-ep { @apply text-4xl md:text-5xl font-extrabold tracking-tight; }
-.h2-ep { @apply text-xl md:text-2xl font-semibold; }
-.muted-ep { @apply text-neutral-400; }
-.card-pad-ep { @apply p-5 md:p-6; }
-.cta-ep { @apply bg-emerald-600 hover:bg-emerald-700 text-white font-medium; }
-
-/* Chip button (neutral → brand hover) */
-.chip-ep {
-  @apply inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03]
-         px-3 py-2 text-sm text-neutral-200 hover:bg-white/[0.06] transition;
-}
-.chip-ep[data-selected="true"] {
-  @apply border-emerald-500/40 bg-emerald-500/10;
+/* --- Base page backdrop + typography smoothing --- */
+html, body { height: 100%; }
+body {
+  background: #0B0E13;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Label + hint */
-.field-label-ep { @apply text-sm font-medium text-neutral-200; }
-.field-hint-ep { @apply text-xs text-neutral-400; }
+/* Selection color (subtle, like live site) */
+::selection { background: rgba(255,255,255,.14); color: #fff; }
 
-/* --- Help dot (native title tooltip) --- */
-.help-dot-ep{
-  @apply inline-flex items-center justify-center text-[10px] leading-none rounded-full px-[6px] py-[2px]
-         border border-white/15 bg-white/10 text-white/70 cursor-help;
-}
-.help-dot-ep:hover{ @apply bg-white/20 text-white; }
-
-/* --- Help dot (click for tooltip) --- */
-.help-dot-ep{
-  @apply inline-flex items-center justify-center text-[10px] leading-none rounded-full px-[6px] py-[2px]
-         border border-white/15 bg-white/10 text-white/70 cursor-pointer select-none;
-}
-.help-dot-ep:hover{ @apply bg-white/20 text-white; }
-
-/* --- Popover panel --- */
-.popover-ep{
-  @apply absolute z-50 rounded-md border border-white/10 bg-black/90 p-3 shadow-xl backdrop-blur;
-  /* basic fade/scale */
-  transform-origin: top center;
-  animation: ep-pop 120ms ease-out;
-}
-@keyframes ep-pop{
-  from{ opacity:.0; transform: scale(.96); }
-  to  { opacity:1;  transform: scale(1);   }
+/* Fix WebKit scroll-bounce tint on dark */
+@supports (-webkit-touch-callout: none) {
+  body { background-color: #0B0E13; }
 }
 
-/* ===== TEMP SAFETY OVERRIDES (remove when stable) ===== */
-html, body {
-  background: #ffffff !important;
-  color: #111111 !important;
+/* ===========================
+   Unified main page title
+=========================== */
+.page-title {
+  @apply text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-6;
 }
-* { text-shadow: none !important; }
-/* ====================================================== */
 
-/* enforce dark page bg */
-html, body { background-color:#0B0E13 !important; }
+/* =========================================
+   FULL-SCREEN SPLASH (once per session)
+   Hook with a fixed <div class="ep-splash">
+   Hide by adding .ep-splash--hide
+========================================= */
+.ep-splash{
+  position: fixed;
+  inset: 0;
+  z-index: 60;                /* above TopNav (z-40) */
+  background-position: center;
+  background-size: cover;     /* image fills screen */
+  background-repeat: no-repeat;
+  opacity: 1;
+  transform: scale(1) translateY(0); /* start natural */
+  filter: brightness(.96) saturate(1.06);
+  animation: ep-kenburns 4.5s ease-out forwards; /* longer + cinematic */
+  transition:
+    opacity 1s ease,
+    transform 1s ease,
+    filter 1s ease;
+}
 
-html,body{background:#0B0E13!important}
+/* Vignette overlay so landing text stays readable while splash is visible */
+.ep-splash::after{
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(55% 45% at 50% 30%, rgba(0,0,0,.10), rgba(0,0,0,.28) 55%, rgba(0,0,0,.52)),
+    radial-gradient(120% 80% at 50% 100%, rgba(10,14,20,.55), transparent 60%);
+  pointer-events: none;
+}
+
+/* Exit state (when you want to hide it) */
+.ep-splash--hide{
+  opacity: 0;
+  transform: scale(1.12) translateY(-2%); /* push zoom a bit further + slight pan */
+  filter: brightness(.85) saturate(1.0) blur(4px);
+  pointer-events: none; /* let clicks pass after fade */
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .ep-splash{ opacity:0; transform:none; filter:none; animation:none; transition:none; }
+}
+
+/* Ken Burns zoom (magnify + subtle upward pan) */
+@keyframes ep-kenburns{
+  0%   { transform: scale(1) translateY(0);     filter: brightness(.96) saturate(1.06); opacity: 1; }
+  60%  { transform: scale(1.07) translateY(-1%); filter: brightness(1)   saturate(1.10); opacity: 1; }
+  100% { transform: scale(1.10) translateY(-2%); filter: brightness(.92) saturate(1.02); opacity: 0; }
+}
+
+/* =========================================
+   HERO REVEAL (after splash)
+   Add .ep-hero to the container to reveal
+   Toggle .ep-hero--show when splash finishes
+========================================= */
+.ep-hero{
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .9s ease .25s, transform .9s ease .25s;
+}
+.ep-hero.ep-hero--show{
+  opacity: 1;
+  transform: none;
+}
+
+/* =========================================
+   HERO GLOW (behind headline/buttons)
+   Add .ep-hero-splash to the hero section
+   Uses your /imageep2.png softly as a glow
+========================================= */
+.ep-hero-splash{
+  position: relative;
+  isolation: isolate; /* keep glow between bg and content */
+}
+.ep-hero-splash > *{ position: relative; z-index: 1; }
+
+.ep-hero-splash::before{
+  content: "";
+  position: absolute;
+  top: -140px;                /* lift above heading */
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1400px, 92vw);
+  height: 560px;
+  background:
+    url("/imageep2.png") center top / 1200px auto no-repeat;
+  opacity: 0.88;              /* visible and crisp */
+  filter: blur(18px) brightness(1.28) saturate(1.12);
+  mix-blend-mode: screen;     /* glow on dark bg */
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Crisp image rendering on HiDPI */
+.ep-splash img { image-rendering: auto; }

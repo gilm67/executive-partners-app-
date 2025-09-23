@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.container-ep { @apply mx-auto w-full max-w-6xl px-4; }
+.card-ep { @apply rounded-2xl border border-white/10 bg-white/[0.05] backdrop-blur; }
+
+/* --- Executive polish --- */
+.h1-ep { @apply text-4xl md:text-5xl font-extrabold tracking-tight; }
+.h2-ep { @apply text-xl md:text-2xl font-semibold; }
+.muted-ep { @apply text-neutral-400; }
+.card-pad-ep { @apply p-5 md:p-6; }
+.cta-ep { @apply bg-emerald-600 hover:bg-emerald-700 text-white font-medium; }
+
+/* Chip button (neutral → brand hover) */
+.chip-ep {
+  @apply inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03]
+         px-3 py-2 text-sm text-neutral-200 hover:bg-white/[0.06] transition;
+}
+.chip-ep[data-selected="true"] {
+  @apply border-emerald-500/40 bg-emerald-500/10;
+}
+
+/* Label + hint */
+.field-label-ep { @apply text-sm font-medium text-neutral-200; }
+.field-hint-ep { @apply text-xs text-neutral-400; }
+
+/* --- Help dot (native title tooltip) --- */
+.help-dot-ep{
+  @apply inline-flex items-center justify-center text-[10px] leading-none rounded-full px-[6px] py-[2px]
+         border border-white/15 bg-white/10 text-white/70 cursor-help;
+}
+.help-dot-ep:hover{ @apply bg-white/20 text-white; }
+
+/* --- Help dot (click for tooltip) --- */
+.help-dot-ep{
+  @apply inline-flex items-center justify-center text-[10px] leading-none rounded-full px-[6px] py-[2px]
+         border border-white/15 bg-white/10 text-white/70 cursor-pointer select-none;
+}
+.help-dot-ep:hover{ @apply bg-white/20 text-white; }
+
+/* --- Popover panel --- */
+.popover-ep{
+  @apply absolute z-50 rounded-md border border-white/10 bg-black/90 p-3 shadow-xl backdrop-blur;
+  /* basic fade/scale */
+  transform-origin: top center;
+  animation: ep-pop 120ms ease-out;
+}
+@keyframes ep-pop{
+  from{ opacity:.0; transform: scale(.96); }
+  to  { opacity:1;  transform: scale(1);   }
+}
+
+/* ===== TEMP SAFETY OVERRIDES (remove when stable) ===== */
+html, body {
+  background: #ffffff !important;
+  color: #111111 !important;
+}
+* { text-shadow: none !important; }
+/* ====================================================== */
+
+/* enforce dark page bg */
+html, body { background-color:#0B0E13 !important; }
+
+html,body{background:#0B0E13!important}
