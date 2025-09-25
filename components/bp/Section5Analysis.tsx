@@ -49,8 +49,8 @@ export default function Section5Analysis() {
   const reasons_neg: string[] = [];
   const flags: string[] = [];
 
-  if (i.years_experience >= 7) { score += 2; reasons_pos.push('Experience ≥7 years in market'); }
-  else if (i.years_experience >= 6) { score += 1; reasons_pos.push('Experience 6 years'); }
+  if ((i.years_experience ?? 0) >= 7) { score += 2; reasons_pos.push('Experience ≥7 years in market'); }
+  else if ((i.years_experience ?? 0) >= 6) { score += 1; reasons_pos.push('Experience 6 years'); }
   else { reasons_neg.push('Experience <6 years'); }
 
   const aum_min = i.current_market === 'CH Onshore' ? 250 : 200;

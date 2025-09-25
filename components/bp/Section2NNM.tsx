@@ -26,7 +26,7 @@ export default function Section2NNM() {
       <div className="grid md:grid-cols-3 gap-4">
         <Field label="NNM Year 1 (M CHF)">
           <NumberInput
-            value={i.nnm_y1_m}
+            value={(i.nnm_y1_m ?? "")}
             step={0.1}
             placeholder="e.g. 25"
             onChange={(v) => set({ nnm_y1_m: v })}
@@ -34,7 +34,7 @@ export default function Section2NNM() {
         </Field>
         <Field label="NNM Year 2 (M CHF)">
           <NumberInput
-            value={i.nnm_y2_m}
+            value={(i.nnm_y2_m ?? "")}
             step={0.1}
             placeholder="e.g. 35"
             onChange={(v) => set({ nnm_y2_m: v })}
@@ -42,7 +42,7 @@ export default function Section2NNM() {
         </Field>
         <Field label="NNM Year 3 (M CHF)">
           <NumberInput
-            value={i.nnm_y3_m}
+            value={(i.nnm_y3_m ?? "")}
             step={0.1}
             placeholder="e.g. 45"
             onChange={(v) => set({ nnm_y3_m: v })}
@@ -53,21 +53,21 @@ export default function Section2NNM() {
       <div className="grid md:grid-cols-3 gap-4">
         <Field label="Projected Clients Year 1">
           <IntInput
-            value={i.proj_clients_y1}
+            value={(i.proj_clients_y1 ?? "")}
             placeholder="e.g. 10"
             onChange={(v) => set({ proj_clients_y1: v })}
           />
         </Field>
         <Field label="Projected Clients Year 2">
           <IntInput
-            value={i.proj_clients_y2}
+            value={(i.proj_clients_y2 ?? "")}
             placeholder="e.g. 15"
             onChange={(v) => set({ proj_clients_y2: v })}
           />
         </Field>
         <Field label="Projected Clients Year 3">
           <IntInput
-            value={i.proj_clients_y3}
+            value={(i.proj_clients_y3 ?? "")}
             placeholder="e.g. 18"
             onChange={(v) => set({ proj_clients_y3: v })}
           />
