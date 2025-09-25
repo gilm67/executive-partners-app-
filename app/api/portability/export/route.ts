@@ -193,7 +193,7 @@ export async function POST(req: Request) {
 
     const bytes = await pdf.save();
   const buf = Buffer.from(bytes);
-  return new NextResponse(buf as any, { status: 200, headers: { "Content-Type": "application/pdf", "Content-Disposition": "attachment; filename="Portability.pdf"", "Cache-Control": "no-store" } });
+  return new NextResponse(buf as any, { status: 200, headers: { "Content-Type": "application/pdf", "Content-Disposition": "attachment; filename=\"Portability.pdf\"", "Cache-Control": "no-store" } });
   } catch (e) {
     console.error("export error:", e);
     return NextResponse.json({ error: "failed" }, { status: 500 });
