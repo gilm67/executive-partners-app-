@@ -192,7 +192,9 @@ export async function POST(req: Request) {
     drawBullets("Recommended next steps", steps);
 
     const bytes = await pdf.save();
-    return new NextResponse(bytes, {
+  const buf = Buffer.from(bytes);
+  const buf = Buffer.from(bytes);
+    return new NextResponse(buf as any, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
