@@ -43,13 +43,13 @@ export default function Section4Revenue() {
       {/* ROA inputs */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Field label="ROA % Year 1">
-          <Num value={(i.roa_y1 ?? "")} onChange={(v)=>set({roa_y1:v})}/>
+          <Num value={i.roa_y1} onChange={(v)=>set({roa_y1:v})}/>
         </Field>
         <Field label="ROA % Year 2">
-          <Num value={(i.roa_y2 ?? "")} onChange={(v)=>set({roa_y2:v})}/>
+          <Num value={i.roa_y2} onChange={(v)=>set({roa_y2:v})}/>
         </Field>
         <Field label="ROA % Year 3">
-          <Num value={(i.roa_y3 ?? "")} onChange={(v)=>set({roa_y3:v})}/>
+          <Num value={i.roa_y3} onChange={(v)=>set({roa_y3:v})}/>
         </Field>
       </div>
 

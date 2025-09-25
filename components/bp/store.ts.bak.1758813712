@@ -46,10 +46,6 @@ export type Inputs = {
   // Section 5 outputs (persisted)
   score?: number;
   ai_notes?: string;
-
-  roa_y1?: number;
-  roa_y2?: number;
-  roa_y3?: number;
 };
 
 type BPState = {
