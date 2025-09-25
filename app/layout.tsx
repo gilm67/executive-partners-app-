@@ -1,15 +1,10 @@
-// app/layout.tsx
-import type { ReactNode } from "react";
-import TopNav from "../components/TopNav"; // keep this relative import
-import "./globals.css";
+import TopNav from "../components/TopNav";
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-black text-white antialiased">
-        {/* Global, sticky navigation */}
+      <body>
         <TopNav />
-        {/* Keep content below the sticky bar */}
         <main className="pt-16 md:pt-20">{children}</main>
       </body>
     </html>
