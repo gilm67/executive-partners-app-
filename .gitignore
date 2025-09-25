@@ -35,3 +35,4 @@ private_key.b64
 
 # editor backups
 *.bak
+service_account.json
