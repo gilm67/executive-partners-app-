@@ -34,18 +34,21 @@ body {
 .ep-splash{
   position: fixed;
   inset: 0;
-  z-index: 60;                /* above TopNav (z-40) */
+  z-index: 40;                /* BELOW sticky header (z-50) so hamburger stays clickable */
+  background:
+    radial-gradient(110% 80% at 50% 20%, #1E64F0 0%, rgba(30,100,240,0.25) 35%, rgba(14,18,24,0.85) 70%, #0E1218 100%);
   background-position: center;
-  background-size: cover;     /* image fills screen */
+  background-size: cover;
   background-repeat: no-repeat;
   opacity: 1;
-  transform: scale(1) translateY(0); /* start natural */
+  transform: scale(1) translateY(0);
   filter: brightness(.96) saturate(1.06);
-  animation: ep-kenburns 4.5s ease-out forwards; /* longer + cinematic */
+  animation: ep-kenburns 4.5s ease-out forwards;
   transition:
     opacity 1s ease,
     transform 1s ease,
     filter 1s ease;
+  will-change: opacity, transform, filter;
 }
 
 /* Vignette overlay so landing text stays readable while splash is visible */
@@ -61,9 +64,9 @@ body {
 /* Exit state (when you want to hide it) */
 .ep-splash--hide{
   opacity: 0;
-  transform: scale(1.12) translateY(-2%); /* push zoom a bit further + slight pan */
+  transform: scale(1.12) translateY(-2%);
   filter: brightness(.85) saturate(1.0) blur(4px);
-  pointer-events: none; /* let clicks pass after fade */
+  pointer-events: none;
 }
 
 /* Respect reduced motion */
@@ -76,6 +79,17 @@ body {
   0%   { transform: scale(1) translateY(0);     filter: brightness(.96) saturate(1.06); opacity: 1; }
   60%  { transform: scale(1.07) translateY(-1%); filter: brightness(1)   saturate(1.10); opacity: 1; }
   100% { transform: scale(1.10) translateY(-2%); filter: brightness(.92) saturate(1.02); opacity: 0; }
+}
+
+/* ===== Mobile adjustments for splash ===== */
+@media (max-width: 640px) {
+  .ep-splash{
+    /* Briefer + slightly dimmer on small screens */
+    animation-duration: 3.2s;
+    filter: brightness(.92) saturate(1.02);
+    background:
+      radial-gradient(120% 85% at 50% 25%, #1E64F0 12%, rgba(30,100,240,0.18) 34%, rgba(14,18,24,0.9) 66%, #0E1218 100%);
+  }
 }
 
 /* =========================================
@@ -107,18 +121,24 @@ body {
 .ep-hero-splash::before{
   content: "";
   position: absolute;
-  top: -140px;                /* lift above heading */
+  top: -140px;
   left: 50%;
   transform: translateX(-50%);
   width: min(1400px, 92vw);
   height: 560px;
-  background:
-    url("/imageep2.png") center top / 1200px auto no-repeat;
-  opacity: 0.88;              /* visible and crisp */
+  background: url("/imageep2.png") center top / 1200px auto no-repeat;
+  opacity: 0.88;
   filter: blur(18px) brightness(1.28) saturate(1.12);
-  mix-blend-mode: screen;     /* glow on dark bg */
+  mix-blend-mode: screen;
   pointer-events: none;
   z-index: 0;
+}
+
+/* Hide heavy glow on mobile to prevent muddiness & lighten paint cost */
+@media (max-width: 640px) {
+  .ep-hero-splash::before{
+    display: none;
+  }
 }
 
 /* Crisp image rendering on HiDPI */

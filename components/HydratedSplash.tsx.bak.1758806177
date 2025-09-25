@@ -30,9 +30,9 @@ export default function HydratedSplash() {
   return (
     <div
       aria-hidden
-      className="fixed inset-0 z-[9999] pointer-events-none bg-gradient-to-b from-neutral-950 via-neutral-900 to-black"
+      className="fixed inset-0 z-[9999] pointer-events-none"
       style={{
-        backgroundImage: 'none',
+        backgroundImage: 'url(/imageep2.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
