@@ -36,12 +36,14 @@ body {
   clip-path: inset(-2px -2px -2px -2px); /* kill GPU edge seams */
   overflow: hidden;
 
-  /* base values; image is chosen below */
+  /* Desktop / default background image */
   background-color: #0B0E13;
+  background-image: url("/imageep2.png?v=9");
   background-position: 50% 55%;
   background-size: cover;
   background-repeat: no-repeat;
 
+  /* Animate the container (not an <img>) */
   filter: blur(0) brightness(1) saturate(1.02);
   transform: scale(1.08) translateZ(0);     /* slight zoom-out start (desktop) */
   transform-origin: center center;
@@ -72,32 +74,18 @@ body {
 /* Hide cleanly */
 #ep-splash.hidden { opacity: 0; pointer-events: none; }
 
-/* ---------------- Image selection (robust) ---------------- */
-/* Desktop default */
-html[data-ep-splash="desktop"] #ep-splash {
-  background-image: url("/imageep2.png?v=4");
-}
-
-/* Mobile portrait crop (force) */
-html[data-ep-splash="mobile"] #ep-splash {
-  /* prefer JPG; fall back to PNG */
-  background-image:
-    image-set(url("/imageep2-mobile.jpg?v=4") type("image/jpeg"),
-              url("/imageep2-mobile.png?v=4") type("image/png")) !important;
-  background-position: 50% 55% !important;
-  background-size: cover !important;
-  transform: none !important; /* no zoom on phones */
-}
-
-/* Extra safety if the attribute isn’t present for some reason */
+/* ===== Mobile override: force portrait crop ===== */
 @media (max-width: 640px) {
   #ep-splash {
     background-image:
-      image-set(url("/imageep2-mobile.jpg?v=4") type("image/jpeg"),
-                url("/imageep2-mobile.png?v=4") type("image/png")) !important;
+      image-set(
+        url("/imageep2-mobile.jpg?v=9") type("image/jpeg"),
+        url("/imageep2-mobile.png?v=9") type("image/png")
+      ) !important;
     background-position: center !important;
     background-size: cover !important;
-    transform: none !important;
+    background-repeat: no-repeat !important;
+    transform: none !important;         /* avoid oversized feel on phones */
   }
   #ep-splash.revealed { transform: none !important; }
 }
@@ -130,7 +118,7 @@ html[data-ep-splash="mobile"] #ep-splash {
   transform: translateX(-50%);
   width: min(1400px, 92vw);
   height: 560px;
-  background: url("/imageep2.png?v=4") center top / 1200px auto no-repeat;
+  background: url("/imageep2.png?v=9") center top / 1200px auto no-repeat;
   opacity: 0.88;
   filter: blur(18px) brightness(1.28) saturate(1.12);
   mix-blend-mode: screen;
@@ -139,49 +127,4 @@ html[data-ep-splash="mobile"] #ep-splash {
 }
 @media (max-width: 640px) {
   .ep-hero-splash::before { display: none; }
-}
-/* ===== [PATCH v5] Force device-specific splash images via html[data-ep-splash] ===== */
-html[data-ep-splash="desktop"] #ep-splash {
-  background-image: url("/imageep2.png?v=5");
-  background-position: 50% 55%;
-  background-size: cover;
-  transform: scale(1.08) translateZ(0);
-}
-html[data-ep-splash="desktop"] #ep-splash.revealed {
-  transform: scale(1.02) translateZ(0);
-}
-
-html[data-ep-splash="mobile"] #ep-splash {
-  background-image:
-    image-set(url("/imageep2-mobile.jpg?v=5") type("image/jpeg"),
-              url("/imageep2-mobile.png?v=5") type("image/png"));
-  background-position: 50% 55%;
-  background-size: cover;
-  transform: none; /* avoid oversized feel on phones */
-}
-
-/* Extra safety if attribute is missing */
-@media (max-width: 640px) {
-  #ep-splash {
-    background-image:
-      image-set(url("/imageep2-mobile.jpg?v=5") type("image/jpeg"),
-                url("/imageep2-mobile.png?v=5") type("image/png")) !important;
-    background-position: center !important;
-    background-size: cover !important;
-    transform: none !important;
-  }
-  #ep-splash.revealed { transform: none !important; }
-}
-
-/* ===== [FORCE MOBILE SPLASH v6] hard override ===== */
-@media (max-width: 640px) {
-  #ep-splash {
-    background-image:
-      image-set(url("/imageep2-mobile.jpg?v=6") type("image/jpeg"));
-    background-position: center !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
-    transform: none !important;
-  }
-  #ep-splash.revealed { transform: none !important; }
 }
