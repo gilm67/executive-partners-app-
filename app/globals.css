@@ -38,7 +38,7 @@ body {
 
   /* Background image fills perfectly */
   background-color: #0B0E13;
-  background-image: url("/imageep2.png");  /* <= ensure this file exists in /public */
+  background-image: url("/imageep2.png");  /* ensure this file exists in /public */
   background-position: 50% 55%;
   background-size: cover;
   background-repeat: no-repeat;
@@ -78,9 +78,14 @@ body {
 /* Hide cleanly */
 #ep-splash.hidden { opacity: 0; pointer-events: none; }
 
-/* Mobile focal tweak */
+/* ===== Mobile overrides: show entire image (no crop) ===== */
 @media (max-width: 640px) {
-  #ep-splash { background-position: 50% 60%; }
+  #ep-splash {
+    background-size: contain;       /* fit entire image */
+    background-position: center;    /* keep centered */
+    background-color: #0B0E13;      /* fill any side/top bands */
+    transform: none;                /* remove zoom for mobile */
+  }
 }
 
 /* Accessibility */
