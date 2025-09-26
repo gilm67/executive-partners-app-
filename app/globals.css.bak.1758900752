@@ -172,16 +172,3 @@ html[data-ep-splash="mobile"] #ep-splash {
   }
   #ep-splash.revealed { transform: none !important; }
 }
-
-/* ===== [FORCE MOBILE SPLASH v6] hard override ===== */
-@media (max-width: 640px) {
-  #ep-splash {
-    background-image:
-      image-set(url("/imageep2-mobile.jpg?v=6") type("image/jpeg"));
-    background-position: center !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
-    transform: none !important;
-  }
-  #ep-splash.revealed { transform: none !important; }
-}
