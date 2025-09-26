@@ -38,7 +38,7 @@ body {
 
   /* Desktop / default background image */
   background-color: #0B0E13;
-  background-image: url("/imageep2.png?v=9");
+  background-image: url("/imageep2.png?v=12");
   background-position: 50% 55%;
   background-size: cover;
   background-repeat: no-repeat;
@@ -74,20 +74,22 @@ body {
 /* Hide cleanly */
 #ep-splash.hidden { opacity: 0; pointer-events: none; }
 
-/* ===== Mobile override: force portrait crop ===== */
-@media (max-width: 640px) {
-  #ep-splash {
+/* ===== Mobile override: force portrait crop =====
+   Use a wider breakpoint (900px) and also target portrait.
+   Strong specificity + !important so it always wins. */
+@media (max-width: 900px), (orientation: portrait) {
+  html body #ep-splash {
     background-image:
       image-set(
-        url("/imageep2-mobile.jpg?v=9") type("image/jpeg"),
-        url("/imageep2-mobile.png?v=9") type("image/png")
+        url("/imageep2-mobile.jpg?v=12") type("image/jpeg"),
+        url("/imageep2-mobile.png?v=12") type("image/png")
       ) !important;
     background-position: center !important;
     background-size: cover !important;
     background-repeat: no-repeat !important;
     transform: none !important;         /* avoid oversized feel on phones */
   }
-  #ep-splash.revealed { transform: none !important; }
+  html body #ep-splash.revealed { transform: none !important; }
 }
 
 /* Accessibility */
@@ -118,13 +120,13 @@ body {
   transform: translateX(-50%);
   width: min(1400px, 92vw);
   height: 560px;
-  background: url("/imageep2.png?v=9") center top / 1200px auto no-repeat;
+  background: url("/imageep2.png?v=12") center top / 1200px auto no-repeat;
   opacity: 0.88;
   filter: blur(18px) brightness(1.28) saturate(1.12);
   mix-blend-mode: screen;
   pointer-events: none;
   z-index: 0;
 }
-@media (max-width: 640px) {
+@media (max-width: 900px), (orientation: portrait) {
   .ep-hero-splash::before { display: none; }
 }
