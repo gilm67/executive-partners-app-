@@ -136,7 +136,7 @@ export default function CandidatesPage() {
                 View current opportunities
               </Link>
               <Link
-                href="/top-talent"
+                href="/bp-simulator?src=candidates_cta"
                 className="inline-flex w-full items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
               >
                 For RMs: BP Simulator / Tools
