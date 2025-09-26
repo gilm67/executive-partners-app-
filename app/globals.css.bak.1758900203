@@ -140,35 +140,3 @@ html[data-ep-splash="mobile"] #ep-splash {
 @media (max-width: 640px) {
   .ep-hero-splash::before { display: none; }
 }
-/* ===== [PATCH v5] Force device-specific splash images via html[data-ep-splash] ===== */
-html[data-ep-splash="desktop"] #ep-splash {
-  background-image: url("/imageep2.png?v=5");
-  background-position: 50% 55%;
-  background-size: cover;
-  transform: scale(1.08) translateZ(0);
-}
-html[data-ep-splash="desktop"] #ep-splash.revealed {
-  transform: scale(1.02) translateZ(0);
-}
-
-html[data-ep-splash="mobile"] #ep-splash {
-  background-image:
-    image-set(url("/imageep2-mobile.jpg?v=5") type("image/jpeg"),
-              url("/imageep2-mobile.png?v=5") type("image/png"));
-  background-position: 50% 55%;
-  background-size: cover;
-  transform: none; /* avoid oversized feel on phones */
-}
-
-/* Extra safety if attribute is missing */
-@media (max-width: 640px) {
-  #ep-splash {
-    background-image:
-      image-set(url("/imageep2-mobile.jpg?v=5") type("image/jpeg"),
-                url("/imageep2-mobile.png?v=5") type("image/png")) !important;
-    background-position: center !important;
-    background-size: cover !important;
-    transform: none !important;
-  }
-  #ep-splash.revealed { transform: none !important; }
-}

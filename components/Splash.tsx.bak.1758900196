@@ -1,0 +1,72 @@
+// components/Splash.tsx
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+const KEY = "ep.splash.shown";
+
+export default function Splash() {
+  const [visible, setVisible] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+  const timers = useRef<number[]>([]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // ---- set mobile/desktop attribute for CSS to target ----
+    const mql = window.matchMedia("(max-width: 640px)");
+    const apply = () => {
+      document.documentElement.setAttribute(
+        "data-ep-splash",
+        mql.matches ? "mobile" : "desktop"
+      );
+    };
+    apply();
+    // Safari/Chrome: both support addEventListener on MediaQueryList
+    mql.addEventListener?.("change", apply);
+
+    // show only once per session
+    if (sessionStorage.getItem(KEY) !== "1") {
+      setVisible(true);
+
+      const prefersReduced =
+        window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+
+      const HOLD = prefersReduced ? 600 : 800;
+      const REVEAL = prefersReduced ? 200 : 700;
+      const LINGER = prefersReduced ? 1200 : 2500;
+
+      timers.current.push(window.setTimeout(() => setRevealed(true), HOLD));
+      timers.current.push(
+        window.setTimeout(() => {
+          setVisible(false);
+          sessionStorage.setItem(KEY, "1");
+        }, HOLD + REVEAL + LINGER)
+      );
+    }
+
+    return () => {
+      timers.current.forEach((t) => clearTimeout(t));
+      timers.current = [];
+      mql.removeEventListener?.("change", apply);
+    };
+  }, []);
+
+  const skip = () => {
+    timers.current.forEach((t) => clearTimeout(t));
+    timers.current = [];
+    setVisible(false);
+    if (typeof window !== "undefined") sessionStorage.setItem(KEY, "1");
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div
+      id="ep-splash"
+      className={revealed ? "revealed" : ""}
+      onClick={skip}
+      aria-hidden
+    />
+  );
+}
