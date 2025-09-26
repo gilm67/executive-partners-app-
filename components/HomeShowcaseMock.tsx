@@ -69,6 +69,8 @@ export default function HomeShowcaseMock() {
   const pathname = usePathname();
   const base = pathname?.startsWith('/en') ? '/en' : ''; // locale-aware prefix
 
+  const MARKETS = ['Geneva', 'Zürich', 'London', 'Dubai', 'Singapore', 'Hong Kong', 'New York', 'Miami'];
+
   const [jobs, setJobs] = useState<Job[] | null>(null);
   useEffect(() => {
     const t = setTimeout(
@@ -120,7 +122,7 @@ export default function HomeShowcaseMock() {
           <div className="text-sm text-white/70">12-month retention</div>
         </Card>
         <Card className="hidden md:block">
-          <div className="text-2xl font-extrabold">6</div>
+          <div className="text-2xl font-extrabold">{MARKETS.length}</div>
           <div className="text-sm text-white/70">Core markets</div>
         </Card>
       </section>
@@ -129,7 +131,7 @@ export default function HomeShowcaseMock() {
       <section className="space-y-3">
         <h2 className="text-xl md:text-2xl font-bold">Markets</h2>
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-          {['Geneva', 'Zürich', 'London', 'Dubai', 'Singapore', 'Hong Kong', 'New York', 'Miami'].map((m) => (
+          {MARKETS.map((m) => (
             <Link
               key={m}
               href={`${base}/markets/${m.toLowerCase().replace(/\s+/g, '-')}`}
@@ -209,10 +211,18 @@ export default function HomeShowcaseMock() {
             />
           </Card>
           <Card>
-            <Testimonial quote="Discreet, calibrated profiles — saved my time." author="Market Head" role="Dubai" />
+            <Testimonial
+              quote="Discreet, calibrated profiles — saved my time."
+              author="Market Head"
+              role="Dubai"
+            />
           </Card>
           <Card>
-            <Testimonial quote="Strong grasp of portability and platform nuances." author="COO Wealth" role="Geneva" />
+            <Testimonial
+              quote="Thanks to your support, I secured a CEO position in Dubai."
+              author="CEO"
+              role="Dubai"
+            />
           </Card>
         </div>
       </section>
