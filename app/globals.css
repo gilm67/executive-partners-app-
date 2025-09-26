@@ -36,7 +36,7 @@ body {
   /* Overdraw by 2px to kill rounding seams on some GPUs */
   clip-path: inset(-2px -2px -2px -2px);
 
-  /* Background image fills perfectly */
+  /* Desktop / default background image */
   background-color: #0B0E13;
   background-image: url("/imageep2.png");  /* ensure this file exists in /public */
   background-position: 50% 55%;
@@ -78,13 +78,13 @@ body {
 /* Hide cleanly */
 #ep-splash.hidden { opacity: 0; pointer-events: none; }
 
-/* ===== Mobile overrides: show entire image (no crop) ===== */
+/* ===== Mobile overrides: use portrait crop (best look) ===== */
 @media (max-width: 640px) {
   #ep-splash {
-    background-size: contain;       /* fit entire image */
-    background-position: center;    /* keep centered */
-    background-color: #0B0E13;      /* fill any side/top bands */
-    transform: none;                /* remove zoom for mobile */
+    background-image: url("/imageep2-mobile.png"); /* your new mobile crop */
+    background-position: 50% 55%;                  /* tweak if you want a different focal point */
+    background-size: cover;                        /* keep full-bleed */
+    transform: scale(1.03);                        /* gentler zoom on mobile */
   }
 }
 
