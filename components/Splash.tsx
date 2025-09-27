@@ -1,58 +1,79 @@
-// components/Splash.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 
 const KEY = "ep.splash.shown";
 
+function getQueryFlag(name: string) {
+  if (typeof window === "undefined") return null;
+  const v = new URLSearchParams(window.location.search).get(name);
+  return v === "" ? true : v === "1" || v === "true";
+}
+
 export default function Splash() {
+  // Hydration-safe gating
+  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const timers = useRef<number[]>([]);
 
+  useEffect(() => setMounted(true), []);
+
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!mounted || typeof window === "undefined") return;
 
-    // Mark html with mobile/desktop so CSS can pick the right image
-    const isMobile = window.matchMedia?.("(max-width: 640px)").matches ?? false;
-    document.documentElement.setAttribute("data-ep-splash", isMobile ? "mobile" : "desktop");
+    // ---- URL overrides (for quick testing) ----
+    const forceOn  = getQueryFlag("splash");     // ?splash=1
+    const forceOff = getQueryFlag("nosplash");   // ?nosplash=1
+    if (forceOff) return;
 
-    // If you add ?splash=1 to the URL, always show the splash (handy for testing on phone)
-    const force = new URLSearchParams(window.location.search).get("splash") === "1";
+    // Desktop only (unless forced on)
+    const isMobile = window.matchMedia("(max-width: 900px)").matches;
+    if (!forceOn && isMobile) return;
 
-    // Only show once per session unless forced
-    if (!force && sessionStorage.getItem(KEY) === "1") return;
+    // Only once per session (unless forced on)
+    if (!forceOn && sessionStorage.getItem(KEY) === "1") return;
 
     setVisible(true);
 
-    const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
-    const HOLD   = prefersReduced ? 600  : 800;   // initial moment
-    const REVEAL = prefersReduced ? 200  : 700;   // unblur/settle
-    const LINGER = prefersReduced ? 1200 : 2500;  // crisp on screen
+    const prefersReduced =
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
-    timers.current.push(window.setTimeout(() => setRevealed(true), HOLD));
+    // —— Timings tuned for desktop “premium” feel ——
+    // 1) brief soft hold (blurred), 2) reveal, 3) linger sharp
+    const HOLD   = prefersReduced ? 400 : 600;
+    const REVEAL = prefersReduced ? 200 : 700;
+    const LINGER = prefersReduced ? 400 : 1200;
+
+    timers.current.push(window.setTimeout(() => setReveal(true), HOLD));
     timers.current.push(
       window.setTimeout(() => {
         setVisible(false);
-        if (!force) sessionStorage.setItem(KEY, "1");
+        sessionStorage.setItem(KEY, "1");
       }, HOLD + REVEAL + LINGER)
     );
 
+    function setReveal(v: boolean) {
+      setRevealed(v);
+    }
+
     return () => {
-      timers.current.forEach(clearTimeout);
+      timers.current.forEach((t) => clearTimeout(t));
       timers.current = [];
     };
-  }, []);
+  }, [mounted]);
 
+  // Click to skip (desktop)
   const skip = () => {
-    timers.current.forEach(clearTimeout);
+    timers.current.forEach((t) => clearTimeout(t));
     timers.current = [];
     setVisible(false);
-    sessionStorage.setItem(KEY, "1");
+    if (typeof window !== "undefined") sessionStorage.setItem(KEY, "1");
   };
 
-  if (!visible) return null;
+  if (!mounted || !visible) return null;
 
+  // Background image & animation are controlled in CSS (#ep-splash)
   return (
     <div
       id="ep-splash"
