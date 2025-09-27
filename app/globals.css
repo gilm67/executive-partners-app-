@@ -25,7 +25,7 @@ body {
 :root{
   --ep-maxw: 72rem;            /* 1152px */
   --ep-pad-x: clamp(1rem, 3vw, 2rem);
-  --ep-section-y: clamp(1.75rem, 4vw, 3rem);
+  --ep-section-y: clamp(1.5rem, 4vw, 3rem);
   --ep-card-bg: rgba(255,255,255,0.04);
   --ep-card-brd: rgba(255,255,255,0.10);
 }
@@ -76,7 +76,7 @@ a:focus-visible{ outline: 2px solid rgba(59,130,246,.6); outline-offset: 2px; bo
 }
 .no-scrollbar::-webkit-scrollbar{ display: none; }
 
-/* Buttons baseline (CTA components can keep Tailwind classes; this polishes defaults) */
+/* Buttons baseline */
 .btn{
   @apply inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold min-h-[44px];
 }
@@ -118,12 +118,8 @@ a:focus-visible{ outline: 2px solid rgba(59,130,246,.6); outline-offset: 2px; bo
 }
 
 /* Footer polish */
-.footer-links a{
-  @apply text-white/80 hover:text-white;
-}
-.footer-meta{
-  @apply text-xs text-white/50;
-}
+.footer-links a{ @apply text-white/80 hover:text-white; }
+.footer-meta{ @apply text-xs text-white/50; }
 
 /* ===========================
    Unified main page title
@@ -131,9 +127,7 @@ a:focus-visible{ outline: 2px solid rgba(59,130,246,.6); outline-offset: 2px; bo
 .page-title { @apply text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-6; }
 
 /* =========================================
-   PRO SPLASH (full-bleed, centered, no edge banding)
-   Hook with: <div id="ep-splash" />
-   Add class "revealed" to ease zoom; add "hidden" to fade out.
+   SPLASH — keep for desktop, disable on mobile
 ========================================= */
 #ep-splash {
   position: fixed;
@@ -180,20 +174,9 @@ a:focus-visible{ outline: 2px solid rgba(59,130,246,.6); outline-offset: 2px; bo
 /* Hide cleanly */
 #ep-splash.hidden { opacity: 0; pointer-events: none; }
 
-/* ===== Mobile override: force portrait crop & calmer motion ===== */
-@media (max-width: 900px), (orientation: portrait) {
-  #ep-splash {
-    background-image:
-      image-set(
-        url("/imageep2-mobile.jpg?v=12") type("image/jpeg"),
-        url("/imageep2-mobile.png?v=12") type("image/png")
-      ) !important;
-    background-position: center !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
-    transform: none !important;         /* avoid oversized feel on phones */
-  }
-  #ep-splash.revealed { transform: none !important; }
+/* 🔕 Disable splash on mobile/tablet — instant content, no cover-up */
+@media (max-width: 900px) {
+  #ep-splash { display: none !important; }
 }
 
 /* Accessibility */
@@ -202,17 +185,22 @@ a:focus-visible{ outline: 2px solid rgba(59,130,246,.6); outline-offset: 2px; bo
 }
 
 /* =========================================
-   HERO REVEAL
+   HERO REVEAL (instant, lightweight, mobile-first)
 ========================================= */
-.ep-hero {
+.hero-reveal {
   opacity: 0;
-  transform: translateY(10px);
-  transition: opacity .9s ease .25s, transform .9s ease .25s;
+  transform: translateY(8px);
+  filter: saturate(1.02);
+  transition: opacity .5s ease, transform .5s ease, filter .6s ease;
 }
-.ep-hero.ep-hero--show { opacity: 1; transform: none; }
+.hero-reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
 
 /* =========================================
    HERO GLOW
+   (kept for desktop, hidden on small screens)
 ========================================= */
 .ep-hero-splash { position: relative; isolation: isolate; }
 .ep-hero-splash > * { position: relative; z-index: 1; }
@@ -231,7 +219,7 @@ a:focus-visible{ outline: 2px solid rgba(59,130,246,.6); outline-offset: 2px; bo
   pointer-events: none;
   z-index: 0;
 }
-@media (max-width: 900px), (orientation: portrait) {
+@media (max-width: 900px) {
   .ep-hero-splash::before { display: none; }
 }
 
@@ -244,11 +232,15 @@ a:focus-visible{ outline: 2px solid rgba(59,130,246,.6); outline-offset: 2px; bo
   background: rgba(11,14,19,0.6);
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
-.site-header .brand{
-  @apply font-semibold text-white text-lg;
-}
+.site-header .brand{ @apply font-semibold text-white text-lg; }
 .site-nav a{
   @apply rounded-md px-3 py-2 text-sm text-white/85 hover:bg-white/5 hover:text-white;
+}
+
+/* Optional stronger glass on landing */
+.header-glass {
+  background: linear-gradient(180deg, rgba(11,14,19,.85), rgba(11,14,19,.55) 40%, transparent);
+  backdrop-filter: saturate(140%) blur(8px);
 }
 
 /* Mobile menu sheet */
@@ -274,9 +266,7 @@ a:focus-visible{ outline: 2px solid rgba(59,130,246,.6); outline-offset: 2px; bo
 /* =========================================
    Footer readability (mobile-first)
 ========================================= */
-footer .section{
-  @apply grid gap-6 md:grid-cols-3;
-}
+footer .section{ @apply grid gap-6 md:grid-cols-3; }
 footer h3{ @apply text-sm font-semibold text-white/90; }
 footer p, footer li{ @apply text-sm text-white/75; }
 .footer-meta{ @apply mt-6 border-t border-white/10 pt-4 flex flex-wrap items-center justify-between gap-3; }
