@@ -1,17 +1,15 @@
-// app/page.tsx
-import HeaderTopBar from "@/components/HeaderTopBar"; // ensure this file starts with "use client"
 import Image from "next/image";
-import Link from "next/link";
+import HeaderTopBar from "@/components/HeaderTopBar";
 
 export default function Page() {
   return (
     <main className="relative min-h-screen w-full overflow-hidden">
       <HeaderTopBar />
 
-      {/* Background image */}
+      {/* Background image: your new file */}
       <Image
-        src="/hero-executive-partners.png"
-        alt="Executive Partners – Global Finance Hero"
+        src="/newlp.png"
+        alt="Executive Partners — Private Banking & Wealth Management"
         fill
         priority
         className="object-cover object-center"
@@ -19,7 +17,7 @@ export default function Page() {
       />
 
       {/* Overlay for readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
 
       {/* Centered content */}
       <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 text-center md:px-6 lg:px-8">
@@ -42,19 +40,13 @@ export default function Page() {
           London, New York, Miami, Dubai, Singapore.
         </p>
 
-        <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
-          <Link
-            href="/jobs"
+        <div className="mt-9">
+          <a
+            href="http://localhost:3007/"
             className="rounded-2xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-white/90"
           >
             EXPLORE OPPORTUNITIES
-          </Link>
-          <Link
-            href="/contact"
-            className="rounded-2xl border border-white/30 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
-          >
-            CONNECT WITH US
-          </Link>
+          </a>
         </div>
       </div>
     </main>
