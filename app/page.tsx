@@ -1,62 +1,94 @@
 // app/page.tsx
-import HeaderTopBar from "@/components/HeaderTopBar"; // ensure this file starts with "use client"
+import HeaderTopBar from "@/components/HeaderTopBar";
 import Image from "next/image";
 import Link from "next/link";
+import MobileHero from "@/components/MobileHero"; // mobile-only hero
+
+const showNewHero = process.env.NEXT_PUBLIC_SHOW_NEW_HERO === "true";
 
 export default function Page() {
   return (
-    <main className="relative min-h-screen w-full overflow-hidden">
+    <main className="relative w-full overflow-hidden pt-0 lg:pt-16">
+      {/* Header: transparent on mobile (over hero), solid on desktop */}
       <HeaderTopBar />
 
+      {/* Mobile-only hero (phones/tablets) */}
+      <div className="lg:hidden">
+        <MobileHero />
+      </div>
+
+      {/* Desktop-only: keep your current toggle-based hero/legacy */}
+      <div className="hidden lg:block">
+        {showNewHero ? <HeroSection /> : <LegacyLanding />}
+      </div>
+    </main>
+  );
+}
+
+/* ---------- New compact hero (desktop) ---------- */
+function HeroSection() {
+  return (
+    <section className="relative h-[60vh] md:h-[55vh] lg:h-[480px] w-full overflow-hidden">
       {/* Background image */}
       <Image
         src="/hero-executive-partners.png"
         alt="Executive Partners – Global Finance Hero"
         fill
         priority
-        className="object-cover object-center"
+        className="object-cover object-[50%_35%]" // slightly higher crop
         sizes="100vw"
       />
 
       {/* Overlay for readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" aria-hidden />
 
-      {/* Centered content */}
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 text-center md:px-6 lg:px-8">
-        <h1 className="text-4xl font-extrabold tracking-tight text-white drop-shadow-lg sm:text-5xl md:text-6xl">
+      {/* Content */}
+      <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-4 text-center md:px-6 lg:px-8 lg:justify-start lg:pt-16">
+        <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow lg:text-5xl">
           EXECUTIVE PARTNERS
         </h1>
 
-        <p className="mt-5 max-w-3xl text-base text-white/90 sm:text-lg">
+        <p className="mt-3 max-w-3xl text-sm text-white/90 sm:text-base">
           Your Gateway to Elite Opportunities in Global Finance.
         </p>
 
-        <p className="mt-2 text-xs uppercase tracking-[0.18em] text-white/70 sm:text-sm">
+        <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-white/70 sm:text-xs">
           Top Recruiting for Private Banking &amp; Wealth Management
         </p>
 
-        <div className="mt-8 h-px w-24 bg-white/25" />
+        <div className="mt-6 h-px w-20 bg-white/25" />
 
-        <p className="mt-6 max-w-3xl text-sm leading-7 text-white/85 md:text-base">
+        <p className="mt-4 max-w-3xl text-xs leading-6 text-white/85 md:text-sm">
           Based in Geneva. Covering International Financial Hubs: Geneva, Zurich,
           London, New York, Miami, Dubai, Singapore.
         </p>
 
-        <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
+        <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
           <Link
             href="/jobs"
-            className="rounded-2xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-white/90"
+            className="rounded-2xl bg-white px-5 py-2.5 text-xs font-semibold text-black hover:bg-white/90 sm:text-sm"
+            aria-label="Explore opportunities"
           >
             EXPLORE OPPORTUNITIES
           </Link>
           <Link
             href="/contact"
-            className="rounded-2xl border border-white/30 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+            className="rounded-2xl border border-white/30 px-5 py-2.5 text-xs font-semibold text-white hover:bg-white/10 sm:text-sm"
+            aria-label="Connect with us"
           >
             CONNECT WITH US
           </Link>
         </div>
       </div>
-    </main>
+    </section>
+  );
+}
+
+/* ---------- Your existing landing page (desktop fallback) ---------- */
+function LegacyLanding() {
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-14 md:px-6 lg:px-8 text-white/90">
+      {/* TODO: paste your existing landing JSX here (stats, Markets, Featured Roles, etc.) */}
+    </div>
   );
 }

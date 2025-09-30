@@ -26,9 +26,9 @@ export default function Splash() {
     const forceOff = getQueryFlag("nosplash"); // ?nosplash=1
     if (forceOff) return;
 
-    // Desktop only (unless forced on)
+    // 🚨 Desktop only (unless forced on)
     const isMobile = window.matchMedia("(max-width: 900px)").matches;
-    if (!forceOn && isMobile) return;
+    if (!forceOn && isMobile) return; // <- prevents splash on mobile
 
     // Only once per session (unless forced on)
     if (!forceOn && sessionStorage.getItem(KEY) === "1") return;
@@ -75,12 +75,13 @@ export default function Splash() {
     if (typeof window !== "undefined") sessionStorage.setItem(KEY, "1");
   };
 
+  // 🚨 If not visible or mobile, render nothing
   if (!mounted || !visible) return null;
 
   return (
     <div
       id="ep-splash"
-      className={revealed ? "revealed" : ""}
+      className={revealed ? "revealed hidden lg:block" : "hidden lg:block"}
       onClick={skip}
       role="button"
       aria-label="Skip intro splash"
