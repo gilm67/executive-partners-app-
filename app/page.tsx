@@ -18,13 +18,9 @@ export default function Page({ searchParams }: PageProps) {
       <HeaderTopBar />
 
       {/* Mobile-only hero; also render at any width if ?mobile=1 */}
-      {forceMobile ? (
-        <MobileHero force />
-      ) : (
-        <div className="lg:hidden">
-          <MobileHero />
-        </div>
-      )}
+      <div className={forceMobile ? "" : "lg:hidden"}>
+        <MobileHero />
+      </div>
 
       {/* Desktop landing; hidden when forcing mobile */}
       {!forceMobile && (
