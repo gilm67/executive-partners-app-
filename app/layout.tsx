@@ -1,7 +1,8 @@
 // app/layout.tsx
 import "./globals.css";
-import TopNav from "@/components/TopNav";
-import Splash from "@/components/Splash";
+// ⬇️ Force the concrete file used in production (no alias ambiguity)
+import TopNav from "../components/TopNav";
+import Splash from "../components/Splash";
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { Inter, Playfair_Display } from "next/font/google";
@@ -100,28 +101,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <head>
-        {/* Using next/font, so preconnect is optional; keep if you like */}
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-
-        {/* 🔔 RSS autodiscovery */}
         <link
           rel="alternate"
           type="application/rss+xml"
           title="Executive Partners – Private Wealth Pulse"
           href="/rss.xml"
         />
-
-        {/* 🧭 Safari pinned tab */}
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0B0E13" />
         <meta name="msapplication-TileColor" content="#0B0E13" />
-
-        {/* Structured Data */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       </head>
 
-      {/* body-grain enables the subtle luxury grain overlay from globals.css */}
       <body className="min-h-screen body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white">
         <a
           href="#main"
@@ -133,7 +126,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Splash />
         <TopNav />
 
-        {/* container-max matches the new landing building blocks */}
         <main id="main" className="container-max py-10">
           {children}
         </main>
