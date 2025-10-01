@@ -4,6 +4,10 @@ import TopNav from "@/components/TopNav";
 import Splash from "@/components/Splash";
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
+import { Inter, Playfair_Display } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
 
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -35,8 +39,6 @@ export const metadata: Metadata = {
     images: ["/og.png"],
   },
   robots: { index: true, follow: true },
-
-  // ✅ Multi-size icons + one-time cache-buster on ICO
   icons: {
     icon: [
       { url: "/favicon.ico?v=2" },
@@ -48,8 +50,6 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico?v=2",
     apple: "/apple-touch-icon.png",
   },
-
-  // ✅ Google Search Console verification
   verification: {
     google: "WEQvBE0-6FZmOaMbV2oVP9Cm9Zm6A25zU_0Jaghettk",
   },
@@ -69,9 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     name: "Executive Partners",
     url: SITE,
     logo: `${SITE}/logo.png`,
-    sameAs: [
-      "https://www.linkedin.com/company/executive-partners/",
-    ],
+    sameAs: ["https://www.linkedin.com/company/executive-partners/"],
     contactPoint: [
       {
         "@type": "ContactPoint",
@@ -96,8 +94,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <html lang="en" className="h-full" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`h-full ${inter.variable} ${playfair.variable}`}
+      suppressHydrationWarning
+    >
       <head>
+        {/* Using next/font, so preconnect is optional; keep if you like */}
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
 
@@ -109,7 +112,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="/rss.xml"
         />
 
-        {/* 🧭 Safari pinned tab (optional but nice) */}
+        {/* 🧭 Safari pinned tab */}
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0B0E13" />
         <meta name="msapplication-TileColor" content="#0B0E13" />
 
@@ -117,7 +120,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       </head>
-      <body className="min-h-screen bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white">
+
+      {/* body-grain enables the subtle luxury grain overlay from globals.css */}
+      <body className="min-h-screen body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white/10 focus:px-3 focus:py-2"
@@ -128,13 +133,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Splash />
         <TopNav />
 
-        <main id="main" className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
+        {/* container-max matches the new landing building blocks */}
+        <main id="main" className="container-max py-10">
           {children}
         </main>
 
-        {/* 🔗 Sitewide internal links footer (SEO juice + UX) */}
         <footer className="border-t border-white/10">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
+          <div className="container-max py-10">
             <div className="grid gap-8 md:grid-cols-3">
               <div>
                 <h3 className="text-sm font-semibold text-white/90">Executive Partners</h3>
@@ -170,7 +175,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             <div className="mt-8 border-t border-white/10 pt-6 text-xs text-white/50 flex flex-wrap items-center justify-between gap-3">
               <span>© {new Date().getFullYear()} Executive Partners. All rights reserved.</span>
-              <a className="hover:underline" href="https://www.linkedin.com/company/executive-partners/" target="_blank" rel="noopener noreferrer">
+              <a
+                className="hover:underline"
+                href="https://www.linkedin.com/company/executive-partners/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 LinkedIn
               </a>
             </div>
