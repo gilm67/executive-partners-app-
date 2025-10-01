@@ -4,10 +4,10 @@ import { CardBtn } from "./components/CardBtn";
 import { MapPin, ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 
-// ✅ FIXED imports: use relative paths instead of "@/"
-import Skyline from "../components/Skyline";
-import StatsCount from "../components/StatsCount";
-import ConfidentialCTA from "../components/ConfidentialCTA";
+// ✅ FIXED imports: point to app/components/
+import Skyline from "./components/Skyline";
+import StatsCount from "./components/StatsCount";
+import ConfidentialCTA from "./components/ConfidentialCTA";
 
 /* ------------ Types & helpers ------------ */
 
