@@ -1,33 +1,40 @@
-// components/ConfidentialCTA.tsx
+"use client";
+
 import Link from "next/link";
 
 export default function ConfidentialCTA() {
   return (
-    <section className="mt-16 border-t border-white/10">
-      <div className="container-max py-10">
-        <div className="grid items-center gap-6 md:grid-cols-2">
-          <div>
-            <h3 className="font-[var(--font-playfair)] text-3xl">
-              Move discreetly. Hire decisively.
-            </h3>
-            <p className="mt-3 text-white/75">
-              Confidential conversations for senior private bankers and hiring leaders.
-              No data stored without consent.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <Link href="/contact" className="btn-ghost">Talk confidentially</Link>
-              <Link href="/portability" className="btn-primary">Portability Score™</Link>
-              <Link href="/bp-simulator" className="btn-ghost">Business Plan Simulator</Link>
-            </div>
-          </div>
+    <section
+      className="mx-auto mt-16 w-full max-w-6xl rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.03))] p-6 backdrop-blur"
+      aria-label="Confidential call to action"
+    >
+      <div className="grid items-center gap-6 md:grid-cols-3">
+        <div className="md:col-span-2">
+          <h3 className="text-2xl font-bold leading-snug">
+            Move discreetly. Hire decisively.
+          </h3>
+          <p className="mt-2 text-white/80">
+            Leverage our{" "}
+            <span className="font-semibold">Portability Score™</span> and the{" "}
+            <span className="font-semibold">Business Plan Simulator</span> to pre-validate books,
+            de-risk transitions, and accelerate approvals across compliance.
+          </p>
+        </div>
 
-          <div className="card">
-            <div className="text-sm text-white/70">Highlights</div>
-            <ul className="mt-2 space-y-2 text-white/85">
-              <li>• 200+ senior placements across Swiss & global hubs</li>
-              <li>• 92% 12-month retention on mandates</li>
-              <li>• Advanced tools: Portability Score™ & Business Plan Simulator</li>
-            </ul>
+        <div className="flex flex-col gap-3 md:items-end">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            <Link href="/apply" className="btn-primary btn-xl text-center">
+              Apply Confidentially
+            </Link>
+            <Link href="/portability" className="btn-ghost btn-xl text-center">
+              Portability Score™
+            </Link>
+          </div>
+          <div className="text-xs text-white/60">
+            Prefer a model review?{" "}
+            <Link href="/business-plan-simulator" className="underline underline-offset-4 hover:text-white">
+              Run the Simulator
+            </Link>
           </div>
         </div>
       </div>
