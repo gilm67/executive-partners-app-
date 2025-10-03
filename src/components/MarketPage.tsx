@@ -1,177 +1,209 @@
-// src/components/MarketPage.tsx
+"use client";
+
 import Link from "next/link";
+// Use your shim or import directly from lib/markets
+import type { Market as MarketData } from "../../lib/markets";
 
-export type CompRow = { level: string; base: string; bonus: string };
-export type MarketData = {
-  slug: string;
-  country: string;
-  currency: string;
-  title: string;
-  intro: string;
-  highlights: string[];
-  regulatory: string[];
-  ecosystemTags: string[];
-  compTable: CompRow[];
-  footnote?: string;
-};
+/* UI helpers */
+const cap = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
-export default function MarketPage({ data }: { data: MarketData }) {
+function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative">
-      {/* top glow */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{
-        background:
-          "radial-gradient(900px 320px at 15% -8%, rgba(59,130,246,.14) 0%, rgba(59,130,246,0) 60%), radial-gradient(800px 300px at 110% 0%, rgba(16,185,129,.10) 0%, rgba(16,185,129,0) 60%)",
-      }} />
+    <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/80">
+      {children}
+    </span>
+  );
+}
 
-      {/* breadcrumb */}
-      <nav className="mb-4 text-sm text-white/70">
-        <Link href="/markets" className="hover:text-white">Markets</Link>
-        <span className="mx-2">/</span>
-        <span>{capitalize(data.slug)}</span>
-      </nav>
+function Card({
+  title,
+  children,
+  footnote,
+  className = "",
+}: {
+  title?: string;
+  children: React.ReactNode;
+  footnote?: string;
+  className?: string;
+}) {
+  return (
+    <section
+      className={`rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)] ${className}`}
+    >
+      {title ? (
+        <h2 className="text-lg font-semibold tracking-tight text-white">{title}</h2>
+      ) : null}
+      <div className={title ? "mt-3" : ""}>{children}</div>
+      {footnote ? (
+        <p className="mt-3 text-xs text-neutral-500">{footnote}</p>
+      ) : null}
+    </section>
+  );
+}
 
-      {/* H1 + intro – match site scale */}
-      <header className="max-w-3xl">
-        <h1 className="text-5xl font-extrabold tracking-tight md:text-6xl">{data.title}</h1>
-        <p className="mt-3 text-white/80">{data.intro}</p>
-        <div className="mt-4 flex flex-wrap gap-2 text-xs">
-          <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-white/80">
-            {capitalize(data.slug)}, {data.country}
-          </span>
-          <span className="inline-flex items-center rounded-full border border-sky-400/30 bg-sky-500/10 px-2.5 py-1 text-sky-300">
-            Currency: {data.currency}
-          </span>
+export default function MarketPage({ market }: { market: MarketData }) {
+  return (
+    <main className="relative mx-auto max-w-6xl px-4 py-10 text-white">
+      {/* subtle site glow */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(1100px 420px at 12% -10%, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%), radial-gradient(950px 380px at 110% 0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%)",
+        }}
+      />
+
+      {/* Eyebrow */}
+      <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-white/60">
+        Market insight
+      </div>
+
+      {/* Header */}
+      <header>
+        <h1 className="text-balance text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
+          {market.name}
+        </h1>
+        <p className="mt-3 max-w-3xl text-neutral-300">{market.headline}</p>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Pill>
+            {cap(market.slug)}
+            {market.country ? `, ${market.country}` : ""}
+          </Pill>
+          {market.comp?.currency ? (
+            <Pill>Currency: {market.comp.currency}</Pill>
+          ) : null}
         </div>
       </header>
 
-      {/* content grid */}
-      <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
-        {/* left column */}
-        <div className="space-y-6">
-          {/* Hiring pulse */}
+      {/* Row 1: Hiring Pulse + Compensation */}
+      <div className="mt-6 grid gap-6 md:grid-cols-2">
+        {/* Hiring Pulse */}
+        {market.hiringPulse?.length ? (
           <Card title="Hiring Pulse">
-            <ul className="space-y-2 text-sm leading-relaxed text-white/85">
-              {data.highlights.map((h, i) => (
-                <li key={i} className="flex gap-2">
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-400" />
-                  <span>{h}</span>
-                </li>
+            <ul className="grid list-disc gap-2 pl-5 text-sm text-neutral-300">
+              {market.hiringPulse.map((h, i) => (
+                <li key={i}>{h}</li>
               ))}
             </ul>
           </Card>
+        ) : (
+          <div />
+        )}
 
-          {/* Regulatory */}
-          <Card title="Regulatory Must-Haves">
-            <ul className="space-y-2 text-sm leading-relaxed text-white/85">
-              {data.regulatory.map((r, i) => (
-                <li key={i} className="flex gap-2">
-                  <span className="mt-2 h-[3px] w-[14px] shrink-0 rounded bg-white/40" />
-                  <span>{r}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-
-          {/* Compensation */}
-          <Card title={`Typical Senior PB Compensation (${data.currency})`}>
-            <div className="overflow-hidden rounded-xl border border-white/10">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-white/5 text-white/80">
-                  <tr>
-                    <th className="px-3 py-2 font-semibold">Level</th>
-                    <th className="px-3 py-2 font-semibold">Base</th>
-                    <th className="px-3 py-2 font-semibold">Bonus</th>
+        {/* Compensation */}
+        {market.comp?.bands?.length ? (
+          <Card
+            title={`Typical Senior PB Compensation (${market.comp.currency || ""})`}
+            footnote={
+              market.comp.netNote ||
+              "Indicative only; varies by platform, coverage, portability, and revenue model."
+            }
+          >
+            <div className="overflow-x-auto rounded-xl border border-white/10">
+              <table className="w-full border-collapse text-sm">
+                <thead>
+                  <tr className="bg-white/[0.06] text-left text-white/90">
+                    <th className="px-4 py-2">Level</th>
+                    <th className="px-4 py-2">Base</th>
+                    <th className="px-4 py-2">Bonus</th>
+                    <th className="px-4 py-2">Note</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {data.compTable.map((row) => (
-                    <tr key={row.level} className="odd:bg-white/[0.02]">
-                      <td className="px-3 py-2">{row.level}</td>
-                      <td className="px-3 py-2">{row.base}</td>
-                      <td className="px-3 py-2">{row.bonus}</td>
+                  {market.comp.bands.map((row, i) => (
+                    <tr
+                      key={i}
+                      className="border-t border-white/10 text-neutral-300 hover:bg-white/[0.04]"
+                    >
+                      <td className="px-4 py-2">{row.level}</td>
+                      <td className="px-4 py-2">{row.base}</td>
+                      <td className="px-4 py-2">{row.bonus}</td>
+                      <td className="px-4 py-2">{row.note ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            {data.footnote && (
-              <p className="mt-2 text-xs text-white/60">{data.footnote}</p>
-            )}
           </Card>
+        ) : (
+          <div />
+        )}
+      </div>
 
-          {/* Ecosystem */}
-          <Card title={`${capitalize(data.slug)} ecosystem`}>
-            <div className="flex flex-wrap gap-2">
-              {data.ecosystemTags.map((t) => (
-                <span
-                  key={t}
-                  className="inline-flex items-center rounded-full border border-sky-400/30 bg-sky-500/10 px-2.5 py-1 text-xs font-medium text-sky-300"
-                >
-                  {t}
-                </span>
+      {/* Row 2: Regulatory full width */}
+      {market.regulatory?.length ? (
+        <div className="mt-6">
+          <Card title="Regulatory Must-Haves">
+            <ul className="grid list-disc gap-2 pl-5 text-sm text-neutral-300">
+              {market.regulatory.map((r, i) => (
+                <li key={i}>{r}</li>
               ))}
-            </div>
+            </ul>
           </Card>
+        </div>
+      ) : null}
 
-          {/* Explore other markets */}
-          <Card title="Explore other markets">
-            <div className="flex flex-wrap gap-2">
-              {["zurich","dubai","singapore","hong-kong","london","new-york","miami","geneva"].filter(s => s!==data.slug).map((s) => (
+      {/* Row 3: Ecosystem full width */}
+      {market.ecosystem ? (
+        <div className="mt-6">
+          <Card title={market.ecosystem.title || `${cap(market.slug)} ecosystem`}>
+            {/* Institutions / items */}
+            {market.ecosystem.items?.length ? (
+              <>
+                <div className="mb-2 text-xs font-semibold text-white/70">Institutions</div>
+                <div className="mb-4 flex flex-wrap gap-2">
+                  {market.ecosystem.items.map((tag, i) => (
+                    <span
+                      key={i}
+                      className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/80"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {/* Trends */}
+            {market.ecosystem.trends?.length ? (
+              <>
+                <div className="mb-2 text-xs font-semibold text-white/70">Trends</div>
+                <div className="flex flex-wrap gap-2">
+                  {market.ecosystem.trends.map((tag, i) => (
+                    <span
+                      key={i}
+                      className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/80"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </>
+            ) : null}
+          </Card>
+        </div>
+      ) : null}
+
+      {/* Row 4: Explore other markets */}
+      <div className="mt-6">
+        <Card title="Explore other markets">
+          <div className="flex flex-wrap gap-2">
+            {(["geneva", "zurich", "dubai", "london", "singapore", "miami", "hong-kong", "new-york"] as const)
+              .filter((s) => s !== market.slug)
+              .map((s) => (
                 <Link
                   key={s}
                   href={`/markets/${s}`}
-                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm text-white/85 hover:bg-white/10"
+                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm text-white/90 transition hover:bg-white/10"
                 >
-                  {titleCase(s.replace("-", " "))}
+                  {cap(s.replace("-", " "))}
                 </Link>
               ))}
-            </div>
-          </Card>
-        </div>
-
-        {/* right column – CTA box */}
-        <aside className="space-y-6">
-          <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/[.06] to-white/[.03] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
-            <div className="text-sm text-white/70">
-              {capitalize(data.slug)}, {data.country}
-            </div>
-            <p className="mt-3 text-[15px] text-white/85">
-              Need a shortlist in {capitalize(data.slug)}? We’ll align on coverage, portability, and onboarding — then move fast.
-            </p>
-            <div className="mt-3 flex gap-2">
-              <Link href="/hiring-managers" className="inline-flex w-full justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700">
-                Hire Talent
-              </Link>
-              <Link href="/contact" className="inline-flex w-full justify-center rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10">
-                Contact
-              </Link>
-            </div>
-            <div className="mt-3 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-xs text-white/70">
-              ⓘ Typical shortlist: 10–15 business days (brief-dependent).
-            </div>
-            <Link href="/jobs" className="mt-3 inline-flex items-center text-sm font-semibold text-sky-300 hover:text-sky-200">
-              View market jobs →
-            </Link>
           </div>
-        </aside>
-      </section>
-    </div>
-  );
-}
-
-function capitalize(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-function titleCase(s: string) {
-  return s.split(" ").map(w => w.charAt(0).toUpperCase()+w.slice(1)).join(" ");
-}
-
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/[.06] to-white/[.03] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)]">
-      <h2 className="mb-3 text-lg font-semibold tracking-tight">{title}</h2>
-      {children}
-    </section>
+        </Card>
+      </div>
+    </main>
   );
 }

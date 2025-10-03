@@ -10,37 +10,35 @@ const Fallback = ({ title }: { title: string }) => (
 );
 
 /* ---------- Explicit dynamic imports (Sections 1–5 only) ---------- */
-/* Adjust the relative path if your folder layout differs */
 const Section1Basic = dynamic(
-  () => import('../../../components/bp/Section1Basic'),
+  () => import('@/components/bp/Section1Basic'),
   { ssr: false, loading: () => <Fallback title="Section 1 – Basic Candidate Information" /> }
 );
 
 const Section2NNM = dynamic(
-  () => import('../../../components/bp/Section2NNM'),
+  () => import('@/components/bp/Section2NNM'),
   { ssr: false, loading: () => <Fallback title="Section 2 – Net New Money (3Y)" /> }
 );
 
 const Section3Prospects = dynamic(
-  () => import('../../../components/bp/Section3Prospects'),
+  () => import('@/components/bp/Section3Prospects'),
   { ssr: false, loading: () => <Fallback title="Section 3 – Prospects" /> }
 );
 
 const Section4Revenue = dynamic(
-  () => import('../../../components/bp/Section4Revenue'),
+  () => import('@/components/bp/Section4Revenue'),
   { ssr: false, loading: () => <Fallback title="Section 4 – Revenue, Costs & Net Margin" /> }
 );
 
 const Section5Analysis = dynamic(
-  () => import('../../../components/bp/Section5Analysis'),
+  () => import('@/components/bp/Section5Analysis'),
   { ssr: false, loading: () => <Fallback title="Section 5 – AI Candidate Analysis" /> }
 );
 
-/* ---------- Page ---------- */
-export default function BPSimulatorPage() {
+export default function BPClient() {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <h1 className="page-title">BP Simulator</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">BP Simulator</h1>
       <p className="text-sm text-white/70">
         *Fields marked with an asterisk are mandatory and handled confidentially.
       </p>

@@ -1,63 +1,57 @@
-"use client";
+// components/portability/HelpTip.tsx
+'use client';
 
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from 'react';
 
-export default function HelpTip({
-  content,
-  side = "top",
-}: {
-  content: string;
-  side?: "top" | "bottom" | "left" | "right";
-}) {
+export default function HelpTip({ content }: { content: string }) {
   const [open, setOpen] = useState(false);
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const popRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
+  // Close on outside click / ESC
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
-      if (!open) return;
-      const t = e.target as Node;
-      if (btnRef.current?.contains(t) || popRef.current?.contains(t)) return;
-      setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
+    function onEsc(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false);
     }
-    document.addEventListener("mousedown", onDocClick);
-    document.addEventListener("keydown", onKey);
+    document.addEventListener('mousedown', onDocClick);
+    document.addEventListener('keydown', onEsc);
     return () => {
-      document.removeEventListener("mousedown", onDocClick);
-      document.removeEventListener("keydown", onKey);
+      document.removeEventListener('mousedown', onDocClick);
+      document.removeEventListener('keydown', onEsc);
     };
-  }, [open]);
-
-  const pos =
-    side === "bottom"
-      ? "left-1/2 -translate-x-1/2 top-[calc(100%+8px)]"
-      : side === "left"
-      ? "right-[calc(100%+8px)] top-1/2 -translate-y-1/2"
-      : side === "right"
-      ? "left-[calc(100%+8px)] top-1/2 -translate-y-1/2"
-      : "left-1/2 -translate-x-1/2 bottom-[calc(100%+8px)]";
+  }, []);
 
   return (
-    <span className="relative inline-flex">
+    <div ref={ref} className="relative inline-block">
       <button
-        ref={btnRef}
         type="button"
-        className="help-dot-ep"
-        aria-haspopup="dialog"
+        aria-label="More info"
         aria-expanded={open}
-        aria-label="Help"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen((v) => !v)}
+        className="h-5 w-5 rounded-full border border-white/20 text-xs leading-5 text-white/80 hover:text-white hover:border-white/40 flex items-center justify-center"
       >
         i
       </button>
+
       {open && (
-        <div ref={popRef} role="tooltip" className={`popover-ep ${pos}`}>
-          <div className="max-w-xs text-xs leading-relaxed text-neutral-200">{content}</div>
+        <div
+          role="dialog"
+          aria-modal="false"
+          className="
+            absolute left-0 top-7 z-[9999]
+            w-[min(90vw,28rem)]
+            rounded-lg border border-white/15
+            bg-black/90 backdrop-blur
+            p-3 shadow-2xl
+            text-xs text-white/90
+            whitespace-normal leading-snug
+          "
+        >
+          {content}
         </div>
       )}
-    </span>
+    </div>
   );
 }

@@ -2,176 +2,162 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 
 type NavItem = { href: string; label: string; external?: boolean };
 
 const NAV: NavItem[] = [
   { href: "/jobs", label: "Jobs" },
+  { href: "/insights", label: "Insights" },
   { href: "/candidates", label: "Candidates" },
   { href: "/hiring-managers", label: "Hiring Managers" },
+  // ✅ Fixed: now points to the correct Next.js route
   { href: "/bp-simulator", label: "BP Simulator" },
-  { href: "/markets", label: "Markets" },
   { href: "/portability", label: "Portability" },
-  { href: "/insights", label: "Insights" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
 export default function TopNav() {
-  const pathname = usePathname();
-  const base = pathname?.startsWith("/en") ? "/en" : "";
-
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+  const pathname = usePathname() || "/";
 
-  // Ensure portals are only used on the client
-  useEffect(() => setMounted(true), []);
-
-  // Lock scroll when menu is open (iOS-safe: lock both html & body)
+  // Close mobile menu on route change
   useEffect(() => {
-    if (!open) return;
-    const prevHtml = document.documentElement.style.overflow;
-    const prevBody = document.body.style.overflow;
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    // focus close for a11y
-    setTimeout(() => closeBtnRef.current?.focus(), 0);
-    return () => {
-      document.documentElement.style.overflow = prevHtml;
-      document.body.style.overflow = prevBody;
-    };
-  }, [open]);
+    if (open) setOpen(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
-  // Close on route change
-  useEffect(() => { setOpen(false); }, [pathname]);
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(href + "/");
+  };
 
-  const hrefFor = (href: string) => (base ? `${base}${href}` : href);
+  const ItemLink = ({ item }: { item: NavItem }) => {
+    const active = isActive(item.href);
 
-  const linkCls = (active: boolean) =>
-    [
-      "rounded-md px-3 py-1.5 text-sm whitespace-nowrap transition",
-      active ? "bg-white/10 text-white" : "text-white/85 hover:text-white hover:bg-white/5",
-    ].join(" ");
+    if (item.external) {
+      return (
+        <a
+          href={item.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm font-semibold text-white hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 rounded-md px-1.5 py-1"
+        >
+          {item.label}
+        </a>
+      );
+    }
+
+    return (
+      <Link
+        href={item.href}
+        aria-current={active ? "page" : undefined}
+        className={[
+          "text-sm font-semibold text-white hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 rounded-md px-1.5 py-1",
+          active ? "underline underline-offset-8 decoration-white/70" : "",
+        ].join(" ")}
+      >
+        {item.label}
+      </Link>
+    );
+  };
+
+  const ItemLinkMobile = ({ item }: { item: NavItem }) => {
+    const active = isActive(item.href);
+
+    if (item.external) {
+      return (
+        <a
+          href={item.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block rounded-lg px-4 py-3 text-base font-bold bg-neutral-900/90 text-white ring-1 ring-white/15"
+        >
+          {item.label}
+        </a>
+      );
+    }
+
+    return (
+      <Link
+        href={item.href}
+        aria-current={active ? "page" : undefined}
+        className={[
+          "block rounded-lg px-4 py-3 text-base font-bold text-white ring-1 ring-white/15",
+          active ? "bg-blue-600" : "bg-neutral-900/90 hover:bg-neutral-800",
+        ].join(" ")}
+      >
+        {item.label}
+      </Link>
+    );
+  };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0E13]/80 backdrop-blur supports-[backdrop-filter]:bg-[#0B0E13]/60">
-      <nav className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
-        {/* Brand */}
-        <Link href={base || "/"} className="text-white font-semibold tracking-tight">
+    <header className="sticky top-0 z-40 border-b border-neutral-800 bg-neutral-950/85 backdrop-blur supports-[backdrop-filter]:bg-neutral-950/60">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
+        <Link
+          href="/"
+          className="text-sm font-extrabold tracking-tight text-white hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 rounded-md px-1.5 py-1"
+        >
           Executive Partners
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-2">
-          {NAV.map((item) => {
-            const href = hrefFor(item.href);
-            const active = pathname === href || pathname?.startsWith(href + "/");
-            const cls = linkCls(active);
-            return item.external ? (
-              <a key={item.href} href={href} target="_blank" rel="noopener noreferrer" className={cls}>
-                {item.label}
-              </a>
-            ) : (
-              <Link key={item.href} href={href} className={cls}>
-                {item.label}
-              </Link>
-            );
-          })}
+        {/* Desktop */}
+        <ul className="hidden gap-6 md:flex" aria-label="Primary">
+          {NAV.map((item) => (
+            <li key={item.href}>
+              <ItemLink item={item} />
+            </li>
+          ))}
+        </ul>
+
+        <div className="hidden md:block">
+          <Link
+            href="/apply"
+            className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-bold text-white hover:bg-[#1E40AF] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+          >
+            Submit CV
+          </Link>
         </div>
 
-        {/* Mobile hamburger */}
+        {/* Mobile burger */}
         <button
-          aria-label="Open menu"
+          className="md:hidden rounded-md border border-neutral-700 px-3 py-2 text-sm font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+          onClick={() => setOpen((v) => !v)}
+          aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
-          onClick={() => setOpen(true)}
-          className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/12 bg-white/6 text-white/90 hover:bg-white/10"
+          aria-controls="mobile-nav"
+          type="button"
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden>
-            <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
+          {open ? "Close" : "Menu"}
         </button>
       </nav>
 
-      {/* Mobile full-screen menu via Portal (escapes any stacking context) */}
-      {mounted && open &&
-        createPortal(
-          <div className="fixed inset-0 z-[120] md:hidden">
-            {/* Dim backdrop */}
-            <div
-              className="absolute inset-0 bg-black/65 backdrop-blur-sm"
-              onClick={() => setOpen(false)}
-              aria-hidden
-            />
-
-            {/* Fullscreen panel */}
-            <div
-              role="dialog"
-              aria-modal="true"
-              className="absolute inset-0 flex flex-col bg-[#0B0E13]"
-              style={{ height: "100dvh" }} // iOS Safari viewport safe height
-            >
-              {/* Top bar */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-                <span className="text-sm font-semibold tracking-tight">Menu</span>
-                <button
-                  ref={closeBtnRef}
-                  aria-label="Close menu"
-                  onClick={() => setOpen(false)}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/12 bg-white/6 text-white/90 hover:bg-white/10"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
-                    <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              </div>
-
-              {/* Links */}
-              <div className="flex-1 overflow-y-auto">
-                <ul className="divide-y divide-white/8">
-                  {NAV.map((item) => {
-                    const href = hrefFor(item.href);
-                    const active = pathname === href || pathname?.startsWith(href + "/");
-                    const baseCls = "flex items-center justify-between px-5 h-14 text-base";
-                    const stateCls = active ? "bg-white/8 text-white" : "text-white/90 hover:bg-white/6";
-                    const content = (
-                      <>
-                        <span className="font-medium">{item.label}</span>
-                        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden className="opacity-80">
-                          <path d="M9 18l6-6-6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </>
-                    );
-                    return (
-                      <li key={item.href}>
-                        {item.external ? (
-                          <a href={href} target="_blank" rel="noopener noreferrer" className={`${baseCls} ${stateCls}`}>{content}</a>
-                        ) : (
-                          <Link href={href} className={`${baseCls} ${stateCls}`}>{content}</Link>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-
-              {/* Footer CTA */}
-              <div className="border-t border-white/10 p-4">
-                <Link
-                  href={hrefFor("/contact")}
-                  className="block w-full text-center rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold py-3"
-                >
-                  Contact a Recruiter
-                </Link>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )
-      }
+      {/* Mobile drawer */}
+      {open && (
+        <div
+          id="mobile-nav"
+          className="md:hidden border-t border-neutral-800 bg-neutral-950/95 backdrop-blur"
+        >
+          <ul className="space-y-2 px-4 py-4" aria-label="Primary mobile">
+            {NAV.map((item) => (
+              <li key={item.href}>
+                <ItemLinkMobile item={item} />
+              </li>
+            ))}
+            <li>
+              <Link
+                href="/apply"
+                className="block text-center rounded-lg px-4 py-3 text-base font-bold bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Submit CV
+              </Link>
+            </li>
+          </ul>
+        </div>
+      )}
     </header>
   );
 }
