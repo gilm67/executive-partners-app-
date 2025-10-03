@@ -1,35 +1,31 @@
 // app/markets/[slug]/page.tsx
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import {
+  markets,
+  marketSlugs,
+  getMarket,
+  type Market,
+} from "../../../lib/markets";
 
-/**
- * Supports both:
- *   export const markets = {...}
- *   OR   export default {...}
- * inside lib/markets.ts
- */
-import * as Markets from "../../../lib/markets";
-
-const markets: Record<string, any> =
-  ((Markets as any).markets as Record<string, any>) ||
-  ((Markets as any).default as Record<string, any>) ||
-  {};
-
-type Params = { params: { slug: string } };
-
-export async function generateStaticParams() {
-  return Object.keys(markets).map((slug) => ({ slug }));
+/* ------- Static params (SSG) ------- */
+export function generateStaticParams(): Array<{ slug: string }> {
+  return marketSlugs.map((slug) => ({ slug }));
 }
 
 export const dynamicParams = false;
 
-export function generateMetadata({ params }: Params) {
-  const m = markets[params.slug];
-  const title =
-    m?.seoTitle ||
-    `${m?.name ?? params.slug} — Private Banking jobs & market notes`;
+/* ------- Metadata ------- */
+export function generateMetadata(
+  { params }: { params: { slug: string } }
+): Metadata {
+  const m = getMarket(params.slug);
+  const title = m
+    ? `${m.name} — Private Banking market notes & roles`
+    : `${params.slug} — Private Banking market notes`;
+
   const description =
-    m?.seoDescription ||
-    m?.summary ||
+    m?.headline ??
     "Executive Partners — Geneva-based executive search for Private Banking & Wealth Management.";
 
   return {
@@ -38,9 +34,7 @@ export function generateMetadata({ params }: Params) {
     openGraph: {
       title,
       description,
-      images: [
-        { url: "/og.png", width: 1200, height: 630, alt: "Executive Partners" },
-      ],
+      images: [{ url: "/og.png", width: 1200, height: 630, alt: "Executive Partners" }],
     },
     twitter: {
       card: "summary_large_image",
@@ -51,44 +45,102 @@ export function generateMetadata({ params }: Params) {
   };
 }
 
-export default function MarketSlugPage({ params }: Params) {
-  const m = markets[params.slug];
+/* ------- Page ------- */
+export default function MarketSlugPage(
+  { params }: { params: { slug: string } }
+) {
+  const m: Market | undefined = getMarket(params.slug);
   if (!m) notFound();
 
   return (
     <main className="container-max py-10 text-white">
+      {/* Breadcrumb / kicker */}
       <p className="text-xs text-white/60">Markets</p>
-      <h1 className="mt-1 text-3xl font-bold">{m.name ?? params.slug}</h1>
-      {m.summary && <p className="mt-2 max-w-3xl text-white/80">{m.summary}</p>}
 
-      {Array.isArray(m.highlights) && m.highlights.length > 0 && (
+      {/* H1 */}
+      <h1 className="mt-1 text-3xl font-bold">
+        {m.name} <span className="text-white/60">— {m.country}</span>
+      </h1>
+
+      {/* Headline */}
+      {m.headline && (
+        <p className="mt-3 max-w-3xl text-white/80">{m.headline}</p>
+      )}
+
+      {/* Hiring pulse */}
+      {Array.isArray(m.hiringPulse) && m.hiringPulse.length > 0 && (
         <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
-          <h2 className="text-lg font-semibold">Highlights</h2>
+          <h2 className="text-lg font-semibold">Hiring pulse</h2>
           <ul className="mt-3 list-disc pl-5 text-sm text-white/80">
-            {m.highlights.map((t: string, i: number) => (
+            {m.hiringPulse.map((t, i) => (
               <li key={i}>{t}</li>
             ))}
           </ul>
         </section>
       )}
 
-      {(m.compLow || m.compHigh || m.netNote) && (
-        <section className="mt-6 grid gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-6 sm:grid-cols-3">
-          <div>
-            <div className="text-xs text-white/60">Comp (low)</div>
-            <div className="text-xl font-semibold">{m.compLow ?? "—"}</div>
-          </div>
-          <div>
-            <div className="text-xs text-white/60">Comp (high)</div>
-            <div className="text-xl font-semibold">{m.compHigh ?? "—"}</div>
-          </div>
-          <div>
-            <div className="text-xs text-white/60">Note</div>
-            <div className="text-sm text-white/80">{m.netNote ?? "—"}</div>
-          </div>
+      {/* Regulatory */}
+      {Array.isArray(m.regulatory) && m.regulatory.length > 0 && (
+        <section className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          <h2 className="text-lg font-semibold">Regulatory notes</h2>
+          <ul className="mt-3 list-disc pl-5 text-sm text-white/80">
+            {m.regulatory.map((t, i) => (
+              <li key={i}>{t}</li>
+            ))}
+          </ul>
         </section>
       )}
 
+      {/* Compensation bands */}
+      {m.comp?.bands?.length ? (
+        <section className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          <h2 className="text-lg font-semibold">Compensation (currency: {m.comp.currency})</h2>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {m.comp.bands.map((b, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
+              >
+                <div className="text-sm text-white/70">{b.level}</div>
+                <div className="mt-1 text-xl font-semibold">
+                  Base {b.base}
+                </div>
+                <div className="text-sm text-white/80">Bonus {b.bonus}</div>
+                {b.note && (
+                  <div className="mt-1 text-xs text-white/60">{b.note}</div>
+                )}
+              </div>
+            ))}
+          </div>
+          {m.comp.netNote && (
+            <p className="mt-3 text-xs text-white/60">{m.comp.netNote}</p>
+          )}
+        </section>
+      ) : null}
+
+      {/* Ecosystem */}
+      {m.ecosystem && (
+        <section className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          <h2 className="text-lg font-semibold">{m.ecosystem.title}</h2>
+          <ul className="mt-3 list-disc pl-5 text-sm text-white/80">
+            {m.ecosystem.items.map((t, i) => (
+              <li key={i}>{t}</li>
+            ))}
+          </ul>
+          {m.ecosystem.trends?.length ? (
+            <>
+              <h3 className="mt-4 text-sm font-semibold text-white">Trends</h3>
+              <ul className="mt-2 list-disc pl-5 text-sm text-white/80">
+                {m.ecosystem.trends.map((t, i) => (
+                  <li key={i}>{t}</li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+        </section>
+      )}
+
+      {/* CTAs */}
       <div className="mt-8 flex flex-wrap gap-3">
         <a
           href="/jobs"
