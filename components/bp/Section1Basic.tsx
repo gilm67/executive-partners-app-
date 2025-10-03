@@ -1,249 +1,102 @@
 'use client';
-
 import { useBP } from './store';
 
-/* ---------- Tiny input helpers (no default 0, nice placeholders) ---------- */
-function IntInput({
-  value,
-  onChange,
-  placeholder
-}: {
-  value: number | string | undefined;
-  onChange: (v: number) => void;
-  placeholder?: string;
-}) {
-  return (
-    <input
-      type="number"
-      inputMode="numeric"
-      step={1}
-      className="w-full bg-transparent outline-none"
-      placeholder={placeholder}
-      value={value ?? ''}
-      onChange={(e) => onChange(Math.max(0, Math.floor(Number(e.target.value) || 0)))}
-    />
-  );
-}
-
-function NumberInput({
-  value,
-  onChange,
-  step = 0.1,
-  placeholder
-}: {
-  value: number | string | undefined;
-  onChange: (v: number) => void;
-  step?: number;
-  placeholder?: string;
-}) {
-  return (
-    <input
-      type="number"
-      inputMode="decimal"
-      step={step}
-      className="w-full bg-transparent outline-none"
-      placeholder={placeholder}
-      value={value ?? ''}
-      onChange={(e) => onChange(Number(e.target.value) || 0)}
-    />
-  );
-}
-
-function MoneyInput({
-  value,
-  onChange,
-  placeholder,
-  currencyLabel = 'CHF'
-}: {
-  value: number | string | undefined;
-  onChange: (v: number) => void;
-  placeholder?: string;
-  currencyLabel?: string;
-}) {
-  return (
-    <div className="flex items-center rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-      <span className="text-sm text-white/60 mr-2">{currencyLabel}</span>
-      <input
-        type="number"
-        inputMode="decimal"
-        className="w-full bg-transparent outline-none"
-        placeholder={placeholder}
-        value={value ?? ''}
-        onChange={(e) => onChange(Number(e.target.value) || 0)}
-      />
-    </div>
-  );
-}
-
-/* ---------- Section 1 ---------- */
-export default function Section1Basic() {
+export default function Section1Basic(){
   const { i, set } = useBP();
-  const C = i?.currency || 'CHF';
-
   return (
     <section className="space-y-4">
       <h2 className="text-lg font-semibold">1️⃣ Basic Candidate Information</h2>
-
-      {/* Identity */}
       <div className="grid md:grid-cols-2 gap-4">
-        <label className="block text-sm text-white/80 space-y-1">
-          <span className="font-medium text-white">Full Name *</span>
-          <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-            <input
-              type="text"
-              className="w-full bg-transparent outline-none"
-              placeholder="e.g. Jane Doe"
-              value={i.candidate_name ?? ''}
-              onChange={(e) => set({ candidate_name: e.target.value })}
-            />
-          </div>
-        </label>
-
-        <label className="block text-sm text-white/80 space-y-1">
-          <span className="font-medium text-white">Email *</span>
-          <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-            <input
-              type="email"
-              className="w-full bg-transparent outline-none"
-              placeholder="name@company.com"
-              value={i.candidate_email ?? ''}
-              onChange={(e) => set({ candidate_email: e.target.value })}
-            />
-          </div>
-        </label>
-      </div>
-
-      {/* Experience / Inherited */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <label className="block text-sm text-white/80 space-y-1">
-          <span className="font-medium text-white">Years of Experience *</span>
-          <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-            <IntInput
-              value={i.years_experience}
-              onChange={(v) => set({ years_experience: v })}
-              placeholder="e.g. 12"
-            />
-          </div>
-        </label>
-
-        <label className="block text-sm text-white/80 space-y-1">
-          <span className="font-medium text-white">Inherited Book (% of AUM) *</span>
-          <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-            <IntInput
-              value={i.inherited_book_pct}
-              onChange={(v) => set({ inherited_book_pct: v })}
-              placeholder="%"
-            />
-          </div>
-        </label>
-      </div>
-
-      {/* Role / Location (kept as text selects — unchanged) */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <label className="block text-sm text-white/80 space-y-1">
-          <span className="font-medium text-white">Current Role</span>
-          <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-            <input
-              type="text"
-              className="w-full bg-transparent outline-none"
-              placeholder="Relationship Manager"
-              value={i.current_role ?? ''}
-              onChange={(e) => set({ current_role: e.target.value })}
-            />
-          </div>
-        </label>
-
-        <label className="block text-sm text-white/80 space-y-1">
-          <span className="font-medium text-white">Location</span>
-          <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-            <input
-              type="text"
-              className="w-full bg-transparent outline-none"
-              placeholder="e.g. Geneva"
-              value={i.candidate_location ?? ''}
-              onChange={(e) => set({ candidate_location: e.target.value })}
-            />
-          </div>
-        </label>
-      </div>
-
-      {/* Employer / Market */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <label className="block text-sm text-white/80 space-y-1">
-          <span className="font-medium text-white">Current Employer</span>
-          <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-            <input
-              type="text"
-              className="w-full bg-transparent outline-none"
-              placeholder="Bank name"
-              value={i.current_employer ?? ''}
-              onChange={(e) => set({ current_employer: e.target.value })}
-            />
-          </div>
-        </label>
-
-        <label className="block text-sm text-white/80 space-y-1">
-          <span className="font-medium text-white">Market</span>
-          <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-            <input
-              type="text"
-              className="w-full bg-transparent outline-none"
-              placeholder="e.g. CH Onshore"
-              value={i.current_market ?? ''}
-              onChange={(e) => set({ current_market: e.target.value })}
-            />
-          </div>
-        </label>
-      </div>
-
-      {/* Compensation */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <label className="block text-sm text-white/80 space-y-1">
-          <span className="font-medium text-white">Current Base Salary ({C}) *</span>
-          <MoneyInput
-            value={i.base_salary}
-            onChange={(v) => set({ base_salary: v })}
-            placeholder="e.g. 180000"
-            currencyLabel={C}
-          />
-        </label>
-
-        <label className="block text-sm text-white/80 space-y-1">
-          <span className="font-medium text-white">Last Bonus ({C}) *</span>
-          <MoneyInput
-            value={i.last_bonus}
-            onChange={(v) => set({ last_bonus: v })}
-            placeholder="e.g. 60000"
-            currencyLabel={C}
-          />
-        </label>
-      </div>
-
-      {/* Book snapshot */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <label className="block text-sm text-white/80 space-y-1">
-          <span className="font-medium text-white">Current Number of Clients *</span>
-          <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-            <IntInput
-              value={i.current_number_clients}
-              onChange={(v) => set({ current_number_clients: v })}
-              placeholder="e.g. 35"
-            />
-          </div>
-        </label>
-
-        <label className="block text-sm text-white/80 space-y-1">
-          <span className="font-medium text-white">Current AUM (million {C}) *</span>
-          <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-            <NumberInput
-              value={i.current_assets_m}
-              step={0.1}
-              onChange={(v) => set({ current_assets_m: v })}
-              placeholder="e.g. 220"
-            />
-          </div>
-        </label>
+        <Field label="Candidate Name">
+          <input className="w-full bg-transparent outline-none"
+                 value={i.candidate_name}
+                 onChange={(e)=>set({candidate_name:e.target.value})}/>
+        </Field>
+        <Field label="Candidate Email *">
+          <input className="w-full bg-transparent outline-none"
+                 value={i.candidate_email}
+                 onChange={(e)=>set({candidate_email:e.target.value})}/>
+        </Field>
+        <Field label="Years of Experience *">
+          <input type="number" min={0} className="w-full bg-transparent outline-none"
+                 value={i.years_experience}
+                 onChange={(e)=>set({years_experience:Number(e.target.value)||0})}/>
+        </Field>
+        <Field label="Inherited Book (% of AUM) *">
+          <input type="number" min={0} max={100} className="w-full bg-transparent outline-none"
+                 value={i.inherited_book_pct}
+                 onChange={(e)=>set({inherited_book_pct:Number(e.target.value)||0})}/>
+        </Field>
+        <Field label="Current Role *">
+          <select className="w-full bg-transparent outline-none"
+                  value={i.current_role}
+                  onChange={(e)=>set({current_role:e.target.value})}>
+            {["Relationship Manager","Senior Relationship Manager","Assistant Relationship Manager",
+              "Investment Advisor","Managing Director","Director","Team Head","Market Head","Other"].map(x=>
+              <option key={x} value={x}>{x}</option>
+            )}
+          </select>
+        </Field>
+        <Field label="Candidate Location *">
+          <select className="w-full bg-transparent outline-none"
+                  value={i.candidate_location}
+                  onChange={(e)=>set({candidate_location:e.target.value})}>
+            {["— Select —","Zurich","Geneva","Lausanne","Basel","Luzern","Dubai","London","Hong Kong","Singapore","New York","Miami","Madrid","Lisbon","Sao Paulo"]
+              .map(x=><option key={x} value={x}>{x}</option>)}
+          </select>
+        </Field>
+        <Field label="Current Employer *">
+          <input className="w-full bg-transparent outline-none"
+                 value={i.current_employer}
+                 onChange={(e)=>set({current_employer:e.target.value})}/>
+        </Field>
+        <Field label="Current Market *">
+          <select className="w-full bg-transparent outline-none"
+                  value={i.current_market}
+                  onChange={(e)=>set({current_market:e.target.value})}>
+            {["CH Onshore","UK","Portugal","Spain","Germany","MEA","LATAM","CIS","CEE","France","Benelux","Asia","Argentina","Brazil","Conosur","NRI","India","US","China"]
+              .map(x=><option key={x} value={x}>{x}</option>)}
+          </select>
+        </Field>
+        <Field label="Currency *">
+          <select className="w-full bg-transparent outline-none"
+                  value={i.currency}
+                  onChange={(e)=>set({currency:e.target.value})}>
+            {["CHF","USD","EUR","AED","SGD","HKD"].map(x=><option key={x} value={x}>{x}</option>)}
+          </select>
+        </Field>
+        <Field label={`Current Base Salary (${i.currency}) *`}>
+          <input type="number" min={0} className="w-full bg-transparent outline-none"
+                 value={i.base_salary}
+                 onChange={(e)=>set({base_salary:Number(e.target.value)||0})}/>
+        </Field>
+        <Field label={`Last Bonus (${i.currency}) *`}>
+          <input type="number" min={0} className="w-full bg-transparent outline-none"
+                 value={i.last_bonus}
+                 onChange={(e)=>set({last_bonus:Number(e.target.value)||0})}/>
+        </Field>
+        <Field label="Current Number of Clients *">
+          <input type="number" min={0} className="w-full bg-transparent outline-none"
+                 value={i.current_number_clients}
+                 onChange={(e)=>set({current_number_clients:Number(e.target.value)||0})}/>
+        </Field>
+        <Field label="Current AUM (in million CHF) *">
+          <input type="number" min={0} step="0.1" className="w-full bg-transparent outline-none"
+                 value={i.current_assets_m}
+                 onChange={(e)=>set({current_assets_m:Number(e.target.value)||0})}/>
+        </Field>
       </div>
     </section>
+  );
+}
+
+function Field({label,children}:{label:string;children:React.ReactNode}){
+  return (
+    <label className="text-sm text-white/80 space-y-1 block">
+      <div className="font-medium text-white">{label}</div>
+      <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
+        {children}
+      </div>
+    </label>
   );
 }

@@ -13,25 +13,25 @@ export type Inputs = {
   // Section 1
   candidate_name: string;
   candidate_email: string;
-  years_experience: number | undefined;
-  inherited_book_pct: number | undefined;
+  years_experience: number;
+  inherited_book_pct: number;
   current_role: string;
   candidate_location: string;
   current_employer: string;
   current_market: string;
   currency: string;
-  base_salary: number | undefined;
-  last_bonus: number | undefined;
-  current_number_clients: number | undefined;
-  current_assets_m: number | undefined;
+  base_salary: number;
+  last_bonus: number;
+  current_number_clients: number;
+  current_assets_m: number;
 
   // Section 2
-  nnm_y1_m: number | undefined;
-  nnm_y2_m: number | undefined;
-  nnm_y3_m: number | undefined;
-  proj_clients_y1: number | undefined;
-  proj_clients_y2: number | undefined;
-  proj_clients_y3: number | undefined;
+  nnm_y1_m: number;
+  nnm_y2_m: number;
+  nnm_y3_m: number;
+  proj_clients_y1: number;
+  proj_clients_y2: number;
+  proj_clients_y3: number;
 
   // Section 3
   prospects: Prospect[];
@@ -126,28 +126,28 @@ const defaultProspectDraft = {
 
 export const useBP = create<BPState>((set, get) => ({
   i: {
-    // Section 1 defaults (now blank)
+    // Section 1 defaults
     candidate_name: '',
     candidate_email: '',
-    years_experience: undefined,
-    inherited_book_pct: undefined,
+    years_experience: 0,
+    inherited_book_pct: 0,
     current_role: 'Relationship Manager',
     candidate_location: '— Select —',
     current_employer: '',
     current_market: 'CH Onshore',
     currency: 'CHF',
-    base_salary: undefined,
-    last_bonus: undefined,
-    current_number_clients: undefined,
-    current_assets_m: undefined,
+    base_salary: 0,
+    last_bonus: 0,
+    current_number_clients: 0,
+    current_assets_m: 0,
 
-    // Section 2 defaults (now blank)
-    nnm_y1_m: undefined,
-    nnm_y2_m: undefined,
-    nnm_y3_m: undefined,
-    proj_clients_y1: undefined,
-    proj_clients_y2: undefined,
-    proj_clients_y3: undefined,
+    // Section 2 defaults
+    nnm_y1_m: 0,
+    nnm_y2_m: 0,
+    nnm_y3_m: 0,
+    proj_clients_y1: 0,
+    proj_clients_y2: 0,
+    proj_clients_y3: 0,
 
     // Section 3 defaults
     prospects: [],
