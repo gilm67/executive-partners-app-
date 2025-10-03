@@ -12,8 +12,8 @@ const NAV: NavItem[] = [
   { href: "/insights", label: "Insights" },
   { href: "/candidates", label: "Candidates" },
   { href: "/hiring-managers", label: "Hiring Managers" },
-  // ✅ Fixed: now points to the correct Next.js route
-  { href: "/bp-simulator", label: "BP Simulator" },
+  // ✅ Fixed: point to the Next.js simulator page
+  { href: "/business-plan-simulator", label: "BP Simulator" },
   { href: "/portability", label: "Portability" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
@@ -26,8 +26,7 @@ export default function TopNav() {
   // Close mobile menu on route change
   useEffect(() => {
     if (open) setOpen(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
