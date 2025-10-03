@@ -1,6 +1,6 @@
 // app/layout.tsx
 import "./globals.css";
-// ⬇️ Force the concrete file used in production (no alias ambiguity)
+// ✅ Force concrete files (no alias ambiguity)
 import TopNav from "../components/TopNav";
 import Splash from "../components/Splash";
 import type { Metadata, Viewport } from "next";
@@ -51,9 +51,7 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico?v=2",
     apple: "/apple-touch-icon.png",
   },
-  verification: {
-    google: "WEQvBE0-6FZmOaMbV2oVP9Cm9Zm6A25zU_0Jaghettk",
-  },
+  verification: { google: "WEQvBE0-6FZmOaMbV2oVP9Cm9Zm6A25zU_0Jaghettk" },
 };
 
 export const viewport: Viewport = {
@@ -158,6 +156,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <ul className="mt-2 space-y-2 text-white/80">
                   <li><a className="hover:underline" href="/jobs">Jobs</a></li>
                   <li><a className="hover:underline" href="/insights">Insights</a></li>
+                  <li><a className="hover:underline" href="/business-plan-simulator">BP Simulator</a></li>
+                  <li><a className="hover:underline" href="/portability">Portability</a></li>
                   <li><a className="hover:underline" href="/apply">Apply</a></li>
                   <li><a className="hover:underline" href="/hiring-managers">Hiring Managers</a></li>
                   <li><a className="hover:underline" href="/contact">Contact</a></li>
