@@ -11,6 +11,8 @@ export const metadata: Metadata = {
     description:
       "Estimate realistic portability for your client book (AUM, booking centers, cross-border, product scope). Confidential, on-domain.",
     images: [{ url: "/og-portability.png", width: 1200, height: 630, alt: "Portability Score" }],
+    type: "website",
+    url: "/portability",
   },
   twitter: {
     card: "summary_large_image",
@@ -19,6 +21,7 @@ export const metadata: Metadata = {
       "Estimate realistic portability for your client book (AUM, booking centers, cross-border, product scope).",
     images: ["/og-portability.png"],
   },
+  alternates: { canonical: "/portability" },
 };
 
 export default function PortabilityPage() {
@@ -29,12 +32,12 @@ export default function PortabilityPage() {
         <h1 className="text-3xl font-bold">Portability Score™</h1>
         <p className="max-w-2xl text-white/80">
           Confidential assessment designed for Private Banking moves. We consider booking centers,
-          cross-border realities, segmentation, compliance and product scope to estimate
+          cross-border realities, segmentation, compliance, and product scope to estimate
           realistic portability.
         </p>
       </header>
 
-      {/* Client-side app */}
+      {/* Client-side app (lives in app/portability/portability-client.tsx) */}
       <PortabilityClient />
     </section>
   );
