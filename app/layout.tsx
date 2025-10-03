@@ -4,11 +4,23 @@ import "./globals.css";
 import TopNav from "../components/TopNav";
 import Splash from "../components/Splash";
 import type { Metadata, Viewport } from "next";
+// Keep the import — it's tree-shaken if not used
 import { Analytics } from "@vercel/analytics/react";
 import { Inter, Playfair_Display } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
+// ⤵️ Turn off automatic font preloading to avoid console warnings
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  preload: false,
+});
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+  preload: false,
+});
 
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -91,6 +103,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       "query-input": "required name=search_term_string",
     },
   };
+
+  const enableAnalytics = process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "1";
 
   return (
     <html
@@ -179,7 +193,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </footer>
 
-        <Analytics />
+        {/* Render analytics only when explicitly enabled to avoid warnings */}
+        {enableAnalytics && <Analytics />}
       </body>
     </html>
   );
