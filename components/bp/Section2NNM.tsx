@@ -6,10 +6,10 @@ import { useBP } from './store';
 export default function Section2NNM() {
   const { i, set } = useBP();
 
-  const bestProspectsSum = useMemo(
-    () => (i.prospects || []).reduce((acc, p) => acc + (Number(p.best_nnm_m) || 0), 0),
-    [i.prospects]
-  );
+  const bestProspectsSum = useMemo(() => {
+    const list = Array.isArray(i.prospects) ? i.prospects : [];
+    return list.reduce<number>((acc, p: any) => acc + (Number(p?.best_nnm_m) || 0), 0);
+  }, [i.prospects]);
 
   const totalNNM3Y =
     (Number(i.nnm_y1_m) || 0) +
@@ -23,10 +23,10 @@ export default function Section2NNM() {
         Enter NNM projections (values in <strong>M CHF</strong>) and projected client counts.
       </p>
 
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid gap-4 md:grid-cols-3">
         <Field label="NNM Year 1 (M CHF)">
           <NumberInput
-            value={i.nnm_y1_m ?? ''}
+            value={i.nnm_y1_m ?? ''}   /* keep controlled */
             step={0.1}
             placeholder="e.g. 25"
             onChange={(v) => set({ nnm_y1_m: v })}
@@ -50,7 +50,7 @@ export default function Section2NNM() {
         </Field>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid gap-4 md:grid-cols-3">
         <Field label="Projected Clients Year 1">
           <IntInput
             value={i.proj_clients_y1 ?? ''}
@@ -74,7 +74,7 @@ export default function Section2NNM() {
         </Field>
       </div>
 
-      <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-white/80 flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-white/80">
         <span>
           <span className="text-white/60">3Y NNM Total:</span>{' '}
           <strong className="text-white">{totalNNM3Y.toFixed(1)} M</strong>
@@ -98,7 +98,7 @@ export default function Section2NNM() {
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="text-sm text-white/80 space-y-1 block">
+    <label className="block space-y-1 text-sm text-white/80">
       <div className="font-medium text-white">{label}</div>
       <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
         {children}
@@ -107,12 +107,12 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-/** Friendly decimal input */
+/* -------- Decimal input (controlled, tolerant of empty/partial) -------- */
 function NumberInput({
   value,
   step = 0.1,
   placeholder,
-  onChange
+  onChange,
 }: {
   value: number | string;
   step?: number;
@@ -137,8 +137,9 @@ function NumberInput({
       return;
     }
     const n = Number(raw);
-    onChange(Number.isFinite(n) ? n : 0);
-    setText(Number.isFinite(n) ? String(n) : '');
+    const safe = Number.isFinite(n) ? n : 0;
+    onChange(safe);
+    setText(raw); // keep what user typed; store has the number
   };
 
   return (
@@ -153,18 +154,19 @@ function NumberInput({
         const v = e.target.value;
         if (/^-?\d*([.]\d*)?$/.test(v) || v === '') setText(v);
       }}
-      onFocus={(e) => e.currentTarget.select()}
       onBlur={commit}
+      onFocus={(e) => e.currentTarget.select()}
       onWheel={(e) => (e.currentTarget as HTMLInputElement).blur()}
+      aria-label={placeholder}
     />
   );
 }
 
-/** Friendly integer input (>=0) */
+/* -------- Integer input (>= 0) -------- */
 function IntInput({
   value,
   placeholder,
-  onChange
+  onChange,
 }: {
   value: number | string;
   placeholder?: string;
@@ -187,8 +189,7 @@ function IntInput({
       return;
     }
     let n = Math.floor(Number(raw));
-    if (!Number.isFinite(n)) n = 0;
-    if (n < 0) n = 0;
+    if (!Number.isFinite(n) || n < 0) n = 0;
     onChange(n);
     setText(String(n));
   };
@@ -204,9 +205,10 @@ function IntInput({
         const v = e.target.value;
         if (/^\d*$/.test(v) || v === '') setText(v);
       }}
-      onFocus={(e) => e.currentTarget.select()}
       onBlur={commit}
+      onFocus={(e) => e.currentTarget.select()}
       onWheel={(e) => (e.currentTarget as HTMLInputElement).blur()}
+      aria-label={placeholder}
     />
   );
 }
