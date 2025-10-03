@@ -1,5 +1,7 @@
 'use client';
 
+'use client';
+
 "use client";
 
 import { useMemo, useRef, useState } from "react";
