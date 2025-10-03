@@ -12,8 +12,8 @@ const NAV: NavItem[] = [
   { href: "/insights", label: "Insights" },
   { href: "/candidates", label: "Candidates" },
   { href: "/hiring-managers", label: "Hiring Managers" },
-  // ✅ Correct internal routes
-  { href: "/business-plan-simulator", label: "BP Simulator" },
+  // ✅ Fixed: now points to the correct Next.js route
+  { href: "/bp-simulator", label: "BP Simulator" },
   { href: "/portability", label: "Portability" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
@@ -30,7 +30,6 @@ export default function TopNav() {
   }, [pathname]);
 
   const isActive = (href: string) => {
-    // Exact match for root, otherwise highlight on prefix (so subpages are active)
     if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(href + "/");
   };
