@@ -71,7 +71,7 @@ function Chip({ label, selected, onClick }:{
 function localNextSteps(payload: any, score?: number): string[] {
   const steps: string[] = [];
   const i = payload?.inputs || {};
-  the const centres: string[] = payload?.bookingCentres || [];
+  const centres: string[] = payload?.bookingCentres || [];
   const tier1 = ["Geneva","Zurich","London","Luxembourg","Singapore","New York"];
 
   const hasTier1 = centres.some(c =>
