@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import { useBP } from './store';
-import { getROA } from './types'; // ← fallback-aware getter
 
 const fmt0 = new Intl.NumberFormat('en-CH', { maximumFractionDigits: 0 });
 
@@ -14,10 +13,10 @@ export default function Section4Revenue() {
     const nnm2 = toNum(i.nnm_y2_m) * 1_000_000;
     const nnm3 = toNum(i.nnm_y3_m) * 1_000_000;
 
-    // Use canonical *_pct (fallbacks to legacy if needed)
-    const roa1 = toNum(getROA(i as any, 1));
-    const roa2 = toNum(getROA(i as any, 2));
-    const roa3 = toNum(getROA(i as any, 3));
+    // Prefer canonical *_pct, fall back to legacy roa_y*
+    const roa1 = toNum((i as any).roa_y1_pct ?? (i as any).roa_y1);
+    const roa2 = toNum((i as any).roa_y2_pct ?? (i as any).roa_y2);
+    const roa3 = toNum((i as any).roa_y3_pct ?? (i as any).roa_y3);
 
     const rev1 = nnm1 * (roa1 / 100);
     const rev2 = nnm2 * (roa2 / 100);
@@ -39,7 +38,7 @@ export default function Section4Revenue() {
   }, [
     i.nnm_y1_m, i.nnm_y2_m, i.nnm_y3_m,
     (i as any).roa_y1_pct, (i as any).roa_y2_pct, (i as any).roa_y3_pct,
-    (i as any).roa_y1, (i as any).roa_y2, (i as any).roa_y3, // legacy watchers
+    (i as any).roa_y1, (i as any).roa_y2, (i as any).roa_y3,
     i.base_salary,
   ]);
 
@@ -95,7 +94,7 @@ export default function Section4Revenue() {
         </table>
       </div>
 
-      {/* Mini bar chart (no deps) */}
+      {/* Mini bar chart */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <h3 className="text-sm font-medium text-white/80 mb-2">Gross Revenue</h3>
@@ -107,7 +106,7 @@ export default function Section4Revenue() {
         </div>
       </div>
 
-      {/* Quick metrics */}
+      {/* Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
         <Metric label="Fixed Cost (each year)" value={`CHF ${fmt0.format(m.fixed)}`} />
         <Metric label="Gross Revenue (3Y)" value={`CHF ${fmt0.format(m.grossTotal)}`} />
