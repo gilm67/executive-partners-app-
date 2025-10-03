@@ -11,27 +11,27 @@ const Fallback = ({ title }: { title: string }) => (
 
 /* ---------- Explicit dynamic imports (Sections 1–5 only) ---------- */
 const Section1Basic = dynamic(
-  () => import('../../components/bp/Section1Basic'),
+  () => import('@/components/bp/Section1Basic'),
   { ssr: false, loading: () => <Fallback title="Section 1 – Basic Candidate Information" /> }
 );
 
 const Section2NNM = dynamic(
-  () => import('../../components/bp/Section2NNM'),
+  () => import('@/components/bp/Section2NNM'),
   { ssr: false, loading: () => <Fallback title="Section 2 – Net New Money (3Y)" /> }
 );
 
 const Section3Prospects = dynamic(
-  () => import('../../components/bp/Section3Prospects'),
+  () => import('@/components/bp/Section3Prospects'),
   { ssr: false, loading: () => <Fallback title="Section 3 – Prospects" /> }
 );
 
 const Section4Revenue = dynamic(
-  () => import('../../components/bp/Section4Revenue'),
+  () => import('@/components/bp/Section4Revenue'),
   { ssr: false, loading: () => <Fallback title="Section 4 – Revenue, Costs & Net Margin" /> }
 );
 
 const Section5Analysis = dynamic(
-  () => import('../../components/bp/Section5Analysis'),
+  () => import('@/components/bp/Section5Analysis'),
   { ssr: false, loading: () => <Fallback title="Section 5 – AI Candidate Analysis" /> }
 );
 
