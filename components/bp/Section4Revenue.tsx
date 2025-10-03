@@ -2,9 +2,9 @@
 
 import { useMemo } from 'react';
 import { useBP } from './store';
+import { getROA } from './types'; // uses *_pct, falls back to legacy *_y
 
 const fmt0 = new Intl.NumberFormat('en-CH', { maximumFractionDigits: 0 });
-const fmt1 = new Intl.NumberFormat('en-CH', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 export default function Section4Revenue() {
   const { i, set } = useBP();
@@ -15,9 +15,14 @@ export default function Section4Revenue() {
     const nnm2 = toNum(i.nnm_y2_m) * 1_000_000;
     const nnm3 = toNum(i.nnm_y3_m) * 1_000_000;
 
-    const rev1 = nnm1 * (toNum(i.roa_y1) / 100);
-    const rev2 = nnm2 * (toNum(i.roa_y2) / 100);
-    const rev3 = nnm3 * (toNum(i.roa_y3) / 100);
+    // ROA % — prefer *_pct; fallback handled by getROA()
+    const roa1 = toNum(getROA(i as any, 1));
+    const roa2 = toNum(getROA(i as any, 2));
+    const roa3 = toNum(getROA(i as any, 3));
+
+    const rev1 = nnm1 * (roa1 / 100);
+    const rev2 = nnm2 * (roa2 / 100);
+    const rev3 = nnm3 * (roa3 / 100);
 
     const fixed = toNum(i.base_salary) * 1.25;
 
@@ -30,26 +35,40 @@ export default function Section4Revenue() {
     const nmTotal = nm1 + nm2 + nm3;
 
     // For tiny bar chart widths
-    const maxBar = Math.max(rev1, rev2, rev3, nm1, nm2, nm3, 1);
+    const maxBar = Math.max(rev1, rev2, rev3, Math.abs(nm1), Math.abs(nm2), Math.abs(nm3), 1);
 
     return { rev1, rev2, rev3, fixed, nm1, nm2, nm3, grossTotal, totalCosts, nmTotal, maxBar };
-  }, [i.nnm_y1_m, i.nnm_y2_m, i.nnm_y3_m, i.roa_y1, i.roa_y2, i.roa_y3, i.base_salary]);
+  }, [
+    i.nnm_y1_m, i.nnm_y2_m, i.nnm_y3_m,
+    (i as any).roa_y1_pct, (i as any).roa_y2_pct, (i as any).roa_y3_pct,
+    (i as any).roa_y1, (i as any).roa_y2, (i as any).roa_y3,
+    i.base_salary
+  ]);
 
   return (
     <section className="space-y-4">
       <h2 className="text-lg font-semibold">4️⃣ Revenue, Costs &amp; Net Margin</h2>
       <p className="text-white/70">Set ROA% per year. Fixed cost = Base Salary × 1.25 (matches your Streamlit logic).</p>
 
-      {/* ROA inputs */}
+      {/* ROA inputs — write to canonical *_pct; display legacy if present */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Field label="ROA % Year 1">
-          <Num value={i.roa_y1} onChange={(v)=>set({roa_y1:v})}/>
+          <Num
+            value={(i as any).roa_y1_pct ?? (i as any).roa_y1 ?? ''}
+            onChange={(v) => set({ roa_y1_pct: v } as any)}
+          />
         </Field>
         <Field label="ROA % Year 2">
-          <Num value={i.roa_y2} onChange={(v)=>set({roa_y2:v})}/>
+          <Num
+            value={(i as any).roa_y2_pct ?? (i as any).roa_y2 ?? ''}
+            onChange={(v) => set({ roa_y2_pct: v } as any)}
+          />
         </Field>
         <Field label="ROA % Year 3">
-          <Num value={i.roa_y3} onChange={(v)=>set({roa_y3:v})}/>
+          <Num
+            value={(i as any).roa_y3_pct ?? (i as any).roa_y3 ?? ''}
+            onChange={(v) => set({ roa_y3_pct: v } as any)}
+          />
         </Field>
       </div>
 
