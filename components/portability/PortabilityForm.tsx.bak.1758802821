@@ -39,7 +39,6 @@ const MARKETS: Market[] = [
   { id: 'amer_miami',  label: 'Miami',       region: 'Americas',    benchmark: {median: 56, topQuartile: 72}},   // ✅ added
 ];
 
-
 /* Booking centres list (keep short here; add more if needed) */
 const BOOKING_CENTRES = [
   'Geneva','Zurich','Luxembourg','London','Dubai','Singapore','Hong Kong','New York','Miami'
@@ -295,9 +294,6 @@ export default function PortabilityForm() {
       {/* Market select */}
       <div>
         <div className="text-sm text-white/80 mb-2">Select market</div>
-<p className="text-xs text-white/60 mb-3 italic">/* tip:market */
-  Your <strong>home market</strong> sets the benchmark. Scores are compared with the median and top-quartile portability levels of peers in your region.
-</p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {grouped.map(g => (
             <div key={g.region}>
@@ -323,9 +319,6 @@ export default function PortabilityForm() {
       {/* Booking centres */}
       <div>
         <div className="text-sm text-white/80 mb-2">Booking centres</div>
-<p className="text-xs text-white/60 mb-3 italic">/* tip:centres */
-  The more <strong>custody locations</strong> you cover — especially Tier-1 hubs like London, Zurich, or Hong Kong — the easier it is to move your book across platforms.
-</p>
         <div className="flex flex-wrap gap-2">
           {BOOKING_CENTRES.map(c => {
             const on = booking.includes(c);
@@ -391,9 +384,6 @@ export default function PortabilityForm() {
       {/* Cross-border licenses */}
       <div>
         <div className="text-sm text-white/80 mb-2">Cross-border licenses</div>
-<p className="text-xs text-white/60 mb-3 italic">/* tip:xb */
-  Breadth of cross-border coverage is a strong portability signal. More licenses = fewer restrictions when relocating client relationships.
-</p>
         <TagEditor
           values={crossBorder}
           placeholder="Add a license (e.g., EU Pass, UK, UAE)..."
