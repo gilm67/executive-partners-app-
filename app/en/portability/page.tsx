@@ -1,91 +1,58 @@
-// app/portability/page.tsx
+// app/en/portability/page.tsx
 import type { Metadata } from "next";
-import PortabilityForm from "@/components/portability/PortabilityForm";
+import dynamic from "next/dynamic";
 
+/** SEO */
 export const metadata: Metadata = {
-  title: { absolute: "Portability for Private Bankers | Executive Partners" },
+  title: "Portability Readiness – Executive Partners",
   description:
-    "Assess your Portability Readiness with market-specific benchmarks and booking-centre intelligence.",
+    "Assess your book’s portability across booking centres with live benchmarks and banker-grade guidance.",
+  openGraph: {
+    title: "Portability Readiness – Executive Partners",
+    description:
+      "Quick, structured assessment across documentation, licensing and onboarding speed.",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Executive Partners" }],
+  },
+  twitter: { card: "summary_large_image", title: "Portability", images: ["/og.png"] },
 };
 
-function Decor() {
-  return (
-    <div aria-hidden="true" suppressHydrationWarning className="pointer-events-none absolute inset-0 -z-10">
-      <div className="absolute inset-0 opacity-[0.06] ep-grid-bg"
-      />
-      <div className="absolute -top-32 right-0 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl" />
+// CSR-only client UI (keeps the new layout SSR clean)
+const PortabilityForm = dynamic(() => import("@/components/portability/PortabilityForm"), {
+  ssr: false,
+  loading: () => (
+    <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-sm text-white/70">
+      Loading Portability…
     </div>
-  );
-}
+  ),
+});
 
 export default function PortabilityPage() {
   return (
-    <main className="relative text-white">
-      <Decor />
-
-      {/* Hero */}
-      <section className="border-b border-white/10 bg-black/20">
-        <div className="mx-auto w-full max-w-7xl px-4 py-12 md:py-16">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80">
+    <main className="min-h-[70vh]">
+      {/* Hero (keeps your new look) */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-14">
+        <div className="mb-8">
+          <p className="mb-3 inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
             Portability Readiness
-          </div>
-          <h1 className="mt-4 text-4xl font-extrabold tracking-tight md:text-5xl">
-            Assess your book’s portability
-          </h1>
-          <p className="mt-3 max-w-2xl text-neutral-300">
-            A quick, structured assessment of revenue attribution, documentation quality, cross-border
-            compliance, and onboarding speed. Your inputs stay private.
           </p>
-
-          {/* Metrics */}
-          <div className="mt-8 grid grid-cols-3 gap-4 sm:max-w-lg sm:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-              <div className="text-2xl font-semibold">35+</div>
-              <div className="text-xs text-neutral-400">Markets</div>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-              <div className="text-2xl font-semibold">15</div>
-              <div className="text-xs text-neutral-400">Booking centres</div>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-              <div className="text-2xl font-semibold">Live</div>
-              <div className="text-xs text-neutral-400">Benchmarks</div>
-            </div>
+          <h1 className="text-4xl font-semibold tracking-tight">Assess your book’s portability</h1>
+          <p className="mt-3 max-w-2xl text-white/70">
+            A quick, structured assessment of revenue attribution, documentation quality,
+            cross-border compliance, and onboarding speed. Your inputs stay private.
+          </p>
+          <div className="mt-6 flex gap-3 text-sm text-white/70">
+            <span className="rounded-xl border border-white/10 bg-white/5 px-3 py-1">35+ Markets</span>
+            <span className="rounded-xl border border-white/10 bg-white/5 px-3 py-1">15 Booking centres</span>
+            <span className="rounded-xl border border-white/10 bg-white/5 px-3 py-1">Live Benchmarks</span>
           </div>
         </div>
-      </section>
 
-      {/* Body */}
-      <section className="py-10 md:py-14">
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 lg:grid-cols-3">
-          {/* Explainer */}
-          <aside className="order-last lg:order-first">
-            <div className="sticky top-24 rounded-2xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur">
-              <h2 className="text-lg font-semibold">How scoring works</h2>
-              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-neutral-300">
-                <li>Weighted across revenue, references (documentation), compliance, and onboarding.</li>
-                <li>Higher scores suggest faster offers and smoother transitions.</li>
-                <li>Optionally share your result with Executive Partners confidentially.</li>
-              </ul>
-              <p className="mt-4 text-xs text-neutral-400">
-                *Indicative only — platforms differ in risk appetite and document thresholds.
-              </p>
-              <a
-                href="/contact"
-                className="mt-4 inline-flex text-sm text-emerald-400 underline underline-offset-4 hover:text-emerald-300"
-              >
-                Contact Executive Partners
-              </a>
-            </div>
-          </aside>
+        {/* Interactive tool */}
+        <PortabilityForm />
 
-          {/* Form */}
-          <div className="lg:col-span-2">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-5 backdrop-blur">
-              <PortabilityForm />
-            </div>
-          </div>
-        </div>
+        <p className="mt-6 text-xs text-white/60">
+          Privacy: We do not store any data without your explicit consent.
+        </p>
       </section>
     </main>
   );
