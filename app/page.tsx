@@ -9,8 +9,11 @@ import Skyline from "./components/Skyline";
 import StatsCount from "./components/StatsCount";
 import ConfidentialCTA from "./components/ConfidentialCTA";
 
-/* ------------ Types & helpers ------------ */
+/* ---------------- Static rendering lock ---------------- */
+export const dynamic = "force-static";
+export const revalidate = false;
 
+/* ------------ Types ------------ */
 type Job = {
   id?: string;
   title: string;
@@ -24,35 +27,8 @@ type Job = {
   createdAt?: string;
 };
 
-// Hide retired/duplicate slugs if they ever appear in the API
-const HIDDEN_SLUGS = new Set<string>([
-  "senior-relationship-manager-ch-onshore-4",
-  "senior-relationship-manager-brazil-2",
-  "private-banker-mea-2",
-]);
-
-async function getFeaturedJobs(): Promise<Job[]> {
-  const qs = new URLSearchParams({ active: "true", sort: "newest", limit: "6" }).toString();
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
-  const abs = base ? `${base}/api/jobs?${qs}` : `/api/jobs?${qs}`;
-
-  // Try absolute first (prod/preview), then relative (dev)
-  const r1 = await fetch(abs, { cache: "no-store" }).catch(() => null);
-  const data =
-    r1?.ok
-      ? await r1.json()
-      : await (async () => {
-          const r2 = await fetch(`/api/jobs?${qs}`, { cache: "no-store" }).catch(() => null);
-          if (!r2?.ok) return [];
-          return r2.json();
-        })();
-
-  return (Array.isArray(data) ? data : [])
-    .filter((j) => j?.active !== false && !HIDDEN_SLUGS.has(j.slug))
-    .slice(0, 3);
-}
-
-/* ------------ SEO ------------ */
+/* ------------ (Optional) SEO ------------ */
+// If you already declare page-level metadata elsewhere, keep that and remove this.
 export const metadata: Metadata = {
   title: { absolute: "Executive Partners – Private Banking & Wealth Management Search" },
   description:
@@ -61,8 +37,35 @@ export const metadata: Metadata = {
 
 /* ---------------- Page ---------------- */
 
-export default async function HomePage() {
-  const featured = await getFeaturedJobs();
+// ⛔️ No async / no fetch — fully static page
+export default function HomePage() {
+  // Static featured roles (prevents runtime data dependencies)
+  const featured: Job[] = [
+    {
+      title: "Senior Relationship Manager — CH Onshore",
+      location: "Geneva",
+      summary:
+        "UHNW/HNW Swiss-domiciled clients; Geneva booking centre; strong local network required.",
+      slug: "senior-relationship-manager-ch-onshore-geneva",
+      active: true,
+    },
+    {
+      title: "Private Banker — MEA",
+      location: "Dubai",
+      summary:
+        "Cover UHNW/HNW MEA clients from Dubai; strong acquisition and cross-border expertise.",
+      slug: "senior-relationship-manager-mea-dubai",
+      active: true,
+    },
+    {
+      title: "Senior Relationship Manager — Brazil",
+      location: "Zurich or Geneva",
+      summary:
+        "Develop and manage HNW/UHNW Brazilian clients; full private banking advisory and cross-border expertise.",
+      slug: "senior-relationship-manager-brazil-ch",
+      active: true,
+    },
+  ];
 
   return (
     <main className="relative min-h-screen body-grain text-white">
@@ -139,7 +142,7 @@ export default async function HomePage() {
         {/* Authority stats */}
         <StatsCount />
 
-        {/* Featured jobs */}
+        {/* Featured jobs (static list above) */}
         <FeaturedRoles featured={featured} />
       </div>
 
