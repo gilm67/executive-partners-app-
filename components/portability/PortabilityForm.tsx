@@ -17,7 +17,7 @@ type Result = {
   median: number;
   topQuartile: number;
   recs: string[];
-  interp?: string[]; // optional – only shown if present
+  interp?: string[]; // optional
 };
 
 /* -------- Section with optional tooltip -------- */
@@ -62,7 +62,7 @@ function Chip({ label, selected, onClick }:{
   );
 }
 
-/* --- contextual next steps for on-page result (mirrors export API) --- */
+/* --- contextual next steps for on-page result --- */
 function localNextSteps(payload: any, score?: number): string[] {
   const steps: string[] = [];
   const i = payload?.inputs || {};
@@ -73,7 +73,6 @@ function localNextSteps(payload: any, score?: number): string[] {
     tier1.some(t => c.toLowerCase().includes(t.toLowerCase()))
   );
 
-  // Booking centres
   if (centres.length === 0) {
     steps.push("Add at least one booking centre to assess portability.");
   } else if (hasTier1) {
@@ -82,26 +81,16 @@ function localNextSteps(payload: any, score?: number): string[] {
     steps.push("Add a Tier-1 hub (e.g., London, Luxembourg, Singapore) to widen custodian matches.");
   }
 
-  // AUM mix
-  if ((i.aumMix ?? 3) <= 2) {
-    steps.push("Broaden AUM mix to reduce perceived platform risk.");
-  }
+  if ((i.aumMix ?? 3) <= 2) steps.push("Broaden AUM mix to reduce perceived platform risk.");
+  if ((i.clientConcentration ?? 3) >= 4) steps.push("Reduce top-client concentration below ~40% of AUM to de-risk portability.");
 
-  // Client concentration
-  if ((i.clientConcentration ?? 3) >= 4) {
-    steps.push("Reduce top-client concentration below ~40% of AUM to de-risk portability.");
-  }
-
-  // Cross-border licenses
   const lic = i.crossBorderLicenses ?? 0;
   if (lic === 0) steps.push("No outbound permissions — portability limited outside domestic market.");
   else if (lic === 1) steps.push("Limited outbound permissions — verify key target jurisdictions.");
 
-  // Product scope
   const prod = i.productScope ?? 2;
   if (prod <= 2) steps.push("Consider enabling Lending and Alternatives for a more competitive platform.");
 
-  // KYC portability
   const k = i.kycPortability ?? 1;
   if (k <= 1) steps.push("Standardize CRS/FATCA + MiFID/LSFin packs for reuse across custodians.");
 
@@ -150,17 +139,18 @@ export default function PortabilityForm() {
         kycPortability: kyc,
       };
       const res = await fetch("/api/portability/analyze", {
-        method:"POST", headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify(payload), signal: controller.signal
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal
       });
-      if (!res.ok) throw new Error(\`Analyze failed (\${res.status})\`);
+      if (!res.ok) throw new Error(`Analyze failed (${res.status})`);
       const data = await res.json();
       setResult({
         score: data.score,
         median: data.benchmark.median,
         topQuartile: data.benchmark.topQuartile,
         recs: localNextSteps({ inputs: payload, bookingCentres: booking }, data.score),
-        // If your API returns interpretation later, add it here:
         // interp: data.interpretation,
       });
     } catch (e:any) {
@@ -174,16 +164,16 @@ export default function PortabilityForm() {
   function openPrefilledEmail() {
     const subj = encodeURIComponent("Map my booking-centre options");
     const lines = [
-      \`Market: \${market?.label ?? "-"}\`,
-      \`Booking centres: \${booking.join(", ") || "-"}\`,
+      `Market: ${market?.label ?? "-"}`,
+      `Booking centres: ${booking.join(", ") || "-"}`,
       result
-        ? \`Score: \${result.score}/100 (Median \${result.median} • Top quartile \${result.topQuartile})\`
+        ? `Score: ${result.score}/100 (Median ${result.median} • Top quartile ${result.topQuartile})`
         : "Score: (not calculated yet)",
       "—",
       "Please advise optimal custodians and onboarding path."
     ];
-    const body = encodeURIComponent(lines.filter(Boolean).join("\\n"));
-    window.location.href = \`mailto:info@execpartners.ch?subject=\${subj}&body=\${body}\`;
+    const body = encodeURIComponent(lines.filter(Boolean).join("\n"));
+    window.location.href = `mailto:info@execpartners.ch?subject=${subj}&body=${body}`;
   }
 
   async function downloadDossier() {
@@ -209,7 +199,7 @@ export default function PortabilityForm() {
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error(\`Export failed (\${res.status})\`);
+      if (!res.ok) throw new Error(`Export failed (${res.status})`);
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
