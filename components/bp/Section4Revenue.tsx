@@ -2,22 +2,26 @@
 
 import { useMemo } from 'react';
 import { useBP } from './store';
+import { getROA } from './types'; // ← fallback-aware getter
 
 const fmt0 = new Intl.NumberFormat('en-CH', { maximumFractionDigits: 0 });
-const fmt1 = new Intl.NumberFormat('en-CH', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 export default function Section4Revenue() {
   const { i, set } = useBP();
 
-  // derive all numbers exactly like Streamlit
   const m = useMemo(() => {
     const nnm1 = toNum(i.nnm_y1_m) * 1_000_000;
     const nnm2 = toNum(i.nnm_y2_m) * 1_000_000;
     const nnm3 = toNum(i.nnm_y3_m) * 1_000_000;
 
-    const rev1 = nnm1 * (toNum(i.roa_y1) / 100);
-    const rev2 = nnm2 * (toNum(i.roa_y2) / 100);
-    const rev3 = nnm3 * (toNum(i.roa_y3) / 100);
+    // Use canonical *_pct (fallbacks to legacy if needed)
+    const roa1 = toNum(getROA(i as any, 1));
+    const roa2 = toNum(getROA(i as any, 2));
+    const roa3 = toNum(getROA(i as any, 3));
+
+    const rev1 = nnm1 * (roa1 / 100);
+    const rev2 = nnm2 * (roa2 / 100);
+    const rev3 = nnm3 * (roa3 / 100);
 
     const fixed = toNum(i.base_salary) * 1.25;
 
@@ -29,27 +33,40 @@ export default function Section4Revenue() {
     const totalCosts = fixed * 3;
     const nmTotal = nm1 + nm2 + nm3;
 
-    // For tiny bar chart widths
-    const maxBar = Math.max(rev1, rev2, rev3, nm1, nm2, nm3, 1);
+    const maxBar = Math.max(rev1, rev2, rev3, Math.abs(nm1), Math.abs(nm2), Math.abs(nm3), 1);
 
     return { rev1, rev2, rev3, fixed, nm1, nm2, nm3, grossTotal, totalCosts, nmTotal, maxBar };
-  }, [i.nnm_y1_m, i.nnm_y2_m, i.nnm_y3_m, i.roa_y1, i.roa_y2, i.roa_y3, i.base_salary]);
+  }, [
+    i.nnm_y1_m, i.nnm_y2_m, i.nnm_y3_m,
+    (i as any).roa_y1_pct, (i as any).roa_y2_pct, (i as any).roa_y3_pct,
+    (i as any).roa_y1, (i as any).roa_y2, (i as any).roa_y3, // legacy watchers
+    i.base_salary,
+  ]);
 
   return (
     <section className="space-y-4">
       <h2 className="text-lg font-semibold">4️⃣ Revenue, Costs &amp; Net Margin</h2>
-      <p className="text-white/70">Set ROA% per year. Fixed cost = Base Salary × 1.25 (matches your Streamlit logic).</p>
+      <p className="text-white/70">Set ROA% per year. Fixed cost = Base Salary × 1.25.</p>
 
-      {/* ROA inputs */}
+      {/* ROA inputs — write canonical *_pct, show legacy if present */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Field label="ROA % Year 1">
-          <Num value={i.roa_y1} onChange={(v)=>set({roa_y1:v})}/>
+          <Num
+            value={(i as any).roa_y1_pct ?? (i as any).roa_y1 ?? ''}
+            onChange={(v) => set({ roa_y1_pct: v } as any)}
+          />
         </Field>
         <Field label="ROA % Year 2">
-          <Num value={i.roa_y2} onChange={(v)=>set({roa_y2:v})}/>
+          <Num
+            value={(i as any).roa_y2_pct ?? (i as any).roa_y2 ?? ''}
+            onChange={(v) => set({ roa_y2_pct: v } as any)}
+          />
         </Field>
         <Field label="ROA % Year 3">
-          <Num value={i.roa_y3} onChange={(v)=>set({roa_y3:v})}/>
+          <Num
+            value={(i as any).roa_y3_pct ?? (i as any).roa_y3 ?? ''}
+            onChange={(v) => set({ roa_y3_pct: v } as any)}
+          />
         </Field>
       </div>
 
@@ -65,9 +82,9 @@ export default function Section4Revenue() {
             </tr>
           </thead>
           <tbody>
-            <Row label="Year 1" rev={m.rev1} fixed={m.fixed} nm={m.nm1}/>
-            <Row label="Year 2" rev={m.rev2} fixed={m.fixed} nm={m.nm2}/>
-            <Row label="Year 3" rev={m.rev3} fixed={m.fixed} nm={m.nm3}/>
+            <Row label="Year 1" rev={m.rev1} fixed={m.fixed} nm={m.nm1} />
+            <Row label="Year 2" rev={m.rev2} fixed={m.fixed} nm={m.nm2} />
+            <Row label="Year 3" rev={m.rev3} fixed={m.fixed} nm={m.nm3} />
             <tr className="bg-emerald-500/10 font-semibold">
               <Td>Total</Td>
               <Td className="text-right">{fmt0.format(m.grossTotal)}</Td>
@@ -78,32 +95,24 @@ export default function Section4Revenue() {
         </table>
       </div>
 
-      {/* Mini bar chart (CSS, no deps) */}
+      {/* Mini bar chart (no deps) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <h3 className="text-sm font-medium text-white/80 mb-2">Gross Revenue</h3>
-          <Bars items={[
-            ['Year 1', m.rev1],
-            ['Year 2', m.rev2],
-            ['Year 3', m.rev3],
-          ]} max={m.maxBar}/>
+          <Bars items={[['Year 1', m.rev1], ['Year 2', m.rev2], ['Year 3', m.rev3]]} max={m.maxBar} />
         </div>
         <div>
           <h3 className="text-sm font-medium text-white/80 mb-2">Net Margin</h3>
-          <Bars items={[
-            ['Year 1', m.nm1],
-            ['Year 2', m.nm2],
-            ['Year 3', m.nm3],
-          ]} max={m.maxBar}/>
+          <Bars items={[['Year 1', m.nm1], ['Year 2', m.nm2], ['Year 3', m.nm3]]} max={m.maxBar} />
         </div>
       </div>
 
       {/* Quick metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-        <Metric label="Fixed Cost (each year)" value={`CHF ${fmt0.format(m.fixed)}`}/>
-        <Metric label="Gross Revenue (3Y)" value={`CHF ${fmt0.format(m.grossTotal)}`}/>
-        <Metric label="Total Costs (3Y)" value={`CHF ${fmt0.format(m.totalCosts)}`}/>
-        <Metric label="Net Margin (3Y)" value={`CHF ${fmt0.format(m.nmTotal)}`}/>
+        <Metric label="Fixed Cost (each year)" value={`CHF ${fmt0.format(m.fixed)}`} />
+        <Metric label="Gross Revenue (3Y)" value={`CHF ${fmt0.format(m.grossTotal)}`} />
+        <Metric label="Total Costs (3Y)" value={`CHF ${fmt0.format(m.totalCosts)}`} />
+        <Metric label="Net Margin (3Y)" value={`CHF ${fmt0.format(m.nmTotal)}`} />
       </div>
     </section>
   );
@@ -159,9 +168,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   return (
     <label className="text-sm text-white/80 space-y-1 block">
       <div className="font-medium text-white">{label}</div>
-      <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-        {children}
-      </div>
+      <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">{children}</div>
     </label>
   );
 }
