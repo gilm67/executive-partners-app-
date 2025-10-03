@@ -1,51 +1,28 @@
-/* app/portability/page.tsx */
-import type { Metadata } from "next";
-import PortabilityClient from "./portability-client";
-import { getOgImage } from "@/lib/og"; // 👈 NEW
+// app/portability/page.tsx
 
-const SITE =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.execpartners.ch";
-const PAGE_URL = `${SITE}/portability`;
-
-/* ---------------- SEO ---------------- */
-export const metadata: Metadata = {
-  title: "Portability Readiness Score™ | Executive Partners",
-  description:
-    "Answer 6 quick questions to estimate your client portability readiness (AUM mix, booking centres, cross-border licenses, product scope, and client concentration).",
-  alternates: { canonical: PAGE_URL },
-  openGraph: {
-    type: "website",
-    siteName: "Executive Partners",
-    url: PAGE_URL,
-    title: "Portability Readiness Score™",
-    description:
-      "6-question widget for RMs. Instant score + confidential CTA. No data stored without consent.",
-    images: [{ url: getOgImage("/portability"), width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Portability Readiness Score™",
-    description:
-      "Confidential client portability assessment. 6 quick questions, instant score.",
-    images: [getOgImage("/portability")],
-  },
-  robots: { index: true, follow: true },
+export const metadata = {
+  title: "Portability Score™ – Executive Partners",
+  description: "Confidentially assess client portability & transition risk.",
 };
 
-/* ---------------- Page ---------------- */
-export default function Page() {
+export default function PortabilityPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <h1 className="text-3xl font-semibold tracking-tight">
-        Portability Readiness Score™
-      </h1>
-      <p className="mt-2 text-sm text-neutral-500">
-        6 quick questions. Instant score. Confidential — no data stored without
-        your consent.
+    <main className="container-max py-10 text-white">
+      <h1 className="text-3xl font-bold">Portability Score™</h1>
+      <p className="mt-2 max-w-2xl text-white/80">
+        Assess client transfer feasibility across booking centres, licensing, and product scope.
+        This page is now live under your domain. We’ll mount the interactive widget here soon.
       </p>
-      <div className="mt-8">
-        <PortabilityClient />
+
+      <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6">
+        <h2 className="text-lg font-semibold">Coming soon</h2>
+        <ul className="mt-3 list-disc pl-5 text-sm text-white/80">
+          <li>Coverage & cross-border checks</li>
+          <li>Wallet share & retention signals</li>
+          <li>Booking centre and product compatibility</li>
+          <li>PDF export for hiring packs</li>
+        </ul>
       </div>
-    </div>
+    </main>
   );
 }
