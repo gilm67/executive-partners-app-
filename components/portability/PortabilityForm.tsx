@@ -30,12 +30,17 @@ function Section({
   children:React.ReactNode;
 }) {
   return (
-    <div className="space-y-2">
+    // Make this a positioned container so HelpTip (absolute) anchors correctly
+    <div className="space-y-2 relative">
       <div className="flex items-center gap-2 text-sm font-medium text-neutral-100">
         <span>{title}</span>
         {tip && <HelpTip content={tip} />}
       </div>
-      {subtitle && <div className="text-xs text-neutral-400">{subtitle}</div>}
+      {subtitle && (
+        <div className="text-xs text-neutral-400 mt-1 leading-relaxed">
+          {subtitle}
+        </div>
+      )}
       {children}
     </div>
   );
@@ -66,7 +71,7 @@ function Chip({ label, selected, onClick }:{
 function localNextSteps(payload: any, score?: number): string[] {
   const steps: string[] = [];
   const i = payload?.inputs || {};
-  const centres: string[] = payload?.bookingCentres || [];
+  the const centres: string[] = payload?.bookingCentres || [];
   const tier1 = ["Geneva","Zurich","London","Luxembourg","Singapore","New York"];
 
   const hasTier1 = centres.some(c =>
