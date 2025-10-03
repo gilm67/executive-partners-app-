@@ -7,31 +7,41 @@ import { usePathname } from "next/navigation";
 
 type NavItem = { href: string; label: string; external?: boolean };
 
+// NOTE: Internal routes only; /bp-simulator is legacy and redirected in next.config.js
 const NAV: NavItem[] = [
   { href: "/jobs", label: "Jobs" },
   { href: "/insights", label: "Insights" },
   { href: "/candidates", label: "Candidates" },
   { href: "/hiring-managers", label: "Hiring Managers" },
-  // ✅ Fixed: point to the Next.js simulator page
   { href: "/business-plan-simulator", label: "BP Simulator" },
   { href: "/portability", label: "Portability" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
+// Strip optional locale prefix like /en, /fr, /de for active-match checks
+function stripLocalePrefix(path: string) {
+  return path.replace(/^\/(en|fr|de)(?=\/|$)/, "");
+}
+
 export default function TopNav() {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname() || "/";
+  const pathnameRaw = usePathname() || "/";
+  const pathname = stripLocalePrefix(pathnameRaw);
 
   // Close mobile menu on route change
   useEffect(() => {
     if (open) setOpen(false);
-  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pathname]); // close whenever path changes
 
   const isActive = (href: string) => {
-    if (href === "/") return pathname === "/";
-    return pathname === href || pathname.startsWith(href + "/");
+    const target = stripLocalePrefix(href);
+    if (target === "/") return pathname === "/";
+    return pathname === target || pathname.startsWith(target + "/");
   };
+
+  const baseLinkCls =
+    "text-sm font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 rounded-md px-1.5 py-1";
 
   const ItemLink = ({ item }: { item: NavItem }) => {
     const active = isActive(item.href);
@@ -42,7 +52,7 @@ export default function TopNav() {
           href={item.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm font-semibold text-white hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 rounded-md px-1.5 py-1"
+          className={`${baseLinkCls} hover:text-white/90`}
         >
           {item.label}
         </a>
@@ -54,7 +64,8 @@ export default function TopNav() {
         href={item.href}
         aria-current={active ? "page" : undefined}
         className={[
-          "text-sm font-semibold text-white hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 rounded-md px-1.5 py-1",
+          baseLinkCls,
+          "hover:text-white/90 transition",
           active ? "underline underline-offset-8 decoration-white/70" : "",
         ].join(" ")}
       >
@@ -73,6 +84,7 @@ export default function TopNav() {
           target="_blank"
           rel="noopener noreferrer"
           className="block rounded-lg px-4 py-3 text-base font-bold bg-neutral-900/90 text-white ring-1 ring-white/15"
+          onClick={() => setOpen(false)}
         >
           {item.label}
         </a>
@@ -84,9 +96,10 @@ export default function TopNav() {
         href={item.href}
         aria-current={active ? "page" : undefined}
         className={[
-          "block rounded-lg px-4 py-3 text-base font-bold text-white ring-1 ring-white/15",
+          "block rounded-lg px-4 py-3 text-base font-bold text-white ring-1 ring-white/15 transition",
           active ? "bg-blue-600" : "bg-neutral-900/90 hover:bg-neutral-800",
         ].join(" ")}
+        onClick={() => setOpen(false)}
       >
         {item.label}
       </Link>
@@ -150,6 +163,7 @@ export default function TopNav() {
               <Link
                 href="/apply"
                 className="block text-center rounded-lg px-4 py-3 text-base font-bold bg-blue-600 text-white hover:bg-blue-700"
+                onClick={() => setOpen(false)}
               >
                 Submit CV
               </Link>

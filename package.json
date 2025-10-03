@@ -6,7 +6,17 @@
     "dev": "next dev --turbopack",
     "build": "next build --no-lint",
     "start": "next start",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+
+    "test": "playwright test",
+    "test:e2e": "playwright test",
+    "pretest:e2e": "playwright install --with-deps || true",
+    "test:e2e:headed": "playwright test --headed --project=chromium",
+    "test:e2e:update": "playwright test --update-snapshots",
+    "test:e2e:report": "playwright show-report",
+
+    "test:e2e:prod": "E2E_BASE_URL=https://www.execpartners.ch playwright test",
+    "test:e2e:preview": "if [ -z \"$PREVIEW_URL\" ]; then echo 'Set PREVIEW_URL=https://<your-vercel-preview>.vercel.app' && exit 1; fi; E2E_BASE_URL=$PREVIEW_URL playwright test"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
@@ -41,6 +51,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.0",
+    "@playwright/test": "^1.55.1",
     "@tailwindcss/postcss": "^4.1.14",
     "@tailwindcss/typography": "^0.5.16",
     "@types/luxon": "^3.7.1",
