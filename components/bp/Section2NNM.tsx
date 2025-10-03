@@ -7,7 +7,7 @@ export default function Section2NNM() {
   const { i, set } = useBP();
 
   const bestProspectsSum = useMemo(
-    () => (i.prospects || []).reduce((acc, p) => acc + (Number(p.best_nnm_m) || 0), 0),
+    () => (i.prospects || []).reduce((acc, p) => acc + (Number((p as any).best_nnm_m ?? 0) || 0), 0),
     [i.prospects]
   );
 
@@ -114,12 +114,12 @@ function NumberInput({
   placeholder,
   onChange
 }: {
-  value: number | string;
+  value?: number | string;         // allow undefined
   step?: number;
   placeholder?: string;
   onChange: (v: number) => void;
 }) {
-  const toText = (v: number | string) =>
+  const toText = (v?: number | string | null) =>
     v === 0 || v === '0' || v === undefined || v === null ? '' : String(v);
 
   const [text, setText] = useState<string>(toText(value));
@@ -166,11 +166,11 @@ function IntInput({
   placeholder,
   onChange
 }: {
-  value: number | string;
+  value?: number | string;         // allow undefined
   placeholder?: string;
   onChange: (v: number) => void;
 }) {
-  const toText = (v: number | string) =>
+  const toText = (v?: number | string | null) =>
     v === 0 || v === '0' || v === undefined || v === null ? '' : String(v);
 
   const [text, setText] = useState<string>(toText(value));
@@ -214,4 +214,3 @@ function IntInput({
 function deltaClass(delta: number) {
   return delta >= 0 ? 'text-emerald-300' : 'text-rose-300';
 }
-
