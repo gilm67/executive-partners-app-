@@ -3,6 +3,8 @@
 import { useMemo, useRef } from 'react';
 import { useBP, Prospect } from './store';
 
+type TotalRow = Prospect & { _isTotal: true; source: Prospect['source'] | '' };
+
 export default function Section3Prospects() {
   const {
     i,
@@ -20,10 +22,11 @@ export default function Section3Prospects() {
 
   // Data for display with a TOTAL row at the end
   const { rowsForDisplay, totals } = useMemo(() => {
-    const best = sum(i.prospects.map(p => p.best_nnm_m));
-    const worst = sum(i.prospects.map(p => p.worst_nnm_m));
-    const wealth = sum(i.prospects.map(p => p.wealth_m));
-    const totalRow = {
+    const best = sum(i.prospects.map((p: Prospect) => Number(p.best_nnm_m)));
+    const worst = sum(i.prospects.map((p: Prospect) => Number(p.worst_nnm_m)));
+    const wealth = sum(i.prospects.map((p: Prospect) => Number(p.wealth_m)));
+
+    const totalRow: TotalRow = {
       name: 'TOTAL',
       source: '' as Prospect['source'] | '',
       wealth_m: wealth,
@@ -31,10 +34,9 @@ export default function Section3Prospects() {
       worst_nnm_m: worst,
       _isTotal: true,
     };
-    return {
-      totals: totalRow,
-      rowsForDisplay: [...i.prospects, totalRow as any],
-    };
+
+    const rowsForDisplay: Array<Prospect | TotalRow> = [...i.prospects, totalRow];
+    return { totals: totalRow, rowsForDisplay };
   }, [i.prospects]);
 
   return (
@@ -129,18 +131,18 @@ export default function Section3Prospects() {
             </tr>
           </thead>
           <tbody>
-            {rowsForDisplay.map((row: any, idx) => {
-              const isTotal = !!row._isTotal;
+            {rowsForDisplay.map((row, idx) => {
+              const isTotal = '_isTotal' in row;
               return (
                 <tr
                   key={idx}
                   className={isTotal ? 'bg-emerald-500/10 font-semibold' : 'odd:bg-white/5'}
                 >
                   <Td>{row.name}</Td>
-                  <Td>{row.source || ''}</Td>
-                  <Td className="text-right">{fmt(row.wealth_m)}</Td>
-                  <Td className="text-right">{fmt(row.best_nnm_m)}</Td>
-                  <Td className="text-right">{fmt(row.worst_nnm_m)}</Td>
+                  <Td>{(row as Prospect).source || ''}</Td>
+                  <Td className="text-right">{fmt(Number(row.wealth_m))}</Td>
+                  <Td className="text-right">{fmt(Number(row.best_nnm_m))}</Td>
+                  <Td className="text-right">{fmt(Number(row.worst_nnm_m))}</Td>
                   <Td className="text-right">
                     {!isTotal && (
                       <div className="flex justify-end gap-2">
@@ -158,7 +160,7 @@ export default function Section3Prospects() {
 
       {/* Quick delta info like Streamlit note */}
       <p className="text-sm text-white/60">
-        Δ Best NNM vs NNM Y1: {' '}
+        Δ Best NNM vs NNM Y1:{' '}
         <span className={deltaClass(totals.best_nnm_m - (Number(i.nnm_y1_m) || 0))}>
           {(totals.best_nnm_m - (Number(i.nnm_y1_m) || 0)).toFixed(1)} M
         </span>
@@ -285,7 +287,7 @@ function parseCSV(text: string): Prospect[] {
     const cols = splitCSVLine(lines[r]);
     const src = (cols[idx.source] || '').trim();
     const candidate: Prospect['source'] =
-      (['Self Acquired','Inherited','Finder'].includes(src) ? src : 'Self Acquired') as any;
+      (['Self Acquired','Inherited','Finder'].includes(src) ? src : 'Self Acquired') as Prospect['source'];
 
     out.push({
       name: (cols[idx.name] || '').trim(),
