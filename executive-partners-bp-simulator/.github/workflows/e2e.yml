@@ -1,0 +1,30 @@
+name: E2E Smoke (BP Simulator via www.execpartners.ch)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run smoke test against PROD proxy
+        env:
+          BASE_URL: "https://www.execpartners.ch/business-plan-simulator"
+        run: npx playwright test
