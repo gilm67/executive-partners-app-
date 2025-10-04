@@ -1,14 +1,13 @@
 // src/app/business-plan-simulator/page.tsx
-'use client';
-
 import dynamic from 'next/dynamic';
-
-const BPClient = dynamic(() => import('../BPClient'), { ssr: false });
 
 export const metadata = {
   title: 'Business Plan Simulator – Executive Partners',
   description: 'Plan, project and export an Executive Partners business plan.',
 };
+
+// Dynamically import the client-only component
+const BPClient = dynamic(() => import('../BPClient'), { ssr: false });
 
 export default function Page() {
   return (
