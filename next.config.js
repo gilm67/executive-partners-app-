@@ -10,7 +10,7 @@ const nextConfig = {
         permanent: true, // 308
       },
       {
-        // just in case you had deep links before
+        // deep links safety
         source: "/bp-simulator/:path*",
         destination: "/business-plan-simulator/:path*",
         permanent: true,
@@ -28,7 +28,6 @@ const nextConfig = {
       return [];
     }
 
-    // Must include protocol so Next can build a proper absolute URL
     if (!/^https?:\/\//i.test(raw)) {
       console.warn(
         `[next.config.js] ⚠️  NEXT_PUBLIC_BP_SIM_URL "${raw}" is missing a protocol (http/https). Proxy disabled.`
@@ -36,18 +35,18 @@ const nextConfig = {
       return [];
     }
 
-    // Remove trailing slash to avoid '//' when appending '/:path*'
+    // normalize: no trailing slash
     const target = raw.replace(/\/+$/, "");
     console.log("[next.config.js] ✅ BP Simulator proxy target:", target);
 
     return [
-      // Keep your internal proxy path (useful for diagnostics)
+      // (optional) internal proxy path for diagnostics
       {
         source: "/bp-sim-proxy/:path*",
         destination: `${target}/:path*`,
       },
 
-      // ✅ Full proxy for the public route
+      // ✅ FULL PROXY for the public route
       {
         source: "/business-plan-simulator",
         destination: `${target}/`,
