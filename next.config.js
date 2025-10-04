@@ -41,9 +41,19 @@ const nextConfig = {
     console.log("[next.config.js] ✅ BP Simulator proxy target:", target);
 
     return [
+      // Keep your internal proxy path (useful for diagnostics)
       {
-        // Proxy path for BP Simulator (if you need to hit the external app)
         source: "/bp-sim-proxy/:path*",
+        destination: `${target}/:path*`,
+      },
+
+      // ✅ Full proxy for the public route
+      {
+        source: "/business-plan-simulator",
+        destination: `${target}/`,
+      },
+      {
+        source: "/business-plan-simulator/:path*",
         destination: `${target}/:path*`,
       },
     ];
