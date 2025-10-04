@@ -1,8 +1,8 @@
-import { computeScore } from "./score";
+import { computeScore } from "../../lib/portability/score";
 
 const base = {
   marketId: "uae_dubai",
-  bookingCentres: ["Dubai (DIFC)","Geneva"],
+  bookingCentres: ["Dubai (DIFC)", "Geneva"],
   aumMix: 3,
   crossBorderLicenses: 1,
   productScope: 2,
@@ -17,6 +17,12 @@ test("baseline score is within sane range", () => {
 });
 
 test("more licences + product breadth + lower concentration increases score", () => {
-  const better = { ...base, crossBorderLicenses: 3, productScope: 4, clientConcentration: 1, kycPortability: 3 };
+  const better = {
+    ...base,
+    crossBorderLicenses: 3,
+    productScope: 4,
+    clientConcentration: 1,
+    kycPortability: 3,
+  };
   expect(computeScore(better)).toBeGreaterThan(computeScore(base));
 });
