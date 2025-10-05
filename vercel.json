@@ -1,16 +1,8 @@
 {
+  "buildCommand": "TAILWIND_DISABLE_OXIDE=1 LIGHTNINGCSS_FORCE_JS=1 next build --no-lint",
   "rewrites": [
-    {
-      "source": "/bp-simulator",
-      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator"
-    },
-    {
-      "source": "/business-plan-simulator",
-      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator"
-    },
-    {
-      "source": "/bp-simulator/(.*)",
-      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator/$1"
-    }
+    { "source": "/bp-simulator", "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator" },
+    { "source": "/business-plan-simulator", "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator" },
+    { "source": "/bp-simulator/(.*)", "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator/$1" }
   ]
 }
