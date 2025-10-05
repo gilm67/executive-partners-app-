@@ -12,25 +12,19 @@
       "source": "/bp-simulator/(.*)",
       "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator/$1"
     },
+
+    /* Proxy Next.js assets & API for simulator pages ONLY when our cookie is set */
     {
       "source": "/_next/:path*",
       "has": [
-        {
-          "type": "header",
-          "key": "referer",
-          "value": "https?://(www\\.)?execpartners\\.ch/(bp-simulator|business-plan-simulator)(.*)"
-        }
+        { "type": "cookie", "key": "ep-sim", "value": "1" }
       ],
       "destination": "https://executive-partners-bp-simulator.vercel.app/_next/:path*"
     },
     {
       "source": "/api/:path*",
       "has": [
-        {
-          "type": "header",
-          "key": "referer",
-          "value": "https?://(www\\.)?execpartners\\.ch/(bp-simulator|business-plan-simulator)(.*)"
-        }
+        { "type": "cookie", "key": "ep-sim", "value": "1" }
       ],
       "destination": "https://executive-partners-bp-simulator.vercel.app/api/:path*"
     }
