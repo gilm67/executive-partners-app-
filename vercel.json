@@ -1,27 +1,36 @@
 {
   "rewrites": [
-    { "source": "/bp-simulator",
+    {
+      "source": "/bp-simulator",
       "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator"
     },
-    { "source": "/business-plan-simulator",
+    {
+      "source": "/business-plan-simulator",
       "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator"
     },
-    { "source": "/bp-simulator/(.*)",
+    {
+      "source": "/bp-simulator/(.*)",
       "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator/$1"
     },
-
-    /* Proxy Next.js assets ONLY when the request originates from the simulator page */
-    { "source": "/_next/:path*",
+    {
+      "source": "/_next/:path*",
       "has": [
-        { "type": "header", "key": "referer", "value": "https?://(www\\.)?execpartners\\.ch/(bp-simulator|business-plan-simulator)(.*)" }
+        {
+          "type": "header",
+          "key": "referer",
+          "value": "https?://(www\\.)?execpartners\\.ch/(bp-simulator|business-plan-simulator)(.*)"
+        }
       ],
       "destination": "https://executive-partners-bp-simulator.vercel.app/_next/:path*"
     },
-
-    /* Proxy API calls from the simulator UI (same-origin from browser pov) */
-    { "source": "/api/:path*",
+    {
+      "source": "/api/:path*",
       "has": [
-        { "type": "header", "key": "referer", "value": "https?://(www\\.)?execpartners\\.ch/(bp-simulator|business-plan-simulator)(.*)" }
+        {
+          "type": "header",
+          "key": "referer",
+          "value": "https?://(www\\.)?execpartners\\.ch/(bp-simulator|business-plan-simulator)(.*)"
+        }
       ],
       "destination": "https://executive-partners-bp-simulator.vercel.app/api/:path*"
     }
