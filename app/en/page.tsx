@@ -1,6 +1,9 @@
-// app/en/page.tsx
-import HomeShowcaseMock from "@/components/HomeShowcaseMock";
+import Hero from "@/components/Hero";
 
-export default function EnPage() {
-  return <HomeShowcaseMock />;
+export default function Page() {
+  return (
+    <main>
+      <Hero />
+    </main>
+  );
 }

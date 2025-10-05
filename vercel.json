@@ -1,14 +1,16 @@
 {
-  "redirects": [
-    {
-      "source": "/business-plan-simulator",
-      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator",
-      "permanent": false
-    },
+  "rewrites": [
     {
       "source": "/bp-simulator",
-      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator",
-      "permanent": false
+      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator"
+    },
+    {
+      "source": "/business-plan-simulator",
+      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator"
+    },
+    {
+      "source": "/bp-simulator/(.*)",
+      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator/$1"
     }
   ]
 }
