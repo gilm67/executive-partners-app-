@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/bp-simulator",
+      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator"
+    },
+    {
+      "source": "/business-plan-simulator",
+      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator"
+    },
+    {
+      "source": "/bp-simulator/(.*)",
+      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator/$1"
+    }
+  ]
+}
