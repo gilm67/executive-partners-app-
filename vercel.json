@@ -14,16 +14,10 @@
     },
     {
       "source": "/_next/:path*",
-      "has": [
-        { "type": "cookie", "key": "ep-sim", "value": "1" }
-      ],
       "destination": "https://executive-partners-bp-simulator.vercel.app/_next/:path*"
     },
     {
       "source": "/api/:path*",
-      "has": [
-        { "type": "cookie", "key": "ep-sim", "value": "1" }
-      ],
       "destination": "https://executive-partners-bp-simulator.vercel.app/api/:path*"
     }
   ]
