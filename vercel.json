@@ -12,8 +12,6 @@
       "source": "/bp-simulator/(.*)",
       "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator/$1"
     },
-
-    /* Proxy Next.js assets & API for simulator pages ONLY when our cookie is set */
     {
       "source": "/_next/:path*",
       "has": [
