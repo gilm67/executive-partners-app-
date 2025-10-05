@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/business-plan-simulator",
+      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator",
+      "permanent": false
+    },
+    {
+      "source": "/bp-simulator",
+      "destination": "https://executive-partners-bp-simulator.vercel.app/business-plan-simulator",
+      "permanent": false
+    }
+  ]
+}
