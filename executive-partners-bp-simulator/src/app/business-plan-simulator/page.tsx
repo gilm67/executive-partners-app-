@@ -1,5 +1,5 @@
-// src/app/business-plan-simulator/page.tsx (SERVER component)
-import BPClient from '../BPClient'; // regular import of a client component
+// src/app/business-plan-simulator/page.tsx
+import BPClient from '../BPClient';
 
 export const metadata = {
   title: 'Business Plan Simulator – Executive Partners',
@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <main className="min-h-screen bg-[#0B0E13] text-white">
+    <main className="min-h-screen">
       <div className="max-w-5xl mx-auto p-6 md:p-10">
         <h1 className="text-2xl font-semibold mb-6">Business Plan Simulator</h1>
         <BPClient />
