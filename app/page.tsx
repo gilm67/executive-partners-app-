@@ -1,31 +1,28 @@
 // app/page.tsx
 import HeaderTopBar from "@/components/HeaderTopBar";
 import MobileHero from "@/components/MobileHero";
-import Splash from "@/components/Splash";
 
-type PageProps = { searchParams: Promise<{ mobile?: string }> };
+type PageProps = {
+  searchParams?: { mobile?: string };
+};
 
-export default async function Page({ searchParams }: PageProps) {
-  const sp = await searchParams;                // ✅ await the dynamic API
-  const raw = sp?.mobile ?? "";
-  const forceMobile = raw === "" || raw === "1" || raw.toLowerCase() === "true";
-
-  const splashEnabled = process.env.NEXT_PUBLIC_ENABLE_SPLASH === "1";
+export default function Page({ searchParams }: PageProps) {
+  // Force the mobile hero when URL has ?mobile, ?mobile=1 or ?mobile=true
+  const forceMobile =
+    searchParams?.mobile === "" ||
+    searchParams?.mobile === "1" ||
+    searchParams?.mobile?.toLowerCase() === "true";
 
   return (
     <main className="relative w-full overflow-hidden pt-0 lg:pt-16">
       <HeaderTopBar />
 
-      {splashEnabled && !forceMobile && (
-        <div className="hidden lg:block">
-          <Splash />
-        </div>
-      )}
-
+      {/* Mobile-only hero; also render at any width if ?mobile=1 */}
       <div className={forceMobile ? "" : "lg:hidden"}>
         <MobileHero />
       </div>
 
+      {/* Desktop landing; hidden when forcing mobile */}
       {!forceMobile && (
         <div className="hidden lg:block">
           <LegacyLanding />
@@ -35,11 +32,11 @@ export default async function Page({ searchParams }: PageProps) {
   );
 }
 
-/* ---------- Desktop landing (placeholder) ---------- */
+/* ---------- Your existing landing page (desktop) ---------- */
 function LegacyLanding() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14 md:px-6 lg:px-8 text-white/90">
-      {/* your real desktop content */}
-    </section>
+    <div className="mx-auto max-w-7xl px-4 py-14 md:px-6 lg:px-8 text-white/90">
+      {/* Paste your current production landing JSX here */}
+    </div>
   );
 }
