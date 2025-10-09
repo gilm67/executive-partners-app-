@@ -6,15 +6,33 @@ export type Job = {
   location: string;
   experience_min?: number;
   languages?: string[];
-  summary: string;               // short blurb for the card
+  summary: string;               // short blurb for cards
   overview: string[];            // long spec sections for the details page
   responsibilities: string[];
   qualifications: string[];
   offer: string[];
   compliance?: string[];
   apply_note?: string;
+
+  // Optional (used by details page / SEO but not mandatory)
+  seniority?: string;
+  confidential?: boolean;
+  active?: boolean;
+  createdAt?: string;            // ISO date
+  body?: string;                 // if you want to supply a full markdown body
 };
 
+/* ---------------- Helpers ---------------- */
+function norm(s: string | undefined) {
+  return (s ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/--+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/* ---------------- Data ---------------- */
 export const jobsBySlug: Record<string, Job> = {
   // 1) MEA — Dubai
   "senior-relationship-manager-mea-dubai": {
@@ -52,6 +70,10 @@ export const jobsBySlug: Record<string, Job> = {
     ],
     apply_note:
       "Confidentially share your CV and brief business plan (AUM, NNM, pipeline).",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2025-09-01",
   },
 
   // 2) Brazil — Zurich or Geneva
@@ -87,6 +109,10 @@ export const jobsBySlug: Record<string, Job> = {
       "Relocation support where applicable; strong LatAm desk collaboration.",
     ],
     apply_note: "Send CV + short plan (AUM, NNM, pipeline).",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2025-09-05",
   },
 
   // 3) Portugal — Geneva / Zurich (long spec per your example)
@@ -125,6 +151,10 @@ export const jobsBySlug: Record<string, Job> = {
     ],
     apply_note:
       "👉 To apply: send your CV and a brief cover note via the Apply form or contact us for a confidential discussion.",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2025-09-10",
   },
 
   // 4) CH Onshore — Zurich
@@ -151,12 +181,18 @@ export const jobsBySlug: Record<string, Job> = {
       "7+ years with Swiss onshore clients; consistent delivery and references.",
       "Strong reputation and network in Deutschschweiz.",
     ],
-    compliance: ["Operate under LSFin/FinSA/MiFID-aligned policies; perfect documentation."],
+    compliance: [
+      "Operate under LSFin/FinSA/MiFID-aligned policies; perfect documentation.",
+    ],
     offer: [
       "Top-quartile Zurich package; upside tied to plan execution.",
       "Strong product platform and local PM/advisory support.",
     ],
     apply_note: "Submit CV + brief plan; Zurich hiring window is open.",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2025-09-12",
   },
 
   // 5) CH Onshore — Lausanne
@@ -189,6 +225,10 @@ export const jobsBySlug: Record<string, Job> = {
       "Prestigious Swiss brand with strong local heritage.",
     ],
     apply_note: "Confidential enquiries welcome; immediate interviews possible.",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2025-09-15",
   },
 
   // 6) MEA — Zurich
@@ -221,11 +261,42 @@ export const jobsBySlug: Record<string, Job> = {
       "Entrepreneurial environment with strong support functions.",
     ],
     apply_note: "Contact us confidentially; Zurich MEA desk is growing.",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2025-09-20",
   },
 };
 
-// convenient helpers
+/* ---------------- Exports ---------------- */
 export const jobsList: Job[] = Object.values(jobsBySlug);
+
+/**
+ * getJobBySlug
+ * - Tries exact raw key
+ * - Tries normalized key
+ * - Fuzzy-falls back on title/location if needed
+ */
 export function getJobBySlug(slug: string): Job | null {
-  return jobsBySlug[slug] ?? null;
+  if (!slug) return null;
+
+  // 1) exact
+  const exact = jobsBySlug[slug];
+  if (exact) return exact;
+
+  // 2) normalized exact
+  const wanted = norm(slug);
+  const byNormKey = Object.values(jobsBySlug).find((j) => norm(j.slug) === wanted);
+  if (byNormKey) return byNormKey;
+
+  // 3) fuzzy (startsWith / includes on normalized fields)
+  const fuzzy =
+    Object.values(jobsBySlug).find((j) => norm(j.slug).startsWith(wanted)) ||
+    Object.values(jobsBySlug).find((j) => wanted.startsWith(norm(j.slug))) ||
+    Object.values(jobsBySlug).find((j) => norm(j.title).includes(wanted)) ||
+    Object.values(jobsBySlug).find((j) =>
+      (norm(j.title) + "-" + norm(j.location) + "-" + norm(j.market)).includes(wanted)
+    );
+
+  return fuzzy ?? null;
 }
