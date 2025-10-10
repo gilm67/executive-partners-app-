@@ -5,7 +5,7 @@ import nodemailer from "nodemailer";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic"; // don't cache this endpoint
-export const preferredRegion = process.env.VERCEL_REGION || "iad1";
+// ❌ removed preferredRegion (must be a literal if used at all)
 
 /* -------------------- ENV / CONFIG -------------------- */
 const resendApiKey = (process.env.RESEND_API_KEY || "").trim();
