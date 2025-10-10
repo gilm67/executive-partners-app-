@@ -1,26 +1,12 @@
 // app/layout.tsx
 import "./globals.css";
-// ✅ Force concrete files (no alias ambiguity)
 import TopNav from "../components/TopNav";
-import Splash from "../components/Splash";
 import type { Metadata, Viewport } from "next";
-// Keep the import — it's tree-shaken if not used
 import { Analytics } from "@vercel/analytics/react";
 import { Inter, Playfair_Display } from "next/font/google";
 
-// ⤵️ Turn off automatic font preloading to avoid console warnings
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-  preload: false,
-});
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-  preload: false,
-});
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap", preload: false });
+const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap", preload: false });
 
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -47,8 +33,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Executive Partners – Private Banking & Wealth Management Search",
-    description:
-      "Confidential private banking & wealth management recruitment. Geneva-based, international reach.",
+    description: "Confidential private banking & wealth management recruitment. Geneva-based, international reach.",
     images: ["/og.png"],
   },
   robots: { index: true, follow: true },
@@ -113,8 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <head>
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        {/* No remote font preconnects (prevents build DNS warnings) */}
         <link
           rel="alternate"
           type="application/rss+xml"
@@ -127,7 +111,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       </head>
 
-      <body className="min-h-screen body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white">
+      <body className="min-h-screen overflow-x-hidden body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white/10 focus:px-3 focus:py-2"
@@ -135,12 +119,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
 
-        <Splash />
+        {/* No splash overlay — keeps the stunning landing fully visible */}
         <TopNav />
 
-        <main id="main" className="container-max py-10">
-          {children}
-        </main>
+        {/* Full-bleed: landing controls its own layout */}
+        <main id="main">{children}</main>
 
         <footer className="border-t border-white/10">
           <div className="container-max py-10">
@@ -193,7 +176,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </footer>
 
-        {/* Render analytics only when explicitly enabled to avoid warnings */}
         {enableAnalytics && <Analytics />}
       </body>
     </html>

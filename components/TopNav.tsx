@@ -1,4 +1,3 @@
-// components/TopNav.tsx
 "use client";
 
 import Link from "next/link";
@@ -22,88 +21,137 @@ const NAV: NavItem[] = [
 export default function TopNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  // Body scroll lock helper
+  // Body scroll lock
   useEffect(() => {
-    const body = document.body;
-    if (open) body.classList.add("ep-lock-scroll");
-    else body.classList.remove("ep-lock-scroll");
-    return () => body.classList.remove("ep-lock-scroll");
+    document.body.classList.toggle("ep-lock-scroll", open);
+    return () => document.body.classList.remove("ep-lock-scroll");
   }, [open]);
 
-  // Close menu on route change
+  // Close on route change
   useEffect(() => {
     setOpen(false);
     document.body.classList.remove("ep-lock-scroll");
   }, [pathname]);
 
-  // Close menu when tapping any nav link
-  function handleNavClick() {
-    setOpen(false);
-    document.body.classList.remove("ep-lock-scroll");
-  }
+  // Header style on scroll + ESC to close
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, []);
+
+  const bar =
+    "fixed inset-x-0 top-0 z-40 transition-colors " +
+    (scrolled
+      ? "border-b border-white/10 bg-[#0B0E13]/70 backdrop-blur supports-[backdrop-filter]:bg-[#0B0E13]/55"
+      : "bg-transparent");
+
+  const linkClasses = (active: boolean) =>
+    [
+      "rounded-md px-3 py-1.5 text-sm whitespace-nowrap transition",
+      active ? "bg-white/10 text-white" : "text-white/80 hover:text-white hover:bg-white/5",
+    ].join(" ");
+
+  const isActive = (href: string) =>
+    pathname === href || pathname?.startsWith(href + "/");
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0E13]/80 backdrop-blur supports-[backdrop-filter]:bg-[#0B0E13]/60">
+    <header className={bar}>
       <nav className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-3">
-          <Link href="/" className="shrink-0 text-base sm:text-lg font-semibold tracking-tight">
+          {/* Brand */}
+          <Link
+            href="/"
+            className="shrink-0 text-base sm:text-lg font-semibold tracking-tight text-white hover:opacity-90"
+            aria-label="Executive Partners — Home"
+          >
             Executive Partners
           </Link>
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-2">
             <div className="flex items-center gap-2 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
-              {NAV.map((item) => {
-                const active = pathname === item.href || pathname?.startsWith(item.href + "/");
-                const className = [
-                  "rounded-md px-3 py-1.5 text-sm whitespace-nowrap transition",
-                  active ? "bg-white/10 text-white" : "text-white/80 hover:text-white hover:bg-white/5",
-                ].join(" ");
-                return item.external ? (
-                  <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" className={className}>
+              {NAV.map((item) =>
+                item.external ? (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={linkClasses(isActive(item.href))}
+                  >
                     {item.label}
                   </a>
                 ) : (
-                  <Link key={item.href} href={item.href} className={className} onClick={handleNavClick}>
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={linkClasses(isActive(item.href))}
+                    onClick={() => setOpen(false)}
+                    aria-current={isActive(item.href) ? "page" : undefined}
+                  >
                     {item.label}
                   </Link>
-                );
-              })}
+                )
+              )}
             </div>
           </div>
 
           {/* Mobile burger */}
           <button
-            aria-label="Open menu"
+            type="button"
+            aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
-            className="md:hidden rounded-md border border-white/15 bg-white/5 px-3 py-1.5 text-sm hover:bg-white/10"
             onClick={() => setOpen((v) => !v)}
+            className="md:hidden rounded-md border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-white hover:bg-white/10"
           >
-            Menu
+            {open ? "Close" : "Menu"}
           </button>
         </div>
 
-        {/* Mobile panel */}
+        {/* Mobile panel (hidden when closed) */}
         <div
-          className="ep-mobile-menu md:hidden mt-3 rounded-2xl border border-white/10 bg-[#0B0E13]/95 backdrop-blur p-3"
-          aria-hidden={!open}
+          className={
+            (open ? "mt-3" : "hidden") +
+            " md:hidden rounded-2xl border border-white/10 bg-[#0B0E13]/95 backdrop-blur p-3"
+          }
         >
           <ul className="grid gap-1">
             {NAV.map((item) => {
-              const active = pathname === item.href || pathname?.startsWith(item.href + "/");
-              const className = [
+              const active = isActive(item.href);
+              const cls = [
                 "block rounded-md px-3 py-2 text-sm",
                 active ? "bg-white/10 text-white" : "text-white/80 hover:text-white hover:bg-white/5",
               ].join(" ");
               return (
                 <li key={item.href}>
                   {item.external ? (
-                    <a href={item.href} target="_blank" rel="noopener noreferrer" className={className} onClick={handleNavClick}>
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cls}
+                      onClick={() => setOpen(false)}
+                    >
                       {item.label}
                     </a>
                   ) : (
-                    <Link href={item.href} className={className} onClick={handleNavClick}>
+                    <Link
+                      href={item.href}
+                      className={cls}
+                      onClick={() => setOpen(false)}
+                      aria-current={active ? "page" : undefined}
+                    >
                       {item.label}
                     </Link>
                   )}
@@ -113,6 +161,9 @@ export default function TopNav() {
           </ul>
         </div>
       </nav>
+
+      {/* subtle divider when not scrolled */}
+      {!scrolled && <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />}
     </header>
   );
 }

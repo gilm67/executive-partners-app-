@@ -6,6 +6,9 @@ import {
   Search, MapPin, Briefcase, Shield, CalendarDays, ChevronRight, Filter, Star,
 } from "lucide-react";
 
+/* 🔗 Central job data (single source of truth) */
+import { jobsList as CANONICAL_DATA } from "@/data/jobs";
+
 /* ---------------- meta (SEO) ---------------- */
 export const metadata: Metadata = {
   title: "Private Banking Jobs in Switzerland | Executive Partners",
@@ -35,75 +38,20 @@ type Job = {
   createdAt?: string; // ISO
 };
 
-/* ---------------- data: fallback (keeps page populated) ---------------- */
-const CANONICAL_JOBS: Job[] = [
-  {
-    title: "Senior Relationship Manager — MEA",
-    location: "Dubai",
-    market: "Middle East & Africa (MEA)",
-    seniority: "Director / Executive Director",
-    summary:
-      "Cover UHNW/HNW MEA clients from Dubai; strong acquisition and cross-border expertise.",
-    slug: "senior-relationship-manager-mea-dubai",
-    confidential: true,
-    active: true,
-  },
-  {
-    title: "Senior Relationship Manager — Brazil",
-    location: "Zurich or Geneva",
-    market: "Brazil (LatAm)",
-    seniority: "Director / Executive Director",
-    summary:
-      "Acquire, develop and manage HNW/UHNW Brazilian clients in Switzerland; full private banking advisory and cross-border expertise.",
-    slug: "senior-relationship-manager-brazil-ch",
-    confidential: true,
-    active: true,
-  },
-  {
-    title: "Senior Relationship Manager — CH Onshore",
-    location: "Zurich",
-    market: "Switzerland (Onshore)",
-    seniority: "Director / Executive Director",
-    summary:
-      "Manage UHNW/HNW Swiss onshore clients in German-speaking Switzerland; strong acquisition and advisory expertise.",
-    slug: "senior-relationship-manager-ch-onshore-zurich",
-    confidential: true,
-    active: true,
-  },
-  {
-    title: "Senior Relationship Manager — CH Onshore",
-    location: "Lausanne",
-    market: "Switzerland (Onshore)",
-    seniority: "Director / Executive Director",
-    summary:
-      "Cover UHNW/HNW Swiss onshore clients in Romandie; focus on acquisition and cross-generational advisory.",
-    slug: "senior-relationship-manager-ch-onshore-lausanne",
-    confidential: true,
-    active: true,
-  },
-  {
-    title: "Senior Relationship Manager — Portugal",
-    location: "Geneva",
-    market: "Portugal (LatAm/Europe)",
-    seniority: "Director / Executive Director",
-    summary:
-      "Manage UHNW/HNW Portuguese clients booking in Switzerland; strong cross-border, advisory, and acquisition expertise.",
-    slug: "senior-relationship-manager-portugal-geneva",
-    confidential: true,
-    active: true,
-  },
-  {
-    title: "Senior Relationship Manager — MEA",
-    location: "Zurich",
-    market: "Middle East & Africa (MEA)",
-    seniority: "Director / Executive Director",
-    summary:
-      "Cover UHNW/HNW MEA clients from Zurich; GCC and African markets focus.",
-    slug: "senior-relationship-manager-mea-zurich",
-    confidential: true,
-    active: true,
-  },
-];
+/* ---------------- data: fallback (centralised) ----------------
+   We derive the lightweight card fields from data/jobs.ts so this page
+   never ships stale/hardcoded copies. No layout/JSX changes.
+----------------------------------------------------------------- */
+const CANONICAL_JOBS: Job[] = CANONICAL_DATA.map((j) => ({
+  title: j.title,
+  location: j.location,
+  market: j.market,
+  seniority: "Director / Executive Director",
+  summary: j.summary, // short blurb from data/jobs.ts
+  slug: j.slug,
+  confidential: true,
+  active: true,
+}));
 
 /* Hide retired/duplicate slugs */
 const HIDDEN_SLUGS = new Set<string>([
@@ -138,9 +86,12 @@ async function getJobs(query: string, filters: Record<string, string>) {
 
   for (const u of urls) {
     const json = await safeFetchJSON(u);
-    if (Array.isArray(json) && json.length) return json as Job[];
+    if (Array.isArray(json) && json.length) {
+      // Expecting API to already serve the same shape (slug-specific).
+      return json as Job[];
+    }
   }
-  // ✅ Fallback so the page is never empty
+  // ✅ Fallback so the page is never empty, and never hardcoded to Dubai
   return CANONICAL_JOBS;
 }
 

@@ -1,5 +1,6 @@
-/* app/globals.css */
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* =========================
    Base + Luxury Background
@@ -10,8 +11,8 @@ html, body { height: 100%; margin: 0; }
 body {
   background-color: #0B0F1A; /* deep midnight */
   background-image:
-    radial-gradient(1200px 600px at 20% 0%, rgba(158,203,255,.10), transparent),  /* ice */
-    radial-gradient(800px 400px at 80% 20%, rgba(30,144,255,.08), transparent),   /* sapphire */
+    radial-gradient(1200px 600px at 20% 0%, rgba(158,203,255,.10), transparent),
+    radial-gradient(800px 400px at 80% 20%, rgba(30,144,255,.08), transparent),
     radial-gradient(1000px 500px at 50% 120%, rgba(158,203,255,.09), transparent);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
@@ -38,40 +39,47 @@ body {
 .gold { color: #9ECBFF; } /* ice */
 
 /* ---------- Buttons: unified premium set ---------- */
-.btn {
+/* Make base button styling apply to all button variants */
+.btn,
+.btn-primary,
+.btn-ghost,
+.btn-gold {
   display: inline-flex; align-items: center; justify-content: center;
-  gap: .5rem; border-radius: 14px; /* consistent shape everywhere */
+  gap: .5rem; border-radius: 14px;
   padding: .9rem 1.2rem; font-weight: 700; line-height: 1;
   transition: transform .08s ease, box-shadow .25s ease, background .25s ease, opacity .2s ease;
   will-change: transform, box-shadow;
 }
-.btn:active { transform: translateY(1px) scale(.99); }
+.btn:active,
+.btn-primary:active,
+.btn-ghost:active,
+.btn-gold:active { transform: translateY(1px) scale(.99); }
 
 /* Large, identical hero size */
 .btn-xl {
   padding: 1.05rem 1.4rem;
   font-size: 0.98rem;
-  min-width: 13.5rem; /* forces identical width across the 3 hero CTAs */
+  min-width: 13.5rem;
 }
 
-/* Primary — Sapphire gradient with soft sheen (no yellow) */
-.btn-primary {
-  composes: btn;
-  color: #07131f;
-  background: linear-gradient(180deg, #9ECBFF 0%, #6FB5FF 35%, #1E90FF 100%);
+/* Primary — GOLD gradient (replaces old blue) */
+.btn-primary,
+.btn-gold {
+  color: #1a1300;
+  background: linear-gradient(180deg, #FFE8A3 0%, #F6C859 45%, #D6A738 100%);
   box-shadow:
-    0 8px 28px rgba(30,144,255,.32),
-    inset 0 1px 0 rgba(255,255,255,.55);
+    0 10px 36px rgba(214,167,56,.32),
+    inset 0 1px 0 rgba(255,255,255,.70);
 }
-.btn-primary:hover {
+.btn-primary:hover,
+.btn-gold:hover {
   box-shadow:
-    0 10px 36px rgba(30,144,255,.42),
-    inset 0 1px 0 rgba(255,255,255,.65);
+    0 14px 42px rgba(214,167,56,.44),
+    inset 0 1px 0 rgba(255,255,255,.85);
 }
 
-/* Ghost — glass with sapphire border on hover */
+/* Ghost — glass with subtle sapphire border on hover */
 .btn-ghost {
-  composes: btn;
   color: #fff;
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.14);
@@ -83,21 +91,6 @@ body {
   box-shadow: 0 10px 28px rgba(30,144,255,.25);
 }
 
-/* Backward-compat alias: .btn-gold now uses the same sapphire primary */
-.btn-gold {
-  composes: btn;
-  color: #07131f;
-  background: linear-gradient(180deg, #9ECBFF 0%, #6FB5FF 35%, #1E90FF 100%);
-  box-shadow:
-    0 8px 28px rgba(30,144,255,.32),
-    inset 0 1px 0 rgba(255,255,255,.55);
-}
-.btn-gold:hover {
-  box-shadow:
-    0 10px 36px rgba(30,144,255,.42),
-    inset 0 1px 0 rgba(255,255,255,.65);
-}
-
 /* Glass card with sapphire glow */
 .card {
   background: rgba(255,255,255,.05);
@@ -106,15 +99,18 @@ body {
   border-radius: 1.5rem;
   padding: 1.25rem;
   box-shadow:
-    0 0 0 1px rgba(158,203,255,0.28),   /* ice outline */
-    0 10px 40px rgba(30,144,255,0.10);  /* sapphire glow */
+    0 0 0 1px rgba(158,203,255,0.28),
+    0 10px 40px rgba(30,144,255,0.10);
 }
 
-/* Safety net for scroll locks (mobile menus, etc.) */
+/* Safety net for scroll locks */
 html[data-lock] { overflow: hidden; height: 100%; }
 
+/* Scroll lock when mobile menu is open */
+.ep-lock-scroll { overflow: hidden; touch-action: none; }
+
 /* =========================================================
-   Mobile contrast & readability (kept)
+   Mobile contrast & readability
    ========================================================= */
 @media (max-width: 768px) {
   header, nav { background: #0B0E13 !important; }
@@ -122,36 +118,42 @@ html[data-lock] { overflow: hidden; height: 100%; }
     color: #fff !important; font-weight: 700 !important;
   }
   .bg-white, .bg-neutral-50, .bg-zinc-50, .bg-gray-50 { color: #0B0E13 !important; }
-  .bg-white a, .bg-neutral-50 a, .bg-zinc-50 a, .bg-gray-50 a { color: #1D4ED8 !important; font-weight: 600; }
+  .bg-white a, .bg-neutral-50 a, .bg-zinc-50 a, .bg-gray-50 a { color: #1a1300 !important; font-weight: 600; }
   .bg-\[\#0B0E13\] .card, .bg-\[\#0B0E13\] .panel, .bg-\[\#0B0E13\] .section, .bg-\[\#0B0E13\] .prose { color: #ffffff !important; }
-  form input, form textarea, form select { background: rgba(255,255,255,0.06) !important; color: #fff !important; border-color: rgba(255,255,255,0.15) !important; }
+
+  form input, form textarea, form select {
+    background: rgba(255,255,255,0.06) !important; color: #fff !important; border-color: rgba(255,255,255,0.15) !important;
+  }
   form ::placeholder { color: rgba(255,255,255,0.65) !important; }
-  .cta, .apply-cta, [data-cta="apply"] { background: rgba(255,255,255,0.06) !important; color: #fff !important; border: 1px solid rgba(255,255,255,0.12) !important; }
-  .cta a, .apply-cta a, [data-cta="apply"] a { color: #fff !important; text-decoration: underline; text-underline-offset: 2px; }
+
+  /* Use GOLD for mobile CTAs instead of blue */
+  .cta, .apply-cta, [data-cta="apply"], a[href*="apply"], a[href*="contact"] {
+    background: linear-gradient(180deg, #FFE8A3 0%, #F6C859 45%, #D6A738 100%) !important;
+    color: #1a1300 !important; border: 0 !important;
+  }
 }
 
 @media (max-width: 640px) {
   header a, header nav a, header button, nav a, nav button {
     color: #fff !important; font-weight: 700 !important; text-shadow: 0 1px 2px rgba(0,0,0,.35);
   }
-  .mobile-dark-surface, .card, .panel, .rounded-2xl, .shadow-sm, .shadow, .bg-white, .bg-gray-50, .bg-neutral-50 {
+  .mobile-dark-surface, .card, .panel, .rounded-2xl, .shadow-sm, .shadow,
+  .bg-white, .bg-gray-50, .bg-neutral-50 {
     background-color: rgba(255,255,255,.06) !important; border-color: rgba(255,255,255,.10) !important;
   }
-  .mobile-readable, .prose, .content, .content p, .content li, .text-neutral-500, .text-neutral-600, .text-gray-500, .text-gray-600 { color: rgba(255,255,255,.90) !important; }
-  .mobile-readable-muted, .text-neutral-400, .text-gray-400 { color: rgba(255,255,255,.75) !important; }
-  .btn-outline, .btn-ghost, .border-white\/10, .border-white\/15, .border-gray-200 { border-color: rgba(255,255,255,.25) !important; color: #fff !important; }
-  .apply-cta, a[href*="apply"], a[href*="contact"] { background: #1D4ED8 !important; color: #fff !important; border-color: transparent !important; }
-}
-
-@media (max-width: 768px) {
-  .text-blue-400, .text-blue-500, .text-blue-600,
-  .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover {
-    color: #fff !important; font-weight: 600 !important;
+  .mobile-readable, .prose, .content, .content p, .content li,
+  .text-neutral-500, .text-neutral-600, .text-gray-500, .text-gray-600 {
+    color: rgba(255,255,255,.90) !important;
+  }
+  .mobile-readable-muted, .text-neutral-400, .text-gray-400 {
+    color: rgba(255,255,255,.75) !important;
+  }
+  .btn-outline, .btn-ghost, .border-white\/10, .border-white\/15, .border-gray-200 {
+    border-color: rgba(255,255,255,.25) !important; color: #fff !important;
   }
 }
 
-/* Force white, bold text inside blue buttons */
-a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\] { color: #fff !important; font-weight: 600 !important; }
+/* (Old blue overrides removed/replaced) */
 
 /* Strengthen brand/top-nav links */
 header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
@@ -160,54 +162,20 @@ header nav a, header nav button { color: #fff !important; font-weight: 600 !impo
 [class*="SheetContent"] a, [class*="SheetContent"] button,
 [class*="DrawerContent"] a, [class*="DrawerContent"] button { color: #fff !important; font-weight: 600 !important; }
 
-a[role="button"].bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button { color: #fff !important; font-weight: 600 !important; }
-
-@media (max-width: 768px) {
-  header a, header button, header nav a, header nav button,
-  [class*="Sheet"] a, [class*="Sheet"] button, [class*="Drawer"] a, [class*="Drawer"] button,
-  [class*="Menu"] a, [class*="Menu"] button {
-    color: #fff !important; font-weight: 700 !important;
-  }
-  .text-blue-400, .text-blue-500, .text-blue-600, .text-blue-700,
-  .hover\:text-blue-400:hover, .hover\:text-blue-500:hover, .hover\:text-blue-600:hover,
-  .text-primary, .hover\:text-primary:hover {
-    color: #fff !important; font-weight: 700 !important;
-  }
-  a.bg-\[\#1D4ED8\], button.bg-\[\#1D4ED8\], .bg-\[\#1D4ED8\] a, .bg-\[\#1D4ED8\] button {
-    color: #fff !important; font-weight: 700 !important;
-  }
-}
-
-header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
-
 /* =========================================================
    Splash — Cinematic Rise + Deblur (stable)
    ========================================================= */
 .splash-root {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  pointer-events: none;
-  -webkit-user-select: none;
-  user-select: none;
+  position: fixed; inset: 0; z-index: 1000;
+  pointer-events: none; -webkit-user-select: none; user-select: none;
   background-color: #0B0E13;
 }
-.splash-img {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; /* desktop: full-bleed luxury */
-}
+.splash-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .cinematic-rise {
-  transform: translateY(8vh);
-  filter: blur(8px);
-  opacity: 0.85;
-  transition:
-    transform 2000ms cubic-bezier(.2,.7,.2,1),
-    filter 2000ms ease-out,
-    opacity 2000ms ease-in-out;
+  transform: translateY(8vh); filter: blur(8px); opacity: 0.85;
+  transition: transform 2000ms cubic-bezier(.2,.7,.2,1), filter 2000ms ease-out, opacity 2000ms ease-in-out;
 }
-.cinematic-rise.revealed {
-  transform: translateY(0); filter: blur(0); opacity: 1;
-}
+.cinematic-rise.revealed { transform: translateY(0); filter: blur(0); opacity: 1; }
 .splash-gradient::after {
   content: ""; position: absolute; inset: 0;
   background:

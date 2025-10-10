@@ -4,6 +4,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import MarkdownLite from "../MarkdownLite";
 
+/* 🔗 Use your canonical data (single source of truth) */
+import {
+  getJobBySlug as getCanonicalJobBySlug,
+  jobsList as canonicalJobs,
+} from "@/data/jobs";
+
 /* ---------------- Types ---------------- */
 
 type Job = {
@@ -18,6 +24,14 @@ type Job = {
   active?: boolean;
   createdAt?: string;
   body?: string;
+  // Optional extended fields your data/jobs.ts might have:
+  experience_min?: number;
+  languages?: string[];
+  overview?: string[];
+  responsibilities?: string[];
+  qualifications?: string[];
+  offer?: string[];
+  compliance?: string[];
 };
 
 /* ---------------- Constants ---------------- */
@@ -83,7 +97,7 @@ function countryForLocation(loc?: string): string | undefined {
 
 const COMP_BLOCK = md(`
 ### Compensation
-Compensation is highly competitive and structured according to seniority, experience, and the business plan presented (AUM, NNM, and client portfolio).
+Compensation is highly competitive and structured according to seniority, experience, and the business plan presented (AUM, NNM, and the client portfolio).
 `);
 
 function withCompensation(text: string) {
@@ -351,66 +365,60 @@ const SALARY_RANGES: Record<string, SalaryBand> = {
   // "senior-relationship-manager-mea-dubai": { min: 250000, max: 500000, currency: "USD", unitText: "YEAR" },
 };
 
-/* ---------------- Data loading ---------------- */
+/* ---------------- Static params so featured links always resolve ---------------- */
 
-async function fetchAllJobs(): Promise<Job[]> {
-  const abs = process.env.NEXT_PUBLIC_SITE_URL
-    ? `${process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")}/api/jobs`
-    : null;
+export const dynamicParams = true;
 
-  const tries: (RequestInfo | URL)[] = [];
-  if (abs) tries.push(abs);
-  tries.push("/api/jobs");
+export function generateStaticParams() {
+  // canonical slugs (if present)
+  const canon = Array.isArray(canonicalJobs)
+    ? canonicalJobs
+        .map((j) => (j?.slug ? String(j.slug).trim() : ""))
+        .filter(Boolean)
+        .map((slug) => ({ slug }))
+    : [];
 
-  for (const url of tries) {
-    try {
-      const r = await fetch(url, { cache: "no-store" });
-      if (!r.ok) continue;
-      const raw = await r.json();
-      const list: Job[] = Array.isArray(raw)
-        ? raw
-        : Array.isArray((raw as any)?.jobs)
-        ? (raw as any).jobs
-        : [];
-      if (Array.isArray(list) && list.length) return list;
-    } catch {
-      // ignore and try next
-    }
-  }
-  // fall back to known evergreen postings
-  return Object.values(KNOWN_JOBS);
+  // our guaranteed fallbacks (homepage featured items + other knowns)
+  const known = Object.keys(KNOWN_JOBS).map((slug) => ({ slug }));
+
+  // de-dupe by slug
+  const seen = new Set<string>();
+  const merged = [...known, ...canon].filter(({ slug }) => {
+    if (seen.has(slug)) return false;
+    seen.add(slug);
+    return true;
+  });
+
+  return merged;
 }
 
-/** Find a job by slug with robust fallbacks. */
-async function fetchJobBySlug(requestedSlug: string): Promise<Job | null> {
-  const all = await fetchAllJobs();
-  if (!all.length) return null;
+/* ---------------- Data loading ---------------- */
 
+/**
+ * Primary resolver:
+ * 1) Try canonical data source (`@/data/jobs`) by exact raw slug,
+ *    then by normalized slug
+ * 2) If not found, try canonical fuzzy match
+ * 3) If still not found, fall back to your KNOWN_JOBS + rich markdown bodies
+ */
+async function resolveJobBySlug(requestedSlug: string): Promise<Job | null> {
   const wanted = norm(requestedSlug);
 
-  // exact
-  let found = all.find((j) => norm(j.slug) === wanted);
-  if (found) return found;
+  // 1) Exact from canonical data (raw, then normalized)
+  const canonExactRaw = getCanonicalJobBySlug(requestedSlug) as Job | null;
+  if (canonExactRaw) return canonExactRaw;
+  const canonExactNorm = getCanonicalJobBySlug(wanted) as Job | null;
+  if (canonExactNorm) return canonExactNorm;
 
-  // fuzzy
-  found =
-    all.find((j) => norm(j.slug).startsWith(wanted)) ||
-    all.find((j) => wanted.startsWith(norm(j.slug))) ||
-    all.find((j) => norm(j.title).includes(wanted));
-  if (found) return found;
+  // 2) Fuzzy from canonical list (helps if slug case/accents differ)
+  const canonFuzzy =
+    canonicalJobs.find((j) => norm(j.slug) === wanted) ||
+    canonicalJobs.find((j) => norm(j.slug).startsWith(wanted)) ||
+    canonicalJobs.find((j) => wanted.startsWith(norm(j.slug))) ||
+    canonicalJobs.find((j) => norm(j.title).includes(wanted));
+  if (canonFuzzy) return canonFuzzy as Job;
 
-  // heuristic
-  const hints = new Set(wanted.split("-"));
-  found = all.find((j) => {
-    const hay = `${norm(j.title)}-${norm(j.location)}-${norm(j.market)}`;
-    const score = [...hints].reduce(
-      (acc, p) => (p && hay.includes(p) ? acc + 1 : acc),
-      0
-    );
-    return score >= 2;
-  });
-  if (found) return found;
-
+  // 3) Fallback (ensures page still works even if API/canonical misconfigured)
   return KNOWN_JOBS[wanted] ?? null;
 }
 
@@ -431,12 +439,9 @@ function inferMarket(job: Job): string | undefined {
 
 function buildApplyHref(job: Job) {
   const params = new URLSearchParams();
-  // Role = the job title
   if (job.title) params.set("role", job.title);
-  // Market = explicit or inferred
   const m = inferMarket(job);
   if (m) params.set("market", m);
-  // Job ID = use slug to track source
   if (job.slug) params.set("jobId", job.slug);
   return `/apply?${params.toString()}`;
 }
@@ -449,7 +454,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const job = await fetchJobBySlug(slug);
+  const job = await resolveJobBySlug(slug);
   const base = siteBase();
 
   const title = job?.title
@@ -461,10 +466,7 @@ export async function generateMetadata({
     "Confidential private banking mandate via Executive Partners. Apply discretely.";
 
   const url = `${base}/jobs/${slug}`;
-
-  // include prefilled apply target in JSON-LD
-  const applyTarget =
-    job ? `${base}${buildApplyHref(job)}` : `${base}/apply`;
+  const applyTarget = job ? `${base}${buildApplyHref(job)}` : `${base}/apply`;
 
   return {
     title,
@@ -475,14 +477,14 @@ export async function generateMetadata({
       description,
       url,
       type: "article",
-      images: [{ url: `${base}/og.png` }],
+      images: [{ url: `${base}/og.png` }], // keep your OG image
     },
     robots:
       job?.active === false || (job && HIDDEN_SLUGS.has(job.slug))
         ? { index: false, follow: true }
         : { index: true, follow: true },
     other: {
-      // keep nothing extra
+      "apply:target": applyTarget,
     },
   };
 }
@@ -495,7 +497,7 @@ export default async function JobDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const job = await fetchJobBySlug(slug);
+  const job = await resolveJobBySlug(slug);
 
   // ✅ Use Next's jobs 404
   if (!job || job.active === false || HIDDEN_SLUGS.has(job.slug)) {
@@ -518,11 +520,42 @@ export default async function JobDetailPage({
 
   const country = countryForLocation(job.location);
 
+  // Prefer rich canonical sections if present, else fallbacks/summary
+  let bodyFromSections = "";
+  const hasSections =
+    Array.isArray((job as any).overview) ||
+    Array.isArray((job as any).responsibilities) ||
+    Array.isArray((job as any).qualifications) ||
+    Array.isArray((job as any).offer) ||
+    Array.isArray((job as any).compliance);
+
+  if (hasSections) {
+    const j: any = job;
+    const blocks: string[] = [];
+    if (Array.isArray(j.overview) && j.overview.length) {
+      blocks.push("### Overview\n" + j.overview.map((x: string) => `- ${x}`).join("\n"));
+    }
+    if (Array.isArray(j.responsibilities) && j.responsibilities.length) {
+      blocks.push("### Key Responsibilities\n" + j.responsibilities.map((x: string) => `- ${x}`).join("\n"));
+    }
+    if (Array.isArray(j.qualifications) && j.qualifications.length) {
+      blocks.push("### Qualifications\n" + j.qualifications.map((x: string) => `- ${x}`).join("\n"));
+    }
+    if (Array.isArray(j.compliance) && j.compliance.length) {
+      blocks.push("### Regulatory & Compliance\n" + j.compliance.map((x: string) => `- ${x}`).join("\n"));
+    }
+    if (Array.isArray(j.offer) && j.offer.length) {
+      blocks.push("### What We Offer\n" + j.offer.map((x: string) => `- ${x}`).join("\n"));
+    }
+    bodyFromSections = blocks.join("\n\n");
+  }
+
   const descriptionSourceRaw =
-    job.body?.trim() ||
-    FALLBACK_BODIES[norm(job.slug)] ||
-    job.summary ||
-    "Confidential private banking mandate.";
+    (job.body?.trim() ||
+      bodyFromSections ||
+      FALLBACK_BODIES[norm(job.slug)] ||
+      job.summary ||
+      "Confidential private banking mandate.").trim();
 
   // Inject Compensation disclaimer (also used in JSON-LD)
   const descriptionSource = withCompensation(descriptionSourceRaw);
@@ -615,13 +648,7 @@ export default async function JobDetailPage({
       })
     : undefined;
 
-  const body = withCompensation(
-    job.body?.trim() ||
-      FALLBACK_BODIES[norm(job.slug)] ||
-      (job.summary
-        ? `**Overview**\n\n${job.summary}\n\nFor full details, please contact us confidentially.`
-        : "")
-  );
+  const body = descriptionSource;
 
   // ✅ Build prefilled /apply URL (works for all current & future jobs)
   const applyHref = buildApplyHref(job);
@@ -697,7 +724,7 @@ export default async function JobDetailPage({
               </Link>
               <Link
                 href="/contact"
-                className="hidden items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10 md:inline-flex"
+                className="hidden items-center justify-center rounded-xl border border-white/15 bg:white/5 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10 md:inline-flex"
               >
                 Talk to us
               </Link>
