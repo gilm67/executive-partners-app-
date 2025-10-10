@@ -266,6 +266,50 @@ export const jobsBySlug: Record<string, Job> = {
     active: true,
     createdAt: "2025-09-20",
   },
+
+  // 7) LATAM — New York (NEW)
+  "senior-relationship-manager-latam-new-york": {
+    slug: "senior-relationship-manager-latam-new-york",
+    title: "Senior Relationship Manager — LATAM (New York)",
+    market: "Latin America (LatAm)",
+    location: "New York, USA",
+    experience_min: 7,
+    languages: ["English", "Spanish (strong)", "Portuguese (plus)"],
+    summary:
+      "Acquire and manage HNW/UHNW Latin American clients from a New York hub; cross-border advisory, lending and investment solutions.",
+    overview: [
+      "Lead client acquisition and relationship management for HNW/UHNW LATAM clients (Mexico, Andean region, Southern Cone, Brazil diaspora) from New York.",
+      "Provide holistic wealth management across advisory/DPM, structured products, credit (Lombard/RE), FX and estate planning coordination.",
+      "Leverage US platform breadth with international booking options (US/CH/SG as applicable) and specialist teams.",
+    ],
+    responsibilities: [
+      "Bring a portable network and originate consistent NNM via referrals, diaspora communities, and professional introducers.",
+      "Deliver tailored investment and credit solutions; coordinate with product, lending and planning specialists.",
+      "Maintain disciplined pipeline management, documenting opportunities and conversion.",
+      "Travel within the region as needed to maintain and expand key relationships.",
+    ],
+    qualifications: [
+      "7–10+ years serving LATAM private clients with a proven AUM/NNM track record.",
+      "Deep understanding of cross-border considerations for LATAM clients banking in the US and abroad.",
+      "Strong product knowledge across multi-asset advisory/DPM, alternatives, and credit.",
+      "Fluent English with strong Spanish (Portuguese a plus); excellent communication and negotiation skills.",
+    ],
+    compliance: [
+      "Operate within US regulatory requirements and internal cross-border frameworks.",
+      "Exemplary KYC/AML, Source of Wealth/Funds and suitability standards; documentation excellence.",
+    ],
+    offer: [
+      "Highly competitive US package with performance-linked variable; upside for quality, recurring revenues.",
+      "Access to a robust product shelf, private markets and specialized lending.",
+      "Entrepreneurial culture with senior support for strategic hires.",
+    ],
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, early portability view).",
+    seniority: "Director / Executive Director / MD",
+    confidential: true,
+    active: true,
+    createdAt: "2025-10-09",
+  },
 };
 
 /* ---------------- Exports ---------------- */
