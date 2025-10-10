@@ -115,7 +115,7 @@ export const jobsBySlug: Record<string, Job> = {
     createdAt: "2025-09-05",
   },
 
-  // 3) Portugal — Geneva / Zurich (long spec per your example)
+  // 3) Portugal — Geneva / Zurich
   "senior-relationship-manager-portugal-geneva": {
     slug: "senior-relationship-manager-portugal-geneva",
     title: "Senior Relationship Manager — Portugal Market",
@@ -231,7 +231,7 @@ export const jobsBySlug: Record<string, Job> = {
     createdAt: "2025-09-15",
   },
 
-  // 6) MEA — Zurich
+  // 6) MEA — Zurich (already present; kept)
   "senior-relationship-manager-mea-zurich": {
     slug: "senior-relationship-manager-mea-zurich",
     title: "Senior Relationship Manager — MEA",
@@ -267,7 +267,7 @@ export const jobsBySlug: Record<string, Job> = {
     createdAt: "2025-09-20",
   },
 
-  // 7) LATAM — New York (NEW)
+  // 7) LATAM — New York (existing recent)
   "senior-relationship-manager-latam-new-york": {
     slug: "senior-relationship-manager-latam-new-york",
     title: "Senior Relationship Manager — LATAM (New York)",
@@ -309,6 +309,130 @@ export const jobsBySlug: Record<string, Job> = {
     confidential: true,
     active: true,
     createdAt: "2025-10-09",
+  },
+
+  // 8) NEW — Nordics from Zurich
+  "senior-relationship-manager-nordics-zurich": {
+    slug: "senior-relationship-manager-nordics-zurich",
+    title: "Senior Relationship Manager — Nordics",
+    market: "Nordics (SE/NO/DK/FI/IS)",
+    location: "Zurich, Switzerland",
+    experience_min: 7,
+    languages: ["English", "Swedish/Norwegian/Danish/Finnish (plus)"],
+    summary:
+      "Acquire and advise HNW/UHNW Nordic clients from a Swiss booking centre; mandates, lending and cross-border expertise.",
+    overview: [
+      "Develop and manage a portfolio of Nordic entrepreneurs and families booking in Switzerland.",
+      "Deliver advisory/DPM, Lombard and structured solutions with strong FX and alternatives access.",
+      "Partner with Nordic introducers and Swiss product specialists to drive growth.",
+    ],
+    responsibilities: [
+      "Bring a portable Nordic network and originate consistent NNM.",
+      "Increase mandate penetration and share of wallet with existing clients.",
+      "Build referral channels with lawyers, tax advisers and family offices.",
+    ],
+    qualifications: [
+      "7+ years covering Nordics private clients; proven AUM/NNM track record.",
+      "Cultural fluency and credibility with Nordic clients and intermediaries.",
+      "Solid knowledge of multi-asset advisory/DPM, credit and cross-border rules.",
+    ],
+    compliance: [
+      "Operate under Swiss cross-border policy and Nordic regulatory sensitivities.",
+      "Exemplary KYC/AML; clear SoW/SoF narrative and suitability documentation.",
+    ],
+    offer: [
+      "Competitive Swiss package with performance upside.",
+      "Strong platform with private markets and specialized lending.",
+      "Entrepreneurial team with senior sponsorship for market build-out.",
+    ],
+    apply_note: "Send CV and a short business plan (AUM, NNM, 12–24 month view).",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2025-10-10",
+  },
+
+  // 9) NEW — US Onshore from Miami
+  "senior-relationship-manager-us-miami": {
+    slug: "senior-relationship-manager-us-miami",
+    title: "Senior Relationship Manager — US Onshore (Miami)",
+    market: "United States (Onshore)",
+    location: "Miami, USA",
+    experience_min: 7,
+    languages: ["English", "Spanish (plus)"],
+    summary:
+      "Grow a book of HNW/UHNW US onshore clients from Miami; advisory/DPM, credit and private markets.",
+    overview: [
+      "Lead acquisition and relationship management for US onshore clients (entrepreneurs, executives, family offices).",
+      "Provide end-to-end wealth solutions including advisory/DPM, tailored lending (Lombard/RE) and private markets.",
+      "Leverage a Miami hub with national reach and strong product platform.",
+    ],
+    responsibilities: [
+      "Bring a portable US network; deliver consistent NNM from targeted segments.",
+      "Calibrate proposals with investment/advisory and credit specialists.",
+      "Maintain a robust pipeline and deliver superior client experience.",
+    ],
+    qualifications: [
+      "7–10+ years advising US HNW/UHNW clients; strong revenue and NNM record.",
+      "Deep knowledge of investment solutions, lending and planning coordination.",
+      "Excellent communication; ability to win and retain sophisticated clients.",
+    ],
+    compliance: [
+      "Operate under US regulatory requirements and firm policies.",
+      "Impeccable KYC/AML and suitability standards; audit-ready documentation.",
+    ],
+    offer: [
+      "Attractive US package with variable tied to quality revenues.",
+      "Access to differentiated alternatives, credit and platform resources.",
+      "Senior sponsorship and resources for market development.",
+    ],
+    apply_note: "Apply with CV + brief plan (current AUM, 12-month NNM, pipeline view).",
+    seniority: "Director / Executive Director / MD",
+    confidential: true,
+    active: true,
+    createdAt: "2025-10-10",
+  },
+
+  // 10) NEW — LATAM from Miami
+  "senior-relationship-manager-latam-miami": {
+    slug: "senior-relationship-manager-latam-miami",
+    title: "Senior Relationship Manager — LATAM (Miami)",
+    market: "Latin America (LatAm)",
+    location: "Miami, USA",
+    experience_min: 7,
+    languages: ["Spanish", "English", "Portuguese (plus)"],
+    summary:
+      "Acquire and manage HNW/UHNW LATAM clients from a Miami hub; cross-border advisory, FX and credit.",
+    overview: [
+      "Build and grow relationships with LATAM clients (Mexico, Andean, Southern Cone, Brazil diaspora) booking US/CH.",
+      "Deliver multi-asset advisory/DPM, structured products, Lombard and real-estate lending, plus FX solutions.",
+      "Leverage Miami’s regional connectivity and a global booking platform.",
+    ],
+    responsibilities: [
+      "Bring a portable LATAM network and originate NNM via diaspora, introducers and events.",
+      "Coordinate proposals with product desks, lending and wealth planners.",
+      "Maintain high-tempo pipeline discipline and conversion reporting.",
+    ],
+    qualifications: [
+      "7–10+ years with LATAM private clients; proven AUM/NNM growth.",
+      "Strong cross-border understanding (US/LATAM) and product fluency.",
+      "Native/near-native Spanish; English fluent; Portuguese a plus.",
+    ],
+    compliance: [
+      "Operate within US regulations and cross-border frameworks.",
+      "Exemplary KYC/AML, SoW/SoF and suitability; meticulous files.",
+    ],
+    offer: [
+      "Competitive package with meaningful upside for recurring revenues.",
+      "Robust product shelf including private markets and tailored credit.",
+      "Entrepreneurial culture; senior sponsorship for strategic hires.",
+    ],
+    apply_note:
+      "Share CV and a concise plan (AUM today, targeted NNM, early portability view).",
+    seniority: "Director / Executive Director / MD",
+    confidential: true,
+    active: true,
+    createdAt: "2025-10-10",
   },
 };
 
