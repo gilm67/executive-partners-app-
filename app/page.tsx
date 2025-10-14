@@ -62,10 +62,11 @@ export default function HomePage() {
                 value="98%"
                 note="Candidates still in seat after 12 months"
               />
+              {/* ✅ Updated: count + city list */}
               <KpiCard
                 title="Global Hubs"
-                value="10+"
-                note="Geneva, Zurich, London, Dubai, Singapore, Hong Kong, New York, Miami"
+                value="12+"
+                note="Geneva, Zurich, London, Dubai, Singapore, Hong Kong, New York, Miami, Paris, Milano, Madrid, Lisbon"
               />
             </div>
           </div>
