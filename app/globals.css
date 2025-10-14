@@ -110,6 +110,46 @@ html[data-lock] { overflow: hidden; height: 100%; }
 .ep-lock-scroll { overflow: hidden; touch-action: none; }
 
 /* =========================================================
+   ✅ Light-surface override (for white pages/sections)
+   ========================================================= */
+.light-surface {
+  background: #ffffff !important;
+  color: #0B0E13 !important;
+}
+.light-surface .prose,
+.light-surface .content,
+.light-surface .card,
+.light-surface .panel,
+.light-surface .section,
+.light-surface .text-white,
+.light-surface [class*="text-white"] {
+  color: #0B0E13 !important;
+}
+.light-surface a { color: #1D4ED8 !important; }
+
+/* Buttons on light background */
+.light-surface .btn-ghost {
+  color: #0B0E13 !important;
+  background: rgba(0,0,0,.04) !important;
+  border-color: rgba(0,0,0,.12) !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,.06) !important;
+}
+.light-surface .btn-ghost:hover {
+  background: rgba(0,0,0,.06) !important;
+  border-color: rgba(0,0,0,.18) !important;
+}
+
+/* Form fields on light background */
+.light-surface form input,
+.light-surface form textarea,
+.light-surface form select {
+  background: #ffffff !important;
+  color: #0B0E13 !important;
+  border-color: rgba(0,0,0,.18) !important;
+}
+.light-surface form ::placeholder { color: rgba(0,0,0,.45) !important; }
+
+/* =========================================================
    Mobile contrast & readability
    ========================================================= */
 @media (max-width: 768px) {
@@ -126,7 +166,7 @@ html[data-lock] { overflow: hidden; height: 100%; }
   }
   form ::placeholder { color: rgba(255,255,255,0.65) !important; }
 
-  /* Use GOLD for mobile CTAs instead of blue */
+  /* Use GOLD for mobile CTAs */
   .cta, .apply-cta, [data-cta="apply"], a[href*="apply"], a[href*="contact"] {
     background: linear-gradient(180deg, #FFE8A3 0%, #F6C859 45%, #D6A738 100%) !important;
     color: #1a1300 !important; border: 0 !important;
@@ -152,8 +192,6 @@ html[data-lock] { overflow: hidden; height: 100%; }
     border-color: rgba(255,255,255,.25) !important; color: #fff !important;
   }
 }
-
-/* (Old blue overrides removed/replaced) */
 
 /* Strengthen brand/top-nav links */
 header a[href="/"] { color: #fff !important; font-weight: 700 !important; }
