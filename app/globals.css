@@ -10,17 +10,28 @@ html, body { height: 100%; margin: 0; }
 
 body {
   background-color: #0B0F1A; /* deep midnight */
+  /* ✨ Layered luxury gradients (merged) */
   background-image:
+    radial-gradient(1200px 600px at 10% -10%, rgba(158,203,255,.06), transparent),
+    radial-gradient(900px 500px at 90% 10%, rgba(156, 81, 255, .06), transparent),
+    radial-gradient(1100px 600px at 50% 120%, rgba(79, 220, 160, .07), transparent),
+    /* your original sapphire glows, kept but softened */
     radial-gradient(1200px 600px at 20% 0%, rgba(158,203,255,.10), transparent),
     radial-gradient(800px 400px at 80% 20%, rgba(30,144,255,.08), transparent),
     radial-gradient(1000px 500px at 50% 120%, rgba(158,203,255,.09), transparent);
-  background-attachment: fixed;
+  background-attachment: fixed; /* disabled on mobile below */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Subtle grain overlay for luxury feel */
-.body-grain::before {
+/* ✅ Prevent iOS repaint jank from fixed backgrounds on small screens */
+@media (max-width: 768px) {
+  body { background-attachment: scroll; }
+}
+
+/* Subtle grain overlay for luxury feel
+   - Activate by adding class="body-grain" to <body> in app/layout.tsx */
+body.body-grain::before {
   content: "";
   position: fixed; inset: 0; pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
@@ -39,7 +50,6 @@ body {
 .gold { color: #9ECBFF; } /* ice */
 
 /* ---------- Buttons: unified premium set ---------- */
-/* Make base button styling apply to all button variants */
 .btn,
 .btn-primary,
 .btn-ghost,
@@ -62,7 +72,7 @@ body {
   min-width: 13.5rem;
 }
 
-/* Primary — GOLD gradient (replaces old blue) */
+/* Primary — GOLD gradient */
 .btn-primary,
 .btn-gold {
   color: #1a1300;
@@ -159,7 +169,10 @@ html[data-lock] { overflow: hidden; height: 100%; }
   }
   .bg-white, .bg-neutral-50, .bg-zinc-50, .bg-gray-50 { color: #0B0E13 !important; }
   .bg-white a, .bg-neutral-50 a, .bg-zinc-50 a, .bg-gray-50 a { color: #1a1300 !important; font-weight: 600; }
-  .bg-\[\#0B0E13\] .card, .bg-\[\#0B0E13\] .panel, .bg-\[\#0B0E13\] .section, .bg-\[\#0B0E13\] .prose { color: #ffffff !important; }
+
+  .bg-\[\#0B0E13\] .card, .bg-\[\#0B0E13\] .panel, .bg-\[\#0B0E13\] .section, .bg-\[\#0B0E13\] .prose {
+    color: #ffffff !important;
+  }
 
   form input, form textarea, form select {
     background: rgba(255,255,255,0.06) !important; color: #fff !important; border-color: rgba(255,255,255,0.15) !important;
