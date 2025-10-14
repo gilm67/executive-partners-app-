@@ -30,13 +30,13 @@ type Band = { title: string; base: string; bonus: string; notes?: string };
 type Market = {
   title: string;
   intro: string;
-  currency: string; // display only
+  currency: string;
   hiringPulse: string[];
   comp: Band[];
   compNote?: string;
   ecosystem: {
     global?: string[];
-    champions?: string[]; // Swiss champions (for CH) or Local champions (elsewhere)
+    champions?: string[];
     boutiques?: string[];
   };
   trends?: string[];
@@ -48,7 +48,6 @@ const mk = (m: Market) => m;
    Market dataset (indicative 2025 ranges)
    ========================================================= */
 const MARKETS: Record<string, Market> = {
-  // ——— Switzerland ———
   geneva: mk({
     title: "Geneva",
     intro:
@@ -371,6 +370,10 @@ export async function generateStaticParams() {
   return Object.keys(MARKETS).map((city) => ({ city }));
 }
 
+const SITE =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.execpartners.ch");
+
 export async function generateMetadata({
   params,
 }: {
@@ -379,9 +382,29 @@ export async function generateMetadata({
   const { city } = await params;
   const info = MARKETS[city];
   if (!info) return { title: "Market — Executive Partners" };
+
+  const url = `${SITE}/markets/${city}`;
+  const title = `${info.title} — Private Banking Market`;
+  const description = info.intro;
+
   return {
-    title: `${info.title} — Private Banking Market`,
-    description: info.intro,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      siteName: "Executive Partners",
+      title,
+      description,
+      images: [{ url: "/og.png", width: 1200, height: 630, alt: "Executive Partners" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og.png"],
+    },
   };
 }
 
@@ -396,7 +419,7 @@ function dedupe(list?: string[]) {
 }
 
 /* =========================================================
-   Page (stunning layout)
+   Page (stunning layout) + Breadcrumb JSON-LD
    ========================================================= */
 export default async function MarketPage({
   params,
@@ -424,8 +447,22 @@ export default async function MarketPage({
   const champions = dedupe(data.ecosystem.champions)?.filter((n) => !global.includes(n));
   const boutiques = dedupe(data.ecosystem.boutiques);
 
+  // BreadcrumbList JSON-LD
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Markets", item: `${SITE}/markets` },
+      { "@type": "ListItem", position: 3, name: data.title, item: `${SITE}/markets/${city}` },
+    ],
+  };
+
   return (
     <main className="relative">
+      {/* JSON-LD */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+
       {/* Hero with subtle animated radial/linear gradient */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10">
@@ -448,7 +485,6 @@ export default async function MarketPage({
             <div>
               <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">{data.title}</h1>
               <p className="mt-3 max-w-3xl text-base md:text-lg text-white/80">{data.intro}</p>
-              {/* Trend pills if present */}
               {data.trends && data.trends.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2">
                   {data.trends.map((t) => (
@@ -622,7 +658,6 @@ export default async function MarketPage({
             )}
           </div>
 
-          {/* Inline trends (secondary) */}
           {data.trends && data.trends.length > 0 && (
             <div className="mt-6 rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-white/80">
               <span className="font-medium text-white/90">Trends: </span>
