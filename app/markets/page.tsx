@@ -10,16 +10,25 @@ const CITIES = [
   { slug: "hong-kong", city: "Hong Kong", country: "Hong Kong" },
   { slug: "new-york",  city: "New York",  country: "United States" },
   { slug: "miami",     city: "Miami",     country: "United States" },
+  // NEW
+  { slug: "paris",     city: "Paris",     country: "France" },
+  { slug: "milano",    city: "Milano",    country: "Italy" },
+  { slug: "madrid",    city: "Madrid",    country: "Spain" },
+  { slug: "lisbon",    city: "Lisbon",    country: "Portugal" },
 ];
 
 export default function MarketsIndex() {
   return (
     <div className="relative">
       {/* soft page glow */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{
-        background:
-          "radial-gradient(900px 320px at 15% -8%, rgba(59,130,246,.14) 0%, rgba(59,130,246,0) 60%), radial-gradient(800px 300px at 110% 0%, rgba(16,185,129,.10) 0%, rgba(16,185,129,0) 60%)",
-      }} />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(900px 320px at 15% -8%, rgba(59,130,246,.14) 0%, rgba(59,130,246,0) 60%), radial-gradient(800px 300px at 110% 0%, rgba(16,185,129,.10) 0%, rgba(16,185,129,0) 60%)",
+        }}
+      />
 
       {/* Title – match home/insights scale */}
       <header className="mb-8">
@@ -42,7 +51,10 @@ export default function MarketsIndex() {
             className="group relative rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-white/[0.02] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(59,130,246,.24)]"
           >
             {/* corner glow */}
-            <div aria-hidden className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 rounded-full bg-sky-500/25 blur-3xl opacity-40" />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-10 -right-10 h-40 w-40 rounded-full bg-sky-500/25 blur-3xl opacity-40"
+            />
             <div className="relative">
               <span className="inline-flex items-center rounded-full border border-sky-400/30 bg-sky-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-sky-300">
                 {m.country}
