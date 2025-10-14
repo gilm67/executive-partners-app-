@@ -17,7 +17,7 @@ type Result = {
   median: number;
   topQuartile: number;
   recs: string[];
-  interp?: string[]; // optional
+  interp?: string[];
 };
 
 /* -------- Section with optional tooltip -------- */
@@ -30,14 +30,13 @@ function Section({
   children:React.ReactNode;
 }) {
   return (
-    // Make this a positioned container so HelpTip (absolute) anchors correctly
-    <div className="space-y-2 relative">
-      <div className="flex items-center gap-2 text-sm font-medium text-neutral-100">
+    <div className="relative space-y-2">
+      <div className="flex items-center gap-2 text-[15px] font-medium text-white/95">
         <span>{title}</span>
         {tip && <HelpTip content={tip} />}
       </div>
       {subtitle && (
-        <div className="text-xs text-neutral-400 mt-1 leading-relaxed">
+        <div className="mt-1 text-sm leading-relaxed text-white/70">
           {subtitle}
         </div>
       )}
@@ -55,14 +54,19 @@ function Chip({ label, selected, onClick }:{
       type="button"
       onClick={onClick}
       className={[
-        "group flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition",
+        "group flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition ring-1",
         selected
-          ? "border-emerald-500/60 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/15"
-          : "border-white/10 bg-white/[0.03] text-neutral-200 hover:bg-white/[0.06]",
+          ? "ring-emerald-400/60 bg-emerald-500/20 text-emerald-50 hover:bg-emerald-500/25"
+          : "ring-white/15 bg-white/[0.07] text-white/90 hover:bg-white/[0.12]"
       ].join(" ")}
     >
       <span className="truncate">{label}</span>
-      <span className={["h-4 w-4 rounded-sm border transition", selected ? "border-emerald-400 bg-emerald-500/80" : "border-white/20"].join(" ")} />
+      <span
+        className={[
+          "h-4 w-4 rounded-sm border transition",
+          selected ? "border-emerald-300 bg-emerald-400/80" : "border-white/40"
+        ].join(" ")}
+      />
     </button>
   );
 }
@@ -156,7 +160,6 @@ export default function PortabilityForm() {
         median: data.benchmark.median,
         topQuartile: data.benchmark.topQuartile,
         recs: localNextSteps({ inputs: payload, bookingCentres: booking }, data.score),
-        // interp: data.interpretation,
       });
     } catch (e:any) {
       if (e.name !== "AbortError") {
@@ -220,137 +223,173 @@ export default function PortabilityForm() {
     }
   }
 
+  const isBusy = loading;
+
   return (
     <div className="container-ep">
-      <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+      {/* Thin progress bar while busy */}
+      {isBusy && <div className="fixed left-0 top-14 z-40 h-0.5 w-full animate-pulse bg-emerald-500" />}
+
+      {/* Card container – stronger contrast */}
+      <div className="rounded-2xl border border-white/15 bg-white/[0.08] p-6 shadow-lg backdrop-blur md:p-7">
         <div className="mb-5">
-          <div className="text-xl font-semibold">Portability Readiness Score™</div>
+          <div className="text-2xl font-semibold text-white">Portability Readiness Score™</div>
           {market && (
-            <p className="mt-1 text-sm text-neutral-300">
+            <p className="mt-1 text-sm text-white/80">
               {market.label} · Regulator: {market.regulator || "—"} · {market.notes?.slice(0,2).join(" · ")}
             </p>
           )}
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* Market */}
-          <Section
-            title="Market"
-            tip="Pick the exact onshore/offshore market you cover. Changing market may reset default booking centres until you edit them."
-          >
-            <select
-              value={marketId}
-              onChange={(e)=>{
-                const v = e.target.value;
-                setMarketId(v);
-                if (!touchedBooking) {
-                  const def = MARKETS.find(m=>m.id===v)?.defaultCentres || [];
-                  if (def.length) setBooking(def);
-                }
-              }}
-              className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-neutral-100 outline-none transition hover:bg-white/[0.06] focus:border-emerald-400"
+        {/* Disable only the controls when busy (keeps UI readable) */}
+        <fieldset
+          disabled={isBusy}
+          className="[&_input]:disabled:cursor-not-allowed [&_select]:disabled:cursor-not-allowed [&_button]:disabled:cursor-not-allowed"
+        >
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* Market */}
+            <Section
+              title="Market"
+              tip="Pick the exact onshore/offshore market you cover. Changing market may reset default booking centres until you edit them."
             >
-              {grouped.map(g=>(
-                <optgroup key={g.region} label={g.region}>
-                  {g.items.map(m=>(<option key={m.id} value={m.id}>{m.label}</option>))}
-                </optgroup>
-              ))}
-            </select>
-          </Section>
+              <select
+                value={marketId}
+                onChange={(e)=>{
+                  const v = e.target.value;
+                  setMarketId(v);
+                  if (!touchedBooking) {
+                    const def = MARKETS.find(m=>m.id===v)?.defaultCentres || [];
+                    if (def.length) setBooking(def);
+                  }
+                }}
+                className="w-full rounded-lg bg-[#0E131A] px-3 py-2 text-sm text-white/90 ring-1 ring-white/20 outline-none transition focus:ring-2 focus:ring-emerald-400/70"
+              >
+                {grouped.map(g=>(
+                  <optgroup key={g.region} label={g.region}>
+                    {g.items.map(m=>(<option key={m.id} value={m.id}>{m.label}</option>))}
+                  </optgroup>
+                ))}
+              </select>
+            </Section>
 
-          {/* Booking centres */}
-          <Section
-            title="Booking centres"
-            subtitle="Pick the custodians/centres your clients can use. More options typically increase portability."
-            tip="Add at least one Tier-1 centre (e.g., Geneva, Zurich, London, Singapore) to widen custodian matches."
-          >
-            <div className="grid grid-cols-2 gap-2">
-              {BOOKING_CENTRES.map(c=>(
-                <Chip key={c} label={c} selected={booking.includes(c)} onClick={()=>toggleCentre(c)} />
-              ))}
-            </div>
-          </Section>
+            {/* Booking centres */}
+            <Section
+              title="Booking centres"
+              subtitle="Pick the custodians/centres your clients can use. More options typically increase portability."
+              tip="Add at least one Tier-1 centre (e.g., Geneva, Zurich, London, Singapore) to widen custodian matches."
+            >
+              <div className="grid grid-cols-2 gap-2">
+                {BOOKING_CENTRES.map(c=>(
+                  <Chip key={c} label={c} selected={booking.includes(c)} onClick={()=>toggleCentre(c)} />
+                ))}
+              </div>
+            </Section>
 
-          {/* AUM mix */}
-          <Section
-            title="AUM mix (diversification)"
-            subtitle="1 = concentrated • 5 = well diversified"
-            tip="Mix across clients/products/geographies. Diversification improves acceptance and risk-adjusted revenue quality."
-          >
-            <input type="range" min={1} max={5} step={1} value={aumMix} onChange={(e)=>setAumMix(+e.target.value)} className="w-full" />
-            <div className="text-sm text-emerald-400 font-medium">Current: {aumMix} — {aumLabel(aumMix)}</div>
-          </Section>
+            {/* AUM mix */}
+            <Section
+              title="AUM mix (diversification)"
+              subtitle="1 = concentrated • 5 = well diversified"
+              tip="Mix across clients/products/geographies. Diversification improves acceptance and risk-adjusted revenue quality."
+            >
+              <input
+                type="range" min={1} max={5} step={1} value={aumMix}
+                onChange={(e)=>setAumMix(+e.target.value)}
+                className="w-full accent-emerald-500"
+              />
+              <div className="font-medium text-emerald-300">Current: {aumMix} — {aumLabel(aumMix)}</div>
+            </Section>
 
-          {/* Cross-border licenses */}
-          <Section
-            title="Cross-border licenses"
-            subtitle="Jurisdictional permissions (0–3)"
-            tip="0: none/onshore only. 1: limited outbound. 2: multi-jurisdiction. 3: robust multi-jurisdiction permissions."
-          >
-            <input type="range" min={0} max={3} step={1} value={licenses} onChange={(e)=>setLicenses(+e.target.value)} className="w-full" />
-            <div className="text-sm text-emerald-400 font-medium">Current: {licenses} — {licenseLabel(licenses)}</div>
-          </Section>
+            {/* Cross-border licenses */}
+            <Section
+              title="Cross-border licenses"
+              subtitle="Jurisdictional permissions (0–3)"
+              tip="0: none/onshore only. 1: limited outbound. 2: multi-jurisdiction. 3: robust multi-jurisdiction permissions."
+            >
+              <input
+                type="range" min={0} max={3} step={1} value={licenses}
+                onChange={(e)=>setLicenses(+e.target.value)}
+                className="w-full accent-emerald-500"
+              />
+              <div className="font-medium text-emerald-300">Current: {licenses} — {licenseLabel(licenses)}</div>
+            </Section>
 
-          {/* Product scope */}
-          <Section
-            title="Product scope breadth"
-            subtitle="Advisory/DPM • Lending • Alternatives"
-            tip="Broader scope increases stickiness. Lending and alternatives coverage are common acceptance thresholds."
-          >
-            <input type="range" min={1} max={4} step={1} value={product} onChange={(e)=>setProduct(+e.target.value)} className="w-full" />
-            <div className="text-sm text-emerald-400 font-medium">Current: {product} — {productLabel(product)}</div>
-          </Section>
+            {/* Product scope */}
+            <Section
+              title="Product scope breadth"
+              subtitle="Advisory/DPM • Lending • Alternatives"
+              tip="Broader scope increases stickiness. Lending and alternatives coverage are common acceptance thresholds."
+            >
+              <input
+                type="range" min={1} max={4} step={1} value={product}
+                onChange={(e)=>setProduct(+e.target.value)}
+                className="w-full accent-emerald-500"
+              />
+              <div className="font-medium text-emerald-300">Current: {product} — {productLabel(product)}</div>
+            </Section>
 
-          {/* Client concentration */}
-          <Section
-            title="Client concentration (lower is better)"
-            subtitle="1 = diversified • 5 = top-heavy"
-            tip="Aim top-3 clients &lt; 45% of revenue to reduce portability risk and onboarding frictions."
-          >
-            <input type="range" min={1} max={5} step={1} value={concentration} onChange={(e)=>setConcentration(+e.target.value)} className="w-full" />
-            <div className="text-sm text-emerald-400 font-medium">Current: {concentration} — {concLabel(concentration)}</div>
-          </Section>
+            {/* Client concentration */}
+            <Section
+              title="Client concentration (lower is better)"
+              subtitle="1 = diversified • 5 = top-heavy"
+              tip="Aim top-3 clients &lt; 45% of revenue to reduce portability risk and onboarding frictions."
+            >
+              <input
+                type="range" min={1} max={5} step={1} value={concentration}
+                onChange={(e)=>setConcentration(+e.target.value)}
+                className="w-full accent-emerald-500"
+              />
+              <div className="font-medium text-emerald-300">Current: {concentration} — {concLabel(concentration)}</div>
+            </Section>
 
-          {/* KYC portability */}
-          <Section
-            title="Compliance / KYC portability"
-            subtitle="CRS/FATCA/MiFID/LSFin pack reuse (0–3)"
-            tip="How re-usable are your packs across custodians? Evidence reuse materially speeds transitions."
-          >
-            <input type="range" min={0} max={3} step={1} value={kyc} onChange={(e)=>setKyc(+e.target.value)} className="w-full" />
-            <div className="text-sm text-emerald-400 font-medium">Current: {kyc} — {kycLabel(kyc)}</div>
-          </Section>
-        </div>
+            {/* KYC portability */}
+            <Section
+              title="Compliance / KYC portability"
+              subtitle="CRS/FATCA/MiFID/LSFin pack reuse (0–3)"
+              tip="How re-usable are your packs across custodians? Evidence reuse materially speeds transitions."
+            >
+              <input
+                type="range" min={0} max={3} step={1} value={kyc}
+                onChange={(e)=>setKyc(+e.target.value)}
+                className="w-full accent-emerald-500"
+              />
+              <div className="font-medium text-emerald-300">Current: {kyc} — {kycLabel(kyc)}</div>
+            </Section>
+          </div>
 
-        <div className="mt-4 flex items-center justify-end gap-3">
-          {error && <span className="text-xs text-red-400">{error}</span>}
-          <button
-            onClick={analyze}
-            disabled={loading}
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-50"
-          >
-            {loading ? "Analyzing…" : "Analyze"}
-          </button>
-        </div>
+          <div className="mt-4 flex items-center justify-end gap-3">
+            {error && (
+              <span role="status" aria-live="polite" className="text-xs text-red-400">
+                {error}
+              </span>
+            )}
+            <button
+              onClick={analyze}
+              disabled={isBusy}
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
+            >
+              {isBusy ? "Analyzing…" : "Analyze"}
+            </button>
+          </div>
+        </fieldset>
 
         {result && (
-          <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.04] p-5">
+          <div className="mt-6 rounded-xl border border-white/15 bg-white/[0.06] p-5">
             <div className="flex items-center justify-between">
               <div className="text-lg font-semibold">Result</div>
-              <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm">{market?.label}</div>
+              <div className="rounded-full bg-white/10 px-3 py-1 text-sm ring-1 ring-white/20">{market?.label}</div>
             </div>
             <div className="mt-3 text-3xl font-semibold">{result.score}/100</div>
-            <div className="mt-1 text-sm text-neutral-300">Benchmark — Median {result.median} • Top quartile {result.topQuartile}</div>
+            <div className="mt-1 text-sm text-white/80">Benchmark — Median {result.median} • Top quartile {result.topQuartile}</div>
 
             <div className="mt-4 text-sm font-semibold">Recommended next steps</div>
-            <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-neutral-200">
+            <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-white/90">
               {result.recs.map((r,i)=>(<li key={i}>{r}</li>))}
             </ul>
 
             {!!result.interp?.length && (
               <div className="mt-5">
-                <div className="text-sm font-semibold mb-2">Interpretation &amp; banker guidance</div>
-                <ul className="list-disc space-y-1 pl-5 text-sm text-neutral-200">
+                <div className="mb-2 text-sm font-semibold">Interpretation &amp; banker guidance</div>
+                <ul className="list-disc space-y-1 pl-5 text-sm text-white/90">
                   {result.interp.map((t, i) => (<li key={i}>{t}</li>))}
                 </ul>
               </div>
@@ -360,7 +399,7 @@ export default function PortabilityForm() {
               <button
                 type="button"
                 onClick={openPrefilledEmail}
-                className="rounded-lg border border-white/15 bg-white/[0.03] px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/[0.07]"
+                className="rounded-lg bg-white/[0.08] px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:bg-white/[0.12]"
               >
                 Map my booking-centre options
               </button>
@@ -375,7 +414,7 @@ export default function PortabilityForm() {
           </div>
         )}
 
-        <p className="mt-5 text-xs text-neutral-400">Privacy: We do not store any data without your explicit consent.</p>
+        <p className="mt-5 text-xs text-white/60">Privacy: We do not store any data without your explicit consent.</p>
       </div>
     </div>
   );
