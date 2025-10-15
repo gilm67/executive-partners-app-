@@ -78,19 +78,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`h-full ${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       </head>
 
-      {/* 'has-sticky-header' enables global top padding if you keep that approach as well */}
+      {/* Removed 'has-sticky-header' to avoid double top spacing with spacer */}
       <body
-        className="has-sticky-header min-h-screen overflow-x-hidden body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white"
+        className="min-h-screen overflow-x-hidden body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white"
         suppressHydrationWarning
       >
         <a
@@ -108,8 +102,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <TopNav />
         </header>
 
-        {/* Hard spacer to guarantee no overlap (matches header height) */}
-        <div aria-hidden className="h-16 md:h-20" />
+        {/* Half-height spacer for tighter alignment */}
+        <div aria-hidden className="h-8 md:h-10" />
 
         <main id="main">{children}</main>
 
