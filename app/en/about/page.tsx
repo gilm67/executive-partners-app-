@@ -48,22 +48,68 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ===== Credibility / Stats ===== */}
-      <section className="container-max py-10 md:py-14">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { k: "10–30%", v: "Typical uplift in total comp for placed RMs*" },
-            { k: "CHF 1–5bn", v: "Aggregate AuM portability advised yearly" },
-            { k: "4–8 weeks", v: "Avg. end-to-end move (signed to landed)" },
-            { k: "92%", v: "Retention at 12 months post-move" },
-          ].map((s) => (
-            <div key={s.k} className="card">
-              <div className="text-3xl font-semibold">{s.k}</div>
-              <div className="mt-2 text-white/80 text-sm">{s.v}</div>
-            </div>
-          ))}
+      {/* ===== Who We Are ===== */}
+      <section className="container-max py-14">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">
+            Boutique Search. Global Reach.
+          </h2>
+          <p className="text-white/85 text-lg leading-relaxed">
+            Executive Partners is a boutique executive search firm focused exclusively on{" "}
+            <strong>Private Banking & Wealth Management</strong>. Headquartered in Geneva with an
+            international footprint, we advise private banks, EAMs, and family offices on critical
+            hires across Relationship Management, Desk &amp; Market Heads, and senior leadership.
+          </p>
         </div>
-        <p className="mt-3 text-xs text-white/50">*Depending on portable book, ROA, lending penetration, and platform fit.</p>
+
+        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {/* What we do */}
+          <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
+            <h3 className="text-lg font-semibold mb-3">What we do</h3>
+            <ul className="space-y-2 text-sm text-white/80">
+              <li>• Front-office hires: Senior / Executive / Managing Directors</li>
+              <li>• Team Heads &amp; Market Leaders</li>
+              <li>• Strategic mandates: new-desk builds, market entries, M&amp;A integration</li>
+              <li>• Discreet outreach to targeted bankers or teams</li>
+              <li>• Advisory: portability, comp benchmarking, succession, team moves</li>
+            </ul>
+          </div>
+
+          {/* Why clients trust us */}
+          <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
+            <h3 className="text-lg font-semibold mb-3">Why clients trust us</h3>
+            <ul className="space-y-2 text-sm text-white/80">
+              <li>• True sector specialists — former front-office and talent leaders</li>
+              <li>• Fluent in cross-border, booking-centre and compliance realities</li>
+              <li>• Portability obsessed — we validate coverage &amp; wallet share before interviews</li>
+              <li>• Targeted, not transactional — research-led shortlists, no volume spam</li>
+              <li>• Confidential by design — quiet processes that protect brands and teams</li>
+            </ul>
+          </div>
+
+          {/* How we work */}
+          <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
+            <h3 className="text-lg font-semibold mb-3">How we work</h3>
+            <ul className="space-y-2 text-sm text-white/80">
+              <li>• Rigorous market mapping and shortlist curation</li>
+              <li>• Senior-only engagement from first call to signed offer</li>
+              <li>• Transparent, portable book evaluation</li>
+              <li>• Candidate control &amp; hiring velocity built in</li>
+            </ul>
+          </div>
+
+          {/* Our footprint */}
+          <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
+            <h3 className="text-lg font-semibold mb-3">Our footprint</h3>
+            <ul className="space-y-2 text-sm text-white/80">
+              <li>• Deep roots in Geneva &amp; Zurich</li>
+              <li>• Active mandates across MEA, LATAM, UK &amp; Europe</li>
+              <li>• Strong coverage in the US (New York, Miami)</li>
+              <li>• APAC hubs: Singapore &amp; Hong Kong</li>
+              <li>• FR / Spain / Portugal emerging corridors</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
       {/* ===== Why EP (Value Props) ===== */}
