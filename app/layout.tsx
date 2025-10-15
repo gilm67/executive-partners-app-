@@ -80,19 +80,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
         />
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
 
-      {/* Add/remove 'body-grain' to toggle subtle grain overlay (see globals.css) */}
+      {/* 'has-sticky-header' enables global top padding if you keep that approach as well */}
       <body
-        className="min-h-screen overflow-x-hidden body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white"
+        className="has-sticky-header min-h-screen overflow-x-hidden body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white"
         suppressHydrationWarning
       >
         <a
@@ -102,7 +100,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
 
-        <TopNav />
+        {/* Sticky, blurred header with fixed height */}
+        <header
+          role="banner"
+          className="sticky top-0 inset-x-0 z-50 h-16 md:h-20 border-b border-white/10 bg-[#0B0E13]/80 backdrop-blur-md"
+        >
+          <TopNav />
+        </header>
+
+        {/* Hard spacer to guarantee no overlap (matches header height) */}
+        <div aria-hidden className="h-16 md:h-20" />
 
         <main id="main">{children}</main>
 
