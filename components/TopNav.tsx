@@ -7,12 +7,11 @@ import { useEffect, useState } from "react";
 type NavItem = { href: string; label: string; external?: boolean };
 
 const NAV: NavItem[] = [
+  { href: "/en/markets", label: "Markets" },
   { href: "/jobs", label: "Jobs" },
   { href: "/candidates", label: "Candidates" },
   { href: "/hiring-managers", label: "Hiring Managers" },
   { href: "/bp-simulator", label: "BP Simulator" },
-  // ⬇️ Localized markets path
-  { href: "/en/markets", label: "Markets" },
   { href: "/portability", label: "Portability" },
   { href: "/insights", label: "Insights" },
   { href: "/about", label: "About" },
