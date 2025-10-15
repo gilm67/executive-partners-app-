@@ -11,7 +11,8 @@ const NAV: NavItem[] = [
   { href: "/candidates", label: "Candidates" },
   { href: "/hiring-managers", label: "Hiring Managers" },
   { href: "/bp-simulator", label: "BP Simulator" },
-  { href: "/markets", label: "Markets" },
+  // ⬇️ Localized markets path
+  { href: "/en/markets", label: "Markets" },
   { href: "/portability", label: "Portability" },
   { href: "/insights", label: "Insights" },
   { href: "/about", label: "About" },

@@ -73,7 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   };
 
   const enableAnalytics = process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "1";
-  const markets = getAllMarkets(); // stays in sync with your data file
+  const markets = getAllMarkets();
 
   return (
     <html lang="en" className={`h-full ${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
