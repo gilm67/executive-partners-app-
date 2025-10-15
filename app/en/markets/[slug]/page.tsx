@@ -3,18 +3,21 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { getMarket, MARKET_SLUGS, fmt } from "@/lib/markets/data";
 
-type Props = { params: { slug: string } };
+// Next 15: params is async in server components
+type Params = Promise<{ slug: string }>;
+type Props = { params: Params };
 
 export async function generateStaticParams() {
   return MARKET_SLUGS.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const m = getMarket(params.slug);
+  const { slug } = await params; // ✅ await params
+  const m = getMarket(slug);
   if (!m) return { title: "Markets — Executive Partners" };
   return {
     title: `${m.city} — Private Banking Market | Executive Partners`,
-    description: `${m.city}: compensation benchmarks, licensing, client base, and relocation & tax for Private Banking / Wealth Management.`,
+    description: `${m.city}: compensation benchmarks, licensing, client base, relocation & tax, hiring pulse, and local ecosystem for Private Banking / Wealth Management.`,
     openGraph: {
       title: `${m.city} — Private Banking Market | Executive Partners`,
       description: m.summary,
@@ -23,8 +26,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function MarketPage({ params }: Props) {
-  const m = getMarket(params.slug);
+export default async function MarketPage({ params }: Props) {
+  const { slug } = await params; // ✅ await params
+  const m = getMarket(slug);
 
   if (!m) {
     return (
@@ -64,6 +68,60 @@ export default function MarketPage({ params }: Props) {
       {/* Content */}
       <section className="mx-auto max-w-6xl px-6 py-10 md:py-14">
         <div className="grid grid-cols-1 gap-6 md:gap-8">
+
+          {/* NEW: Hiring Pulse */}
+          {m.hiringPulse && (
+            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 md:p-8 shadow-xl">
+              <header className="mb-5">
+                <h2 className="text-xl md:text-2xl font-semibold">Hiring Pulse</h2>
+                {m.hiringPulse.notes && (
+                  <p className="mt-2 text-neutral-300">{m.hiringPulse.notes}</p>
+                )}
+              </header>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
+                  <div className="text-sm uppercase tracking-wide text-neutral-400">Hot roles</div>
+                  <ul className="mt-2 flex flex-wrap gap-2">
+                    {m.hiringPulse.hotRoles.map((r) => (
+                      <li key={r} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm">
+                        {r}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
+                  <div className="text-sm uppercase tracking-wide text-neutral-400">Hot skills</div>
+                  <ul className="mt-2 flex flex-wrap gap-2">
+                    {m.hiringPulse.hotSkills.map((s) => (
+                      <li key={s} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm">
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </article>
+          )}
+
+          {/* NEW: At a Glance */}
+          {!!m.atAGlance?.length && (
+            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 md:p-8 shadow-xl">
+              <header className="mb-5">
+                <h2 className="text-xl md:text-2xl font-semibold">At a Glance</h2>
+                <p className="mt-2 text-neutral-300">High-signal facts for fast decisions.</p>
+              </header>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {m.atAGlance.map((stat) => (
+                  <div key={stat.label} className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
+                    <div className="text-sm uppercase tracking-wide text-neutral-400">{stat.label}</div>
+                    <div className="mt-1 text-lg font-semibold">{stat.value}</div>
+                    {stat.hint && <div className="mt-1 text-xs text-neutral-400">{stat.hint}</div>}
+                  </div>
+                ))}
+              </div>
+            </article>
+          )}
+
           {/* Compensation Table */}
           <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 md:p-8 shadow-xl">
             <header className="mb-5">
@@ -136,6 +194,38 @@ export default function MarketPage({ params }: Props) {
               ))}
             </ul>
           </article>
+
+          {/* NEW: Banking Ecosystem */}
+          {m.ecosystem && (
+            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 md:p-8 shadow-xl">
+              <header className="mb-4">
+                <h2 className="text-xl md:text-2xl font-semibold">Banking Ecosystem</h2>
+              </header>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
+                  <div className="text-sm uppercase tracking-wide text-neutral-400">Booking / Execution</div>
+                  <ul className="mt-2 space-y-1">
+                    {m.ecosystem.bookingCentres.map((b) => <li key={b}>{b}</li>)}
+                  </ul>
+                </div>
+                <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
+                  <div className="text-sm uppercase tracking-wide text-neutral-400">Key Banks</div>
+                  <ul className="mt-2 space-y-1">
+                    {m.ecosystem.keyBanks.map((b) => <li key={b}>{b}</li>)}
+                  </ul>
+                </div>
+                <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
+                  <div className="text-sm uppercase tracking-wide text-neutral-400">EAMs / Family Offices</div>
+                  <ul className="mt-2 space-y-1">
+                    {m.ecosystem.eamsAndFOs.map((e) => <li key={e}>{e}</li>)}
+                  </ul>
+                  <div className="mt-4 text-sm text-neutral-400">
+                    Regulators: {m.ecosystem.regulators.join(" • ")}
+                  </div>
+                </div>
+              </div>
+            </article>
+          )}
 
           {/* Relocation & Tax */}
           <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 md:p-8 shadow-xl">

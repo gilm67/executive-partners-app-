@@ -8,6 +8,8 @@ export type CompBand = {
   topQuartileNote?: string;
 };
 
+export type Stat = { label: string; value: string; hint?: string };
+
 export type Market = {
   slug: string;                // url segment, lowercase, kebab
   city: string;                // display
@@ -35,6 +37,20 @@ export type Market = {
     uploadPlanHref: string;          // e.g. "/bp-simulator" or "/candidates/register"
   };
   legalDisclaimer?: string;
+
+  // NEW sections
+  hiringPulse: {
+    hotRoles: string[];
+    hotSkills: string[];
+    notes?: string;
+  };
+  atAGlance: Stat[];
+  ecosystem: {
+    bookingCentres: string[];
+    keyBanks: string[];
+    eamsAndFOs: string[];
+    regulators: string[];
+  };
 };
 
 // ---------- helper ----------
@@ -89,6 +105,23 @@ export const MARKETS: Market[] = [
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["Senior RM CH Onshore", "Team Lead MEA", "UHNW Banker"],
+      hotSkills: ["Lombard lending", "Alternatives distribution", "Cross-border CH–EU/MEA"],
+      notes: "Selective hiring; portable books & ROA uplift drive offers.",
+    },
+    atAGlance: [
+      { label: "Focus", value: "Onshore + Cross-border" },
+      { label: "Languages", value: "FR/EN", hint: "AR/ES/PT helpful" },
+      { label: "Deal Style", value: "Advisory/DPM + Credit" },
+      { label: "Pipelines", value: "Dense EAM/FO network" },
+    ],
+    ecosystem: {
+      bookingCentres: ["Geneva", "Zurich", "Luxembourg", "Monaco"],
+      keyBanks: ["UBS", "Julius Baer", "Pictet", "Lombard Odier", "Vontobel", "EFG", "UBP"],
+      eamsAndFOs: ["Robust EAM channel", "Single/Multi-FO growth"],
+      regulators: ["FINMA", "FDF", "OECD CRS"],
+    },
   },
 
   /* =========================
@@ -128,6 +161,23 @@ export const MARKETS: Market[] = [
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["CH Onshore Senior RM", "DACH Market Head"],
+      hotSkills: ["DPM penetration", "Credit structuring", "Alts distribution"],
+      notes: "Preference for German-speaking profiles with portable books.",
+    },
+    atAGlance: [
+      { label: "Focus", value: "Onshore DACH + Intl" },
+      { label: "Languages", value: "DE/EN", hint: "IT/FR plus" },
+      { label: "Deal Style", value: "Advisory + Credit" },
+      { label: "EAM", value: "Very active" },
+    ],
+    ecosystem: {
+      bookingCentres: ["Zurich", "Geneva", "Luxembourg"],
+      keyBanks: ["UBS", "Julius Baer", "Credit Suisse legacy", "Vontobel", "EFG"],
+      eamsAndFOs: ["Large EAM density", "Sophisticated FO market"],
+      regulators: ["FINMA"],
+    },
   },
 
   /* =========================
@@ -167,6 +217,23 @@ export const MARKETS: Market[] = [
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["UHNW Banker", "Team Lead Europe", "Non-Resident RM"],
+      hotSkills: ["Cross-border structuring", "Alts access", "Credit expertise"],
+      notes: "Strong demand for portable non-resident books.",
+    },
+    atAGlance: [
+      { label: "Focus", value: "Intl UHNW" },
+      { label: "Comp Shape", value: "High variable" },
+      { label: "Languages", value: "EN + EU/MEA/Asia" },
+      { label: "Deferrals", value: "Common at seniority" },
+    ],
+    ecosystem: {
+      bookingCentres: ["London", "Jersey", "Guernsey", "Luxembourg"],
+      keyBanks: ["Barclays", "UBS", "Citi PB", "JPM PB", "HSBC GPB", "Rothschild & Co"],
+      eamsAndFOs: ["Large FO/MFO presence", "Active EAM links"],
+      regulators: ["FCA", "PRA"],
+    },
   },
 
   /* =========================
@@ -206,6 +273,23 @@ export const MARKETS: Market[] = [
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["Senior RM GCC", "Team Lead South Asia", "NRI Banker"],
+      hotSkills: ["Sharia awareness", "Cross-border MEA/India", "Credit + Lombard"],
+      notes: "Packages often include housing/schooling allowances.",
+    },
+    atAGlance: [
+      { label: "Tax", value: "Salary tax-free" },
+      { label: "Focus", value: "GCC + NRI + Expats" },
+      { label: "Languages", value: "EN + AR/HI/UR" },
+      { label: "Time-to-Live", value: "Fast onboarding" },
+    ],
+    ecosystem: {
+      bookingCentres: ["DIFC", "ADGM", "SG", "CH"],
+      keyBanks: ["Emirates NBD PB", "HSBC GPB", "Barclays", "UBS", "Julius Baer"],
+      eamsAndFOs: ["Growing FO ecosystem", "Boutique EAMs"],
+      regulators: ["DFSA", "FSRA", "SCA"],
+    },
   },
 
   /* =========================
@@ -245,6 +329,23 @@ export const MARKETS: Market[] = [
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["RM SE Asia", "North Asia RM (SG booking)", "Credit-led RM"],
+      hotSkills: ["Mandarin/Indonesian", "Alts distribution", "Credit structuring"],
+      notes: "Competition high; language & cross-border skills prized.",
+    },
+    atAGlance: [
+      { label: "Tax", value: "Favorable" },
+      { label: "Focus", value: "SEA + North Asia" },
+      { label: "Languages", value: "EN + ZH/ID/MS" },
+      { label: "Ecosystem", value: "Booking centre" },
+    ],
+    ecosystem: {
+      bookingCentres: ["Singapore", "HK", "CH"],
+      keyBanks: ["DBS PB", "UOB PB", "OCBC PB", "Citi PB", "UBS", "Julius Baer"],
+      eamsAndFOs: ["Rapid FO growth", "Regional EAM expansion"],
+      regulators: ["MAS"],
+    },
   },
 
   /* =========================
@@ -284,6 +385,23 @@ export const MARKETS: Market[] = [
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["North Asia RM", "China offshore RM", "UHNW Team Lead"],
+      hotSkills: ["Cantonese/Mandarin", "Structure/Alts", "CN cross-border"],
+      notes: "Language + CN client access are decisive.",
+    },
+    atAGlance: [
+      { label: "Focus", value: "CN + Regional" },
+      { label: "Languages", value: "ZH/EN" },
+      { label: "Comp", value: "High variable" },
+      { label: "Booking", value: "HK / SG" },
+    ],
+    ecosystem: {
+      bookingCentres: ["Hong Kong", "Singapore"],
+      keyBanks: ["HSBC GPB", "Citi PB", "UBS", "Julius Baer", "BOC", "ICBC"],
+      eamsAndFOs: ["FO growth, CN-linked"],
+      regulators: ["SFC", "HKMA"],
+    },
   },
 
   /* =========================
@@ -323,6 +441,23 @@ export const MARKETS: Market[] = [
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["UHNW Banker", "Team Lead LatAm", "Credit-led PB"],
+      hotSkills: ["Private credit", "Secondaries/Alts", "Complex lending"],
+      notes: "Books with fee yield & credit penetration command premiums.",
+    },
+    atAGlance: [
+      { label: "Focus", value: "Onshore UHNW" },
+      { label: "Deal Style", value: "Alts + Credit + IB" },
+      { label: "Languages", value: "EN", hint: "ES/PT a plus" },
+      { label: "Comp Shape", value: "High variable + deferrals" },
+    ],
+    ecosystem: {
+      bookingCentres: ["NYC", "Delaware trusts", "Miami (LatAm)"],
+      keyBanks: ["JPM PB", "Goldman PWM", "Citi PB", "Barclays", "UBS"],
+      eamsAndFOs: ["Large MFO presence", "Boutique RIAs"],
+      regulators: ["SEC", "FINRA", "NYDFS"],
+    },
   },
 
   /* =========================
@@ -362,6 +497,23 @@ export const MARKETS: Market[] = [
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["LatAm RM", "Offshore Private Banker", "UHNW Team Lead"],
+      hotSkills: ["Spanish/Portuguese", "Cross-border AML", "Credit"],
+      notes: "Bilingual + portable LatAm books are highly prized.",
+    },
+    atAGlance: [
+      { label: "Focus", value: "US offshore + LatAm" },
+      { label: "Languages", value: "EN/ES", hint: "PT a plus" },
+      { label: "Comp", value: "Bonus-driven" },
+      { label: "Migration", value: "Strong inflows" },
+    ],
+    ecosystem: {
+      bookingCentres: ["Miami", "NYC", "Delaware trusts", "Bahamas"],
+      keyBanks: ["JPM PB", "Citi PB", "UBS", "BTG Pactual", "Itaú PB"],
+      eamsAndFOs: ["Boutique MFOs", "Cross-border EAMs"],
+      regulators: ["SEC", "FINRA", "Florida OIR (insurance)"],
+    },
   },
 
   /* =========================
@@ -401,6 +553,23 @@ export const MARKETS: Market[] = [
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["Onshore PB", "UHNW Advisor", "FO Coverage RM"],
+      hotSkills: ["Insurance wrappers", "Structuring", "Alts access"],
+      notes: "Onshore quality + FO connectivity valued.",
+    },
+    atAGlance: [
+      { label: "Focus", value: "Onshore EU" },
+      { label: "Languages", value: "FR/EN" },
+      { label: "Comp", value: "Moderate var." },
+      { label: "FO Growth", value: "Rising" },
+    ],
+    ecosystem: {
+      bookingCentres: ["Paris", "Luxembourg", "CH"],
+      keyBanks: ["BNP PB", "SG PB", "Crédit Agricole Indosuez", "UBS", "Rothschild & Co"],
+      eamsAndFOs: ["Growing MFOs", "Boutique EAMs"],
+      regulators: ["AMF", "ACPR"],
+    },
   },
 
   /* =========================
@@ -440,6 +609,23 @@ export const MARKETS: Market[] = [
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["Onshore PB", "UHNW RM", "Team Lead North"],
+      hotSkills: ["Insurance wrappers", "Alts", "Succession planning"],
+      notes: "Entrepreneur/Family business relationships prized.",
+    },
+    atAGlance: [
+      { label: "Focus", value: "Onshore IT" },
+      { label: "Tax", value: "Flat-tax relocations" },
+      { label: "Comp", value: "Below CH/UK" },
+      { label: "Cross-border", value: "CH/LU wrappers" },
+    ],
+    ecosystem: {
+      bookingCentres: ["Milan", "Luxembourg", "Zurich"],
+      keyBanks: ["Intesa PB", "UniCredit PB", "Banca Generali", "UBS", "Credit Suisse legacy"],
+      eamsAndFOs: ["MFO growth", "Private offices"],
+      regulators: ["Banca d’Italia", "CONSOB"],
+    },
   },
 
   /* =========================
@@ -479,6 +665,23 @@ export const MARKETS: Market[] = [
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["Affluent-to-HNW RM", "FO Services RM"],
+      hotSkills: ["Insurance wrappers", "Real-estate wealth", "Cross-border basics"],
+      notes: "Smaller PB market; language & lifestyle pitch matter.",
+    },
+    atAGlance: [
+      { label: "Focus", value: "Onshore + Expats" },
+      { label: "Comp", value: "Below EU hubs" },
+      { label: "Languages", value: "PT/EN" },
+      { label: "Cross-border", value: "LU/IE/CH wrappers" },
+    ],
+    ecosystem: {
+      bookingCentres: ["Lisbon", "Luxembourg"],
+      keyBanks: ["Caixa PB", "BCP", "Santander", "Novobanco", "International PBs (limited)"],
+      eamsAndFOs: ["Boutique FOs", "Wealth managers"],
+      regulators: ["CMVM", "Banco de Portugal"],
+    },
   },
 ];
 
