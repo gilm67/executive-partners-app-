@@ -1,6 +1,8 @@
 /* app/en/about/page.tsx */
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
+import HubsGrid from "@/components/HubsGrid";
 
 export const metadata: Metadata = {
   title: "About — Executive Partners",
@@ -18,12 +20,16 @@ export default function AboutPage() {
     <main className="relative">
       {/* ===== Hero ===== */}
       <section className="relative overflow-hidden">
-        <div
-          className="absolute inset-0 -z-10 bg-cover bg-center opacity-60"
-          style={{ backgroundImage: "url(/about/hero-geneva.jpg)" }}
-          aria-hidden
-        />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/60 to-black/20" />
+        <div className="absolute inset-0 -z-10">
+          <Image
+            src="/about/hero-geneva.jpg"
+            alt=""
+            fill
+            priority
+            className="object-cover opacity-60"
+          />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/60 to-black/20" />
+        </div>
         <div className="container-max py-20 md:py-28">
           <div className="max-w-3xl">
             <h1 className="font-semibold tracking-tight text-4xl md:text-5xl">
@@ -102,36 +108,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ===== Logos / Social Proof ===== */}
-      <section className="container-max py-8">
-        <div className="rounded-2xl border border-white/10 bg-black/30 p-5">
-          <p className="text-center text-white/70 text-sm">We’ve successfully partnered with teams moving between:</p>
-          <div className="mt-5 grid grid-cols-3 sm:grid-cols-6 gap-6 items-center opacity-80">
-            {["pb1","pb2","pb3","pb4","pb5","pb6"].map((k)=>(
-              <img key={k} src={`/about/logos/${k}.svg`} alt="" className="mx-auto h-8 w-auto" />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== Geneva Roots + Coverage Map ===== */}
-      <section className="container-max py-10 md:py-14 grid gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6">
-          <h2 className="text-2xl font-semibold">Geneva-rooted. Global in scope.</h2>
-          <p className="mt-3 text-white/80">
-            From Geneva, we operate across Switzerland (Geneva, Zürich) and international hubs (London, New York, Miami,
-            Dubai, Singapore, Hong Kong, Paris, Milan, Lisbon). Our market microsites keep compensation and licensing
-            intel current, so you negotiate from strength.
-          </p>
-          <div className="mt-4 flex gap-3">
-            <Link href="/en/markets" className="btn-ghost">See market benchmarks</Link>
-            <Link href="/en/bp-simulator" className="btn-primary">BP Simulator</Link>
-          </div>
-        </div>
-        <div className="rounded-2xl overflow-hidden ring-1 ring-white/10">
-          <img src="/about/map-hubs.jpg" alt="Executive Partners coverage hubs" className="w-full h-full object-cover" />
-        </div>
-      </section>
+      {/* ===== Global Hubs (cards replacing the map) ===== */}
+      <HubsGrid />
 
       {/* ===== Timeline ===== */}
       <section className="container-max py-10 md:py-14">
