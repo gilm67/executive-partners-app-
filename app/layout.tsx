@@ -82,7 +82,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       </head>
 
-      {/* Removed 'has-sticky-header' to avoid double top spacing with spacer */}
+      {/* No 'has-sticky-header' to avoid double spacing; spacer controls offset */}
       <body
         className="min-h-screen overflow-x-hidden body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white"
         suppressHydrationWarning
@@ -102,8 +102,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <TopNav />
         </header>
 
-        {/* Half-height spacer for tighter alignment */}
-        <div aria-hidden className="h-8 md:h-10" />
+        {/* Reduced spacer (half again) for tighter alignment */}
+        <div aria-hidden className="h-4 md:h-5" />
 
         <main id="main">{children}</main>
 
