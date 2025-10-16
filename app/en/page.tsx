@@ -88,13 +88,13 @@ export default function HomePage() {
       </section>
 
       {/* ===== DUE-DILIGENCE TOOLS (Portability + BP Simulator) ===== */}
-      <section className="container-max mt-14 px-4 pb-16">
-        <h2 className="text-center text-3xl font-semibold">Due-Diligence Tools</h2>
-        <p className="mx-auto mt-2 max-w-3xl text-center text-white/75">
+      <section className="container-max mt-14 px-4 pb-16 text-center">
+        <h2 className="text-3xl font-semibold">Due-Diligence Tools</h2>
+        <p className="mx-auto mt-2 max-w-3xl text-white/75">
           Validate portability and strengthen approvals before you move.
         </p>
 
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
+        <div className="mt-6 grid gap-6 mx-auto max-w-5xl md:grid-cols-2">
           <ToolCard
             title="Portability Score™"
             bullets={[
@@ -190,16 +190,14 @@ function ToolCard({
   primary: { href: string; label: string };
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur">
-      <h3 className="text-xl font-semibold">{title}</h3>
-      <ul className="mt-3 space-y-1 text-white/80">
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur flex flex-col items-center text-center">
+      <h3 className="text-lg font-semibold mb-4">{title}</h3>
+      <ul className="space-y-2 mb-6 text-sm text-white/80 list-none">
         {bullets.map((b) => (
-          <li key={b} className="list-disc pl-5">{b}</li>
+          <li key={b}>{b}</li>
         ))}
       </ul>
-      <div className="mt-5">
-        <Link href={primary.href} className="btn-primary">{primary.label}</Link>
-      </div>
+      <Link href={primary.href} className="btn-primary inline-flex">{primary.label}</Link>
     </div>
   );
 }
