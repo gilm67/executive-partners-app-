@@ -82,7 +82,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       </head>
 
-      {/* No 'has-sticky-header' to avoid double spacing; spacer controls offset */}
+      {/* No 'has-sticky-header' to avoid double spacing; spacer controls offset for non-home pages */}
       <body
         className="min-h-screen overflow-x-hidden body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white"
         suppressHydrationWarning
@@ -102,8 +102,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <TopNav />
         </header>
 
-        {/* Reduced spacer (half again) for tighter alignment */}
-        <div aria-hidden className="h-4 md:h-5" />
+        {/* Spacer for non-home pages; hidden on "/" and "/en" so the hero can cover the header */}
+        <div id="global-spacer" aria-hidden className="h-4 md:h-5" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(){
+                try {
+                  var p = location.pathname;
+                  var isHome = (p === "/" || p === "/en");
+                  if (isHome) {
+                    var el = document.getElementById("global-spacer");
+                    if (el) el.style.display = "none";
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
 
         <main id="main">{children}</main>
 
