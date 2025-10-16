@@ -150,7 +150,7 @@ function FeaturePanel({
 }) {
   return (
     <article className="grid overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur md:grid-cols-2">
-      {/* IMAGE SIDE — h-[420]/[500], center face */}
+      {/* IMAGE SIDE */}
       <div className={imageLeft ? "order-1" : "order-2"}>
         <div className="relative h-[420px] w-full md:h-[500px]">
           <Image
@@ -192,9 +192,12 @@ function ToolCard({
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur flex flex-col items-center text-center">
       <h3 className="text-lg font-semibold mb-4">{title}</h3>
-      <ul className="space-y-2 mb-6 text-sm text-white/80 list-none">
+      <ul className="mb-6 space-y-2 w-full max-w-sm">
         {bullets.map((b) => (
-          <li key={b}>{b}</li>
+          <li key={b} className="flex items-center justify-center gap-2 text-sm text-white/80">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-white/70" aria-hidden />
+            <span>{b}</span>
+          </li>
         ))}
       </ul>
       <Link href={primary.href} className="btn-primary inline-flex">{primary.label}</Link>
