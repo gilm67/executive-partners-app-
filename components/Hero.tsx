@@ -3,24 +3,26 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="relative h-[60vh] md:h-[55vh] lg:h-[480px] w-full overflow-hidden">
-      {/* Background image */}
+    <section className="relative w-full h-[70vh] md:h-[65vh] lg:h-[560px] overflow-hidden">
+      {/* Background image fills behind the header */}
       <Image
         src="/hero-executive-partners.png"
         alt="Executive Partners – Global Finance Hero"
         fill
         priority
-        // Shift the visual focus slightly higher; tweak to taste (e.g., object-[50%_30%])
-        className="object-cover object-[50%_35%]"
         sizes="100vw"
+        className="object-cover object-top"
       />
 
-      {/* Overlay for readability (subtler) */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />
+      {/* Top-heavy overlay for header readability */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/20" />
 
-      {/* Content */}
-      <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-4 text-center md:px-6 lg:px-8
-                      lg:justify-start lg:pt-16">
+      {/* Content (padded down so text doesn't sit under the header) */}
+      <div
+        className="relative z-10 mx-auto h-full max-w-7xl px-4 md:px-6 lg:px-8
+                   flex flex-col items-center justify-center text-center
+                   pt-16 md:pt-20"
+      >
         <h1 className="text-3xl font-extrabold tracking-tight text-white drop-shadow lg:text-5xl">
           EXECUTIVE PARTNERS
         </h1>
