@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og/og-bp-simulator.jpg", // ensure this exists in public/og/
+        url: "/og/og-bp-simulator.png", // must exist at public/og/og-bp-simulator.png
         width: 1200,
         height: 630,
         alt: "Executive Partners — Business Plan Simulator",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: "Business Plan Simulator — Executive Partners",
     description:
       "Model AuM portability, revenue projections and net margin scenarios with our AI-driven simulator for Private Bankers.",
-    images: ["/og/og-bp-simulator.jpg"],
+    images: ["/og/og-bp-simulator.png"],
   },
 };
 
