@@ -894,7 +894,7 @@ function BPModelPage2({
                       className="w-56 rounded-md bg-black/30 border border-white/10 px-2 py-1"
                       value={r.name}
                       onChange={(e) => patch(r.id, { name: e.target.value })}
-                      placeholder="e.g. FO Israel #1"
+                      placeholder="e.g. John Doe #"
                     />
                   </td>
                   <td className="px-3 py-2">
