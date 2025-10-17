@@ -1,11 +1,13 @@
-// playwright.config.ts
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: 'tests',
-  retries: 0,
+  timeout: 30_000,
+  testDir: './tests',
   use: {
-    headless: true,
-    baseURL: process.env.E2E_BASE_URL ?? 'https://www.execpartners.ch',
+    baseURL: 'http://localhost:3000',
+    headless: true
   },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } }
+  ]
 });
