@@ -64,7 +64,6 @@
     "@eslint/eslintrc": "^3.0.0",
     "@playwright/test": "^1.47.0",
     "@tailwindcss/typography": "^0.5.16",
-    "@types/html2canvas": "^0.5.35",
     "@types/jest": "^30.0.0",
     "@types/luxon": "^3.7.1",
     "@types/node": "^20.0.0",
