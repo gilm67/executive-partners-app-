@@ -231,6 +231,20 @@ type ProspectRow = {
   worstY3M: number;
 };
 
+/* Narrow keys to numeric-only fields for safe arithmetic */
+type NumericProspectKey = Extract<
+  keyof ProspectRow,
+  | "wealthM"
+  | "aumM"
+  | "marginPct"
+  | "bestY1M"
+  | "worstY1M"
+  | "bestY2M"
+  | "worstY2M"
+  | "bestY3M"
+  | "worstY3M"
+>;
+
 /* Defaults */
 const DEFAULT_CANDIDATE: Candidate = {
   name: "",
@@ -689,7 +703,7 @@ function RevenueCostsSimple({
 
   const netMarginY3Pct = useMemo(() => (rev3 > 0 ? (nm3 / rev3) * 100 : 0), [rev3, nm3]);
 
-  // push parent update by effect
+  // push parent update by effect (avoids setState during render warning)
   useEffect(() => {
     onNetMarginY3(netMarginY3Pct);
   }, [netMarginY3Pct, onNetMarginY3]);
@@ -1266,7 +1280,8 @@ function FinalAnalysis({
    Export helpers
 ------------------------------ */
 async function exportPdf(el: HTMLElement, candidateName?: string) {
-  const canvas = await html2canvas(el, { scale: 2, backgroundColor: "#0B0E13" });
+  // Cast to any to allow 'scale' and 'backgroundColor' options without relying on community types
+  const canvas = await html2canvas(el, { scale: 2, backgroundColor: "#0B0E13" } as any);
   const imgData = canvas.toDataURL("image/jpeg", 0.92);
   const pdf = new jsPDF("p", "mm", "a4");
   const pageWidth = pdf.internal.pageSize.getWidth();
@@ -1413,11 +1428,13 @@ export default function BpSimulatorClient() {
   const domicileSum = (candidate.dom_share1 || 0) + (candidate.dom_share2 || 0) + (candidate.dom_share3 || 0);
 
   const prospectBands = useMemo(() => {
-    const sum = (key: keyof ProspectRow) => prospects.reduce((a, r) => a + (r[key] || 0), 0);
+    const sum = (key: NumericProspectKey) =>
+      prospects.reduce((a, r) => a + (typeof r[key] === "number" ? r[key] : 0), 0);
+    const to1 = (n: number) => Number(n.toFixed(1));
     return [
-      { year: "Y1", Best: Number(sum("bestY1M").toFixed(1)), Worst: Number(sum("worstY1M").toFixed(1)) },
-      { year: "Y2", Best: Number(sum("bestY2M").toFixed(1)), Worst: Number(sum("worstY2M").toFixed(1)) },
-      { year: "Y3", Best: Number(sum("bestY3M").toFixed(1)), Worst: Number(sum("worstY3M").toFixed(1)) },
+      { year: "Y1", Best: to1(sum("bestY1M")), Worst: to1(sum("worstY1M")) },
+      { year: "Y2", Best: to1(sum("bestY2M")), Worst: to1(sum("worstY2M")) },
+      { year: "Y3", Best: to1(sum("bestY3M")), Worst: to1(sum("worstY3M")) },
     ];
   }, [prospects]);
 

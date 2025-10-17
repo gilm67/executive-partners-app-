@@ -1,7 +1,36 @@
 // app/en/bp-simulator/page.tsx
-"use client";
-
+import type { Metadata } from "next";
 import BpSimulatorClient from "./BpSimulatorClient";
+
+export const metadata: Metadata = {
+  title: "Business Plan Simulator — Executive Partners",
+  description:
+    "Model AuM portability, revenue projections and net margin scenarios with our AI-driven simulator for Private Bankers.",
+  openGraph: {
+    title: "Business Plan Simulator — Executive Partners",
+    description:
+      "Model AuM portability, revenue projections and net margin scenarios with our AI-driven simulator for Private Bankers.",
+    url: "https://execpartners-prod.vercel.app/en/bp-simulator",
+    siteName: "Executive Partners",
+    locale: "en_CH",
+    type: "website",
+    images: [
+      {
+        url: "/og/og-bp-simulator.jpg", // ensure this exists in public/og/
+        width: 1200,
+        height: 630,
+        alt: "Executive Partners — Business Plan Simulator",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Business Plan Simulator — Executive Partners",
+    description:
+      "Model AuM portability, revenue projections and net margin scenarios with our AI-driven simulator for Private Bankers.",
+    images: ["/og/og-bp-simulator.jpg"],
+  },
+};
 
 export default function Page() {
   return <BpSimulatorClient />;
