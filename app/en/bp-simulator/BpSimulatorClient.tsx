@@ -36,9 +36,6 @@ function PopTip({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ------------------------------
-   Reusable bits
------------------------------- */
 function HelpTip({ show, children }: { show: boolean; children: React.ReactNode }) {
   if (!show) return null;
   return (
@@ -128,31 +125,7 @@ function Select({
   );
 }
 
-/* Small Yes/No helper (for toggle lists) */
 type YesNo = "Yes" | "No";
-function YesNoSelect({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: YesNo;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-}) {
-  return (
-    <label className="text-sm flex items-center justify-between gap-3">
-      <span>{label}</span>
-      <select
-        className="rounded-md bg-black/30 border border-white/10 px-2 py-1 w-28"
-        value={value}
-        onChange={onChange}
-      >
-        <option>Yes</option>
-        <option>No</option>
-      </select>
-    </label>
-  );
-}
 
 /* ------------------------------
    Types
@@ -170,43 +143,31 @@ type Candidate = {
   baseSalary: number;
   lastBonus: number;
   currentClients: number;
-  currentAumMM: number; // in million
-
-  /* —— NEW: Assets snapshot —— */
+  currentAumMM: number;
   assets_totalAumM: number;
-  assets_affluentPct: number; // <1m
-  assets_hnwiPct: number;     // 1–15m
-  assets_uhnwiPct: number;    // >15m
-
-  /* —— NEW: ROA / Revenues —— */
-  roa_averagePct: number;     // %
-  roa_revYtdM: number;        // in million
-  roa_revLastYearM: number;   // in million
-
-  /* —— NEW: Service mix (% of assets) —— */
+  assets_affluentPct: number;
+  assets_hnwiPct: number;
+  assets_uhnwiPct: number;
+  roa_averagePct: number;
+  roa_revYtdM: number;
+  roa_revLastYearM: number;
   svc_selfDirectedPct: number;
   svc_discretionaryPct: number;
   svc_advisoryPct: number;
-  svc_directAccessPct: number; // direct access to trading room
+  svc_directAccessPct: number;
   svc_custodyPct: number;
-
-  /* —— NEW: # Clients domiciled —— */
   dom_country1: string;
   dom_share1: number;
   dom_country2: string;
   dom_share2: number;
   dom_country3: string;
   dom_share3: number;
-
-  /* —— NEW: Type of Clients (Yes/No) —— */
   client_pep: YesNo;
   client_executive: YesNo;
   client_inactive: YesNo;
   client_company: YesNo;
   client_finInstitutionEam: YesNo;
   client_trust: YesNo;
-
-  /* —— NEW: Type of Product (Yes/No) —— */
   prod_creditLombard: YesNo;
   prod_mortgage: YesNo;
   prod_wealthTaxPlanning: YesNo;
@@ -231,7 +192,6 @@ type ProspectRow = {
   worstY3M: number;
 };
 
-/* Narrow keys to numeric-only fields for safe arithmetic */
 type NumericProspectKey = Extract<
   keyof ProspectRow,
   | "wealthM"
@@ -245,7 +205,6 @@ type NumericProspectKey = Extract<
   | "worstY3M"
 >;
 
-/* Defaults */
 const DEFAULT_CANDIDATE: Candidate = {
   name: "",
   email: "",
@@ -260,37 +219,30 @@ const DEFAULT_CANDIDATE: Candidate = {
   lastBonus: 0,
   currentClients: 0,
   currentAumMM: 0,
-
-  /* NEW */
   assets_totalAumM: 0,
   assets_affluentPct: 0,
   assets_hnwiPct: 0,
   assets_uhnwiPct: 0,
-
   roa_averagePct: 0,
   roa_revYtdM: 0,
   roa_revLastYearM: 0,
-
   svc_selfDirectedPct: 0,
   svc_discretionaryPct: 0,
   svc_advisoryPct: 0,
   svc_directAccessPct: 0,
   svc_custodyPct: 0,
-
   dom_country1: "",
   dom_share1: 0,
   dom_country2: "",
   dom_share2: 0,
   dom_country3: "",
   dom_share3: 0,
-
   client_pep: "No",
   client_executive: "Yes",
   client_inactive: "No",
   client_company: "Yes",
   client_finInstitutionEam: "No",
   client_trust: "No",
-
   prod_creditLombard: "Yes",
   prod_mortgage: "No",
   prod_wealthTaxPlanning: "Yes",
@@ -306,7 +258,7 @@ const fmtCurrency = (n: number, currency: string) =>
   new Intl.NumberFormat("en-CH", { style: "currency", currency, maximumFractionDigits: 0 }).format(n || 0);
 
 /* ===========================================================
-   1) BASIC CANDIDATE INFORMATION (requested fields)
+   1) BASIC CANDIDATE INFORMATION
    =========================================================== */
 function CandidateBlock({
   showTips,
@@ -335,12 +287,8 @@ function CandidateBlock({
       setCandidate({ ...candidate, [k]: (typeof candidate[k] === "number" ? Number(val) : val) as Candidate[K] });
     };
 
-  const Row2 = ({ children }: { children: React.ReactNode }) => (
-    <div className="grid grid-cols-2 gap-3">{children}</div>
-  );
-
   return (
-    <section className="container-max grid gap-6 pb-4">
+    <section className="container-max grid gap-6 pb-4 overflow-visible">
       <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5 ring-1 ring-white/10">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           1️⃣ Basic Candidate Information
@@ -353,7 +301,6 @@ function CandidateBlock({
           <b> Fixed Cost per year</b> (includes seat, desk, support, platform fees).
         </HelpTip>
 
-        {/* Identity & comp */}
         <div className="mt-4 grid gap-3 md:grid-cols-3">
           <Text label="Candidate Name" value={candidate.name} onChange={onCand("name")} />
           <Text label="Candidate Email *" value={candidate.email} onChange={onCand("email")} type="email" />
@@ -363,18 +310,33 @@ function CandidateBlock({
             onChange={onCand("currency")}
             options={["CHF", "USD", "EUR", "AED", "SGD", "HKD"]}
           />
-
-          <Num label={`Current Base Salary (${candidate.currency}) *`} value={candidate.baseSalary} onChange={onCand("baseSalary")} step={1_000} />
-          <Num label={`Last Bonus (${candidate.currency}) *`} value={candidate.lastBonus} onChange={onCand("lastBonus")} step={1_000} />
+          <Num
+            label={`Current Base Salary (${candidate.currency}) *`}
+            value={candidate.baseSalary}
+            onChange={onCand("baseSalary")}
+            step={1_000}
+          />
+          <Num
+            label={`Last Bonus (${candidate.currency}) *`}
+            value={candidate.lastBonus}
+            onChange={onCand("lastBonus")}
+            step={1_000}
+          />
           <Num label="Years of Experience *" value={candidate.yearsExperience} onChange={onCand("yearsExperience")} step={1} />
-
           <Select
             label="Current Role *"
             value={candidate.role}
             onChange={onCand("role")}
             options={[
-              "Relationship Manager","Senior Relationship Manager","Assistant Relationship Manager",
-              "Investment Advisor","Managing Director","Director","Team Head","Market Head","Other",
+              "Relationship Manager",
+              "Senior Relationship Manager",
+              "Assistant Relationship Manager",
+              "Investment Advisor",
+              "Managing Director",
+              "Director",
+              "Team Head",
+              "Market Head",
+              "Other",
             ]}
           />
           <Select
@@ -382,19 +344,48 @@ function CandidateBlock({
             value={candidate.location}
             onChange={onCand("location")}
             options={[
-              "— Select —","Zurich","Geneva","Lausanne","Basel","Luzern",
-              "Dubai","London","Hong Kong","Singapore","New York","Miami","Madrid","Lisbon","Sao Paulo",
+              "— Select —",
+              "Zurich",
+              "Geneva",
+              "Lausanne",
+              "Basel",
+              "Luzern",
+              "Dubai",
+              "London",
+              "Hong Kong",
+              "Singapore",
+              "New York",
+              "Miami",
+              "Madrid",
+              "Lisbon",
+              "Sao Paulo",
             ]}
           />
           <Text label="Current Employer *" value={candidate.employer} onChange={onCand("employer")} />
-
           <Select
             label="Current Market *"
             value={candidate.marketLabel}
             onChange={onCand("marketLabel")}
             options={[
-              "CH Onshore","UK","Portugal","Spain","Germany","MEA","LATAM",
-              "CIS","CEE","France","Benelux","Asia","Argentina","Brazil","Conosur","NRI","India","US","China",
+              "CH Onshore",
+              "UK",
+              "Portugal",
+              "Spain",
+              "Germany",
+              "MEA",
+              "LATAM",
+              "CIS",
+              "CEE",
+              "France",
+              "Benelux",
+              "Asia",
+              "Argentina",
+              "Brazil",
+              "Conosur",
+              "NRI",
+              "India",
+              "US",
+              "China",
             ]}
           />
           <Num label="Inherited Book (% of AUM) *" value={candidate.inheritedBookPct} onChange={onCand("inheritedBookPct")} step={1} />
@@ -402,7 +393,6 @@ function CandidateBlock({
           <Num label="Current AUM (in million CHF) *" value={candidate.currentAumMM} onChange={onCand("currentAumMM")} step={0.1} />
         </div>
 
-        {/* Auto fixed cost toggle */}
         <div className="mt-3 flex items-center gap-2">
           <input
             id="autoFixed"
@@ -426,128 +416,17 @@ function CandidateBlock({
             />
           </div>
         )}
-
-        {/* ————————————————— NEW PDF-like blocks ————————————————— */}
-
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
-          {/* Assets */}
-          <section className="rounded-xl bg-black/30 ring-1 ring-white/10 border border-white/10">
-            <header className="px-4 py-3 border-b border-white/10 text-sm font-semibold flex items-center gap-2">
-              Assets (%assets / #clients)
-              <PopTip>AUM in millions; tiers as % of assets. Keep shares summing near 100%.</PopTip>
-            </header>
-            <div className="p-4 grid gap-3">
-              <Num label="Total AUM (m)" value={candidate.assets_totalAumM} onChange={onCand("assets_totalAumM")} step={0.1} />
-              <div className="grid grid-cols-2 gap-3">
-                <Num label="o/w Affluent (<1m) %" value={candidate.assets_affluentPct} onChange={onCand("assets_affluentPct")} step={1} />
-                <Num label="o/w HNWI (1–15m) %" value={candidate.assets_hnwiPct} onChange={onCand("assets_hnwiPct")} step={1} />
-              </div>
-              <Num label="o/w UHNWI (>15m) %" value={candidate.assets_uhnwiPct} onChange={onCand("assets_uhnwiPct")} step={1} />
-            </div>
-          </section>
-
-          {/* ROA / Revenues */}
-          <section className="rounded-xl bg-black/30 ring-1 ring-white/10 border border-white/10">
-            <header className="px-4 py-3 border-b border-white/10 text-sm font-semibold flex items-center gap-2">
-              ROA / Revenues
-              <PopTip>Average ROA in %, Revenues in millions (YTD & last year).</PopTip>
-            </header>
-            <div className="p-4 grid gap-3">
-              <Num label="Average ROA (%)" value={candidate.roa_averagePct} onChange={onCand("roa_averagePct")} step={0.1} />
-              <div className="grid grid-cols-2 gap-3">
-                <Num label="Revenues YTD (m)" value={candidate.roa_revYtdM} onChange={onCand("roa_revYtdM")} step={0.1} />
-                <Num label="Revenues last year (m)" value={candidate.roa_revLastYearM} onChange={onCand("roa_revLastYearM")} step={0.1} />
-              </div>
-            </div>
-          </section>
-        </div>
-
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
-          {/* Service type */}
-          <section className="rounded-xl bg-black/30 ring-1 ring-white/10 border border-white/10">
-            <header className="px-4 py-3 border-b border-white/10 text-sm font-semibold flex items-center gap-2">
-              Service type (% of Assets)
-              <PopTip>Breakdown by mandate type. Aim for totals near 100%.</PopTip>
-            </header>
-            <div className="p-4 grid gap-3">
-              <Num label="Self-directed %" value={candidate.svc_selfDirectedPct} onChange={onCand("svc_selfDirectedPct")} step={1} />
-              <Num label="Discretionary mandate %" value={candidate.svc_discretionaryPct} onChange={onCand("svc_discretionaryPct")} step={1} />
-              <Num label="Investment Advisory %" value={candidate.svc_advisoryPct} onChange={onCand("svc_advisoryPct")} step={1} />
-              <Num label="Direct Access to trading room %" value={candidate.svc_directAccessPct} onChange={onCand("svc_directAccessPct")} step={1} />
-              <Num label="Custody %" value={candidate.svc_custodyPct} onChange={onCand("svc_custodyPct")} step={1} />
-            </div>
-          </section>
-
-          {/* # Clients (domicile) */}
-          <section className="rounded-xl bg-black/30 ring-1 ring-white/10 border border-white/10">
-            <header className="px-4 py-3 border-b border-white/10 text-sm font-semibold flex items-center gap-2">
-              # Clients (%assets / #clients)
-              <PopTip>List up to three key domiciles with their estimated shares.</PopTip>
-            </header>
-            <div className="p-4 grid gap-3">
-              <div className="grid grid-cols-2 gap-3">
-                <Text label="o/w domiciled in" value={candidate.dom_country1} onChange={onCand("dom_country1")} />
-                <Num label="Share (%)" value={candidate.dom_share1} onChange={onCand("dom_share1")} step={1} />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Text label="o/w domiciled in" value={candidate.dom_country2} onChange={onCand("dom_country2")} />
-                <Num label="Share (%)" value={candidate.dom_share2} onChange={onCand("dom_share2")} step={1} />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Text label="o/w domiciled in" value={candidate.dom_country3} onChange={onCand("dom_country3")} />
-                <Num label="Share (%)" value={candidate.dom_share3} onChange={onCand("dom_share3")} step={1} />
-              </div>
-            </div>
-          </section>
-        </div>
-
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
-          {/* Type of Clients */}
-          <section className="rounded-xl bg-black/30 ring-1 ring-white/10 border border-white/10">
-            <header className="px-4 py-3 border-b border-white/10 text-sm font-semibold flex items-center gap-2">
-              Type of Clients
-              <PopTip>Select Yes/No for each client type.</PopTip>
-            </header>
-            <div className="p-4 grid gap-3">
-              <YesNoSelect label="PEP" value={candidate.client_pep} onChange={onCand("client_pep")} />
-              <YesNoSelect label="Executive / Entrepreneur" value={candidate.client_executive} onChange={onCand("client_executive")} />
-              <YesNoSelect label="Inactive" value={candidate.client_inactive} onChange={onCand("client_inactive")} />
-              <YesNoSelect label="Company" value={candidate.client_company} onChange={onCand("client_company")} />
-              <YesNoSelect label="Financial Institution / EAM" value={candidate.client_finInstitutionEam} onChange={onCand("client_finInstitutionEam")} />
-              <YesNoSelect label="Trust" value={candidate.client_trust} onChange={onCand("client_trust")} />
-            </div>
-          </section>
-
-          {/* Type of Product */}
-          <section className="rounded-xl bg-black/30 ring-1 ring-white/10 border border-white/10">
-            <header className="px-4 py-3 border-b border-white/10 text-sm font-semibold flex items-center gap-2">
-              Type of Product
-              <PopTip>Mark product areas you actively cover. Use “Other” note to specify.</PopTip>
-            </header>
-            <div className="p-4 grid gap-3">
-              <YesNoSelect label="Credit Lombard" value={candidate.prod_creditLombard} onChange={onCand("prod_creditLombard")} />
-              <YesNoSelect label="Mortgage" value={candidate.prod_mortgage} onChange={onCand("prod_mortgage")} />
-              <YesNoSelect label="Wealth & Tax Planning" value={candidate.prod_wealthTaxPlanning} onChange={onCand("prod_wealthTaxPlanning")} />
-              <YesNoSelect label="Structured Products" value={candidate.prod_structuredProducts} onChange={onCand("prod_structuredProducts")} />
-              <YesNoSelect label="Hedge Funds / Private Equity" value={candidate.prod_hedgeFundsPE} onChange={onCand("prod_hedgeFundsPE")} />
-              <div className="grid grid-cols-2 gap-3">
-                <YesNoSelect label="Other" value={candidate.prod_other} onChange={onCand("prod_other")} />
-                <Text label="Other (explain)" value={candidate.prod_otherNote} onChange={onCand("prod_otherNote")} />
-              </div>
-            </div>
-          </section>
-        </div>
       </div>
     </section>
   );
 }
 
 /* ===========================================================
-   2) BUSINESS PLAN — PAGE 1 (contextual strategy)
+   2) BUSINESS PLAN — PAGE 1
    =========================================================== */
 function BPModelPage1() {
   return (
-    <section className="container-max grid gap-6">
+    <section className="container-max grid gap-6 overflow-visible">
       <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           📄 Business Development Plan — Page 1
@@ -556,19 +435,33 @@ function BPModelPage1() {
         <div className="mt-4 grid md:grid-cols-2 gap-4">
           <label className="text-sm">
             Target Market(s)
-            <input className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2" placeholder="e.g. MEA, CH Onshore" />
+            <input
+              className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
+              placeholder="e.g. MEA, CH Onshore"
+            />
           </label>
           <label className="text-sm">
             Client Segment
-            <input className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2" placeholder="e.g. UHNWI, Family Offices" />
+            <input
+              className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
+              placeholder="e.g. UHNWI, Family Offices"
+            />
           </label>
           <label className="text-sm md:col-span-2">
             Strategic Positioning
-            <textarea className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2" rows={2} placeholder="e.g. Relationship-led, independent advice, platform differentiation" />
+            <textarea
+              className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
+              rows={2}
+              placeholder="e.g. Relationship-led, independent advice, platform differentiation"
+            />
           </label>
           <label className="text-sm md:col-span-2">
             Value Proposition & Unique Angle
-            <textarea className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2" rows={2} placeholder="e.g. LatAm UHNWI niche + FX expertise" />
+            <textarea
+              className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
+              rows={2}
+              placeholder="e.g. LatAm UHNWI niche + FX expertise"
+            />
           </label>
         </div>
       </div>
@@ -577,7 +470,7 @@ function BPModelPage1() {
 }
 
 /* ===========================================================
-   3) NET NEW MONEY
+   3) NET NEW MONEY  ✅ now in millions
    =========================================================== */
 function NetNewMoney({
   currency,
@@ -598,48 +491,51 @@ function NetNewMoney({
     new Intl.NumberFormat("en-CH", { style: "currency", currency, maximumFractionDigits: 0 }).format(n || 0);
 
   return (
-    <section className="container-max py-6">
+    <section className="container-max py-6 overflow-visible">
       <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           2️⃣ Net New Money (NNM)
           <PopTip>Enter conservative, probability-weighted inflows per year.</PopTip>
         </h2>
         <HelpTip show={showTips}>
-          Split large tickets realistically across years and track “stretch” cases separately to avoid double counting.
+          Values below are in <b>millions</b>. Typing <code>1</code> = {fmt(1_000_000)}.
         </HelpTip>
 
         <div className="mt-4 grid md:grid-cols-3 gap-4">
           <label className="text-sm">
-            NNM — Year 1 ({currency})
+            NNM — Year 1 ({currency}, in millions)
             <input
               type="number"
               inputMode="decimal"
-              value={Number.isFinite(nnmY1) ? nnmY1 : 0}
-              onChange={(e) => onPatch({ nnmY1: Number(e.target.value || 0) })}
+              step={0.1}
+              value={Number.isFinite(nnmY1) ? nnmY1 / 1_000_000 : 0}
+              onChange={(e) => onPatch({ nnmY1: Number(e.target.value || 0) * 1_000_000 })}
               className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
-              placeholder="e.g. 20000000"
+              placeholder="e.g. 20"
             />
           </label>
           <label className="text-sm">
-            NNM — Year 2 ({currency})
+            NNM — Year 2 ({currency}, in millions)
             <input
               type="number"
               inputMode="decimal"
-              value={Number.isFinite(nnmY2) ? nnmY2 : 0}
-              onChange={(e) => onPatch({ nnmY2: Number(e.target.value || 0) })}
+              step={0.1}
+              value={Number.isFinite(nnmY2) ? nnmY2 / 1_000_000 : 0}
+              onChange={(e) => onPatch({ nnmY2: Number(e.target.value || 0) * 1_000_000 })}
               className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
-              placeholder="e.g. 25000000"
+              placeholder="e.g. 25"
             />
           </label>
           <label className="text-sm">
-            NNM — Year 3 ({currency})
+            NNM — Year 3 ({currency}, in millions)
             <input
               type="number"
               inputMode="decimal"
-              value={Number.isFinite(nnmY3) ? nnmY3 : 0}
-              onChange={(e) => onPatch({ nnmY3: Number(e.target.value || 0) })}
+              step={0.1}
+              value={Number.isFinite(nnmY3) ? nnmY3 / 1_000_000 : 0}
+              onChange={(e) => onPatch({ nnmY3: Number(e.target.value || 0) * 1_000_000 })}
               className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
-              placeholder="e.g. 30000000"
+              placeholder="e.g. 30"
             />
           </label>
         </div>
@@ -653,7 +549,7 @@ function NetNewMoney({
 }
 
 /* ===========================================================
-   4) SIMPLE REVENUE / COST / NET VIEW (kept for table)
+   4) SIMPLE REVENUE / COST / NET VIEW
    =========================================================== */
 function RevenueCostsSimple({
   currency,
@@ -703,13 +599,12 @@ function RevenueCostsSimple({
 
   const netMarginY3Pct = useMemo(() => (rev3 > 0 ? (nm3 / rev3) * 100 : 0), [rev3, nm3]);
 
-  // push parent update by effect (avoids setState during render warning)
   useEffect(() => {
     onNetMarginY3(netMarginY3Pct);
   }, [netMarginY3Pct, onNetMarginY3]);
 
   return (
-    <section className="container-max py-6">
+    <section className="container-max py-6 overflow-visible">
       <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           4️⃣ Revenue, Costs & Net Margin (Simple View)
@@ -719,9 +614,13 @@ function RevenueCostsSimple({
         </h2>
         <HelpTip show={showTips}>
           {useAutoFixed ? (
-            <>Fixed cost source: <b>Base × 1.25</b>. Turn the toggle off in the Candidate section to override.</>
+            <>
+              Fixed cost source: <b>Base × 1.25</b>. Turn the toggle off in the Candidate section to override.
+            </>
           ) : (
-            <>Fixed cost source: <b>Custom fixed per year</b>. Ensure it includes seat, desk, support, platform fees.</>
+            <>
+              Fixed cost source: <b>Custom fixed per year</b>. Ensure it includes seat, desk, support, platform fees.
+            </>
           )}
         </HelpTip>
 
@@ -758,7 +657,6 @@ function RevenueCostsSimple({
           </label>
         </div>
 
-        {/* Table */}
         <div className="mt-4 overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead className="bg-white/5">
@@ -806,15 +704,9 @@ function RevenueCostsSimple({
 }
 
 /* ===========================================================
-   5) BUSINESS PLAN — PAGE 2 (prospect summary table)
+   5) BUSINESS PLAN — PAGE 2 (prospect table)  ⭐️ SHRUNK
    =========================================================== */
-function BPModelPage2({
-  rows,
-  setRows,
-}: {
-  rows: ProspectRow[];
-  setRows: (r: ProspectRow[]) => void;
-}) {
+function BPModelPage2({ rows, setRows }: { rows: ProspectRow[]; setRows: (r: ProspectRow[]) => void }) {
   const add = () =>
     setRows([
       ...rows,
@@ -852,8 +744,8 @@ function BPModelPage2({
   );
 
   return (
-    <section className="container-max grid gap-6 pt-2">
-      <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
+    <section className="container-max grid gap-6 pt-2 overflow-visible pb-6">
+      <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10 relative">
         <h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
           3️⃣ Business Development Plan — Page 2
           <PopTip>Map prospects/groups with best/worst NNM over 3 years.</PopTip>
@@ -868,12 +760,13 @@ function BPModelPage2({
           </button>
         </div>
 
-        <div className="mt-4 overflow-x-auto">
-          <table className="min-w-full text-sm">
+        {/* shrinked table so it fits */}
+        <div className="-mx-3 mt-4 overflow-x-auto md:mx-0">
+          <table className="w-full text-sm table-fixed">
             <thead className="bg-white/5 align-bottom">
               <tr>
-                <th className="px-3 py-2 text-left font-medium">Prospect / Group</th>
-                <th className="px-3 py-2 text-left font-medium">Source</th>
+                <th className="px-3 py-2 text-left font-medium w-48">Prospect / Group</th>
+                <th className="px-3 py-2 text-left font-medium w-32">Source</th>
                 <th className="px-3 py-2 text-right font-medium">Wealth (M)</th>
                 <th className="px-3 py-2 text-right font-medium">AUM (M)</th>
                 <th className="px-3 py-2 text-right font-medium">Margin (%)</th>
@@ -883,7 +776,7 @@ function BPModelPage2({
                 <th className="px-3 py-2 text-right font-medium">Worst Y2</th>
                 <th className="px-3 py-2 text-right font-medium">Best Y3</th>
                 <th className="px-3 py-2 text-right font-medium">Worst Y3</th>
-                <th className="px-3 py-2 text-left font-medium">Actions</th>
+                <th className="px-3 py-2 text-left font-medium w-20">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
@@ -891,7 +784,7 @@ function BPModelPage2({
                 <tr key={r.id}>
                   <td className="px-3 py-2">
                     <input
-                      className="w-56 rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                      className="w-48 rounded-md bg-black/30 border border-white/10 px-2 py-1"
                       value={r.name}
                       onChange={(e) => patch(r.id, { name: e.target.value })}
                       placeholder="e.g. John Doe #"
@@ -899,7 +792,7 @@ function BPModelPage2({
                   </td>
                   <td className="px-3 py-2">
                     <select
-                      className="w-40 rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                      className="w-32 rounded-md bg-black/30 border border-white/10 px-2 py-1"
                       value={r.source}
                       onChange={(e) => patch(r.id, { source: e.target.value as ProspectRow["source"] })}
                     >
@@ -926,7 +819,7 @@ function BPModelPage2({
                       <input
                         type="number"
                         step={step}
-                        className="w-24 max-w-[110px] rounded-md bg-black/30 border border-white/10 px-2 py-1 text-right"
+                        className="w-16 max-w-[64px] rounded-md bg-black/30 border border-white/10 px-2 py-1 text-right"
                         value={(r as any)[k]}
                         onChange={(e) => patch(r.id, { [k]: Number(e.target.value || 0) } as any)}
                       />
@@ -934,7 +827,7 @@ function BPModelPage2({
                   ))}
                   <td className="px-3 py-2">
                     <button className="btn-ghost text-red-300" onClick={() => remove(r.id)}>
-                      🗑 Remove
+                      🗑
                     </button>
                   </td>
                 </tr>
@@ -958,6 +851,8 @@ function BPModelPage2({
             </tbody>
           </table>
         </div>
+
+        <div className="pointer-events-none absolute top-0 right-0 h-full w-6 bg-gradient-to-l from-neutral-900/40 to-transparent md:hidden" />
       </div>
     </section>
   );
@@ -983,9 +878,8 @@ function ChartsPanel({
 }) {
   const pieColors = ["#7dd3fc", "#86efac", "#fde68a", "#fca5a5", "#c4b5fd"];
   return (
-    <section className="container-max py-6">
+    <section className="container-max py-6 overflow-visible">
       <div className="grid gap-6 md:grid-cols-2">
-        {/* NNM line */}
         <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5 ring-1 ring-white/10">
           <h3 className="text-sm font-semibold mb-3">NNM Trajectory ({currency})</h3>
           <div className="h-56">
@@ -1002,7 +896,6 @@ function ChartsPanel({
           </div>
         </div>
 
-        {/* P&L bars */}
         <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5 ring-1 ring-white/10">
           <h3 className="text-sm font-semibold mb-3">Revenue vs Fixed vs Net ({currency})</h3>
           <div className="h-56">
@@ -1021,7 +914,6 @@ function ChartsPanel({
           </div>
         </div>
 
-        {/* Service mix pie */}
         <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5 ring-1 ring-white/10">
           <h3 className="text-sm font-semibold mb-3">Service Mix (% of Assets)</h3>
           <div className="h-56">
@@ -1039,7 +931,6 @@ function ChartsPanel({
           </div>
         </div>
 
-        {/* Asset tiers pie */}
         <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5 ring-1 ring-white/10">
           <h3 className="text-sm font-semibold mb-3">Asset Tiers (% of AUM)</h3>
           <div className="h-56">
@@ -1057,7 +948,6 @@ function ChartsPanel({
           </div>
         </div>
 
-        {/* Prospect best/worst band */}
         <div className="md:col-span-2 rounded-2xl border border-white/10 bg-neutral-900/40 p-5 ring-1 ring-white/10">
           <h3 className="text-sm font-semibold mb-3">Prospects — Best/Worst NNM bands (M)</h3>
           <div className="h-56">
@@ -1080,7 +970,7 @@ function ChartsPanel({
 }
 
 /* ===========================================================
-   6) FINAL ANALYSIS + EXPORT (refined)
+   6) FINAL ANALYSIS + EXPORT
    =========================================================== */
 type Insights = {
   netMarginY3Pct: number;
@@ -1144,7 +1034,6 @@ function FinalAnalysis({
     return "🔴 Weak";
   }, [netMarginY3Pct]);
 
-  // Diagnostic metrics
   const nnmCAGR = useMemo(() => {
     const start = nnmY1 || 0;
     const end = nnmY3 || 0;
@@ -1160,11 +1049,10 @@ function FinalAnalysis({
 
   const fixedAsPctOfRev3 = useMemo(() => (rev3 > 0 ? (fixed / rev3) * 100 : 0), [fixed, rev3]);
 
-  // What ROA would be needed in Y3 to reach 35% net margin?
   const targetNetMargin = 0.35;
   const revNeededForTarget = useMemo(() => (1 - targetNetMargin > 0 ? fixed / (1 - targetNetMargin) : 0), [fixed]);
   const roaNeededPct = useMemo(() => (nnmY3 > 0 ? (revNeededForTarget / nnmY3) * 100 : 0), [revNeededForTarget, nnmY3]);
-  const roaGapBps = Math.max(0, Math.round((roaNeededPct - roaY3) * 100)); // in bps
+  const roaGapBps = Math.max(0, Math.round((roaNeededPct - roaY3) * 100));
 
   const warnings: string[] = [];
   if (serviceMixSum && Math.abs(100 - serviceMixSum) > 5) warnings.push(`Service mix totals ${serviceMixSum.toFixed(0)}% (aim ~100%).`);
@@ -1172,7 +1060,6 @@ function FinalAnalysis({
   if (domicileSum && Math.abs(100 - domicileSum) > 5) warnings.push(`Domicile shares total ${domicileSum.toFixed(0)}% (aim ~100%).`);
   if (pep === "Yes") warnings.push("PEP exposure flagged — expect enhanced onboarding/monitoring timelines.");
 
-  // Recommendations (concise, banker-grade)
   const recs = [
     netMarginY3Pct < 28
       ? `Raise Y3 ROA from ${roaY3.toFixed(2)}% toward ~${roaNeededPct.toFixed(
@@ -1201,19 +1088,20 @@ function FinalAnalysis({
   ];
 
   return (
-    <section className="container-max py-10">
+    <section className="container-max py-10 overflow-visible pb-16">
       <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
         <h2 className="text-xl font-semibold flex items-center gap-2">
           📈 Final Analysis & Recommendation
           <PopTip>Actionable diagnostics derived from NNM, ROA and fixed-cost profile.</PopTip>
         </h2>
 
-        {/* KPIs */}
         <div className="mt-4 grid md:grid-cols-4 gap-4">
           <div className="rounded-xl border border-white/10 bg-black/30 p-4">
             <div className="text-xs text-white/70">Net Margin (Y3)</div>
             <div className="text-2xl font-bold">{netMarginY3Pct.toFixed(1)}%</div>
-            <div className="text-sm mt-1">Status: <span className="font-semibold">{score}</span></div>
+            <div className="text-sm mt-1">
+              Status: <span className="font-semibold">{score}</span>
+            </div>
           </div>
           <div className="rounded-xl border border-white/10 bg-black/30 p-4">
             <div className="text-xs text-white/70">Fixed as % of Rev (Y3)</div>
@@ -1223,7 +1111,9 @@ function FinalAnalysis({
           <div className="rounded-xl border border-white/10 bg-black/30 p-4">
             <div className="text-xs text-white/70">NNM CAGR (Y1→Y3)</div>
             <div className="text-2xl font-bold">{nnmCAGR.toFixed(1)}%</div>
-            <div className="text-sm mt-1">{fmtCurrency(nnmY1, currency)} → {fmtCurrency(nnmY3, currency)}</div>
+            <div className="text-sm mt-1">
+              {fmtCurrency(nnmY1, currency)} → {fmtCurrency(nnmY3, currency)}
+            </div>
           </div>
           <div className="rounded-xl border border-white/10 bg-black/30 p-4">
             <div className="text-xs text-white/70">ROA Trend</div>
@@ -1234,17 +1124,6 @@ function FinalAnalysis({
           </div>
         </div>
 
-        {/* Recommendations */}
-        <div className="mt-6">
-          <h3 className="text-sm font-semibold mb-2">Recommendations</h3>
-          <ul className="list-disc pl-6 space-y-2 text-sm">
-            {recs.map((r, i) => (
-              <li key={i}>{r}</li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Cautions */}
         {warnings.length > 0 && (
           <div className="mt-6">
             <h3 className="text-sm font-semibold mb-2">Cautions / Data Hygiene</h3>
@@ -1280,7 +1159,6 @@ function FinalAnalysis({
    Export helpers
 ------------------------------ */
 async function exportPdf(el: HTMLElement, candidateName?: string) {
-  // Cast to any to allow 'scale' and 'backgroundColor' options without relying on community types
   const canvas = await html2canvas(el, { scale: 2, backgroundColor: "#0B0E13" } as any);
   const imgData = canvas.toDataURL("image/jpeg", 0.92);
   const pdf = new jsPDF("p", "mm", "a4");
@@ -1343,32 +1221,37 @@ ROA% Y3,${roaY3}
 export default function BpSimulatorClient() {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Toggles
   const [showTips, setShowTips] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [autoFixedFromBase, setAutoFixedFromBase] = useState(true);
   const [customFixedPerYear, setCustomFixedPerYear] = useState<number>(350_000);
-
-  // Candidate
   const [candidate, setCandidate] = useState<Candidate>(DEFAULT_CANDIDATE);
-
-  // NNM
   const [nnmY1, setNnmY1] = useState<number>(20_000_000);
   const [nnmY2, setNnmY2] = useState<number>(25_000_000);
   const [nnmY3, setNnmY3] = useState<number>(30_000_000);
-
-  // ROA (%)
   const [roaY1, setRoaY1] = useState<number>(1.0);
   const [roaY2, setRoaY2] = useState<number>(1.0);
   const [roaY3, setRoaY3] = useState<number>(1.0);
-
-  // Derived — Y3 Net Margin %
   const [netMarginPctY3, setNetMarginPctY3] = useState<number>(0);
 
-  // Prospects (Page 2)
-  const [prospects, setProspects] = useState<ProspectRow[]>([]);
+  // ✅ start with one ready-made row so the user sees what to do
+  const [prospects, setProspects] = useState<ProspectRow[]>([
+    {
+      id: uid(),
+      name: "John Doe #",
+      source: "Self-acquired",
+      wealthM: 0,
+      aumM: 0,
+      marginPct: 0,
+      bestY1M: 0,
+      worstY1M: 0,
+      bestY2M: 0,
+      worstY2M: 0,
+      bestY3M: 0,
+      worstY3M: 0,
+    },
+  ]);
 
-  // Derived values for charts & analysis (compute here once)
   const fixed = useMemo(
     () => (autoFixedFromBase ? Math.max(0, candidate.baseSalary) * 1.25 : Math.max(0, customFixedPerYear)),
     [autoFixedFromBase, candidate.baseSalary, customFixedPerYear]
@@ -1452,9 +1335,8 @@ export default function BpSimulatorClient() {
     exportCsvSimple({ netMarginPctY3, candidateName: candidate.name, roaY1, roaY2, roaY3 });
 
   return (
-    <main className="min-h-screen" ref={containerRef}>
-      {/* Header */}
-      <section className="container-max py-8 md:py-10">
+    <main className="min-h-screen overflow-visible pb-10" ref={containerRef}>
+      <section className="container-max py-8 md:py-10 overflow-visible">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Business Plan Simulator</h1>
@@ -1474,7 +1356,6 @@ export default function BpSimulatorClient() {
         </div>
       </section>
 
-      {/* ORDERED SECTIONS */}
       <CandidateBlock
         showTips={showTips}
         candidate={candidate}
@@ -1502,7 +1383,6 @@ export default function BpSimulatorClient() {
 
       <BPModelPage2 rows={prospects} setRows={setProspects} />
 
-      {/* CHARTS */}
       <ChartsPanel
         currency={candidate.currency || "CHF"}
         nnmSeries={nnmSeries}
@@ -1512,7 +1392,6 @@ export default function BpSimulatorClient() {
         prospectBands={prospectBands}
       />
 
-      {/* TABLE + COMPUTATION of Y3 Net Margin (updates parent) */}
       <RevenueCostsSimple
         currency={candidate.currency || "CHF"}
         baseSalary={candidate.baseSalary}
