@@ -1,6 +1,5 @@
 // app/[locale]/apply/page.tsx
-import ApplyPage from "../../../apply/page";
+// Reuse the main /apply page for locale-prefixed routes like /en/apply, /fr/apply, etc.
+import ApplyPage from "../../apply/page";
 
-// ✅ Reuse the existing /apply page for all locale-prefixed routes
 export default ApplyPage;
-
