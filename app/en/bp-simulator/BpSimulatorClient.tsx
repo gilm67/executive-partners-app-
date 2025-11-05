@@ -704,7 +704,7 @@ function RevenueCostsSimple({
 }
 
 /* ===========================================================
-   5) BUSINESS PLAN — PAGE 2 (prospect table)  ⭐️ SHRUNK
+   5) BUSINESS PLAN — PAGE 2 (prospect table)  ⭐️ mobile-friendly
    =========================================================== */
 function BPModelPage2({ rows, setRows }: { rows: ProspectRow[]; setRows: (r: ProspectRow[]) => void }) {
   const add = () =>
@@ -760,8 +760,172 @@ function BPModelPage2({ rows, setRows }: { rows: ProspectRow[]; setRows: (r: Pro
           </button>
         </div>
 
-        {/* shrinked table so it fits */}
-        <div className="-mx-3 mt-4 overflow-x-auto md:mx-0">
+        {/* mobile cards */}
+        <div className="mt-4 space-y-3 md:hidden">
+          {rows.map((r) => (
+            <div key={r.id} className="rounded-xl border border-white/10 bg-black/20 p-4 space-y-3">
+              <div className="flex items-start justify-between gap-3">
+                <label className="flex-1 text-sm">
+                  Prospect / Group
+                  <input
+                    className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                    value={r.name}
+                    onChange={(e) => patch(r.id, { name: e.target.value })}
+                    placeholder="e.g. John Doe #"
+                  />
+                </label>
+                <button className="text-sm text-red-300" onClick={() => remove(r.id)}>
+                  🗑
+                </button>
+              </div>
+              <label className="text-sm block">
+                Source
+                <select
+                  className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                  value={r.source}
+                  onChange={(e) => patch(r.id, { source: e.target.value as ProspectRow["source"] })}
+                >
+                  <option>Self-acquired</option>
+                  <option>Inherited</option>
+                  <option>Finder</option>
+                  <option>Other</option>
+                </select>
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <label className="text-xs">
+                  Wealth (M)
+                  <input
+                    type="number"
+                    step={0.1}
+                    className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                    value={r.wealthM}
+                    onChange={(e) => patch(r.id, { wealthM: Number(e.target.value || 0) })}
+                  />
+                </label>
+                <label className="text-xs">
+                  AUM (M)
+                  <input
+                    type="number"
+                    step={0.1}
+                    className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                    value={r.aumM}
+                    onChange={(e) => patch(r.id, { aumM: Number(e.target.value || 0) })}
+                  />
+                </label>
+                <label className="text-xs">
+                  Margin (%)
+                  <input
+                    type="number"
+                    step={0.01}
+                    className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                    value={r.marginPct}
+                    onChange={(e) => patch(r.id, { marginPct: Number(e.target.value || 0) })}
+                  />
+                </label>
+              </div>
+              <div>
+                <p className="text-xs mb-1 text-white/70">Best / Worst by year (in M)</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="text-[11px]">
+                    Best Y1
+                    <input
+                      type="number"
+                      step={0.1}
+                      className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                      value={r.bestY1M}
+                      onChange={(e) => patch(r.id, { bestY1M: Number(e.target.value || 0) })}
+                    />
+                  </label>
+                  <label className="text-[11px]">
+                    Worst Y1
+                    <input
+                      type="number"
+                      step={0.1}
+                      className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                      value={r.worstY1M}
+                      onChange={(e) => patch(r.id, { worstY1M: Number(e.target.value || 0) })}
+                    />
+                  </label>
+                  <label className="text-[11px]">
+                    Best Y2
+                    <input
+                      type="number"
+                      step={0.1}
+                      className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                      value={r.bestY2M}
+                      onChange={(e) => patch(r.id, { bestY2M: Number(e.target.value || 0) })}
+                    />
+                  </label>
+                  <label className="text-[11px]">
+                    Worst Y2
+                    <input
+                      type="number"
+                      step={0.1}
+                      className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                      value={r.worstY2M}
+                      onChange={(e) => patch(r.id, { worstY2M: Number(e.target.value || 0) })}
+                    />
+                  </label>
+                  <label className="text-[11px]">
+                    Best Y3
+                    <input
+                      type="number"
+                      step={0.1}
+                      className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                      value={r.bestY3M}
+                      onChange={(e) => patch(r.id, { bestY3M: Number(e.target.value || 0) })}
+                    />
+                  </label>
+                  <label className="text-[11px]">
+                    Worst Y3
+                    <input
+                      type="number"
+                      step={0.1}
+                      className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
+                      value={r.worstY3M}
+                      onChange={(e) => patch(r.id, { worstY3M: Number(e.target.value || 0) })}
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {!!rows.length && (
+            <div className="rounded-xl border border-white/10 bg-black/20 p-4 text-sm space-y-1">
+              <div className="font-semibold text-white/80">Totals</div>
+              <div className="flex justify-between text-xs">
+                <span>Wealth</span>
+                <span>{totals.wealth.toFixed(1)} M</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span>AUM</span>
+                <span>{totals.aum.toFixed(1)} M</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span>Best Y1 / Worst Y1</span>
+                <span>
+                  {totals.best1.toFixed(1)} / {totals.worst1.toFixed(1)}
+                </span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span>Best Y2 / Worst Y2</span>
+                <span>
+                  {totals.best2.toFixed(1)} / {totals.worst2.toFixed(1)}
+                </span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span>Best Y3 / Worst Y3</span>
+                <span>
+                  {totals.best3.toFixed(1)} / {totals.worst3.toFixed(1)}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* desktop table */}
+        <div className="-mx-3 mt-4 overflow-x-auto md:mx-0 hidden md:block">
           <table className="w-full text-sm table-fixed">
             <thead className="bg-white/5 align-bottom">
               <tr>
@@ -1234,7 +1398,7 @@ export default function BpSimulatorClient() {
   const [roaY3, setRoaY3] = useState<number>(1.0);
   const [netMarginPctY3, setNetMarginPctY3] = useState<number>(0);
 
-  // ✅ start with one ready-made row so the user sees what to do
+  // start with one default prospect so it’s obvious
   const [prospects, setProspects] = useState<ProspectRow[]>([
     {
       id: uid(),
