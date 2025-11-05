@@ -21,13 +21,14 @@ export default function Footer() {
               Geneva-based executive search focused on Private Banking &amp; Wealth Management.
             </p>
 
-            {/* mobile-friendly CTA */}
-            <div className="mt-4 md:hidden">
+            {/* ✅ this one must NOT be locale-prefixed */}
+            <div className="mt-4">
               <Link
-                href={href("/apply")}
-                className="inline-flex items-center justify-center rounded-md bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-400"
+                href="/apply"
+                className="inline-flex items-center gap-1 rounded-md bg-emerald-500 px-3 py-1.5 text-sm font-medium text-black hover:bg-emerald-400"
               >
-                Apply Confidentially
+                Apply confidentially
+                <span aria-hidden>→</span>
               </Link>
             </div>
           </div>
@@ -64,8 +65,6 @@ export default function Footer() {
               <li><Link className="hover:underline" href={href("/candidates")}>Candidates</Link></li>
               <li><Link className="hover:underline" href={href("/hiring-managers")}>Hiring Managers</Link></li>
               <li><Link className="hover:underline" href={href("/contact")}>Contact</Link></li>
-              {/* ✅ this was missing – now mobile footer Apply won’t 404 */}
-              <li><Link className="hover:underline" href={href("/apply")}>Apply Confidentially</Link></li>
             </ul>
           </nav>
         </div>
