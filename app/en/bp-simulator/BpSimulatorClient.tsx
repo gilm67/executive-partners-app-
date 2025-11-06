@@ -70,6 +70,7 @@ function Text({
   );
 }
 
+/* ✅ FIX HERE: show empty field instead of 0 */
 function Num({
   label,
   value,
@@ -88,7 +89,8 @@ function Num({
         type="number"
         inputMode="decimal"
         className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
-        value={Number.isFinite(value) ? value : 0}
+        /* if value is 0 → show "", user types normally */
+        value={Number.isFinite(value) ? (value === 0 ? "" : value) : ""}
         onChange={onChange}
         step={step}
       />
