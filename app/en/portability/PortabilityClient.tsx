@@ -1,29 +1,308 @@
-'use client';
+"use client";
 
-import dynamic from 'next/dynamic';
+import { useMemo, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
-const Fallback = ({ title }: { title: string }) => (
-  <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-white/70">
-    Loading {title}…
-  </div>
-);
+type DimensionKey =
+  | "custodian"
+  | "aum"
+  | "licenses"
+  | "product"
+  | "concentration"
+  | "compliance";
 
-// If you have an intro/hero, keep it dynamic too (optional)
-const PortabilityForm = dynamic(
-  () => import('../../../components/portability/PortabilityForm'),
-  { ssr: false, loading: () => <Fallback title="Portability Diagnostic" /> }
-);
+const DIMENSIONS: Array<{
+  key: DimensionKey;
+  label: string;
+  description: string;
+}> = [
+  {
+    key: "custodian",
+    label: "Custodian / Booking Centre Footprint",
+    description:
+      "CH, UK, UAE, SG, HK, US — the more booking centres your clients can follow, the higher your portability.",
+  },
+  {
+    key: "aum",
+    label: "AUM Mix & Diversification",
+    description:
+      "Balanced advisory/DPM/lending books are easier to transfer than highly concentrated or single-product books.",
+  },
+  {
+    key: "licenses",
+    label: "Cross-Border Licenses",
+    description:
+      "FINMA outbound, FCA, DIFC/ADGM, MAS, SFC, plus bank-level permissions enabling compliant servicing.",
+  },
+  {
+    key: "product",
+    label: "Product Scope Breadth",
+    description:
+      "From core PB to structured products, private markets and alternatives — especially relevant for UHNW and US/LatAm clients.",
+  },
+  {
+    key: "concentration",
+    label: "Client Concentration",
+    description:
+      "Lower concentration = lower attrition risk when moving from Geneva to Dubai, London to Zurich, or Paris to Lisbon/Madrid.",
+  },
+  {
+    key: "compliance",
+    label: "Compliance & KYC Reuse",
+    description:
+      "CRS, FATCA, MiFID II, LSFin packs that can be reused → shorter onboarding and faster time-to-revenue.",
+  },
+];
 
 export default function PortabilityClient() {
+  const [scores, setScores] = useState<Record<DimensionKey, number>>({
+    custodian: 3,
+    aum: 3,
+    licenses: 2,
+    product: 3,
+    concentration: 3,
+    compliance: 2,
+  });
+
+  const captureRef = useRef<HTMLDivElement | null>(null);
+
+  const total = useMemo(() => {
+    const vals = Object.values(scores);
+    const sum = vals.reduce((acc, v) => acc + v, 0);
+    const max = vals.length * 5;
+    const pct = Math.round((sum / max) * 100);
+    return { sum, max, pct };
+  }, [scores]);
+
+  const level =
+    total.pct >= 80
+      ? "Excellent mobility"
+      : total.pct >= 60
+      ? "Good mobility"
+      : total.pct >= 40
+      ? "Moderate mobility"
+      : "Limited mobility";
+
+  const handleDownload = async () => {
+    if (!captureRef.current) return;
+    const element = captureRef.current;
+
+    // slightly enlarge for better quality
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      backgroundColor: "#0B0F1A",
+    });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("portability-readiness-report.pdf");
+  };
+
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <h1 className="text-3xl font-semibold tracking-tight">Portability</h1>
-      <p className="text-sm text-white/70">
-        Map your booking-centre coverage, product fit and documentation readiness. Get a
-        banker-friendly score with next actions and a downloadable dossier.
-      </p>
-      <hr className="border-white/10" />
-      <PortabilityForm />
+    <div className="mx-auto max-w-6xl px-6 py-12 space-y-10">
+      {/* header + action bar */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="inline-flex items-center gap-2 rounded-full bg-blue-500/10 px-4 py-1 text-sm text-blue-100 ring-1 ring-blue-500/30">
+            Executive Partners · Geneva · Global PB & WM
+          </p>
+          <h1 className="mt-4 text-4xl font-bold text-white md:text-5xl">
+            Portability Readiness Score™
+          </h1>
+          <p className="mt-2 text-gray-200/90">
+            Senior private-banking mobility across Switzerland, the UK, UAE,
+            Singapore, Hong Kong, New York, Miami, Paris, Lisbon and Madrid.
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={handleDownload}
+            className="rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/20 hover:bg-white/20"
+          >
+            Download PDF report
+          </button>
+          <a
+            href="/en/contact"
+            className="rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600"
+          >
+            Request diagnostic
+          </a>
+        </div>
+      </div>
+
+      {/* everything below will be in the PDF */}
+      <div ref={captureRef} className="space-y-10">
+        {/* top section */}
+        <div className="flex flex-col gap-10 lg:flex-row">
+          {/* LEFT: intro card */}
+          <div className="flex-1 space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10"
+            >
+              <h2 className="text-lg font-semibold text-white">
+                What this evaluates
+              </h2>
+              <p className="text-sm text-gray-300">
+                How easily a banker or team can be onboarded and start producing
+                revenues in another hub — Geneva, Zurich, London, Dubai,
+                Singapore, Hong Kong, New York, Miami or key EU capitals.
+              </p>
+              <p className="mt-2 text-xs text-gray-400">
+                Indicative only — receiving bank&apos;s compliance rules always
+                prevail.
+              </p>
+            </motion.div>
+
+            <p className="text-sm text-gray-300">
+              We use six dimensions similar to what leading Swiss and
+              international private banks review: booking-centre coverage,
+              diversification of book, cross-border permissions, product depth,
+              client concentration and reuse of KYC/compliance packs.
+            </p>
+          </div>
+
+          {/* RIGHT: interactive panel */}
+          <motion.div
+            initial={{ opacity: 0, x: 25 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="w-full max-w-md space-y-6 rounded-2xl bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/10 p-6 ring-1 ring-white/10"
+          >
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-wide text-gray-300">
+                  Overall score
+                </p>
+                <p className="text-3xl font-bold text-white">{total.pct}%</p>
+                <p className="text-xs text-gray-400">{level}</p>
+              </div>
+              <div className="h-16 w-16 rounded-full bg-blue-500/20 ring-4 ring-blue-500/40" />
+            </div>
+
+            <div className="flex gap-2 text-xs">
+              <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-emerald-100 ring-1 ring-emerald-400/40">
+                Faster time-to-revenue
+              </span>
+              <span className="rounded-full bg-blue-500/10 px-3 py-1 text-blue-100 ring-1 ring-blue-400/40">
+                Lower onboarding friction
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              {DIMENSIONS.map((dim) => (
+                <div key={dim.key} className="space-y-1">
+                  <div className="flex items-center justify-between gap-4">
+                    <p className="text-sm font-medium text-white">
+                      {dim.label}
+                    </p>
+                    <p className="text-sm text-gray-300">
+                      {scores[dim.key]}/5
+                    </p>
+                  </div>
+                  <input
+                    type="range"
+                    min={1}
+                    max={5}
+                    value={scores[dim.key]}
+                    onChange={(e) =>
+                      setScores((prev) => ({
+                        ...prev,
+                        [dim.key]: Number(e.target.value),
+                      }))
+                    }
+                    className="w-full accent-blue-500"
+                  />
+                  <p className="text-[11px] text-gray-400">
+                    {dim.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-[10px] leading-relaxed text-gray-500">
+              Final onboarding depends on the target bank&apos;s compliance, tax,
+              immigration and booking-centre rules (FINMA, FCA, DFSA/FSRA, MAS,
+              SFC, SEC).
+            </p>
+          </motion.div>
+        </div>
+
+        {/* mobility routes */}
+        <section className="space-y-4 rounded-2xl bg-white/5 p-6 ring-1 ring-white/10">
+          <h2 className="text-xl font-semibold text-white">
+            Global mobility routes we actively cover
+          </h2>
+          <p className="text-sm text-gray-300">
+            Executive Partners supports senior private-banking moves across
+            Swiss, European, Middle Eastern, Asian and US wealth hubs.
+          </p>
+
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="rounded-xl bg-white/5 p-4">
+              <h3 className="text-sm font-semibold text-white">
+                Switzerland ↔ UK / EU
+              </h3>
+              <p className="text-xs text-gray-300">
+                Geneva / Zurich to London, Paris, Lisbon, Madrid — driven by
+                EU/HNW books, languages and custodian compatibility.
+              </p>
+            </div>
+            <div className="rounded-xl bg-white/5 p-4">
+              <h3 className="text-sm font-semibold text-white">
+                Switzerland / UK → UAE
+              </h3>
+              <p className="text-xs text-gray-300">
+                Geneva / London to Dubai / Abu Dhabi (DIFC, ADGM) for MENA, NRI
+                and East Africa books.
+              </p>
+            </div>
+            <div className="rounded-xl bg-white/5 p-4">
+              <h3 className="text-sm font-semibold text-white">
+                Europe → US Wealth Hubs
+              </h3>
+              <p className="text-xs text-gray-300">
+                Paris / Madrid / Lisbon to New York or Miami for LatAm/HNW
+                coverage, subject to US onboarding.
+              </p>
+            </div>
+            <div className="rounded-xl bg-white/5 p-4">
+              <h3 className="text-sm font-semibold text-white">
+                Switzerland / UK → Singapore & Hong Kong
+              </h3>
+              <p className="text-xs text-gray-300">
+                For Asia & NRI coverage (MAS / SFC rules, local booking
+                centres).
+              </p>
+            </div>
+            <div className="rounded-xl bg-white/5 p-4">
+              <h3 className="text-sm font-semibold text-white">
+                US (New York / Miami) → Switzerland
+              </h3>
+              <p className="text-xs text-gray-300">
+                For international bankers seeking Swiss platforms for multi-book
+                mandates.
+              </p>
+            </div>
+            <div className="rounded-xl bg-white/5 p-4">
+              <h3 className="text-sm font-semibold text-white">
+                Intra-EU (Paris, Lisbon, Madrid)
+              </h3>
+              <p className="text-xs text-gray-300">
+                For multilingual RMs with Southern European HNW/UHNW books who
+                want Swiss/UK umbrella or a Middle East platform.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
