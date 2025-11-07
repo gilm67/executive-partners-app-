@@ -17,6 +17,8 @@ export default function ApplyForm({
   const [market, setMarket] = useState(defaultMarket);
   const [notes, setNotes] = useState("");
   const [jobId, setJobId] = useState(defaultJobId);
+  const [location, setLocation] = useState("");
+  const [currentEmployer, setCurrentEmployer] = useState("");
   const [loading, setLoading] = useState(false);
   const [okMsg, setOkMsg] = useState<string | null>(null);
   const [errMsg, setErrMsg] = useState<string | null>(null);
@@ -28,6 +30,7 @@ export default function ApplyForm({
     setOkMsg(null);
     setErrMsg(null);
 
+    // honeypot -> block bots
     if (company.trim()) {
       setErrMsg("Submission blocked.");
       return;
@@ -40,13 +43,15 @@ export default function ApplyForm({
     try {
       setLoading(true);
 
-      // ✅ Build multipart FormData directly from the form element
       const formEl = e.currentTarget;
       const fd = new FormData(formEl);
 
+      // if later you generate a recaptcha token in the client, do:
+      // fd.set("recaptchaToken", token);
+
       const res = await fetch("/api/apply", {
         method: "POST",
-        body: fd, // <-- let the browser set Content-Type with boundary
+        body: fd,
       });
 
       let data: any = {};
@@ -69,6 +74,8 @@ export default function ApplyForm({
       setRole(defaultRole);
       setMarket(defaultMarket);
       setJobId(defaultJobId);
+      setLocation("");
+      setCurrentEmployer("");
     } catch (err: any) {
       setErrMsg(err?.message || "Something went wrong.");
     } finally {
@@ -79,22 +86,22 @@ export default function ApplyForm({
   return (
     <form
       onSubmit={onSubmit}
-      encType="multipart/form-data" // ✅ important for file upload
+      encType="multipart/form-data"
       className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6 text-white"
       noValidate
     >
       {okMsg && (
         <div
-          role="status"
-          className="rounded-md border border-emerald-300/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200"
+            role="status"
+            className="rounded-md border border-emerald-300/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200"
         >
           {okMsg}
         </div>
       )}
       {errMsg && (
         <div
-          role="alert"
-          className="rounded-md border border-rose-300/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200"
+            role="alert"
+            className="rounded-md border border-rose-300/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200"
         >
           {errMsg}
         </div>
@@ -113,12 +120,15 @@ export default function ApplyForm({
         />
       </div>
 
+      {/* Placeholder for reCAPTCHA token (will be filled by client script later) */}
+      <input type="hidden" name="recaptchaToken" value="" />
+
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="block text-sm text-white/80" htmlFor="name">
             Name *
           </label>
-        <input
+          <input
             id="name"
             name="name"
             className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
@@ -176,6 +186,36 @@ export default function ApplyForm({
         </div>
       </div>
 
+      {/* new row: location + current employer */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label className="block text-sm text-white/80" htmlFor="location">
+            Location
+          </label>
+          <input
+            id="location"
+            name="location"
+            className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="e.g., Geneva, Zurich, Dubai"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-white/80" htmlFor="currentEmployer">
+            Current employer
+          </label>
+          <input
+            id="currentEmployer"
+            name="currentEmployer"
+            className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
+            value={currentEmployer}
+            onChange={(e) => setCurrentEmployer(e.target.value)}
+            placeholder="e.g., UBS, Pictet, Julius Baer"
+          />
+        </div>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="block text-sm text-white/80" htmlFor="jobId">
@@ -191,7 +231,7 @@ export default function ApplyForm({
           />
         </div>
 
-        {/* ✅ CV Upload */}
+        {/* CV Upload */}
         <div>
           <label className="block text-sm text-white/80" htmlFor="cv">
             Upload CV (PDF or Word)
@@ -203,7 +243,9 @@ export default function ApplyForm({
             accept=".pdf,.doc,.docx"
             className="mt-1 block w-full text-sm text-neutral-300 file:mr-4 file:rounded-lg file:border-0 file:bg-[#1D4ED8] file:px-3 file:py-2 file:font-semibold file:text-white hover:file:bg-[#1E40AF]"
           />
-          <p className="mt-1 text-xs text-white/50">Max 10MB. Formats: .pdf, .doc, .docx</p>
+          <p className="mt-1 text-xs text-white/50">
+            Max 10MB. Formats: .pdf, .doc, .docx
+          </p>
         </div>
       </div>
 
@@ -217,7 +259,7 @@ export default function ApplyForm({
           className="mt-1 w-full rounded-lg border border-white/15 bg-transparent px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/25"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Anything you'd like to add"
+          placeholder="Anything you'd like to add (portability, BCs, AUM...)"
         />
       </div>
 
@@ -231,7 +273,7 @@ export default function ApplyForm({
       </button>
 
       <p className="text-xs text-white/60">
-        We’ll email you from Executive Partners. Your details are confidential.
+        We will review your profile confidentially and only introduce you to a bank with your consent.
       </p>
     </form>
   );

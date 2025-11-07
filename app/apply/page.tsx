@@ -19,7 +19,9 @@ export const revalidate = 60;
 
 /* ---------------- SEO metadata ---------------- */
 export const metadata: Metadata = {
-  title: { absolute: "Apply Confidentially | Private Banking & Wealth Management" },
+  title: {
+    absolute: "Apply Confidentially | Private Banking & Wealth Management",
+  },
   description:
     "Submit your CV securely for Private Banking roles (Relationship Managers, Team Heads, Market Leaders). Geneva-based, global mandates. Discretion guaranteed.",
   alternates: { canonical: "/apply" },
@@ -43,14 +45,13 @@ export const metadata: Metadata = {
 };
 
 /* ---------------- page ---------------- */
-export default async function ApplyPage({
-  // ✅ Next 15 expects a Promise here
+export default function ApplyPage({
   searchParams,
 }: {
-  searchParams?: Promise<Record<string, string | string[]>>;
+  // Next gives a plain object here, not a Promise
+  searchParams?: Record<string, string | string[]>;
 }) {
-  // ✅ Await it before use
-  const sp = (await searchParams) ?? {};
+  const sp = searchParams ?? {};
   const get = (k: string): string => {
     const v = sp[k];
     return Array.isArray(v) ? v[0] ?? "" : (v as string) ?? "";
@@ -69,7 +70,11 @@ export default async function ApplyPage({
     url: PAGE_URL,
     description:
       "Submit your CV securely for Private Banking roles (Relationship Managers, Team Heads, Market Leaders).",
-    publisher: { "@type": "Organization", name: "Executive Partners", url: SITE },
+    publisher: {
+      "@type": "Organization",
+      name: "Executive Partners",
+      url: SITE,
+    },
   };
 
   const howToJsonLd = {
@@ -78,10 +83,26 @@ export default async function ApplyPage({
     name: "How to Apply Confidentially",
     totalTime: "PT5M",
     step: [
-      { "@type": "HowToStep", name: "Share profile", text: "Provide name, email, markets covered, and current location." },
-      { "@type": "HowToStep", name: "Attach CV", text: "Upload a PDF résumé (no contact is made without your consent)." },
-      { "@type": "HowToStep", name: "Optional details", text: "Add AUM portability, booking centres, mobility, and languages." },
-      { "@type": "HowToStep", name: "Submit", text: "We review and respond—typically the same business day." },
+      {
+        "@type": "HowToStep",
+        name: "Share profile",
+        text: "Provide name, email, markets covered, and current location.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Attach CV",
+        text: "Upload a PDF résumé (no contact is made without your consent).",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Optional details",
+        text: "Add AUM portability, booking centres, mobility, and languages.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Submit",
+        text: "We review and respond—typically the same business day.",
+      },
     ],
   };
 
@@ -96,16 +117,28 @@ export default async function ApplyPage({
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12">
-      {/* JSON-LD */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      {/* JSON-LD for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
 
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-white">Apply Confidentially</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-white">
+          Apply Confidentially
+        </h1>
         <p className="mt-2 text-sm text-neutral-400">
-          Private Banking &amp; Wealth Management. We review every submission and only move
-          forward with your consent. Typical response: same business day.
+          Private Banking &amp; Wealth Management. We review every submission
+          and only move forward with your consent. Typical response: same
+          business day.
         </p>
       </header>
 
