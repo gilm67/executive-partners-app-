@@ -6,6 +6,29 @@ import nodemailer from "nodemailer";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+/* -------------------- SIMPLE RATE LIMIT -------------------- */
+// in-memory, per Vercel lambda instance
+const BUCKET = new Map<string, { count: number; ts: number }>();
+const WINDOW_MS = 60_000; // 1 minute
+const MAX_PER_WINDOW = 10;
+function rateLimit(ip: string): boolean {
+  const now = Date.now();
+  const prev = BUCKET.get(ip);
+  if (!prev) {
+    BUCKET.set(ip, { count: 1, ts: now });
+    return true;
+  }
+  // window expired → reset
+  if (now - prev.ts > WINDOW_MS) {
+    BUCKET.set(ip, { count: 1, ts: now });
+    return true;
+  }
+  // still in window
+  if (prev.count >= MAX_PER_WINDOW) return false;
+  prev.count += 1;
+  return true;
+}
+
 /* -------------------- ENV / CONFIG -------------------- */
 const resendApiKey = (process.env.RESEND_API_KEY || "").trim();
 const FROM = (process.env.RESEND_FROM || "Executive Partners <recruiter@execpartners.ch>").trim();
@@ -41,7 +64,8 @@ const SMTP_SECURE = (process.env.SMTP_SECURE || "true").toLowerCase() === "true"
 const MAX_CV_BYTES = 10 * 1024 * 1024; // 10 MB
 
 /* -------------------- HELPERS -------------------- */
-const redact = (s?: string | null) => (!s ? "" : s.length <= 4 ? "****" : `${s.slice(0, 2)}****${s.slice(-2)}`);
+const redact = (s?: string | null) =>
+  !s ? "" : s.length <= 4 ? "****" : `${s.slice(0, 2)}****${s.slice(-2)}`;
 const clip = (s: string, n = 80) => (s.length > n ? `${s.slice(0, n)}…` : s);
 const clean = (s?: string) => (s || "").replace(/[\r\n]/g, " ").replace(/\s+/g, " ").trim();
 
@@ -114,7 +138,7 @@ export function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
     headers: {
-      "Access-Control-Allow-Origin": process.env.CORS_ORIGIN || "*",
+      "Access-Control-Allow-Origin": process.env.CORS_ORIGIN || "https://www.execpartners.ch",
       "Access-Control-Allow-Methods": "POST,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization",
       "Access-Control-Max-Age": "86400",
@@ -127,6 +151,12 @@ export async function POST(req: Request) {
   const ts = new Date().toISOString();
   const url = new URL(req.url);
   const diag = url.searchParams.get("diag") === "1";
+
+  // rate limit first
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  if (!rateLimit(ip)) {
+    return jsonRes({ ok: false, error: "Too many requests" }, 429);
+  }
 
   try {
     // Accept JSON or multipart/form-data
@@ -151,6 +181,27 @@ export async function POST(req: Request) {
     const notes = ((form.get("notes") as string) || "").slice(0, 5000);
     const cv = (form.get("cv") as any) || null;
 
+    // optional reCAPTCHA (only if you set RECAPTCHA_SECRET)
+    const recaptchaToken = (form.get("recaptchaToken") as string) || "";
+    if (process.env.RECAPTCHA_SECRET && recaptchaToken) {
+      try {
+        const verify = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            secret: process.env.RECAPTCHA_SECRET,
+            response: recaptchaToken,
+          }),
+        }).then((r) => r.json());
+
+        if (!verify.success || (typeof verify.score === "number" && verify.score < 0.5)) {
+          return jsonRes({ ok: false, error: "reCAPTCHA failed" }, 400);
+        }
+      } catch (e) {
+        if (LOG) console.warn("[apply] reCAPTCHA check failed:", e);
+      }
+    }
+
     if (!name || !email) {
       return jsonRes({ ok: false, error: "Name and Email are required." }, 400);
     }
@@ -169,6 +220,7 @@ export async function POST(req: Request) {
       notesPreview: notes ? clip(notes, 120) : "",
       cv: cv ? { name: cv.name, type: cv.type, size: cv.size } : null,
       ts,
+      ip,
     };
     if (LOG) console.log("[apply] received", safe);
 
@@ -182,6 +234,7 @@ export async function POST(req: Request) {
 
         const payload = {
           Timestamp: ts,
+          IP: ip,
           "Candidate Name": name,
           "Candidate Email": email,
           "Current Role": role,
@@ -333,8 +386,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // IMPORTANT CHANGE:
-    // even if email/webhook failed, we return 200 so the frontend shows "success"
+    // even if email/webhook failed, we return 200 so the frontend shows success
     const debug = diag
       ? {
           webhook: {
@@ -359,7 +411,7 @@ export async function POST(req: Request) {
         received: { ...safe, replyTo: redact(email) },
         ...(debug ? { diag: debug } : {}),
       },
-      200
+      200,
     );
   } catch (err: any) {
     if (LOG) console.error("[apply] error:", err?.message, err);
@@ -373,7 +425,7 @@ function jsonRes(data: any, status = 200) {
     status,
     headers: {
       "content-type": "application/json",
-      "Access-Control-Allow-Origin": process.env.CORS_ORIGIN || "*",
+      "Access-Control-Allow-Origin": process.env.CORS_ORIGIN || "https://www.execpartners.ch",
       "Access-Control-Allow-Methods": "POST,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
