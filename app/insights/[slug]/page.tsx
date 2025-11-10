@@ -1,6 +1,7 @@
 /* app/insights/[slug]/page.tsx */
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getInsights, slugify } from "@/lib/insights";
 
 /* ---------- helpers ---------- */
 function siteBase() {
@@ -13,516 +14,29 @@ function siteBase() {
 }
 const SITE = siteBase();
 
-/* same slugify as in /app/insights/page.tsx */
-function slugify(title: string) {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+/* Turn the long excerpt into <p>…</p> blocks */
+function toParagraphs(text: string) {
+  if (!text) return [];
+  // split on blank lines or on ". "
+  const parts = text.split(/\n\s*\n|(?<=\.)\s+(?=[A-ZÉÀÜ])/).map((p) => p.trim());
+  return parts.filter(Boolean);
 }
 
-type Item = {
-  title: string;
-  date: string;
-  href: string; // /insights/...
-  tag: "Private Wealth Pulse" | "Article";
-  linkedin?: string;
-};
-
-/* ---------- SAME DATA AS LIST PAGE (shortened comments removed) ---------- */
-const newsletter: Item[] = [
-  {
-    title:
-      "Swiss Private Banks Double Down on Digital, Outperform Amid Global Volatility",
-    date: "Sep 1, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "Swiss Private Banks Double Down on Digital, Outperform Amid Global Volatility"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/swiss-private-banks-double-down-digital-outperform-amid-m-chalem--h5vne/?trackingId=l4J5BhFKGRuipGhjm6NeoA%3D%3D",
-    tag: "Private Wealth Pulse",
-  },
-  {
-    title:
-      "Swiss Private Banks Forge Ahead: Profit Surges, Talent Battles, and Digital Transformation Define August 2025",
-    date: "Aug 19, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "Swiss Private Banks Forge Ahead: Profit Surges, Talent Battles, and Digital Transformation Define August 2025"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/swiss-private-banks-forge-ahead-profit-surges-talent-2025-m-chalem--hfnme/?trackingId=W4nWPfJLYU%2FuuXz9CGha7w%3D%3D",
-    tag: "Private Wealth Pulse",
-  },
-  {
-    title: "Swiss Private Banking & Global Markets Weekly",
-    date: "Aug 6, 2025",
-    href: "/insights/" + slugify("Swiss Private Banking & Global Markets Weekly"),
-    linkedin:
-      "https://www.linkedin.com/pulse/swiss-private-banking-global-markets-weekly-gil-m-chalem--krzje/?trackingId=NwRRUi4mLFy1unMWAGN1dQ%3D%3D",
-    tag: "Private Wealth Pulse",
-  },
-  {
-    title: "Swiss Private Banking & Global Markets Weekly",
-    date: "Jul 21, 2025",
-    href: "/insights/" + slugify("Swiss Private Banking & Global Markets Weekly"),
-    linkedin:
-      "https://www.linkedin.com/pulse/swiss-private-banking-global-markets-weekly-gil-m-chalem--owyqc/?trackingId=xd3HE5Ha9NaFhoMoAAj%2BIw%3D%3D",
-    tag: "Private Wealth Pulse",
-  },
-  {
-    title: "Swiss Private Banking: New Data, Risks & Strategic Moves",
-    date: "Jul 16, 2025",
-    href:
-      "/insights/" +
-      slugify("Swiss Private Banking: New Data, Risks & Strategic Moves"),
-    linkedin:
-      "https://www.linkedin.com/pulse/swiss-private-banking-new-data-risks-strategic-moves-gil-m-chalem--cc2ge/?trackingId=QbY0bCjkcfywKEbQmC%2FWMA%3D%3D",
-    tag: "Private Wealth Pulse",
-  },
-  {
-    title:
-      "Swiss Private Banking Weekly: Post-Crisis Resilience and Market Stabilisation",
-    date: "Jul 8, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "Swiss Private Banking Weekly: Post-Crisis Resilience and Market Stabilisation"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/swiss-private-banking-weekly-post-crisis-resilience-gil-m-chalem--igode/?trackingId=d54tvsQ4fKDE8gmVObUKVA%3D%3D",
-    tag: "Private Wealth Pulse",
-  },
-];
-
-const articles: Item[] = [
-  {
-    title: "What Netflix Knows Your Wealth Firm Doesn’t",
-    date: "Nov 3, 2025",
-    href: "/insights/" + slugify("What Netflix Knows Your Wealth Firm Doesn’t"),
-    linkedin:
-      "https://www.linkedin.com/pulse/what-netflix-knows-your-wealth-firm-doesnt-gil-m-chalem--ffyye/",
-    tag: "Article",
-  },
-  {
-    title: "Swiss Private Banking: Thriving Against the Odds",
-    date: "Oct 27, 2025",
-    href: "/insights/" + slugify("Swiss Private Banking: Thriving Against the Odds"),
-    linkedin:
-      "https://www.linkedin.com/pulse/swiss-private-banking-thriving-against-odds-gil-m-chalem--ztl5e/",
-    tag: "Article",
-  },
-  {
-    title: "La Dolce Vita Returns: Why Italy Has Become Europe’s Wealth Magnet",
-    date: "Oct 20, 2025",
-    href:
-      "/insights/" +
-      slugify("La Dolce Vita Returns: Why Italy Has Become Europe’s Wealth Magnet"),
-    linkedin:
-      "https://www.linkedin.com/pulse/la-dolce-vita-returns-why-italy-has-become-europes-gil-m-chalem--xfrre/",
-    tag: "Article",
-  },
-  {
-    title:
-      "What Do Gen Z Want from Wealth Managers and How Fast Is Industry Shifting?",
-    date: "Oct 10, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "What Do Gen Z Want from Wealth Managers and How Fast Is Industry Shifting?"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/what-do-gen-z-want-from-wealth-managers-how-fast-gil-m-chalem--akpre/",
-    tag: "Article",
-  },
-  {
-    title:
-      "Turbulent Time: Crisis Resilience and Market Leadership in Turbulent Times (Middle East Conflict)",
-    date: "Jun 22, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "Turbulent Time: Crisis Resilience and Market Leadership in Turbulent Times (Middle East Conflict)"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/turbulent-time-crisis-resilience-market-leadership-times-m-chalem--wu0fe/?trackingId=Xbv8b8OzSFOKaJNrxuEcaw%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "Global Markets Outlook 2025: Strategic Insights for Private Bankers",
-    date: "Jun 5, 2025",
-    href:
-      "/insights/" +
-      slugify("Global Markets Outlook 2025: Strategic Insights for Private Bankers"),
-    linkedin:
-      "https://www.linkedin.com/pulse/global-markets-outlook-2025-strategic-insights-gil-m-chalem--hjcre/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "From Zurich to Hong Kong: Navigating Wealth in a Multipolar World",
-    date: "Jun 1, 2025",
-    href:
-      "/insights/" +
-      slugify("From Zurich to Hong Kong: Navigating Wealth in a Multipolar World"),
-    linkedin:
-      "https://www.linkedin.com/pulse/from-zurich-hong-kong-navigating-wealth-multipolar-world-m-chalem--ezase/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "EFG Bank Switzerland: Pioneering Private Banking with Entrepreneurial Agility and Strategic Mastery",
-    date: "May 27, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "EFG Bank Switzerland: Pioneering Private Banking with Entrepreneurial Agility and Strategic Mastery"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/efg-bank-switzerland-pioneering-private-banking-gil-m-chalem--tknge/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "How to Build a Billion-Dollar Client Portfolio in International Banking: Lessons from a Top Relationship Manager",
-    date: "May 14, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "How to Build a Billion-Dollar Client Portfolio in International Banking: Lessons from a Top Relationship Manager"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/how-build-billion-dollar-client-portfolio-banking-from-gil-m-chalem--uazye/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "UBS: Switzerland’s Banking Giant in Transformation",
-    date: "Apr 30, 2025",
-    href: "/insights/" + slugify("UBS: Switzerland’s Banking Giant in Transformation"),
-    linkedin:
-      "https://www.linkedin.com/pulse/ubs-switzerlands-banking-giant-transformation-gil-m-chalem--fynde/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "Navigating Trump’s Economic Storm: How Private Banks and Their Clients Can Secure Assets in 2025",
-    date: "Apr 13, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "Navigating Trump’s Economic Storm: How Private Banks and Their Clients Can Secure Assets in 2025"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/navigating-trumps-economic-storm-how-private-banks-can-gil-m-chalem--9q2de/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "Whale vs. Retail Investor Behavior: Decoding Market Dynamics in Bitcoin Investments",
-    date: "Apr 6, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "Whale vs. Retail Investor Behavior: Decoding Market Dynamics in Bitcoin Investments"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/whale-vs-retail-investor-behavior-decoding-market-gil-m-chalem--andie/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "UBS and Credit Suisse: From “Deal of the Century” to High-Stakes Turbulence",
-    date: "Apr 1, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "UBS and Credit Suisse: From “Deal of the Century” to High-Stakes Turbulence"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/ubs-credit-suisse-from-deal-century-high-stakes-gil-m-chalem--ilpfe/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "The Ultimate Guide to Interview Preparation: A Recruiter's Insider Perspective",
-    date: "Mar 30, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "The Ultimate Guide to Interview Preparation: A Recruiter's Insider Perspective"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/ultimate-guide-interview-preparation-recruiters-gil-m-chalem--ew6pe/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "The Changing Face of Swiss Private Banking",
-    date: "Mar 26, 2025",
-    href: "/insights/" + slugify("The Changing Face of Swiss Private Banking"),
-    linkedin:
-      "https://www.linkedin.com/pulse/changing-face-swiss-private-banking-gil-m-chalem--thxhe/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "Private Bankers: How to Choose the Right Institution for Your Career",
-    date: "Mar 14, 2025",
-    href:
-      "/insights/" +
-      slugify("Private Bankers: How to Choose the Right Institution for Your Career"),
-    linkedin:
-      "https://www.linkedin.com/pulse/private-bankers-how-choose-right-institution-your-gil-m-chalem--suqfe/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "The Great Wealth Transfer: Adapting to the Next Generation’s Needs",
-    date: "Mar 4, 2025",
-    href:
-      "/insights/" +
-      slugify("The Great Wealth Transfer: Adapting to the Next Generation’s Needs"),
-    linkedin:
-      "https://www.linkedin.com/pulse/great-wealth-transfer-adapting-next-generations-needs-gil-m-chalem--ligae/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "How Global Economic Shifts Reshape High-Net-Worth Portfolios",
-    date: "Feb 27, 2025",
-    href:
-      "/insights/" +
-      slugify("How Global Economic Shifts Reshape High-Net-Worth Portfolios"),
-    linkedin:
-      "https://www.linkedin.com/pulse/how-global-economic-shifts-reshape-high-net-worth-gil-m-chalem--uyl5e/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "Traditional Private Banks vs. Family Offices",
-    date: "Feb 19, 2025",
-    href: "/insights/" + slugify("Traditional Private Banks vs. Family Offices"),
-    linkedin:
-      "https://www.linkedin.com/in/gil-m-chalem-35281916b/recent-activity/articles/",
-    tag: "Article",
-  },
-  {
-    title:
-      "Swiss Private Banking Shake-Up: The Mega Mergers Redefining an Iconic Industry",
-    date: "Feb 16, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "Swiss Private Banking Shake-Up: The Mega Mergers Redefining an Iconic Industry"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/swiss-private-banking-shake-up-mega-mergers-iconic-gil-m-chalem--etbme/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "The Battle of the Gulf Giants: Saudi Arabia's Vision 2030 vs. Dubai's Established Dominance",
-    date: "Feb 9, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "The Battle of the Gulf Giants: Saudi Arabia's Vision 2030 vs. Dubai's Established Dominance"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/battle-gulf-giants-saudi-arabias-vision-2030-vs-gil-m-chalem--1kvee/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "Saudi Arabia's Economic Landscape and Opportunities for Private Banking",
-    date: "2025",
-    href:
-      "/insights/" +
-      slugify("Saudi Arabia's Economic Landscape and Opportunities for Private Banking"),
-    linkedin: "https://www.linkedin.com/pulse/saudi-arab",
-    tag: "Article",
-  },
-  {
-    title: "The Rise of the PIGS: Europe's Economic Underdogs Take Flight",
-    date: "Feb 4, 2025",
-    href:
-      "/insights/" +
-      slugify("The Rise of the PIGS: Europe's Economic Underdogs Take Flight"),
-    linkedin:
-      "https://www.linkedin.com/pulse/rise-pigs-europes-economic-underdogs-take-flight-gil-m-chalem--1pyme/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "The NRI Gold Rush: Your 2025 Private Banking Playbook",
-    date: "Jan 29, 2025",
-    href:
-      "/insights/" + slugify("The NRI Gold Rush: Your 2025 Private Banking Playbook"),
-    linkedin:
-      "https://www.linkedin.com/pulse/nri-gold-rush-your-2025-private-banking-playbook-gil-m-chalem--0zyfe/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "Crisis to Opportunity: Decoding the UBS-Credit Suisse Merger",
-    date: "Jan 25, 2025",
-    href:
-      "/insights/" +
-      slugify("Crisis to Opportunity: Decoding the UBS-Credit Suisse Merger"),
-    linkedin:
-      "https://www.linkedin.com/pulse/crisis-opportunity-decoding-ubs-credit-suisse-merger-gil-m-chalem--f73je/?trackingId=jpmgGLfyRqmRzxVPYBJLVg%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "Latest News on the Swiss Financial Market: A Professional Perspective for Private Bankers",
-    date: "Jan 24, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "Latest News on the Swiss Financial Market: A Professional Perspective for Private Bankers"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/latest-news-swiss-financial-market-professional-gil-m-chalem--tk3ge/?trackingId=jpmgGLfyRqmRzxVPYBJLVg%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "Germany's Economic Outlook and Private Banking Opportunities in 2025",
-    date: "Jan 19, 2025",
-    href:
-      "/insights/" +
-      slugify("Germany's Economic Outlook and Private Banking Opportunities in 2025"),
-    linkedin:
-      "https://www.linkedin.com/pulse/germanys-economic-outlook-private-banking-2025-gil-m-chalem--3pbze/?trackingId=jpmgGLfyRqmRzxVPYBJLVg%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "Why APAC is the Ultimate Private Banking Hotspot for 2025",
-    date: "Jan 14, 2025",
-    href:
-      "/insights/" + slugify("Why APAC is the Ultimate Private Banking Hotspot for 2025"),
-    linkedin:
-      "https://www.linkedin.com/in/gil-m-chalem-35281916b/recent-activity/articles/",
-    tag: "Article",
-  },
-  {
-    title:
-      "Unlocking Growth: The CEE Region's Untapped Potential for Swiss and Global Private Banks",
-    date: "Jan 10, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "Unlocking Growth: The CEE Region's Untapped Potential for Swiss and Global Private Banks"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/potential-central-eastern-europe-cee-swiss-private-banks-m-chalem--bpooe/?trackingId=jpmgGLfyRqmRzxVPYBJLVg%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "Latest News on the Swiss Financial Market: Focus on Swiss and International Banks",
-    date: "Jan 9, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "Latest News on the Swiss Financial Market: Focus on Swiss and International Banks"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/latest-news-swiss-financial-market-focus-banks-gil-m-chalem--vgjve/?trackingId=G%2FjgEiXPSSSO33kg6d6pdA%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "LATAM Private Banking: Navigating Challenges and Opportunities in a $1.3T Market",
-    date: "Jan 5, 2025",
-    href:
-      "/insights/" +
-      slugify(
-        "LATAM Private Banking: Navigating Challenges and Opportunities in a $1.3T Market"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/latam-private-banking-navigating-challenges-13t-gil-m-chalem--g9jqe/?trackingId=G%2FjgEiXPSSSO33kg6d6pdA%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "Dubai: The Rising Star of Private Banking and Wealth Management",
-    date: "Jan 3, 2025",
-    href:
-      "/insights/" +
-      slugify("Dubai: The Rising Star of Private Banking and Wealth Management"),
-    linkedin:
-      "https://www.linkedin.com/pulse/dubai-rising-star-private-banking-wealth-management-gil-m-chalem--ag9xe/?trackingId=G%2FjgEiXPSSSO33kg6d6pdA%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "Should Private Banks Embrace Bitcoin for Their Clients?",
-    date: "Jan 2, 2025",
-    href:
-      "/insights/" +
-      slugify("Should Private Banks Embrace Bitcoin for Their Clients?"),
-    linkedin:
-      "https://www.linkedin.com/pulse/should-private-banks-embrace-bitcoin-clients-gil-m-chalem--k0kze/?trackingId=G%2FjgEiXPSSSO33kg6d6pdA%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "The Swiss Financial market developments",
-    date: "Dec 30, 2024",
-    href: "/insights/" + slugify("The Swiss Financial market developments"),
-    linkedin:
-      "https://www.linkedin.com/pulse/swiss-financial-market-developments-gil-m-chalem--kvone/?trackingId=G%2FjgEiXPSSSO33kg6d6pdA%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "Swiss and European Banks Tighten Grip on CIS Clients Amid Sanctions Storm",
-    date: "Dec 24, 2024",
-    href:
-      "/insights/" +
-      slugify(
-        "Swiss and European Banks Tighten Grip on CIS Clients Amid Sanctions Storm"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/swiss-european-banks-tighten-grip-cis-clients-amid-storm-m-chalem--age8e/?trackingId=G%2FjgEiXPSSSO33kg6d6pdA%3D%3D",
-    tag: "Article",
-  },
-  {
-    title:
-      "The Exodus of Ultra High Net Worth and High Net Worth Individuals from the UK: Reasons and Destinations",
-    date: "Dec 23, 2024",
-    href:
-      "/insights/" +
-      slugify(
-        "The Exodus of Ultra High Net Worth and High Net Worth Individuals from the UK: Reasons and Destinations"
-      ),
-    linkedin:
-      "https://www.linkedin.com/pulse/exodus-ultra-high-net-worth-individuals-from-uk-gil-m-chalem--dwize/?trackingId=G%2FjgEiXPSSSO33kg6d6pdA%3D%3D",
-    tag: "Article",
-  },
-  {
-    title: "Transforming Wealth Management: Global Trends and Best Practices",
-    date: "Dec 20, 2024",
-    href:
-      "/insights/" +
-      slugify("Transforming Wealth Management: Global Trends and Best Practices"),
-    linkedin:
-      "https://www.linkedin.com/pulse/transforming-wealth-management-global-trends-best-gil-m-chalem--jkcqe/?trackingId=G%2FjgEiXPSSSO33kg6d6pdA%3D%3D",
-    tag: "Article",
-  },
-];
-
-/* ---------- util ---------- */
-function findBySlug(slug: string): Item | undefined {
-  const all = [...newsletter, ...articles];
-  return all.find((item) => item.href === `/insights/${slug}`);
-}
-
-/* ---------- SEO metadata ---------- */
+/* ---------- metadata ---------- */
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
-  const post = findBySlug(params.slug);
+  const insights = await getInsights();
+  const post =
+    insights.find((p) => p.href === `/insights/${params.slug}`) ||
+    insights.find((p) => slugify(p.title) === params.slug);
 
   const title =
     post?.title ?? "Private Wealth Pulse | Executive Partners Insights";
   const description =
-    post?.title ??
+    post?.excerpt ??
     "Executive Partners insights on Private Banking & Wealth Management hiring trends.";
   const url = `${SITE}/insights/${params.slug}`;
 
@@ -542,7 +56,7 @@ export async function generateMetadata({
   };
 }
 
-export const revalidate = 3600;
+export const revalidate = 1800;
 
 /* ---------- page ---------- */
 export default async function InsightPostPage({
@@ -550,7 +64,11 @@ export default async function InsightPostPage({
 }: {
   params: { slug: string };
 }) {
-  const post = findBySlug(params.slug);
+  const insights = await getInsights();
+  const post =
+    insights.find((p) => p.href === `/insights/${params.slug}`) ||
+    insights.find((p) => slugify(p.title) === params.slug) ||
+    null;
 
   if (!post) {
     return (
@@ -573,43 +91,83 @@ export default async function InsightPostPage({
     );
   }
 
+  const pageUrl = `${SITE}${post.href}`;
+  const paragraphs = toParagraphs(post.excerpt || "");
+
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
-    datePublished: new Date(post.date).toISOString(),
-    mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE}${post.href}` },
+    datePublished: post.date || undefined,
+    description: post.excerpt || "",
+    mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+    author: {
+      "@type": "Organization",
+      name: "Executive Partners",
+      url: SITE,
+    },
     publisher: {
       "@type": "Organization",
       name: "Executive Partners",
-      logo: { "@type": "ImageObject", url: `${SITE}/icon.png` },
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE}/icon.png`,
+      },
     },
   };
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
+      {/* JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
 
+      {/* background */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(1200px 420px at 18% -10%, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%), radial-gradient(1000px 380px at 110% 0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%)",
+        }}
+      />
+
       <div className="relative mx-auto w-full max-w-3xl px-4 pb-20 pt-12">
+        {/* Eyebrow */}
         <div className="w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
-          Private Wealth Pulse — Insights
+          {post.tag || "Private Wealth Pulse — Insights"}
         </div>
 
+        {/* Title */}
         <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
           {post.title}
         </h1>
-        <p className="mt-2 text-sm text-white/70">{post.date}</p>
 
+        {/* Date line */}
+        <p className="mt-2 text-sm text-white/70">
+          {post.date && post.date.trim().length > 0
+            ? post.date
+            : "Published on LinkedIn"}
+        </p>
+
+        {/* Body */}
         <article className="prose prose-invert mt-6 max-w-none">
-          <p className="text-neutral-300 leading-7">
-            This article is currently published on LinkedIn. You can read the
-            full version there.
-          </p>
+          {paragraphs.length > 0 ? (
+            paragraphs.map((p, i) => (
+              <p key={i} className="text-neutral-200 leading-7">
+                {p}
+              </p>
+            ))
+          ) : (
+            <p className="text-neutral-400">
+              This article is available on LinkedIn.
+            </p>
+          )}
         </article>
 
+        {/* LinkedIn original */}
         {post.linkedin ? (
           <div className="mt-8">
             <a
@@ -618,12 +176,13 @@ export default async function InsightPostPage({
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium hover:bg-white/10"
             >
-              View this article on LinkedIn
+              View the full article on LinkedIn
               <span aria-hidden="true">↗</span>
             </a>
           </div>
         ) : null}
 
+        {/* SEO internal links */}
         <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <h2 className="text-lg font-bold">Explore related pages</h2>
           <div className="mt-3 flex flex-wrap gap-3 text-sm">

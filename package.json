@@ -47,6 +47,7 @@
     "papaparse": "^5.5.3",
     "pdf-lib": "^1.17.1",
     "pdf-parse": "^1.1.1",
+    "puppeteer": "^24.29.1",
     "react-tooltip": "^5.29.1",
     "recharts": "^3.3.0",
     "redis": "^5.8.2",
@@ -91,5 +92,23 @@
     "ignorePatterns": [
       "**/*"
     ]
-  }
+  },
+  "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).",
+  "main": "jest.config.js",
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gilm67/executive-partners-app-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/gilm67/executive-partners-app-/issues"
+  },
+  "homepage": "https://github.com/gilm67/executive-partners-app-#readme"
 }
