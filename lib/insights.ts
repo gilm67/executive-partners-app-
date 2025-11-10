@@ -12,7 +12,7 @@ export type Insight = {
 };
 
 // generate slug safely from title
-function slugify(title: string) {
+export function slugify(title: string) {
   return title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
@@ -25,14 +25,34 @@ export function getInsights(): Insight[] {
     const raw = fs.readFileSync(filePath, "utf8");
     const data = JSON.parse(raw) as any[];
 
-    return data.map((item) => ({
-      title: item.title,
-      linkedin: item.linkedin,
-      date: item.date || "",
-      excerpt: item.excerpt || "",
-      href: "/insights/" + slugify(item.title),
-      tag: "Article",
-    }));
+    // normalize + filter bad rows
+    const cleaned = data
+      .filter((item) => item && item.title) // must have title
+      .filter((item) => item.linkedin) // must have original link
+      .map((item) => {
+        const title = String(item.title).trim();
+        const href = "/insights/" + slugify(title);
+
+        return {
+          title,
+          linkedin: String(item.linkedin).trim(),
+          date: item.date ? String(item.date).trim() : "",
+          excerpt: item.excerpt ? String(item.excerpt).trim() : "",
+          href,
+          tag: "Article" as const,
+        };
+      });
+
+    // dedupe by href (LinkedIn sometimes produces close duplicates)
+    const seen = new Set<string>();
+    const unique: Insight[] = [];
+    for (const it of cleaned) {
+      if (seen.has(it.href)) continue;
+      seen.add(it.href);
+      unique.push(it);
+    }
+
+    return unique;
   } catch (err) {
     console.error("Error reading articles.json:", err);
     return [];
