@@ -83,6 +83,33 @@ const newsletter: Item[] = [
 ];
 
 const articles: Item[] = [
+  /* ---------- NEW ARTICLES YOU MENTIONED (put first) ---------- */
+  {
+    title: "What Netflix Knows Your Wealth Firm Doesn’t",
+    date: "Nov 3, 2025",
+    href: "https://www.linkedin.com/pulse/what-netflix-knows-your-wealth-firm-doesnt-gil-m-chalem--ffyye/",
+    tag: "Article",
+  },
+  {
+    title: "Swiss Private Banking: Thriving Against the Odds",
+    date: "Oct 27, 2025",
+    href: "https://www.linkedin.com/pulse/swiss-private-banking-thriving-against-odds-gil-m-chalem--ztl5e/",
+    tag: "Article",
+  },
+  {
+    title: "La Dolce Vita Returns: Why Italy Has Become Europe’s Wealth Magnet",
+    date: "Oct 20, 2025",
+    href: "https://www.linkedin.com/pulse/la-dolce-vita-returns-why-italy-has-become-europes-gil-m-chalem--xfrre/",
+    tag: "Article",
+  },
+  {
+    title: "What Do Gen Z Want from Wealth Managers and How Fast Is Industry Shifting?",
+    date: "Oct 10, 2025",
+    href: "https://www.linkedin.com/pulse/what-do-gen-z-want-from-wealth-managers-how-fast-gil-m-chalem--akpre/",
+    tag: "Article",
+  },
+
+  /* ---------- EXISTING ARTICLES ---------- */
   {
     title:
       "Turbulent Time: Crisis Resilience and Market Leadership in Turbulent Times (Middle East Conflict)",
@@ -202,8 +229,7 @@ const articles: Item[] = [
     tag: "Article",
   },
   {
-    title:
-      "The Rise of the PIGS: Europe's Economic Underdogs Take Flight",
+    title: "The Rise of the PIGS: Europe's Economic Underdogs Take Flight",
     date: "Feb 4, 2025",
     href: "https://www.linkedin.com/pulse/rise-pigs-europes-economic-underdogs-take-flight-gil-m-chalem--1pyme/?trackingId=dJZo6qjzRUOFPP3nQIxj4Q%3D%3D",
     tag: "Article",
@@ -235,8 +261,7 @@ const articles: Item[] = [
     tag: "Article",
   },
   {
-    title:
-      "Why APAC is the Ultimate Private Banking Hotspot for 2025",
+    title: "Why APAC is the Ultimate Private Banking Hotspot for 2025",
     date: "Jan 14, 2025",
     href: "https://www.linkedin.com/in/gil-m-chalem-35281916b/recent-activity/articles/",
     tag: "Article",
@@ -355,7 +380,10 @@ export default function InsightsPage() {
         "@type": "Article",
         headline: latestInternal.title,
         datePublished: toISO(latestInternal.date),
-        mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE}${latestInternal.href}` },
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": `${SITE}${latestInternal.href}`,
+        },
         publisher: {
           "@type": "Organization",
           name: "Executive Partners",
@@ -367,11 +395,23 @@ export default function InsightsPage() {
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
       {/* JSON-LD */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {articleJsonLd ? (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+        />
       ) : null}
 
       {/* Background glow */}
@@ -407,19 +447,34 @@ export default function InsightsPage() {
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <h3 className="text-lg font-semibold">Explore related pages</h3>
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
-            <Link href="/private-banking-jobs-switzerland" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-switzerland"
+              className="underline hover:text-white"
+            >
               See open Private Banking jobs in Switzerland
             </Link>
-            <Link href="/private-banking-jobs-dubai" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-dubai"
+              className="underline hover:text-white"
+            >
               Private Banking roles in Dubai
             </Link>
-            <Link href="/private-banking-jobs-singapore" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-singapore"
+              className="underline hover:text-white"
+            >
               Private Banking roles in Singapore
             </Link>
-            <Link href="/private-banking-jobs-london" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-london"
+              className="underline hover:text-white"
+            >
               Private Banking roles in London
             </Link>
-            <Link href="/private-banking-jobs-new-york" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-new-york"
+              className="underline hover:text-white"
+            >
               Private Banking roles in New York
             </Link>
           </div>
