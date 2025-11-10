@@ -22,6 +22,20 @@ function siteBase() {
 const SITE = siteBase();
 const PAGE_URL = `${SITE}/insights`;
 
+/* dedupe: keep only first occurrence of each href */
+function dedupeByHref(list: Item[]): Item[] {
+  const seen = new Set<string>();
+  const out: Item[] = [];
+  for (const item of list) {
+    const key = item.href.trim();
+    if (!seen.has(key)) {
+      seen.add(key);
+      out.push(item);
+    }
+  }
+  return out;
+}
+
 /* ---------------- SEO metadata ---------------- */
 export const metadata: Metadata = {
   title: { absolute: "Private Wealth Pulse — Insights | Executive Partners" },
@@ -83,7 +97,7 @@ const newsletter: Item[] = [
 ];
 
 const articles: Item[] = [
-  /* ---------- NEW ARTICLES YOU MENTIONED (put first) ---------- */
+  // latest ones you mentioned
   {
     title: "What Netflix Knows Your Wealth Firm Doesn’t",
     date: "Nov 3, 2025",
@@ -103,13 +117,14 @@ const articles: Item[] = [
     tag: "Article",
   },
   {
-    title: "What Do Gen Z Want from Wealth Managers and How Fast Is Industry Shifting?",
+    title:
+      "What Do Gen Z Want from Wealth Managers and How Fast Is Industry Shifting?",
     date: "Oct 10, 2025",
     href: "https://www.linkedin.com/pulse/what-do-gen-z-want-from-wealth-managers-how-fast-gil-m-chalem--akpre/",
     tag: "Article",
   },
 
-  /* ---------- EXISTING ARTICLES ---------- */
+  // existing list
   {
     title:
       "Turbulent Time: Crisis Resilience and Market Leadership in Turbulent Times (Middle East Conflict)",
@@ -339,7 +354,10 @@ export const revalidate = 1800;
 
 /* ---------------- Page ---------------- */
 export default function InsightsPage() {
-  const items = [...newsletter, ...articles];
+  // clean duplicates before using them anywhere
+  const cleanNewsletter = dedupeByHref(newsletter);
+  const cleanArticles = dedupeByHref(articles);
+  const items = [...cleanNewsletter, ...cleanArticles];
 
   // JSON-LD (Blog + ItemList + Breadcrumb)
   const blogJsonLd = {
@@ -438,9 +456,9 @@ export default function InsightsPage() {
           Dubai, Singapore, London &amp; New York.
         </p>
 
-        {/* Your existing client-side list UI */}
+        {/* Pass the cleaned arrays to client component */}
         <div className="mt-8">
-          <ClientInsights newsletter={newsletter} articles={articles} />
+          <ClientInsights newsletter={cleanNewsletter} articles={cleanArticles} />
         </div>
 
         {/* Hub backlinks (internal interlinking) */}
