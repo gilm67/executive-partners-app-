@@ -13,15 +13,14 @@ function siteBase() {
 }
 const SITE = siteBase();
 
-/** Minimal in-file “CMS” so the page renders immediately.
- *  Add more posts here or wire this up to MDX/CMS later.
- */
+/** Minimal in-file “CMS” */
 type Post = {
   slug: string;
   title: string;
   dateISO: string;
   excerpt: string;
-  body: string; // plain text / basic markdown-ish
+  body: string;
+  linkedinUrl?: string;
 };
 
 const POSTS: Record<string, Post> = {
@@ -31,6 +30,8 @@ const POSTS: Record<string, Post> = {
     dateISO: "2025-09-08",
     excerpt:
       "Signals from Geneva & Zurich desks: steady onboarding where discretionary share is high; select hiring across CH Onshore, MEA via Zurich and Portugal diaspora in Romandie.",
+    linkedinUrl:
+      "https://www.linkedin.com/pulse/swiss-private-banking-weekly-post-crisis-resilience-gil-m-chalem--igode/",
     body: `
 **Market pulse (CH):** Client activity remains stable with healthy inflows to discretionary and advisory mandates. Banks continue to prioritise low-noise growth and strong documentation discipline.
 
@@ -43,6 +44,7 @@ const POSTS: Record<string, Post> = {
 **For hiring managers:** We’ll map your segment, pressure-test portability and present actionable shortlists aligned to booking and cross-border realities.
     `.trim(),
   },
+  // add more posts here when you want
 };
 
 /* Simple safe HTML helpers */
@@ -53,7 +55,6 @@ function escapeHTML(s: string) {
     .replace(/>/g, "&gt;");
 }
 function toHtml(s: string) {
-  // super-light markdown-ish: escape + line breaks + bold
   const escaped = escapeHTML(s);
   return escaped
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
@@ -70,17 +71,16 @@ async function getPost(slug: string): Promise<Post | null> {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }): Promise<Metadata> {
-  const { slug } = await params; // ✅ Next 15: await params
-  const post = await getPost(slug);
+  const post = await getPost(params.slug);
 
   const title =
     post?.title ?? "Private Wealth Pulse | Executive Partners Insights";
   const description =
     post?.excerpt ??
     "Executive Partners insights on Private Banking & Wealth Management hiring trends.";
-  const url = `${SITE}/insights/${slug}`;
+  const url = `${SITE}/insights/${params.slug}`;
 
   return {
     title: { absolute: title },
@@ -104,13 +104,11 @@ export const revalidate = 3600;
 export default async function InsightPostPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  const { slug } = await params; // ✅ await the Promise
-  const post = await getPost(slug);
+  const post = await getPost(params.slug);
 
   if (!post) {
-    // Let the app fallback to your global not-found if missing
     return (
       <main className="min-h-screen bg-[#0B0E13] text-white">
         <div className="mx-auto max-w-3xl px-4 py-16 text-center">
@@ -133,7 +131,6 @@ export default async function InsightPostPage({
 
   const pageUrl = `${SITE}/insights/${post.slug}`;
 
-  // Article JSON-LD
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -157,7 +154,7 @@ export default async function InsightPostPage({
     },
   };
 
-  const niceDate = new Date(post.dateISO).toLocaleDateString(undefined, {
+  const niceDate = new Date(post.dateISO).toLocaleDateString("en-CH", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -201,23 +198,53 @@ export default async function InsightPostPage({
           />
         </article>
 
-        {/* Inline CTA to hub pages (internal linking for SEO) */}
+        {/* LinkedIn CTA if available */}
+        {post.linkedinUrl ? (
+          <div className="mt-8">
+            <a
+              href={post.linkedinUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium hover:bg-white/10"
+            >
+              View this article on LinkedIn
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        ) : null}
+
+        {/* Inline CTA to hub pages */}
         <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <h2 className="text-lg font-bold">Explore related pages</h2>
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
-            <Link href="/private-banking-jobs-switzerland" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-switzerland"
+              className="underline hover:text-white"
+            >
               See open Private Banking jobs in Switzerland
             </Link>
-            <Link href="/private-banking-jobs-dubai" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-dubai"
+              className="underline hover:text-white"
+            >
               Private Banking roles in Dubai
             </Link>
-            <Link href="/private-banking-jobs-singapore" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-singapore"
+              className="underline hover:text-white"
+            >
               Private Banking roles in Singapore
             </Link>
-            <Link href="/private-banking-jobs-london" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-london"
+              className="underline hover:text-white"
+            >
               Private Banking roles in London
             </Link>
-            <Link href="/private-banking-jobs-new-york" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-new-york"
+              className="underline hover:text-white"
+            >
               Private Banking roles in New York
             </Link>
           </div>
