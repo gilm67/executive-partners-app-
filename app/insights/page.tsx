@@ -20,8 +20,8 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function InsightsPage() {
-  const items = getInsights();
+export default async function InsightsPage() {
+  const items = await getInsights(); // 👈 this was missing
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
@@ -36,7 +36,7 @@ export default function InsightsPage() {
 
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
-          Weekly market pulse — Private Banking & Wealth Management
+          Weekly market pulse — Private Banking &amp; Wealth Management
         </div>
 
         <h1 className="mt-3 text-center text-4xl font-extrabold tracking-tight md:text-5xl">
@@ -44,45 +44,53 @@ export default function InsightsPage() {
         </h1>
         <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
           Hiring trends, market notes and portability signals across Switzerland,
-          Dubai, Singapore, London & New York.
+          Dubai, Singapore, London &amp; New York.
         </p>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((it) => (
-            <article
-              key={it.href}
-              className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 hover:bg-white/[0.08] transition"
-            >
-              <h2 className="text-lg font-semibold text-white mb-2">
-                <Link href={it.href} className="hover:underline">
-                  {it.title}
-                </Link>
-              </h2>
-              {it.date && (
-                <p className="text-xs text-neutral-400 mb-2">{it.date}</p>
-              )}
-              <p className="text-sm text-neutral-300 line-clamp-4 mb-3">
-                {it.excerpt}
-              </p>
-              <div className="flex justify-between items-center text-sm">
-                <Link
-                  href={it.href}
-                  className="text-emerald-400 hover:text-emerald-300"
-                >
-                  Read on site →
-                </Link>
-                <a
-                  href={it.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300"
-                >
-                  LinkedIn ↗
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
+        {items.length === 0 ? (
+          <p className="mt-10 text-center text-neutral-500">
+            No insights available yet.
+          </p>
+        ) : (
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {items.map((it) => (
+              <article
+                key={it.href}
+                className="rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10 transition"
+              >
+                <h2 className="text-lg font-semibold mb-2">
+                  <Link href={it.href} className="hover:underline">
+                    {it.title}
+                  </Link>
+                </h2>
+                {it.date ? (
+                  <p className="text-xs text-neutral-400 mb-2">{it.date}</p>
+                ) : null}
+                {it.excerpt ? (
+                  <p className="text-sm text-neutral-200 line-clamp-4 mb-4">
+                    {it.excerpt}
+                  </p>
+                ) : null}
+                <div className="flex justify-between text-sm">
+                  <Link
+                    href={it.href}
+                    className="text-emerald-400 hover:text-emerald-300"
+                  >
+                    Read on site →
+                  </Link>
+                  <a
+                    href={it.linkedin}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-400 hover:text-blue-300"
+                  >
+                    LinkedIn ↗
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
