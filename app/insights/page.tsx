@@ -35,18 +35,18 @@ export const metadata: Metadata = {
 export const revalidate = 1800;
 
 export default function InsightsPage() {
+  // pull from JSON
   const insights = getAllInsights();
 
-  // your client component wants 2 arrays
+  // the client component expects 2 arrays
   const articles = insights.map((it) => ({
     title: it.title,
     date: it.date || "",
     href: it.href,
     tag: it.tag,
-    linkedin: it.linkedin,
-    excerpt: it.excerpt,
+    // we keep linkedin off the client props to stay small
   }));
-  const newsletter: typeof articles = []; // none for now
+  const newsletter: typeof articles = [];
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
@@ -70,7 +70,6 @@ export default function InsightsPage() {
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
-      {/* JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
@@ -103,6 +102,7 @@ export default function InsightsPage() {
           Dubai, Singapore, London &amp; New York.
         </p>
 
+        {/* this is your existing layout — now with real data */}
         <div className="mt-10">
           <ClientInsights newsletter={newsletter} articles={articles} />
         </div>
@@ -110,34 +110,19 @@ export default function InsightsPage() {
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <h3 className="text-lg font-semibold">Explore related pages</h3>
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
-            <Link
-              href="/private-banking-jobs-switzerland"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-switzerland" className="underline hover:text-white">
               See open Private Banking jobs in Switzerland
             </Link>
-            <Link
-              href="/private-banking-jobs-dubai"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-dubai" className="underline hover:text-white">
               Private Banking roles in Dubai
             </Link>
-            <Link
-              href="/private-banking-jobs-singapore"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-singapore" className="underline hover:text-white">
               Private Banking roles in Singapore
             </Link>
-            <Link
-              href="/private-banking-jobs-london"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-london" className="underline hover:text-white">
               Private Banking roles in London
             </Link>
-            <Link
-              href="/private-banking-jobs-new-york"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-new-york" className="underline hover:text-white">
               Private Banking roles in New York
             </Link>
           </div>

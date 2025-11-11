@@ -1,9 +1,7 @@
 /* app/insights/[slug]/page.tsx */
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  getInsightBySlug,
-} from "../../../lib/insights/posts";
+import { getInsightBySlug, getAllInsights } from "../../../lib/insights/posts";
 
 function siteBase() {
   const raw =
@@ -17,17 +15,22 @@ const SITE = siteBase();
 
 export const revalidate = 1800;
 
+export async function generateStaticParams() {
+  const all = getAllInsights();
+  return all.map((post) => ({ slug: post.href.replace("/insights/", "") }));
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
   const post = getInsightBySlug(params.slug);
-
-  const title = post?.title ?? "Insight | Executive Partners";
+  const title =
+    post?.title ?? "Private Wealth Pulse | Executive Partners Insights";
   const description =
     post?.excerpt ??
-    "Executive Partners insights on Private Banking & Wealth Management.";
+    "Executive Partners insights on Private Banking & Wealth Management hiring trends.";
   const url = `${SITE}/insights/${params.slug}`;
 
   return {
@@ -46,11 +49,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function InsightPostPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default function InsightPostPage({ params }: { params: { slug: string } }) {
   const post = getInsightBySlug(params.slug);
 
   if (!post) {
@@ -70,38 +69,17 @@ export default async function InsightPostPage({
     );
   }
 
-  const pageUrl = `${SITE}${post.href}`;
-  const hasDate = post.date && post.date.trim().length > 0;
-
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    datePublished: hasDate ? post.date : undefined,
-    description: post.excerpt || "",
-    mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
-    author: {
-      "@type": "Organization",
-      name: "Executive Partners",
-      url: SITE,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Executive Partners",
-      logo: {
-        "@type": "ImageObject",
-        url: `${SITE}/icon.png`,
-      },
-    },
-  };
+  const niceDate = post.date
+    ? new Date(post.date).toLocaleDateString("en-CH", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : "";
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-
+      {/* bg */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -119,36 +97,36 @@ export default async function InsightPostPage({
         <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
           {post.title}
         </h1>
-        {hasDate ? (
-          <p className="mt-2 text-sm text-white/70">{post.date}</p>
-        ) : (
-          <p className="mt-2 text-sm text-white/50">Published on LinkedIn</p>
-        )}
+        {niceDate ? (
+          <p className="mt-2 text-sm text-white/70">Published {niceDate}</p>
+        ) : null}
 
         <article className="prose prose-invert mt-6 max-w-none">
           {post.excerpt ? (
-            <p className="text-neutral-200 leading-7">{post.excerpt}</p>
+            <p className="text-neutral-200 leading-7 whitespace-pre-line">
+              {post.excerpt}
+            </p>
           ) : (
             <p className="text-neutral-400">
-              This article is currently published on LinkedIn.
+              This article was scraped from LinkedIn. Open the original version below.
             </p>
           )}
         </article>
 
         {post.linkedin ? (
-          <div className="mt-6">
+          <div className="mt-8">
             <a
               href={post.linkedin}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium hover:bg-white/10"
             >
-              View this article on LinkedIn ↗
+              View full article on LinkedIn ↗
             </a>
           </div>
         ) : null}
 
-        <div className="mt-10 text-sm text-neutral-400">
+        <div className="mt-8 text-sm text-neutral-400">
           <Link href="/insights" className="underline underline-offset-4">
             ← Back to Insights
           </Link>

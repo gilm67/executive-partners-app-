@@ -10,7 +10,6 @@ export type Insight = {
   tag: "Article" | "Private Wealth Pulse";
 };
 
-// make slug same everywhere
 export function slugify(title: string) {
   return title
     .toLowerCase()
@@ -18,9 +17,7 @@ export function slugify(title: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-// turn JSON into our shape
 export function getAllInsights(): Insight[] {
-  // JSON is an array in your repo
   const arr = (articlesJson as any[]) || [];
 
   return arr.map((item) => {
@@ -40,19 +37,15 @@ export function getAllInsights(): Insight[] {
   });
 }
 
-/**
- * Find one insight by slug, but be tolerant,
- * because LinkedIn titles can have extra punctuation.
- */
 export function getInsightBySlug(slug: string): Insight | null {
   const all = getAllInsights();
   const norm = slug.toLowerCase();
 
-  // exact first
+  // exact
   const exact = all.find((x) => slugify(x.title) === norm);
   if (exact) return exact;
 
-  // loose
+  // tolerant
   const loose = all.find((x) => slugify(x.title).startsWith(norm));
   return loose ?? null;
 }
