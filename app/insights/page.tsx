@@ -1,8 +1,10 @@
-// app/insights/page.tsx
+/* app/insights/page.tsx */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getAllInsights } from "@/lib/insights/posts";
+import ClientInsights from "./ClientInsights";
+import { getAllInsights } from "../../lib/insights/posts"; // ← use the JSON
 
+/* ---------------- helpers ---------------- */
 function siteBase() {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
@@ -14,19 +16,36 @@ function siteBase() {
 const SITE = siteBase();
 const PAGE_URL = `${SITE}/insights`;
 
+/* ---------------- SEO metadata ---------------- */
 export const metadata: Metadata = {
   title: { absolute: "Private Wealth Pulse — Insights | Executive Partners" },
   description:
-    "Hiring trends, market notes and portability signals across Switzerland, Dubai, Singapore, London & New York.",
+    "Weekly Private Wealth Pulse and articles on Private Banking & Wealth Management hiring. Switzerland, Dubai, Singapore, London & New York coverage.",
   alternates: { canonical: "/insights" },
+  openGraph: {
+    type: "website",
+    url: "/insights",
+    siteName: "Executive Partners",
+    title: "Private Wealth Pulse — Insights | Executive Partners",
+    description:
+      "Market pulse and hiring trends across Switzerland, MEA, UK, US and APAC.",
+    images: [{ url: "/og.png" }],
+  },
   robots: { index: true, follow: true },
 };
 
 export const revalidate = 1800;
 
-export default function InsightsPage() {
+/* ---------------- Page ---------------- */
+export default async function InsightsPage() {
+  // 1) read everything from JSON
   const insights = getAllInsights();
 
+  // 2) split by tag (right now everything is "Article", but this keeps your ClientInsights API the same)
+  const articles = insights.filter((i) => i.tag === "Article");
+  const newsletter = insights.filter((i) => i.tag === "Private Wealth Pulse");
+
+  // 3) JSON-LD (only for the current list)
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -38,15 +57,42 @@ export default function InsightsPage() {
     })),
   };
 
+  const blogJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "Private Wealth Pulse — Insights",
+    url: PAGE_URL,
+    description:
+      "Private Banking & Wealth Management market pulse and hiring insights.",
+    isPartOf: { "@type": "WebSite", name: "Executive Partners", url: SITE },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Insights", item: PAGE_URL },
+    ],
+  };
+
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
       {/* JSON-LD */}
       <script
         type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
 
-      {/* Background */}
+      {/* Background glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -56,79 +102,69 @@ export default function InsightsPage() {
         }}
       />
 
+      {/* Header */}
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           Weekly market pulse — Private Banking &amp; Wealth Management
         </div>
+
         <h1 className="mt-3 text-center text-4xl font-extrabold tracking-tight md:text-5xl">
           Private Wealth Pulse — Insights
         </h1>
         <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
-          Hiring trends, market notes and portability signals across Switzerland,
-          Dubai, Singapore, London &amp; New York.
+          Hiring trends, market notes and portability signals across
+          Switzerland, Dubai, Singapore, London &amp; New York.
         </p>
 
-        {insights.length === 0 ? (
-          <p className="mt-10 text-center text-neutral-400">
-            No insights available yet.
-          </p>
-        ) : (
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {insights.map((it) => (
-              <article
-                key={it.href}
-                className="rounded-2xl border border-white/5 bg-white/[0.03] p-5 hover:border-white/15"
-              >
-                <h2 className="text-base font-semibold leading-tight">
-                  <Link href={it.href}>{it.title}</Link>
-                </h2>
-                {it.date ? (
-                  <p className="mt-1 text-xs text-neutral-400">{it.date}</p>
-                ) : null}
-                {it.excerpt ? (
-                  <p className="mt-3 text-sm text-neutral-300 line-clamp-4">
-                    {it.excerpt}
-                  </p>
-                ) : null}
-                <div className="mt-4 flex items-center justify-between text-sm">
-                  <Link href={it.href} className="text-emerald-400">
-                    Read on site →
-                  </Link>
-                  <a
-                    href={it.linkedin}
-                    className="text-xs text-neutral-400 hover:text-white"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    LinkedIn ↗
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+        {/* now the client component actually gets data */}
+        <div className="mt-8">
+          <ClientInsights newsletter={newsletter} articles={articles} />
+        </div>
 
-        {/* SEO links */}
+        {/* Hub backlinks */}
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <h3 className="text-lg font-semibold">Explore related pages</h3>
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
-            <Link href="/private-banking-jobs-switzerland" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-switzerland"
+              className="underline hover:text-white"
+            >
               See open Private Banking jobs in Switzerland
             </Link>
-            <Link href="/private-banking-jobs-dubai" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-dubai"
+              className="underline hover:text-white"
+            >
               Private Banking roles in Dubai
             </Link>
-            <Link href="/private-banking-jobs-singapore" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-singapore"
+              className="underline hover:text-white"
+            >
               Private Banking roles in Singapore
             </Link>
-            <Link href="/private-banking-jobs-london" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-london"
+              className="underline hover:text-white"
+            >
               Private Banking roles in London
             </Link>
-            <Link href="/private-banking-jobs-new-york" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-new-york"
+              className="underline hover:text-white"
+            >
               Private Banking roles in New York
             </Link>
           </div>
         </section>
+
+        {/* RSS */}
+        <p className="mt-6 text-center text-sm text-neutral-400">
+          Subscribe via{" "}
+          <a href="/rss.xml" className="underline hover:text-white">
+            RSS
+          </a>
+        </p>
       </div>
     </main>
   );
