@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllInsights } from "@/lib/insights/posts";
 
+/* ---------- helpers ---------- */
 function siteBase() {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
@@ -14,6 +15,7 @@ function siteBase() {
 const SITE = siteBase();
 const PAGE_URL = `${SITE}/insights`;
 
+/* ---------- SEO ---------- */
 export const metadata: Metadata = {
   title: { absolute: "Private Wealth Pulse — Insights | Executive Partners" },
   description:
@@ -33,11 +35,17 @@ export const metadata: Metadata = {
 
 export const revalidate = 1800;
 
+/* ---------- page ---------- */
 export default function InsightsPage() {
-  // 🟣 1) get EVERYTHING we scraped
-  const insights = getAllInsights(); // this reads data/articles.json
+  // 1) pull everything from the hard-coded lib
+  let insights = [];
+  try {
+    insights = getAllInsights() ?? [];
+  } catch (e) {
+    insights = [];
+  }
 
-  // basic sort: newest first (if date is not ISO, they’ll stay at bottom)
+  // 2) sort newest-ish first
   const sorted = [...insights].sort((a, b) => {
     const da = Date.parse(a.date || "");
     const db = Date.parse(b.date || "");
@@ -47,7 +55,7 @@ export default function InsightsPage() {
     return db - da;
   });
 
-  // JSON-LD
+  // 3) JSON-LD
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -92,7 +100,7 @@ export default function InsightsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      {/* Background glow */}
+      {/* background */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -102,8 +110,8 @@ export default function InsightsPage() {
         }}
       />
 
-      {/* Header */}
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
+        {/* hero */}
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           Weekly market pulse — Private Banking &amp; Wealth Management
         </div>
@@ -116,12 +124,15 @@ export default function InsightsPage() {
           Dubai, Singapore, London &amp; New York.
         </p>
 
-        {/* 🟣 2) ACTUAL LIST */}
+        {/* list */}
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           {sorted.length === 0 ? (
-            <p className="text-neutral-400 col-span-full">
-              No insights found. Make sure <code>data/articles.json</code> is in
-              the repo.
+            <p className="col-span-full text-center text-neutral-400">
+              No insights found. (This means Next didn’t see
+              {" "}
+              <code>lib/insights/posts.ts</code>
+              {" "}
+              or the array inside it is empty.)
             </p>
           ) : (
             sorted.map((it) => {
@@ -139,10 +150,11 @@ export default function InsightsPage() {
                   displayDate = it.date;
                 }
               }
+
               return (
                 <article
-                  key={it.href}
-                  className="rounded-2xl border border-white/5 bg-white/5 p-5 backdrop-blur"
+                    key={it.href}
+                    className="rounded-2xl border border-white/5 bg-white/5 p-5 backdrop-blur"
                 >
                   <p className="text-xs uppercase tracking-wide text-emerald-200/70">
                     {it.tag ?? "Article"}
@@ -182,38 +194,23 @@ export default function InsightsPage() {
           )}
         </div>
 
-        {/* Hub backlinks */}
+        {/* related pages */}
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <h3 className="text-lg font-semibold">Explore related pages</h3>
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
-            <Link
-              href="/private-banking-jobs-switzerland"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-switzerland" className="underline hover:text-white">
               See open Private Banking jobs in Switzerland
             </Link>
-            <Link
-              href="/private-banking-jobs-dubai"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-dubai" className="underline hover:text-white">
               Private Banking roles in Dubai
             </Link>
-            <Link
-              href="/private-banking-jobs-singapore"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-singapore" className="underline hover:text-white">
               Private Banking roles in Singapore
             </Link>
-            <Link
-              href="/private-banking-jobs-london"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-london" className="underline hover:text-white">
               Private Banking roles in London
             </Link>
-            <Link
-              href="/private-banking-jobs-new-york"
-              className="underline hover:text-white"
-            >
+            <Link href="/private-banking-jobs-new-york" className="underline hover:text-white">
               Private Banking roles in New York
             </Link>
           </div>
