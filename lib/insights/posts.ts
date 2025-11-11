@@ -1,49 +1,62 @@
 // lib/insights/posts.ts
+// this assumes you have `data/articles.json` in the repo
+// and that `resolveJsonModule` is ON in tsconfig
+import articlesJson from "../../data/articles.json";
 
-export type InsightPost = {
+export type Insight = {
   title: string;
-  slug: string;
-  date: string;
-  excerpt: string;
-  linkedinUrl: string;
+  linkedin: string;
+  date?: string;
+  excerpt?: string;
+  href: string;
+  tag: "Article" | "Private Wealth Pulse";
 };
 
-export const INSIGHTS: InsightPost[] = [
-  {
-    title: "What Netflix Knows and Your Wealth Firm Doesn’t",
-    slug: "what-netflix-knows-your-wealth-firm-doesnt",
-    date: "2025-11-05",
-    excerpt:
-      "Client experience in wealth is still years behind streaming. Here’s what private banks can copy from Netflix.",
-    linkedinUrl:
-      "https://www.linkedin.com/pulse/what-netflix-knows-your-wealth-firm-doesnt-gil-m-chalem--ffyye/",
-  },
-  {
-    title: "Swiss Private Banking: Thriving Against the Odds",
-    slug: "swiss-private-banking-thriving-against-odds",
-    date: "2025-10-29",
-    excerpt:
-      "Despite consolidation and regulation, Swiss private banking is expanding again in key UHNW segments.",
-    linkedinUrl:
-      "https://www.linkedin.com/pulse/swiss-private-banking-thriving-against-odds-gil-m-chalem--ztl5e/",
-  },
-  {
-    title: "La Dolce Vita Returns: Why Italy Has Become Europe’s New Wealth Magnet",
-    slug: "la-dolce-vita-returns-italy-wealth-magnet",
-    date: "2025-10-21",
-    excerpt:
-      "Italy’s tax regime is attracting UHNW families, bankers and asset managers. Here’s what it means for hiring.",
-    linkedinUrl:
-      "https://www.linkedin.com/pulse/la-dolce-vita-returns-why-italy-has-become-europes-gil-m-chalem--xfrre/",
-  },
-  {
-    title:
-      "What Do Gen Z Want from Wealth Managers — and How Fast Is the Industry Shifting?",
-    slug: "what-gen-z-want-from-wealth-managers",
-    date: "2025-10-14",
-    excerpt:
-      "Next-gen clients don’t just want returns. They want access, transparency and digital-first advisory.",
-    linkedinUrl:
-      "https://www.linkedin.com/pulse/what-do-gen-z-want-from-wealth-managers-how-fast-gil-m-chalem--akpre/",
-  },
-];
+// -------------- slug helper (use everywhere) --------------
+export function slugify(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+// -------------- list --------------
+export function getAllInsights(): Insight[] {
+  // make it safe in case the JSON is empty or not an array
+  const arr = (Array.isArray(articlesJson) ? articlesJson : []) as any[];
+
+  return arr.map((item) => {
+    const title = String(item.title || "").trim();
+    const date = String(item.date || "").trim();
+    const excerpt = String(item.excerpt || "").trim();
+    const linkedin = String(item.linkedin || "").trim();
+
+    return {
+      title,
+      linkedin,
+      date,
+      excerpt,
+      href: "/insights/" + slugify(title),
+      tag: "Article",
+    };
+  });
+}
+
+// -------------- single item --------------
+/**
+ * Find one insight by slug.
+ * We compare using the same slugify() so titles / hyphens / accents
+ * don’t break the lookup.
+ */
+export function getInsightBySlug(slug: string): Insight | null {
+  const all = getAllInsights();
+  const wanted = slugify(slug);
+
+  // 1) exact slug match
+  const exact = all.find((x) => slugify(x.title) === wanted);
+  if (exact) return exact;
+
+  // 2) loose match (in case LinkedIn changed the title slightly)
+  const loose = all.find((x) => slugify(x.title).startsWith(wanted));
+  return loose ?? null;
+}
