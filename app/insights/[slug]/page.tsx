@@ -4,10 +4,8 @@ import Link from "next/link";
 import {
   getAllInsights,
   getInsightBySlug,
-  slugify,
 } from "../../../lib/insights/posts";
 
-/* ---------- helpers ---------- */
 function siteBase() {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
@@ -18,9 +16,8 @@ function siteBase() {
 }
 const SITE = siteBase();
 
-export const revalidate = 3600;
+export const revalidate = 1800;
 
-/* ---------- SEO metadata ---------- */
 export async function generateMetadata({
   params,
 }: {
@@ -28,11 +25,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const post = getInsightBySlug(params.slug);
 
-  const title =
-    post?.title ?? "Private Wealth Pulse | Executive Partners Insights";
+  const title = post?.title ?? "Insight | Executive Partners";
   const description =
     post?.excerpt ??
-    "Executive Partners insights on Private Banking & Wealth Management hiring trends.";
+    "Executive Partners insights on Private Banking & Wealth Management.";
   const url = `${SITE}/insights/${params.slug}`;
 
   return {
@@ -51,8 +47,7 @@ export async function generateMetadata({
   };
 }
 
-/* ---------- page ---------- */
-export default function InsightPostPage({
+export default async function InsightPostPage({
   params,
 }: {
   params: { slug: string };
@@ -77,13 +72,20 @@ export default function InsightPostPage({
   }
 
   const pageUrl = `${SITE}${post.href}`;
+  const niceDate = post.date
+    ? new Date(post.date).toLocaleDateString("en-CH", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : null;
+
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
-    datePublished: post.date,
-    dateModified: post.date,
-    description: post.excerpt,
+    datePublished: post.date || undefined,
+    description: post.excerpt || "",
     mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
     author: {
       "@type": "Organization",
@@ -106,7 +108,7 @@ export default function InsightPostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
-      {/* ambient bg */}
+
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -124,13 +126,22 @@ export default function InsightPostPage({
         <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
           {post.title}
         </h1>
-        <p className="mt-2 text-sm text-white/70">
-          {post.date ? post.date : "Published on LinkedIn"}
-        </p>
+        {niceDate ? (
+          <p className="mt-2 text-sm text-white/70">Published {niceDate}</p>
+        ) : (
+          <p className="mt-2 text-sm text-white/50">
+            Published on LinkedIn
+          </p>
+        )}
 
-        {/* we only scraped excerpt, so show that */}
         <article className="prose prose-invert mt-6 max-w-none">
-          <p className="text-neutral-200 leading-7">{post.excerpt}</p>
+          {post.excerpt ? (
+            <p className="text-neutral-200 leading-7">{post.excerpt}</p>
+          ) : (
+            <p className="text-neutral-400">
+              This article is currently published on LinkedIn.
+            </p>
+          )}
         </article>
 
         {post.linkedin ? (
@@ -141,13 +152,12 @@ export default function InsightPostPage({
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium hover:bg-white/10"
             >
-              View full version on LinkedIn
-              <span aria-hidden="true">↗</span>
+              View this article on LinkedIn ↗
             </a>
           </div>
         ) : null}
 
-        <div className="mt-8 text-sm text-neutral-400">
+        <div className="mt-10 text-sm text-neutral-400">
           <Link href="/insights" className="underline underline-offset-4">
             ← Back to Insights
           </Link>

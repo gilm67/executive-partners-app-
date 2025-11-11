@@ -4,15 +4,6 @@ import Link from "next/link";
 import ClientInsights from "./ClientInsights";
 import { getAllInsights } from "../../lib/insights/posts";
 
-type ClientItem = {
-  title: string;
-  date: string;
-  href: string;
-  tag: "Private Wealth Pulse" | "Article";
-  linkedin?: string;
-};
-
-/* ---------------- helpers ---------------- */
 function siteBase() {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
@@ -24,11 +15,10 @@ function siteBase() {
 const SITE = siteBase();
 const PAGE_URL = `${SITE}/insights`;
 
-/* ---------------- SEO metadata ---------------- */
 export const metadata: Metadata = {
   title: { absolute: "Private Wealth Pulse — Insights | Executive Partners" },
   description:
-    "Weekly Private Wealth Pulse and articles on Private Banking & Wealth Management hiring. Switzerland, Dubai, Singapore, London & New York coverage.",
+    "Private Wealth Pulse and articles on Private Banking & Wealth Management hiring. Switzerland, Dubai, Singapore, London & New York coverage.",
   alternates: { canonical: "/insights" },
   openGraph: {
     type: "website",
@@ -44,41 +34,28 @@ export const metadata: Metadata = {
 
 export const revalidate = 1800;
 
-/* ---------------- Page ---------------- */
-export default async function InsightsPage() {
-  // 1) read scraped articles from data/articles.json (through lib)
-  const scraped = getAllInsights();
+export default function InsightsPage() {
+  // pull everything from data/articles.json (via lib/insights/posts.ts)
+  const insights = getAllInsights();
 
-  // 2) adapt to what the client component wants
-  const adapted: ClientItem[] = scraped.map((it) => ({
+  // ClientInsights expects two arrays; all our scraped stuff is “Article”
+  const articles = insights.map((it) => ({
     title: it.title,
-    date: it.date && it.date.trim() ? it.date : "Published on LinkedIn",
+    date: it.date || "",
     href: it.href,
     tag: it.tag,
+    // keep these extra fields so client can use them
     linkedin: it.linkedin,
+    excerpt: it.excerpt,
   }));
 
-  // your component has two tabs, so we give it two arrays
-  const articles = adapted.filter((x) => x.tag === "Article");
-  const newsletter: ClientItem[] = adapted.filter(
-    (x) => x.tag === "Private Wealth Pulse"
-  );
+  const newsletter: typeof articles = []; // none for now
 
-  // JSON-LD (optional, same as before)
-  const blogJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Blog",
-    name: "Private Wealth Pulse — Insights",
-    url: PAGE_URL,
-    description:
-      "Private Banking & Wealth Management market pulse and hiring insights.",
-    isPartOf: { "@type": "WebSite", name: "Executive Partners", url: SITE },
-  };
-
+  // JSON-LD
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    itemListElement: adapted.map((it, i) => ({
+    itemListElement: insights.map((it, i) => ({
       "@type": "ListItem",
       position: i + 1,
       url: `${SITE}${it.href}`,
@@ -97,11 +74,6 @@ export default async function InsightsPage() {
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
-      {/* JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
@@ -111,7 +83,7 @@ export default async function InsightsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      {/* Background glow */}
+      {/* background */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -130,12 +102,12 @@ export default async function InsightsPage() {
           Private Wealth Pulse — Insights
         </h1>
         <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
-          Hiring trends, market notes and portability signals across
-          Switzerland, Dubai, Singapore, London &amp; New York.
+          Hiring trends, market notes and portability signals across Switzerland,
+          Dubai, Singapore, London &amp; New York.
         </p>
 
-        {/* ✅ your existing client layout now receives real data */}
-        <div className="mt-8">
+        {/* ✅ now your client component actually receives data */}
+        <div className="mt-10">
           <ClientInsights newsletter={newsletter} articles={articles} />
         </div>
 
