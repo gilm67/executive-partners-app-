@@ -1,12 +1,25 @@
 /* app/insights/page.tsx */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getInsights } from "@/lib/insights";
+import { getInsights } from "@/lib/insights"; // ← same source as detail page
 
+/* ---------------- helpers ---------------- */
+function siteBase() {
+  const raw =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.VERCEL_URL ||
+    "https://www.execpartners.ch";
+  const url = raw.startsWith("http") ? raw : `https://${raw}`;
+  return url.replace(/\/$/, "");
+}
+const SITE = siteBase();
+const PAGE_URL = `${SITE}/insights`;
+
+/* ---------------- SEO metadata ---------------- */
 export const metadata: Metadata = {
-  title: "Private Wealth Pulse — Insights | Executive Partners",
+  title: { absolute: "Private Wealth Pulse — Insights | Executive Partners" },
   description:
-    "Weekly Private Wealth Pulse and articles on Private Banking & Wealth Management hiring. Switzerland, Dubai, Singapore, London & New York coverage.",
+    "Private Wealth Pulse and articles on Private Banking & Wealth Management hiring. Switzerland, Dubai, Singapore, London & New York coverage.",
   alternates: { canonical: "/insights" },
   openGraph: {
     type: "website",
@@ -20,11 +33,61 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default async function InsightsPage() {
-  const items = await getInsights(); // 👈 this was missing
+export const revalidate = 1800;
+
+/* ---------------- Page ---------------- */
+export default function InsightsPage() {
+  // now we load from JSON (public/data/articles.json) via lib/insights.ts
+  const insights = getInsights(); // [{title, href, date, excerpt, linkedin, tag}...]
+
+  // JSON-LD (Blog + ItemList + Breadcrumb)
+  const blogJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "Private Wealth Pulse — Insights",
+    url: PAGE_URL,
+    description:
+      "Private Banking & Wealth Management market pulse and hiring insights.",
+    isPartOf: { "@type": "WebSite", name: "Executive Partners", url: SITE },
+  };
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: insights.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${SITE}${it.href}`,
+      name: it.title,
+    })),
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+      { "@type": "ListItem", position: 2, name: "Insights", item: PAGE_URL },
+    ],
+  };
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
+      {/* Background glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -34,6 +97,7 @@ export default async function InsightsPage() {
         }}
       />
 
+      {/* Header */}
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           Weekly market pulse — Private Banking &amp; Wealth Management
@@ -47,50 +111,68 @@ export default async function InsightsPage() {
           Dubai, Singapore, London &amp; New York.
         </p>
 
-        {items.length === 0 ? (
-          <p className="mt-10 text-center text-neutral-500">
-            No insights available yet.
-          </p>
-        ) : (
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((it) => (
-              <article
-                key={it.href}
-                className="rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10 transition"
-              >
-                <h2 className="text-lg font-semibold mb-2">
-                  <Link href={it.href} className="hover:underline">
-                    {it.title}
-                  </Link>
-                </h2>
-                {it.date ? (
-                  <p className="text-xs text-neutral-400 mb-2">{it.date}</p>
-                ) : null}
-                {it.excerpt ? (
-                  <p className="text-sm text-neutral-200 line-clamp-4 mb-4">
-                    {it.excerpt}
-                  </p>
-                ) : null}
-                <div className="flex justify-between text-sm">
-                  <Link
-                    href={it.href}
-                    className="text-emerald-400 hover:text-emerald-300"
-                  >
-                    Read on site →
-                  </Link>
+        {/* List of articles from JSON */}
+        <div className="mt-10 grid gap-5">
+          {insights.map((item) => (
+            <article
+              key={item.href}
+              className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:bg-white/[0.05] transition"
+            >
+              <p className="text-xs uppercase tracking-wide text-emerald-200/80">
+                {item.tag || "Article"}
+              </p>
+              <h2 className="mt-2 text-xl font-semibold">{item.title}</h2>
+              <p className="mt-2 text-sm text-neutral-300 line-clamp-3">
+                {item.excerpt}
+              </p>
+              <p className="mt-2 text-xs text-neutral-500">
+                {item.date && item.date.trim().length > 0
+                  ? item.date
+                  : "Published on LinkedIn"}
+              </p>
+              <div className="mt-4 flex gap-3">
+                <Link
+                  href={item.href}
+                  className="text-sm underline underline-offset-4 hover:text-white"
+                >
+                  Read on site
+                </Link>
+                {item.linkedin ? (
                   <a
-                    href={it.linkedin}
+                    href={item.linkedin}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-blue-400 hover:text-blue-300"
+                    className="text-sm text-neutral-300 hover:text-white"
                   >
-                    LinkedIn ↗
+                    View on LinkedIn ↗
                   </a>
-                </div>
-              </article>
-            ))}
+                ) : null}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {/* Hub backlinks */}
+        <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          <h3 className="text-lg font-semibold">Explore related pages</h3>
+          <div className="mt-3 flex flex-wrap gap-3 text-sm">
+            <Link href="/private-banking-jobs-switzerland" className="underline hover:text-white">
+              See open Private Banking jobs in Switzerland
+            </Link>
+            <Link href="/private-banking-jobs-dubai" className="underline hover:text-white">
+              Private Banking roles in Dubai
+            </Link>
+            <Link href="/private-banking-jobs-singapore" className="underline hover:text-white">
+              Private Banking roles in Singapore
+            </Link>
+            <Link href="/private-banking-jobs-london" className="underline hover:text-white">
+              Private Banking roles in London
+            </Link>
+            <Link href="/private-banking-jobs-new-york" className="underline hover:text-white">
+              Private Banking roles in New York
+            </Link>
           </div>
-        )}
+        </section>
       </div>
     </main>
   );
