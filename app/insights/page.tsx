@@ -2,7 +2,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ClientInsights from "./ClientInsights";
-import { getAllInsights } from "../../lib/insights/posts"; // ← use the JSON
+import { getAllInsights } from "../../lib/insights/posts";
+
+type ClientItem = {
+  title: string;
+  date: string;
+  href: string;
+  tag: "Private Wealth Pulse" | "Article";
+  linkedin?: string;
+};
 
 /* ---------------- helpers ---------------- */
 function siteBase() {
@@ -38,25 +46,23 @@ export const revalidate = 1800;
 
 /* ---------------- Page ---------------- */
 export default async function InsightsPage() {
-  // 1) read everything from JSON
+  // 1) get scraped data
   const insights = getAllInsights();
 
-  // 2) split by tag (right now everything is "Article", but this keeps your ClientInsights API the same)
-  const articles = insights.filter((i) => i.tag === "Article");
-  const newsletter = insights.filter((i) => i.tag === "Private Wealth Pulse");
+  // 2) adapt to what ClientInsights expects
+  const adapted: ClientItem[] = insights.map((it) => ({
+    title: it.title,
+    date: it.date && it.date.trim() ? it.date : "Published on LinkedIn",
+    href: it.href,
+    tag: it.tag,
+    linkedin: it.linkedin,
+  }));
 
-  // 3) JSON-LD (only for the current list)
-  const itemListJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    itemListElement: insights.map((it, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      url: `${SITE}${it.href}`,
-      name: it.title,
-    })),
-  };
+  // split (everything is Article right now, but we keep the API)
+  const articles = adapted.filter((x) => x.tag === "Article");
+  const newsletter = adapted.filter((x) => x.tag === "Private Wealth Pulse");
 
+  // JSON-LD
   const blogJsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
@@ -65,6 +71,17 @@ export default async function InsightsPage() {
     description:
       "Private Banking & Wealth Management market pulse and hiring insights.",
     isPartOf: { "@type": "WebSite", name: "Executive Partners", url: SITE },
+  };
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: adapted.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${SITE}${it.href}`,
+      name: it.title,
+    })),
   };
 
   const breadcrumbJsonLd = {
@@ -116,7 +133,6 @@ export default async function InsightsPage() {
           Switzerland, Dubai, Singapore, London &amp; New York.
         </p>
 
-        {/* now the client component actually gets data */}
         <div className="mt-8">
           <ClientInsights newsletter={newsletter} articles={articles} />
         </div>
@@ -158,7 +174,6 @@ export default async function InsightsPage() {
           </div>
         </section>
 
-        {/* RSS */}
         <p className="mt-6 text-center text-sm text-neutral-400">
           Subscribe via{" "}
           <a href="/rss.xml" className="underline hover:text-white">
