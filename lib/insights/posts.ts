@@ -1,18 +1,16 @@
 // lib/insights/posts.ts
-// this assumes you have `data/articles.json` in the repo
-// and that `resolveJsonModule` is ON in tsconfig
 import articlesJson from "../../data/articles.json";
 
 export type Insight = {
   title: string;
   linkedin: string;
-  date?: string;
-  excerpt?: string;
+  date: string;
+  excerpt: string;
   href: string;
   tag: "Article" | "Private Wealth Pulse";
 };
 
-// -------------- slug helper (use everywhere) --------------
+// make slug same everywhere
 export function slugify(title: string) {
   return title
     .toLowerCase()
@@ -20,16 +18,16 @@ export function slugify(title: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-// -------------- list --------------
+// turn JSON into our shape
 export function getAllInsights(): Insight[] {
-  // make it safe in case the JSON is empty or not an array
-  const arr = (Array.isArray(articlesJson) ? articlesJson : []) as any[];
+  // JSON is an array in your repo
+  const arr = (articlesJson as any[]) || [];
 
   return arr.map((item) => {
     const title = String(item.title || "").trim();
+    const linkedin = String(item.linkedin || "").trim();
     const date = String(item.date || "").trim();
     const excerpt = String(item.excerpt || "").trim();
-    const linkedin = String(item.linkedin || "").trim();
 
     return {
       title,
@@ -42,21 +40,19 @@ export function getAllInsights(): Insight[] {
   });
 }
 
-// -------------- single item --------------
 /**
- * Find one insight by slug.
- * We compare using the same slugify() so titles / hyphens / accents
- * don’t break the lookup.
+ * Find one insight by slug, but be tolerant,
+ * because LinkedIn titles can have extra punctuation.
  */
 export function getInsightBySlug(slug: string): Insight | null {
   const all = getAllInsights();
-  const wanted = slugify(slug);
+  const norm = slug.toLowerCase();
 
-  // 1) exact slug match
-  const exact = all.find((x) => slugify(x.title) === wanted);
+  // exact first
+  const exact = all.find((x) => slugify(x.title) === norm);
   if (exact) return exact;
 
-  // 2) loose match (in case LinkedIn changed the title slightly)
-  const loose = all.find((x) => slugify(x.title).startsWith(wanted));
+  // loose
+  const loose = all.find((x) => slugify(x.title).startsWith(norm));
   return loose ?? null;
 }

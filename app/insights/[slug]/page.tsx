@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  getAllInsights,
   getInsightBySlug,
 } from "../../../lib/insights/posts";
 
@@ -72,19 +71,13 @@ export default async function InsightPostPage({
   }
 
   const pageUrl = `${SITE}${post.href}`;
-  const niceDate = post.date
-    ? new Date(post.date).toLocaleDateString("en-CH", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
-    : null;
+  const hasDate = post.date && post.date.trim().length > 0;
 
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
-    datePublished: post.date || undefined,
+    datePublished: hasDate ? post.date : undefined,
     description: post.excerpt || "",
     mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
     author: {
@@ -126,12 +119,10 @@ export default async function InsightPostPage({
         <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
           {post.title}
         </h1>
-        {niceDate ? (
-          <p className="mt-2 text-sm text-white/70">Published {niceDate}</p>
+        {hasDate ? (
+          <p className="mt-2 text-sm text-white/70">{post.date}</p>
         ) : (
-          <p className="mt-2 text-sm text-white/50">
-            Published on LinkedIn
-          </p>
+          <p className="mt-2 text-sm text-white/50">Published on LinkedIn</p>
         )}
 
         <article className="prose prose-invert mt-6 max-w-none">
