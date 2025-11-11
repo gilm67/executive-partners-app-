@@ -1,8 +1,9 @@
 /* app/insights/[slug]/page.tsx */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getInsightBySlug, getAllInsights } from "../../../lib/insights/posts";
+import { getInsightBySlug } from "@/lib/insights/posts";
 
+/* ---------- helpers ---------- */
 function siteBase() {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
@@ -13,19 +14,15 @@ function siteBase() {
 }
 const SITE = siteBase();
 
-export const revalidate = 1800;
-
-export async function generateStaticParams() {
-  const all = getAllInsights();
-  return all.map((post) => ({ slug: post.href.replace("/insights/", "") }));
-}
-
+/* ---------- SEO metadata ---------- */
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
+  // getInsightBySlug is synchronous, so just call it
   const post = getInsightBySlug(params.slug);
+
   const title =
     post?.title ?? "Private Wealth Pulse | Executive Partners Insights";
   const description =
@@ -49,7 +46,14 @@ export async function generateMetadata({
   };
 }
 
-export default function InsightPostPage({ params }: { params: { slug: string } }) {
+export const revalidate = 1800;
+
+/* ---------- page ---------- */
+export default function InsightPostPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const post = getInsightBySlug(params.slug);
 
   if (!post) {
@@ -69,17 +73,55 @@ export default function InsightPostPage({ params }: { params: { slug: string } }
     );
   }
 
-  const niceDate = post.date
-    ? new Date(post.date).toLocaleDateString("en-CH", {
+  const pageUrl = `${SITE}${post.href}`;
+
+  // some of your scraped dates are not real ISO dates,
+  // so show a nice date only if it's parsable, otherwise show the raw string
+  let niceDate = "—";
+  if (post.date) {
+    const parsed = Date.parse(post.date);
+    if (!Number.isNaN(parsed)) {
+      niceDate = new Date(parsed).toLocaleDateString("en-CH", {
         month: "short",
         day: "numeric",
         year: "numeric",
-      })
-    : "";
+      });
+    } else {
+      niceDate = post.date;
+    }
+  }
+
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    datePublished: post.date || undefined,
+    description: post.excerpt || "",
+    mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+    author: {
+      "@type": "Organization",
+      name: "Executive Partners",
+      url: SITE,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Executive Partners",
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE}/icon.png`,
+      },
+    },
+  };
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
-      {/* bg */}
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+
+      {/* background */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -90,17 +132,18 @@ export default function InsightPostPage({ params }: { params: { slug: string } }
       />
 
       <div className="relative mx-auto w-full max-w-3xl px-4 pb-20 pt-12">
+        {/* Eyebrow */}
         <div className="w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           Private Wealth Pulse — Insights
         </div>
 
+        {/* Title */}
         <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
           {post.title}
         </h1>
-        {niceDate ? (
-          <p className="mt-2 text-sm text-white/70">Published {niceDate}</p>
-        ) : null}
+        <p className="mt-2 text-sm text-white/70">Published {niceDate}</p>
 
+        {/* Body from scraped excerpt */}
         <article className="prose prose-invert mt-6 max-w-none">
           {post.excerpt ? (
             <p className="text-neutral-200 leading-7 whitespace-pre-line">
@@ -108,11 +151,13 @@ export default function InsightPostPage({ params }: { params: { slug: string } }
             </p>
           ) : (
             <p className="text-neutral-400">
-              This article was scraped from LinkedIn. Open the original version below.
+              This article was scraped from LinkedIn and doesn&apos;t have full
+              body text here.
             </p>
           )}
         </article>
 
+        {/* LinkedIn original */}
         {post.linkedin ? (
           <div className="mt-8">
             <a
@@ -121,12 +166,13 @@ export default function InsightPostPage({ params }: { params: { slug: string } }
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium hover:bg-white/10"
             >
-              View full article on LinkedIn ↗
+              View on LinkedIn ↗
             </a>
           </div>
         ) : null}
 
-        <div className="mt-8 text-sm text-neutral-400">
+        {/* Back link */}
+        <div className="mt-10 text-sm text-neutral-400">
           <Link href="/insights" className="underline underline-offset-4">
             ← Back to Insights
           </Link>
