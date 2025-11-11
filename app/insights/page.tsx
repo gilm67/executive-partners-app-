@@ -1,7 +1,7 @@
 /* app/insights/page.tsx */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getAllInsights } from "@/lib/insights/posts";
+import { getAllInsights, type Insight } from "@/lib/insights/posts";
 
 /* ---------- helpers ---------- */
 function siteBase() {
@@ -38,7 +38,7 @@ export const revalidate = 1800;
 /* ---------- page ---------- */
 export default function InsightsPage() {
   // 1) pull everything from the hard-coded lib
-  let insights = [];
+  let insights: Insight[] = [];
   try {
     insights = getAllInsights() ?? [];
   } catch (e) {
@@ -128,11 +128,9 @@ export default function InsightsPage() {
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           {sorted.length === 0 ? (
             <p className="col-span-full text-center text-neutral-400">
-              No insights found. (This means Next didn’t see
-              {" "}
-              <code>lib/insights/posts.ts</code>
-              {" "}
-              or the array inside it is empty.)
+              No insights found. (This means
+              <code className="mx-1">lib/insights/posts.ts</code>
+              didn’t load or the array inside it is empty.)
             </p>
           ) : (
             sorted.map((it) => {
@@ -153,8 +151,8 @@ export default function InsightsPage() {
 
               return (
                 <article
-                    key={it.href}
-                    className="rounded-2xl border border-white/5 bg-white/5 p-5 backdrop-blur"
+                  key={it.href}
+                  className="rounded-2xl border border-white/5 bg-white/5 p-5 backdrop-blur"
                 >
                   <p className="text-xs uppercase tracking-wide text-emerald-200/70">
                     {it.tag ?? "Article"}
@@ -198,19 +196,34 @@ export default function InsightsPage() {
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <h3 className="text-lg font-semibold">Explore related pages</h3>
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
-            <Link href="/private-banking-jobs-switzerland" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-switzerland"
+              className="underline hover:text-white"
+            >
               See open Private Banking jobs in Switzerland
             </Link>
-            <Link href="/private-banking-jobs-dubai" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-dubai"
+              className="underline hover:text-white"
+            >
               Private Banking roles in Dubai
             </Link>
-            <Link href="/private-banking-jobs-singapore" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-singapore"
+              className="underline hover:text-white"
+            >
               Private Banking roles in Singapore
             </Link>
-            <Link href="/private-banking-jobs-london" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-london"
+              className="underline hover:text-white"
+            >
               Private Banking roles in London
             </Link>
-            <Link href="/private-banking-jobs-new-york" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-new-york"
+              className="underline hover:text-white"
+            >
               Private Banking roles in New York
             </Link>
           </div>
