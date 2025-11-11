@@ -1,7 +1,6 @@
 /* app/insights/page.tsx */
 import type { Metadata } from "next";
 import Link from "next/link";
-import ClientInsights from "./ClientInsights";
 import { getAllInsights } from "@/lib/insights/posts";
 
 function siteBase() {
@@ -35,31 +34,24 @@ export const metadata: Metadata = {
 export const revalidate = 1800;
 
 export default function InsightsPage() {
-  // 1) pull everything from scraped JSON
-  const insights = getAllInsights();
+  // 🟣 1) get EVERYTHING we scraped
+  const insights = getAllInsights(); // this reads data/articles.json
 
-  // 2) your client component expects two buckets, so:
-  const newsletter: Array<{
-    title: string;
-    date: string;
-    href: string;
-    tag: "Private Wealth Pulse" | "Article";
-    linkedin?: string;
-  }> = [];
+  // basic sort: newest first (if date is not ISO, they’ll stay at bottom)
+  const sorted = [...insights].sort((a, b) => {
+    const da = Date.parse(a.date || "");
+    const db = Date.parse(b.date || "");
+    if (Number.isNaN(da) && Number.isNaN(db)) return 0;
+    if (Number.isNaN(da)) return 1;
+    if (Number.isNaN(db)) return -1;
+    return db - da;
+  });
 
-  const articles = insights.map((it) => ({
-    title: it.title,
-    date: it.date || "",
-    href: it.href, // internal /insights/...
-    tag: "Article" as const,
-    linkedin: it.linkedin,
-  }));
-
-  // 3) JSON-LD
+  // JSON-LD
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    itemListElement: articles.map((it, i) => ({
+    itemListElement: sorted.map((it, i) => ({
       "@type": "ListItem",
       position: i + 1,
       url: `${SITE}${it.href}`,
@@ -124,9 +116,70 @@ export default function InsightsPage() {
           Dubai, Singapore, London &amp; New York.
         </p>
 
-        {/* This is what was empty before */}
-        <div className="mt-8">
-          <ClientInsights newsletter={newsletter} articles={articles} />
+        {/* 🟣 2) ACTUAL LIST */}
+        <div className="mt-8 grid gap-6 md:grid-cols-2">
+          {sorted.length === 0 ? (
+            <p className="text-neutral-400 col-span-full">
+              No insights found. Make sure <code>data/articles.json</code> is in
+              the repo.
+            </p>
+          ) : (
+            sorted.map((it) => {
+              // displayable date
+              let displayDate = "—";
+              if (it.date) {
+                const parsed = Date.parse(it.date);
+                if (!Number.isNaN(parsed)) {
+                  displayDate = new Date(parsed).toLocaleDateString("en-CH", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  });
+                } else {
+                  displayDate = it.date;
+                }
+              }
+              return (
+                <article
+                  key={it.href}
+                  className="rounded-2xl border border-white/5 bg-white/5 p-5 backdrop-blur"
+                >
+                  <p className="text-xs uppercase tracking-wide text-emerald-200/70">
+                    {it.tag ?? "Article"}
+                  </p>
+                  <h2 className="mt-2 text-lg font-semibold">
+                    <Link href={it.href} className="hover:underline">
+                      {it.title}
+                    </Link>
+                  </h2>
+                  <p className="mt-1 text-xs text-white/50">{displayDate}</p>
+                  {it.excerpt ? (
+                    <p className="mt-3 text-sm text-neutral-200 line-clamp-3">
+                      {it.excerpt}
+                    </p>
+                  ) : null}
+                  <div className="mt-4 flex gap-3">
+                    <Link
+                      href={it.href}
+                      className="text-sm font-medium text-white underline-offset-4 hover:underline"
+                    >
+                      Read on site →
+                    </Link>
+                    {it.linkedin ? (
+                      <a
+                        href={it.linkedin}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sm text-neutral-300 hover:text-white"
+                      >
+                        LinkedIn ↗
+                      </a>
+                    ) : null}
+                  </div>
+                </article>
+              );
+            })
+          )}
         </div>
 
         {/* Hub backlinks */}
