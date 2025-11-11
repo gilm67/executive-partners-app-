@@ -1,7 +1,7 @@
 /* app/insights/page.tsx */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getInsights } from "@/lib/insights"; // ← same source as detail page
+import { getInsights } from "@/lib/insights";
 
 /* ---------------- helpers ---------------- */
 function siteBase() {
@@ -36,11 +36,10 @@ export const metadata: Metadata = {
 export const revalidate = 1800;
 
 /* ---------------- Page ---------------- */
-export default function InsightsPage() {
-  // now we load from JSON (public/data/articles.json) via lib/insights.ts
-  const insights = getInsights(); // [{title, href, date, excerpt, linkedin, tag}...]
+export default async function InsightsPage() {
+  // ⬅️ await because lib/insights.ts returns Promise<Insight[]>
+  const insights = await getInsights();
 
-  // JSON-LD (Blog + ItemList + Breadcrumb)
   const blogJsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
@@ -111,7 +110,7 @@ export default function InsightsPage() {
           Dubai, Singapore, London &amp; New York.
         </p>
 
-        {/* List of articles from JSON */}
+        {/* List from JSON */}
         <div className="mt-10 grid gap-5">
           {insights.map((item) => (
             <article
