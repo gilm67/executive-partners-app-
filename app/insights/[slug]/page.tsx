@@ -4,6 +4,14 @@ import path from "path";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+type Article = {
+  title: string;
+  linkedin: string;
+  date?: string;
+  excerpt?: string;
+  body?: string;
+};
+
 /* ---------- helpers ---------- */
 function siteBase() {
   const raw =
@@ -15,64 +23,75 @@ function siteBase() {
 }
 const SITE = siteBase();
 
-/* ---------- Types ---------- */
-type Article = {
-  title: string;
-  linkedin: string;
-  date?: string;
-  excerpt?: string;
-  href?: string;
-};
-
-/* ---------- Data ---------- */
 function loadArticles(): Article[] {
   try {
-    const filePath = path.join(process.cwd(), "public/data/articles.json");
-    const raw = fs.readFileSync(filePath, "utf8");
+    const file = path.join(process.cwd(), "public/data/articles.json");
+    const raw = fs.readFileSync(file, "utf8");
     return JSON.parse(raw);
-  } catch (err) {
-    console.error("Error loading articles.json:", err);
+  } catch (e) {
+    console.error("cannot read public/data/articles.json", e);
     return [];
   }
 }
 
-function slugify(title: string) {
-  return title
+// base slugify
+function slugifyBase(s: string) {
+  return s
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
 
-/* ---------- Metadata ---------- */
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const articles = loadArticles();
-  const post = articles.find((a) => slugify(a.title) === params.slug);
+// stricter normalizer: collapse multiple dashes and trim ending dash
+function normalizeSlug(s: string) {
+  return slugifyBase(s).replace(/-+/g, "-").replace(/-$/, "");
+}
 
-  const title = post?.title ?? "Executive Partners Insights";
-  const description = post?.excerpt ?? "Private Banking & Wealth Management insights.";
+/* ---------- metadata ---------- */
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const all = loadArticles();
+  const targetSlug = normalizeSlug(decodeURIComponent(params.slug));
+  const article =
+    all.find((a) => normalizeSlug(a.title) === targetSlug) ||
+    null;
+
+  const title = article?.title ?? "Executive Partners Insights";
+  const desc = article?.excerpt ?? "Private Banking & Wealth Management insights.";
   const url = `${SITE}/insights/${params.slug}`;
 
   return {
     title: { absolute: title },
-    description,
+    description: desc,
     alternates: { canonical: url },
     openGraph: {
       type: "article",
       url,
       title,
-      description,
+      description: desc,
       siteName: "Executive Partners",
       images: [{ url: "/og.png" }],
     },
   };
 }
 
-/* ---------- Page ---------- */
-export default async function InsightPage({ params }: { params: { slug: string } }) {
+/* ---------- page ---------- */
+export default async function InsightPostPage({ params }: { params: { slug: string } }) {
   const articles = loadArticles();
-  const post = articles.find((a) => slugify(a.title) === params.slug);
+  const targetSlug = normalizeSlug(decodeURIComponent(params.slug));
 
-  if (!post) {
+  // try exact normalized match
+  let article =
+    articles.find((a) => normalizeSlug(a.title) === targetSlug) || null;
+
+  // fallback: sometimes LinkedIn adds tracking, so try contains
+  if (!article) {
+    article =
+      articles.find((a) =>
+        normalizeSlug(a.title).includes(targetSlug)
+      ) || null;
+  }
+
+  if (!article) {
     return (
       <main className="min-h-screen bg-[#0B0E13] text-white">
         <div className="mx-auto max-w-3xl px-4 py-16 text-center">
@@ -89,23 +108,20 @@ export default async function InsightPage({ params }: { params: { slug: string }
     );
   }
 
-  const niceDate = post.date
-    ? new Date(post.date).toLocaleDateString("en-CH", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
-    : "Published on LinkedIn";
+  const dateLabel =
+    article.date && article.date.trim().length > 0
+      ? article.date
+      : "Published on LinkedIn";
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
-      {/* background glow */}
+      {/* background */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(1200px 420px at 18% -10%, rgba(59,130,246,.16), rgba(59,130,246,0)), radial-gradient(1000px 380px at 110% 0%, rgba(16,185,129,.15), rgba(16,185,129,0))",
+            "radial-gradient(1200px 420px at 18% -10%, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%), radial-gradient(1000px 380px at 110% 0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%)",
         }}
       />
 
@@ -115,31 +131,26 @@ export default async function InsightPage({ params }: { params: { slug: string }
         </div>
 
         <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
-          {post.title}
+          {article.title}
         </h1>
-        <p className="mt-2 text-sm text-white/70">{niceDate}</p>
+        <p className="mt-2 text-sm text-white/70">{dateLabel}</p>
 
-        <article className="prose prose-invert mt-6 max-w-none">
-          {post.excerpt ? (
-            <p className="text-neutral-300 leading-7 whitespace-pre-line">
-              {post.excerpt}
-            </p>
-          ) : (
-            <p className="text-neutral-500">No excerpt available.</p>
-          )}
+        <article className="prose prose-invert mt-6 max-w-none whitespace-pre-line leading-relaxed">
+          {article.body || article.excerpt || "No content available."}
         </article>
 
-        {/* LinkedIn button */}
-        <div className="mt-8">
-          <a
-            href={post.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium hover:bg-white/10"
-          >
-            View full article on LinkedIn ↗
-          </a>
-        </div>
+        {article.linkedin ? (
+          <div className="mt-8">
+            <a
+              href={article.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium hover:bg-white/10"
+            >
+              View on LinkedIn ↗
+            </a>
+          </div>
+        ) : null}
 
         <div className="mt-8 text-sm text-neutral-400">
           <Link href="/insights" className="underline underline-offset-4">
