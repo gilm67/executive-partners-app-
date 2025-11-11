@@ -1,1 +1,2 @@
-export { default, metadata } from "../../insights/page";
+// app/en/insights/page.tsx
+export { default, metadata, revalidate } from "../../insights/page";
