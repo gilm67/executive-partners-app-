@@ -1,8 +1,13 @@
-// app/insights/[slug]/page.tsx
+/* app/insights/[slug]/page.tsx */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getInsightBySlug, slugify, getAllInsights } from "@/lib/insights/posts";
+import {
+  getAllInsights,
+  getInsightBySlug,
+  slugify,
+} from "../../../lib/insights/posts";
 
+/* ---------- helpers ---------- */
 function siteBase() {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
@@ -13,15 +18,21 @@ function siteBase() {
 }
 const SITE = siteBase();
 
-export const revalidate = 1800;
+export const revalidate = 3600;
 
-/* --------------------------------------------
-   Generate metadata for SEO
--------------------------------------------- */
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+/* ---------- SEO metadata ---------- */
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
   const post = getInsightBySlug(params.slug);
-  const title = post?.title ?? "Executive Partners — Private Wealth Pulse";
-  const description = post?.excerpt ?? "Private banking & wealth management insights.";
+
+  const title =
+    post?.title ?? "Private Wealth Pulse | Executive Partners Insights";
+  const description =
+    post?.excerpt ??
+    "Executive Partners insights on Private Banking & Wealth Management hiring trends.";
   const url = `${SITE}/insights/${params.slug}`;
 
   return {
@@ -36,25 +47,26 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       siteName: "Executive Partners",
       images: [{ url: "/og.png" }],
     },
+    robots: { index: true, follow: true },
   };
 }
 
-/* --------------------------------------------
-   Page rendering
--------------------------------------------- */
-export default function InsightPage({ params }: { params: { slug: string } }) {
+/* ---------- page ---------- */
+export default function InsightPostPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const post = getInsightBySlug(params.slug);
 
   if (!post) {
-    // 🔧 for debugging: show what slug was searched
-    console.warn("Article not found for slug:", params.slug);
     return (
       <main className="min-h-screen bg-[#0B0E13] text-white">
         <div className="mx-auto max-w-3xl px-4 py-16 text-center">
           <h1 className="text-2xl font-semibold">Article not found</h1>
           <p className="mt-2 text-neutral-300">
             Try our{" "}
-            <Link href="/insights" className="underline">
+            <Link href="/insights" className="underline underline-offset-4">
               Insights hub
             </Link>
             .
@@ -64,78 +76,79 @@ export default function InsightPage({ params }: { params: { slug: string } }) {
     );
   }
 
+  const pageUrl = `${SITE}${post.href}`;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
+    datePublished: post.date,
+    dateModified: post.date,
     description: post.excerpt,
-    datePublished: post.date || undefined,
-    mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE}${post.href}` },
+    mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+    author: {
+      "@type": "Organization",
+      name: "Executive Partners",
+      url: SITE,
+    },
     publisher: {
       "@type": "Organization",
       name: "Executive Partners",
-      logo: { "@type": "ImageObject", url: `${SITE}/icon.png` },
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE}/icon.png`,
+      },
     },
   };
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
-      {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      {/* ambient bg */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(1200px 420px at 18% -10%, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%), radial-gradient(1000px 380px at 110% 0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%)",
+        }}
       />
 
       <div className="relative mx-auto w-full max-w-3xl px-4 pb-20 pt-12">
         <div className="w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           Private Wealth Pulse — Insights
         </div>
+
         <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
           {post.title}
         </h1>
-        {post.date && (
-          <p className="mt-2 text-sm text-white/70">{post.date}</p>
-        )}
-
-        <p className="mt-6 text-base text-neutral-200 leading-7 whitespace-pre-line">
-          {post.excerpt ||
-            "This article is currently published on LinkedIn. You can read the full version there."}
+        <p className="mt-2 text-sm text-white/70">
+          {post.date ? post.date : "Published on LinkedIn"}
         </p>
 
-        <div className="mt-6">
-          <a
-            href={post.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium hover:bg-white/10"
-          >
-            View this article on LinkedIn ↗
-          </a>
-        </div>
+        {/* we only scraped excerpt, so show that */}
+        <article className="prose prose-invert mt-6 max-w-none">
+          <p className="text-neutral-200 leading-7">{post.excerpt}</p>
+        </article>
 
-        <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
-          <h2 className="text-lg font-bold">Explore related pages</h2>
-          <div className="mt-3 flex flex-wrap gap-3 text-sm">
-            <Link href="/private-banking-jobs-switzerland" className="underline hover:text-white">
-              See open Private Banking jobs in Switzerland
-            </Link>
-            <Link href="/private-banking-jobs-dubai" className="underline hover:text-white">
-              Private Banking roles in Dubai
-            </Link>
-            <Link href="/private-banking-jobs-singapore" className="underline hover:text-white">
-              Private Banking roles in Singapore
-            </Link>
-            <Link href="/private-banking-jobs-london" className="underline hover:text-white">
-              Private Banking roles in London
-            </Link>
-            <Link href="/private-banking-jobs-new-york" className="underline hover:text-white">
-              Private Banking roles in New York
-            </Link>
+        {post.linkedin ? (
+          <div className="mt-6">
+            <a
+              href={post.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium hover:bg-white/10"
+            >
+              View full version on LinkedIn
+              <span aria-hidden="true">↗</span>
+            </a>
           </div>
-        </section>
+        ) : null}
 
         <div className="mt-8 text-sm text-neutral-400">
-          <Link href="/insights" className="underline">
+          <Link href="/insights" className="underline underline-offset-4">
             ← Back to Insights
           </Link>
         </div>

@@ -46,11 +46,11 @@ export const revalidate = 1800;
 
 /* ---------------- Page ---------------- */
 export default async function InsightsPage() {
-  // 1) get scraped data
-  const insights = getAllInsights();
+  // 1) read scraped articles from data/articles.json (through lib)
+  const scraped = getAllInsights();
 
-  // 2) adapt to what ClientInsights expects
-  const adapted: ClientItem[] = insights.map((it) => ({
+  // 2) adapt to what the client component wants
+  const adapted: ClientItem[] = scraped.map((it) => ({
     title: it.title,
     date: it.date && it.date.trim() ? it.date : "Published on LinkedIn",
     href: it.href,
@@ -58,11 +58,13 @@ export default async function InsightsPage() {
     linkedin: it.linkedin,
   }));
 
-  // split (everything is Article right now, but we keep the API)
+  // your component has two tabs, so we give it two arrays
   const articles = adapted.filter((x) => x.tag === "Article");
-  const newsletter = adapted.filter((x) => x.tag === "Private Wealth Pulse");
+  const newsletter: ClientItem[] = adapted.filter(
+    (x) => x.tag === "Private Wealth Pulse"
+  );
 
-  // JSON-LD
+  // JSON-LD (optional, same as before)
   const blogJsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
@@ -119,7 +121,6 @@ export default async function InsightsPage() {
         }}
       />
 
-      {/* Header */}
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           Weekly market pulse — Private Banking &amp; Wealth Management
@@ -133,6 +134,7 @@ export default async function InsightsPage() {
           Switzerland, Dubai, Singapore, London &amp; New York.
         </p>
 
+        {/* ✅ your existing client layout now receives real data */}
         <div className="mt-8">
           <ClientInsights newsletter={newsletter} articles={articles} />
         </div>
@@ -173,13 +175,6 @@ export default async function InsightsPage() {
             </Link>
           </div>
         </section>
-
-        <p className="mt-6 text-center text-sm text-neutral-400">
-          Subscribe via{" "}
-          <a href="/rss.xml" className="underline hover:text-white">
-            RSS
-          </a>
-        </p>
       </div>
     </main>
   );
