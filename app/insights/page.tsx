@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ClientInsights from "./ClientInsights";
-import { getAllInsights } from "../../lib/insights/posts";
+import { getAllInsights } from "@/lib/insights/posts";
 
 function siteBase() {
   const raw =
@@ -18,7 +18,7 @@ const PAGE_URL = `${SITE}/insights`;
 export const metadata: Metadata = {
   title: { absolute: "Private Wealth Pulse — Insights | Executive Partners" },
   description:
-    "Private Wealth Pulse and articles on Private Banking & Wealth Management hiring. Switzerland, Dubai, Singapore, London & New York coverage.",
+    "Weekly Private Wealth Pulse and articles on Private Banking & Wealth Management hiring. Switzerland, Dubai, Singapore, London & New York coverage.",
   alternates: { canonical: "/insights" },
   openGraph: {
     type: "website",
@@ -35,30 +35,46 @@ export const metadata: Metadata = {
 export const revalidate = 1800;
 
 export default function InsightsPage() {
-  // pull from JSON
+  // 1) pull everything from scraped JSON
   const insights = getAllInsights();
 
-  // the client component expects 2 arrays
+  // 2) your client component expects two buckets, so:
+  const newsletter: Array<{
+    title: string;
+    date: string;
+    href: string;
+    tag: "Private Wealth Pulse" | "Article";
+    linkedin?: string;
+  }> = [];
+
   const articles = insights.map((it) => ({
     title: it.title,
     date: it.date || "",
-    href: it.href,
-    tag: it.tag,
-    // we keep linkedin off the client props to stay small
+    href: it.href, // internal /insights/...
+    tag: "Article" as const,
+    linkedin: it.linkedin,
   }));
-  const newsletter: typeof articles = [];
 
+  // 3) JSON-LD
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    itemListElement: insights.map((it, i) => ({
+    itemListElement: articles.map((it, i) => ({
       "@type": "ListItem",
       position: i + 1,
       url: `${SITE}${it.href}`,
       name: it.title,
     })),
   };
-
+  const blogJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "Private Wealth Pulse — Insights",
+    url: PAGE_URL,
+    description:
+      "Private Banking & Wealth Management market pulse and hiring insights.",
+    isPartOf: { "@type": "WebSite", name: "Executive Partners", url: SITE },
+  };
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -70,6 +86,11 @@ export default function InsightsPage() {
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
@@ -89,6 +110,7 @@ export default function InsightsPage() {
         }}
       />
 
+      {/* Header */}
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           Weekly market pulse — Private Banking &amp; Wealth Management
@@ -102,31 +124,54 @@ export default function InsightsPage() {
           Dubai, Singapore, London &amp; New York.
         </p>
 
-        {/* this is your existing layout — now with real data */}
-        <div className="mt-10">
+        {/* This is what was empty before */}
+        <div className="mt-8">
           <ClientInsights newsletter={newsletter} articles={articles} />
         </div>
 
+        {/* Hub backlinks */}
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <h3 className="text-lg font-semibold">Explore related pages</h3>
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
-            <Link href="/private-banking-jobs-switzerland" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-switzerland"
+              className="underline hover:text-white"
+            >
               See open Private Banking jobs in Switzerland
             </Link>
-            <Link href="/private-banking-jobs-dubai" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-dubai"
+              className="underline hover:text-white"
+            >
               Private Banking roles in Dubai
             </Link>
-            <Link href="/private-banking-jobs-singapore" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-singapore"
+              className="underline hover:text-white"
+            >
               Private Banking roles in Singapore
             </Link>
-            <Link href="/private-banking-jobs-london" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-london"
+              className="underline hover:text-white"
+            >
               Private Banking roles in London
             </Link>
-            <Link href="/private-banking-jobs-new-york" className="underline hover:text-white">
+            <Link
+              href="/private-banking-jobs-new-york"
+              className="underline hover:text-white"
+            >
               Private Banking roles in New York
             </Link>
           </div>
         </section>
+
+        <p className="mt-6 text-center text-sm text-neutral-400">
+          Subscribe via{" "}
+          <a href="/rss.xml" className="underline hover:text-white">
+            RSS
+          </a>
+        </p>
       </div>
     </main>
   );
