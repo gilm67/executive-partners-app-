@@ -1,9 +1,9 @@
 /* app/insights/page.tsx */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getAllInsights, type Insight } from "@/lib/insights/posts";
+import { getAllInsights } from "@/lib/insights/posts";
 
-/* ---------- helpers ---------- */
+/* helpers */
 function siteBase() {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL ||
@@ -15,7 +15,7 @@ function siteBase() {
 const SITE = siteBase();
 const PAGE_URL = `${SITE}/insights`;
 
-/* ---------- SEO ---------- */
+/* SEO */
 export const metadata: Metadata = {
   title: { absolute: "Private Wealth Pulse — Insights | Executive Partners" },
   description:
@@ -35,27 +35,20 @@ export const metadata: Metadata = {
 
 export const revalidate = 1800;
 
-/* ---------- page ---------- */
+/* page */
 export default function InsightsPage() {
-  // 1) pull everything from the hard-coded lib
-  let insights: Insight[] = [];
-  try {
-    insights = getAllInsights() ?? [];
-  } catch (e) {
-    insights = [];
-  }
+  // make sure we always have an array
+  const insights = getAllInsights() ?? [];
 
-  // 2) sort newest-ish first
   const sorted = [...insights].sort((a, b) => {
     const da = Date.parse(a.date || "");
     const db = Date.parse(b.date || "");
-    if (Number.isNaN(da) && Number.isNaN(db)) return 0;
+    if (Number.isNaN(da) && Number.isNaN(db)) return a.title.localeCompare(b.title);
     if (Number.isNaN(da)) return 1;
     if (Number.isNaN(db)) return -1;
     return db - da;
   });
 
-  // 3) JSON-LD
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -75,14 +68,6 @@ export default function InsightsPage() {
       "Private Banking & Wealth Management market pulse and hiring insights.",
     isPartOf: { "@type": "WebSite", name: "Executive Partners", url: SITE },
   };
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: SITE },
-      { "@type": "ListItem", position: 2, name: "Insights", item: PAGE_URL },
-    ],
-  };
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
@@ -95,12 +80,8 @@ export default function InsightsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
 
-      {/* background */}
+      {/* Background glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -111,7 +92,7 @@ export default function InsightsPage() {
       />
 
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
-        {/* hero */}
+        {/* Header */}
         <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
           Weekly market pulse — Private Banking &amp; Wealth Management
         </div>
@@ -120,35 +101,32 @@ export default function InsightsPage() {
           Private Wealth Pulse — Insights
         </h1>
         <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
-          Hiring trends, market notes and portability signals across Switzerland,
-          Dubai, Singapore, London &amp; New York.
+          Hiring trends, market notes and portability signals across
+          Switzerland, Dubai, Singapore, London &amp; New York.
         </p>
 
-        {/* list */}
+        {/* List */}
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           {sorted.length === 0 ? (
             <p className="col-span-full text-center text-neutral-400">
-              No insights found. (This means
-              <code className="mx-1">lib/insights/posts.ts</code>
-              didn’t load or the array inside it is empty.)
+              No insights found. If you see this in production, check that
+              <code className="ml-1">getAllInsights()</code> in
+              <code className="ml-1">lib/insights/posts.ts</code> returns your
+              embedded array.
             </p>
           ) : (
             sorted.map((it) => {
-              // displayable date
               let displayDate = "—";
               if (it.date) {
                 const parsed = Date.parse(it.date);
-                if (!Number.isNaN(parsed)) {
-                  displayDate = new Date(parsed).toLocaleDateString("en-CH", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  });
-                } else {
-                  displayDate = it.date;
-                }
+                displayDate = Number.isNaN(parsed)
+                  ? it.date
+                  : new Date(parsed).toLocaleDateString("en-CH", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    });
               }
-
               return (
                 <article
                   key={it.href}
@@ -192,7 +170,7 @@ export default function InsightsPage() {
           )}
         </div>
 
-        {/* related pages */}
+        {/* Hub backlinks */}
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <h3 className="text-lg font-semibold">Explore related pages</h3>
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
