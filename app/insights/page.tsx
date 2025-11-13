@@ -15,6 +15,9 @@ function siteBase() {
 const SITE = siteBase();
 const PAGE_URL = `${SITE}/insights`;
 
+const isIsoDate = (value: string | undefined) =>
+  !!value && /^\d{4}-\d{2}-\d{2}$/.test(value.trim());
+
 /* SEO */
 export const metadata: Metadata = {
   title: { absolute: "Private Wealth Pulse — Insights | Executive Partners" },
@@ -37,15 +40,24 @@ export const revalidate = 1800;
 
 /* page */
 export default function InsightsPage() {
-  // make sure we always have an array
-  const insights = getAllInsights() ?? [];
+  const insights = getAllInsights();
 
+  // sort: ISO dates (YYYY-MM-DD) first, newest to oldest; others stay in title order
   const sorted = [...insights].sort((a, b) => {
-    const da = Date.parse(a.date || "");
-    const db = Date.parse(b.date || "");
-    if (Number.isNaN(da) && Number.isNaN(db)) return a.title.localeCompare(b.title);
-    if (Number.isNaN(da)) return 1;
-    if (Number.isNaN(db)) return -1;
+    const ad = a.date?.trim() ?? "";
+    const bd = b.date?.trim() ?? "";
+
+    const aIso = isIsoDate(ad);
+    const bIso = isIsoDate(bd);
+
+    if (!aIso && !bIso) {
+      return a.title.localeCompare(b.title);
+    }
+    if (!aIso) return 1;
+    if (!bIso) return -1;
+
+    const da = Date.parse(ad);
+    const db = Date.parse(bd);
     return db - da;
   });
 
@@ -107,67 +119,69 @@ export default function InsightsPage() {
 
         {/* List */}
         <div className="mt-8 grid gap-6 md:grid-cols-2">
-          {sorted.length === 0 ? (
-            <p className="col-span-full text-center text-neutral-400">
-              No insights found. If you see this in production, check that
-              <code className="ml-1">getAllInsights()</code> in
-              <code className="ml-1">lib/insights/posts.ts</code> returns your
-              embedded array.
-            </p>
-          ) : (
-            sorted.map((it) => {
-              let displayDate = "—";
-              if (it.date) {
-                const parsed = Date.parse(it.date);
-                displayDate = Number.isNaN(parsed)
-                  ? it.date
-                  : new Date(parsed).toLocaleDateString("en-CH", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    });
+          {sorted.map((it) => {
+            let displayDate = "—";
+
+            if (it.date) {
+              const trimmed = it.date.trim();
+
+              if (isIsoDate(trimmed)) {
+                const parsed = Date.parse(trimmed);
+                if (!Number.isNaN(parsed)) {
+                  displayDate = new Date(parsed).toLocaleDateString("en-CH", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  });
+                } else {
+                  displayDate = trimmed;
+                }
+              } else {
+                // show exactly what you stored in JSON (no guessing)
+                displayDate = trimmed;
               }
-              return (
-                <article
-                  key={it.href}
-                  className="rounded-2xl border border-white/5 bg-white/5 p-5 backdrop-blur"
-                >
-                  <p className="text-xs uppercase tracking-wide text-emerald-200/70">
-                    {it.tag ?? "Article"}
+            }
+
+            return (
+              <article
+                key={it.href}
+                className="rounded-2xl border border-white/5 bg-white/5 p-5 backdrop-blur"
+              >
+                <p className="text-xs uppercase tracking-wide text-emerald-200/70">
+                  {it.tag ?? "Article"}
+                </p>
+                <h2 className="mt-2 text-lg font-semibold">
+                  <Link href={it.href} className="hover:underline">
+                    {it.title}
+                  </Link>
+                </h2>
+                <p className="mt-1 text-xs text-white/50">{displayDate}</p>
+                {it.excerpt ? (
+                  <p className="mt-3 text-sm text-neutral-200 line-clamp-3">
+                    {it.excerpt}
                   </p>
-                  <h2 className="mt-2 text-lg font-semibold">
-                    <Link href={it.href} className="hover:underline">
-                      {it.title}
-                    </Link>
-                  </h2>
-                  <p className="mt-1 text-xs text-white/50">{displayDate}</p>
-                  {it.excerpt ? (
-                    <p className="mt-3 text-sm text-neutral-200 line-clamp-3">
-                      {it.excerpt}
-                    </p>
-                  ) : null}
-                  <div className="mt-4 flex gap-3">
-                    <Link
-                      href={it.href}
-                      className="text-sm font-medium text-white underline-offset-4 hover:underline"
+                ) : null}
+                <div className="mt-4 flex gap-3">
+                  <Link
+                    href={it.href}
+                    className="text-sm font-medium text-white underline-offset-4 hover:underline"
+                  >
+                    Read on site →
+                  </Link>
+                  {it.linkedin ? (
+                    <a
+                      href={it.linkedin}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm text-neutral-300 hover:text-white"
                     >
-                      Read on site →
-                    </Link>
-                    {it.linkedin ? (
-                      <a
-                        href={it.linkedin}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-sm text-neutral-300 hover:text-white"
-                      >
-                        LinkedIn ↗
-                      </a>
-                    ) : null}
-                  </div>
-                </article>
-              );
-            })
-          )}
+                      LinkedIn ↗
+                    </a>
+                  ) : null}
+                </div>
+              </article>
+            );
+          })}
         </div>
 
         {/* Hub backlinks */}
