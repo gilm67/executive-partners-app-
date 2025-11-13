@@ -1,1 +1,16 @@
-[]
+// data/articles.json
+[
+  {
+    "title": "Turbulent Time: Crisis Resilience and Market Leadership in Turbulent Times  (Middle East Conflict)",
+    "linkedin": "https://www.linkedin.com/pulse/turbulent-time-crisis-resilience-market-leadership-times-m-chalem--wu0fe?trackingId=…",
+    "date": "",
+    "excerpt": "The Swiss private banking sector demonstrates exceptional stability…"
+  },
+  {
+    "title": "Global Markets Outlook 2025: Strategic Insights for Private Bankers",
+    "linkedin": "https://www.linkedin.com/pulse/global-markets-outlook-2025-strategic-insights-gil-m-chalem--hjcre?trackingId=…",
+    "date": "2025-01-05",          // 👉 if you want nice dates, use ISO like this
+    "excerpt": "The global economic landscape in 2025 presents a mosaic…"
+  }
+  // … all the other objects, exactly as in your big JSON
+]
