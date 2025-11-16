@@ -70,7 +70,7 @@ function Text({
   );
 }
 
-/* ✅ FIX HERE: show empty field instead of 0 */
+/* ✅ show empty field instead of 0 */
 function Num({
   label,
   value,
@@ -89,7 +89,6 @@ function Num({
         type="number"
         inputMode="decimal"
         className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
-        /* if value is 0 → show "", user types normally */
         value={Number.isFinite(value) ? (value === 0 ? "" : value) : ""}
         onChange={onChange}
         step={step}
@@ -324,7 +323,12 @@ function CandidateBlock({
             onChange={onCand("lastBonus")}
             step={1_000}
           />
-          <Num label="Years of Experience *" value={candidate.yearsExperience} onChange={onCand("yearsExperience")} step={1} />
+          <Num
+            label="Years of Experience *"
+            value={candidate.yearsExperience}
+            onChange={onCand("yearsExperience")}
+            step={1}
+          />
           <Select
             label="Current Role *"
             value={candidate.role}
@@ -390,9 +394,24 @@ function CandidateBlock({
               "China",
             ]}
           />
-          <Num label="Inherited Book (% of AUM) *" value={candidate.inheritedBookPct} onChange={onCand("inheritedBookPct")} step={1} />
-          <Num label="Current Number of Clients *" value={candidate.currentClients} onChange={onCand("currentClients")} step={1} />
-          <Num label="Current AUM (in million CHF) *" value={candidate.currentAumMM} onChange={onCand("currentAumMM")} step={0.1} />
+          <Num
+            label="Inherited Book (% of AUM) *"
+            value={candidate.inheritedBookPct}
+            onChange={onCand("inheritedBookPct")}
+            step={1}
+          />
+          <Num
+            label="Current Number of Clients *"
+            value={candidate.currentClients}
+            onChange={onCand("currentClients")}
+            step={1}
+          />
+          <Num
+            label="Current AUM (in million CHF) *"
+            value={candidate.currentAumMM}
+            onChange={onCand("currentAumMM")}
+            step={0.1}
+          />
         </div>
 
         <div className="mt-3 flex items-center gap-2">
@@ -492,6 +511,9 @@ function NetNewMoney({
   const fmt = (n: number) =>
     new Intl.NumberFormat("en-CH", { style: "currency", currency, maximumFractionDigits: 0 }).format(n || 0);
 
+  const toDisplay = (val: number) =>
+    Number.isFinite(val) && val !== 0 ? val / 1_000_000 : "";
+
   return (
     <section className="container-max py-6 overflow-visible">
       <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
@@ -510,7 +532,7 @@ function NetNewMoney({
               type="number"
               inputMode="decimal"
               step={0.1}
-              value={Number.isFinite(nnmY1) ? nnmY1 / 1_000_000 : 0}
+              value={toDisplay(nnmY1)}
               onChange={(e) => onPatch({ nnmY1: Number(e.target.value || 0) * 1_000_000 })}
               className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
               placeholder="e.g. 20"
@@ -522,7 +544,7 @@ function NetNewMoney({
               type="number"
               inputMode="decimal"
               step={0.1}
-              value={Number.isFinite(nnmY2) ? nnmY2 / 1_000_000 : 0}
+              value={toDisplay(nnmY2)}
               onChange={(e) => onPatch({ nnmY2: Number(e.target.value || 0) * 1_000_000 })}
               className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
               placeholder="e.g. 25"
@@ -534,7 +556,7 @@ function NetNewMoney({
               type="number"
               inputMode="decimal"
               step={0.1}
-              value={Number.isFinite(nnmY3) ? nnmY3 / 1_000_000 : 0}
+              value={toDisplay(nnmY3)}
               onChange={(e) => onPatch({ nnmY3: Number(e.target.value || 0) * 1_000_000 })}
               className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
               placeholder="e.g. 30"
@@ -665,7 +687,9 @@ function RevenueCostsSimple({
               <tr>
                 <th className="px-3 py-2 text-left font-medium">Year</th>
                 <th className="px-3 py-2 text-left font-medium">Gross Revenue</th>
-                <th className="px-3 py-2 text-left font-medium">Fixed Cost ({useAutoFixed ? "Base×1.25" : "Custom"})</th>
+                <th className="px-3 py-2 text-left font-medium">
+                  Fixed Cost ({useAutoFixed ? "Base×1.25" : "Custom"})
+                </th>
                 <th className="px-3 py-2 text-left font-medium">Net Margin</th>
               </tr>
             </thead>
@@ -686,7 +710,9 @@ function RevenueCostsSimple({
                 <td className="px-3 py-2">Year 3</td>
                 <td className="px-3 py-2">
                   {fmtCurrency(rev3, currency)}{" "}
-                  <span className="text-xs text-white/60">(Net margin {rev3 > 0 ? netMarginY3Pct.toFixed(1) : 0}%)</span>
+                  <span className="text-xs text-white/60">
+                    (Net margin {rev3 > 0 ? netMarginY3Pct.toFixed(1) : 0}%)
+                  </span>
                 </td>
                 <td className="px-3 py-2">{fmtCurrency(fixed, currency)}</td>
                 <td className="px-3 py-2">{fmtCurrency(nm3, currency)}</td>
@@ -1187,7 +1213,6 @@ function FinalAnalysis({
     domicileSum,
     pep,
     exec,
-    company,
     prodCredit,
     prodStruct,
     prodHFPE,
@@ -1217,13 +1242,19 @@ function FinalAnalysis({
 
   const targetNetMargin = 0.35;
   const revNeededForTarget = useMemo(() => (1 - targetNetMargin > 0 ? fixed / (1 - targetNetMargin) : 0), [fixed]);
-  const roaNeededPct = useMemo(() => (nnmY3 > 0 ? (revNeededForTarget / nnmY3) * 100 : 0), [revNeededForTarget, nnmY3]);
+  const roaNeededPct = useMemo(
+    () => (nnmY3 > 0 ? (revNeededForTarget / nnmY3) * 100 : 0),
+    [revNeededForTarget, nnmY3]
+  );
   const roaGapBps = Math.max(0, Math.round((roaNeededPct - roaY3) * 100));
 
   const warnings: string[] = [];
-  if (serviceMixSum && Math.abs(100 - serviceMixSum) > 5) warnings.push(`Service mix totals ${serviceMixSum.toFixed(0)}% (aim ~100%).`);
-  if (assetTierSum && Math.abs(100 - assetTierSum) > 5) warnings.push(`Asset tiers total ${assetTierSum.toFixed(0)}% (aim ~100%).`);
-  if (domicileSum && Math.abs(100 - domicileSum) > 5) warnings.push(`Domicile shares total ${domicileSum.toFixed(0)}% (aim ~100%).`);
+  if (serviceMixSum && Math.abs(100 - serviceMixSum) > 5)
+    warnings.push(`Service mix totals ${serviceMixSum.toFixed(0)}% (aim ~100%).`);
+  if (assetTierSum && Math.abs(100 - assetTierSum) > 5)
+    warnings.push(`Asset tiers total ${assetTierSum.toFixed(0)}% (aim ~100%).`);
+  if (domicileSum && Math.abs(100 - domicileSum) > 5)
+    warnings.push(`Domicile shares total ${domicileSum.toFixed(0)}% (aim ~100%).`);
   if (pep === "Yes") warnings.push("PEP exposure flagged — expect enhanced onboarding/monitoring timelines.");
 
   const recs = [
@@ -1244,10 +1275,16 @@ function FinalAnalysis({
           fixed / 0.6,
           currency
         )}.`
-      : `Fixed cost discipline adequate (${fixedAsPctOfRev3.toFixed(0)}% of Y3 revenue). Keep variable-heavy stack.`,
+      : `Fixed cost discipline adequate (${fixedAsPctOfRev3.toFixed(
+          0
+        )}% of Y3 revenue). Keep a variable-heavy cost stack.`,
     nnmCAGR < 10
-      ? `NNM CAGR at ${nnmCAGR.toFixed(1)}% — concentrate pipeline on 3–5 anchor prospects; pre-commit custody and FX lines to accelerate conversion.`
-      : `NNM growth ${nnmCAGR.toFixed(1)}% — ensure pipeline depth to backfill slippage and sustain trajectory.`,
+      ? `NNM CAGR at ${nnmCAGR.toFixed(
+          1
+        )}% — concentrate pipeline on 3–5 anchor prospects; pre-commit custody and FX lines to accelerate conversion.`
+      : `NNM growth ${nnmCAGR.toFixed(
+          1
+        )}% — ensure pipeline depth to backfill slippage and sustain trajectory.`,
     exec === "Yes" && (prodCredit === "Yes" || prodStruct === "Yes" || prodHFPE === "Yes")
       ? `Leverage executive/entrepreneur footprint with structured yields and Lombard overlays; bundle treasury/FX to defend ROA.`
       : `Clarify monetization levers (advisory retainers, DPM tiers, financing spreads) to stabilize ROA.`,
@@ -1296,6 +1333,17 @@ function FinalAnalysis({
             <ul className="list-disc pl-6 space-y-2 text-sm text-amber-200">
               {warnings.map((w, i) => (
                 <li key={i}>{w}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {recs.length > 0 && (
+          <div className="mt-6">
+            <h3 className="text-sm font-semibold mb-2">Strategic Recommendations</h3>
+            <ul className="list-disc pl-6 space-y-2 text-sm text-white/80">
+              {recs.map((r, i) => (
+                <li key={i}>{r}</li>
               ))}
             </ul>
           </div>
@@ -1399,6 +1447,24 @@ export default function BpSimulatorClient() {
   const [roaY2, setRoaY2] = useState<number>(1.0);
   const [roaY3, setRoaY3] = useState<number>(1.0);
   const [netMarginPctY3, setNetMarginPctY3] = useState<number>(0);
+  // -----------------------------------------
+// Minimum input validation to show analytics
+// -----------------------------------------
+const hasMinimumInputs = useMemo(() => {
+  const hasBase = candidate?.baseSalary && candidate.baseSalary > 0;
+
+  const hasRoa =
+    (roaY1 && roaY1 > 0) ||
+    (roaY2 && roaY2 > 0) ||
+    (roaY3 && roaY3 > 0);
+
+  const hasNnm =
+    (nnmY1 && nnmY1 > 0) ||
+    (nnmY2 && nnmY2 > 0) ||
+    (nnmY3 && nnmY3 > 0);
+
+  return hasBase && hasRoa && hasNnm;
+}, [candidate.baseSalary, roaY1, roaY2, roaY3, nnmY1, nnmY2, nnmY3]);
 
   // start with one default prospect so it’s obvious
   const [prospects, setProspects] = useState<ProspectRow[]>([
@@ -1558,52 +1624,81 @@ export default function BpSimulatorClient() {
         prospectBands={prospectBands}
       />
 
-      <RevenueCostsSimple
-        currency={candidate.currency || "CHF"}
-        baseSalary={candidate.baseSalary}
-        useAutoFixed={autoFixedFromBase}
-        customFixedPerYear={customFixedPerYear}
-        nnmY1={nnmY1}
-        nnmY2={nnmY2}
-        nnmY3={nnmY3}
-        roaY1={roaY1}
-        roaY2={roaY2}
-        roaY3={roaY3}
-        onChangeRoa={(p) => {
-          if (p.roaY1 !== undefined) setRoaY1(p.roaY1);
-          if (p.roaY2 !== undefined) setRoaY2(p.roaY2);
-          if (p.roaY3 !== undefined) setRoaY3(p.roaY3);
-        }}
-        onNetMarginY3={setNetMarginPctY3}
-        showTips={showTips}
-      />
-
-      <FinalAnalysis
-        exporting={exporting}
-        onExportPdf={handleExportPdf}
-        onExportCsv={handleExportCsv}
-        insights={{
-          netMarginY3Pct: netMarginPctY3,
-          rev3,
-          fixed,
-          roaY1,
-          roaY2,
-          roaY3,
-          nnmY1,
-          nnmY2,
-          nnmY3,
-          currency: candidate.currency || "CHF",
-          serviceMixSum,
-          assetTierSum,
-          domicileSum,
-          pep: candidate.client_pep,
-          exec: candidate.client_executive,
-          company: candidate.client_company,
-          prodCredit: candidate.prod_creditLombard,
-          prodStruct: candidate.prod_structuredProducts,
-          prodHFPE: candidate.prod_hedgeFundsPE,
-        }}
-      />
+      {hasMinimumInputs ? (
+  <RevenueCostsSimple
+    currency={candidate.currency || "CHF"}
+    baseSalary={candidate.baseSalary}
+    useAutoFixed={autoFixedFromBase}
+    customFixedPerYear={customFixedPerYear}
+    nnmY1={nnmY1}
+    nnmY2={nnmY2}
+    nnmY3={nnmY3}
+    roaY1={roaY1}
+    roaY2={roaY2}
+    roaY3={roaY3}
+    onChangeRoa={(p) => {
+      if (p.roaY1 !== undefined) setRoaY1(p.roaY1);
+      if (p.roaY2 !== undefined) setRoaY2(p.roaY2);
+      if (p.roaY3 !== undefined) setRoaY3(p.roaY3);
+    }}
+    onNetMarginY3={setNetMarginPctY3}
+    showTips={showTips}
+  />
+) : (
+  <section className="container-max py-10">
+    <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10 backdrop-blur">
+      <h3 className="text-lg font-semibold text-white mb-1">📊 Waiting for Inputs</h3>
+      <p className="text-sm text-white/70">
+        Enter <strong>Base Salary</strong>, <strong>ROA%</strong> and <strong>NNM</strong> to generate the revenue,
+        fixed cost and net-margin analysis.
+      </p>
+      <ul className="list-disc text-white/60 text-xs pl-5 mt-3 space-y-1.5">
+        <li>Base Salary &gt; 0</li>
+        <li>At least one ROA year &gt; 0%</li>
+        <li>At least one NNM year &gt; 0</li>
+      </ul>
+    </div>
+  </section>
+)}
+{hasMinimumInputs ? (
+  <FinalAnalysis
+    exporting={exporting}
+    onExportPdf={handleExportPdf}
+    onExportCsv={handleExportCsv}
+    insights={{
+      netMarginY3Pct: netMarginPctY3,
+      rev3,
+      fixed,
+      roaY1,
+      roaY2,
+      roaY3,
+      nnmY1,
+      nnmY2,
+      nnmY3,
+      currency: candidate.currency || "CHF",
+      serviceMixSum,
+      assetTierSum,
+      domicileSum,
+      pep: candidate.client_pep,
+      exec: candidate.client_executive,
+      company: candidate.client_company,
+      prodCredit: candidate.prod_creditLombard,
+      prodStruct: candidate.prod_structuredProducts,
+      prodHFPE: candidate.prod_hedgeFundsPE,
+    }}
+  />
+) : (
+  <section className="container-max py-6">
+    <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10 backdrop-blur text-white/80">
+      <h3 className="text-lg font-semibold mb-1">📈 Analysis Pending</h3>
+      <p className="text-sm">
+        Complete the inputs above to unlock the full <strong>3-year business plan</strong>  
+        with revenue, NNM, ROA and net-margin diagnostics.
+      </p>
+    </div>
+  </section>
+)}
+      
     </main>
   );
 }
