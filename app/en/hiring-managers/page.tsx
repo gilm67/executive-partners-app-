@@ -1,12 +1,9 @@
 import Link from "next/link";
 
-export const metadata = {
-  title: "Hiring Managers – Executive Partners",
-  description:
-    "Targeted senior hires in Private Banking & Wealth Management across Geneva, Zurich, UK, US, Dubai, Singapore and Hong Kong.",
-};
+// Reuse existing SEO metadata from the base page
+export { metadata } from "../../hiring-managers/page";
 
-export default function HiringManagersPage() {
+export default function HiringManagersPageEn() {
   return (
     <main className="min-h-[70vh] px-4 md:px-6 lg:px-10 py-12 md:py-16">
       {/* TOP HERO CARD */}
@@ -30,22 +27,14 @@ export default function HiringManagersPage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
-                         bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
-                         hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
-                         focus-visible:ring-emerald-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent
-                         transition"
+              className="btn-primary btn-xl w-full md:w-auto"
             >
               Contact us about a hire
             </Link>
 
             <Link
               href="/jobs"
-              className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
-                         border border-white/15 bg-black/10 text-slate-100
-                         hover:border-white/35 hover:bg-white/5
-                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60
-                         transition"
+              className="btn-ghost w-full md:w-auto"
             >
               View live mandates
             </Link>
@@ -100,12 +89,8 @@ export default function HiringManagersPage() {
 
             <div className="mt-3 flex flex-col gap-3 md:mt-0 md:min-w-[230px]">
               <Link
-                href="/bp-simulator"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
-                           bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
-                           hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
-                           focus-visible:ring-emerald-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent
-                           transition"
+                href="/en/bp-simulator"
+                className="btn-primary btn-xl w-full md:w-auto"
               >
                 Open the Business Plan Simulator
               </Link>
@@ -143,22 +128,14 @@ export default function HiringManagersPage() {
             <div className="mt-4 flex flex-col gap-3 md:mt-0 md:min-w-[220px]">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
-                           bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
-                           hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
-                           focus-visible:ring-emerald-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent
-                           transition"
+                className="btn-primary w-full md:w-auto"
               >
                 Send us your brief
               </Link>
 
               <Link
-                href="/portability"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
-                           border border-emerald-400/60 bg-black/20 text-emerald-200
-                           hover:border-emerald-300 hover:bg-emerald-500/10
-                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/80
-                           transition"
+                href="/en/portability"
+                className="btn-outline-emerald w-full md:w-auto"
               >
                 Explore AUM portability
               </Link>
