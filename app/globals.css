@@ -49,7 +49,7 @@ body.body-grain::before {
     @apply btn text-base px-6 py-3 min-w-[13rem];
   }
 
-  /* PRIMARY — Gold gradient (base definition) */
+  /* PRIMARY — Gold gradient */
   .btn-primary {
     @apply btn text-[#1A1300];
     background-image: linear-gradient(
@@ -116,7 +116,6 @@ body.body-grain::before {
   color: #0B0E13;
   background: rgba(0,0,0,.04);
   border-color: rgba(0,0,0,.14);
-  box-shadow: 0 6px 20px rgba(0,0,0,.08);
 }
 .light-surface .btn-ghost:hover {
   background: rgba(0,0,0,.08);
@@ -136,16 +135,15 @@ body.body-grain::before {
       #FFE8A3 0%,
       #F6C859 45%,
       #D6A738 100%
-    );
-    background-color: transparent;
+    ) !important;
     color: #1A1300 !important;
   }
 }
 
 /* =========================================================
-   FINAL OVERRIDE – NOTHING CAN BEAT THIS
-   (ensures gold everywhere for .btn-primary)
+   FINAL OVERRIDE – ENSURES GOLD **EVERYWHERE**
    ========================================================= */
+button.btn-primary.btn-xl,
 button.btn-primary,
 a.btn-primary {
   background-image: linear-gradient(
