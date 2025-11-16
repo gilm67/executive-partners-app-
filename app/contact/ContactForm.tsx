@@ -48,24 +48,39 @@ export default function ContactForm() {
           I am a…
         </label>
         <div className="flex flex-wrap gap-2">
-          {["candidate", "hiring-manager", "other"].map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setContactType(t as ContactType)}
-              className={`btn-ghost text-xs px-3 py-1.5 ${
-                contactType === t
-                  ? "border-emerald-400/80 bg-emerald-500/10 text-emerald-200"
-                  : "opacity-80"
-              }`}
-            >
-              {t === "candidate"
-                ? "Candidate"
-                : t === "hiring-manager"
-                ? "Hiring Manager"
-                : "Other"}
-            </button>
-          ))}
+          <button
+            type="button"
+            onClick={() => setContactType("candidate")}
+            className={`btn-ghost text-xs px-3 py-1.5 ${
+              contactType === "candidate"
+                ? "border-emerald-400/80 bg-emerald-500/10 text-emerald-200"
+                : "opacity-80"
+            }`}
+          >
+            Candidate
+          </button>
+          <button
+            type="button"
+            onClick={() => setContactType("hiring-manager")}
+            className={`btn-ghost text-xs px-3 py-1.5 ${
+              contactType === "hiring-manager"
+                ? "border-emerald-400/80 bg-emerald-500/10 text-emerald-200"
+                : "opacity-80"
+            }`}
+          >
+            Hiring Manager
+          </button>
+          <button
+            type="button"
+            onClick={() => setContactType("other")}
+            className={`btn-ghost text-xs px-3 py-1.5 ${
+              contactType === "other"
+                ? "border-emerald-400/80 bg-emerald-500/10 text-emerald-200"
+                : "opacity-80"
+            }`}
+          >
+            Other
+          </button>
         </div>
         <input type="hidden" name="contactType" value={contactType} />
       </div>
@@ -117,18 +132,18 @@ export default function ContactForm() {
       {/* Hiring Manager fields */}
       {contactType === "hiring-manager" && (
         <div className="grid gap-4 md:grid-cols-3">
-          <InputHM name="hm_company" label="Company" placeholder="Bank / IAM / Family Office" />
-          <InputHM name="hm_role" label="Role" placeholder="Desk Head, COO..." />
-          <InputHM name="hm_location" label="Location" placeholder="Geneva, Zurich, Dubai..." />
+          <Field name="hm_company" label="Company" placeholder="Bank / IAM / Family Office" />
+          <Field name="hm_role" label="Role" placeholder="Desk Head, COO..." />
+          <Field name="hm_location" label="Location" placeholder="Geneva, Zurich, Dubai..." />
         </div>
       )}
 
       {/* Candidate fields */}
       {contactType === "candidate" && (
         <div className="grid gap-4 md:grid-cols-3">
-          <InputHM name="cand_bank" label="Current bank" placeholder="UBS, Julius Baer..." />
-          <InputHM name="cand_market" label="Market" placeholder="CH Onshore, MEA, LatAm..." />
-          <InputHM name="cand_aum_band" label="AUM band" placeholder="e.g. 200–500m, 500m+" />
+          <Field name="cand_bank" label="Current bank" placeholder="UBS, Julius Baer..." />
+          <Field name="cand_market" label="Market" placeholder="CH Onshore, MEA, LatAm..." />
+          <Field name="cand_aum_band" label="AUM band" placeholder="e.g. 200–500m, 500m+" />
         </div>
       )}
 
@@ -155,7 +170,7 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="btn btn-xl w-full md:w-auto disabled:opacity-70 disabled:cursor-not-allowed"
+          className="inline-flex w-full md:w-auto items-center justify-center rounded-full font-semibold text-sm leading-none px-6 py-3 min-w-[13rem] disabled:opacity-70 disabled:cursor-not-allowed"
           style={{
             backgroundImage:
               "linear-gradient(180deg, #FFE8A3 0%, #F6C859 45%, #D6A738 100%)",
@@ -200,8 +215,7 @@ export default function ContactForm() {
   );
 }
 
-/* Small helper for repeated HM/Candidate mini-fields */
-function InputHM({
+function Field({
   name,
   label,
   placeholder,
