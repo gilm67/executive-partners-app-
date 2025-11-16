@@ -1,6 +1,6 @@
 // app/contact/page.tsx
-import ContactForm from "./ContactForm";
 import type { Metadata } from "next";
+import ContactForm from "./ContactForm";
 
 /* ---------------- helpers ---------------- */
 function siteBase() {
@@ -57,15 +57,14 @@ export default function ContactPage() {
       addressCountry: "CH",
     },
     areaServed: ["CH", "GB", "US", "AE", "SG", "HK"],
+    // ❌ Email removed to reduce spam harvesting
     contactPoint: [
       {
         "@type": "ContactPoint",
         contactType: "General",
-        email: "contact@execpartners.ch",
         availableLanguage: ["en", "fr", "de"],
       },
     ],
-    sameAs: [],
   };
 
   const breadcrumbJsonLd = {
@@ -135,9 +134,8 @@ export default function ContactPage() {
         </p>
       </header>
 
-      {/* 2-column layout: LEFT = ContactForm, RIGHT = info + map */}
       <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-5">
-        {/* LEFT: form */}
+        {/* LEFT: form panel */}
         <section className="md:col-span-3 h-full">
           <div className="h-full rounded-2xl border border-neutral-800 bg-neutral-900/50 p-6">
             <ContactForm />
@@ -171,14 +169,8 @@ export default function ContactPage() {
               </ul>
 
               <p className="mt-4 text-xs text-neutral-500">
-                Meetings by appointment.{" "}
-                <a
-                  className="underline underline-offset-2"
-                  href="/contact"
-                >
-                  Get in touch
-                </a>{" "}
-                to schedule a time.
+                Meetings by appointment. Use the contact form to request a call
+                or meeting time.
               </p>
             </div>
 
