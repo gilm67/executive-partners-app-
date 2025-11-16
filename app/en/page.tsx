@@ -5,7 +5,7 @@ import Image from "next/image";
 /* Public assets */
 const HERO = "/hero-skyline-hq.jpg";
 const LADY = "/candidate-eurasian.jpg";
-const MAN  = "/manager-portrait.jpg";
+const MAN = "/manager-portrait.jpg";
 
 export const dynamic = "force-static";
 export const revalidate = false;
@@ -31,13 +31,28 @@ export default function HomePage() {
 
           <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4">
             <h1 className="text-center font-[var(--font-playfair)] text-5xl font-semibold tracking-tight md:text-6xl">
-              International &amp; Swiss <span className="gold">Private Banking</span>
+              International &amp; Swiss{" "}
+              <span className="gold">Private Banking</span>
             </h1>
             <p className="mx-auto mt-4 max-w-3xl text-center text-white/85">
-              Executive Search &amp; Talent Advisory for HNW/UHNW banking. Geneva-based, globally connected.
+              Executive Search &amp; Talent Advisory for HNW/UHNW banking.
+              Geneva-based, globally connected.
             </p>
-            <div className="mt-8 flex justify-center">
-              <Link href="/apply" className="btn-primary btn-xl text-center">Apply Confidentially</Link>
+
+            {/* Dual funnel CTAs */}
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Link
+                href="/candidates"
+                className="btn-primary btn-xl text-center w-full sm:w-auto"
+              >
+                I’m a Private Banker
+              </Link>
+              <Link
+                href="/en/hiring-managers"
+                className="btn-ghost btn-xl text-center w-full sm:w-auto"
+              >
+                I’m Hiring Talent
+              </Link>
             </div>
           </div>
         </div>
@@ -63,6 +78,12 @@ export default function HomePage() {
               />
             </div>
           </div>
+
+          {/* Proof line under metrics */}
+          <p className="mt-3 text-center text-xs md:text-sm text-white/80">
+            Senior RMs, Team Heads &amp; Desk Leaders across CH, MEA, UK, US
+            &amp; APAC.
+          </p>
         </div>
       </section>
 
@@ -82,7 +103,7 @@ export default function HomePage() {
           imageAlt="Hiring manager — executive tone"
           title="For Hiring Managers"
           copy="Market mapping, calibrated outreach and vetted shortlists with real portability. Brief a new role or ask us to approach specific bankers."
-          primary={{ href: "/hiring-managers", label: "Find Top Talent" }}
+          primary={{ href: "/en/hiring-managers", label: "Find Top Talent" }}
           secondary={{ href: "/contact", label: "Talk to Us" }}
         />
       </section>
@@ -102,7 +123,7 @@ export default function HomePage() {
               "Flag risks early",
               "Evidence pack for approvals",
             ]}
-            primary={{ href: "/portability-score", label: "Calculate Score" }}
+            primary={{ href: "/en/portability", label: "Calculate Score" }}
           />
           <ToolCard
             title="Business Plan Simulator"
@@ -111,7 +132,10 @@ export default function HomePage() {
               "Document assumptions",
               "Export for review",
             ]}
-            primary={{ href: "/business-plan-simulator", label: "Run Simulation" }}
+            primary={{
+              href: "/en/bp-simulator",
+              label: "Run Simulation",
+            }}
           />
         </div>
       </section>
@@ -121,12 +145,24 @@ export default function HomePage() {
 
 /* ===== Components ===== */
 
-function KpiCard({ title, value, note }: { title: string; value: string; note?: string }) {
+function KpiCard({
+  title,
+  value,
+  note,
+}: {
+  title: string;
+  value: string;
+  note?: string;
+}) {
   return (
     <div className="rounded-xl border border-black/10 bg-white/90 p-5 shadow-sm">
       <div className="text-sm font-semibold text-black/70">{title}</div>
-      <div className="mt-2 text-4xl font-extrabold tracking-tight text-black">{value}</div>
-      {note ? <div className="mt-2 text-[13px] leading-snug text-black/70">{note}</div> : null}
+      <div className="mt-2 text-4xl font-extrabold tracking-tight text-black">
+        {value}
+      </div>
+      {note ? (
+        <div className="mt-2 text-[13px] leading-snug text-black/70">{note}</div>
+      ) : null}
     </div>
   );
 }
@@ -171,8 +207,12 @@ function FeaturePanel({
           <h3 className="text-2xl font-semibold">{title}</h3>
           <p className="text-white/85">{copy}</p>
           <div className="mt-2 flex flex-wrap gap-3">
-            <Link href={primary.href} className="btn-primary">{primary.label}</Link>
-            <Link href={secondary.href} className="btn-ghost">{secondary.label}</Link>
+            <Link href={primary.href} className="btn-primary">
+              {primary.label}
+            </Link>
+            <Link href={secondary.href} className="btn-ghost">
+              {secondary.label}
+            </Link>
           </div>
         </div>
       </div>
@@ -194,13 +234,21 @@ function ToolCard({
       <h3 className="text-lg font-semibold mb-4">{title}</h3>
       <ul className="mb-6 space-y-2 w-full max-w-sm">
         {bullets.map((b) => (
-          <li key={b} className="flex items-center justify-center gap-2 text-sm text-white/80">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-white/70" aria-hidden />
+          <li
+            key={b}
+            className="flex items-center justify-center gap-2 text-sm text-white/80"
+          >
+            <span
+              className="inline-block h-1.5 w-1.5 rounded-full bg-white/70"
+              aria-hidden
+            />
             <span>{b}</span>
           </li>
         ))}
       </ul>
-      <Link href={primary.href} className="btn-primary inline-flex">{primary.label}</Link>
+      <Link href={primary.href} className="btn-primary inline-flex">
+        {primary.label}
+      </Link>
     </div>
   );
 }
