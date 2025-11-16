@@ -1,164 +1,173 @@
-// app/hiring-managers/page.tsx
 import Link from "next/link";
-import type { Metadata } from "next";
-import HiringManagersForm from "./HiringManagersForm";
 
-/** Resolve absolute site URL from env or fallback */
-const SITE =
-  (process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "")) ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.execpartners.ch");
-
-/* ---------------- Meta (SEO) ---------------- */
-export const metadata: Metadata = {
-  title: "Hire Private Bankers — Hiring Managers | Executive Partners",
-  description:
-    "Targeted shortlists of Senior Relationship Managers and Private Bankers with real portability. Switzerland-first (Geneva & Zurich), plus MEA, UK, US & APAC coverage.",
-  alternates: { canonical: `${SITE}/hiring-managers` },
-  openGraph: {
-    title: "Hire Private Bankers — Executive Partners",
-    description:
-      "Executive search for Private Banking & Wealth Management. Vetted, portable talent for HNW/UHNW markets.",
-    url: `${SITE}/hiring-managers`,
-    type: "website",
-    images: [{ url: "/og.png" }],
-  },
-  robots: { index: true, follow: true },
-};
-
-/* ---------------- Page ---------------- */
 export default function HiringManagersPage() {
-  // JSON-LD: Service (what you offer to employers)
-  const serviceJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: "Private Banking Executive Search",
-    provider: {
-      "@type": "Organization",
-      name: "Executive Partners",
-      url: SITE,
-      logo: `${SITE}/icon.png`,
-    },
-    areaServed: ["CH", "AE", "GB", "US", "SG", "HK"],
-    serviceType: "Executive Search — Private Banking & Wealth Management",
-    description:
-      "Research-led market mapping and targeted shortlists of portable Private Bankers and Relationship Managers for HNW/UHNW coverage.",
-    url: `${SITE}/hiring-managers`,
-  };
-
-  // JSON-LD: FAQ
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "How fast can we see a shortlist?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text:
-            "Typically within 5–10 working days for well-scoped mandates, based on active pipelines and research-backed mapping.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Do you validate portability?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text:
-            "Yes—calibration includes coverage checks, cross-border constraints, and realistic wallet transfer potential before interviews.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Which markets do you cover?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text:
-            "Switzerland (Geneva & Zurich) as a priority, plus MEA, UK, US, Singapore and Hong Kong via cross-border teams.",
-        },
-      },
-    ],
-  };
-
-  // JSON-LD: Breadcrumbs
-  const breadcrumb = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/` },
-      { "@type": "ListItem", position: 2, name: "Hiring Managers", item: `${SITE}/hiring-managers` },
-    ],
-  };
-
   return (
-    <main className="relative min-h-screen bg-[#0B0E13] text-white">
-      {/* Structured data */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-
-      <section className="mx-auto max-w-6xl px-4 py-12">
-        {/* SEO header */}
-        <header className="mb-8 text-center">
-          <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
-            For Hiring Managers — Private Banking
-          </div>
-          <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
-            Targeted Shortlists with Real Portability
-          </h1>
-          <p className="mx-auto mt-3 max-w-3xl text-neutral-300">
-            Switzerland-first (Geneva &amp; Zurich), plus MEA, UK, US &amp; APAC.
-            Research-led mapping, calibrated outreach, and shortlists you can act on.
+    <main className="min-h-[70vh] px-4 md:px-6 lg:px-10 py-12 md:py-16">
+      {/* TOP HERO CARD */}
+      <section className="mx-auto max-w-5xl">
+        <div className="rounded-3xl border border-white/10 bg-white/5/40 bg-gradient-to-br from-white/5 via-white/0 to-emerald-500/5 px-6 py-8 md:px-10 md:py-10 shadow-[0_22px_60px_rgba(0,0,0,0.65)] backdrop-blur">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-emerald-300/80">
+            For Hiring Managers
           </p>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
-            <Link href="/contact" className="rounded-full border border-white/15 bg-white/5 px-3 py-1 hover:bg-white/10">
-              Share a Brief
+
+          <h1 className="mt-4 text-3xl md:text-4xl lg:text-[2.6rem] font-semibold leading-tight">
+            Targeted senior hires in Private Banking &amp; Wealth Management
+          </h1>
+
+          <p className="mt-4 max-w-3xl text-sm md:text-base text-slate-200/80">
+            We work with Desk Heads, Market Leaders and COOs across Switzerland,
+            the UK, US, Dubai, Singapore and Hong Kong to build and strengthen
+            front-office teams with real AUM portability and long-term
+            retention.
+          </p>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
+                         bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
+                         hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
+                         focus-visible:ring-emerald-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent
+                         transition"
+            >
+              Contact us about a hire
             </Link>
-            <Link href="/jobs" className="rounded-full border border-white/15 bg-white/5 px-3 py-1 hover:bg-white/10">
-              View Live Mandates
-            </Link>
-            <Link href="/about" className="rounded-full border border-white/15 bg-white/5 px-3 py-1 hover:bg-white/10">
-              About Us
+
+            <Link
+              href="/jobs"
+              className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
+                         border border-white/15 bg-black/10 text-slate-100
+                         hover:border-white/35 hover:bg-white/5
+                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60
+                         transition"
+            >
+              View live mandates
             </Link>
           </div>
-        </header>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-5">
-          {/* Left: form */}
-          <section className="md:col-span-3">
-            <div className="mb-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-              <h2 className="text-sm font-semibold text-neutral-200">Create a confidential role</h2>
-              <p className="mt-1 text-sm text-neutral-400">
-                Entries publish to your jobs board (or can stay unlisted). We’ll calibrate and begin discrete outreach.
+          <div className="mt-6 grid gap-4 text-xs md:text-[13px] text-slate-200/75 md:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
+              <p className="font-semibold text-white">200+ senior placements</p>
+              <p className="mt-1 text-slate-300/75">
+                Director / MD RMs, Team Heads and Market Leaders.
               </p>
             </div>
-            <HiringManagersForm />
-          </section>
-
-          {/* Right: value props + posting guidelines */}
-          <aside className="md:col-span-2">
-            <div className="sticky top-6 space-y-4 rounded-2xl border border-neutral-800 bg-neutral-900/50 p-5">
-              <h2 className="text-sm font-semibold text-neutral-200">Why Executive Partners</h2>
-              <ul className="list-disc space-y-2 pl-5 text-sm text-neutral-300">
-                <li>Portability obsessed: coverage checks before interviews.</li>
-                <li>Quiet approach work that protects brands & careers.</li>
-                <li>Swiss execution (Geneva & Zurich), global booking centers.</li>
-              </ul>
-
-              <hr className="border-white/10" />
-
-              <h3 className="text-sm font-semibold text-neutral-200">Posting Guidelines</h3>
-              <ul className="list-disc space-y-2 pl-5 text-sm text-neutral-400">
-                <li>Be precise on market (CH Onshore, MEA, UK, APAC).</li>
-                <li>Indicate expected AUM profile and booking centres.</li>
-                <li>Mention product scope (public &amp; private markets).</li>
-                <li>State regulatory must-haves (FINMA, DFSA, SFC, etc.).</li>
-              </ul>
-              <p className="text-xs text-neutral-500">
-                Need help? <Link href="/contact" className="underline underline-offset-2">Contact us</Link> and we’ll draft the brief in minutes.
+            <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
+              <p className="font-semibold text-white">Real AUM portability</p>
+              <p className="mt-1 text-slate-300/75">
+                We screen for book composition, cross-border and platform fit.
               </p>
             </div>
-          </aside>
+            <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
+              <p className="font-semibold text-white">12+ booking centres</p>
+              <p className="mt-1 text-slate-300/75">
+                CH, UK, US, MEA, LATAM and APAC private-banking hubs.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* BP SIMULATOR – HIRING MANAGERS FOCUS */}
+      <section className="mx-auto mt-10 max-w-5xl">
+        <div className="rounded-3xl border border-emerald-400/40 bg-black/40 px-6 py-7 md:px-10 md:py-9 shadow-[0_18px_50px_rgba(0,0,0,0.8)] backdrop-blur">
+          <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+            <div className="max-w-2xl space-y-3">
+              <h2 className="text-2xl md:text-[1.65rem] font-semibold">
+                Test a 3-year business plan before you hire
+              </h2>
+              <p className="text-sm md:text-base text-slate-200/85">
+                Use our{" "}
+                <span className="font-semibold text-emerald-300">
+                  Business Plan Simulator
+                </span>{" "}
+                to model NNM, ROA and net margin for a specific RM or team
+                before you open a mandate.
+              </p>
+
+              <ul className="mt-1 list-disc pl-5 text-sm md:text-[15px] text-slate-200/85 space-y-1.5">
+                <li>3-year view on NNM, revenue, fixed cost and net margin</li>
+                <li>Scenario analysis with conservative vs ambitious targets</li>
+                <li>Exportable PDF to share internally with COOs / HR / ExCo</li>
+              </ul>
+            </div>
+
+            <div className="mt-3 flex flex-col gap-3 md:mt-0 md:min-w-[230px]">
+              <Link
+                href="/bp-simulator"
+                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
+                           bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
+                           hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
+                           focus-visible:ring-emerald-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent
+                           transition"
+              >
+                Open the Business Plan Simulator
+              </Link>
+              <p className="text-[11px] text-slate-300/75">
+                No login required. Use anonymised data (AUM, NNM, ROA, fixed
+                costs) for pre-mandate calibration.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SHARE A BRIEF – GLASS CARD */}
+      <section className="mx-auto mt-10 max-w-5xl">
+        <div className="rounded-3xl border border-white/10 bg-black/40 px-6 py-7 md:px-10 md:py-9 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div className="max-w-2xl space-y-3">
+              <h2 className="text-2xl md:text-[1.65rem] font-semibold">
+                Share a brief (no portals, no admin token)
+              </h2>
+              <p className="text-sm md:text-base text-slate-200/80">
+                Send us a short description of the mandate – booking centre,
+                market focus, seniority, regulatory requirements and product
+                scope – and we will revert the same business day with clarifying
+                questions or a proposed call slot.
+              </p>
+
+              <ul className="mt-1 list-disc pl-5 text-sm md:text-[15px] text-slate-200/85 space-y-1.5">
+                <li>Director / MD RMs, Team Heads and Market Leaders</li>
+                <li>Swiss onshore, international desks and booking centres</li>
+                <li>Coverage across CH, UK, US, MEA, LATAM and APAC</li>
+              </ul>
+            </div>
+
+            <div className="mt-4 flex flex-col gap-3 md:mt-0 md:min-w-[220px]">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
+                           bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
+                           hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
+                           focus-visible:ring-emerald-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent
+                           transition"
+              >
+                Send us your brief
+              </Link>
+
+              <Link
+                href="/portability"
+                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
+                           border border-emerald-400/60 bg-black/20 text-emerald-200
+                           hover:border-emerald-300 hover:bg-emerald-500/10
+                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/80
+                           transition"
+              >
+                Explore AUM portability
+              </Link>
+            </div>
+          </div>
+
+          <p className="mt-6 text-[11px] text-slate-300/70">
+            Existing clients with a secure posting link can continue to use
+            their private URL to create or update roles. If you need your secure
+            link resent, please{" "}
+            <Link href="/contact" className="underline underline-offset-2">
+              contact us
+            </Link>
+            .
+          </p>
         </div>
       </section>
     </main>
