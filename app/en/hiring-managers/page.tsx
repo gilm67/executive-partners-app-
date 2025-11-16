@@ -71,6 +71,50 @@ export default function HiringManagersPageEn() {
         </div>
       </section>
 
+      {/* BP SIMULATOR – HIRING MANAGERS FOCUS */}
+      <section className="mx-auto mt-10 max-w-5xl">
+        <div className="rounded-3xl border border-emerald-400/40 bg-black/40 px-6 py-7 md:px-10 md:py-9 shadow-[0_18px_50px_rgba(0,0,0,0.8)] backdrop-blur">
+          <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+            <div className="max-w-2xl space-y-3">
+              <h2 className="text-2xl md:text-[1.65rem] font-semibold">
+                Test a 3-year business plan before you hire
+              </h2>
+              <p className="text-sm md:text-base text-slate-200/85">
+                Use our{" "}
+                <span className="font-semibold text-emerald-300">
+                  Business Plan Simulator
+                </span>{" "}
+                to model NNM, ROA and net margin for a specific RM or team
+                before you open a mandate.
+              </p>
+
+              <ul className="mt-1 list-disc pl-5 text-sm md:text-[15px] text-slate-200/85 space-y-1.5">
+                <li>3-year view on NNM, revenue, fixed cost and net margin</li>
+                <li>Scenario analysis with conservative vs ambitious targets</li>
+                <li>Exportable PDF to share internally with COOs / HR / ExCo</li>
+              </ul>
+            </div>
+
+            <div className="mt-3 flex flex-col gap-3 md:mt-0 md:min-w-[230px]">
+              <Link
+                href="/en/bp-simulator"
+                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
+                           bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
+                           hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
+                           focus-visible:ring-emerald-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent
+                           transition"
+              >
+                Open the Business Plan Simulator
+              </Link>
+              <p className="text-[11px] text-slate-300/75">
+                No login required. Use anonymised data (AUM, NNM, ROA, fixed
+                costs) for pre-mandate calibration.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* SHARE A BRIEF – GLASS CARD */}
       <section className="mx-auto mt-10 max-w-5xl">
         <div className="rounded-3xl border border-white/10 bg-black/40 px-6 py-7 md:px-10 md:py-9 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur">
