@@ -22,7 +22,6 @@ export async function POST(req: Request) {
     const contentType = req.headers.get("content-type") || "";
     let body: Record<string, any> = {};
 
-    // Handle JSON or FormData
     if (contentType.includes("application/json")) {
       body = await req.json();
     } else {
@@ -36,7 +35,6 @@ export async function POST(req: Request) {
     const message = clean(body.message);
     const contactType = clean(body.contactType);
 
-    // Optional: phone
     const phone = clean(body.phone);
 
     // Hiring Manager fields
@@ -66,13 +64,11 @@ export async function POST(req: Request) {
 
     const subject = `[Executive Partners] New ${typeLabel} contact — ${name}`;
 
-    /* ----------------------------------------------------------
-       Build the beautiful HTML email
-    ---------------------------------------------------------- */
-
+    /* ------------------------------------------------------------
+       Build BEAUTIFUL HTML email
+    ------------------------------------------------------------ */
     const htmlParts: string[] = [];
 
-    // Basic info
     htmlParts.push(`
       <h2 style="font-family:system-ui;font-size:18px;margin-bottom:8px;">
         New contact received
@@ -86,12 +82,9 @@ export async function POST(req: Request) {
       </table>
     `);
 
-    // Hiring manager block
     if (hm_company || hm_role || hm_location) {
       htmlParts.push(`
-        <h3 style="font-family:system-ui;font-size:15px;margin-top:20px;">
-          Hiring Manager details
-        </h3>
+        <h3 style="font-family:system-ui;font-size:15px;margin-top:20px;">Hiring Manager details</h3>
         <table cellpadding="6" style="font-family:system-ui;font-size:14px;border-collapse:collapse;">
           <tr><td style="font-weight:600;">Company</td><td>${hm_company || "—"}</td></tr>
           <tr><td style="font-weight:600;">Role</td><td>${hm_role || "—"}</td></tr>
@@ -100,12 +93,9 @@ export async function POST(req: Request) {
       `);
     }
 
-    // Candidate block
     if (cand_bank || cand_market || cand_aum_band) {
       htmlParts.push(`
-        <h3 style="font-family:system-ui;font-size:15px;margin-top:20px;">
-          Candidate details
-        </h3>
+        <h3 style="font-family:system-ui;font-size:15px;margin-top:20px;">Candidate details</h3>
         <table cellpadding="6" style="font-family:system-ui;font-size:14px;border-collapse:collapse;">
           <tr><td style="font-weight:600;">Current bank</td><td>${cand_bank || "—"}</td></tr>
           <tr><td style="font-weight:600;">Market</td><td>${cand_market || "—"}</td></tr>
@@ -114,18 +104,13 @@ export async function POST(req: Request) {
       `);
     }
 
-    // Message
     const safeMsg = message
       .split("\n")
-      .map((line) =>
-        line.replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      )
+      .map((line) => line.replace(/</g, "&lt;").replace(/>/g, "&gt;"))
       .join("<br />");
 
     htmlParts.push(`
-      <h3 style="font-family:system-ui;font-size:15px;margin-top:20px;">
-        Message
-      </h3>
+      <h3 style="font-family:system-ui;font-size:15px;margin-top:20px;">Message</h3>
       <div style="font-family:system-ui;font-size:14px;line-height:1.5;padding:12px;border-radius:8px;background:#0b0f18;color:#e0e0e0;border:1px solid #1f2933;">
         ${safeMsg}
       </div>
@@ -141,10 +126,6 @@ export async function POST(req: Request) {
         </div>
       </div>
     `;
-
-    /* ----------------------------------------------------------
-       TEXT fallback email
-    ---------------------------------------------------------- */
 
     const text = [
       `New contact form submission`,
@@ -163,9 +144,9 @@ export async function POST(req: Request) {
       `Message:\n${message}`,
     ].join("\n");
 
-    /* ----------------------------------------------------------
-       SEND EMAIL (Resend)
-    ---------------------------------------------------------- */
+    /* ------------------------------------------------------------
+       SEND EMAIL — Resend
+    ------------------------------------------------------------ */
 
     if (!resendApiKey) {
       console.warn("⚠ RESEND_API_KEY missing — simulated email:", {
@@ -181,7 +162,7 @@ export async function POST(req: Request) {
     await resend.emails.send({
       from: CONTACT_FROM_EMAIL,
       to: CONTACT_TO_EMAIL,
-      reply_to: email,
+      replyTo: email,   // FIXED (was reply_to)
       subject,
       html,
       text,
@@ -190,10 +171,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("CONTACT_FORM_ERROR", err);
-    return NextResponse.json(
-      { ok: false, error: "Server error" },
-      { status: 200 }
-    );
+    return NextResponse.json({ ok: false, error: "Server error" }, { status: 200 });
   }
 }
 
