@@ -1,9 +1,12 @@
 import Link from "next/link";
 
-// Reuse existing SEO metadata from the base page
-export { metadata } from "../../hiring-managers/page";
+export const metadata = {
+  title: "Hiring Managers – Executive Partners",
+  description:
+    "Targeted senior hires in Private Banking & Wealth Management across Geneva, Zurich, UK, US, Dubai, Singapore and Hong Kong.",
+};
 
-export default function HiringManagersPageEn() {
+export default function HiringManagersPage() {
   return (
     <main className="min-h-[70vh] px-4 md:px-6 lg:px-10 py-12 md:py-16">
       {/* TOP HERO CARD */}
@@ -26,7 +29,7 @@ export default function HiringManagersPageEn() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/en/contact"
+              href="/contact"
               className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
                          bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
                          hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
@@ -37,7 +40,7 @@ export default function HiringManagersPageEn() {
             </Link>
 
             <Link
-              href="/en/jobs"
+              href="/jobs"
               className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
                          border border-white/15 bg-black/10 text-slate-100
                          hover:border-white/35 hover:bg-white/5
@@ -97,7 +100,7 @@ export default function HiringManagersPageEn() {
 
             <div className="mt-3 flex flex-col gap-3 md:mt-0 md:min-w-[230px]">
               <Link
-                href="/en/bp-simulator"
+                href="/bp-simulator"
                 className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
                            bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
                            hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
@@ -139,7 +142,7 @@ export default function HiringManagersPageEn() {
 
             <div className="mt-4 flex flex-col gap-3 md:mt-0 md:min-w-[220px]">
               <Link
-                href="/en/contact"
+                href="/contact"
                 className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
                            bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
                            hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
@@ -150,7 +153,7 @@ export default function HiringManagersPageEn() {
               </Link>
 
               <Link
-                href="/en/portability"
+                href="/portability"
                 className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
                            border border-emerald-400/60 bg-black/20 text-emerald-200
                            hover:border-emerald-300 hover:bg-emerald-500/10
@@ -166,7 +169,7 @@ export default function HiringManagersPageEn() {
             Existing clients with a secure posting link can continue to use
             their private URL to create or update roles. If you need your secure
             link resent, please{" "}
-            <Link href="/en/contact" className="underline underline-offset-2">
+            <Link href="/contact" className="underline underline-offset-2">
               contact us
             </Link>
             .
