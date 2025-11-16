@@ -48,39 +48,24 @@ export default function ContactForm() {
           I am a…
         </label>
         <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => setContactType("candidate")}
-            className={`btn-ghost text-xs px-3 py-1.5 ${
-              contactType === "candidate"
-                ? "border-emerald-400/80 bg-emerald-500/10 text-emerald-200"
-                : "opacity-80"
-            }`}
-          >
-            Candidate
-          </button>
-          <button
-            type="button"
-            onClick={() => setContactType("hiring-manager")}
-            className={`btn-ghost text-xs px-3 py-1.5 ${
-              contactType === "hiring-manager"
-                ? "border-emerald-400/80 bg-emerald-500/10 text-emerald-200"
-                : "opacity-80"
-            }`}
-          >
-            Hiring Manager
-          </button>
-          <button
-            type="button"
-            onClick={() => setContactType("other")}
-            className={`btn-ghost text-xs px-3 py-1.5 ${
-              contactType === "other"
-                ? "border-emerald-400/80 bg-emerald-500/10 text-emerald-200"
-                : "opacity-80"
-            }`}
-          >
-            Other
-          </button>
+          {["candidate", "hiring-manager", "other"].map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setContactType(t as ContactType)}
+              className={`btn-ghost text-xs px-3 py-1.5 ${
+                contactType === t
+                  ? "border-emerald-400/80 bg-emerald-500/10 text-emerald-200"
+                  : "opacity-80"
+              }`}
+            >
+              {t === "candidate"
+                ? "Candidate"
+                : t === "hiring-manager"
+                ? "Hiring Manager"
+                : "Other"}
+            </button>
+          ))}
         </div>
         <input type="hidden" name="contactType" value={contactType} />
       </div>
@@ -132,72 +117,18 @@ export default function ContactForm() {
       {/* Hiring Manager fields */}
       {contactType === "hiring-manager" && (
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-neutral-200">
-              Company (optional)
-            </label>
-            <input
-              name="hm_company"
-              className="w-full rounded-xl border border-neutral-700 bg-neutral-900/70 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400"
-              placeholder="Bank / IAM / Family Office"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-neutral-200">
-              Role (optional)
-            </label>
-            <input
-              name="hm_role"
-              className="w-full rounded-xl border border-neutral-700 bg-neutral-900/70 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400"
-              placeholder="Desk Head, COO..."
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-neutral-200">
-              Location (optional)
-            </label>
-            <input
-              name="hm_location"
-              className="w-full rounded-xl border border-neutral-700 bg-neutral-900/70 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400"
-              placeholder="Geneva, Zurich, Dubai..."
-            />
-          </div>
+          <InputHM name="hm_company" label="Company" placeholder="Bank / IAM / Family Office" />
+          <InputHM name="hm_role" label="Role" placeholder="Desk Head, COO..." />
+          <InputHM name="hm_location" label="Location" placeholder="Geneva, Zurich, Dubai..." />
         </div>
       )}
 
       {/* Candidate fields */}
       {contactType === "candidate" && (
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-neutral-200">
-              Current bank (optional)
-            </label>
-            <input
-              name="cand_bank"
-              className="w-full rounded-xl border border-neutral-700 bg-neutral-900/70 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400"
-              placeholder="UBS, Julius Baer..."
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-neutral-200">
-              Market (optional)
-            </label>
-            <input
-              name="cand_market"
-              className="w-full rounded-xl border border-neutral-700 bg-neutral-900/70 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400"
-              placeholder="CH Onshore, MEA, LatAm..."
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-neutral-200">
-              AUM band (optional)
-            </label>
-            <input
-              name="cand_aum_band"
-              className="w-full rounded-xl border border-neutral-700 bg-neutral-900/70 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400"
-              placeholder="e.g. 200–500m, 500m+"
-            />
-          </div>
+          <InputHM name="cand_bank" label="Current bank" placeholder="UBS, Julius Baer..." />
+          <InputHM name="cand_market" label="Market" placeholder="CH Onshore, MEA, LatAm..." />
+          <InputHM name="cand_aum_band" label="AUM band" placeholder="e.g. 200–500m, 500m+" />
         </div>
       )}
 
@@ -224,12 +155,14 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="btn-primary btn-xl w-full md:w-auto disabled:opacity-70 disabled:cursor-not-allowed"
+          className="btn btn-xl w-full md:w-auto disabled:opacity-70 disabled:cursor-not-allowed"
           style={{
             backgroundImage:
               "linear-gradient(180deg, #FFE8A3 0%, #F6C859 45%, #D6A738 100%)",
             backgroundColor: "transparent",
             color: "#1A1300",
+            boxShadow:
+              "0 10px 28px rgba(214,167,56,.38), inset 0 1px 0 rgba(255,255,255,.75)",
           }}
         >
           {status === "sending"
@@ -264,5 +197,29 @@ export default function ContactForm() {
         </p>
       )}
     </form>
+  );
+}
+
+/* Small helper for repeated HM/Candidate mini-fields */
+function InputHM({
+  name,
+  label,
+  placeholder,
+}: {
+  name: string;
+  label: string;
+  placeholder: string;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label className="block text-sm font-medium text-neutral-200">
+        {label} (optional)
+      </label>
+      <input
+        name={name}
+        className="w-full rounded-xl border border-neutral-700 bg-neutral-900/70 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400"
+        placeholder={placeholder}
+      />
+    </div>
   );
 }
