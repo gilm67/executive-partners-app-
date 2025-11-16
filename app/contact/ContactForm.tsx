@@ -224,7 +224,13 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="btn-primary btn-xl w-full md:w-auto disabled:opacity-70 disabled:cursor-not-allowed !bg-[linear-gradient(180deg,#FFE8A3_0%,#F6C859_45%,#D6A738_100%)] !text-[#1A1300]"
+          className="btn-primary btn-xl w-full md:w-auto disabled:opacity-70 disabled:cursor-not-allowed"
+          style={{
+            backgroundImage:
+              "linear-gradient(180deg, #FFE8A3 0%, #F6C859 45%, #D6A738 100%)",
+            backgroundColor: "transparent",
+            color: "#1A1300",
+          }}
         >
           {status === "sending"
             ? "Sending…"
