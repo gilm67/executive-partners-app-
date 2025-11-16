@@ -20,16 +20,11 @@ body {
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
 }
-
-@media (max-width: 768px) {
-  body { background-attachment: scroll; }
-}
+@media (max-width: 768px) { body { background-attachment: scroll; } }
 
 body.body-grain::before {
   content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
+  position: fixed; inset: 0; pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
   z-index: 0;
@@ -42,7 +37,7 @@ body.body-grain::before {
 
   /* Base button */
   .btn {
-    @apply inline-flex items-center justify-center
+    @apply inline-flex items-center justify-center 
       rounded-full font-semibold text-sm leading-none
       px-5 py-2.5 transition-all duration-200
       focus-visible:outline-none focus-visible:ring-2
@@ -67,14 +62,12 @@ body.body-grain::before {
       0 10px 28px rgba(214,167,56,.38),
       inset 0 1px 0 rgba(255,255,255,.75);
   }
-
   .btn-primary:hover {
     box-shadow:
       0 14px 36px rgba(214,167,56,.48),
       inset 0 1px 0 rgba(255,255,255,.95);
     transform: translateY(-1px);
   }
-
   .btn-primary:active {
     transform: translateY(1px) scale(.98);
   }
@@ -85,7 +78,6 @@ body.body-grain::before {
     background: rgba(255,255,255,.06);
     box-shadow: 0 6px 18px rgba(0,0,0,.18);
   }
-
   .btn-ghost:hover {
     background: rgba(255,255,255,.12);
     border-color: rgba(158,203,255,.55);
@@ -96,7 +88,6 @@ body.body-grain::before {
   .btn-outline-emerald {
     @apply btn text-emerald-200 border border-emerald-400/60 bg-transparent;
   }
-
   .btn-outline-emerald:hover {
     @apply border-emerald-300;
     background: rgba(16,185,129,.10);
@@ -127,7 +118,6 @@ body.body-grain::before {
   border-color: rgba(0,0,0,.14);
   box-shadow: 0 6px 20px rgba(0,0,0,.08);
 }
-
 .light-surface .btn-ghost:hover {
   background: rgba(0,0,0,.08);
   border-color: rgba(0,0,0,.25);
@@ -146,18 +136,18 @@ body.body-grain::before {
       #FFE8A3 0%,
       #F6C859 45%,
       #D6A738 100%
-    ) !important;
-    background-color: transparent !important;
+    );
+    background-color: transparent;
     color: #1A1300 !important;
   }
 }
 
 /* =========================================================
-   HARD OVERRIDE: ensure gold gradient wins everywhere
+   FINAL OVERRIDE – NOTHING CAN BEAT THIS
+   (ensures gold everywhere for .btn-primary)
    ========================================================= */
 button.btn-primary,
-a.btn-primary,
-.btn-primary[type="submit"] {
+a.btn-primary {
   background-image: linear-gradient(
     180deg,
     #FFE8A3 0%,
