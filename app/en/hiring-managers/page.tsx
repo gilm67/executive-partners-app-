@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
-// Reuse existing SEO metadata from the base page
-export { metadata } from "../../hiring-managers/page";
+/* ----------------- SEO metadata (EN) ----------------- */
+export const metadata: Metadata = {
+  title: "Hiring Managers – Executive Partners",
+  description:
+    "Discreet, targeted senior hires in Private Banking & Wealth Management. Geneva-based with mandates across Switzerland, the UK, US, Dubai, Singapore and Hong Kong.",
+};
 
+/* ----------------- Page ----------------- */
 export default function HiringManagersPageEn() {
   return (
     <main className="min-h-[70vh] px-4 md:px-6 lg:px-10 py-12 md:py-16">
@@ -32,10 +38,7 @@ export default function HiringManagersPageEn() {
               Contact us about a hire
             </Link>
 
-            <Link
-              href="/jobs"
-              className="btn-ghost w-full md:w-auto"
-            >
+            <Link href="/jobs" className="btn-ghost w-full md:w-auto">
               View live mandates
             </Link>
           </div>
