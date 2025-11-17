@@ -3,8 +3,18 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import {
-  Search, MapPin, Briefcase, Shield, CalendarDays, ChevronRight, Filter, Star,
+  Search,
+  MapPin,
+  Briefcase,
+  Shield,
+  CalendarDays,
+  ChevronRight,
+  Filter,
+  Star,
 } from "lucide-react";
+
+import PrimaryButton from "@/components/ui/PrimaryButton";
+import SecondaryButton from "@/components/ui/SecondaryButton";
 
 /* 🔗 Central job data (single source of truth) */
 import { jobsList as CANONICAL_DATA } from "@/data/jobs";
@@ -108,13 +118,17 @@ function BadgeTone({ market }: { market?: string }) {
   const mk = (market || "").toLowerCase();
   const isMEA = mk.includes("mea");
   const isCH = mk.includes("switzerland") || mk.includes("onshore");
+
   const base = isMEA
-    ? "from-emerald-500 to-teal-400"
+    ? "from-brandGoldDark to-brandGold"
     : isCH
-    ? "from-sky-500 to-blue-400"
-    : "from-purple-500 to-pink-500";
+    ? "from-brandGold to-brandGoldSoft"
+    : "from-brandGoldSoft to-brandGold";
+
   return (
-    <div className={`inline-flex select-none items-center gap-2 rounded-full bg-gradient-to-r ${base} px-2.5 py-1 text-xs font-semibold text-white shadow-sm`}>
+    <div
+      className={`inline-flex select-none items-center gap-2 rounded-full bg-gradient-to-r ${base} px-2.5 py-1 text-xs font-semibold text-black shadow-sm`}
+    >
       <Star className="h-3.5 w-3.5 opacity-90" />
       {market ?? "International"}
     </div>
@@ -125,12 +139,21 @@ function Card({ job }: { job: Job }) {
   const href = `/jobs/${job.slug}`;
   const created = job.createdAt ? new Date(job.createdAt) : null;
   const createdFmt = created
-    ? created.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+    ? created.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+      })
     : null;
 
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)] transition hover:shadow-[0_8px_30px_rgba(0,0,0,.45)]">
-      <div className="pointer-events-none absolute inset-0 opacity-[.18] [background:radial-gradient(700px_160px_at_0%_0%,rgba(14,165,233,1),transparent_60%),radial-gradient(700px_160px_at_100%_0%,rgba(34,197,94,1),transparent_60%)]" />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[.18]"
+        style={{
+          background:
+            "radial-gradient(700px 160px at 0% 0%, rgba(201,161,74,.35), transparent 60%), radial-gradient(700px 160px at 100% 0%, rgba(245,231,192,.28), transparent 60%)",
+        }}
+      />
       <div className="relative flex h-full flex-col">
         <div className="flex items-center justify-between gap-3">
           <BadgeTone market={job.market} />
@@ -163,13 +186,14 @@ function Card({ job }: { job: Job }) {
         </div>
 
         <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-neutral-300">
-          {job.summary ?? "Discreet mandate with strong platform, open architecture and competitive grid."}
+          {job.summary ??
+            "Discreet mandate with strong platform, open architecture and competitive grid."}
         </p>
 
         <div className="mt-auto pt-4">
           <Link
             href={href}
-            className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
+            className="inline-flex items-center gap-2 rounded-xl border border-brandGold/40 bg-black/30 px-4 py-2 text-sm font-semibold text-brandGoldPale transition hover:bg-brandGold/15 hover:text-white"
           >
             View details <ChevronRight className="h-4 w-4" />
           </Link>
@@ -194,14 +218,16 @@ function SkeletonCard() {
 function EmptyState() {
   return (
     <div className="col-span-full rounded-2xl border border-white/10 bg-white/5 p-10 text-center">
-      <h3 className="text-lg font-semibold text-white">No roles match your filters</h3>
+      <h3 className="text-lg font-semibold text-white">
+        No roles match your filters
+      </h3>
       <p className="mt-2 text-sm text-neutral-300">
         Try clearing filters or checking back soon—new mandates drop regularly.
       </p>
-      <div className="mt-4">
-        <Link href="/contact" className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10">
+      <div className="mt-4 flex justify-center">
+        <PrimaryButton href="/contact" className="px-4 py-2 text-sm">
           Talk to us confidentially
-        </Link>
+        </PrimaryButton>
       </div>
     </div>
   );
@@ -223,44 +249,102 @@ function FilterBar({
           name="q"
           defaultValue={defaultQuery}
           placeholder="Search by title, market, location…"
-          className="w-full rounded-xl border border-white/10 bg-transparent py-2 pl-9 pr-3 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/20"
+          className="w-full rounded-xl border border-white/10 bg-transparent py-2 pl-9 pr-3 text-sm text-white placeholder:text-white/50 outline-none focus:border-brandGold/60"
         />
       </div>
 
       <div className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-3">
-        <select name="market" defaultValue={defaultFilters?.market ?? ""} className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none">
-          <option value="" className="bg-[#0B0E13]">All markets</option>
-          <option value="Switzerland (Onshore)" className="bg-[#0B0E13]">Switzerland (Onshore)</option>
-          <option value="Middle East & Africa (MEA)" className="bg-[#0B0E13]">MEA</option>
-          <option value="UK" className="bg-[#0B0E13]">UK</option>
-          <option value="US" className="bg-[#0B0E13]">US</option>
-          <option value="Singapore" className="bg-[#0B0E13]">Singapore</option>
-          <option value="Hong Kong" className="bg-[#0B0E13]">Hong Kong</option>
-          <option value="Portugal (LatAm/Europe)" className="bg-[#0B0E13]">Portugal</option>
+        <select
+          name="market"
+          defaultValue={defaultFilters?.market ?? ""}
+          className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none"
+        >
+          <option value="" className="bg-[#0B0E13]">
+            All markets
+          </option>
+          <option value="Switzerland (Onshore)" className="bg-[#0B0E13]">
+            Switzerland (Onshore)
+          </option>
+          <option value="Middle East & Africa (MEA)" className="bg-[#0B0E13]">
+            MEA
+          </option>
+          <option value="UK" className="bg-[#0B0E13]">
+            UK
+          </option>
+          <option value="US" className="bg-[#0B0E13]">
+            US
+          </option>
+          <option value="Singapore" className="bg-[#0B0E13]">
+            Singapore
+          </option>
+          <option value="Hong Kong" className="bg-[#0B0E13]">
+            Hong Kong
+          </option>
+          <option value="Portugal (LatAm/Europe)" className="bg-[#0B0E13]">
+            Portugal
+          </option>
         </select>
 
-        <select name="location" defaultValue={defaultFilters?.location ?? ""} className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none">
-          <option value="" className="bg-[#0B0E13]">All locations</option>
-          <option value="Geneva" className="bg-[#0B0E13]">Geneva</option>
-          <option value="Zurich" className="bg-[#0B0E13]">Zurich</option>
-          <option value="Lausanne" className="bg-[#0B0E13]">Lausanne</option>
-          <option value="Dubai" className="bg-[#0B0E13]">Dubai</option>
-          <option value="Singapore" className="bg-[#0B0E13]">Singapore</option>
-          <option value="Hong Kong" className="bg-[#0B0E13]">Hong Kong</option>
-          <option value="London" className="bg-[#0B0E13]">London</option>
-          <option value="New York" className="bg-[#0B0E13]">New York</option>
+        <select
+          name="location"
+          defaultValue={defaultFilters?.location ?? ""}
+          className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none"
+        >
+          <option value="" className="bg-[#0B0E13]">
+            All locations
+          </option>
+          <option value="Geneva" className="bg-[#0B0E13]">
+            Geneva
+          </option>
+          <option value="Zurich" className="bg-[#0B0E13]">
+            Zurich
+          </option>
+          <option value="Lausanne" className="bg-[#0B0E13]">
+            Lausanne
+          </option>
+          <option value="Dubai" className="bg-[#0B0E13]">
+            Dubai
+          </option>
+          <option value="Singapore" className="bg-[#0B0E13]">
+            Singapore
+          </option>
+          <option value="Hong Kong" className="bg-[#0B0E13]">
+            Hong Kong
+          </option>
+          <option value="London" className="bg-[#0B0E13]">
+            London
+          </option>
+          <option value="New York" className="bg-[#0B0E13]">
+            New York
+          </option>
         </select>
 
-        <select name="seniority" defaultValue={defaultFilters?.seniority ?? ""} className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none">
-          <option value="" className="bg-[#0B0E13]">All seniorities</option>
-          <option value="Director" className="bg-[#0B0E13]">Director</option>
-          <option value="Executive Director" className="bg-[#0B0E13]">Executive Director</option>
-          <option value="Managing Director" className="bg-[#0B0E13]">Managing Director</option>
-          <option value="Team Head" className="bg-[#0B0E13]">Team Head</option>
+        <select
+          name="seniority"
+          defaultValue={defaultFilters?.seniority ?? ""}
+          className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none"
+        >
+          <option value="" className="bg-[#0B0E13]">
+            All seniorities
+          </option>
+          <option value="Director" className="bg-[#0B0E13]">
+            Director
+          </option>
+          <option value="Executive Director" className="bg-[#0B0E13]">
+            Executive Director
+          </option>
+          <option value="Managing Director" className="bg-[#0B0E13]">
+            Managing Director
+          </option>
+          <option value="Team Head" className="bg-[#0B0E13]">
+            Team Head
+          </option>
         </select>
       </div>
 
-      <button className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10">
+      <button
+        className="inline-flex items-center gap-2 rounded-xl border border-brandGold/70 bg-brandGold/15 px-4 py-2 text-sm font-semibold text-brandGoldPale hover:bg-brandGold/25 hover:text-white"
+      >
         <Filter className="h-4 w-4" /> Apply
       </button>
     </form>
@@ -289,11 +373,13 @@ export default async function JobsPage({
 
   const rawJobs: Job[] = await getJobs(q, filters);
   const jobs = rawJobs.filter(
-    (j) => j?.active !== false && !HIDDEN_SLUGS.has(j.slug)
+    (j) => j?.active !== false && !HIDDEN_SLUGS.has(j.slug),
   );
 
   // ------- JSON-LD ItemList for SEO -------
-  const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.execpartners.ch").replace(/\/$/, "");
+  const base = (
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.execpartners.ch"
+  ).replace(/\/$/, "");
   const itemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -314,83 +400,121 @@ export default async function JobsPage({
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(1400px 500px at 10% -10%, rgba(14,165,233,.15) 0%, rgba(14,165,233,0) 60%), radial-gradient(1100px 420px at 110% 0%, rgba(34,197,94,.14) 0%, rgba(34,197,94,0) 60%)",
+            "radial-gradient(1400px 500px at 10% -10%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 55%), radial-gradient(1100px 420px at 110% 0%, rgba(245,231,192,.20) 0%, rgba(245,231,192,0) 60%)",
         }}
       />
 
       {/* JSON-LD script */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
+      />
 
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-14">
         <div className="text-center">
-          <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
-            Discreet Private Banking Mandates
-          </div>
+          <p className="mx-auto text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">
+            Private Banking · Discreet Mandates
+          </p>
           {/* ✅ SEO H1 */}
           <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
             Private Banking Jobs in Switzerland
           </h1>
           <p className="mx-auto mt-3 max-w-3xl text-neutral-300">
-            Live mandates across <strong>Geneva</strong> and <strong>Zurich</strong>, with international coverage in{" "}
-            <strong>Dubai</strong>, <strong>Singapore</strong>, <strong>London</strong> &amp; <strong>New York</strong>.
-            We publish a subset of searches; confidential roles are shared directly with qualified bankers.
+            Live mandates across <strong>Geneva</strong> and{" "}
+            <strong>Zurich</strong>, with international coverage in{" "}
+            <strong>Dubai</strong>, <strong>Singapore</strong>,{" "}
+            <strong>London</strong> &amp; <strong>New York</strong>. We publish
+            a subset of searches; confidential roles are shared directly with
+            qualified bankers.
           </p>
 
           {/* Quick internal links help SEO & UX */}
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
-            <Link href="/apply" className="rounded-full border border-white/15 bg-white/5 px-3 py-1 hover:bg-white/10">
+            <Link
+              href="/apply"
+              className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
+            >
               Submit CV
             </Link>
-            <Link href="/candidates" className="rounded-full border border-white/15 bg-white/5 px-3 py-1 hover:bg-white/10">
+            <Link
+              href="/candidates"
+              className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
+            >
               Candidate Hub
             </Link>
-            <Link href="/contact" className="rounded-full border border-white/15 bg-white/5 px-3 py-1 hover:bg-white/10">
+            <Link
+              href="/contact"
+              className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
+            >
               Contact a Recruiter
             </Link>
           </div>
         </div>
 
         <div className="mt-8">
-          <FilterBar defaultQuery={q} defaultFilters={{ market, location, seniority }} />
+          <FilterBar
+            defaultQuery={q}
+            defaultFilters={{ market, location, seniority }}
+          />
         </div>
 
         {/* Sort row */}
         <div className="mt-4 flex items-center justify-between text-sm text-white/70">
-          <div>{jobs.length} role{jobs.length === 1 ? "" : "s"}</div>
+          <div>
+            {jobs.length} role{jobs.length === 1 ? "" : "s"}
+          </div>
           <form>
-            <select name="sort" defaultValue={sort} className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none">
-              <option value="newest" className="bg-[#0B0E13]">Newest first</option>
-              <option value="oldest" className="bg-[#0B0E13]">Oldest first</option>
-              <option value="title" className="bg-[#0B0E13]">Title A–Z</option>
+            <select
+              name="sort"
+              defaultValue={sort}
+              className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none"
+            >
+              <option value="newest" className="bg-[#0B0E13]">
+                Newest first
+              </option>
+              <option value="oldest" className="bg-[#0B0E13]">
+                Oldest first
+              </option>
+              <option value="title" className="bg-[#0B0E13]">
+                Title A–Z
+              </option>
             </select>
           </form>
         </div>
 
         {/* Grid */}
         <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Suspense fallback={<><SkeletonCard/><SkeletonCard/><SkeletonCard/><SkeletonCard/></>}>
-            {jobs.length === 0 ? <EmptyState /> : jobs.map((job) => <Card key={job.slug} job={job} />)}
+          <Suspense
+            fallback={
+              <>
+                <SkeletonCard />
+                <SkeletonCard />
+                <SkeletonCard />
+                <SkeletonCard />
+              </>
+            }
+          >
+            {jobs.length === 0 ? (
+              <EmptyState />
+            ) : (
+              jobs.map((job) => <Card key={job.slug} job={job} />)
+            )}
           </Suspense>
         </div>
 
         {/* Footer CTA */}
         <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center">
           <p className="text-neutral-300">
-            Don’t see your exact market? We run confidential mandates continuously.
+            Don’t see your exact market? We run confidential mandates
+            continuously.
           </p>
-          <div className="mt-3 flex items-center justify-center gap-3">
-            <Link
-              href="/contact"
-              className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
-            >
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
+            <PrimaryButton href="/contact">
               Contact us
-            </Link>
-            <Link
-              href="/candidates"
-              className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF]"
-            >
+            </PrimaryButton>
+            <SecondaryButton href="/candidates">
               Register confidentially
-            </Link>
+            </SecondaryButton>
           </div>
         </div>
       </div>
