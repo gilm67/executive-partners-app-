@@ -1,2 +1,6 @@
 // app/en/insights/page.tsx
-export { default, metadata } from "@/app/insights/page";
+
+import InsightsPage, { metadata } from "@/app/insights/page";
+
+export { metadata };
+export default InsightsPage;
