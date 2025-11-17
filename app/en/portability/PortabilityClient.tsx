@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
+import PrimaryButton from "@/components/ui/PrimaryButton";
+
 type DimensionKey =
   | "custodian"
   | "aum"
@@ -40,7 +42,7 @@ const DIMENSIONS: Array<{
     key: "product",
     label: "Product Scope Breadth",
     description:
-      "From core PB to structured products, private markets and alternatives — especially relevant for UHNW and US/LatAm clients.",
+      "From core PB to structured products, private markets and alternatives — especially relevant for HNWI/UHNW and US/LatAm clients.",
   },
   {
     key: "concentration",
@@ -104,12 +106,12 @@ export default function PortabilityClient() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-12 space-y-10">
+    <div className="mx-auto max-w-6xl space-y-10 px-6 py-12">
       {/* header + action bar */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full bg-blue-500/10 px-4 py-1 text-sm text-blue-100 ring-1 ring-blue-500/30">
-            Executive Partners · Geneva · Global PB & WM
+          <p className="inline-flex items-center gap-2 rounded-full bg-brandGold/10 px-4 py-1 text-sm text-brandGoldPale ring-1 ring-brandGold/40">
+            Executive Partners · Geneva · Global PB &amp; WM
           </p>
           <h1 className="mt-4 text-4xl font-bold text-white md:text-5xl">
             Portability Readiness Score™
@@ -119,19 +121,16 @@ export default function PortabilityClient() {
             Singapore, Hong Kong, New York, Miami, Paris, Lisbon and Madrid.
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <button
             onClick={handleDownload}
-            className="rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/20 hover:bg-white/20"
+            className="rounded-xl bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brandGold/90 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           >
             Download PDF report
           </button>
-          <a
-            href="/en/contact"
-            className="rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600"
-          >
+          <PrimaryButton href="/en/contact" className="whitespace-nowrap">
             Request diagnostic
-          </a>
+          </PrimaryButton>
         </div>
       </div>
 
@@ -174,7 +173,7 @@ export default function PortabilityClient() {
             initial={{ opacity: 0, x: 25 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
-            className="w-full max-w-md space-y-6 rounded-2xl bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/10 p-6 ring-1 ring-white/10"
+            className="w-full max-w-md space-y-6 rounded-2xl bg-gradient-to-b from-black/80 via-black/50 to-black/20 p-6 ring-1 ring-brandGold/40"
           >
             <div className="flex items-center justify-between gap-4">
               <div>
@@ -184,14 +183,14 @@ export default function PortabilityClient() {
                 <p className="text-3xl font-bold text-white">{total.pct}%</p>
                 <p className="text-xs text-gray-400">{level}</p>
               </div>
-              <div className="h-16 w-16 rounded-full bg-blue-500/20 ring-4 ring-blue-500/40" />
+              <div className="h-16 w-16 rounded-full bg-brandGold/20 ring-4 ring-brandGold/40" />
             </div>
 
-            <div className="flex gap-2 text-xs">
-              <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-emerald-100 ring-1 ring-emerald-400/40">
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="rounded-full bg-brandGold/15 px-3 py-1 text-brandGoldPale ring-1 ring-brandGold/50">
                 Faster time-to-revenue
               </span>
-              <span className="rounded-full bg-blue-500/10 px-3 py-1 text-blue-100 ring-1 ring-blue-400/40">
+              <span className="rounded-full border border-brandGold/40 bg-black/40 px-3 py-1 text-brandGoldPale">
                 Lower onboarding friction
               </span>
             </div>
@@ -218,7 +217,7 @@ export default function PortabilityClient() {
                         [dim.key]: Number(e.target.value),
                       }))
                     }
-                    className="w-full accent-blue-500"
+                    className="w-full accent-brandGold"
                   />
                   <p className="text-[11px] text-gray-400">
                     {dim.description}
@@ -246,7 +245,7 @@ export default function PortabilityClient() {
           </p>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-xl bg-white/5 p-4">
+            <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
               <h3 className="text-sm font-semibold text-white">
                 Switzerland ↔ UK / EU
               </h3>
@@ -255,7 +254,7 @@ export default function PortabilityClient() {
                 EU/HNW books, languages and custodian compatibility.
               </p>
             </div>
-            <div className="rounded-xl bg-white/5 p-4">
+            <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
               <h3 className="text-sm font-semibold text-white">
                 Switzerland / UK → UAE
               </h3>
@@ -264,7 +263,7 @@ export default function PortabilityClient() {
                 and East Africa books.
               </p>
             </div>
-            <div className="rounded-xl bg-white/5 p-4">
+            <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
               <h3 className="text-sm font-semibold text-white">
                 Europe → US Wealth Hubs
               </h3>
@@ -273,16 +272,16 @@ export default function PortabilityClient() {
                 coverage, subject to US onboarding.
               </p>
             </div>
-            <div className="rounded-xl bg-white/5 p-4">
+            <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
               <h3 className="text-sm font-semibold text-white">
-                Switzerland / UK → Singapore & Hong Kong
+                Switzerland / UK → Singapore &amp; Hong Kong
               </h3>
               <p className="text-xs text-gray-300">
-                For Asia & NRI coverage (MAS / SFC rules, local booking
+                For Asia &amp; NRI coverage (MAS / SFC rules, local booking
                 centres).
               </p>
             </div>
-            <div className="rounded-xl bg-white/5 p-4">
+            <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
               <h3 className="text-sm font-semibold text-white">
                 US (New York / Miami) → Switzerland
               </h3>
@@ -291,7 +290,7 @@ export default function PortabilityClient() {
                 mandates.
               </p>
             </div>
-            <div className="rounded-xl bg-white/5 p-4">
+            <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
               <h3 className="text-sm font-semibold text-white">
                 Intra-EU (Paris, Lisbon, Madrid)
               </h3>
