@@ -1,12 +1,19 @@
 import Link from "next/link";
+import PrimaryButton from "@/components/ui/PrimaryButton";
+import SecondaryButton from "@/components/ui/SecondaryButton";
 
 export default function HiringManagersPage() {
   return (
     <main className="min-h-[70vh] px-4 md:px-6 lg:px-10 py-12 md:py-16">
       {/* TOP HERO CARD */}
       <section className="mx-auto max-w-5xl">
-        <div className="rounded-3xl border border-white/10 bg-white/5/40 bg-gradient-to-br from-white/5 via-white/0 to-emerald-500/5 px-6 py-8 md:px-10 md:py-10 shadow-[0_22px_60px_rgba(0,0,0,0.65)] backdrop-blur">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-emerald-300/80">
+        <div
+          className="rounded-3xl border border-white/10 bg-white/5/40 
+                     bg-gradient-to-br from-white/5 via-white/0 to-brandGold/10
+                     px-6 py-8 md:px-10 md:py-10
+                     shadow-[0_22px_60px_rgba(0,0,0,0.65)] backdrop-blur"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">
             For Hiring Managers
           </p>
 
@@ -22,27 +29,13 @@ export default function HiringManagersPage() {
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
-                         bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
-                         hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
-                         focus-visible:ring-emerald-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent
-                         transition"
-            >
+            <PrimaryButton href="/contact">
               Contact us about a hire
-            </Link>
+            </PrimaryButton>
 
-            <Link
-              href="/jobs"
-              className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
-                         border border-white/15 bg-black/10 text-slate-100
-                         hover:border-white/35 hover:bg-white/5
-                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60
-                         transition"
-            >
+            <SecondaryButton href="/jobs">
               View live mandates
-            </Link>
+            </SecondaryButton>
           </div>
 
           <div className="mt-6 grid gap-4 text-xs md:text-[13px] text-slate-200/75 md:grid-cols-3">
@@ -70,7 +63,11 @@ export default function HiringManagersPage() {
 
       {/* BP SIMULATOR – HIRING MANAGERS FOCUS */}
       <section className="mx-auto mt-10 max-w-5xl">
-        <div className="rounded-3xl border border-emerald-400/40 bg-black/40 px-6 py-7 md:px-10 md:py-9 shadow-[0_18px_50px_rgba(0,0,0,0.8)] backdrop-blur">
+        <div
+          className="rounded-3xl border border-brandGold/60 bg-black/40 
+                     px-6 py-7 md:px-10 md:py-9
+                     shadow-[0_18px_50px_rgba(0,0,0,0.8)] backdrop-blur"
+        >
           <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
             <div className="max-w-2xl space-y-3">
               <h2 className="text-2xl md:text-[1.65rem] font-semibold">
@@ -78,7 +75,7 @@ export default function HiringManagersPage() {
               </h2>
               <p className="text-sm md:text-base text-slate-200/85">
                 Use our{" "}
-                <span className="font-semibold text-emerald-300">
+                <span className="font-semibold text-brandGoldSoft">
                   Business Plan Simulator
                 </span>{" "}
                 to model NNM, ROA and net margin for a specific RM or team
@@ -93,16 +90,9 @@ export default function HiringManagersPage() {
             </div>
 
             <div className="mt-3 flex flex-col gap-3 md:mt-0 md:min-w-[230px]">
-              <Link
-                href="/bp-simulator"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
-                           bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
-                           hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
-                           focus-visible:ring-emerald-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent
-                           transition"
-              >
+              <PrimaryButton href="/bp-simulator">
                 Open the Business Plan Simulator
-              </Link>
+              </PrimaryButton>
               <p className="text-[11px] text-slate-300/75">
                 No login required. Use anonymised data (AUM, NNM, ROA, fixed
                 costs) for pre-mandate calibration.
@@ -114,7 +104,11 @@ export default function HiringManagersPage() {
 
       {/* SHARE A BRIEF – GLASS CARD */}
       <section className="mx-auto mt-10 max-w-5xl">
-        <div className="rounded-3xl border border-white/10 bg-black/40 px-6 py-7 md:px-10 md:py-9 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur">
+        <div
+          className="rounded-3xl border border-white/10 bg-black/40 
+                     px-6 py-7 md:px-10 md:py-9
+                     shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur"
+        >
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div className="max-w-2xl space-y-3">
               <h2 className="text-2xl md:text-[1.65rem] font-semibold">
@@ -135,27 +129,13 @@ export default function HiringManagersPage() {
             </div>
 
             <div className="mt-4 flex flex-col gap-3 md:mt-0 md:min-w-[220px]">
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
-                           bg-emerald-500 text-white shadow-lg shadow-emerald-500/30
-                           hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2
-                           focus-visible:ring-emerald-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent
-                           transition"
-              >
+              <PrimaryButton href="/contact">
                 Send us your brief
-              </Link>
+              </PrimaryButton>
 
-              <Link
-                href="/portability"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium
-                           border border-emerald-400/60 bg-black/20 text-emerald-200
-                           hover:border-emerald-300 hover:bg-emerald-500/10
-                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/80
-                           transition"
-              >
+              <SecondaryButton href="/portability">
                 Explore AUM portability
-              </Link>
+              </SecondaryButton>
             </div>
           </div>
 
