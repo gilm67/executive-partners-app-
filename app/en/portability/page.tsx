@@ -3,15 +3,15 @@ import type { Metadata } from "next";
 import PortabilityClient from "./PortabilityClient";
 
 export const metadata: Metadata = {
-  title: "Portability – Executive Partners",
+  title: "Portability Readiness Score™ | Executive Partners",
   description:
     "Interactive Portability Readiness Score™ for Private Banking & Wealth Management across Switzerland, UK, UAE, Asia, US and key EU hubs.",
 };
 
-export default function Page() {
+export default function PortabilityPage() {
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white body-grain portability-page">
-      {/* Gold ambient background, consistent with other pages */}
+      {/* Gold ambient background, aligned with other EP pages */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
