@@ -2,41 +2,49 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const BOT_RE = /(bot|crawler|spider|crawling|preview|facebookexternalhit|slackbot|twitterbot|bingbot|googlebot)/i;
+const SUPPORTED_LOCALES = ["en", "fr", "de"]; // adjust to what you actually use
+const DEFAULT_LOCALE = "en";
 
-export function middleware(req: NextRequest) {
-  // Feature flag off → do nothing
-  if (process.env.NEXT_PUBLIC_WELCOME_GATE !== "1") return NextResponse.next();
+function detectLocale(req: NextRequest): string {
+  // 1) From cookie (if you use NEXT_LOCALE or similar)
+  const cookieLocale = req.cookies.get("NEXT_LOCALE")?.value;
+  if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale)) {
+    return cookieLocale;
+  }
 
-  const url = req.nextUrl;
+  // 2) From Accept-Language header
+  const header = req.headers.get("accept-language");
+  if (header) {
+    const preferred = header
+      .split(",")
+      .map((part) => part.split(";")[0]?.trim())
+      .filter(Boolean);
 
-  // Only act on the homepage
-  if (url.pathname !== "/") return NextResponse.next();
+    for (const lang of preferred) {
+      const base = lang.slice(0, 2).toLowerCase();
+      if (SUPPORTED_LOCALES.includes(base)) return base;
+    }
+  }
 
-  // Allow manual bypass: /?nowelcome=1
-  if (url.searchParams.has("nowelcome")) return NextResponse.next();
-
-  // Skip crawlers / link unfurlers (SEO + social)
-  const ua = req.headers.get("user-agent") || "";
-  if (BOT_RE.test(ua)) return NextResponse.next();
-
-  // Already seen within the cookie window?
-  const seen = req.cookies.get("ep_seen_welcome")?.value === "1";
-  if (seen) return NextResponse.next();
-
-  // First-time human visitor → redirect to /welcome and set a 24h cookie
-  const res = NextResponse.redirect(new URL("/welcome", req.url));
-  res.cookies.set("ep_seen_welcome", "1", {
-    path: "/",
-    maxAge: 60 * 60 * 24, // 24 hours
-    sameSite: "lax",
-    secure: true,
-    httpOnly: false, // client code doesn't need it; keep visible
-  });
-  return res;
+  // 3) Fallback
+  return DEFAULT_LOCALE;
 }
 
-// Only match the homepage (keeps the rest of the site untouched)
+export function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  // Only handle the root /portability route
+  if (pathname === "/portability") {
+    const locale = detectLocale(req);
+    const url = req.nextUrl.clone();
+    url.pathname = `/${locale}/portability`;
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
+}
+
+// Limit middleware to paths we care about
 export const config = {
-  matcher: ["/"],
+  matcher: ["/portability"],
 };
