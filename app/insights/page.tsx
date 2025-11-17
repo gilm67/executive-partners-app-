@@ -2,6 +2,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllInsights } from "@/lib/insights/posts";
+import PrimaryButton from "@/components/ui/PrimaryButton";
+import SecondaryButton from "@/components/ui/SecondaryButton";
 
 /* helpers */
 function siteBase() {
@@ -93,32 +95,44 @@ export default function InsightsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
 
-      {/* Background glow */}
+      {/* Gold background glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(1200px 420px at 18% -10%, rgba(59,130,246,.16) 0%, rgba(59,130,246,0) 60%), radial-gradient(1000px 380px at 110% 0%, rgba(16,185,129,.15) 0%, rgba(16,185,129,0) 60%)",
+            "radial-gradient(1200px 420px at 18% -10%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 55%), radial-gradient(1000px 380px at 110% 0%, rgba(245,231,192,.20) 0%, rgba(245,231,192,0) 60%)",
         }}
       />
 
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
         {/* Header */}
-        <div className="mx-auto w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white/80 shadow-sm backdrop-blur">
-          Weekly market pulse — Private Banking &amp; Wealth Management
+        <div className="text-center">
+          <p className="mx-auto text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">
+            Private Wealth Pulse · Market & Hiring Insights
+          </p>
+
+          <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
+            Private Wealth Pulse — Insights
+          </h1>
+          <p className="mx-auto mt-3 max-w-3xl text-neutral-300">
+            Hiring trends, market notes and portability signals across
+            Switzerland, Dubai, Singapore, London &amp; New York.
+          </p>
+
+          {/* Hero CTAs */}
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <PrimaryButton href="/contact">
+              Discuss hiring trends for your desk
+            </PrimaryButton>
+            <SecondaryButton href="/jobs">
+              View live Private Banking mandates
+            </SecondaryButton>
+          </div>
         </div>
 
-        <h1 className="mt-3 text-center text-4xl font-extrabold tracking-tight md:text-5xl">
-          Private Wealth Pulse — Insights
-        </h1>
-        <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
-          Hiring trends, market notes and portability signals across
-          Switzerland, Dubai, Singapore, London &amp; New York.
-        </p>
-
         {/* List */}
-        <div className="mt-8 grid gap-6 md:grid-cols-2">
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
           {sorted.map((it) => {
             let displayDate = "—";
 
@@ -145,9 +159,9 @@ export default function InsightsPage() {
             return (
               <article
                 key={it.href}
-                className="rounded-2xl border border-white/5 bg-white/5 p-5 backdrop-blur"
+                className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur"
               >
-                <p className="text-xs uppercase tracking-wide text-emerald-200/70">
+                <p className="text-xs uppercase tracking-wide text-brandGoldSoft/80">
                   {it.tag ?? "Article"}
                 </p>
                 <h2 className="mt-2 text-lg font-semibold">
@@ -157,14 +171,14 @@ export default function InsightsPage() {
                 </h2>
                 <p className="mt-1 text-xs text-white/50">{displayDate}</p>
                 {it.excerpt ? (
-                  <p className="mt-3 text-sm text-neutral-200 line-clamp-3">
+                  <p className="mt-3 line-clamp-3 text-sm text-neutral-200">
                     {it.excerpt}
                   </p>
                 ) : null}
-                <div className="mt-4 flex gap-3">
+                <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
                   <Link
                     href={it.href}
-                    className="text-sm font-medium text-white underline-offset-4 hover:underline"
+                    className="font-medium text-brandGoldSoft underline-offset-4 hover:text-brandGold hover:underline"
                   >
                     Read on site →
                   </Link>
@@ -173,7 +187,7 @@ export default function InsightsPage() {
                       href={it.linkedin}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-sm text-neutral-300 hover:text-white"
+                      className="text-neutral-300 hover:text-white"
                     >
                       LinkedIn ↗
                     </a>
@@ -190,31 +204,31 @@ export default function InsightsPage() {
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
             <Link
               href="/private-banking-jobs-switzerland"
-              className="underline hover:text-white"
+              className="underline decoration-brandGold/70 underline-offset-4 hover:text-white"
             >
               See open Private Banking jobs in Switzerland
             </Link>
             <Link
               href="/private-banking-jobs-dubai"
-              className="underline hover:text-white"
+              className="underline decoration-brandGold/70 underline-offset-4 hover:text-white"
             >
               Private Banking roles in Dubai
             </Link>
             <Link
               href="/private-banking-jobs-singapore"
-              className="underline hover:text-white"
+              className="underline decoration-brandGold/70 underline-offset-4 hover:text-white"
             >
               Private Banking roles in Singapore
             </Link>
             <Link
               href="/private-banking-jobs-london"
-              className="underline hover:text-white"
+              className="underline decoration-brandGold/70 underline-offset-4 hover:text-white"
             >
               Private Banking roles in London
             </Link>
             <Link
               href="/private-banking-jobs-new-york"
-              className="underline hover:text-white"
+              className="underline decoration-brandGold/70 underline-offset-4 hover:text-white"
             >
               Private Banking roles in New York
             </Link>
@@ -223,7 +237,10 @@ export default function InsightsPage() {
 
         <p className="mt-6 text-center text-sm text-neutral-400">
           Subscribe via{" "}
-          <a href="/rss.xml" className="underline hover:text-white">
+          <a
+            href="/rss.xml"
+            className="underline decoration-brandGold/70 underline-offset-4 hover:text-white"
+          >
             RSS
           </a>
         </p>
