@@ -14,6 +14,11 @@ export const metadata: Metadata = {
     "Assess AUM portability across booking centres and markets. Tools and advisory for Private Bankers planning a move.",
   alternates: {
     canonical: `${SITE}/portability`,
+    languages: {
+      en: `${SITE}/en/portability`,
+      fr: `${SITE}/fr/portability`,
+      de: `${SITE}/de/portability`,
+    },
   },
   openGraph: {
     title: "AUM Portability & Market Access | Executive Partners",

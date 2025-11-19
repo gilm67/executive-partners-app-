@@ -2,10 +2,34 @@
 import type { Metadata } from "next";
 import PortabilityClient from "./PortabilityClient";
 
+/* -------- helpers for canonical URL -------- */
+const SITE =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "https://www.execpartners.ch");
+
+const PAGE_URL = `${SITE}/en/portability`;
+
 export const metadata: Metadata = {
   title: "Portability Readiness Score™ | Executive Partners",
   description:
     "Interactive Portability Readiness Score™ for Private Banking & Wealth Management across Switzerland, UK, UAE, Asia, US and key EU hubs.",
+  alternates: {
+    canonical: PAGE_URL,
+    languages: {
+      en: PAGE_URL,
+      fr: `${SITE}/fr/portability`,
+      de: `${SITE}/de/portability`,
+    },
+  },
+  openGraph: {
+    title: "Portability Readiness Score™ | Executive Partners",
+    description:
+      "Interactive Portability Readiness Score™ for Private Banking & Wealth Management across Switzerland, UK, UAE, Asia, US and key EU hubs.",
+    url: PAGE_URL,
+    images: [{ url: "/og.png" }],
+  },
 };
 
 export default function PortabilityPage() {

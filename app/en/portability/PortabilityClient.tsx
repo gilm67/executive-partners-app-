@@ -7,6 +7,338 @@ import html2canvas from "html2canvas";
 
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SecondaryButton from "@/components/ui/SecondaryButton";
+import type { Locale } from "@/lib/i18n/types";
+
+/* ------------------------------
+   Locale copy (EN / FR / DE)
+------------------------------ */
+
+type PortCopy = {
+  headerBadge: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  pdfButton: string;
+  contactCta: string;
+
+  s1Title: string;
+  s1Intro: string;
+  s1Note: string;
+  primaryMarketLabel: string;
+  mainHubLabel: string;
+  roaLabel: string;
+  roaHelp: string;
+  recurringLabel: string;
+  recurringHelpPrefix: string;
+  recurringHelpSuffix: string;
+  eddLabel: string;
+  eddHelpPrefix: string;
+  eddHelpSuffix: string;
+  pepsLabel: string;
+  pepsHelpPrefix: string;
+  pepsHelpSuffix: string;
+
+  s2Title: string;
+  s2Intro: string;
+  s2Note: string;
+  coreScoreLabel: string;
+
+  s3Title: string;
+  s3Intro: string;
+  advScoreLabel: string;
+
+  bookingCentresTitle: string;
+  bookingCentresText: string;
+  permissionsTitle: string;
+  permissionsText: string;
+
+  s4Title: string;
+  combinedScoreLabel: string;
+  coreFoundationLabel: string;
+  advancedFactorsLabel: string;
+  transferTitle: string;
+  transferLabel: string;
+  transferHelp: string;
+  onboardingLabel: string;
+  onboardingHelp: string;
+  howBankReadsTitle: string;
+  howBankReadsUsage: string;
+
+  s5Title: string;
+  s5Intro: string;
+  nextStepsBtn1: string;
+  nextStepsBtn2: string;
+  nextStepsBtn3: string;
+  prepDisclaimer: string;
+
+  commentStrongProfile: string;
+  commentImproveProfile: string;
+  commentHighLegal: string;
+  commentNormalLegal: string;
+};
+
+const PORT_COPY: Record<Locale, PortCopy> = {
+  en: {
+    headerBadge: "Executive Partners · Geneva · Global Private Banking & WM",
+    heroTitle: "Portability Readiness Score™ — Advanced Diagnostic",
+    heroSubtitle:
+      "A structured, bank-style view of how easily your book can follow you across Switzerland, the UK, UAE, Singapore, Hong Kong, the US and key EU hubs.",
+    pdfButton: "Download full PDF diagnostic",
+    contactCta: "Discuss results confidentially",
+
+    s1Title: "1. Profile & Revenue",
+    s1Intro:
+      "Basic information similar to what a hiring bank will ask at screening: core booking hub, market, ROA and revenue quality.",
+    s1Note:
+      "Indicative only. Receiving banks will run their own KYC, tax, compliance and risk analysis.",
+    primaryMarketLabel: "Primary market",
+    mainHubLabel: "Main booking hub today",
+    roaLabel: "ROA (bps, last 12 months)",
+    roaHelp:
+      "Typical CH onshore: ~65–90 bps; international books often higher.",
+    recurringLabel: "Recurring revenue share (%)",
+    recurringHelpPrefix: "",
+    recurringHelpSuffix:
+      "% of your revenue is recurring (DPM/advisory fees, trail, etc.).",
+    eddLabel: "Clients under EDD / complex tax (% of book)",
+    eddHelpPrefix: "",
+    eddHelpSuffix:
+      "% of clients require enhanced due diligence.",
+    pepsLabel: "PEPs / high-profile clients (%)",
+    pepsHelpPrefix: "",
+    pepsHelpSuffix:
+      "% estimated share of PEP / sensitive clients.",
+
+    s2Title: "2. Core Portability Dimensions",
+    s2Intro:
+      "These six dimensions mirror what front-office leaders review when assessing whether your book can follow you to a new platform.",
+    s2Note:
+      "Score each from 1 (weak) to 5 (very strong) based on your current situation.",
+    coreScoreLabel: "Core score",
+
+    s3Title: "3. Advanced Portability Factors",
+    s3Intro:
+      "A more granular view used by banks' hiring committees: AUM mix, legal/tax complexity, KYC reusability, past mobility, relationship depth, team dependency and platform fit.",
+    advScoreLabel: "Advanced portability",
+
+    bookingCentresTitle: "Booking centres your clients can follow",
+    bookingCentresText:
+      "Tick the locations where a meaningful portion of your book could be onboarded.",
+    permissionsTitle: "Cross-border & regulatory permissions",
+    permissionsText:
+      "Select the regimes you are effectively allowed to cover today.",
+
+    s4Title: "4. Overall Portability View",
+    combinedScoreLabel: "Combined score",
+    coreFoundationLabel: "Core foundation",
+    advancedFactorsLabel: "Advanced factors",
+    transferTitle: "Expected transfer & onboarding (indicative)",
+    transferLabel: "Expected transfer range",
+    transferHelp:
+      "Based on market practice for senior RMs moving between Tier-1 platforms. Not a guarantee; every bank applies its own filters.",
+    onboardingLabel: "Indicative onboarding time",
+    onboardingHelp:
+      "Includes due diligence, approvals, documentation refresh and initial client transfers.",
+    howBankReadsTitle: "How a hiring bank might read this",
+    howBankReadsUsage:
+      "Use this as a preparation tool ahead of conversations with Executive Partners and potential hiring platforms. It helps frame realistic expectations and identify areas to strengthen before a move.",
+
+    s5Title: "5. Next steps with Executive Partners",
+    s5Intro:
+      "If your portability profile looks compelling, we can help you approach the right platforms and booking centres in a structured, discreet way.",
+    nextStepsBtn1: "Share my profile & book a call",
+    nextStepsBtn2: "View live Private Banking mandates",
+    nextStepsBtn3: "Explore booking centres & markets",
+    prepDisclaimer:
+      "This tool is indicative and for preparation purposes only. Final onboarding decisions rest solely with the receiving institution and its compliance, tax, legal and risk frameworks.",
+
+    commentStrongProfile:
+      "Profile consistent with what leading Swiss and international platforms seek for senior hires.",
+    commentImproveProfile:
+      "There may be value in strengthening certain dimensions before approaching Tier-1 platforms.",
+    commentHighLegal:
+      "Legal/tax complexity will likely require additional compliance review and can slow onboarding.",
+    commentNormalLegal:
+      "Legal/tax complexity appears manageable for most booking centres.",
+  },
+
+  fr: {
+    headerBadge:
+      "Executive Partners · Genève · Global Private Banking & WM",
+    heroTitle:
+      "Portability Readiness Score™ — Diagnostic avancé",
+    heroSubtitle:
+      "Une vision structurée, proche de celle d’une banque, de la capacité de votre portefeuille à vous suivre entre la Suisse, le Royaume-Uni, les Émirats, Singapour, Hong Kong, les États-Unis et les principaux hubs européens.",
+    pdfButton: "Télécharger le diagnostic PDF complet",
+    contactCta: "Discuter des résultats en toute confidentialité",
+
+    s1Title: "1. Profil & Revenus",
+    s1Intro:
+      "Informations de base proches de ce qu’une banque cible demandera en screening : booking centre principal, marché, ROA et qualité des revenus.",
+    s1Note:
+      "Outil indicatif uniquement. Les banques d’accueil réalisent leurs propres analyses KYC, fiscales, compliance et risques.",
+    primaryMarketLabel: "Marché principal",
+    mainHubLabel: "Booking centre principal actuel",
+    roaLabel: "ROA (bps, 12 derniers mois)",
+    roaHelp:
+      "Typique CH onshore : ~65–90 bps ; les livres internationaux sont souvent plus élevés.",
+    recurringLabel: "Part de revenus récurrents (%)",
+    recurringHelpPrefix: "",
+    recurringHelpSuffix:
+      "% de vos revenus sont récurrents (frais DPM/advisory, rétrocessions, etc.).",
+    eddLabel: "Clients sous EDD / fiscalité complexe (% du book)",
+    eddHelpPrefix: "",
+    eddHelpSuffix:
+      "% de vos clients nécessitent un enhanced due diligence.",
+    pepsLabel: "PEPs / clients à profil sensible (%)",
+    pepsHelpPrefix: "",
+    pepsHelpSuffix:
+      "% estimation de la part de PEPs / clients sensibles.",
+
+    s2Title: "2. Dimensions clés de portabilité",
+    s2Intro:
+      "Ces six dimensions reflètent ce que les responsables front-office analysent pour évaluer la capacité de votre book à suivre sur une nouvelle plateforme.",
+    s2Note:
+      "Notez chaque critère de 1 (faible) à 5 (très fort) selon votre situation actuelle.",
+    coreScoreLabel: "Score core",
+
+    s3Title: "3. Facteurs avancés de portabilité",
+    s3Intro:
+      "Une vision plus granulaire utilisée par les comités de recrutement : mix AUM, complexité juridique/fiscale, réutilisation KYC, mobilité passée, profondeur de relation, dépendance à l’équipe et adéquation plateforme.",
+    advScoreLabel: "Portabilité avancée",
+
+    bookingCentresTitle:
+      "Booking centres que vos clients peuvent suivre",
+    bookingCentresText:
+      "Cochez les localisations où une part significative de votre book pourrait être onboardée.",
+    permissionsTitle: "Permissions cross-border & réglementaires",
+    permissionsText:
+      "Sélectionnez les régimes que vous êtes effectivement autorisé à couvrir aujourd’hui.",
+
+    s4Title: "4. Vue globale de portabilité",
+    combinedScoreLabel: "Score combiné",
+    coreFoundationLabel: "Socle core",
+    advancedFactorsLabel: "Facteurs avancés",
+    transferTitle:
+      "Portée de transfert & onboarding (indicatif)",
+    transferLabel: "Fourchette de transfert attendue",
+    transferHelp:
+      "Basé sur les pratiques de marché pour des RMs seniors changeant de plateforme Tier-1. Ce n’est pas une garantie ; chaque banque applique ses propres filtres.",
+    onboardingLabel: "Délai indicatif d’onboarding",
+    onboardingHelp:
+      "Inclut due diligence, validations, mise à jour de la documentation et premiers transferts clients.",
+    howBankReadsTitle:
+      "Comment une banque recruteuse pourrait le lire",
+    howBankReadsUsage:
+      "Utilisez ce diagnostic en préparation de vos échanges avec Executive Partners et les plateformes cibles. Il permet de cadrer les attentes et d’identifier les dimensions à renforcer avant un move.",
+
+    s5Title: "5. Prochaines étapes avec Executive Partners",
+    s5Intro:
+      "Si votre profil de portabilité apparaît solide, nous pouvons vous aider à approcher les plateformes et booking centres pertinents de manière structurée et discrète.",
+    nextStepsBtn1: "Partager mon profil & planifier un call",
+    nextStepsBtn2: "Voir les mandats en Banque Privée",
+    nextStepsBtn3: "Explorer booking centres & marchés",
+    prepDisclaimer:
+      "Cet outil est indicatif et sert de préparation. Les décisions finales d’onboarding appartiennent exclusivement à la banque d’accueil et à ses équipes compliance, fiscales, juridiques et risque.",
+
+    commentStrongProfile:
+      "Profil cohérent avec ce que recherchent les plateformes suisses et internationales de premier plan pour des recrutements seniors.",
+    commentImproveProfile:
+      "Il peut être pertinent de renforcer certaines dimensions avant d’approcher des plateformes Tier-1.",
+    commentHighLegal:
+      "La complexité juridique/fiscale impliquera probablement des revues compliance supplémentaires et peut ralentir l’onboarding.",
+    commentNormalLegal:
+      "La complexité juridique/fiscale semble gérable pour la plupart des booking centres.",
+  },
+
+  de: {
+    headerBadge:
+      "Executive Partners · Genf · Global Private Banking & WM",
+    heroTitle:
+      "Portability Readiness Score™ — Erweiterter Diagnostic",
+    heroSubtitle:
+      "Eine strukturierte, banktypische Sicht darauf, wie einfach Ihr Buch Ihnen zwischen der Schweiz, dem Vereinigten Königreich, den VAE, Singapur, Hongkong, den USA und wichtigen EU-Hubs folgen kann.",
+    pdfButton: "Vollständigen PDF-Report herunterladen",
+    contactCta: "Ergebnisse vertraulich besprechen",
+
+    s1Title: "1. Profil & Ertrag",
+    s1Intro:
+      "Basisangaben ähnlich denen, die eine Zielbank im Screening abfragt: zentrales Booking-Center, Markt, ROA und Ertragsqualität.",
+    s1Note:
+      "Nur indikativ. Aufnehmende Banken führen eigene KYC-, Steuer-, Compliance- und Risikoanalysen durch.",
+    primaryMarketLabel: "Primärmarkt",
+    mainHubLabel: "Heutiges Booking-Center",
+    roaLabel: "ROA (Basispunkte, letzte 12 Monate)",
+    roaHelp:
+      "Typisch CH Onshore: ~65–90 bps; internationale Bücher oft höher.",
+    recurringLabel: "Anteil wiederkehrender Erträge (%)",
+    recurringHelpPrefix: "",
+    recurringHelpSuffix:
+      "% Ihrer Erträge sind wiederkehrend (DPM/Advisory-Fees, Trailer etc.).",
+    eddLabel: "Kunden unter EDD / komplexer Steuerlage (% des Buches)",
+    eddHelpPrefix: "",
+    eddHelpSuffix:
+      "% Ihrer Kunden erfordern Enhanced Due Diligence.",
+    pepsLabel: "PEPs / exponierte Kunden (%)",
+    pepsHelpPrefix: "",
+    pepsHelpSuffix:
+      "% geschätzter Anteil an PEPs / sensiblen Kunden.",
+
+    s2Title: "2. Zentrale Portabilitätsdimensionen",
+    s2Intro:
+      "Diese sechs Dimensionen spiegeln wider, was Front-Office-Leiter prüfen, wenn sie beurteilen, ob Ihr Buch auf eine neue Plattform folgen kann.",
+    s2Note:
+      "Bewerten Sie jede Dimension von 1 (schwach) bis 5 (sehr stark) basierend auf Ihrer aktuellen Situation.",
+    coreScoreLabel: "Core-Score",
+
+    s3Title: "3. Erweiterte Portabilitätsfaktoren",
+    s3Intro:
+      "Eine detailliertere Sicht, wie sie von Hiring Committees genutzt wird: AUM-Mix, rechtlich/steuerliche Komplexität, KYC-Wiederverwendbarkeit, bisherige Mobilität, Beziehungs­tiefe, Teamabhängigkeit und Plattform-Fit.",
+    advScoreLabel: "Erweiterte Portabilität",
+
+    bookingCentresTitle:
+      "Booking-Center, denen Ihre Kunden folgen können",
+    bookingCentresText:
+      "Markieren Sie Standorte, an denen ein wesentlicher Teil Ihres Buches onboardet werden könnte.",
+    permissionsTitle: "Cross-Border- und regulatorische Bewilligungen",
+    permissionsText:
+      "Wählen Sie die Regimes, die Sie heute effektiv abdecken dürfen.",
+
+    s4Title: "4. Gesamtbild der Portabilität",
+    combinedScoreLabel: "Kombinierter Score",
+    coreFoundationLabel: "Core-Fundament",
+    advancedFactorsLabel: "Erweiterte Faktoren",
+    transferTitle:
+      "Erwartete Übertragbarkeit & Onboarding (indikativ)",
+    transferLabel: "Erwartete Transfer-Spanne",
+    transferHelp:
+      "Basierend auf Marktpraktiken für Senior RMs, die zwischen Tier-1-Plattformen wechseln. Keine Garantie; jede Bank wendet eigene Filter an.",
+    onboardingLabel: "Indikative Onboarding-Dauer",
+    onboardingHelp:
+      "Umfasst Due Diligence, Freigaben, Aktualisierung der Dokumentation und erste Kundentransfers.",
+    howBankReadsTitle:
+      "Wie eine rekrutierende Bank dies lesen könnte",
+    howBankReadsUsage:
+      "Nutzen Sie dieses Tool zur Vorbereitung Ihrer Gespräche mit Executive Partners und potenziellen Zielplattformen. Es hilft, Erwartungen zu kalibrieren und Bereiche zu identifizieren, die vor einem Wechsel gestärkt werden sollten.",
+
+    s5Title: "5. Nächste Schritte mit Executive Partners",
+    s5Intro:
+      "Ist Ihr Portabilitätsprofil überzeugend, unterstützen wir Sie dabei, die passenden Plattformen und Booking-Center strukturiert und diskret anzusprechen.",
+    nextStepsBtn1: "Profil teilen & Gespräch vereinbaren",
+    nextStepsBtn2: "Laufende Private-Banking-Mandate ansehen",
+    nextStepsBtn3: "Booking-Center & Märkte erkunden",
+    prepDisclaimer:
+      "Dieses Tool ist indikativ und dient der Vorbereitung. Finale Onboarding-Entscheidungen liegen ausschließlich bei der aufnehmenden Institution und deren Compliance-, Steuer-, Rechts- und Risikofunktionen.",
+
+    commentStrongProfile:
+      "Profil im Einklang mit dem, was führende Schweizer und internationale Plattformen für Senior-Hires suchen.",
+    commentImproveProfile:
+      "Es kann sinnvoll sein, bestimmte Dimensionen zu stärken, bevor man Tier-1-Plattformen anspricht.",
+    commentHighLegal:
+      "Rechtliche/steuerliche Komplexität wird voraussichtlich zusätzliche Compliance-Prüfungen erfordern und das Onboarding verlangsamen.",
+    commentNormalLegal:
+      "Die rechtlich/steuerliche Komplexität erscheint für die meisten Booking-Center handhabbar.",
+  },
+};
 
 /* ------------------------------
    Types & configuration
@@ -112,7 +444,16 @@ type ProfileState = {
    Component
 ------------------------------ */
 
-export default function PortabilityClient() {
+export default function PortabilityClient({ locale }: { locale?: Locale }) {
+  const lang: Locale =
+    locale && ["en", "fr", "de"].includes(locale) ? locale : "en";
+  const t = PORT_COPY[lang];
+
+  const localizedPath = (base: string) => {
+    if (lang === "en") return base;
+    return `/${lang}${base}`;
+  };
+
   /* ----- Section 1: Basic profile ----- */
 
   const [profile, setProfile] = useState<ProfileState>({
@@ -185,7 +526,7 @@ export default function PortabilityClient() {
     onboardingSpeed,
     commentary,
   } = useMemo(() => {
-    // Core score (existing 6 sliders)
+    // Core score
     const coreVals = Object.values(coreScores);
     const coreSum = coreVals.reduce((acc, v) => acc + v, 0);
     const coreMax = coreVals.length * 5;
@@ -205,8 +546,7 @@ export default function PortabilityClient() {
     const advVals = Object.values(advancedScores);
     const advSum = advVals.reduce((acc, v) => acc + v, 0);
     const advMax = advVals.length * 5;
-    const advBasePct =
-      advMax > 0 ? (advSum / advMax) * 100 : 0;
+    const advBasePct = advMax > 0 ? (advSum / advMax) * 100 : 0;
 
     // Booking centre coverage multiplier
     const selectedBC = Object.values(bookingCentres).filter(Boolean).length;
@@ -257,7 +597,7 @@ export default function PortabilityClient() {
         ? "Workable portability with conditions"
         : "Challenging portability profile";
 
-    // Expected transfer range (illustrative, not a promise)
+    // Expected transfer range (illustrative)
     let expectedTransferRange = "10–25% of book";
     let onboardingSpeed = "9–12+ months";
 
@@ -272,14 +612,17 @@ export default function PortabilityClient() {
       onboardingSpeed = "9–12 months";
     }
 
-    const commentary = [
+    const c1 =
       overallPct >= 70
-        ? "Profile consistent with what leading Swiss and international platforms seek for senior hires."
-        : "There may be value in strengthening certain dimensions before approaching Tier-1 platforms.",
+        ? PORT_COPY[lang].commentStrongProfile
+        : PORT_COPY[lang].commentImproveProfile;
+
+    const c2 =
       advancedScores.legalComplexity >= 4
-        ? "Legal/tax complexity will likely require additional compliance review and can slow onboarding."
-        : "Legal/tax complexity appears manageable for most booking centres."
-    ];
+        ? PORT_COPY[lang].commentHighLegal
+        : PORT_COPY[lang].commentNormalLegal;
+
+    const commentary = [c1, c2];
 
     return {
       corePct,
@@ -292,7 +635,7 @@ export default function PortabilityClient() {
       onboardingSpeed,
       commentary,
     };
-  }, [coreScores, advancedScores, bookingCentres, permissions]);
+  }, [coreScores, advancedScores, bookingCentres, permissions, lang]);
 
   /* ------------------------------
      PDF download handler
@@ -339,15 +682,13 @@ export default function PortabilityClient() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="inline-flex items-center gap-2 rounded-full bg-brandGold/10 px-4 py-1 text-xs font-semibold text-brandGoldPale ring-1 ring-brandGold/40">
-            Executive Partners · Geneva · Global Private Banking &amp; WM
+            {t.headerBadge}
           </p>
           <h1 className="mt-3 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
-            Portability Readiness Score™ — Advanced Diagnostic
+            {t.heroTitle}
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-gray-200/90 md:text-base">
-            A structured, bank-style view of how easily your book can follow you
-            across Switzerland, the UK, UAE, Singapore, Hong Kong, the US and
-            key EU hubs.
+            {t.heroSubtitle}
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -355,10 +696,13 @@ export default function PortabilityClient() {
             onClick={handleDownload}
             className="rounded-full bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brandGold/90 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           >
-            Download full PDF diagnostic
+            {t.pdfButton}
           </button>
-          <PrimaryButton href="/en/contact" className="whitespace-nowrap">
-            Discuss results confidentially
+          <PrimaryButton
+            href={localizedPath("/contact")}
+            className="whitespace-nowrap"
+          >
+            {t.contactCta}
           </PrimaryButton>
         </div>
       </div>
@@ -374,15 +718,13 @@ export default function PortabilityClient() {
         >
           <div className="md:col-span-1">
             <h2 className="text-lg font-semibold text-white">
-              1. Profile & Revenue
+              {t.s1Title}
             </h2>
             <p className="mt-2 text-sm text-gray-300">
-              Basic information similar to what a hiring bank will ask at
-              screening: core booking hub, market, ROA and revenue quality.
+              {t.s1Intro}
             </p>
             <p className="mt-3 text-[11px] text-gray-400">
-              Indicative only. Receiving banks will run their own KYC, tax,
-              compliance and risk analysis.
+              {t.s1Note}
             </p>
           </div>
 
@@ -390,7 +732,7 @@ export default function PortabilityClient() {
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <label className="block text-xs font-medium text-gray-300">
-                  Primary market
+                  {t.primaryMarketLabel}
                 </label>
                 <select
                   value={profile.market}
@@ -400,7 +742,9 @@ export default function PortabilityClient() {
                   className="mt-1 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
                 >
                   <option className="bg-[#0B0E13]">CH Onshore</option>
-                  <option className="bg-[#0B0E13]">International (CH Booking)</option>
+                  <option className="bg-[#0B0E13]">
+                    International (CH Booking)
+                  </option>
                   <option className="bg-[#0B0E13]">MEA / GCC</option>
                   <option className="bg-[#0B0E13]">LatAm</option>
                   <option className="bg-[#0B0E13]">Europe (EU/UK)</option>
@@ -409,7 +753,7 @@ export default function PortabilityClient() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-300">
-                  Main booking hub today
+                  {t.mainHubLabel}
                 </label>
                 <select
                   value={profile.mainHub}
@@ -433,7 +777,7 @@ export default function PortabilityClient() {
             <div className="grid gap-4 md:grid-cols-3">
               <div>
                 <label className="block text-xs font-medium text-gray-300">
-                  ROA (bps, last 12 months)
+                  {t.roaLabel}
                 </label>
                 <input
                   type="number"
@@ -444,13 +788,13 @@ export default function PortabilityClient() {
                   className="mt-1 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
                 />
                 <p className="mt-1 text-[11px] text-gray-400">
-                  Typical CH onshore: ~65–90 bps; international books often higher.
+                  {t.roaHelp}
                 </p>
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-gray-300">
-                  Recurring revenue share (%)
+                  {t.recurringLabel}
                 </label>
                 <input
                   type="range"
@@ -463,14 +807,15 @@ export default function PortabilityClient() {
                   className="mt-1 w-full accent-brandGold"
                 />
                 <p className="mt-1 text-[11px] text-gray-400">
-                  {profile.recurringShare}% of your revenue is recurring
-                  (DPM/advisory fees, trail, etc.).
+                  {t.recurringHelpPrefix}
+                  {profile.recurringShare}
+                  {t.recurringHelpSuffix}
                 </p>
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-gray-300">
-                  Clients under EDD / complex tax (% of book)
+                  {t.eddLabel}
                 </label>
                 <input
                   type="range"
@@ -483,7 +828,9 @@ export default function PortabilityClient() {
                   className="mt-1 w-full accent-brandGold"
                 />
                 <p className="mt-1 text-[11px] text-gray-400">
-                  {profile.eddShare}% of clients require enhanced due diligence.
+                  {t.eddHelpPrefix}
+                  {profile.eddShare}
+                  {t.eddHelpSuffix}
                 </p>
               </div>
             </div>
@@ -491,7 +838,7 @@ export default function PortabilityClient() {
             <div className="grid gap-4 md:grid-cols-3">
               <div>
                 <label className="block text-xs font-medium text-gray-300">
-                  PEPs / high-profile clients (%)
+                  {t.pepsLabel}
                 </label>
                 <input
                   type="range"
@@ -504,14 +851,16 @@ export default function PortabilityClient() {
                   className="mt-1 w-full accent-brandGold"
                 />
                 <p className="mt-1 text-[11px] text-gray-400">
-                  {profile.pepsShare}% estimated share of PEP / sensitive clients.
+                  {t.pepsHelpPrefix}
+                  {profile.pepsShare}
+                  {t.pepsHelpSuffix}
                 </p>
               </div>
             </div>
           </div>
         </motion.section>
 
-        {/* Section 2 – Core portability dimensions (original model) */}
+        {/* Section 2 – Core portability dimensions */}
         <motion.section
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -520,19 +869,17 @@ export default function PortabilityClient() {
         >
           <div className="lg:col-span-1">
             <h2 className="text-lg font-semibold text-brandGoldSoft">
-              2. Core Portability Dimensions
+              {t.s2Title}
             </h2>
             <p className="mt-2 text-sm text-gray-300">
-              These six dimensions mirror what front-office leaders review when
-              assessing whether your book can follow you to a new platform.
+              {t.s2Intro}
             </p>
             <p className="mt-3 text-xs text-gray-400">
-              Score each from 1 (weak) to 5 (very strong) based on your current
-              situation.
+              {t.s2Note}
             </p>
             <div className="mt-4 rounded-xl border border-brandGold/30 bg-black/60 p-3 text-xs text-gray-200">
               <div className="font-semibold text-brandGold">
-                Core score: {corePct}%
+                {t.coreScoreLabel}: {corePct}%
               </div>
               <div className="mt-1 text-[11px] text-gray-300">
                 {coreLevel}
@@ -564,7 +911,9 @@ export default function PortabilityClient() {
                   }
                   className="w-full accent-brandGold"
                 />
-                <p className="text-[11px] text-gray-400">{dim.description}</p>
+                <p className="text-[11px] text-gray-400">
+                  {dim.description}
+                </p>
               </div>
             ))}
           </div>
@@ -580,24 +929,24 @@ export default function PortabilityClient() {
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="text-lg font-semibold text-white">
-                3. Advanced Portability Factors
+                {t.s3Title}
               </h2>
               <p className="mt-1 text-sm text-gray-300">
-                A more granular view used by banks&apos; hiring committees: AUM
-                mix, legal/tax complexity, KYC reusability, past mobility,
-                relationship depth, team dependency and platform fit.
+                {t.s3Intro}
               </p>
             </div>
             <div className="rounded-xl border border-brandGold/35 bg-black/70 px-4 py-3 text-sm text-gray-200">
               <div className="flex items-baseline justify-between gap-4">
                 <span className="text-xs uppercase tracking-wide text-gray-400">
-                  Advanced portability
+                  {t.advScoreLabel}
                 </span>
                 <span className="text-lg font-semibold text-brandGold">
                   {advancedPct}%
                 </span>
               </div>
-              <p className="mt-1 text-[11px] text-gray-300">{advancedLevel}</p>
+              <p className="mt-1 text-[11px] text-gray-300">
+                {advancedLevel}
+              </p>
             </div>
           </div>
 
@@ -608,7 +957,9 @@ export default function PortabilityClient() {
               {/* AUM diversification */}
               <div>
                 <div className="flex items-center justify-between text-sm">
-                  <span>AUM diversification (Advisory / DPM / Lending)</span>
+                  <span>
+                    AUM diversification (Advisory / DPM / Lending)
+                  </span>
                   <span className="text-gray-300">
                     {advancedScores.aumDiversification}/5
                   </span>
@@ -627,8 +978,8 @@ export default function PortabilityClient() {
                   className="mt-1 w-full accent-brandGold"
                 />
                 <p className="mt-1 text-[11px] text-gray-400">
-                  1 = very concentrated, 5 = well balanced across advisory, DPM,
-                  lending.
+                  1 = very concentrated, 5 = well balanced across advisory,
+                  DPM, lending.
                 </p>
               </div>
 
@@ -830,11 +1181,10 @@ export default function PortabilityClient() {
           <div className="grid gap-6 md:grid-cols-2">
             <div>
               <h3 className="text-sm font-semibold text-white">
-                Booking centres your clients can follow
+                {t.bookingCentresTitle}
               </h3>
               <p className="mt-1 text-xs text-gray-400">
-                Tick the locations where a meaningful portion of your book could
-                be onboarded.
+                {t.bookingCentresText}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {BOOKING_CENTRES.map((bc) => (
@@ -856,10 +1206,10 @@ export default function PortabilityClient() {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-white">
-                Cross-border & regulatory permissions
+                {t.permissionsTitle}
               </h3>
               <p className="mt-1 text-xs text-gray-400">
-                Select the regimes you are effectively allowed to cover today.
+                {t.permissionsText}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {REG_PERMISSIONS.map((p) => (
@@ -892,51 +1242,61 @@ export default function PortabilityClient() {
           {/* Overall score card */}
           <div className="space-y-4 rounded-2xl border border-brandGold/40 bg-black/70 p-4">
             <p className="text-xs uppercase tracking-wide text-gray-300">
-              4. Overall Portability View
+              {t.s4Title}
             </p>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-300">Combined score</p>
+                <p className="text-sm text-gray-300">
+                  {t.combinedScoreLabel}
+                </p>
                 <p className="text-3xl font-bold text-brandGold">
                   {overallPct}%
                 </p>
-                <p className="mt-1 text-xs text-gray-300">{overallLevel}</p>
+                <p className="mt-1 text-xs text-gray-300">
+                  {overallLevel}
+                </p>
               </div>
               <div className="h-16 w-16 rounded-full bg-brandGold/15 ring-4 ring-brandGold/40" />
             </div>
             <div className="space-y-1 text-xs text-gray-300">
-              <p>Core foundation: {corePct}%</p>
-              <p>Advanced factors: {advancedPct}%</p>
+              <p>
+                {t.coreFoundationLabel}: {corePct}%
+              </p>
+              <p>
+                {t.advancedFactorsLabel}: {advancedPct}%
+              </p>
             </div>
           </div>
 
           {/* Expected transfer & onboarding */}
           <div className="space-y-4 rounded-2xl border border-white/15 bg-black/60 p-4">
             <h3 className="text-sm font-semibold text-white">
-              Expected transfer & onboarding (indicative)
+              {t.transferTitle}
             </h3>
             <div className="rounded-xl border border-white/15 bg-black/70 p-3 text-xs text-gray-200">
               <div className="flex items-center justify-between gap-4">
-                <span className="text-gray-300">Expected transfer range</span>
+                <span className="text-gray-300">
+                  {t.transferLabel}
+                </span>
                 <span className="font-semibold text-brandGold">
                   {expectedTransferRange}
                 </span>
               </div>
               <p className="mt-1 text-[11px] text-gray-400">
-                Based on market practice for senior RMs moving between Tier-1
-                platforms. Not a guarantee; every bank applies its own filters.
+                {t.transferHelp}
               </p>
             </div>
             <div className="rounded-xl border border-white/15 bg-black/70 p-3 text-xs text-gray-200">
               <div className="flex items-center justify-between gap-4">
-                <span className="text-gray-300">Indicative onboarding time</span>
+                <span className="text-gray-300">
+                  {t.onboardingLabel}
+                </span>
                 <span className="font-semibold text-brandGold">
                   {onboardingSpeed}
                 </span>
               </div>
               <p className="mt-1 text-[11px] text-gray-400">
-                Includes due diligence, approvals, documentation refresh and
-                initial client transfers.
+                {t.onboardingHelp}
               </p>
             </div>
           </div>
@@ -944,7 +1304,7 @@ export default function PortabilityClient() {
           {/* Commentary & suggested usage */}
           <div className="space-y-3 rounded-2xl border border-white/15 bg-black/60 p-4">
             <h3 className="text-sm font-semibold text-white">
-              How a hiring bank might read this
+              {t.howBankReadsTitle}
             </h3>
             <ul className="space-y-2 text-xs text-gray-300">
               {commentary.map((c, idx) => (
@@ -952,10 +1312,7 @@ export default function PortabilityClient() {
               ))}
             </ul>
             <p className="mt-2 text-[11px] text-gray-400">
-              Use this as a preparation tool ahead of conversations with
-              Executive Partners and potential hiring platforms. It helps frame
-              realistic expectations and identify areas to strengthen before a
-              move.
+              {t.howBankReadsUsage}
             </p>
           </div>
         </motion.section>
@@ -963,28 +1320,22 @@ export default function PortabilityClient() {
         {/* Section 5 – Next steps */}
         <section className="rounded-2xl border border-white/10 bg-black/40 p-5 text-sm text-gray-200">
           <h2 className="text-lg font-semibold text-white">
-            5. Next steps with Executive Partners
+            {t.s5Title}
           </h2>
-          <p className="mt-2">
-            If your portability profile looks compelling, we can help you
-            approach the right platforms and booking centres in a structured,
-            discreet way.
-          </p>
+          <p className="mt-2">{t.s5Intro}</p>
           <div className="mt-4 flex flex-wrap gap-3">
-            <PrimaryButton href="/en/contact">
-              Share my profile & book a call
+            <PrimaryButton href={localizedPath("/contact")}>
+              {t.nextStepsBtn1}
             </PrimaryButton>
-            <SecondaryButton href="/en/jobs">
-              View live Private Banking mandates
+            <SecondaryButton href={localizedPath("/jobs")}>
+              {t.nextStepsBtn2}
             </SecondaryButton>
-            <SecondaryButton href="/en/markets">
-              Explore booking centres & markets
+            <SecondaryButton href={localizedPath("/markets")}>
+              {t.nextStepsBtn3}
             </SecondaryButton>
           </div>
           <p className="mt-3 text-[11px] text-gray-400">
-            This tool is indicative and for preparation purposes only. Final
-            onboarding decisions rest solely with the receiving institution and
-            its compliance, tax, legal and risk frameworks.
+            {t.prepDisclaimer}
           </p>
         </section>
       </div>

@@ -2,6 +2,52 @@
 import type { Metadata } from "next";
 import ContactForm from "./ContactForm";
 
+/* ---------------- locale copy ---------------- */
+
+import type { Locale } from "@/lib/i18n/types";
+
+// Restrict UI locales we actually support on this page
+type UiLocale = "en" | "fr" | "de";
+
+const CONTACT_COPY: Record<
+  UiLocale,
+  {
+    title: string;
+    subtitle: string;
+    headOfficeLabel: string;
+    typicalMandatesLabel: string;
+    meetingNote: string;
+  }
+> = {
+  en: {
+    title: "Contact Executive Partners",
+    subtitle:
+      "Geneva-based. Mandates across Switzerland, the UK, the US, Dubai, Singapore & Hong Kong. We typically respond the same business day.",
+    headOfficeLabel: "Head Office",
+    typicalMandatesLabel: "Typical Mandates",
+    meetingNote:
+      "Meetings by appointment. Use the contact form to request a call or meeting time.",
+  },
+  de: {
+    title: "Kontakt Executive Partners",
+    subtitle:
+      "Mit Sitz in Genf. Mandate in der Schweiz, im Vereinigten Königreich, in den USA, Dubai, Singapur & Hongkong. Wir antworten in der Regel am selben Werktag.",
+    headOfficeLabel: "Hauptsitz",
+    typicalMandatesLabel: "Typische Mandate",
+    meetingNote:
+      "Termine nach Vereinbarung. Bitte nutzen Sie das Kontaktformular, um einen Rückruf oder Termin anzufragen.",
+  },
+  fr: {
+    title: "Contact Executive Partners",
+    subtitle:
+      "Basé à Genève. Mandats en Suisse, au Royaume-Uni, aux États-Unis, à Dubaï, Singapour & Hong Kong. Nous répondons généralement le jour ouvrable même.",
+    headOfficeLabel: "Siège",
+    typicalMandatesLabel: "Mandats typiques",
+    meetingNote:
+      "Rendez-vous sur demande. Merci d’utiliser le formulaire pour proposer un créneau ou demander un appel.",
+  },
+};
+
 /* ---------------- helpers ---------------- */
 function siteBase() {
   const fromEnv =
@@ -40,7 +86,15 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function ContactPage() {
+export default function ContactPage({ locale }: { locale?: Locale }) {
+  const SUPPORTED: UiLocale[] = ["en", "fr", "de"];
+
+  const lang: UiLocale = SUPPORTED.includes(locale as UiLocale)
+    ? (locale as UiLocale)
+    : "en";
+
+  const copy = CONTACT_COPY[lang];
+
   // ---------- Structured Data (JSON-LD) ----------
   const orgJsonLd = {
     "@context": "https://schema.org",
@@ -127,18 +181,16 @@ export default function ContactPage() {
       />
 
       <header className="mb-10">
-        <h1 className="page-title">Contact Executive Partners</h1>
-        <p className="mt-2 text-sm text-neutral-400">
-          Geneva-based. Mandates across Switzerland, the UK, the US, Dubai,
-          Singapore &amp; Hong Kong. We typically respond the same business day.
-        </p>
+        <h1 className="page-title">{copy.title}</h1>
+        <p className="mt-2 text-sm text-neutral-400">{copy.subtitle}</p>
       </header>
 
       <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-5">
         {/* LEFT: form panel */}
         <section className="md:col-span-3 h-full">
           <div className="h-full rounded-2xl border border-neutral-800 bg-neutral-900/50 p-6">
-            <ContactForm />
+            {/* pass effective locale to the form */}
+            <ContactForm locale={lang as Locale} />
           </div>
         </section>
 
@@ -150,7 +202,9 @@ export default function ContactPage() {
                 Executive Partners
               </h2>
               <div className="mt-2 text-sm text-neutral-400">
-                <p className="font-medium text-neutral-200">Head Office</p>
+                <p className="font-medium text-neutral-200">
+                  {copy.headOfficeLabel}
+                </p>
                 <p>118 rue du Rhône</p>
                 <p>1204 Geneva</p>
                 <p>Switzerland</p>
@@ -159,7 +213,7 @@ export default function ContactPage() {
               <div className="my-4 h-px w-full bg-neutral-800" />
 
               <h3 className="text-sm font-semibold text-neutral-200">
-                Typical Mandates
+                {copy.typicalMandatesLabel}
               </h3>
               <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-neutral-400">
                 <li>Relationship Managers &amp; Team Heads (UHNW/HNW)</li>
@@ -169,8 +223,7 @@ export default function ContactPage() {
               </ul>
 
               <p className="mt-4 text-xs text-neutral-500">
-                Meetings by appointment. Use the contact form to request a call
-                or meeting time.
+                {copy.meetingNote}
               </p>
             </div>
 

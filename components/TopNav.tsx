@@ -2,168 +2,160 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import type { Locale } from "@/lib/i18n/types";
+import { SUPPORTED_LOCALES } from "@/lib/i18n/types";
 
-type NavItem = { href: string; label: string; external?: boolean };
+/* ---------- locale helpers ---------- */
 
-const NAV: NavItem[] = [
-  { href: "/en/markets", label: "Markets" },
-  { href: "/jobs", label: "Jobs" },
-  { href: "/candidates", label: "Candidates" },
-  { href: "/hiring-managers", label: "Hiring Managers" },
-  { href: "/bp-simulator", label: "BP Simulator" },
-  { href: "/portability", label: "Portability" },
-  { href: "/insights", label: "Insights" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-];
+function getCurrentLocale(pathname: string): Locale {
+  const segments = pathname.split("/");
+  const maybeLocale = segments[1];
+  if (SUPPORTED_LOCALES.includes(maybeLocale as Locale)) {
+    return maybeLocale as Locale;
+  }
+  return "en";
+}
+
+function getNavItems(locale: Locale) {
+  const prefix = `/${locale}`;
+
+  if (locale === "fr") {
+    return [
+      { name: "Marchés", href: `${prefix}/markets` },
+      { name: "Jobs", href: `${prefix}/jobs` },
+      { name: "Candidats", href: `${prefix}/candidates` },
+      { name: "Employeurs", href: `${prefix}/hiring-managers` },
+      { name: "BP Simulator", href: `${prefix}/bp-simulator` },
+      { name: "Portabilité", href: `${prefix}/portability` },
+      { name: "Analyses", href: `${prefix}/insights` },
+      { name: "À propos", href: `${prefix}/about` },
+      { name: "Contact", href: `${prefix}/contact` },
+    ];
+  }
+
+  if (locale === "de") {
+    return [
+      { name: "Märkte", href: `${prefix}/markets` },
+      { name: "Jobs", href: `${prefix}/jobs` },
+      { name: "Kandidaten", href: `${prefix}/candidates` },
+      { name: "Auftraggeber", href: `${prefix}/hiring-managers` },
+      { name: "BP-Simulator", href: `${prefix}/bp-simulator` },
+      { name: "Portabilität", href: `${prefix}/portability` },
+      { name: "Insights", href: `${prefix}/insights` },
+      { name: "Über uns", href: `${prefix}/about` },
+      { name: "Kontakt", href: `${prefix}/contact` },
+    ];
+  }
+
+  // EN default – same order as live site
+  return [
+    { name: "Markets", href: `${prefix}/markets` },
+    { name: "Jobs", href: `${prefix}/jobs` },
+    { name: "Candidates", href: `${prefix}/candidates` },
+    { name: "Hiring Managers", href: `${prefix}/hiring-managers` },
+    { name: "BP Simulator", href: `${prefix}/bp-simulator` },
+    { name: "Portability", href: `${prefix}/portability` },
+    { name: "Insights", href: `${prefix}/insights` },
+    { name: "About", href: `${prefix}/about` },
+    { name: "Contact", href: `${prefix}/contact` },
+  ];
+}
+
+function switchLocaleInPath(pathname: string, targetLocale: Locale) {
+  const segments = pathname.split("/");
+
+  if (SUPPORTED_LOCALES.includes(segments[1] as Locale)) {
+    segments[1] = targetLocale;
+    const newPath = segments.join("/");
+    return newPath === "" ? "/" : newPath;
+  }
+
+  if (pathname === "/" || pathname === "") {
+    return `/${targetLocale}`;
+  }
+
+  return `/${targetLocale}${pathname}`;
+}
+
+/* ---------- Header (TopNav) ---------- */
 
 export default function TopNav() {
-  const pathname = usePathname();
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  // Body scroll lock
-  useEffect(() => {
-    document.body.classList.toggle("ep-lock-scroll", open);
-    return () => document.body.classList.remove("ep-lock-scroll");
-  }, [open]);
-
-  // Close on route change
-  useEffect(() => {
-    setOpen(false);
-    document.body.classList.remove("ep-lock-scroll");
-  }, [pathname]);
-
-  // Header style on scroll + ESC to close
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("keydown", onKey);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("keydown", onKey);
-    };
-  }, []);
-
-  const bar =
-    "fixed inset-x-0 top-0 z-40 transition-colors " +
-    (scrolled
-      ? "border-b border-white/10 bg-[#0B0E13]/70 backdrop-blur supports-[backdrop-filter]:bg-[#0B0E13]/55"
-      : "bg-transparent");
-
-  const linkClasses = (active: boolean) =>
-    [
-      "rounded-md px-3 py-1.5 text-sm whitespace-nowrap transition",
-      active ? "bg-white/10 text-white" : "text-white/80 hover:text-white hover:bg-white/5",
-    ].join(" ");
-
-  const isActive = (href: string) =>
-    pathname === href || pathname?.startsWith(href + "/");
+  const pathname = usePathname() || "/";
+  const locale = getCurrentLocale(pathname);
+  const navItems = getNavItems(locale);
 
   return (
-    <header className={bar}>
-      <nav className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex items-center justify-between gap-3">
-          {/* Brand */}
-          <Link
-            href="/"
-            className="shrink-0 text-base sm:text-lg font-semibold tracking-tight text-white hover:opacity-90"
-            aria-label="Executive Partners — Home"
-          >
-            Executive Partners
-          </Link>
+    <div className="mx-auto flex h-16 md:h-20 max-w-6xl items-center justify-between px-4 md:px-6">
+      {/* BRAND – visible, elegant */}
+      <Link
+        href={`/${locale}`}
+        className="mr-8 whitespace-nowrap text-[22px] md:text-[26px] tracking-tight text-white"
+      >
+        <span className="font-normal">Executive</span>{" "}
+        <span className="font-semibold">Partners</span>
+      </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-2">
-            <div className="flex items-center gap-2 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
-              {NAV.map((item) =>
-                item.external ? (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={linkClasses(isActive(item.href))}
-                  >
-                    {item.label}
-                  </a>
-                ) : (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={linkClasses(isActive(item.href))}
-                    onClick={() => setOpen(false)}
-                    aria-current={isActive(item.href) ? "page" : undefined}
-                  >
-                    {item.label}
-                  </Link>
-                )
-              )}
-            </div>
-          </div>
+      {/* NAV + LANGUAGE SWITCHER */}
+      <div className="flex flex-1 items-center justify-between gap-4">
+        {/* Main nav – DESKTOP */}
+        <nav className="hidden md:flex flex-1 items-center gap-6 text-[14px] md:text-[15px] font-medium text-slate-100/85">
+          {navItems.map((item) => {
+            const isActive =
+              pathname === item.href ||
+              pathname.startsWith(item.href + "/");
 
-          {/* Mobile burger */}
-          <button
-            type="button"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-            className="md:hidden rounded-md border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-white hover:bg-white/10"
-          >
-            {open ? "Close" : "Menu"}
-          </button>
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`relative whitespace-nowrap pb-0.5 transition-colors ${
+                  isActive
+                    ? "text-amber-200"
+                    : "text-slate-100/80 hover:text-amber-200"
+                }`}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Main nav – MOBILE (scrollable) */}
+        <nav className="flex md:hidden flex-1 items-center gap-4 overflow-x-auto text-[14px] font-medium text-slate-100/85">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="whitespace-nowrap transition-colors hover:text-amber-200"
+            >
+              {item.name}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Language pill – more readable & premium */}
+        <div className="ml-3 flex items-center rounded-full border border-amber-300/60 bg-black/85 px-2.5 py-1 text-[11px] md:text-[12px] uppercase tracking-[0.18em] text-white/70 shadow-[0_0_18px_rgba(0,0,0,0.7)]">
+          {SUPPORTED_LOCALES.map((lng, idx) => {
+            const targetHref = switchLocaleInPath(pathname, lng);
+            const isActive = lng === locale;
+            return (
+              <Link
+                key={lng}
+                href={targetHref}
+                className={[
+                  "rounded-full px-2.5 py-0.5 transition-colors",
+                  isActive
+                    ? "bg-[#F6C859] text-black font-semibold"
+                    : "text-white/75 hover:text-white hover:bg-white/10",
+                  idx === 0 ? "" : "ml-1.5",
+                ].join(" ")}
+              >
+                {lng.toUpperCase()}
+              </Link>
+            );
+          })}
         </div>
-
-        {/* Mobile panel (hidden when closed) */}
-        <div
-          className={
-            (open ? "mt-3" : "hidden") +
-            " md:hidden rounded-2xl border border-white/10 bg-[#0B0E13]/95 backdrop-blur p-3"
-          }
-        >
-          <ul className="grid gap-1">
-            {NAV.map((item) => {
-              const active = isActive(item.href);
-              const cls = [
-                "block rounded-md px-3 py-2 text-sm",
-                active ? "bg-white/10 text-white" : "text-white/80 hover:text-white hover:bg-white/5",
-              ].join(" ");
-              return (
-                <li key={item.href}>
-                  {item.external ? (
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={cls}
-                      onClick={() => setOpen(false)}
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      className={cls}
-                      onClick={() => setOpen(false)}
-                      aria-current={active ? "page" : undefined}
-                    >
-                      {item.label}
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </nav>
-
-      {/* subtle divider when not scrolled */}
-      {!scrolled && <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />}
-    </header>
+      </div>
+    </div>
   );
 }

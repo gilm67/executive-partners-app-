@@ -6,13 +6,26 @@ import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import { Inter, Playfair_Display } from "next/font/google";
 import { getAllMarkets } from "@/lib/markets/data";
+import { GlobalSpacer } from "./GlobalSpacer"; // ⇐ NEW
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap", preload: false });
-const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap", preload: false });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  preload: false,
+});
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+  preload: false,
+});
 
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.execpartners.ch");
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "https://www.execpartners.ch");
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
@@ -76,13 +89,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const markets = getAllMarkets();
 
   return (
-    <html lang="en" className={`h-full ${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`h-full ${inter.variable} ${playfair.variable}`}
+      suppressHydrationWarning
+    >
       <head>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
       </head>
 
-      {/* No 'has-sticky-header' to avoid double spacing; spacer controls offset for non-home pages */}
       <body
         className="min-h-screen overflow-x-hidden body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white"
         suppressHydrationWarning
@@ -102,24 +124,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <TopNav />
         </header>
 
-        {/* Spacer for non-home pages; hidden on "/" and "/en" so the hero can cover the header */}
-        <div id="global-spacer" aria-hidden className="h-4 md:h-5" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(){
-                try {
-                  var p = location.pathname;
-                  var isHome = (p === "/" || p === "/en");
-                  if (isHome) {
-                    var el = document.getElementById("global-spacer");
-                    if (el) el.style.display = "none";
-                  }
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
+        {/* Spacer for non-home pages; controlled in GlobalSpacer (client) */}
+        <GlobalSpacer />
 
         <main id="main">{children}</main>
 
@@ -128,46 +134,117 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="container-max py-10">
             <div className="grid gap-8 md:grid-cols-3">
               <div>
-                <h3 className="text-sm font-semibold text-white/90">Executive Partners</h3>
+                <h3 className="text-sm font-semibold text-white/90">
+                  Executive Partners
+                </h3>
                 <p className="mt-2 text-sm text-white/70">
-                  Geneva-based executive search focused on Private Banking &amp; Wealth Management.
+                  Geneva-based executive search focused on Private Banking &amp;
+                  Wealth Management.
                 </p>
               </div>
 
-              <nav aria-label="Markets we serve" className="text-sm">
-                <h3 className="text-sm font-semibold text-white/90">Markets we serve</h3>
+              <nav
+                aria-label="Markets we serve"
+                className="text-sm"
+              >
+                <h3 className="text-sm font-semibold text-white/90">
+                  Markets we serve
+                </h3>
                 <ul className="mt-2 grid grid-cols-2 gap-2 text-white/80">
                   {markets.map((m) => (
                     <li key={m.slug}>
-                      <Link className="hover:underline" href={`/en/markets/${m.slug}`}>
+                      <Link
+                        className="hover:underline"
+                        href={`/en/markets/${m.slug}`}
+                      >
                         {m.city}
                       </Link>
                     </li>
                   ))}
                 </ul>
                 <div className="mt-3">
-                  <Link className="text-emerald-400 hover:text-emerald-300" href="/en/markets">
+                  <Link
+                    className="text-emerald-400 hover:text-emerald-300"
+                    href="/en/markets"
+                  >
                     View all markets →
                   </Link>
                 </div>
               </nav>
 
-              <nav aria-label="Company" className="text-sm">
-                <h3 className="text-sm font-semibold text-white/90">Company</h3>
+              <nav
+                aria-label="Company"
+                className="text-sm"
+              >
+                <h3 className="text-sm font-semibold text-white/90">
+                  Company
+                </h3>
                 <ul className="mt-2 space-y-2 text-white/80">
-                  <li><Link className="hover:underline" href="/en/jobs">Jobs</Link></li>
-                  <li><Link className="hover:underline" href="/en/insights">Insights</Link></li>
-                  <li><Link className="hover:underline" href="/en/bp-simulator">BP Simulator</Link></li>
-                  <li><Link className="hover:underline" href="/en/portability">Portability</Link></li>
-                  <li><Link className="hover:underline" href="/en/apply">Apply</Link></li>
-                  <li><Link className="hover:underline" href="/en/hiring-managers">Hiring Managers</Link></li>
-                  <li><Link className="hover:underline" href="/en/contact">Contact</Link></li>
+                  <li>
+                    <Link
+                      className="hover:underline"
+                      href="/en/jobs"
+                    >
+                      Jobs
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="hover:underline"
+                      href="/en/insights"
+                    >
+                      Insights
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="hover:underline"
+                      href="/en/bp-simulator"
+                    >
+                      BP Simulator
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="hover:underline"
+                      href="/en/portability"
+                    >
+                      Portability
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="hover:underline"
+                      href="/en/apply"
+                    >
+                      Apply
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="hover:underline"
+                      href="/en/hiring-managers"
+                    >
+                      Hiring Managers
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="hover:underline"
+                      href="/en/contact"
+                    >
+                      Contact
+                    </Link>
+                  </li>
                 </ul>
               </nav>
             </div>
 
             <div className="mt-8 border-t border-white/10 pt-6 text-xs text-white/50 flex flex-wrap items-center justify-between gap-3">
-              <span>© {new Date().getFullYear()} Executive Partners. All rights reserved.</span>
+              <span>
+                © {new Date().getFullYear()} Executive Partners. All rights
+                reserved.
+              </span>
               <a
                 className="hover:underline"
                 href="https://www.linkedin.com/company/executive-partners/"
