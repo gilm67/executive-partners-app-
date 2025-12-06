@@ -1,11 +1,10 @@
-// app/page.tsx
 import Link from "next/link";
 import Image from "next/image";
 
 /* Public assets */
 const HERO = "/hero-skyline-hq.jpg";
 const LADY = "/candidate-eurasian.jpg";
-const MAN  = "/manager-portrait.jpg";
+const MAN = "/manager-portrait.jpg";
 
 export const dynamic = "force-static";
 export const revalidate = false;
@@ -31,12 +30,14 @@ export default function HomePage() {
 
           <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4">
             {/* === Dark glass overlay for title === */}
-            <div className="rounded-xl bg-black/45 px-6 py-5 backdrop-blur-sm text-center max-w-3xl">
-              <h1 className="font-[var(--font-playfair)] text-5xl font-semibold tracking-tight md:text-6xl text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
-                International &amp; Swiss <span className="gold">Private Banking</span>
+            <div className="max-w-3xl rounded-xl bg-black/45 px-6 py-5 text-center backdrop-blur-sm">
+              <h1 className="font-[var(--font-playfair)] text-5xl font-semibold tracking-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] md:text-6xl">
+                International &amp; Swiss{" "}
+                <span className="gold">Private Banking</span>
               </h1>
-              <p className="mt-4 text-white/90 text-base md:text-lg">
-                Executive Search &amp; Talent Advisory for HNW/UHNW banking. Geneva-based, globally connected.
+              <p className="mt-4 text-base text-white/90 md:text-lg">
+                Executive Search &amp; Talent Advisory for HNW/UHNW banking.
+                Geneva-based, globally connected.
               </p>
             </div>
 
@@ -62,13 +63,90 @@ export default function HomePage() {
                 value="98%"
                 note="Candidates still in seat after 12 months"
               />
-              {/* ✅ Updated: count + city list */}
               <KpiCard
                 title="Global Hubs"
                 value="12+"
-                note="Geneva, Zurich, London, Dubai, Singapore, Hong Kong, New York, Miami, Paris, Milano, Madrid, Lisbon"
+                note="Geneva, Zurich, London, Dubai, Singapore, Hong Kong, New York, Miami, Paris, Milan, Madrid, Lisbon"
               />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== BEAUTIFIED + CENTERED: SEO internal links block for private banker jobs ===== */}
+      <section className="container-max mt-12 px-4">
+        <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-sm">
+          {/* HEADER */}
+          <div className="flex flex-col items-center text-center">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/60">
+              Private Banker Hubs
+            </p>
+
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white md:text-3xl">
+              Explore confidential opportunities in key booking centres
+            </h2>
+
+            <p className="mt-3 max-w-2xl text-sm text-white/75 md:text-base">
+              Start from the hub where your franchise is strongest. We focus on
+              senior RMs, Team Leads and Market Heads with portable,
+              well-documented revenue.
+            </p>
+
+            <div className="mt-5">
+              <Link
+                href="/en/private-banker-jobs"
+                className="inline-flex items-center rounded-full bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-black shadow-md transition hover:bg-[#f5d778]"
+              >
+                View all Private Banker hubs →
+              </Link>
+            </div>
+          </div>
+
+          {/* HUB CHIPS */}
+          <div className="mt-8 flex flex-wrap justify-center gap-3 text-xs md:text-sm">
+            <HubChip
+              href="/en/private-banker-jobs/geneva"
+              label="Geneva · Switzerland"
+            />
+            <HubChip
+              href="/en/private-banker-jobs/zurich"
+              label="Zurich · Switzerland"
+            />
+            <HubChip
+              href="/en/private-banker-jobs/london"
+              label="London · UK"
+            />
+            <HubChip href="/en/private-banker-jobs/dubai" label="Dubai · UAE" />
+            <HubChip
+              href="/en/private-banker-jobs/singapore"
+              label="Singapore"
+            />
+            <HubChip
+              href="/en/private-banker-jobs/hong-kong"
+              label="Hong Kong"
+            />
+            <HubChip
+              href="/en/private-banker-jobs/new-york"
+              label="New York · US"
+            />
+            <HubChip href="/en/private-banker-jobs/miami" label="Miami · US" />
+            <HubChip
+              href="/en/private-banker-jobs/paris"
+              label="Paris · France"
+            />
+            <HubChip
+              href="/en/private-banker-jobs/milan"
+              label="Milan · Italy"
+            />
+            {/* NEW: Madrid */}
+            <HubChip
+              href="/en/private-banker-jobs/madrid"
+              label="Madrid · Spain"
+            />
+            <HubChip
+              href="/en/private-banker-jobs/lisbon"
+              label="Lisbon · Portugal"
+            />
           </div>
         </div>
       </section>
@@ -96,7 +174,9 @@ export default function HomePage() {
 
       {/* ===== DUE-DILIGENCE TOOLS (Portability + BP Simulator) ===== */}
       <section className="container-max mt-14 px-4 pb-16">
-        <h2 className="text-center text-3xl font-semibold">Due-Diligence Tools</h2>
+        <h2 className="text-center text-3xl font-semibold">
+          Due-Diligence Tools
+        </h2>
         <p className="mx-auto mt-2 max-w-3xl text-center text-white/75">
           Validate portability and strengthen approvals before you move.
         </p>
@@ -118,7 +198,6 @@ export default function HomePage() {
               "Document assumptions",
               "Export for review",
             ]}
-            /* ✅ FIX: route to /bp-simulator */
             primary={{ href: "/bp-simulator", label: "Run Simulation" }}
           />
         </div>
@@ -127,14 +206,40 @@ export default function HomePage() {
   );
 }
 
+/* ===== Small hub chip component ===== */
+function HubChip({ href, label }: { href: string; label: string }) {
+  return (
+    <Link
+      href={href}
+      className="inline-flex items-center rounded-full bg-white/5 px-3 py-1.5 text-neutral-100 ring-1 ring-white/10 transition hover:bg-[#D4AF37] hover:text-black hover:ring-[#D4AF37]"
+    >
+      {label}
+    </Link>
+  );
+}
+
 /* ===== Components ===== */
 
-function KpiCard({ title, value, note }: { title: string; value: string; note?: string }) {
+function KpiCard({
+  title,
+  value,
+  note,
+}: {
+  title: string;
+  value: string;
+  note?: string;
+}) {
   return (
     <div className="rounded-xl border border-black/10 bg-white/90 p-5 shadow-sm">
       <div className="text-sm font-semibold text-black/70">{title}</div>
-      <div className="mt-2 text-4xl font-extrabold tracking-tight text-black">{value}</div>
-      {note ? <div className="mt-2 text-[13px] leading-snug text-black/70">{note}</div> : null}
+      <div className="mt-2 text-4xl font-extrabold tracking-tight text-black">
+        {value}
+      </div>
+      {note ? (
+        <div className="mt-2 text-[13px] leading-snug text-black/70">
+          {note}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -179,8 +284,12 @@ function FeaturePanel({
           <h3 className="text-2xl font-semibold">{title}</h3>
           <p className="text-white/85">{copy}</p>
           <div className="mt-2 flex flex-wrap gap-3">
-            <Link href={primary.href} className="btn-primary">{primary.label}</Link>
-            <Link href={secondary.href} className="btn-ghost">{secondary.label}</Link>
+            <Link href={primary.href} className="btn-primary">
+              {primary.label}
+            </Link>
+            <Link href={secondary.href} className="btn-ghost">
+              {secondary.label}
+            </Link>
           </div>
         </div>
       </div>
@@ -202,11 +311,15 @@ function ToolCard({
       <h3 className="text-xl font-semibold">{title}</h3>
       <ul className="mt-3 space-y-1 text-white/80">
         {bullets.map((b) => (
-          <li key={b} className="list-disc pl-5">{b}</li>
+          <li key={b} className="list-disc pl-5">
+            {b}
+          </li>
         ))}
       </ul>
       <div className="mt-5">
-        <Link href={primary.href} className="btn-primary">{primary.label}</Link>
+        <Link href={primary.href} className="btn-primary">
+          {primary.label}
+        </Link>
       </div>
     </div>
   );

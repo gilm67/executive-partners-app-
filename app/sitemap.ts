@@ -1,6 +1,29 @@
 // app/sitemap.ts
 import type { MetadataRoute } from "next";
 import { getAllJobsPublic } from "@/lib/jobs-public";
+import { MARKET_SLUGS } from "@/lib/markets/data";
+
+type PublicJob = {
+  slug?: string;
+  active?: boolean;
+  updatedAt?: string;
+  createdAt?: string;
+};
+
+/** If /api/jobs is empty/unavailable, keep these in the sitemap so Jobs stays visible. */
+const FALLBACK_JOB_SLUGS: string[] = [
+  "senior-relationship-manager-mea-dubai",
+  "senior-relationship-manager-brazil-ch",
+  "senior-relationship-manager-ch-onshore-zurich",
+  "senior-relationship-manager-ch-onshore-lausanne",
+  "senior-relationship-manager-portugal-geneva",
+];
+
+/** Curate on-site Insights you’ve published */
+const INSIGHTS_POSTS: Array<{ slug: string; dateISO?: string; priority?: number }> = [
+  { slug: "swiss-private-banking-weekly-update-sep-2025", dateISO: "2025-09-08", priority: 0.75 },
+  { slug: "agility-small-bankers-win", dateISO: "2025-09-09", priority: 0.8 },
+];
 
 /** Build a clean absolute base URL */
 function siteBase(): string {
@@ -8,6 +31,7 @@ function siteBase(): string {
     process.env.NEXT_PUBLIC_SITE_URL ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
     "https://www.execpartners.ch";
+
   const url = env.startsWith("http") ? env : `https://${env}`;
   return url.replace(/\/+$/, "");
 }
@@ -19,45 +43,26 @@ function normalize(base: string, path: string): string {
   return collapsed === `${base}/` ? `${base}/` : collapsed.replace(/\/+$/, "");
 }
 
-type PublicJob = {
-  slug?: string;
-  active?: boolean;
-  updatedAt?: string;
-  createdAt?: string;
-};
-
-/** If /api/jobs is empty/unavailable, keep these in the sitemap so Jobs stays visible. */
-const FALLBACK_JOB_SLUGS = [
-  "senior-relationship-manager-mea-dubai",
-  "senior-relationship-manager-brazil-ch",
-  "senior-relationship-manager-ch-onshore-zurich",
-  "senior-relationship-manager-ch-onshore-lausanne",
-  "senior-relationship-manager-portugal-geneva",
-];
-
-/** Curate on-site Insights you’ve published */
-const INSIGHTS_POSTS: Array<{ slug: string; dateISO?: string; priority?: number }> = [
-  { slug: "swiss-private-banking-weekly-update-sep-2025", dateISO: "2025-09-08", priority: 0.75 },
-  // ✅ New article
-  // Set dateISO to the article’s publish date in YYYY-MM-DD (or omit to default to now)
-  { slug: "agility-small-bankers-win", dateISO: "2025-09-09", priority: 0.80 },
-];
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteBase();
-  const nowISO = new Date().toISOString();
+  const now = new Date();
+  const nowISO = now.toISOString();
 
-  // --- Static pages ---
-  const staticPages = [
-    "/", // home
+  // --- Static pages (legacy + /en structure) ---
+  const staticPages: string[] = [
+    "/",          // main home
+    "/en",        // EN home
+
+    // Legacy / root pages
     "/jobs",
     "/apply",
     "/candidates",
     "/hiring-managers",
-    "/insights", // insights hub
+    "/insights",
     "/about",
     "/contact",
-    // Regional landing pages (SEO)
+
+    // Regional SEO landings you already had
     "/private-banking-jobs-switzerland",
     "/private-banking-jobs-dubai",
     "/private-banking-jobs-singapore",
@@ -65,16 +70,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/private-banking-jobs-new-york",
     "/private-banking-jobs-geneva",
     "/private-banking-jobs-zurich",
+
+    // New EN information architecture
+    "/en/jobs",
+    "/en/apply",
+    "/en/candidates",
+    "/en/hiring-managers",
+    "/en/insights",
+    "/en/about",
+    "/en/contact",
+    "/en/markets",
+    "/en/private-banker-jobs",
+    "/en/portability",
+    "/en/bp-simulator",
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((p) => ({
     url: normalize(base, p),
-    lastModified: nowISO,
-    changeFrequency: p === "/" || p === "/insights" ? "daily" : "weekly",
-    priority: p === "/" ? 1 : p === "/insights" ? 0.8 : 0.7,
+    lastModified: now,
+    changeFrequency:
+      p === "/" || p === "/en" || p === "/insights" || p === "/en/insights"
+        ? "daily"
+        : "weekly",
+    priority:
+      p === "/" || p === "/en"
+        ? 1
+        : p === "/insights" || p === "/en/insights"
+        ? 0.8
+        : 0.7,
   }));
 
-  // --- Dynamic job pages ---
+  // --- Dynamic job pages from API (legacy /jobs/[slug]) ---
   let jobs: PublicJob[] = [];
   try {
     const data = await getAllJobsPublic();
@@ -98,29 +124,55 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((j) => j?.slug && j?.active !== false)
     .map((j) => {
       const last =
-        (j.updatedAt && new Date(j.updatedAt).toISOString()) ||
-        (j.createdAt && new Date(j.createdAt).toISOString()) ||
-        nowISO;
+        (j.updatedAt && new Date(j.updatedAt)) ||
+        (j.createdAt && new Date(j.createdAt)) ||
+        now;
 
       return {
         url: normalize(base, `/jobs/${j.slug!}`),
         lastModified: last,
-        changeFrequency: "weekly" as const,
+        changeFrequency: "weekly",
         priority: 0.8,
       };
     });
 
-  // --- Insights posts (your long-form articles) ---
+  // --- Dynamic market sheets & job-market pages from MARKET_SLUGS ---
+  const marketEntries: MetadataRoute.Sitemap = MARKET_SLUGS.flatMap((slug) => {
+    const marketUrl = normalize(base, `/en/markets/${slug}`);
+    const jobMarketUrl = normalize(base, `/en/private-banker-jobs/${slug}`);
+
+    return [
+      {
+        url: marketUrl,
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.75,
+      },
+      {
+        url: jobMarketUrl,
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.75,
+      },
+    ];
+  });
+
+  // --- Insights posts (long-form articles) ---
   const insightsEntries: MetadataRoute.Sitemap = INSIGHTS_POSTS.map((p) => ({
     url: normalize(base, `/insights/${p.slug}`),
-    lastModified: p.dateISO ? new Date(p.dateISO).toISOString() : nowISO,
+    lastModified: p.dateISO ? new Date(p.dateISO) : now,
     changeFrequency: "weekly",
-    priority: (p.priority ?? 0.75) as 0.75 | 0.8 | 0.7 | 1,
+    priority: p.priority ?? 0.75,
   }));
 
-  // De-duplicate by URL
+  // --- De-duplicate by URL ---
   const seen = new Set<string>();
-  const entries = [...staticEntries, ...jobEntries, ...insightsEntries].filter((e) => {
+  const entries = [
+    ...staticEntries,
+    ...jobEntries,
+    ...marketEntries,
+    ...insightsEntries,
+  ].filter((e) => {
     if (seen.has(e.url)) return false;
     seen.add(e.url);
     return true;
