@@ -54,7 +54,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0B0E13",
+  themeColor: "#050814", // match brand-bg
   colorScheme: "dark",
 };
 
@@ -108,9 +108,8 @@ export default function RootLayout({
         />
       </head>
 
-      {/* No 'has-sticky-header' to avoid double spacing; spacer controls offset for non-home pages */}
       <body
-        className="min-h-screen overflow-x-hidden body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white"
+        className="min-h-screen overflow-x-hidden body-grain bg-brand-bg text-white antialiased selection:bg-white/20 selection:text-white"
         suppressHydrationWarning
       >
         <a
@@ -123,7 +122,7 @@ export default function RootLayout({
         {/* Sticky, blurred header with fixed height */}
         <header
           role="banner"
-          className="sticky top-0 inset-x-0 z-50 h-16 md:h-20 border-b border-white/10 bg-[#0B0E13]/80 backdrop-blur-md"
+          className="sticky top-0 inset-x-0 z-50 h-16 md:h-20 border-b border-white/10 bg-brand-bg/80 backdrop-blur-md"
         >
           <TopNav />
         </header>
@@ -149,7 +148,6 @@ export default function RootLayout({
 
         <main id="main">{children}</main>
 
-        {/* Shared footer */}
         <Footer />
 
         {enableAnalytics && <Analytics />}
