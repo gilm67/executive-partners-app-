@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `Private Banker Jobs – ${m.city}`,
       description: `Confidential private banking roles in ${m.city} with documented AUM portability and realistic business plans.`,
-      images: [{ url: m.heroImage }],
+      images: m.heroImage ? [{ url: m.heroImage }] : undefined,
     },
   };
 }
@@ -261,7 +261,7 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
             If you lead a desk in {m.city} and would like a calibrated view of
             the senior banker market, you can{" "}
             <Link
-              href="/hiring-managers"
+              href="/en/hiring-managers"
               className="underline underline-offset-2"
             >
               visit the Hiring Managers page
@@ -278,7 +278,7 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ================= APPLY CTA ================= */}
+      {/* ================= APPLY CTA + MINI BUSINESS-CASE INTAKE ================= */}
       <section className="mx-auto mt-10 max-w-5xl">
         <article className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#1b1b1f] via-[#1b222b] to-[#111317] p-6 shadow-2xl md:p-8">
           <h2 className="text-xl font-semibold md:text-2xl">
@@ -354,6 +354,13 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
                 <option value="offshore-mixed">Offshore mixed</option>
               </select>
             </label>
+
+            <button
+              type="submit"
+              className="md:col-span-3 mt-2 inline-flex items-center justify-center rounded-full bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-[#f5d778]"
+            >
+              Send these numbers with my application
+            </button>
           </form>
 
           <p className="mt-4 text-xs text-neutral-400">
