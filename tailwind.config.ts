@@ -10,7 +10,20 @@ export default {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  theme: { extend: {} },
   darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          bg: "#0B0E13",          // main background
+          surface: "#111827",     // card / panel background (slate-900 style)
+          gold: "#D4AF37",        // main gold accent (buttons, key highlights)
+          goldSoft: "#F5D778",    // softer gold for labels / small accents
+          text: "#F9FAFB",        // primary text on dark background
+          textMuted: "#9CA3AF",   // secondary / muted text
+        },
+      },
+    },
+  },
   plugins: [],
 } satisfies Config;

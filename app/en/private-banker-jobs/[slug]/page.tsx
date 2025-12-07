@@ -169,7 +169,9 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
               </p>
               <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm text-slate-100">
                 <li>Portable AUM with clear, documented revenue history</li>
-                <li>Regulatory fit (onshore vs cross-border) and clean profile</li>
+                <li>
+                  Regulatory fit (onshore vs cross-border) and clean profile
+                </li>
                 <li>
                   Demonstrated ability to grow NNM beyond your current platform
                 </li>
@@ -288,6 +290,7 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
             your franchise is strategically relevant.
           </p>
 
+          {/* Primary CTAs */}
           <div className="mt-6 flex flex-wrap gap-4">
             <Link
               href="/en/apply"
@@ -303,6 +306,55 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
               Contact Executive Partners
             </Link>
           </div>
+
+          {/* Mini business-case intake */}
+          <form
+            action="/en/apply"
+            method="get"
+            className="mt-6 grid gap-4 md:grid-cols-3"
+          >
+            <input type="hidden" name="city" value={m.city} />
+
+            <label className="text-xs font-medium text-white/80">
+              Approx. total AUM (CHF / USD)
+              <input
+                type="text"
+                name="totalAum"
+                className="mt-1 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-[#D4AF37] focus:outline-none focus:ring-1 focus:ring-[#D4AF37]"
+                placeholder="e.g. 300m"
+              />
+            </label>
+
+            <label className="text-xs font-medium text-white/80">
+              Estimated portable AUM
+              <input
+                type="text"
+                name="portableAum"
+                className="mt-1 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-[#D4AF37] focus:outline-none focus:ring-1 focus:ring-[#D4AF37]"
+                placeholder="e.g. 40–60%"
+              />
+            </label>
+
+            <label className="text-xs font-medium text-white/80">
+              Main client base
+              <select
+                name="clientBase"
+                className="mt-1 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-sm text-white focus:border-[#D4AF37] focus:outline-none focus:ring-1 focus:ring-[#D4AF37]"
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Select segment
+                </option>
+                <option value="swiss-onshore">Swiss onshore</option>
+                <option value="nns">Non-resident Swiss (NNS)</option>
+                <option value="mena">MENA</option>
+                <option value="latam">LATAM</option>
+                <option value="uk-domiciled">UK-domiciled</option>
+                <option value="eu-onshore">EU onshore</option>
+                <option value="offshore-mixed">Offshore mixed</option>
+              </select>
+            </label>
+          </form>
 
           <p className="mt-4 text-xs text-neutral-400">
             We never send your profile to any institution without your explicit

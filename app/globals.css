@@ -13,7 +13,7 @@ body {
   background-image:
     radial-gradient(1200px 600px at 10% -10%, rgba(158,203,255,.06), transparent),
     radial-gradient(900px 500px at 90% 10%, rgba(156,81,255,.06), transparent),
-    radial-gradient(1100px 600px at 50% 120%, rgba(79,220,160,.07), transparent),
+    radial-gradient(1100px 600px at 50% 120%, rgba(212,175,55,.08), transparent),
     radial-gradient(1200px 600px at 20% 0%, rgba(158,203,255,.10), transparent),
     radial-gradient(800px 400px at 80% 20%, rgba(30,144,255,.08), transparent),
     radial-gradient(1000px 500px at 50% 120%, rgba(158,203,255,.09), transparent);
@@ -41,7 +41,7 @@ body.body-grain::before {
       rounded-full font-semibold text-sm leading-none
       px-5 py-2.5 transition-all duration-200
       focus-visible:outline-none focus-visible:ring-2
-      focus-visible:ring-emerald-400 focus-visible:ring-offset-2;
+      focus-visible:ring-brand-gold focus-visible:ring-offset-2;
   }
 
   /* XL button (hero sections) */
@@ -84,14 +84,15 @@ body.body-grain::before {
     box-shadow: 0 10px 26px rgba(30,144,255,.25);
   }
 
-  /* OUTLINE EMERALD — Tools / secondary */
+  /* OUTLINE (was emerald) — now gold / neutral secondary */
   .btn-outline-emerald {
-    @apply btn text-emerald-200 border border-emerald-400/60 bg-transparent;
+    @apply btn text-brand-gold border border-brand-gold/70 bg-transparent;
+    box-shadow: 0 8px 24px rgba(212,175,55,.18);
   }
   .btn-outline-emerald:hover {
-    @apply border-emerald-300;
-    background: rgba(16,185,129,.10);
-    box-shadow: 0 8px 24px rgba(16,185,129,.25);
+    background: rgba(212,175,55,.12);
+    border-color: rgba(245,215,120,.9);
+    box-shadow: 0 10px 30px rgba(212,175,55,.28);
   }
 }
 
@@ -99,14 +100,14 @@ body.body-grain::before {
    Cards
    ========================= */
 .card {
-  background: rgba(255,255,255,.05);
+  background: rgba(11,15,26,.9);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,.10);
   border-radius: 1.5rem;
   padding: 1.25rem;
   box-shadow:
-    0 0 0 1px rgba(158,203,255,0.20),
-    0 10px 40px rgba(30,144,255,0.10);
+    0 0 0 1px rgba(158,203,255,0.16),
+    0 10px 40px rgba(0,0,0,0.65);
 }
 
 /* =========================
