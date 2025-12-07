@@ -1,157 +1,113 @@
-// app/layout.tsx
-import "./globals.css";
-import type { Metadata, Viewport } from "next";
-import type { ReactNode } from "react";
-import { Analytics } from "@vercel/analytics/react";
-import { Inter, Playfair_Display } from "next/font/google";
-import TopNav from "@/components/TopNav";
-import Footer from "@/components/Footer";
+// app/en/private-banker-jobs/page.tsx
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-  preload: false,
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-  preload: false,
-});
-
-const SITE =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  (process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "https://www.execpartners.ch");
+import type { Metadata } from "next";
+import Link from "next/link";
+import { getAllMarkets } from "@/lib/markets/data";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE),
-  title: {
-    default: "Executive Partners — Private Banking & Wealth Management",
-    template: "%s | Executive Partners",
-  },
+  title: "Private Banker Jobs by Market",
   description:
-    "Geneva-based executive search focused on Private Banking & Wealth Management across Switzerland, the UK, US, Dubai, Singapore, and Hong Kong.",
-  openGraph: {
-    type: "website",
-    url: SITE,
-    title: "Executive Partners — Private Banking & Wealth Management",
-    description:
-      "Executive search for Private Banking & Wealth Management. Market microsites: compensation, licensing, client base, relocation.",
-    siteName: "Executive Partners",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Executive Partners — Private Banking & Wealth Management",
-    description:
-      "Executive search for Private Banking & Wealth Management. Market microsites: compensation, licensing, client base, relocation.",
-  },
+    "Director / MD private banker and team head roles across Geneva, Zurich, London, Dubai, Singapore, Hong Kong and other key wealth hubs.",
 };
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  themeColor: "#050814", // match brand-bg
-  colorScheme: "dark",
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  const orgJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Executive Partners",
-    url: SITE,
-    sameAs: ["https://www.linkedin.com/company/executive-partners/"],
-    logo: `${SITE}/ep-logo.png`,
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Geneva",
-      addressCountry: "CH",
-    },
-  };
-
-  const websiteJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Executive Partners",
-    url: SITE,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${SITE}/en/insights?query={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
-  };
-
-  const enableAnalytics = process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "1";
+export default function PrivateBankerJobsIndexPage() {
+  const markets = getAllMarkets();
 
   return (
-    <html
-      lang="en"
-      className={`h-full ${inter.variable} ${playfair.variable}`}
-      suppressHydrationWarning
-    >
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
-      </head>
+    <main className="min-h-screen bg-[#0B0E13] px-4 py-12 text-white md:px-6 md:py-16 lg:px-10">
+      {/* ================= HERO ================= */}
+      <section className="mx-auto max-w-5xl">
+        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-white/0 to-[#D4AF37]/10 px-6 py-8 shadow-[0_22px_60px_rgba(0,0,0,0.7)] backdrop-blur md:px-10 md:py-10">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#D4AF37]">
+            Private Banker Jobs · Global Wealth Hubs
+          </p>
 
-      <body
-        className="min-h-screen overflow-x-hidden body-grain bg-brand-bg text-white antialiased selection:bg-white/20 selection:text-white"
-        suppressHydrationWarning
-      >
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white/10 focus:px-3 focus:py-2"
-        >
-          Skip to content
-        </a>
+          <h1 className="mt-4 text-3xl font-semibold leading-tight md:text-4xl lg:text-[2.6rem]">
+            Director &amp; MD private banker roles by booking centre
+          </h1>
 
-        {/* Sticky, blurred header with fixed height */}
-        <header
-          role="banner"
-          className="sticky top-0 inset-x-0 z-50 h-16 md:h-20 border-b border-white/10 bg-brand-bg/80 backdrop-blur-md"
-        >
-          <TopNav />
+          <p className="mt-4 max-w-3xl text-sm text-slate-200/85 md:text-base">
+            We focus on discreet senior moves for{" "}
+            <span className="font-semibold">Relationship Managers</span>,{" "}
+            <span className="font-semibold">Team Heads</span> and{" "}
+            <span className="font-semibold">Market Heads</span> with documented AUM
+            portability and a realistic, defendable business plan for each
+            platform.
+          </p>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/en/apply"
+              className="btn-primary btn-xl w-full md:w-auto"
+            >
+              Share your profile confidentially
+            </Link>
+            <Link
+              href="/en/markets"
+              className="btn-ghost w-full md:w-auto"
+            >
+              View all market sheets
+            </Link>
+          </div>
+
+          <p className="mt-4 text-xs text-slate-300/80">
+            We never send your CV or business plan to any institution without
+            your explicit consent for that specific platform.
+          </p>
+        </div>
+      </section>
+
+      {/* ================= MARKET CARDS ================= */}
+      <section className="mx-auto mt-10 max-w-5xl">
+        <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold md:text-[1.65rem]">
+              Private banker job markets
+            </h2>
+            <p className="text-sm text-slate-200/85 md:text-base">
+              Choose your main booking centre to see how we structure mandates,
+              approvals and realistic business plans in that hub.
+            </p>
+          </div>
         </header>
 
-        {/* Spacer for non-home pages; hidden on "/" and "/en" so the hero can cover the header */}
-        <div id="global-spacer" aria-hidden className="h-4 md:h-5" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(){
-                try {
-                  var p = location.pathname;
-                  var isHome = (p === "/" || p === "/en");
-                  if (isHome) {
-                    var el = document.getElementById("global-spacer");
-                    if (el) el.style.display = "none";
-                  }
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {markets.map((m) => (
+            <Link
+              key={m.slug}
+              href={`/en/private-banker-jobs/${m.slug}`}
+              className="group flex items-stretch justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/90 transition duration-150 hover:border-[#D4AF37]/80 hover:bg-white/10"
+            >
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-300 group-hover:text-[#D4AF37]">
+                  Booking centre
+                </span>
+                <span className="text-base font-semibold">{m.city}</span>
+                {m.region && (
+                  <span className="text-xs text-slate-300">
+                    {m.region}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2 text-xs text-slate-300 group-hover:text-[#D4AF37]">
+                View roles
+                <span aria-hidden className="text-lg">
+                  →
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
 
-        <main id="main">{children}</main>
-
-        <Footer />
-
-        {enableAnalytics && <Analytics />}
-      </body>
-    </html>
+        <p className="mt-6 text-xs text-slate-400">
+          If your current booking centre is not listed, you can still{" "}
+          <Link href="/en/apply" className="underline underline-offset-2">
+            share your profile confidentially
+          </Link>{" "}
+          and we&apos;ll advise you which platforms and locations are realistic
+          given your client base, licensing and AUM portability.
+        </p>
+      </section>
+    </main>
   );
 }
