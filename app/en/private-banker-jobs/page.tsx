@@ -30,8 +30,8 @@ export default function PrivateBankerJobsIndexPage() {
             We focus on discreet senior moves for{" "}
             <span className="font-semibold">Relationship Managers</span>,{" "}
             <span className="font-semibold">Team Heads</span> and{" "}
-            <span className="font-semibold">Market Heads</span> with documented AUM
-            portability and a realistic, defendable business plan for each
+            <span className="font-semibold">Market Heads</span> with documented
+            AUM portability and a realistic, defendable business plan for each
             platform.
           </p>
 
@@ -42,10 +42,7 @@ export default function PrivateBankerJobsIndexPage() {
             >
               Share your profile confidentially
             </Link>
-            <Link
-              href="/en/markets"
-              className="btn-ghost w-full md:w-auto"
-            >
+            <Link href="/en/markets" className="btn-ghost w-full md:w-auto">
               View all market sheets
             </Link>
           </div>
@@ -83,11 +80,6 @@ export default function PrivateBankerJobsIndexPage() {
                   Booking centre
                 </span>
                 <span className="text-base font-semibold">{m.city}</span>
-                {m.region && (
-                  <span className="text-xs text-slate-300">
-                    {m.region}
-                  </span>
-                )}
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-300 group-hover:text-[#D4AF37]">
                 View roles
