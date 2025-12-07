@@ -46,17 +46,26 @@ body.body-grain::before {
       rounded-full font-semibold text-sm leading-none
       px-5 py-2.5 transition-all duration-200
       focus-visible:outline-none focus-visible:ring-2
-      focus-visible:ring-brand-gold focus-visible:ring-offset-2;
+      focus-visible:ring-offset-2;
+    /* If you want a gold outline on focus, uncomment this:
+    outline: none;
+    }
+    .btn:focus-visible {
+      box-shadow: 0 0 0 2px rgba(212,175,55,.9);
+    }
+    */
   }
 
   /* XL button (hero sections) */
   .btn-xl {
-    @apply btn text-base px-6 py-3 min-w-[13rem];
+    @apply btn text-base px-6 py-3;
+    min-width: 13rem; /* replaces min-w-[13rem] in @apply */
   }
 
   /* PRIMARY — Gold gradient */
   .btn-primary {
-    @apply btn text-[#1A1300];
+    @apply btn;
+    color: #1A1300;
     background-image: linear-gradient(
       180deg,
       #FFE8A3 0%,
@@ -94,7 +103,6 @@ body.body-grain::before {
 
   /* OUTLINE (was emerald) — now gold / neutral secondary */
   .btn-outline-emerald {
-    /* IMPORTANT: no `/70` opacity in @apply */
     @apply btn text-brand-gold border border-brand-gold bg-transparent;
     box-shadow: 0 8px 24px rgba(212,175,55,.18);
   }
