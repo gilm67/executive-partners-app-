@@ -23,7 +23,7 @@ export default function TopNav() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Body scroll lock
+  // Body scroll lock when mobile menu is open
   useEffect(() => {
     document.body.classList.toggle("ep-lock-scroll", open);
     return () => document.body.classList.remove("ep-lock-scroll");
@@ -35,12 +35,13 @@ export default function TopNav() {
     document.body.classList.remove("ep-lock-scroll");
   }, [pathname]);
 
-  // Header style on scroll + ESC to close
+  // Header style on scroll + ESC to close menu
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("keydown", onKey);
@@ -53,17 +54,19 @@ export default function TopNav() {
   const bar =
     "fixed inset-x-0 top-0 z-40 transition-colors " +
     (scrolled
-      ? "border-b border-white/10 bg-[#0B0E13]/70 backdrop-blur supports-[backdrop-filter]:bg-[#0B0E13]/55"
+      ? "border-b border-white/10 bg-[#050814]/80 backdrop-blur supports-[backdrop-filter]:bg-[#050814]/65"
       : "bg-transparent");
-
-  const linkClasses = (active: boolean) =>
-    [
-      "rounded-md px-3 py-1.5 text-sm whitespace-nowrap transition",
-      active ? "bg-white/10 text-white" : "text-white/80 hover:text-white hover:bg-white/5",
-    ].join(" ");
 
   const isActive = (href: string) =>
     pathname === href || pathname?.startsWith(href + "/");
+
+  const linkClasses = (active: boolean) =>
+    [
+      "relative rounded-full px-3 py-1.5 text-sm whitespace-nowrap transition-colors",
+      active
+        ? "text-[#F5D778] bg-white/5"
+        : "text-slate-200 hover:text-white hover:bg-white/5",
+    ].join(" ");
 
   return (
     <header className={bar}>
@@ -72,7 +75,7 @@ export default function TopNav() {
           {/* Brand */}
           <Link
             href="/"
-            className="shrink-0 text-base sm:text-lg font-semibold tracking-tight text-white hover:opacity-90"
+            className="shrink-0 text-base sm:text-lg font-semibold tracking-tight text-white hover:text-[#F5D778] transition-colors"
             aria-label="Executive Partners — Home"
           >
             Executive Partners
@@ -113,26 +116,29 @@ export default function TopNav() {
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="md:hidden rounded-md border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-white hover:bg-white/10"
+            className="md:hidden rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-white hover:bg-white/10"
           >
             {open ? "Close" : "Menu"}
           </button>
         </div>
 
-        {/* Mobile panel (hidden when closed) */}
+        {/* Mobile panel */}
         <div
           className={
             (open ? "mt-3" : "hidden") +
-            " md:hidden rounded-2xl border border-white/10 bg-[#0B0E13]/95 backdrop-blur p-3"
+            " md:hidden rounded-2xl border border-white/10 bg-[#050814]/95 backdrop-blur p-3"
           }
         >
           <ul className="grid gap-1">
             {NAV.map((item) => {
               const active = isActive(item.href);
               const cls = [
-                "block rounded-md px-3 py-2 text-sm",
-                active ? "bg-white/10 text-white" : "text-white/80 hover:text-white hover:bg-white/5",
+                "block rounded-md px-3 py-2 text-sm transition-colors",
+                active
+                  ? "bg-white/10 text-[#F5D778]"
+                  : "text-slate-200 hover:text-white hover:bg-white/5",
               ].join(" ");
+
               return (
                 <li key={item.href}>
                   {item.external ? (
@@ -162,8 +168,10 @@ export default function TopNav() {
         </div>
       </nav>
 
-      {/* subtle divider when not scrolled */}
-      {!scrolled && <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />}
+      {/* Subtle divider when not scrolled */}
+      {!scrolled && (
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      )}
     </header>
   );
 }
