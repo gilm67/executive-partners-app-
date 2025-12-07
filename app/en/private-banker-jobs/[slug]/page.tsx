@@ -66,7 +66,7 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
       {/* ================= HERO / POSITIONING ================= */}
       <section className="mx-auto max-w-5xl">
         <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-white/0 to-[#D4AF37]/10 px-6 py-8 shadow-[0_22px_60px_rgba(0,0,0,0.7)] backdrop-blur md:px-10 md:py-10">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#F5D778]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#D4AF37]">
             Private Banker Jobs · {m.city.toUpperCase()}
           </p>
 
@@ -142,7 +142,7 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
 
           <div className="mt-5 grid gap-6 md:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#F5D778]">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
                 Hot roles
               </p>
               <ul className="mt-2 flex flex-wrap gap-2 text-sm text-slate-100">
@@ -164,7 +164,7 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#F5D778]">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
                 What clients look for
               </p>
               <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm text-slate-100">
@@ -182,7 +182,7 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
 
           {hotSkills.length > 0 && (
             <div className="mt-5 rounded-2xl border border-dashed border-[#D4AF37]/50 bg-[#D4AF37]/5 px-4 py-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#F5D778]">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
                 Skills that move the needle
               </p>
               <ul className="mt-2 flex flex-wrap gap-2 text-xs text-slate-100 md:text-sm">
