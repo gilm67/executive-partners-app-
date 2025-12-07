@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "allowJs": false,
@@ -14,12 +18,19 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*", "./src/*"]
+      "@/*": [
+        "./*",
+        "./src/*"
+      ]
     },
     "resolveJsonModule": true,
     "incremental": true,
     "isolatedModules": true,
-    "plugins": [{ "name": "next" }]
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "app/**/*",
@@ -28,7 +39,8 @@
     "components/**/*",
     "pages/**/*",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     ".next",
@@ -37,7 +49,6 @@
     ".vercel",
     "tmp-restore",
     "node_modules",
-
     "tests",
     "**/*.test.ts",
     "**/*.test.tsx",

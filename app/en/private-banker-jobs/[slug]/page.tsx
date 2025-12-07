@@ -31,8 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: `Director / MD private banker and team lead roles in ${m.city}. Discreet moves with documented AUM portability, cross-border fit and realistic business plans.`,
     openGraph: {
       title: `Private Banker Jobs – ${m.city}`,
-      description:
-        `Confidential private banking roles in ${m.city} with documented AUM portability and realistic business plans.`,
+      description: `Confidential private banking roles in ${m.city} with documented AUM portability and realistic business plans.`,
       images: [{ url: m.heroImage }],
     },
   };
@@ -66,8 +65,8 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
     <main className="min-h-screen bg-[#0B0E13] px-4 py-12 text-white md:px-6 md:py-16 lg:px-10">
       {/* ================= HERO / POSITIONING ================= */}
       <section className="mx-auto max-w-5xl">
-        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-white/0 to-emerald-500/10 px-6 py-8 shadow-[0_22px_60px_rgba(0,0,0,0.7)] backdrop-blur md:px-10 md:py-10">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-emerald-300/80">
+        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-white/0 to-[#D4AF37]/10 px-6 py-8 shadow-[0_22px_60px_rgba(0,0,0,0.7)] backdrop-blur md:px-10 md:py-10">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#F5D778]">
             Private Banker Jobs · {m.city.toUpperCase()}
           </p>
 
@@ -143,7 +142,7 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
 
           <div className="mt-5 grid gap-6 md:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-300">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#F5D778]">
                 Hot roles
               </p>
               <ul className="mt-2 flex flex-wrap gap-2 text-sm text-slate-100">
@@ -165,7 +164,7 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-black/40 px-4 py-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-300">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#F5D778]">
                 What clients look for
               </p>
               <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm text-slate-100">
@@ -182,15 +181,15 @@ export default async function PrivateBankerJobsMarketPage({ params }: Props) {
           </div>
 
           {hotSkills.length > 0 && (
-            <div className="mt-5 rounded-2xl border border-dashed border-emerald-400/40 bg-emerald-500/5 px-4 py-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-300">
+            <div className="mt-5 rounded-2xl border border-dashed border-[#D4AF37]/50 bg-[#D4AF37]/5 px-4 py-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#F5D778]">
                 Skills that move the needle
               </p>
               <ul className="mt-2 flex flex-wrap gap-2 text-xs text-slate-100 md:text-sm">
                 {hotSkills.map((skill) => (
                   <li
                     key={skill}
-                    className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1"
+                    className="rounded-full border border-[#D4AF37]/60 bg-[#D4AF37]/10 px-3 py-1"
                   >
                     {skill}
                   </li>
