@@ -1,6 +1,8 @@
 // app/layout.tsx
 import "./globals.css";
+
 import type { Metadata, Viewport } from "next";
+import type { ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import { Inter, Playfair_Display } from "next/font/google";
 import TopNav from "@/components/TopNav";
@@ -53,14 +55,14 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0B0E13",
+  themeColor: "#0B0F1A", // match CSS body background
   colorScheme: "dark",
 };
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const orgJsonLd = {
     "@context": "https://schema.org",
@@ -107,9 +109,8 @@ export default function RootLayout({
         />
       </head>
 
-      {/* No 'has-sticky-header' to avoid double spacing; spacer controls offset for non-home pages */}
       <body
-        className="min-h-screen overflow-x-hidden body-grain bg-[#0B0E13] text-white antialiased selection:bg-white/20 selection:text-white"
+        className="min-h-screen overflow-x-hidden body-grain text-white antialiased selection:bg-white/20 selection:text-white"
         suppressHydrationWarning
       >
         <a
@@ -122,7 +123,7 @@ export default function RootLayout({
         {/* Sticky, blurred header with fixed height */}
         <header
           role="banner"
-          className="sticky top-0 inset-x-0 z-50 h-16 md:h-20 border-b border-white/10 bg-[#0B0E13]/80 backdrop-blur-md"
+          className="sticky inset-x-0 top-0 z-50 h-16 border-b border-white/10 bg-[#0B0F1A]/80 backdrop-blur-md md:h-20"
         >
           <TopNav />
         </header>
@@ -148,7 +149,6 @@ export default function RootLayout({
 
         <main id="main">{children}</main>
 
-        {/* Shared footer */}
         <Footer />
 
         {enableAnalytics && <Analytics />}
