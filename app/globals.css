@@ -289,6 +289,7 @@ a:hover {
   box-shadow:
     0 10px 28px rgba(214, 167, 56, 0.38),
     inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  transition: all 0.2s ease-out;
 }
 
 .apply-page button[type="submit"]:hover {
@@ -321,6 +322,7 @@ a:hover {
   box-shadow:
     0 10px 20px rgba(214, 167, 56, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition: all 0.2s ease-out;
 }
 
 .apply-page input[type="file"]::file-selector-button:hover,
