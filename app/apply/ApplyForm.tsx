@@ -133,6 +133,7 @@ export default function ApplyForm({
             onChange={(e) => setName(e.target.value)}
             placeholder="Your full name"
             required
+            aria-required="true"
           />
         </div>
         <div>
@@ -148,6 +149,7 @@ export default function ApplyForm({
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
+            aria-required="true"
           />
         </div>
       </div>
