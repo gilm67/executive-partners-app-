@@ -48,7 +48,6 @@ export const metadata: Metadata = {
 export default function ApplyPage({
   searchParams,
 }: {
-  // Next gives a plain object here, not a Promise
   searchParams?: Record<string, string | string[]>;
 }) {
   const sp = searchParams ?? {};
@@ -57,7 +56,6 @@ export default function ApplyPage({
     return Array.isArray(v) ? v[0] ?? "" : (v as string) ?? "";
   };
 
-  // Support ?job= or ?role=
   const prefillRole = get("job") || get("role");
   const prefillMarket = get("market");
   const prefillJobId = get("jobId");
@@ -83,26 +81,10 @@ export default function ApplyPage({
     name: "How to Apply Confidentially",
     totalTime: "PT5M",
     step: [
-      {
-        "@type": "HowToStep",
-        name: "Share profile",
-        text: "Provide your name, email, markets covered and current location.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Attach CV",
-        text: "Upload a PDF résumé. We do not approach any institution without your prior consent.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Optional details",
-        text: "Add AUM portability, booking centres, mobility and language capabilities.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Submit",
-        text: "We review your profile and revert with a view on realistic platforms and markets.",
-      },
+      { "@type": "HowToStep", name: "Share profile", text: "Provide your name, email, markets covered and current location." },
+      { "@type": "HowToStep", name: "Attach CV", text: "Upload a PDF résumé. We do not approach any institution without your prior consent." },
+      { "@type": "HowToStep", name: "Optional details", text: "Add AUM portability, booking centres, mobility and language capabilities." },
+      { "@type": "HowToStep", name: "Submit", text: "We review your profile and revert with a view on realistic platforms and markets." },
     ],
   };
 
@@ -117,44 +99,42 @@ export default function ApplyPage({
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12 text-white md:py-16">
-      {/* JSON-LD for SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      {/* JSON-LD */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
       {/* HERO */}
       <header className="mb-8 md:mb-10">
-        <p className="eyebrow text-[#F5D778]">
-          Private Banking &amp; Wealth Management
-        </p>
+        <p className="eyebrow text-[#F5D778]">Private Banking &amp; Wealth Management</p>
         <h1 className="mt-3">Apply Confidentially</h1>
         <p className="mt-3 max-w-2xl text-sm text-neutral-300 md:text-[0.95rem]">
-          For experienced Relationship Managers, Team Heads and Market Leaders
-          in private banking and wealth management. Geneva-based, with mandates
-          across Switzerland (Geneva &amp; Zurich), London, Dubai, Singapore,
-          Hong Kong and select US locations. We review every submission and only
-          move forward with your consent.
+          For experienced Relationship Managers, Team Heads and Market Leaders in private banking and
+          wealth management. Geneva-based, with mandates across Switzerland (Geneva &amp; Zurich), London,
+          Dubai, Singapore, Hong Kong and select US locations. We review every submission and only move
+          forward with your consent.
         </p>
       </header>
 
+      {/* FORM SECTION */}
       <section className="rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-7">
+
+        {/* Force all form submit buttons to use your gold design */}
+        <style>{`
+          button[type="submit"] {
+            @apply btn-primary btn-xl w-full;
+          }
+        `}</style>
+
         <ApplyForm
           defaultRole={prefillRole}
           defaultMarket={prefillMarket}
           defaultJobId={prefillJobId}
         />
+
         <p className="mt-4 text-xs text-neutral-400">
-          We never send your CV or business case to any institution without your
-          explicit consent for that specific platform.
+          We never send your CV or business case to any institution without your explicit consent
+          for that specific platform.
         </p>
       </section>
     </main>
