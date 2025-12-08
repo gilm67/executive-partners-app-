@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ApplyForm({
   defaultRole = "",
@@ -11,6 +12,8 @@ export default function ApplyForm({
   defaultMarket?: string;
   defaultJobId?: string;
 }) {
+  const router = useRouter();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState(defaultRole);
@@ -62,8 +65,10 @@ export default function ApplyForm({
         throw new Error(data?.error || "Submission failed");
       }
 
+      // Optional local message (in case redirect fails)
       setOkMsg("Thanks! Your application has been received.");
-      // reset visible fields (preserve defaults)
+
+      // Reset visible fields (preserve defaults)
       formEl.reset();
       setName("");
       setEmail("");
@@ -73,6 +78,9 @@ export default function ApplyForm({
       setJobId(defaultJobId);
       setLocation("");
       setCurrentEmployer("");
+
+      // 🔁 Redirect to premium thank-you page
+      router.push("/apply/success");
     } catch (err: any) {
       setErrMsg(err?.message || "Something went wrong.");
     } finally {
@@ -117,7 +125,7 @@ export default function ApplyForm({
         />
       </div>
 
-      {/* Placeholder for reCAPTCHA token (will be filled by client script later) */}
+      {/* Placeholder for reCAPTCHA token (future use) */}
       <input type="hidden" name="recaptchaToken" value="" />
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -133,7 +141,6 @@ export default function ApplyForm({
             onChange={(e) => setName(e.target.value)}
             placeholder="Your full name"
             required
-            aria-required="true"
           />
         </div>
         <div>
@@ -149,7 +156,6 @@ export default function ApplyForm({
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
-            aria-required="true"
           />
         </div>
       </div>
@@ -183,7 +189,7 @@ export default function ApplyForm({
         </div>
       </div>
 
-      {/* new row: location + current employer */}
+      {/* Location + employer */}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="block text-sm text-white/80" htmlFor="location">
