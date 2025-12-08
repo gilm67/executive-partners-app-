@@ -46,9 +46,6 @@ export default function ApplyForm({
       const formEl = e.currentTarget;
       const fd = new FormData(formEl);
 
-      // if later you generate a recaptcha token in the client, do:
-      // fd.set("recaptchaToken", token);
-
       const res = await fetch("/api/apply", {
         method: "POST",
         body: fd,
@@ -92,16 +89,16 @@ export default function ApplyForm({
     >
       {okMsg && (
         <div
-            role="status"
-            className="rounded-md border border-emerald-300/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200"
+          role="status"
+          className="rounded-md border border-emerald-300/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200"
         >
           {okMsg}
         </div>
       )}
       {errMsg && (
         <div
-            role="alert"
-            className="rounded-md border border-rose-300/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200"
+          role="alert"
+          className="rounded-md border border-rose-300/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200"
         >
           {errMsg}
         </div>
@@ -202,7 +199,10 @@ export default function ApplyForm({
           />
         </div>
         <div>
-          <label className="block text-sm text-white/80" htmlFor="currentEmployer">
+          <label
+            className="block text-sm text-white/80"
+            htmlFor="currentEmployer"
+          >
             Current employer
           </label>
           <input
@@ -241,7 +241,7 @@ export default function ApplyForm({
             name="cv"
             type="file"
             accept=".pdf,.doc,.docx"
-            className="mt-1 block w-full text-sm text-neutral-300 file:mr-4 file:rounded-lg file:border-0 file:bg-[#1D4ED8] file:px-3 file:py-2 file:font-semibold file:text-white hover:file:bg-[#1E40AF]"
+            className="mt-1 block w-full text-sm text-neutral-300"
           />
           <p className="mt-1 text-xs text-white/50">
             Max 10MB. Formats: .pdf, .doc, .docx
@@ -266,15 +266,11 @@ export default function ApplyForm({
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF] disabled:opacity-60"
+        className="btn btn-primary btn-xl w-full disabled:opacity-60"
         aria-busy={loading}
       >
         {loading ? "Submitting…" : "Submit Application"}
       </button>
-
-      <p className="text-xs text-white/60">
-        We will review your profile confidentially and only introduce you to a bank with your consent.
-      </p>
     </form>
   );
 }
