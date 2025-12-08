@@ -17,9 +17,10 @@ const PAGE_URL = `${SITE}/contact`;
 
 /* ---------------- metadata ---------------- */
 export const metadata: Metadata = {
-  title: "Contact Executive Partners | Private Banking Recruitment (Geneva)",
+  title:
+    "Contact Executive Partners | Private Banking & Wealth Management Recruitment (Geneva)",
   description:
-    "Contact Executive Partners for confidential searches in private banking and wealth management. Geneva HQ with mandates across Switzerland, UK, US, Dubai, Singapore & Hong Kong.",
+    "Contact Executive Partners for confidential searches in private banking and wealth management. Geneva-based with mandates across Switzerland, the UK, the US, Dubai, Singapore and Hong Kong.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
     type: "website",
@@ -86,7 +87,7 @@ export default function ContactPage() {
         acceptedAnswer: {
           "@type": "Answer",
           text:
-            "Yes. Many of our searches are confidential. We only introduce shortlists to the client and do not share your profile without your consent.",
+            "Yes. Many of our searches are confidential. We only introduce shortlisted candidates to the client and do not share your profile without your consent.",
         },
       },
       {
@@ -95,7 +96,7 @@ export default function ContactPage() {
         acceptedAnswer: {
           "@type": "Answer",
           text:
-            "Switzerland first (Geneva & Zurich) with mandates across the UK, US, Dubai, Singapore and Hong Kong.",
+            "Switzerland first (Geneva & Zurich), with mandates across the UK, the US, Dubai, Singapore and Hong Kong.",
         },
       },
       {
@@ -128,15 +129,15 @@ export default function ContactPage() {
 
       {/* HERO */}
       <header className="mb-10 md:mb-12">
-        <p className="eyebrow text-[#F5D778]">Private Banking &amp; Wealth Management</p>
-        <h1 className="mt-3">
-          Contact Executive Partners
-        </h1>
+        <p className="eyebrow text-[#F5D778]">
+          Private Banking &amp; Wealth Management
+        </p>
+        <h1 className="mt-3">Contact Executive Partners</h1>
         <p className="mt-3 max-w-2xl text-sm text-neutral-300 md:text-[0.95rem]">
-          Geneva-based executive search boutique focusing on private banking and
-          wealth management. We work primarily across Switzerland (Geneva &amp; Zurich)
-          and key hubs including London, Dubai, Singapore and Hong Kong. We typically
-          respond the same business day.
+          Geneva-based executive search boutique focused on private banking and
+          wealth management. We work primarily across Switzerland (Geneva &amp;
+          Zurich) and key hubs including London, Dubai, Singapore and Hong Kong.
+          We typically respond the same business day.
         </p>
       </header>
 
