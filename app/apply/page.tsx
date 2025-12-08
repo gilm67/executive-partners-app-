@@ -157,6 +157,7 @@ export default function ApplyPage({
           We will review your profile confidentially and only introduce you to a
           bank with your consent.
         </p>
+
         <p className="mt-2 text-[11px] text-neutral-500 text-center">
           We never send your CV or business case to any institution without your
           explicit consent for that specific platform.
