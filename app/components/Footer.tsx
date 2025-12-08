@@ -1,169 +1,104 @@
-"use client";
-
+// components/Footer.tsx
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 export default function Footer() {
-  const pathname = usePathname() || "/";
-  const firstSeg = pathname.split("/").filter(Boolean)[0] || "";
-  const supported = new Set(["en", "fr", "de", "it"]);
-  const base = supported.has(firstSeg) ? `/${firstSeg}` : "";
-  const href = (p: string) => `${base}${p.startsWith("/") ? p : `/${p}`}`;
-
   return (
-    <footer className="border-t border-white/10">
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid gap-8 md:grid-cols-3">
-          {/* ─────────── Company Intro ─────────── */}
-          <div>
-            <h3 className="text-sm font-semibold text-white/90">
+    <footer className="mt-16 border-t border-white/10 bg-black/40">
+      <div className="mx-auto max-w-6xl px-4 py-10 md:py-12">
+        {/* Top row */}
+        <div className="grid gap-10 md:grid-cols-4 md:items-start">
+          {/* Brand / description */}
+          <div className="md:col-span-2 space-y-3">
+            <p className="text-xs tracking-[0.3em] uppercase text-[#F5D778]">
               Executive Partners
-            </h3>
-            <p className="mt-2 text-sm text-white/70">
-              Geneva-based executive search focused on Private Banking &amp;
-              Wealth Management.
             </p>
+            <p className="text-sm font-semibold text-neutral-100">
+              Geneva-based executive search focused on Private Banking &amp; Wealth
+              Management.
+            </p>
+            <p className="text-xs text-neutral-400 leading-relaxed">
+              We partner with senior Relationship Managers, Team Heads and
+              Market Leaders across Switzerland, the UK, Europe, the US,
+              Dubai, Singapore and Hong Kong — always with full confidentiality.
+            </p>
+          </div>
 
-            {/* ✅ this one must NOT be locale-prefixed */}
-            <div className="mt-4">
+          {/* Markets */}
+          <div>
+            <h3 className="text-sm font-semibold text-neutral-100">
+              Markets we serve
+            </h3>
+            <ul className="mt-3 space-y-1 text-xs text-neutral-400">
+              <li>Geneva · Zurich</li>
+              <li>London · Luxembourg</li>
+              <li>Dubai · Abu Dhabi</li>
+              <li>Singapore · Hong Kong</li>
+              <li>Monaco · Miami / New York</li>
+            </ul>
+          </div>
+
+          {/* Quick links / CTA */}
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm font-semibold text-neutral-100">
+                Company
+              </h3>
+              <ul className="mt-3 space-y-1 text-xs text-neutral-400">
+                <li>
+                  <Link href="/jobs" className="hover:text-neutral-200">
+                    Jobs
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/insights" className="hover:text-neutral-200">
+                    Insights
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/candidates" className="hover:text-neutral-200">
+                    Candidates
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/hiring-managers" className="hover:text-neutral-200">
+                    Hiring Managers
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="hover:text-neutral-200">
+                    Contact
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Mini CTA */}
+            <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3 text-xs text-neutral-300">
+              <p className="font-medium text-neutral-100">
+                Thinking about a move?
+              </p>
+              <p className="mt-1 text-[11px] text-neutral-400">
+                Share your profile confidentially and we’ll revert with a view on
+                realistic platforms and markets.
+              </p>
               <Link
                 href="/apply"
-                className="btn-primary gap-1"
+                className="mt-3 inline-flex w-full justify-center rounded-full bg-gradient-to-b from-[#FFE8A3] via-[#F6C859] to-[#D6A738] px-3 py-2 text-[11px] font-semibold text-[#1A1300] shadow-[0_10px_24px_rgba(214,167,56,0.4)] hover:shadow-[0_14px_32px_rgba(214,167,56,0.5)]"
               >
                 Apply confidentially
-                <span aria-hidden>→</span>
               </Link>
             </div>
           </div>
-
-          {/* ─────────── Markets ─────────── */}
-          <nav aria-label="Markets we serve" className="text-sm">
-            <h3 className="text-sm font-semibold text-white/90">
-              Markets we serve
-            </h3>
-            <ul className="mt-2 grid grid-cols-2 gap-2 text-white/80">
-              <li>
-                <Link className="hover:underline" href={href("/markets/geneva")}>
-                  Geneva
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:underline" href={href("/markets/zurich")}>
-                  Zürich
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:underline" href={href("/markets/london")}>
-                  London
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:underline" href={href("/markets/dubai")}>
-                  Dubai
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="hover:underline"
-                  href={href("/markets/singapore")}
-                >
-                  Singapore
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="hover:underline"
-                  href={href("/markets/hong-kong")}
-                >
-                  Hong Kong
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:underline" href={href("/markets/miami")}>
-                  Miami
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:underline" href={href("/markets/paris")}>
-                  Paris
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:underline" href={href("/markets/madrid")}>
-                  Madrid
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:underline" href={href("/markets/milano")}>
-                  Milano
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:underline" href={href("/markets/lisbon")}>
-                  Lisbon
-                </Link>
-              </li>
-            </ul>
-            <div className="mt-3">
-              <Link
-                className="text-brand-gold hover:text-brand-gold-soft"
-                href={href("/markets")}
-              >
-                View all markets →
-              </Link>
-            </div>
-          </nav>
-
-          {/* ─────────── Company Links ─────────── */}
-          <nav aria-label="Company" className="text-sm">
-            <h3 className="text-sm font-semibold text-white/90">Company</h3>
-            <ul className="mt-2 space-y-2 text-white/80">
-              <li>
-                <Link className="hover:underline" href={href("/jobs")}>
-                  Jobs
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:underline" href={href("/insights")}>
-                  Insights
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:underline" href={href("/candidates")}>
-                  Candidates
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="hover:underline"
-                  href={href("/hiring-managers")}
-                >
-                  Hiring Managers
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:underline" href={href("/contact")}>
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </nav>
         </div>
 
-        {/* ─────────── Bottom bar ─────────── */}
-        <div className="mt-8 border-t border-white/10 pt-6 text-xs text-white/50 flex flex-wrap items-center justify-between gap-3">
-          <span>
-            © {new Date().getFullYear()} Executive Partners. All rights
-            reserved.
-          </span>
-          <a
-            className="hover:underline"
-            href="https://www.linkedin.com/company/executive-partners/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            LinkedIn
-          </a>
+        {/* Bottom bar */}
+        <div className="mt-8 flex flex-col gap-2 border-t border-white/5 pt-4 text-[11px] text-neutral-500 md:flex-row md:items-center md:justify-between">
+          <p>
+            © {new Date().getFullYear()} Executive Partners. All rights reserved.
+          </p>
+          <p className="text-neutral-500">
+            Discreet executive search for Private Banking &amp; Wealth Management.
+          </p>
         </div>
       </div>
     </footer>
