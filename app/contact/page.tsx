@@ -57,7 +57,7 @@ export default function ContactPage() {
       addressCountry: "CH",
     },
     areaServed: ["CH", "GB", "US", "AE", "SG", "HK"],
-    // ❌ Email removed to reduce spam harvesting
+    // Email intentionally omitted to reduce spam harvesting
     contactPoint: [
       {
         "@type": "ContactPoint",
@@ -86,7 +86,7 @@ export default function ContactPage() {
         acceptedAnswer: {
           "@type": "Answer",
           text:
-            "Yes. Most of our searches are confidential. We only introduce shortlists to the client and never share your profile without consent.",
+            "Yes. Many of our searches are confidential. We only introduce shortlists to the client and do not share your profile without your consent.",
         },
       },
       {
@@ -95,7 +95,7 @@ export default function ContactPage() {
         acceptedAnswer: {
           "@type": "Answer",
           text:
-            "Switzerland first (Geneva & Zurich) with active mandates in the UK, US, Dubai, Singapore and Hong Kong.",
+            "Switzerland first (Geneva & Zurich) with mandates across the UK, US, Dubai, Singapore and Hong Kong.",
         },
       },
       {
@@ -104,14 +104,14 @@ export default function ContactPage() {
         acceptedAnswer: {
           "@type": "Answer",
           text:
-            "We typically respond the same business day. If urgent, include timing in your message.",
+            "We typically respond the same business day. If your request is time-sensitive, please mention this in your message.",
         },
       },
     ],
   };
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-12">
+    <main className="mx-auto max-w-5xl px-4 py-12 text-white md:py-16">
       {/* JSON-LD */}
       <script
         type="application/ld+json"
@@ -126,55 +126,62 @@ export default function ContactPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <header className="mb-10">
-        <h1 className="page-title">Contact Executive Partners</h1>
-        <p className="mt-2 text-sm text-neutral-400">
-          Geneva-based. Mandates across Switzerland, the UK, the US, Dubai,
-          Singapore &amp; Hong Kong. We typically respond the same business day.
+      {/* HERO */}
+      <header className="mb-10 md:mb-12">
+        <p className="eyebrow text-[#F5D778]">Private Banking &amp; Wealth Management</p>
+        <h1 className="mt-3">
+          Contact Executive Partners
+        </h1>
+        <p className="mt-3 max-w-2xl text-sm text-neutral-300 md:text-[0.95rem]">
+          Geneva-based executive search boutique focusing on private banking and
+          wealth management. We work primarily across Switzerland (Geneva &amp; Zurich)
+          and key hubs including London, Dubai, Singapore and Hong Kong. We typically
+          respond the same business day.
         </p>
       </header>
 
       <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-5">
         {/* LEFT: form panel */}
         <section className="md:col-span-3 h-full">
-          <div className="h-full rounded-2xl border border-neutral-800 bg-neutral-900/50 p-6">
+          <div className="h-full rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-7">
             <ContactForm />
           </div>
         </section>
 
         {/* RIGHT: info card + map */}
         <aside className="md:col-span-2 h-full">
-          <div className="flex h-full flex-col">
-            <div className="rounded-2xl border border-neutral-800 bg-neutral-900/50 p-6">
-              <h2 className="text-sm font-semibold text-neutral-200">
-                Executive Partners
+          <div className="flex h-full flex-col gap-4">
+            <div className="rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_40px_rgba(0,0,0,0.7)] backdrop-blur">
+              <h2 className="text-sm font-semibold text-neutral-50">
+                Executive Partners — Geneva
               </h2>
-              <div className="mt-2 text-sm text-neutral-400">
-                <p className="font-medium text-neutral-200">Head Office</p>
+
+              <div className="mt-3 text-sm text-neutral-300">
+                <p className="font-medium text-neutral-100">Head Office</p>
                 <p>118 rue du Rhône</p>
                 <p>1204 Geneva</p>
                 <p>Switzerland</p>
               </div>
 
-              <div className="my-4 h-px w-full bg-neutral-800" />
+              <div className="my-4 h-px w-full bg-white/10" />
 
-              <h3 className="text-sm font-semibold text-neutral-200">
-                Typical Mandates
+              <h3 className="text-sm font-semibold text-neutral-100">
+                Typical mandates
               </h3>
-              <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-neutral-400">
-                <li>Relationship Managers &amp; Team Heads (UHNW/HNW)</li>
+              <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm text-neutral-300">
+                <li>Relationship Managers &amp; Team Heads (HNW / UHNW)</li>
                 <li>Market Leaders (CH, MEA, UK, APAC, LatAm)</li>
-                <li>Investor Protection, Risk &amp; COO roles</li>
+                <li>Front-support roles (Investor Protection, Risk, COO)</li>
                 <li>Private Markets distribution &amp; advisory</li>
               </ul>
 
-              <p className="mt-4 text-xs text-neutral-500">
-                Meetings by appointment. Use the contact form to request a call
-                or meeting time.
+              <p className="mt-4 text-xs text-neutral-400">
+                Meetings in Geneva are by appointment only. Use the form to
+                request a call or meeting, and we will confirm availability.
               </p>
             </div>
 
-            <div className="mt-4 flex-1 overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50">
+            <div className="flex-1 overflow-hidden rounded-3xl border border-white/10 bg-black/40 shadow-[0_18px_40px_rgba(0,0,0,0.7)]">
               <iframe
                 title="Executive Partners – 118 rue du Rhône, 1204 Geneva"
                 className="h-full w-full"
