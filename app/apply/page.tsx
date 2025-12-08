@@ -130,12 +130,12 @@ export default function ApplyPage({
       />
 
       {/* HERO */}
-      <header className="mb-8 md:mb-10">
+      <header className="mb-8 max-w-2xl text-center md:mb-10 mx-auto">
         <p className="eyebrow text-[#F5D778]">
           Private Banking &amp; Wealth Management
         </p>
         <h1 className="mt-3">Apply Confidentially</h1>
-        <p className="mt-3 max-w-2xl text-sm text-neutral-300 md:text-[0.95rem]">
+        <p className="mt-3 text-sm text-neutral-300 md:text-[0.95rem]">
           For experienced Relationship Managers, Team Heads and Market Leaders
           in private banking and wealth management. Geneva-based, with mandates
           across Switzerland (Geneva &amp; Zurich), London, Dubai, Singapore,
@@ -152,7 +152,7 @@ export default function ApplyPage({
           defaultJobId={prefillJobId}
         />
 
-        <p className="mt-4 text-xs text-neutral-400">
+        <p className="mt-4 text-xs text-neutral-400 text-center md:text-left">
           We never send your CV or business case to any institution without your
           explicit consent for that specific platform.
         </p>
