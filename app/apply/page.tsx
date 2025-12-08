@@ -130,7 +130,7 @@ export default function ApplyPage({
       />
 
       {/* HERO */}
-      <header className="mb-8 max-w-2xl text-center md:mb-10 mx-auto">
+      <header className="mb-8 mx-auto max-w-2xl text-center md:mb-10">
         <p className="eyebrow text-[#F5D778]">
           Private Banking &amp; Wealth Management
         </p>
@@ -152,10 +152,15 @@ export default function ApplyPage({
           defaultJobId={prefillJobId}
         />
 
+        {/* Centered disclaimers */}
         <p className="mt-4 text-xs text-neutral-400 text-center">
-  We never send your CV or business case to any institution without your
-  explicit consent for that specific platform.
-</p>
+          We will review your profile confidentially and only introduce you to a
+          bank with your consent.
+        </p>
+        <p className="mt-2 text-[11px] text-neutral-500 text-center">
+          We never send your CV or business case to any institution without your
+          explicit consent for that specific platform.
+        </p>
       </section>
     </main>
   );
