@@ -20,17 +20,18 @@ export const revalidate = 60;
 /* ---------------- SEO metadata ---------------- */
 export const metadata: Metadata = {
   title: {
-    absolute: "Apply Confidentially | Private Banking & Wealth Management",
+    absolute:
+      "Apply Confidentially | Private Banking & Wealth Management Recruitment",
   },
   description:
-    "Submit your CV securely for Private Banking roles (Relationship Managers, Team Heads, Market Leaders). Geneva-based, global mandates. Discretion guaranteed.",
+    "Submit your profile confidentially for senior Private Banking & Wealth Management roles (Relationship Managers, Team Heads, Market Leaders). Geneva-based, with mandates across Switzerland, the UK, the US, Dubai, Singapore and Hong Kong.",
   alternates: { canonical: "/apply" },
   openGraph: {
     type: "website",
     url: "/apply",
     title: "Apply Confidentially — Executive Partners",
     description:
-      "Confidential submission for Private Banking & Wealth Management roles across Switzerland, UK, US, Dubai, Singapore & Hong Kong.",
+      "Confidential submission for senior Private Banking & Wealth Management roles across Switzerland, the UK, the US, Dubai, Singapore and Hong Kong. We review every profile before making any approach.",
     images: [{ url: "/og.png" }],
     siteName: "Executive Partners",
   },
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Apply Confidentially — Executive Partners",
     description:
-      "Private Banking & Wealth Management executive search — submit your profile discreetly.",
+      "Geneva-based executive search boutique focused on Private Banking & Wealth Management. Submit your profile discreetly for senior roles.",
     images: ["/og.png"],
   },
   robots: { index: true, follow: true },
@@ -69,7 +70,7 @@ export default function ApplyPage({
     name: "Apply Confidentially",
     url: PAGE_URL,
     description:
-      "Submit your CV securely for Private Banking roles (Relationship Managers, Team Heads, Market Leaders).",
+      "Submit your CV securely for senior Private Banking & Wealth Management roles (Relationship Managers, Team Heads, Market Leaders). Geneva-based with international mandates.",
     publisher: {
       "@type": "Organization",
       name: "Executive Partners",
@@ -80,28 +81,28 @@ export default function ApplyPage({
   const howToJsonLd = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    name: "How to Apply Confidentially",
+    name: "How to Apply Confidentially as a Private Banker",
     totalTime: "PT5M",
     step: [
       {
         "@type": "HowToStep",
-        name: "Share profile",
-        text: "Provide name, email, markets covered, and current location.",
+        name: "Share your profile",
+        text: "Provide your name, contact details, current institution, booking centre and markets covered.",
       },
       {
         "@type": "HowToStep",
-        name: "Attach CV",
-        text: "Upload a PDF résumé (no contact is made without your consent).",
+        name: "Attach your CV",
+        text: "Upload a recent CV in PDF format. No contact is made with any institution without your prior consent.",
       },
       {
         "@type": "HowToStep",
-        name: "Optional details",
-        text: "Add AUM portability, booking centres, mobility, and languages.",
+        name: "Add optional book details",
+        text: "Optionally add AUM portability, key booking centres, client segments and mobility constraints.",
       },
       {
         "@type": "HowToStep",
-        name: "Submit",
-        text: "We review and respond—typically the same business day.",
+        name: "Submit for review",
+        text: "We review your profile and revert with next steps. Typical response time is within the same business day.",
       },
     ],
   };
@@ -131,14 +132,26 @@ export default function ApplyPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      <header className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-white">
-          Apply Confidentially
+      <header className="mb-8 space-y-3">
+        <p className="eyebrow">Private Banking &amp; Wealth Management</p>
+        <h1 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">
+          Apply confidentially for senior private banking roles
         </h1>
-        <p className="mt-2 text-sm text-neutral-400">
-          Private Banking &amp; Wealth Management. We review every submission
-          and only move forward with your consent. Typical response: same
-          business day.
+        <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+          We focus on Director / MD{" "}
+          <span className="font-semibold">Relationship Managers</span>,{" "}
+          <span className="font-semibold">Team Heads</span> and{" "}
+          <span className="font-semibold">Market Leaders</span> with documented
+          AUM, realistic portability and a defendable business plan.
+        </p>
+        <p className="text-xs text-neutral-500 md:text-[13px]">
+          Based in Geneva, we run mandates across Switzerland (Geneva &amp;
+          Zurich), the UK, the US, Dubai, Singapore and Hong Kong. We review
+          every submission and only move forward with your explicit consent for
+          each institution.
+        </p>
+        <p className="text-[11px] text-neutral-500">
+          Typical response time: same business day.
         </p>
       </header>
 
