@@ -343,6 +343,18 @@ a:hover {
   transform: translateY(-1px) !important;
 }
 
+/* =========================
+   FORCE /markets LINK TO NEUTRAL (NO GREEN)
+   ========================= */
+a[href="/markets"] {
+  color: #d1d5db !important;   /* neutral-300 */
+  text-decoration: none;
+}
+
+a[href="/markets"]:hover {
+  color: #ffffff !important;   /* neutral-100 */
+}
+
 /* =========================================================
    FINAL OVERRIDE – ENSURES GOLD **EVERYWHERE**
    ========================================================= */
