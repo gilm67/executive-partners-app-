@@ -28,8 +28,7 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-neutral-100">
               Markets we serve
             </h3>
-            <ul className="mt-3 space-y-1 text-xs text-neutral-400">
-              <li>Geneva · Zurich</li>
+<ul className="mt-3 space-y-1 text-xs text-neutral-400 [&_a]:text-neutral-300 [&_a:hover]:text-neutral-100">              <li>Geneva · Zurich</li>
               <li>London · Luxembourg</li>
               <li>Dubai · Abu Dhabi</li>
               <li>Singapore · Hong Kong</li>
