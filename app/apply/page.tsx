@@ -152,10 +152,10 @@ export default function ApplyPage({
           defaultJobId={prefillJobId}
         />
 
-        <p className="mt-4 text-xs text-neutral-400 text-center md:text-left">
-          We never send your CV or business case to any institution without your
-          explicit consent for that specific platform.
-        </p>
+        <p className="mt-4 text-xs text-neutral-400 text-center">
+  We never send your CV or business case to any institution without your
+  explicit consent for that specific platform.
+</p>
       </section>
     </main>
   );
