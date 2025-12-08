@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function ApplyForm({
@@ -43,11 +43,28 @@ export default function ApplyForm({
       return;
     }
 
+    const formEl = e.currentTarget;
+    const fd = new FormData(formEl);
+
+    // ---- Client-side CV validation (type + size) ----
+    const cv = fd.get("cv");
+    if (cv instanceof File && cv.name) {
+      const maxSizeBytes = 10 * 1024 * 1024; // 10MB
+      const allowedExt = ["pdf", "doc", "docx"];
+
+      const ext = cv.name.split(".").pop()?.toLowerCase() ?? "";
+      if (!allowedExt.includes(ext)) {
+        setErrMsg("CV must be a PDF, DOC or DOCX file.");
+        return;
+      }
+      if (cv.size > maxSizeBytes) {
+        setErrMsg("CV is too large. Maximum size is 10MB.");
+        return;
+      }
+    }
+
     try {
       setLoading(true);
-
-      const formEl = e.currentTarget;
-      const fd = new FormData(formEl);
 
       const res = await fetch("/api/apply", {
         method: "POST",
@@ -65,7 +82,7 @@ export default function ApplyForm({
         throw new Error(data?.error || "Submission failed");
       }
 
-      // Optional local message (in case redirect fails)
+      // Fallback message in case redirect is slow
       setOkMsg("Thanks! Your application has been received.");
 
       // Reset visible fields (preserve defaults)
@@ -79,7 +96,7 @@ export default function ApplyForm({
       setLocation("");
       setCurrentEmployer("");
 
-      // 🔁 Redirect to premium thank-you page
+      // Premium redirect to thank-you page
       router.push("/apply/success");
     } catch (err: any) {
       setErrMsg(err?.message || "Something went wrong.");
@@ -141,6 +158,7 @@ export default function ApplyForm({
             onChange={(e) => setName(e.target.value)}
             placeholder="Your full name"
             required
+            aria-required="true"
           />
         </div>
         <div>
@@ -156,6 +174,7 @@ export default function ApplyForm({
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
+            aria-required="true"
           />
         </div>
       </div>
