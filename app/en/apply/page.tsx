@@ -1,20 +1,11 @@
 // app/en/apply/page.tsx
-import type { Metadata } from "next";
-import ApplyPage, {
-  metadata as baseMetadata,
-  revalidate as baseRevalidate,
-} from "../../apply/page";
+import ApplyPage, { metadata } from "../../apply/page";
 
-// Re-export metadata and revalidate settings so SEO is identical
-export const metadata: Metadata = {
-  ...baseMetadata,
-  alternates: {
-    ...(baseMetadata.alternates || {}),
-    canonical: "/en/apply",
-  },
-};
+// Re-export metadata so SEO stays consistent
+export { metadata };
 
-export const revalidate = baseRevalidate;
+// Use the same revalidate value as /apply (60 seconds)
+export const revalidate = 60;
 
 // Reuse the existing ApplyPage so logic and form stay in one place
 export default function EnApplyPage(props: any) {
