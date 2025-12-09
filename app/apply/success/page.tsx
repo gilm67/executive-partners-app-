@@ -15,7 +15,6 @@ export default function ApplySuccessPage() {
   return (
     <main className="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-4 py-16 text-white">
       <section className="w-full rounded-3xl border border-white/10 bg-black/40 p-8 text-center shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur">
-        
         {/* Eyebrow */}
         <p className="eyebrow text-[#F5D778] tracking-[0.25em] uppercase text-[11px]">
           Private Banking · Wealth Management · Executive Partners
@@ -61,12 +60,10 @@ export default function ApplySuccessPage() {
 
         <div className="mt-4">
           <Link
-            href="/pdfs/private-banking-career-intelligence-2025.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/insights/private-banking-career-intelligence"
             className="btn btn-secondary btn-xl w-full sm:w-auto"
           >
-            Download Career Intelligence 2025 (PDF)
+            View the guide &amp; download the PDF
           </Link>
         </div>
 
