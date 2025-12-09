@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import TrackedLink from "@/components/analytics/TrackedLink";
 
 export const metadata: Metadata = {
   title: {
@@ -73,21 +74,25 @@ export default function PrivateBankingCareerIntelligencePage() {
 
         {/* Download + secondary actions */}
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <a
+          <TrackedLink
             href="/pdfs/private-banking-career-intelligence-2025.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-primary btn-xl w-full sm:w-auto"
+            eventName="download_career_pdf"
+            eventProps={{ location: "insights_career_intelligence_2025" }}
           >
             Download the PDF guide
-          </a>
+          </TrackedLink>
 
-          <Link
+          <TrackedLink
             href="/contact"
             className="btn btn-ghost w-full text-sm sm:w-auto"
+            eventName="discuss_move_click"
+            eventProps={{ location: "insights_career_intelligence_2025" }}
           >
             Discuss your move with us
-          </Link>
+          </TrackedLink>
         </div>
 
         <p className="mt-4 text-center text-[11px] text-neutral-500">
