@@ -131,8 +131,36 @@ export default function InsightsPage() {
           </div>
         </div>
 
+        {/* FEATURED PREMIUM GUIDE CARD */}
+        <section className="mt-10 mb-8 rounded-3xl border border-white/15 bg-white/[0.06] p-6 md:p-7 shadow-[0_18px_55px_rgba(0,0,0,0.65)]">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-xl">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brandGoldSoft">
+                Premium PDF · Career Move Intelligence
+              </p>
+              <h2 className="mt-2 text-xl font-semibold md:text-2xl">
+                Private Banking Career Intelligence 2025
+              </h2>
+              <p className="mt-2 text-sm text-neutral-200">
+                Fact-checked benchmarks for Geneva, Zurich, London, New York,
+                Miami, Singapore, Hong Kong, Dubai, Paris, Madrid and Lisbon,
+                plus compensation ranges and a candidate readiness scorecard.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 md:items-end">
+              <PrimaryButton href="/insights/private-banking-career-intelligence">
+                View the guide &amp; download PDF
+              </PrimaryButton>
+              <p className="text-[11px] text-neutral-400">
+                Confidential – for senior Private Bankers only.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* List */}
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
           {sorted.map((it) => {
             let displayDate = "—";
 
@@ -151,7 +179,6 @@ export default function InsightsPage() {
                   displayDate = trimmed;
                 }
               } else {
-                // show exactly what you stored in JSON (no guessing)
                 displayDate = trimmed;
               }
             }
@@ -202,6 +229,12 @@ export default function InsightsPage() {
         <section className="mt-12 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <h3 className="text-lg font-semibold">Explore related pages</h3>
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
+            <Link
+              href="/insights/private-banking-career-intelligence"
+              className="underline decoration-brandGold/70 underline-offset-4 hover:text-white"
+            >
+              Private Banking Career Intelligence 2025 (PDF guide)
+            </Link>
             <Link
               href="/private-banking-jobs-switzerland"
               className="underline decoration-brandGold/70 underline-offset-4 hover:text-white"
