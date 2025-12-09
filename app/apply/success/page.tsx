@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     absolute: "Application Received | Executive Partners",
   },
   description:
-    "Thank you for submitting your profile to Executive Partners. We will review your background confidentially and revert shortly.",
+    "Your confidential submission has been received by Executive Partners. We will review your Private Banking & Wealth Management background and revert shortly.",
   robots: { index: false, follow: false },
 };
 
@@ -15,26 +15,42 @@ export default function ApplySuccessPage() {
   return (
     <main className="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-4 py-16 text-white">
       <section className="w-full rounded-3xl border border-white/10 bg-black/40 p-8 text-center shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur">
+        
+        {/* Eyebrow */}
         <p className="eyebrow text-[#F5D778]">
           Private Banking &amp; Wealth Management
         </p>
+
+        {/* Title */}
         <h1 className="mt-4 text-2xl font-semibold md:text-3xl">
-          Thank you — application received
+          Thank you — your application has been received
         </h1>
+
+        {/* Main text */}
         <p className="mt-4 text-sm text-neutral-300 md:text-[0.95rem]">
-          We have received your details and CV. We will review your profile
-          confidentially and only introduce you to a bank or platform with your
-          prior consent.
+          Your profile and CV were submitted successfully. Our team will review 
+          your background confidentially and revert with a view on realistic 
+          platforms and markets across Switzerland, the UK, Europe, the US, 
+          Dubai, Singapore and Hong Kong.
         </p>
+
+        {/* Disclaimer */}
+        <p className="mt-2 text-xs text-neutral-500">
+          We never send your CV or business case to any institution without your
+          explicit consent for that specific platform.
+        </p>
+
+        {/* Response time */}
         <p className="mt-2 text-xs text-neutral-500">
           Typical response time: within one business day (Geneva time).
         </p>
 
+        {/* CTA row */}
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-          <Link href="/" className="btn btn-ghost">
+          <Link href="/" className="btn btn-ghost w-full sm:w-auto">
             Back to Home
           </Link>
-          <Link href="/contact" className="btn btn-primary btn-xl">
+          <Link href="/contact" className="btn btn-primary btn-xl w-full sm:w-auto">
             Request a call
           </Link>
         </div>
