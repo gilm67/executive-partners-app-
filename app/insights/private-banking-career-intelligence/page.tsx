@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import TrackedLink from "@/components/analytics/TrackedLink";
 
 export const metadata: Metadata = {
   title: {
@@ -42,11 +41,11 @@ export default function PrivateBankingCareerIntelligencePage() {
       </header>
 
       {/* Content card */}
-      <section className="rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
+      <section className="rounded-3xl border border-white/10 bg-black/40 p-6 text-center shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
         <h2 className="text-lg font-semibold text-neutral-50">
           What&apos;s inside the PDF
         </h2>
-        <ul className="mt-4 space-y-2 text-sm text-neutral-300">
+        <ul className="mt-4 space-y-2 text-left text-sm text-neutral-300">
           <li>
             • Market benchmarks for{" "}
             <span className="font-medium">
@@ -74,25 +73,21 @@ export default function PrivateBankingCareerIntelligencePage() {
 
         {/* Download + secondary actions */}
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <TrackedLink
+          <a
             href="/pdfs/private-banking-career-intelligence-2025.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-primary btn-xl w-full sm:w-auto"
-            eventName="download_career_pdf"
-            eventProps={{ location: "insights_career_intelligence_2025" }}
           >
             Download the PDF guide
-          </TrackedLink>
+          </a>
 
-          <TrackedLink
+          <Link
             href="/contact"
             className="btn btn-ghost w-full text-sm sm:w-auto"
-            eventName="discuss_move_click"
-            eventProps={{ location: "insights_career_intelligence_2025" }}
           >
             Discuss your move with us
-          </TrackedLink>
+          </Link>
         </div>
 
         <p className="mt-4 text-center text-[11px] text-neutral-500">
