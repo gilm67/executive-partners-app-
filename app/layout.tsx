@@ -90,8 +90,6 @@ export default function RootLayout({
     },
   };
 
-  const enableAnalytics = process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "1";
-
   return (
     <html
       lang="en"
@@ -151,7 +149,8 @@ export default function RootLayout({
 
         <Footer />
 
-        {enableAnalytics && <Analytics />}
+        {/* Vercel Web Analytics */}
+        <Analytics />
       </body>
     </html>
   );
