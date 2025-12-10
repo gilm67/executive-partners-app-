@@ -1,6 +1,4 @@
 // app/contact/page.tsx
-"use client";
-
 import type { Metadata } from "next";
 import ContactForm from "./ContactForm";
 import RevealEmail from "@/components/RevealEmail";
