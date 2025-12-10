@@ -139,10 +139,10 @@ export default function ContactPage() {
           We typically respond the same business day.
         </p>
 
-        <div className="mt-4 text-sm text-neutral-300">
+        <p className="mt-2 text-xs text-neutral-400">
           Prefer to start with a discreet email?{" "}
           <RevealEmail email="info@execpartners.ch" />
-        </div>
+        </p>
       </header>
 
       <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-5">
