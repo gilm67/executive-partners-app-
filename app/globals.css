@@ -128,7 +128,6 @@ a:hover {
 
 /* =========================
    Unified Executive Partners Buttons
-   (no @apply to avoid Tailwind/PostCSS errors)
    ========================= */
 
 /* Base button */
@@ -199,8 +198,9 @@ a:hover {
 
 .btn-ghost:hover {
   background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(158, 203, 255, 0.55);
-  box-shadow: 0 10px 26px rgba(30, 144, 255, 0.25);
+  border-color: rgba(245, 215, 120, 0.8); /* gold instead of blue */
+  box-shadow:
+    0 10px 26px rgba(212, 175, 55, 0.28); /* soft gold glow */
 }
 
 /* Outline button (ex-emerald → now gold-toned) */
@@ -230,7 +230,7 @@ a:hover {
   border-radius: 1.5rem;
   padding: 1.25rem;
   box-shadow:
-    0 0 0 1px rgba(158, 203, 255, 0.16),
+    0 0 0 1px rgba(212, 175, 55, 0.18),  /* gold rim instead of blue */
     0 10px 40px rgba(0, 0, 0, 0.65);
 }
 
@@ -353,6 +353,28 @@ a[href="/markets"] {
 
 a[href="/markets"]:hover {
   color: #ffffff !important;   /* neutral-100 */
+}
+
+/* =========================
+   Override Tailwind emerald utilities → gold
+   (for badges, pills, status dots, etc.)
+   ========================= */
+.text-emerald-400,
+.text-emerald-500,
+.text-emerald-600 {
+  color: #f5d778 !important;
+}
+
+.bg-emerald-400,
+.bg-emerald-500,
+.bg-emerald-600 {
+  background-color: #d4af37 !important;
+}
+
+.border-emerald-400,
+.border-emerald-500,
+.border-emerald-600 {
+  border-color: #d4af37 !important;
 }
 
 /* =========================================================

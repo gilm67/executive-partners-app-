@@ -14,6 +14,10 @@ const NAV: NavItem[] = [
   { href: "/bp-simulator", label: "BP Simulator" },
   { href: "/portability", label: "Portability" },
   { href: "/insights", label: "Insights" },
+  {
+    href: "/insights/private-banking-career-intelligence",
+    label: "Career Intelligence 2025",
+  },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];

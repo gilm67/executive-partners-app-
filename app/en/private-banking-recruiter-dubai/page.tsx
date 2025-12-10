@@ -1,0 +1,1 @@
+import CityRecruiterPage from "@/components/CityRecruiterPage";
