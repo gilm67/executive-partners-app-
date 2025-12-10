@@ -1,4 +1,3 @@
-// app/contact/page.tsx
 import type { Metadata } from "next";
 import ContactForm from "./ContactForm";
 import RevealEmail from "@/components/RevealEmail";
@@ -59,7 +58,6 @@ export default function ContactPage() {
       addressCountry: "CH",
     },
     areaServed: ["CH", "GB", "US", "AE", "SG", "HK"],
-    // Email intentionally omitted to reduce spam harvesting
     contactPoint: [
       {
         "@type": "ContactPoint",
@@ -141,14 +139,10 @@ export default function ContactPage() {
           We typically respond the same business day.
         </p>
 
-        {/* Discreet email with anti-scraping reveal */}
-        <p className="mt-3 max-w-2xl text-sm text-neutral-300 md:text-[0.95rem]">
+        <div className="mt-4 text-sm text-neutral-300">
           Prefer to start with a discreet email?{" "}
-          <RevealEmail
-            email="info@execpartners.ch"
-            label="Click to reveal email"
-          />
-        </p>
+          <RevealEmail email="info@execpartners.ch" />
+        </div>
       </header>
 
       <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-5">
