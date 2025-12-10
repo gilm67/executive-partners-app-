@@ -1,6 +1,9 @@
 // app/contact/page.tsx
+"use client";
+
 import type { Metadata } from "next";
 import ContactForm from "./ContactForm";
+import RevealEmail from "@/components/RevealEmail";
 
 /* ---------------- helpers ---------------- */
 function siteBase() {
@@ -138,6 +141,15 @@ export default function ContactPage() {
           wealth management. We work primarily across Switzerland (Geneva &amp;
           Zurich) and key hubs including London, Dubai, Singapore and Hong Kong.
           We typically respond the same business day.
+        </p>
+
+        {/* Discreet email with anti-scraping reveal */}
+        <p className="mt-3 max-w-2xl text-sm text-neutral-300 md:text-[0.95rem]">
+          Prefer to start with a discreet email?{" "}
+          <RevealEmail
+            email="info@execpartners.ch"
+            label="Click to reveal email"
+          />
         </p>
       </header>
 
