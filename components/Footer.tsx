@@ -10,15 +10,15 @@ export default function Footer() {
   const markets = [
     { label: 'Geneva', href: '/private-banking-recruiter-geneva' },
     { label: 'Zurich', href: '/private-banking-recruiter-zurich' },
+    { label: 'Paris', href: '/private-banking-recruiter-paris' },
+    { label: 'Madrid', href: '/private-banking-recruiter-madrid' },
+    { label: 'Lisbon', href: '/private-banking-recruiter-lisbon' },
     { label: 'Dubai', href: '/private-banking-recruiter-dubai' },
     { label: 'Singapore', href: '/private-banking-recruiter-singapore' },
     { label: 'Hong Kong', href: '/private-banking-recruiter-hong-kong' },
     { label: 'London', href: '/private-banking-recruiter-london' },
     { label: 'New York', href: '/private-banking-recruiter-new-york' },
     { label: 'Miami', href: '/private-banking-recruiter-miami' },
-    { label: 'Paris', href: '/private-banking-recruiter-paris' },
-    { label: 'Madrid', href: '/private-banking-recruiter-madrid' },
-    { label: 'Lisbon', href: '/private-banking-recruiter-lisbon' },
   ];
 
   return (
@@ -41,10 +41,7 @@ export default function Footer() {
               <ul className="mt-2 space-y-1 text-sm text-white/80">
                 {markets.map((m) => (
                   <li key={m.href}>
-                    <Link
-                      href={`${base}${m.href}`}
-                      className="hover:text-white"
-                    >
+                    <Link href={`${base}${m.href}`} className="hover:text-white">
                       {m.label}
                     </Link>
                   </li>
