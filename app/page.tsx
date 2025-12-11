@@ -42,7 +42,10 @@ export default function HomePage() {
             </div>
 
             <div className="mt-8 flex justify-center">
-              <Link href="/apply" className="btn-primary btn-xl text-center">
+              <Link
+                href="/apply"
+                className="btn-primary btn-xl text-center rounded-full px-8 shadow-lg shadow-black/40"
+              >
                 Apply Confidentially
               </Link>
             </div>
@@ -95,7 +98,7 @@ export default function HomePage() {
             <div className="mt-5">
               <Link
                 href="/en/private-banker-jobs"
-                className="inline-flex items-center rounded-full bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-black shadow-md transition hover:bg-[#f5d778]"
+                className="inline-flex items-center rounded-full bg-gradient-to-r from-[#D4AF37] to-[#f5d778] px-6 py-2.5 text-sm font-semibold text-black shadow-lg shadow-black/40 transition hover:brightness-110"
               >
                 View all Private Banker hubs →
               </Link>
@@ -235,7 +238,9 @@ function KpiCard({
         {value}
       </div>
       {note ? (
-        <div className="mt-2 text-[13px] leading-snug text-black/70">{note}</div>
+        <div className="mt-2 text-[13px] leading-snug text-black/70">
+          {note}
+        </div>
       ) : null}
     </div>
   );
@@ -281,10 +286,16 @@ function FeaturePanel({
           <h3 className="text-2xl font-semibold">{title}</h3>
           <p className="text-white/85">{copy}</p>
           <div className="mt-2 flex flex-wrap gap-3">
-            <Link href={primary.href} className="btn-primary">
+            <Link
+              href={primary.href}
+              className="btn-primary rounded-full px-6 py-2.5 text-sm font-semibold shadow-lg shadow-black/30"
+            >
               {primary.label}
             </Link>
-            <Link href={secondary.href} className="btn-ghost">
+            <Link
+              href={secondary.href}
+              className="btn-ghost rounded-full px-6 py-2.5 text-sm font-semibold text-white/90 ring-1 ring-white/15 bg-white/5 hover:bg-white/10"
+            >
               {secondary.label}
             </Link>
           </div>
@@ -314,7 +325,10 @@ function ToolCard({
         ))}
       </ul>
       <div className="mt-5">
-        <Link href={primary.href} className="btn-primary">
+        <Link
+          href={primary.href}
+          className="btn-primary rounded-full px-6 py-2.5 text-sm font-semibold shadow-lg shadow-black/30"
+        >
           {primary.label}
         </Link>
       </div>

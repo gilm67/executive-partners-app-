@@ -4,7 +4,10 @@ import Link from "next/link";
 
 export default function HomepageHero() {
   return (
-    <section className="relative overflow-hidden" aria-labelledby="home-hero-heading">
+    <section
+      className="relative overflow-hidden"
+      aria-labelledby="home-hero-heading"
+    >
       {/* Subtle depth gradient (no photo) */}
       <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-neutral-900 to-black" />
 
@@ -17,7 +20,7 @@ export default function HomepageHero() {
         <div className="flex justify-center">
           <Image
             src="/transparent-ep-logo.png"
-            alt="Executive Partners"
+            alt="Executive Partners – Private Banking & Wealth Management Executive Search"
             width={360}
             height={120}
             priority
@@ -27,48 +30,35 @@ export default function HomepageHero() {
 
         {/* Tagline badge */}
         <div className="mx-auto mt-6 w-fit rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs text-neutral-200">
-          International & Swiss Private Banking — HNW/UHNWI
+          Executive Search · Private Banking &amp; Wealth Management
         </div>
 
-        {/* Title */}
+        {/* H1 – SEO-focused */}
         <h1
           id="home-hero-heading"
           className="mt-4 text-center text-4xl font-semibold tracking-tight text-white sm:text-5xl"
         >
-          Executive Partners
+          Executive Search for Private Banking &amp; Wealth Management Professionals
         </h1>
 
         {/* Subheading */}
         <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
-          Where Private Bankers and Opportunities Meet.
+          Geneva-based boutique connecting Senior Relationship Managers, Team Heads
+          and Market Leaders with leading private banks in Switzerland, the UK, US,
+          Dubai, Singapore and Hong Kong.
         </p>
 
         {/* CTA row */}
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/candidates"
-            className="rounded-xl px-5 py-2.5 text-sm font-medium text-white shadow-lg ring-1 ring-white/10
-                       bg-gradient-to-r from-emerald-700 to-emerald-600
-                       hover:from-emerald-600 hover:to-emerald-500 transition-colors"
-          >
+          <Link href="/candidates" className="btn btn-primary btn-xl">
             I’m a Candidate
           </Link>
 
-          <Link
-            href="/hiring-managers"
-            className="rounded-xl px-5 py-2.5 text-sm font-medium text-white/90
-                       bg-white/5 hover:bg-white/10 ring-1 ring-white/10
-                       backdrop-blur-sm transition-colors"
-          >
+          <Link href="/hiring-managers" className="btn btn-ghost">
             I’m Hiring
           </Link>
 
-          <Link
-            href="/jobs"
-            className="rounded-xl px-5 py-2.5 text-sm font-medium text-white/90
-                       bg-white/5 hover:bg-white/10 ring-1 ring-white/10
-                       backdrop-blur-sm transition-colors"
-          >
+          <Link href="/jobs" className="btn btn-ghost">
             View All Jobs
           </Link>
         </div>
