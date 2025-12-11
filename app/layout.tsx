@@ -34,12 +34,10 @@ const OG_IMAGE = `${SITE}/og.png`;
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    // More keyword-rich default
     default:
       "Executive Search & Private Banking Recruitment | Geneva | Executive Partners",
     template: "%s | Executive Partners",
   },
-  // ~160 chars, keyword-rich, with light CTA
   description:
     "Executive search boutique in Geneva specialised in Private Banking & Wealth Management recruitment for senior RMs, Team Heads and leaders across global wealth hubs.",
   openGraph: {
@@ -72,7 +70,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0B0F1A", // match CSS body background
+  themeColor: "#0B0F1A",
   colorScheme: "dark",
 };
 
@@ -147,29 +145,10 @@ export default function RootLayout({
         {/* Sticky, blurred header with fixed height */}
         <header
           role="banner"
-          className="sticky inset-x-0 top-0 z-50 h-16 border-b border-white/10 bg-[#0B0F1A]/80 backdrop-blur-md md:h-20"
+          className="sticky inset-x-0 top-0 z-50 h-16 bg-[#0B0F1A]/80 backdrop-blur-md md:h-20"
         >
           <TopNav />
         </header>
-
-        {/* Spacer for non-home pages; hidden on "/" and "/en" so the hero can cover the header */}
-        <div id="global-spacer" aria-hidden className="h-4 md:h-5" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(){
-                try {
-                  var p = location.pathname;
-                  var isHome = (p === "/" || p === "/en");
-                  if (isHome) {
-                    var el = document.getElementById("global-spacer");
-                    if (el) el.style.display = "none";
-                  }
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
 
         <main id="main">{children}</main>
 

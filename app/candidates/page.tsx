@@ -14,17 +14,31 @@ const SITE =
     : "https://www.execpartners.ch");
 
 export const metadata: Metadata = {
-  title: "Private Banking Careers — Candidates | Executive Partners",
-  description:
-    "Confidential moves for Private Bankers and Senior Relationship Managers. Geneva & Zurich first, plus Dubai, Singapore, London and New York. Submit your CV securely.",
-  alternates: { canonical: `${SITE}/candidates` },
-  openGraph: {
-    title: "Private Banking Careers — Candidates | Executive Partners",
-    description:
-      "Discreet executive search for HNW/UHNW Private Banking. Switzerland-focused with global reach.",
-    url: `${SITE}/candidates`,
-    images: [{ url: "/og.png" }],
+  title: {
+    absolute:
+      "Private Banking & Wealth Management Career Moves — Candidates | Executive Partners",
   },
+  description:
+    "Confidential executive search support for Senior Private Bankers, Relationship Managers and Team Heads. Benchmark compensation, assess portability and submit your CV securely across global wealth hubs.",
+  alternates: { canonical: "/candidates" },
+  openGraph: {
+    title:
+      "Private Banking & Wealth Management Career Moves — Candidates | Executive Partners",
+    description:
+      "Discreet executive search for HNW/UHNW Private Banking talent. Geneva- and Zurich-led with mandates across London, Dubai, Singapore, Hong Kong, New York and Miami.",
+    url: `${SITE}/candidates`,
+    siteName: "Executive Partners",
+    images: [{ url: "/og.png" }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title:
+      "Private Banking & Wealth Management Career Moves — Candidates | Executive Partners",
+    description:
+      "Geneva-based boutique advising Senior Private Bankers, RMs and Team Heads on confidential career moves across major private banking hubs.",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function CandidatesPage() {
@@ -78,6 +92,38 @@ export default function CandidatesPage() {
     ],
   };
 
+  // JSON-LD: WebPage / audience for candidates
+  const webPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name:
+      "Private Banking & Wealth Management Career Moves for Candidates | Executive Partners",
+    url: `${SITE}/candidates`,
+    description:
+      "Confidential advisory and executive search support for Senior Private Bankers, Relationship Managers and Team Heads across leading global wealth hubs.",
+    inLanguage: "en",
+    isPartOf: {
+      "@type": "WebSite",
+      name: "Executive Partners",
+      url: SITE,
+    },
+    about: [
+      "Private Banking recruitment",
+      "Wealth Management executive search",
+      "Senior Relationship Managers",
+      "Team Heads and Market Leaders",
+    ],
+    audience: {
+      "@type": "Audience",
+      audienceType: [
+        "Senior Private Banker",
+        "Senior Relationship Manager",
+        "Team Head",
+        "Market Leader",
+      ],
+    },
+  };
+
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
       {/* Structured data */}
@@ -88,6 +134,10 @@ export default function CandidatesPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
       />
 
       {/* ambient background glow – gold themed */}
