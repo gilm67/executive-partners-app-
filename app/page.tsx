@@ -17,7 +17,7 @@ export default function HomePage() {
         <div className="relative h-[72vh] min-h-[560px] w-full">
           <Image
             src={HERO}
-            alt="Executive Partners — international skyline at dusk"
+            alt="Executive Partners – global private banking hubs skyline at dusk"
             fill
             priority
             sizes="100vw"
@@ -138,7 +138,6 @@ export default function HomePage() {
               href="/en/private-banker-jobs/milan"
               label="Milan · Italy"
             />
-            {/* NEW: Madrid */}
             <HubChip
               href="/en/private-banker-jobs/madrid"
               label="Madrid · Spain"
@@ -155,7 +154,7 @@ export default function HomePage() {
       <section className="relative mx-auto mt-10 max-w-6xl space-y-6 px-4">
         <FeaturePanel
           imageSrc={LADY}
-          imageAlt="Eurasian private banker — warm, approachable"
+          imageAlt="Eurasian private banker reviewing a client portfolio in a Geneva office"
           title="For Candidates"
           copy="Advance your career with discreet, tailored search. Explore live mandates and roles that match your market, seniority and portability."
           primary={{ href: "/jobs", label: "Explore Opportunities" }}
@@ -164,7 +163,7 @@ export default function HomePage() {
         />
         <FeaturePanel
           imageSrc={MAN}
-          imageAlt="Hiring manager — executive tone"
+          imageAlt="Private banking hiring manager reviewing senior RM shortlists"
           title="For Hiring Managers"
           copy="Market mapping, calibrated outreach and vetted shortlists with real portability. Brief a new role or ask us to approach specific bankers."
           primary={{ href: "/hiring-managers", label: "Find Top Talent" }}
@@ -236,9 +235,7 @@ function KpiCard({
         {value}
       </div>
       {note ? (
-        <div className="mt-2 text-[13px] leading-snug text-black/70">
-          {note}
-        </div>
+        <div className="mt-2 text-[13px] leading-snug text-black/70">{note}</div>
       ) : null}
     </div>
   );
