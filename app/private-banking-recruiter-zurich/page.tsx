@@ -2,6 +2,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+/* ---------- helpers for absolute URLs ---------- */
+function siteBase() {
+  const fromEnv =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.VERCEL_URL ||
+    "https://www.execpartners.ch";
+  const url = fromEnv.startsWith("http") ? fromEnv : `https://${fromEnv}`;
+  return url.replace(/\/$/, "");
+}
+
+const SITE = siteBase();
+const PAGE_URL = `${SITE}/private-banking-recruiter-zurich`;
+
+/* ---------- metadata ---------- */
 export const metadata: Metadata = {
   title: {
     absolute: "Private Banking Recruiter in Zurich – Executive Partners",
@@ -25,8 +39,56 @@ export const metadata: Metadata = {
 export const revalidate = 1800;
 
 export default function PrivateBankingRecruiterZurichPage() {
+  // ---------- Structured Data (JSON-LD) ----------
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": ["ProfessionalService", "LocalBusiness"],
+    name: "Executive Partners – Private Banking Recruiter in Zurich",
+    url: PAGE_URL,
+    image: `${SITE}/og.png`,
+    logo: `${SITE}/icon.png`,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "118 rue du Rhône",
+      addressLocality: "Geneva",
+      postalCode: "1204",
+      addressCountry: "CH",
+    },
+    areaServed: ["CH", "DE", "AT", "EU"],
+    sameAs: [SITE],
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Private Banking Recruiter in Zurich",
+        item: PAGE_URL,
+      },
+    ],
+  };
+
   return (
     <main className="relative min-h-screen bg-[#0B0F1A] text-white">
+      {/* JSON-LD for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
       {/* Gold ambient glow */}
       <div
         aria-hidden

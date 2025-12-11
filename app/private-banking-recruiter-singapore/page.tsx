@@ -1,105 +1,172 @@
+// app/private-banking-recruiter-paris/page.tsx
 import type { Metadata } from "next";
 import CityRecruiterPage from "@/components/CityRecruiterPage";
 
+/* ---------- helpers for absolute URLs ---------- */
+function siteBase() {
+  const fromEnv =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.VERCEL_URL ||
+    "https://www.execpartners.ch";
+  const url = fromEnv.startsWith("http") ? fromEnv : `https://${fromEnv}`;
+  return url.replace(/\/$/, "");
+}
+
+const SITE = siteBase();
+const PAGE_URL = `${SITE}/private-banking-recruiter-paris`;
+
+/* ---------- metadata ---------- */
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter in Singapore – Executive Partners",
+    absolute: "Private Banking Recruiter in Paris – Executive Partners",
   },
   description:
-    "Executive search boutique for senior Private Banking & Wealth Management hires in Singapore. UHNW/HNW RMs, Team Heads and Market Leaders covering ASEAN, NRI and Greater China.",
+    "Executive search boutique focused on senior Private Banking & Wealth Management hires in Paris and major French / EU hubs. Senior RMs, Desk Heads and Market Leaders with UHNW/HNW domestic and cross-border books.",
   alternates: {
-    canonical: "/private-banking-recruiter-singapore",
+    canonical: "/private-banking-recruiter-paris",
   },
   openGraph: {
     type: "article",
-    url: "/private-banking-recruiter-singapore",
-    title: "Private Banking Recruiter in Singapore – Executive Partners",
+    url: "/private-banking-recruiter-paris",
+    title: "Private Banking Recruiter in Paris – Executive Partners",
     description:
-      "Specialist recruiter for Private Banking & Wealth Management in Singapore: ASEAN, NRI and Greater China desks.",
+      "Specialist recruiter for Private Banking & Wealth Management in Paris: French UHNW/HNW, entrepreneurs and cross-border EU flows.",
     siteName: "Executive Partners",
   },
   robots: { index: true, follow: true },
 };
 
-export default function PrivateBankingRecruiterSingaporePage() {
+export default function PrivateBankingRecruiterParisPage() {
+  // ---------- Structured Data (JSON-LD) ----------
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": ["ProfessionalService", "LocalBusiness"],
+    name: "Executive Partners – Private Banking Recruiter in Paris",
+    url: PAGE_URL,
+    image: `${SITE}/og.png`,
+    logo: `${SITE}/icon.png`,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "118 rue du Rhône",
+      addressLocality: "Geneva",
+      postalCode: "1204",
+      addressCountry: "CH",
+    },
+    areaServed: ["FR", "CH", "LU", "GB", "EU"],
+    sameAs: [
+      SITE,
+      "https://www.linkedin.com/company/executive-partners",
+    ],
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Private Banking Recruiter in Paris",
+        item: PAGE_URL,
+      },
+    ],
+  };
+
   return (
-    <CityRecruiterPage
-      city="Singapore"
-      country="Singapore"
-      heroEyebrow="Private Banking · Singapore · Executive Search"
-      heroTitle="Private Banking Recruiter in Singapore"
-      heroSubtitle="Senior RMs, Team Heads and Market Leaders across ASEAN, NRI and Greater China."
-      heroIntro={
-        "Singapore has consolidated its position as Asia’s flagship wealth hub, competing directly with Hong Kong for UHNW families, entrepreneurs and next-gen clients. Senior Relationship Managers who can demonstrate clean, portable AUM across ASEAN, NRI and Greater China remain in high demand."
-      }
-      bulletPoints={[
-        "Senior RMs with USD 150m–500m+ portable AUM across ASEAN, NRI and Greater China.",
-        "Desk Heads and Market Leaders for Singapore booking-centre and regional hubs.",
-        "Moves from global platforms (UBS, CS/UBS, JP, MS, Citi, HSBC, SCB) into leading private banks and family offices.",
-        "Guidance on MAS licensing, variable compensation and long-term career trajectory in Asia.",
-      ]}
-      marketSummary={
-        "Banks in Singapore are actively rebalancing headcount towards senior revenue-generators with diversified, internationally booked books. Pressure on margins and cost of capital means platforms are more selective on new joiners, but the right profile still commands strong guarantees and multi-year upside."
-      }
-      compCurrency="SGD"
-      compRows={[
-        {
-          level: "Senior RM (8–12y, strong book)",
-          baseRange: "SGD 260k – 380k",
-          bonusRange: "40% – 90% of base",
-          totalRange: "≈ SGD 350k – 650k+",
-        },
-        {
-          level: "Desk Head / Team Head",
-          baseRange: "SGD 320k – 480k",
-          bonusRange: "60% – 110% of base",
-          totalRange: "≈ SGD 500k – 900k+",
-        },
-        {
-          level: "Market Head / Segment Head",
-          baseRange: "SGD 450k – 650k",
-          bonusRange: "80% – 140% of base",
-          totalRange: "≈ SGD 800k – 1.5m",
-        },
-      ]}
-      bookingCentres={[
-        "Singapore booking centre",
-        "Hong Kong",
-        "Zurich & Geneva",
-        "London / EU hubs",
-      ]}
-      desksCovered={[
-        "ASEAN onshore / offshore",
-        "NRI & South Asia",
-        "Greater China & North Asia",
-        "Global UHNW / single-family offices",
-      ]}
-      pdfHref="/pdfs/private-banking-career-intelligence-2025.pdf"
-      insightsLinks={[
-        {
-          label:
-            "This Week Changed Everything: Four Events Reshaping Wealth Management",
-          href:
-            "/insights/this-week-changed-everything-four-events-reshaping-wealth-management",
-        },
-        {
-          label:
-            "The Swiss Private Banking Talent Revolution: Digital Skills & NextGen Clients",
-          href:
-            "/insights/the-swiss-private-banking-talent-revolution-digital-skills-nextgen-clients-and-the-battle-for-expertise",
-        },
-        {
-          label:
-            "What Do Gen Z Want from Wealth Managers and How Fast is Industry Shifting?",
-          href:
-            "/insights/what-do-gen-z-want-from-wealth-managers-and-how-fast-is-industry-shifting",
-        },
-      ]}
-      relatedCities={[
-        { label: "Dubai", href: "/private-banking-recruiter-dubai" },
-        { label: "Hong Kong", href: "/private-banking-recruiter-hong-kong" },
-        { label: "Geneva", href: "/private-banking-recruiter-geneva" },
-      ]}
-    />
+    <>
+      {/* JSON-LD for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
+      <CityRecruiterPage
+        city="Paris"
+        country="France"
+        heroEyebrow="Private Banking · Paris · Executive Search"
+        heroTitle="Private Banking Recruiter in Paris"
+        heroSubtitle="Senior Private Bankers and Desk Heads covering French UHNW, entrepreneurs and cross-border EU clients."
+        heroIntro={
+          "Paris is a strategic hub for French UHNW families, listed-company executives and tech / private equity entrepreneurs. Large universal banks and specialist wealth managers are competing for senior Relationship Managers who can combine tax-aware advisory with sophisticated investment and credit capabilities."
+        }
+        bulletPoints={[
+          "Senior RMs with EUR 150m–400m+ AUM across French UHNW/HNW and entrepreneurs.",
+          "Desk Heads for Paris onshore, key regional centres and EU cross-border coverage.",
+          "Moves between universal banks, pure-play wealth managers and family-office style platforms.",
+          "Advisory on compensation design, carried-interest style incentives and long-term retention.",
+        ]}
+        marketSummary={
+          "For experienced bankers, Paris offers access to one of Europe’s deepest domestic wealth pools, increasingly driven by tech, PE and mid-market M&A wealth creation. The most attractive platforms balance strong brand recognition, open-architecture investment platforms and the ability to work seamlessly with lawyers, tax advisers and corporate finance partners. Hiring managers are prioritising bankers who can demonstrate recurring advisory revenues, low attrition and disciplined risk management in a tighter regulatory environment."
+        }
+        compCurrency="EUR"
+        compRows={[
+          {
+            level: "Senior RM (onshore France)",
+            baseRange: "EUR 130k – 190k",
+            bonusRange: "30% – 70% of base",
+            totalRange: "≈ EUR 170k – 320k",
+          },
+          {
+            level: "Desk Head / Team Lead",
+            baseRange: "EUR 170k – 230k",
+            bonusRange: "50% – 90% of base",
+            totalRange: "≈ EUR 255k – 435k",
+          },
+          {
+            level: "Market Head France",
+            baseRange: "EUR 210k – 280k",
+            bonusRange: "70% – 110% of base",
+            totalRange: "≈ EUR 360k – 580k",
+          },
+        ]}
+        bookingCentres={[
+          "Paris onshore",
+          "Luxembourg",
+          "Geneva & Zurich",
+          "London and other EU hubs",
+        ]}
+        desksCovered={[
+          "French UHNW families",
+          "Tech, PE and corporate executives",
+          "Mid-market entrepreneurs and family businesses",
+          "Non-resident French / cross-border EU",
+        ]}
+        pdfHref="/pdfs/private-banking-career-intelligence-2025.pdf"
+        insightsLinks={[
+          {
+            label: "Swiss Private Banking: Thriving Against the Odds",
+            href:
+              "/insights/swiss-private-banking-thriving-against-the-odds-2025-12-09",
+          },
+          {
+            label:
+              "The Swiss Banking Earthquake: How the Credit Suisse Collapse…",
+            href:
+              "/insights/the-swiss-banking-earthquake-how-the-credit-suisse-collapse-is-creating-the-bigg-2025-12-09",
+          },
+          {
+            label:
+              "The AI Reckoning: How 5,200 Job Cuts Are Reshaping Private Banking Talent",
+            href:
+              "/insights/the-ai-reckoning-how-5-200-job-cuts-are-reshaping-private-banking-talent-forever-2025-12-09",
+          },
+        ]}
+        relatedCities={[
+          { label: "Geneva", href: "/private-banking-recruiter-geneva" },
+          { label: "Zurich", href: "/private-banking-recruiter-zurich" },
+          { label: "Madrid", href: "/private-banking-recruiter-madrid" },
+        ]}
+      />
+    </>
   );
 }
