@@ -28,6 +28,8 @@ const SITE =
     ? `https://${process.env.VERCEL_URL}`
     : "https://www.execpartners.ch");
 
+const OG_IMAGE = `${SITE}/og.png`;
+
 // ----------------- GLOBAL METADATA (SEO) -----------------
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
@@ -37,7 +39,7 @@ export const metadata: Metadata = {
       "Executive Search & Private Banking Recruitment | Geneva | Executive Partners",
     template: "%s | Executive Partners",
   },
-  // 150–160 chars, keyword-rich, with light CTA
+  // ~160 chars, keyword-rich, with light CTA
   description:
     "Executive search boutique in Geneva specialised in Private Banking & Wealth Management recruitment for senior RMs, Team Heads and leaders across global wealth hubs.",
   openGraph: {
@@ -48,6 +50,14 @@ export const metadata: Metadata = {
     description:
       "Executive search for Private Banking & Wealth Management: senior Relationship Managers, Team Heads and leadership roles across Switzerland, the UK, US, Dubai, Singapore and Hong Kong.",
     siteName: "Executive Partners",
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "Executive Partners – Private Banking & Wealth Management Executive Search",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -55,6 +65,7 @@ export const metadata: Metadata = {
       "Executive Search & Private Banking Recruitment | Geneva | Executive Partners",
     description:
       "Executive search boutique for Private Banking & Wealth Management. We advise and place senior RMs, Team Heads and leaders across the main global wealth hubs.",
+    images: [OG_IMAGE],
   },
 };
 
