@@ -76,6 +76,66 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ===== SEO COPY: EXECUTIVE SEARCH EXPLAINER ===== */}
+      <section className="container-max mt-10 px-4">
+        <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-sm">
+          <h2 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
+            Executive search for Private Banking &amp; Wealth Management
+          </h2>
+          <p className="mt-3 text-sm text-white/75 md:text-[0.95rem]">
+            Executive Partners is a Geneva-based{" "}
+            <span className="font-semibold">
+              executive search boutique focused exclusively on Private Banking
+              &amp; Wealth Management
+            </span>
+            . We advise and place Senior Relationship Managers, Team Heads and
+            Market Leaders across{" "}
+            <Link
+              href="/en/markets"
+              className="underline decoration-[#D4AF37]/70 underline-offset-4 hover:text-[#F5D778]"
+            >
+              the main global booking centres
+            </Link>
+            , with a constant emphasis on proven AUM portability, revenue
+            quality and compliance.
+          </p>
+
+          <p className="mt-3 text-sm text-white/75 md:text-[0.95rem]">
+            For{" "}
+            <Link
+              href="/candidates"
+              className="underline decoration-[#D4AF37]/70 underline-offset-4 hover:text-[#F5D778]"
+            >
+              senior Private Bankers
+            </Link>
+            , we provide discreet career advice, compensation calibration and
+            business-plan support before any move is initiated. For{" "}
+            <Link
+              href="/hiring-managers"
+              className="underline decoration-[#D4AF37]/70 underline-offset-4 hover:text-[#F5D778]"
+            >
+              hiring managers and platform leaders
+            </Link>
+            , we deliver tightly curated shortlists with realistic views on
+            portability, ROA and P&amp;L contribution.
+          </p>
+
+          <p className="mt-3 text-sm text-white/75 md:text-[0.95rem]">
+            Our weekly{" "}
+            <Link
+              href="/insights"
+              className="underline decoration-[#D4AF37]/70 underline-offset-4 hover:text-[#F5D778]"
+            >
+              Private Wealth Pulse insights
+            </Link>{" "}
+            track restructuring, hiring trends and bonus dynamics across Swiss
+            and international banks. This market intelligence feeds directly
+            into the mandates we run and the guidance we provide to both
+            candidates and clients.
+          </p>
+        </div>
+      </section>
+
       {/* ===== BEAUTIFIED + CENTERED: SEO internal links block for private banker jobs ===== */}
       <section className="container-max mt-12 px-4">
         <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-sm">
