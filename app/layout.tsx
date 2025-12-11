@@ -28,27 +28,33 @@ const SITE =
     ? `https://${process.env.VERCEL_URL}`
     : "https://www.execpartners.ch");
 
+// ----------------- GLOBAL METADATA (SEO) -----------------
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: "Executive Partners — Private Banking & Wealth Management",
+    // More keyword-rich default
+    default:
+      "Executive Search & Private Banking Recruitment | Geneva | Executive Partners",
     template: "%s | Executive Partners",
   },
+  // 150–160 chars, keyword-rich, with light CTA
   description:
-    "Geneva-based executive search focused on Private Banking & Wealth Management across Switzerland, the UK, US, Dubai, Singapore, and Hong Kong.",
+    "Executive search boutique in Geneva specialised in Private Banking & Wealth Management recruitment for senior RMs, Team Heads and leaders across global wealth hubs.",
   openGraph: {
     type: "website",
     url: SITE,
-    title: "Executive Partners — Private Banking & Wealth Management",
+    title:
+      "Executive Search & Private Banking Recruitment | Geneva | Executive Partners",
     description:
-      "Executive search for Private Banking & Wealth Management. Market microsites: compensation, licensing, client base, relocation.",
+      "Executive search for Private Banking & Wealth Management: senior Relationship Managers, Team Heads and leadership roles across Switzerland, the UK, US, Dubai, Singapore and Hong Kong.",
     siteName: "Executive Partners",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Executive Partners — Private Banking & Wealth Management",
+    title:
+      "Executive Search & Private Banking Recruitment | Geneva | Executive Partners",
     description:
-      "Executive search for Private Banking & Wealth Management. Market microsites: compensation, licensing, client base, relocation.",
+      "Executive search boutique for Private Banking & Wealth Management. We advise and place senior RMs, Team Heads and leaders across the main global wealth hubs.",
   },
 };
 
@@ -64,9 +70,10 @@ export default function RootLayout({
 }: {
   children: ReactNode;
 }) {
+  // ---------- Structured Data (JSON-LD) ----------
   const orgJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": ["Organization", "ProfessionalService"],
     name: "Executive Partners",
     url: SITE,
     sameAs: ["https://www.linkedin.com/company/executive-partners/"],
@@ -76,6 +83,14 @@ export default function RootLayout({
       addressLocality: "Geneva",
       addressCountry: "CH",
     },
+    areaServed: ["CH", "GB", "US", "AE", "SG", "HK", "EU"],
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        contactType: "Client & Candidate Enquiries",
+        availableLanguage: ["en", "fr", "de"],
+      },
+    ],
   };
 
   const websiteJsonLd = {
