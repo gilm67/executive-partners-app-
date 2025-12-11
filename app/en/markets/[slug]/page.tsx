@@ -1,5 +1,5 @@
 // app/en/markets/[slug]/page.tsx
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getMarket, MARKET_SLUGS, fmt } from "@/lib/markets/data";
 
@@ -13,16 +13,57 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+
+  // Geneva gets a richer, fully custom SEO treatment
+  if (slug === "geneva") {
+    return {
+      title:
+        "Geneva Private Banking Market | Compensation, Licensing & Hiring Trends",
+      description:
+        "Comprehensive market insights for Private Bankers in Geneva: compensation benchmarks, licensing rules, hiring trends, key banks and why senior RMs move their books to Switzerland’s most established wealth hub.",
+      alternates: {
+        canonical: "/en/markets/geneva",
+      },
+      openGraph: {
+        type: "article",
+        url: "/en/markets/geneva",
+        title: "Geneva Private Banking Market | Executive Partners",
+        description:
+          "Geneva’s private banking ecosystem explained: UHNW flows, hiring trends, compensation ranges, market expectations and cross-border rules.",
+        siteName: "Executive Partners",
+      },
+      robots: { index: true, follow: true },
+    };
+  }
+
   const m = getMarket(slug);
-  if (!m) return { title: "Markets — Executive Partners" };
+  if (!m) {
+    return {
+      title: "Private Banking Markets | Executive Partners",
+      description:
+        "Directional compensation benchmarks, licensing frameworks, hiring pulse and ecosystem snapshots for leading private banking hubs.",
+      alternates: {
+        canonical: "/en/markets",
+      },
+      robots: { index: false, follow: true },
+    };
+  }
+
   return {
     title: `${m.city} — Private Banking Market | Executive Partners`,
     description: `${m.city}: compensation benchmarks, licensing, client base, relocation & tax, hiring pulse, ecosystem and book portability for Private Banking / Wealth Management.`,
+    alternates: {
+      canonical: `/en/markets/${slug}`,
+    },
     openGraph: {
+      type: "article",
+      url: `/en/markets/${slug}`,
       title: `${m.city} — Private Banking Market | Executive Partners`,
       description: m.summary,
       images: [{ url: m.heroImage }],
+      siteName: "Executive Partners",
     },
+    robots: { index: true, follow: true },
   };
 }
 
@@ -159,6 +200,9 @@ export default async function MarketPage({ params }: Props) {
             </article>
           )}
 
+          {/* ======= WHY PRIVATE BANKERS MOVE TO {CITY} (PER CITY SEO BLOCK) ======= */}
+          <WhyMoveBlock slug={slug} city={m.city} />
+
           {/* COMPENSATION TABLE */}
           <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
             <header className="mb-5">
@@ -263,537 +307,6 @@ export default async function MarketPage({ params }: Props) {
             </ul>
           </article>
 
-          {/* ================= PORTABILITY BY CITY ================= */}
-          {slug === "geneva" && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
-              <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
-                  Portability &amp; Book Characteristics in Geneva
-                </h2>
-              </header>
-              <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-                In Geneva, hiring committees are less impressed by headline AUM
-                and more interested in the depth, quality and regulatory
-                robustness of your relationships. Business cases that get
-                approved usually combine demonstrable revenue with a credible
-                new-money story and realistic ROA uplift.
-              </p>
-              <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-                <li>
-                  • <strong>Documented franchise:</strong> multi-year revenue
-                  history, clear split by client and visibility on key
-                  decision-makers (patriarch, next generation, trustees,
-                  external advisors).
-                </li>
-                <li>
-                  • <strong>Regulatory fit:</strong> a client base that can be
-                  booked onshore in Switzerland or under a robust cross-border
-                  model without grey-zone practices.
-                </li>
-                <li>
-                  • <strong>Diversified wallet:</strong> mix of discretionary,
-                  advisory, lending and structured solutions rather than purely
-                  execution-only, price-driven books.
-                </li>
-                <li>
-                  • <strong>Clear value-add at the new platform:</strong> better
-                  product architecture, lending capacity, booking flexibility or
-                  succession planning support that you can articulate client by
-                  client.
-                </li>
-              </ul>
-              <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
-                We pressure-test portability assumptions before you meet a
-                Geneva hiring panel so that the business case is realistic,
-                defensible and aligned with the platform&apos;s risk appetite.
-              </p>
-            </article>
-          )}
-
-          {slug === "zurich" && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
-              <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
-                  Portability &amp; Book Characteristics in Zurich
-                </h2>
-              </header>
-              <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-                In Zurich, platforms typically look for onshore, Swiss-domiciled
-                or clearly booked DACH/EMEA books with transparent revenue and
-                strong balance-sheet usage. Committees focus on the resilience
-                of the franchise and how it fits the Swiss onshore growth
-                strategy.
-              </p>
-              <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-                <li>
-                  • <strong>Onshore relevance:</strong> a material share of
-                  clients that can be booked in Switzerland or serviced from
-                  Zurich under a clean cross-border framework.
-                </li>
-                <li>
-                  • <strong>Entrepreneur &amp; corporate owners:</strong> clear
-                  links to operating businesses, holding structures and
-                  succession planning rather than purely financial wealth.
-                </li>
-                <li>
-                  • <strong>Balanced use of the balance sheet:</strong> Lombard,
-                  mortgages and structured lending alongside investments, not
-                  purely custody-only relationships.
-                </li>
-                <li>
-                  • <strong>Fee and ROA quality:</strong> stable recurring
-                  revenue, limited single-line concentration and realistic ROA
-                  once pricing is aligned to the new platform.
-                </li>
-              </ul>
-              <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
-                We build Zurich business cases around documented revenue,
-                lending usage and a concrete migration plan, so that internal
-                risk and credit teams can support the move.
-              </p>
-            </article>
-          )}
-
-          {slug === "dubai" && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
-              <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
-                  Portability &amp; Book Characteristics in Dubai
-                </h2>
-              </header>
-              <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-                In Dubai, serious private banking franchises are built around
-                clean, well-documented GCC, wider Middle East and NRI wealth
-                that can be booked in the DIFC or ADGM, or in established
-                offshore centres linked to the region. Committees look for
-                robust source-of-wealth files and long-term relationships, not
-                purely transactional flows.
-              </p>
-              <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-                <li>
-                  • <strong>Regulatory clarity:</strong> clients that fit within
-                  DFSA/FSRA frameworks with up-to-date KYC, CRS/FATCA status and
-                  clean booking structures.
-                </li>
-                <li>
-                  • <strong>Entrepreneur &amp; real-asset links:</strong> clear
-                  ties to operating businesses, real estate and family holdings,
-                  with visibility on controllers and beneficiaries.
-                </li>
-                <li>
-                  • <strong>Multi-booking capability:</strong> ability to
-                  allocate assets between UAE, Switzerland, Singapore or other
-                  centres depending on product, leverage and tax considerations.
-                </li>
-                <li>
-                  • <strong>Sticky, advisory-led revenue:</strong> recurring
-                  fees from mandates, lending and solutions rather than purely
-                  structured-product churn.
-                </li>
-              </ul>
-              <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
-                We help position Dubai books to show how they travel across
-                booking centres while remaining fully aligned with regional
-                regulatory expectations.
-              </p>
-            </article>
-          )}
-
-          {slug === "singapore" && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
-              <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
-                  Portability &amp; Book Characteristics in Singapore
-                </h2>
-              </header>
-              <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-                In Singapore, platforms focus on clearly segmented ASEAN and
-                North Asia books that can be booked under MAS rules or paired
-                with Hong Kong and offshore centres. Committees scrutinise the
-                substance of client ties and how the relationship would survive
-                a change of platform.
-              </p>
-              <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-                <li>
-                  • <strong>Residency &amp; tax profile:</strong> clear view on
-                  client domicile, tax residency and preferred booking location
-                  (Singapore, Hong Kong, Switzerland or offshore).
-                </li>
-                <li>
-                  • <strong>Family and corporate structures:</strong> links
-                  between operating businesses, holding companies and family
-                  governance are mapped and understood.
-                </li>
-                <li>
-                  • <strong>Diversified currency &amp; product mix:</strong>{" "}
-                  meaningful allocation across currencies, mandates, deposits,
-                  lending and structured solutions rather than single-theme
-                  portfolios.
-                </li>
-                <li>
-                  • <strong>Succession &amp; next-gen angle:</strong> ability to
-                  demonstrate why a new Singapore platform is better placed to
-                  support cross-border family dynamics over the next 5–10 years.
-                </li>
-              </ul>
-              <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
-                We translate Asia-focused books into business cases that
-                resonate with Singapore investment, risk and compliance
-                committees.
-              </p>
-            </article>
-          )}
-
-          {slug === "london" && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
-              <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
-                  Portability &amp; Book Characteristics in London
-                </h2>
-              </header>
-              <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-                In London, private banking franchises are judged on the depth of
-                their UK-resident and international client base, the quality of
-                advice under FCA rules and the sustainability of fee income.
-                Committees expect a clear articulation of suitability standards
-                and how those will map to the new platform.
-              </p>
-              <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-                <li>
-                  • <strong>Advisory track record:</strong> documented
-                  recommendations, portfolio reviews and suitability files that
-                  can withstand regulatory scrutiny.
-                </li>
-                <li>
-                  • <strong>UK and international split:</strong> transparent
-                  view on which clients are UK-domiciled, UK-resident but
-                  non-dom, or fully international, and how they are currently
-                  booked.
-                </li>
-                <li>
-                  • <strong>Fee-based revenue:</strong> mandates and advice fees
-                  that continue post-transfer, not only one-off transactions.
-                </li>
-                <li>
-                  • <strong>Institutional-grade process:</strong> evidence of
-                  investment committee usage, model portfolios and risk
-                  management rather than purely bespoke, undocumented deals.
-                </li>
-              </ul>
-              <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
-                We frame London moves around advice quality, recurring revenue
-                and a clear compliance narrative, which is what FCA-supervised
-                platforms expect.
-              </p>
-            </article>
-          )}
-
-          {slug === "hong-kong" && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
-              <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
-                  Portability &amp; Book Characteristics in Hong Kong
-                </h2>
-              </header>
-              <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-                In Hong Kong, books are often more trading-oriented with strong
-                North Asia exposure. Platforms look for evidence that revenue is
-                not purely event-driven but anchored in durable relationships
-                and a robust SFC-compliant advisory process.
-              </p>
-              <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-                <li>
-                  • <strong>Cross-border framework:</strong> clear view on how
-                  Mainland China and regional clients are covered under
-                  cross-border and outbound investment rules.
-                </li>
-                <li>
-                  • <strong>Product governance:</strong> documented processes
-                  around structured products, IPO allocations and leveraged
-                  trades.
-                </li>
-                <li>
-                  • <strong>Resilient revenue mix:</strong> blend of recurring
-                  fees and activity-based income, rather than fully
-                  transaction-only books.
-                </li>
-                <li>
-                  • <strong>Booking flexibility:</strong> ability to park assets
-                  across Hong Kong, Singapore and offshore depending on client
-                  profile and regulatory requirements.
-                </li>
-              </ul>
-              <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
-                We help articulate Hong Kong books in terms of durable client
-                franchises, not just recent trading P&amp;L.
-              </p>
-            </article>
-          )}
-
-          {slug === "new-york" && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
-              <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
-                  Portability &amp; Book Characteristics in New York
-                </h2>
-              </header>
-              <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-                In New York, wealth franchises are evaluated primarily on their
-                US-taxable client base, adherence to SEC/FINRA requirements and
-                the depth of planning relationships. Committees want to see
-                clear documentation of advisory processes and household-level
-                balance sheets.
-              </p>
-              <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-                <li>
-                  • <strong>Household view:</strong> consolidated picture of
-                  assets, liabilities and entities across the family tree, not
-                  only single accounts.
-                </li>
-                <li>
-                  • <strong>Planning-led revenue:</strong> fee-based advisory
-                  and managed accounts that will follow the banker to the new
-                  platform.
-                </li>
-                <li>
-                  • <strong>Compliance history:</strong> clean U4/U5 record and
-                  evidence of strong supervision and documentation.
-                </li>
-                <li>
-                  • <strong>LatAm and global links:</strong> where relevant, a
-                  clear framework for cross-border coverage of non-US family
-                  members and structures.
-                </li>
-              </ul>
-              <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
-                We present New York moves in a language that resonates with US
-                market heads, risk and legal.
-              </p>
-            </article>
-          )}
-
-          {slug === "miami" && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
-              <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
-                  Portability &amp; Book Characteristics in Miami
-                </h2>
-              </header>
-              <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-                Miami is a hybrid hub: US-taxable wealth sits alongside
-                LatAm-focused international books. Hiring committees examine how
-                well structured the LatAm relationships are and whether revenue
-                is resilient through cycles and political regimes.
-              </p>
-              <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-                <li>
-                  • <strong>Jurisdiction mapping:</strong> clear breakdown of
-                  clients by country, residency and booking centre, with an
-                  honest view on political and FX risk.
-                </li>
-                <li>
-                  • <strong>Onshore/offshore balance:</strong> transparent split
-                  between US-booked assets and international bookings (Caribbean,
-                  Switzerland, elsewhere).
-                </li>
-                <li>
-                  • <strong>Family-controlled corporate wealth:</strong> links
-                  to operating companies, trade flows and local banking
-                  relationships.
-                </li>
-                <li>
-                  • <strong>Regulatory discipline:</strong> evidence that
-                  cross-border marketing rules and anti-corruption policies are
-                  embedded in day-to-day practice.
-                </li>
-              </ul>
-              <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
-                We help LatAm &amp; US books out of Miami tell a credible,
-                risk-aware story that stands up to North American governance
-                standards.
-              </p>
-            </article>
-          )}
-
-          {slug === "paris" && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
-              <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
-                  Portability &amp; Book Characteristics in Paris
-                </h2>
-              </header>
-              <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-                In Paris, books are typically anchored in French-resident
-                entrepreneurs, executives and family groups, often with complex
-                tax and legal constraints. Platforms assess how portable those
-                relationships are in a MiFID II and French tax environment.
-              </p>
-              <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-                <li>
-                  • <strong>Alignment with local tax rules:</strong> clear view
-                  on wealth-tax exposure, holding-company structures and life
-                  insurance usage.
-                </li>
-                <li>
-                  • <strong>Corporate links:</strong> strong ties to operating
-                  businesses, listed shareholdings and private equity positions.
-                </li>
-                <li>
-                  • <strong>Discretionary &amp; advisory mandates:</strong>{" "}
-                  documented investment processes compatible with MiFID II
-                  requirements.
-                </li>
-                <li>
-                  • <strong>Cross-border angle:</strong> ability to service
-                  French families with assets or residency ties in Switzerland,
-                  Luxembourg or other EU hubs.
-                </li>
-              </ul>
-              <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
-                We structure Paris business cases around documented advice and
-                tight coordination with local tax, legal and insurance partners.
-              </p>
-            </article>
-          )}
-
-          {slug === "milan" && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
-              <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
-                  Portability &amp; Book Characteristics in Milan
-                </h2>
-              </header>
-              <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-                In Milan, many private banking relationships are tied to
-                family-owned industrial and services businesses. Committees look
-                for bankers who sit close to decision-makers and can document
-                both personal and corporate wallet share.
-              </p>
-              <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-                <li>
-                  • <strong>Entrepreneurial ownership:</strong> clear mapping of
-                  shareholdings, governance structures and succession plans.
-                </li>
-                <li>
-                  • <strong>Integrated banking:</strong> evidence that the
-                  banker influences both private and corporate banking
-                  relationships (FX, trade, lending).
-                </li>
-                <li>
-                  • <strong>Mandates &amp; bancassurance:</strong> recurring
-                  fees from mandates, insurance wrappers and retirement
-                  solutions.
-                </li>
-                <li>
-                  • <strong>Cross-border optionality:</strong> ability to link
-                  Italian wealth to Swiss or Luxembourg booking centres where
-                  appropriate and compliant.
-                </li>
-              </ul>
-              <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
-                We position Milan books by quantifying both private and
-                corporate potential, which is how Italian platforms think.
-              </p>
-            </article>
-          )}
-
-          {slug === "lisbon" && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
-              <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
-                  Portability &amp; Book Characteristics in Lisbon
-                </h2>
-              </header>
-              <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-                Lisbon has grown as a hub for entrepreneurs, expats and
-                relocated families, often combining local structures with
-                international holdings. Committees want clarity on residency,
-                tax status and how much of the wealth can genuinely move with
-                the banker.
-              </p>
-              <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-                <li>
-                  • <strong>Residency programmes:</strong> clear mapping of
-                  clients who arrived via golden-visa or other residency
-                  schemes, and how their structures evolved.
-                </li>
-                <li>
-                  • <strong>Local vs. international assets:</strong> split
-                  between Portuguese banked assets and those held in other EU or
-                  offshore centres.
-                </li>
-                <li>
-                  • <strong>Planning relationships:</strong> links to tax,
-                  legal and real-estate advisers that make the relationship
-                  sticky.
-                </li>
-                <li>
-                  • <strong>Succession &amp; relocation angle:</strong> ability
-                  to support further moves (for example back to core EU or
-                  Switzerland) while keeping the wallet.
-                </li>
-              </ul>
-              <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
-                We position Lisbon books as long-term European wealth planning
-                franchises, not just one-off relocation stories.
-              </p>
-            </article>
-          )}
-
-          {/* Generic fallback if none of the specific cities above matched */}
-          {![
-            "geneva",
-            "zurich",
-            "dubai",
-            "singapore",
-            "london",
-            "hong-kong",
-            "new-york",
-            "miami",
-            "paris",
-            "milan",
-            "lisbon",
-          ].includes(slug) && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
-              <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
-                  Portability &amp; Book Characteristics
-                </h2>
-              </header>
-              <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-                Portability into {m.city} depends less on headline AUM and more
-                on the depth, quality and regulatory fit of your client
-                relationships. Platforms tend to prioritise books that combine
-                stable revenue with a credible growth story.
-              </p>
-              <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-                <li>
-                  • <strong>Well documented:</strong> clear revenue history,
-                  stable contact network and transparency on decision-makers.
-                </li>
-                <li>
-                  • <strong>Regulatory fit:</strong> clients that can be booked
-                  locally or via a compliant cross-border framework.
-                </li>
-                <li>
-                  • <strong>Diversified wallets:</strong> mix of discretionary,
-                  advisory, lending and solutions rather than single-product,
-                  price-only relationships.
-                </li>
-                <li>
-                  • <strong>Value-add story:</strong> situations where the
-                  target platform demonstrably improves product access, credit,
-                  execution or succession planning for your clients.
-                </li>
-              </ul>
-              <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
-                Our role is to refine these assumptions with you so the business
-                case stands up in approvals and reflects how your book would
-                behave under a realistic transition scenario.
-              </p>
-            </article>
-          )}
-
           {/* BANKING ECOSYSTEM – TOP PLATFORMS, BOOKING CENTRES, EAMs */}
           {m.ecosystem && (
             <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
@@ -892,6 +405,12 @@ export default async function MarketPage({ params }: Props) {
                   >
                     Apply confidentially
                   </Link>
+                  <Link
+                    href={`/bp-simulator?src=${slug}_market`}
+                    className="inline-flex items-center rounded-full border border-[#D4AF37]/60 px-5 py-2.5 text-sm font-medium text-[#F4D270] transition hover:bg-[#D4AF37]/10"
+                  >
+                    Run Business Plan Simulator
+                  </Link>
                 </div>
               </div>
 
@@ -942,4 +461,893 @@ export default async function MarketPage({ params }: Props) {
       </section>
     </main>
   );
+}
+
+/* ========= CITY-SPECIFIC “WHY MOVE” SEO BLOCK ========= */
+
+function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
+  switch (slug) {
+    case "geneva":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <header className="mb-4">
+            <h2 className="text-xl font-semibold md:text-2xl">
+              Why Private Bankers Move to Geneva
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            Geneva remains one of the most established wealth hubs globally: a
+            AAA-rated country, a predictable regulatory framework and a deep
+            pool of international UHNW families who still value Switzerland for
+            stability, discretion and booking flexibility. Senior Relationship
+            Managers who move here typically want a stronger platform for
+            complex cross-border clients and a safer home for large
+            multi-jurisdictional books.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            The most attractive platforms in Geneva combine a recognised brand,
+            open-architecture investment offering, strong lending capacity and
+            the ability to coordinate with external lawyers, trustees and tax
+            advisers. For many senior RMs, that translates into better client
+            outcomes and higher probability that key households will follow
+            them.
+          </p>
+          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
+            <li>
+              • <strong>Deep, diverse client base:</strong> Swiss-domiciled
+              families, international entrepreneurs, LatAm, Middle East and
+              European wealth all booking assets in Switzerland.
+            </li>
+            <li>
+              • <strong>Multi-booking-centre reach:</strong> ability to combine
+              Geneva booking with Zurich, Dubai, Singapore or offshore centres
+              within one platform.
+            </li>
+            <li>
+              • <strong>Career longevity:</strong> Geneva market heads and
+              platform leaders tend to think in 5–10 year horizons, which suits
+              bankers building long-term franchises.
+            </li>
+            <li>
+              • <strong>Lifestyle &amp; family set-up:</strong> safe city,
+              international schools and proximity to the Alps make Geneva
+              attractive for families relocating from London, Paris or emerging
+              markets.
+            </li>
+          </ul>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            If you want to explore{" "}
+            <Link
+              href="/en/private-banker-jobs/geneva"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              current Geneva private banker jobs
+            </Link>
+            , you can start with a high-level conversation rather than a formal
+            application. You can also share your profile via the{" "}
+            <Link
+              href="/en/candidates"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              candidates hub
+            </Link>{" "}
+            or{" "}
+            <Link
+              href="/en/contact"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              speak directly to a Geneva-based recruiter
+            </Link>
+            . Before you engage with a platform, you can also model a move using
+            our{" "}
+            <Link
+              href="/bp-simulator?src=geneva_market"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Business Plan Simulator
+            </Link>{" "}
+            to test revenue, ROA and portability assumptions.
+          </p>
+        </article>
+      );
+
+    case "zurich":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <header className="mb-4">
+            <h2 className="text-xl font-semibold md:text-2xl">
+              Why Private Bankers Move to Zurich
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            Zurich is the core Swiss onshore hub, with a strong concentration of
+            Swiss-domiciled entrepreneurs, executives and multi-banking UHNW
+            clients. For many senior RMs, Zurich offers closer proximity to
+            decision-makers, corporate balance sheets and lending committees,
+            especially in DACH and broader EMEA.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            Platforms in Zurich typically combine robust Swiss onshore coverage
+            with access to international booking centres, structured lending and
+            institutional-grade investment capabilities. That combination makes
+            it easier to capture a larger share of the client wallet and support
+            both private and corporate banking needs from one hub.
+          </p>
+          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
+            <li>
+              • <strong>Onshore growth focus:</strong> Swiss-resident and DACH
+              clients are prioritised, with clear visibility on tax and
+              regulatory status.
+            </li>
+            <li>
+              • <strong>Corporate connectivity:</strong> strong links between
+              private banking and corporate / investment banking arms for
+              entrepreneurs and business owners.
+            </li>
+            <li>
+              • <strong>High governance standards:</strong> committees focus on
+              well-documented advisory processes and prudent lending usage.
+            </li>
+            <li>
+              • <strong>Quality of life:</strong> a stable, high-income city
+              with strong infrastructure and international schooling options.
+            </li>
+          </ul>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            To explore{" "}
+            <Link
+              href="/en/private-banker-jobs/zurich"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Zurich private banker jobs
+            </Link>
+            , you can either apply to a live mandate or{" "}
+            <Link
+              href="/en/candidates"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              submit your profile confidentially
+            </Link>
+            . If you prefer a direct discussion,{" "}
+            <Link
+              href="/en/contact"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              contact a Zurich-focused recruiter
+            </Link>{" "}
+            or run first numbers in the{" "}
+            <Link
+              href="/bp-simulator?src=zurich_market"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Business Plan Simulator
+            </Link>
+            .
+          </p>
+        </article>
+      );
+
+    case "dubai":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <header className="mb-4">
+            <h2 className="text-xl font-semibold md:text-2xl">
+              Why Private Bankers Move to Dubai
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            Dubai has become the most visible private banking hub for GCC,
+            wider Middle East and select NRI clients. Senior bankers base
+            themselves here to be physically closer to decision-makers while
+            still plugging into international booking centres in Switzerland,
+            Singapore or other offshore locations.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            Serious platforms in Dubai operate under DFSA or ADGM frameworks and
+            emphasise robust KYC, source-of-wealth documentation and sustainable
+            advisory revenues. For many RMs, the appeal lies in combining
+            regional proximity with a broad product shelf and the ability to
+            allocate assets across multiple booking centres.
+          </p>
+          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
+            <li>
+              • <strong>Regional proximity:</strong> easy access to GCC,
+              broader Middle East and South Asia clients.
+            </li>
+            <li>
+              • <strong>Multi-centre architecture:</strong> Dubai desks often
+              coordinate with Swiss, Asian and offshore booking locations.
+            </li>
+            <li>
+              • <strong>Tax &amp; lifestyle:</strong> attractive personal tax
+              environment and a lifestyle that works for internationally mobile
+              families.
+            </li>
+            <li>
+              • <strong>Growth dynamics:</strong> strong pipeline of
+              entrepreneur wealth, real estate and family group restructurings.
+            </li>
+          </ul>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            You can review{" "}
+            <Link
+              href="/en/private-banker-jobs/dubai"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              current Dubai private banker roles
+            </Link>{" "}
+            or{" "}
+            <Link
+              href="/en/candidates"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              share your profile confidentially
+            </Link>{" "}
+            for upcoming mandates. For a deeper discussion,{" "}
+            <Link
+              href="/en/contact"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              contact Executive Partners
+            </Link>{" "}
+            and use the{" "}
+            <Link
+              href="/bp-simulator?src=dubai_market"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Business Plan Simulator
+            </Link>{" "}
+            to stress-test portability and revenue scenarios.
+          </p>
+        </article>
+      );
+
+    case "singapore":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <header className="mb-4">
+            <h2 className="text-xl font-semibold md:text-2xl">
+              Why Private Bankers Move to Singapore
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            Singapore is the primary wealth hub for ASEAN and part of a
+            dual-centre strategy with Hong Kong for North Asia. Senior bankers
+            relocate here to consolidate regional client books under MAS rules,
+            with flexible access to global markets and strong legal certainty.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            The city offers a combination of political stability, robust
+            regulation and deep wealth-management infrastructure. Many platforms
+            position Singapore as a base for long-term family governance,
+            succession planning and multi-jurisdictional structuring rather than
+            purely trading-focused business.
+          </p>
+          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
+            <li>
+              • <strong>Asia hub:</strong> gateway for ASEAN and part of the
+              North Asia coverage model.
+            </li>
+            <li>
+              • <strong>Regulatory clarity:</strong> MAS-led framework with high
+              standards of investor protection.
+            </li>
+            <li>
+              • <strong>Family governance focus:</strong> strong ecosystem of
+              lawyers, trustees and family-office specialists.
+            </li>
+            <li>
+              • <strong>Quality-of-life platform:</strong> safe, efficient and
+              attractive for families relocating from Europe or within Asia.
+            </li>
+          </ul>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            You can explore{" "}
+            <Link
+              href="/en/private-banker-jobs/singapore"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Singapore-based roles
+            </Link>{" "}
+            or register via the{" "}
+            <Link
+              href="/en/candidates"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              candidates hub
+            </Link>{" "}
+            for future searches. If you want to model a move before speaking
+            with a platform, try the{" "}
+            <Link
+              href="/bp-simulator?src=singapore_market"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Business Plan Simulator
+            </Link>{" "}
+            and then{" "}
+            <Link
+              href="/en/contact"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              contact us
+            </Link>{" "}
+            to discuss the results.
+          </p>
+        </article>
+      );
+
+    case "london":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <header className="mb-4">
+            <h2 className="text-xl font-semibold md:text-2xl">
+              Why Private Bankers Move to London
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            London is still one of the most sophisticated hubs for onshore
+            private banking and wealth management, particularly for UK
+            residents, non-doms and international families with UK ties. It
+            offers deep capital markets, a dense professional-services
+            ecosystem and access to institutional-grade investment ideas.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            FCA-regulated platforms place strong emphasis on documented advice,
+            suitability and fee-based revenue. For senior RMs, London can be a
+            compelling place to build a planning-led franchise with close links
+            to investment banking, capital markets and alternatives providers.
+          </p>
+          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
+            <li>
+              • <strong>Onshore advisory hub:</strong> UK-resident (&amp;
+              non-dom) clients who value planning, not just execution.
+            </li>
+            <li>
+              • <strong>Capital-markets access:</strong> strong link between
+              wealth management and institutional product manufacturing.
+            </li>
+            <li>
+              • <strong>Professional network:</strong> ecosystem of lawyers,
+              accountants and corporate-finance advisers.
+            </li>
+            <li>
+              • <strong>Career depth:</strong> multiple platform types:
+              universal banks, UK private banks, boutiques and multi-family
+              offices.
+            </li>
+          </ul>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            To review{" "}
+            <Link
+              href="/en/private-banker-jobs/london"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              London roles
+            </Link>
+            , browse the jobs page or{" "}
+            <Link
+              href="/en/candidates"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              submit your CV
+            </Link>{" "}
+            for confidential consideration. You can also{" "}
+            <Link
+              href="/en/contact"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              speak directly with us
+            </Link>{" "}
+            and run indicative numbers through the{" "}
+            <Link
+              href="/bp-simulator?src=london_market"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Business Plan Simulator
+            </Link>
+            .
+          </p>
+        </article>
+      );
+
+    case "hong-kong":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <header className="mb-4">
+            <h2 className="text-xl font-semibold md:text-2xl">
+              Why Private Bankers Move to Hong Kong
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            Hong Kong remains a key hub for North Asia, particularly Greater
+            China and regional entrepreneurs. Many senior RMs move here because
+            they want to be closer to decision-makers in the region while
+            keeping access to international product platforms and multi-centre
+            booking options.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            The market is more activity-driven than some other centres, but the
+            strongest franchises balance structured products and trading with
+            long-term advisory and planning. SFC supervision and cross-border
+            rules mean platforms value bankers who can combine strong revenue
+            with disciplined governance.
+          </p>
+          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
+            <li>
+              • <strong>North Asia proximity:</strong> closer access to Chinese
+              and regional UHNW families.
+            </li>
+            <li>
+              • <strong>Trading &amp; solutions:</strong> deep product shelves
+              for structured products, leverage and IPO-related flows.
+            </li>
+            <li>
+              • <strong>Cross-centre strategy:</strong> Hong Kong books often
+              link to Singapore and offshore booking locations.
+            </li>
+            <li>
+              • <strong>Dynamic revenue:</strong> mix of recurring and
+              event-driven income for high-activity clients.
+            </li>
+          </ul>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            You can explore{" "}
+            <Link
+              href="/en/private-banker-jobs/hong-kong"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Hong Kong mandates
+            </Link>{" "}
+            or register via the{" "}
+            <Link
+              href="/en/candidates"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              candidates page
+            </Link>
+            . For an initial discussion on how your book might travel,{" "}
+            <Link
+              href="/en/contact"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              contact us
+            </Link>{" "}
+            and pre-test assumptions with the{" "}
+            <Link
+              href="/bp-simulator?src=hong-kong_market"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Business Plan Simulator
+            </Link>
+            .
+          </p>
+        </article>
+      );
+
+    case "new-york":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <header className="mb-4">
+            <h2 className="text-xl font-semibold md:text-2xl">
+              Why Private Bankers Move to New York
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            New York is the core hub for US-taxable wealth and complex
+            household-level planning. Senior advisers base themselves here to
+            sit close to capital markets desks, product specialists and a dense
+            ecosystem of lawyers, accountants and estate-planning experts.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            SEC/FINRA-supervised platforms look for advisers who can build
+            long-term, planning-led relationships rather than purely
+            transaction-driven business. The upside for senior bankers is the
+            ability to anchor themselves at the centre of sophisticated,
+            multi-generational balance sheets across the US and wider Americas.
+          </p>
+          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
+            <li>
+              • <strong>Household-centric model:</strong> multi-entity,
+              multi-account relationships built on planning and advice.
+            </li>
+            <li>
+              • <strong>Capital markets proximity:</strong> daily interaction
+              with product, research and deal specialists.
+            </li>
+            <li>
+              • <strong>Complex tax environment:</strong> opportunity to work
+              with high-quality tax and legal advisers on advanced structures.
+            </li>
+            <li>
+              • <strong>LatAm &amp; global links:</strong> many New York desks
+              connect US clients with international family members and assets.
+            </li>
+          </ul>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            You can review{" "}
+            <Link
+              href="/en/private-banker-jobs/new-york"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              New York private banker roles
+            </Link>{" "}
+            or{" "}
+            <Link
+              href="/en/candidates"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              submit your profile confidentially
+            </Link>{" "}
+            for upcoming mandates. For a more detailed conversation,{" "}
+            <Link
+              href="/en/contact"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              contact us
+            </Link>{" "}
+            and use the{" "}
+            <Link
+              href="/bp-simulator?src=new-york_market"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Business Plan Simulator
+            </Link>{" "}
+            to test revenue and portability assumptions into the US platform.
+          </p>
+        </article>
+      );
+
+    case "miami":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <header className="mb-4">
+            <h2 className="text-xl font-semibold md:text-2xl">
+              Why Private Bankers Move to Miami
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            Miami is a hybrid hub where US-taxable wealth sits alongside
+            sophisticated LatAm and international books. Senior bankers relocate
+            here to remain close to Latin American families, while leveraging
+            US platforms, custody and governance standards.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            The strongest Miami franchises emphasise rigorous jurisdictional
+            mapping, clean cross-border frameworks and stable, fee-based
+            revenue. For bankers with diversified LatAm &amp; US relationships,
+            Miami offers a unique mix of proximity, lifestyle and platform
+            depth.
+          </p>
+          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
+            <li>
+              • <strong>LatAm proximity:</strong> easy connectivity to key Latin
+              American markets and family groups.
+            </li>
+            <li>
+              • <strong>US platform access:</strong> ability to combine US
+              custody, governance and product with Latin American client demand.
+            </li>
+            <li>
+              • <strong>Hybrid booking model:</strong> mix of US-booked and
+              offshore assets, when compliant and appropriate.
+            </li>
+            <li>
+              • <strong>Lifestyle &amp; networks:</strong> growing ecosystem of
+              entrepreneurs, family offices and regional decision-makers.
+            </li>
+          </ul>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            You can check{" "}
+            <Link
+              href="/en/private-banker-jobs/miami"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Miami private banker jobs
+            </Link>{" "}
+            or{" "}
+            <Link
+              href="/en/candidates"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              register confidentially
+            </Link>{" "}
+            to be considered for future mandates. For a deeper discussion of
+            your LatAm &amp; US mix,{" "}
+            <Link
+              href="/en/contact"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              contact our team
+            </Link>{" "}
+            and run an initial scenario through the{" "}
+            <Link
+              href="/bp-simulator?src=miami_market"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Business Plan Simulator
+            </Link>
+            .
+          </p>
+        </article>
+      );
+
+    case "paris":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <header className="mb-4">
+            <h2 className="text-xl font-semibold md:text-2xl">
+              Why Private Bankers Move to Paris
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            Paris is the main hub for French-resident entrepreneurs, executives
+            and multi-generational families, often with sophisticated tax and
+            legal constraints. Senior bankers move here to work closer to local
+            decision-makers and to build long-term franchises under a strong
+            MiFID II and French regulatory framework.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            Leading platforms in Paris combine domestic expertise with access to
+            Luxembourg, Switzerland and other EU booking centres. For many RMs,
+            this allows them to manage both local wealth and cross-border
+            structures from one primary city.
+          </p>
+          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
+            <li>
+              • <strong>Local depth:</strong> strong focus on French residents
+              and corporate owners with complex wealth situations.
+            </li>
+            <li>
+              • <strong>Tax &amp; legal sophistication:</strong> intensive work
+              with local lawyers, notaries and tax advisers.
+            </li>
+            <li>
+              • <strong>Cross-border options:</strong> ability to connect Paris
+              clients with Swiss or Luxembourg booking centres.
+            </li>
+            <li>
+              • <strong>Long-term relationships:</strong> emphasis on planning,
+              mandates and succession rather than trading-only activity.
+            </li>
+          </ul>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            Review{" "}
+            <Link
+              href="/en/private-banker-jobs/paris"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Paris private banking roles
+            </Link>{" "}
+            or{" "}
+            <Link
+              href="/en/candidates"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              submit your profile
+            </Link>{" "}
+            to be considered across leading French and European platforms. For a
+            more detailed calibration of your business case,{" "}
+            <Link
+              href="/en/contact"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              contact Executive Partners
+            </Link>{" "}
+            and pre-test your assumptions in the{" "}
+            <Link
+              href="/bp-simulator?src=paris_market"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Business Plan Simulator
+            </Link>
+            .
+          </p>
+        </article>
+      );
+
+    case "madrid":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <header className="mb-4">
+            <h2 className="text-xl font-semibold md:text-2xl">
+              Why Private Bankers Move to Madrid
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            Madrid is a key hub for Iberian entrepreneurs, executives and family
+            groups, with growing links to LatAm and broader European wealth.
+            Senior private bankers move here to access local decision-makers,
+            Spanish onshore wealth and Latin-linked structures under a familiar
+            language and legal environment.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            The most compelling platforms in Madrid combine domestic coverage
+            with access to Luxembourg, Switzerland or other EU booking centres.
+            This allows bankers to support both local and international
+            structuring while maintaining a strong on-the-ground presence.
+          </p>
+          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
+            <li>
+              • <strong>Iberian focus:</strong> high concentration of
+              Spain-based entrepreneurs, executives and family groups.
+            </li>
+            <li>
+              • <strong>LatAm connectivity:</strong> historical and business
+              links with Latin American wealth.
+            </li>
+            <li>
+              • <strong>EU platform access:</strong> ability to tap into wider
+              European booking centres and product ranges.
+            </li>
+            <li>
+              • <strong>Lifestyle &amp; talent magnet:</strong> attractive city
+              for returning Spanish bankers and international hires.
+            </li>
+          </ul>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            Explore{" "}
+            <Link
+              href="/en/private-banker-jobs/madrid"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Madrid private banker jobs
+            </Link>{" "}
+            or{" "}
+            <Link
+              href="/en/candidates"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              share your profile
+            </Link>{" "}
+            for future Iberian and LatAm-linked mandates. You can also{" "}
+            <Link
+              href="/en/contact"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              contact us
+            </Link>{" "}
+            to discuss a potential move and run scenarios in the{" "}
+            <Link
+              href="/bp-simulator?src=madrid_market"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Business Plan Simulator
+            </Link>
+            .
+          </p>
+        </article>
+      );
+
+    case "lisbon":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <header className="mb-4">
+            <h2 className="text-xl font-semibold md:text-2xl">
+              Why Private Bankers Move to Lisbon
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            Lisbon has evolved into a hub for entrepreneurs, tech founders and
+            internationally mobile families, many of whom arrived via residency
+            or relocation programmes. Senior private bankers move here to serve
+            this mix of local and international wealth while leveraging EU
+            stability and a growing financial-services ecosystem.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            Platforms in Lisbon often combine domestic banking with access to
+            broader European booking centres. For the right banker, this means
+            the ability to manage local cash flows, real estate and business
+            interests while structuring long-term wealth in other EU hubs.
+          </p>
+          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
+            <li>
+              • <strong>Relocation-driven client base:</strong> mix of local
+              families, expats and relocated entrepreneurs.
+            </li>
+            <li>
+              • <strong>EU stability:</strong> euro-zone jurisdiction with
+              access to wider European financial infrastructure.
+            </li>
+            <li>
+              • <strong>International flavour:</strong> English widely spoken,
+              strong tech and start-up presence, global outlook.
+            </li>
+            <li>
+              • <strong>Lifestyle appeal:</strong> quality of life that attracts
+              mobile UHNW and next-gen clients.
+            </li>
+          </ul>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            Check{" "}
+            <Link
+              href="/en/private-banker-jobs/lisbon"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Lisbon private banking opportunities
+            </Link>{" "}
+            or{" "}
+            <Link
+              href="/en/candidates"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              register confidentially
+            </Link>{" "}
+            to be considered across key platforms. For a more detailed view on
+            how your current book might travel,{" "}
+            <Link
+              href="/en/contact"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              contact us
+            </Link>{" "}
+            and run initial numbers through the{" "}
+            <Link
+              href="/bp-simulator?src=lisbon_market"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Business Plan Simulator
+            </Link>
+            .
+          </p>
+        </article>
+      );
+
+    default:
+      return (
+        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <header className="mb-4">
+            <h2 className="text-xl font-semibold md:text-2xl">
+              Why Private Bankers Consider {city}
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            {city} is a relevant hub for Private Banking and Wealth Management,
+            combining local client depth with access to regional or global
+            booking centres. Senior Relationship Managers typically consider a
+            move when their existing platform no longer matches the needs of
+            their clients, or when they see a stronger long-term fit in terms of
+            product, governance and growth.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            The right platform in {city} will usually offer a credible brand,
+            robust regulatory set-up and the ability to service your core client
+            segments over the next decade. That often includes better credit
+            support, a broader investment shelf or more flexible booking
+            options.
+          </p>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            To explore options, you can review relevant roles on the{" "}
+            <Link
+              href="/jobs"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              jobs page
+            </Link>
+            , register via the{" "}
+            <Link
+              href="/en/candidates"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              candidates hub
+            </Link>
+            , or{" "}
+            <Link
+              href="/en/contact"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              contact us
+            </Link>{" "}
+            for a confidential discussion. You can also pre-test a move using
+            the{" "}
+            <Link
+              href="/bp-simulator?src=market_generic"
+              className="text-[#F4D270] underline underline-offset-2"
+            >
+              Business Plan Simulator
+            </Link>
+            .
+          </p>
+        </article>
+      );
+  }
 }
