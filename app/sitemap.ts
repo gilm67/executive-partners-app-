@@ -38,7 +38,6 @@ function isActive(v: unknown): boolean {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = CANONICAL_BASE;
   const now = new Date();
-  const nowISO = now.toISOString();
 
   // --- Static pages ---
   const staticPages: string[] = [
@@ -97,27 +96,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // silent fail in production
   }
 
+  // If jobs API returns nothing, fall back to evergreen slugs
   if (!jobs.length) {
-    jobs = FALLBACK_JOB_SLUGS.map((slug) => ({
-      slug,
-      active: true,
-      createdAt: nowISO,
-    })) as unknown as PublicJob[];
+    jobs = FALLBACK_JOB_SLUGS.map((slug) => ({ slug, active: true })) as unknown as PublicJob[];
   }
 
+  // IMPORTANT: PublicJob has no createdAt/updatedAt → lastModified = now (safe + valid)
   const jobEntries: MetadataRoute.Sitemap = jobs
     .filter((j) => j?.slug && isActive((j as any).active))
-    .map((j) => {
-      const last =
-        j.createdAt ? new Date(j.createdAt as any) : now;
-
-      return {
-        url: normalize(base, `/jobs/${j.slug!}`),
-        lastModified: last,
-        changeFrequency: "weekly",
-        priority: 0.8,
-      };
-    });
+    .map((j) => ({
+      url: normalize(base, `/jobs/${j.slug!}`),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    }));
 
   // --- Markets ---
   const marketEntries: MetadataRoute.Sitemap = MARKET_SLUGS.flatMap((slug) => [
