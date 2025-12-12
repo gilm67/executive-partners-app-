@@ -10,6 +10,9 @@ type PublicJob = {
   createdAt?: string;
 };
 
+/** 🔐 Canonical base — NEVER use env or Vercel here */
+const CANONICAL_BASE = "https://www.execpartners.ch";
+
 /** If /api/jobs is empty/unavailable, keep these in the sitemap so Jobs stays visible. */
 const FALLBACK_JOB_SLUGS: string[] = [
   "senior-relationship-manager-mea-dubai",
@@ -19,24 +22,13 @@ const FALLBACK_JOB_SLUGS: string[] = [
   "senior-relationship-manager-portugal-geneva",
 ];
 
-/** Curate on-site Insights you’ve published */
+/** Curated Insights */
 const INSIGHTS_POSTS: Array<{ slug: string; dateISO?: string; priority?: number }> = [
   { slug: "swiss-private-banking-weekly-update-sep-2025", dateISO: "2025-09-08", priority: 0.75 },
   { slug: "agility-small-bankers-win", dateISO: "2025-09-09", priority: 0.8 },
 ];
 
-/** Build a clean absolute base URL */
-function siteBase(): string {
-  const env =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
-    "https://www.execpartners.ch";
-
-  const url = env.startsWith("http") ? env : `https://${env}`;
-  return url.replace(/\/+$/, "");
-}
-
-/** Normalize URL against base: collapse double slashes & drop trailing slash (except root) */
+/** Normalize URL against canonical base */
 function normalize(base: string, path: string): string {
   const raw = `${base}${path.startsWith("/") ? path : `/${path}`}`;
   const collapsed = raw.replace(/([^:]\/)\/+/g, "$1");
@@ -44,16 +36,14 @@ function normalize(base: string, path: string): string {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = siteBase();
+  const base = CANONICAL_BASE;
   const now = new Date();
   const nowISO = now.toISOString();
 
-  // --- Static pages (legacy + /en structure) ---
+  // --- Static pages ---
   const staticPages: string[] = [
-    "/",          // main home
-    "/en",        // EN home
+    "/", "/en",
 
-    // Legacy / root pages
     "/jobs",
     "/apply",
     "/candidates",
@@ -62,7 +52,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/about",
     "/contact",
 
-    // Regional SEO landings you already had
     "/private-banking-jobs-switzerland",
     "/private-banking-jobs-dubai",
     "/private-banking-jobs-singapore",
@@ -71,7 +60,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/private-banking-jobs-geneva",
     "/private-banking-jobs-zurich",
 
-    // New EN information architecture
     "/en/jobs",
     "/en/apply",
     "/en/candidates",
@@ -100,18 +88,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         : 0.7,
   }));
 
-  // --- Dynamic job pages from API (legacy /jobs/[slug]) ---
+  // --- Dynamic job pages ---
   let jobs: PublicJob[] = [];
   try {
     const data = await getAllJobsPublic();
-    jobs = Array.isArray(data) ? (data as PublicJob[]) : [];
-  } catch (err) {
-    if (process.env.NODE_ENV !== "production") {
-      console.error("sitemap getAllJobsPublic error:", err);
-    }
+    jobs = Array.isArray(data) ? data : [];
+  } catch {
+    // silent fail in production
   }
 
-  // If jobs API returns nothing, fall back to evergreen slugs
   if (!jobs.length) {
     jobs = FALLBACK_JOB_SLUGS.map((slug) => ({
       slug,
@@ -136,28 +121,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       };
     });
 
-  // --- Dynamic market sheets & job-market pages from MARKET_SLUGS ---
-  const marketEntries: MetadataRoute.Sitemap = MARKET_SLUGS.flatMap((slug) => {
-    const marketUrl = normalize(base, `/en/markets/${slug}`);
-    const jobMarketUrl = normalize(base, `/en/private-banker-jobs/${slug}`);
+  // --- Markets ---
+  const marketEntries: MetadataRoute.Sitemap = MARKET_SLUGS.flatMap((slug) => [
+    {
+      url: normalize(base, `/en/markets/${slug}`),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.75,
+    },
+    {
+      url: normalize(base, `/en/private-banker-jobs/${slug}`),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.75,
+    },
+  ]);
 
-    return [
-      {
-        url: marketUrl,
-        lastModified: now,
-        changeFrequency: "weekly",
-        priority: 0.75,
-      },
-      {
-        url: jobMarketUrl,
-        lastModified: now,
-        changeFrequency: "weekly",
-        priority: 0.75,
-      },
-    ];
-  });
-
-  // --- Insights posts (long-form articles) ---
+  // --- Insights ---
   const insightsEntries: MetadataRoute.Sitemap = INSIGHTS_POSTS.map((p) => ({
     url: normalize(base, `/insights/${p.slug}`),
     lastModified: p.dateISO ? new Date(p.dateISO) : now,
@@ -165,9 +145,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: p.priority ?? 0.75,
   }));
 
-  // --- De-duplicate by URL ---
+  // --- De-duplicate ---
   const seen = new Set<string>();
-  const entries = [
+  return [
     ...staticEntries,
     ...jobEntries,
     ...marketEntries,
@@ -177,6 +157,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     seen.add(e.url);
     return true;
   });
-
-  return entries;
 }
