@@ -1,1 +1,3 @@
-export { default, metadata } from "../../candidates/page";
+// app/en/candidates/page.tsx
+export { default } from "../../candidates/page";
+export { metadata } from "../../candidates/page";

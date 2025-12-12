@@ -19,6 +19,13 @@ import SecondaryButton from "@/components/ui/SecondaryButton";
 /* 🔗 Central job data (single source of truth) */
 import { jobsList as CANONICAL_DATA } from "@/data/jobs";
 
+/* ---------------- site base ---------------- */
+const SITE =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "https://www.execpartners.ch");
+
 /* ---------------- meta (SEO) ---------------- */
 export const metadata: Metadata = {
   title: "Private Banking Jobs in Switzerland | Executive Partners",
@@ -28,10 +35,11 @@ export const metadata: Metadata = {
     title: "Private Banking Jobs in Switzerland | Executive Partners",
     description:
       "Confidential Private Banking opportunities in Geneva, Zurich and global hubs. Submit your CV or speak with our search team.",
-    url: "https://www.execpartners.ch/jobs",
+    url: `${SITE}/jobs`,
     images: [{ url: "/og.png" }],
   },
-  alternates: { canonical: "https://www.execpartners.ch/jobs" },
+  alternates: { canonical: `${SITE}/jobs` },
+  robots: { index: true, follow: true },
 };
 
 /* ---------------- types ---------------- */
@@ -103,6 +111,28 @@ async function getJobs(query: string, filters: Record<string, string>) {
   }
   // ✅ Fallback so the page is never empty, and never hardcoded to Dubai
   return CANONICAL_JOBS;
+}
+
+/* ---------------- helpers: country from location (for schema) ---------------- */
+function countryFromLocation(location: string | undefined): string | undefined {
+  if (!location) return undefined;
+  const loc = location.toLowerCase();
+
+  if (["geneva", "zurich", "lausanne", "lugano"].some((c) => loc.includes(c))) {
+    return "CH";
+  }
+  if (loc.includes("dubai")) return "AE";
+  if (loc.includes("singapore")) return "SG";
+  if (loc.includes("hong kong")) return "HK";
+  if (loc.includes("london")) return "GB";
+  if (loc.includes("new york") || loc.includes("ny")) return "US";
+  if (loc.includes("miami")) return "US";
+  if (loc.includes("paris")) return "FR";
+  if (loc.includes("madrid")) return "ES";
+  if (loc.includes("lisbon")) return "PT";
+  if (loc.includes("milan")) return "IT";
+
+  return undefined;
 }
 
 /* ---------------- UI primitives ---------------- */
@@ -342,9 +372,7 @@ function FilterBar({
         </select>
       </div>
 
-      <button
-        className="inline-flex items-center gap-2 rounded-xl border border-brandGold/70 bg-brandGold/15 px-4 py-2 text-sm font-semibold text-brandGoldPale hover:bg-brandGold/25 hover:text-white"
-      >
+      <button className="inline-flex items-center gap-2 rounded-xl border border-brandGold/70 bg-brandGold/15 px-4 py-2 text-sm font-semibold text-brandGoldPale hover:bg-brandGold/25 hover:text-white">
         <Filter className="h-4 w-4" /> Apply
       </button>
     </form>
@@ -376,21 +404,52 @@ export default async function JobsPage({
     (j) => j?.active !== false && !HIDDEN_SLUGS.has(j.slug),
   );
 
-  // ------- JSON-LD ItemList for SEO -------
-  const base = (
-    process.env.NEXT_PUBLIC_SITE_URL || "https://www.execpartners.ch"
-  ).replace(/\/$/, "");
-  const itemList = {
+  // ------- JSON-LD ItemList + JobPosting for SEO -------
+  const base = SITE;
+  const jobsJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     itemListOrder: "https://schema.org/ItemListOrderDescending",
     numberOfItems: jobs.length,
-    itemListElement: jobs.map((j, idx) => ({
-      "@type": "ListItem",
-      position: idx + 1,
-      url: `${base}/jobs/${j.slug}`,
-      name: j.title,
-    })),
+    itemListElement: jobs.map((j, idx) => {
+      const country = countryFromLocation(j.location);
+      const jobPosting: any = {
+        "@type": "JobPosting",
+        title: j.title,
+        description:
+          j.summary ??
+          "Discreet private banking mandate handled by Executive Partners.",
+        industry: "Private Banking & Wealth Management",
+        employmentType: "FULL_TIME",
+        hiringOrganization: {
+          "@type": "Organization",
+          name: "Executive Partners (executive search boutique)",
+          sameAs: SITE,
+        },
+        jobLocation: {
+          "@type": "Place",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: j.location,
+          },
+        },
+        validThrough: undefined,
+      };
+
+      if (country) {
+        jobPosting.jobLocation.address.addressCountry = country;
+      }
+      if (j.createdAt) {
+        jobPosting.datePosted = j.createdAt;
+      }
+
+      return {
+        "@type": "ListItem",
+        position: idx + 1,
+        url: `${base}/jobs/${j.slug}`,
+        item: jobPosting,
+      };
+    }),
   };
 
   return (
@@ -407,7 +466,7 @@ export default async function JobsPage({
       {/* JSON-LD script */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobsJsonLd) }}
       />
 
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-14">
@@ -509,9 +568,7 @@ export default async function JobsPage({
             continuously.
           </p>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
-            <PrimaryButton href="/contact">
-              Contact us
-            </PrimaryButton>
+            <PrimaryButton href="/contact">Contact us</PrimaryButton>
             <SecondaryButton href="/candidates">
               Register confidentially
             </SecondaryButton>

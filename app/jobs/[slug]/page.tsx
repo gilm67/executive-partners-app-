@@ -82,12 +82,16 @@ function toHtmlLines(s: string) {
 function countryForLocation(loc?: string): string | undefined {
   if (!loc) return undefined;
   const L = loc.toLowerCase();
-  if (/(?:\bgeneva\b|\bzurich\b|\blausanne\b|\bswitzerland\b|\bch\b)/.test(L)) return "CH";
+  if (
+    /(?:\bgeneva\b|\bzurich\b|\blausanne\b|\bswitzerland\b|\bch\b)/.test(L)
+  )
+    return "CH";
   if (/(?:\bdubai\b|\buae\b|\bunited arab emirates\b)/.test(L)) return "AE";
   if (/\bsingapore\b/.test(L)) return "SG";
   if (/(?:\bhong\s*kong\b|\bhk\b)/.test(L)) return "HK";
   if (/(?:\blondon\b|\buk\b|\bunited kingdom\b|\bgb\b)/.test(L)) return "GB";
-  if (/(?:\bnew york\b|\bnyc\b|\busa\b|\bunited states\b|\bus\b)/.test(L)) return "US";
+  if (/(?:\bnew york\b|\bnyc\b|\busa\b|\bunited states\b|\bus\b)/.test(L))
+    return "US";
   if (/(?:\bportugal\b|\blisbon\b|\bporto\b)/.test(L)) return "PT";
   if (/(?:\bbrazil\b|\bsão paulo\b|\bsao paulo\b|\brio\b)/.test(L)) return "BR";
   return undefined;
@@ -359,7 +363,12 @@ const KNOWN_JOBS: Record<string, Job> = {
 
 /* ---------------- Optional salary bands for JSON-LD ---------------- */
 
-type SalaryBand = { min: number; max: number; currency: string; unitText?: "YEAR" | "MONTH" | "HOUR" };
+type SalaryBand = {
+  min: number;
+  max: number;
+  currency: string;
+  unitText?: "YEAR" | "MONTH" | "HOUR";
+};
 const SALARY_RANGES: Record<string, SalaryBand> = {
   // Example if you ever want to publish:
   // "senior-relationship-manager-mea-dubai": { min: 250000, max: 500000, currency: "USD", unitText: "YEAR" },
@@ -401,7 +410,9 @@ export function generateStaticParams() {
  * 2) If not found, try canonical fuzzy match
  * 3) If still not found, fall back to your KNOWN_JOBS + rich markdown bodies
  */
-async function resolveJobBySlug(requestedSlug: string): Promise<Job | null> {
+async function resolveJobBySlug(
+  requestedSlug: string,
+): Promise<Job | null> {
   const wanted = norm(requestedSlug);
 
   // 1) Exact from canonical data (raw, then normalized)
@@ -431,7 +442,11 @@ function inferMarket(job: Job): string | undefined {
   if (h.includes("mea")) return "Middle East & Africa (MEA)";
   if (h.includes("brazil")) return "Brazil (LatAm)";
   if (h.includes("portugal")) return "Portugal (LatAm/Europe)";
-  if (h.includes("hong-kong") || h.includes("hk") || h.includes("greater-china"))
+  if (
+    h.includes("hong-kong") ||
+    h.includes("hk") ||
+    h.includes("greater-china")
+  )
     return "Hong Kong / Greater China";
   if (h.includes("singapore") || h.includes("apac")) return "APAC";
   return undefined;
@@ -444,6 +459,58 @@ function buildApplyHref(job: Job) {
   if (m) params.set("market", m);
   if (job.slug) params.set("jobId", job.slug);
   return `/apply?${params.toString()}`;
+}
+
+/* --- Market slug + jobs listing URL helpers for internal links --- */
+
+function inferMarketSlugFromJob(job: Job): string | undefined {
+  const l = (job.location || "").toLowerCase();
+  const s = norm(job.slug);
+  const t = `${s}-${l}-${(job.market || "").toLowerCase()}`;
+
+  if (t.includes("geneva")) return "geneva";
+  if (t.includes("zurich")) return "zurich";
+  if (t.includes("lausanne")) return "geneva"; // Romandie → Geneva market sheet
+  if (t.includes("dubai")) return "dubai";
+  if (t.includes("singapore")) return "singapore";
+  if (t.includes("hong-kong") || t.includes("hong kong") || t.includes("hk"))
+    return "hong-kong";
+  if (t.includes("new-york") || t.includes("new york") || t.includes("nyc"))
+    return "new-york";
+  if (t.includes("miami")) return "miami";
+  if (t.includes("paris")) return "paris";
+  if (t.includes("milan")) return "milan";
+  if (t.includes("lisbon") || t.includes("portugal")) return "lisbon";
+  return undefined;
+}
+
+function jobsListingHrefForMarketSlug(slug: string): string {
+  switch (slug) {
+    case "geneva":
+      return "/private-banking-jobs-geneva";
+    case "zurich":
+      return "/private-banking-jobs-zurich";
+    case "dubai":
+      return "/private-banking-jobs-dubai";
+    case "singapore":
+      return "/private-banking-jobs-singapore";
+    case "new-york":
+      return "/private-banking-jobs-new-york";
+    default:
+      // Fallback to generic jobs page if a dedicated landing doesn't exist yet
+      return "/jobs";
+  }
+}
+
+function cityLabelFromSlug(slug: string): string {
+  switch (slug) {
+    case "new-york":
+      return "New York";
+    case "hong-kong":
+      return "Hong Kong";
+    default:
+      return slug.charAt(0).toUpperCase() + slug.slice(1);
+  }
 }
 
 /* ---------------- Metadata ---------------- */
@@ -477,7 +544,7 @@ export async function generateMetadata({
       description,
       url,
       type: "article",
-      images: [{ url: `${base}/og.png` }], // keep your OG image
+      images: [{ url: `${base}/og.png` }],
     },
     robots:
       job?.active === false || (job && HIDDEN_SLUGS.has(job.slug))
@@ -533,29 +600,44 @@ export default async function JobDetailPage({
     const j: any = job;
     const blocks: string[] = [];
     if (Array.isArray(j.overview) && j.overview.length) {
-      blocks.push("### Overview\n" + j.overview.map((x: string) => `- ${x}`).join("\n"));
+      blocks.push(
+        "### Overview\n" + j.overview.map((x: string) => `- ${x}`).join("\n"),
+      );
     }
     if (Array.isArray(j.responsibilities) && j.responsibilities.length) {
-      blocks.push("### Key Responsibilities\n" + j.responsibilities.map((x: string) => `- ${x}`).join("\n"));
+      blocks.push(
+        "### Key Responsibilities\n" +
+          j.responsibilities.map((x: string) => `- ${x}`).join("\n"),
+      );
     }
     if (Array.isArray(j.qualifications) && j.qualifications.length) {
-      blocks.push("### Qualifications\n" + j.qualifications.map((x: string) => `- ${x}`).join("\n"));
+      blocks.push(
+        "### Qualifications\n" +
+          j.qualifications.map((x: string) => `- ${x}`).join("\n"),
+      );
     }
     if (Array.isArray(j.compliance) && j.compliance.length) {
-      blocks.push("### Regulatory & Compliance\n" + j.compliance.map((x: string) => `- ${x}`).join("\n"));
+      blocks.push(
+        "### Regulatory & Compliance\n" +
+          j.compliance.map((x: string) => `- ${x}`).join("\n"),
+      );
     }
     if (Array.isArray(j.offer) && j.offer.length) {
-      blocks.push("### What We Offer\n" + j.offer.map((x: string) => `- ${x}`).join("\n"));
+      blocks.push(
+        "### What We Offer\n" +
+          j.offer.map((x: string) => `- ${x}`).join("\n"),
+      );
     }
     bodyFromSections = blocks.join("\n\n");
   }
 
-  const descriptionSourceRaw =
-    (job.body?.trim() ||
-      bodyFromSections ||
-      FALLBACK_BODIES[norm(job.slug)] ||
-      job.summary ||
-      "Confidential private banking mandate.").trim();
+  const descriptionSourceRaw = (
+    job.body?.trim() ||
+    bodyFromSections ||
+    FALLBACK_BODIES[norm(job.slug)] ||
+    job.summary ||
+    "Confidential private banking mandate."
+  ).trim();
 
   // Inject Compensation disclaimer (also used in JSON-LD)
   const descriptionSource = withCompensation(descriptionSourceRaw);
@@ -638,7 +720,8 @@ export default async function JobDetailPage({
     ],
   };
 
-  const replacer = (_k: string, v: unknown) => (v === undefined ? undefined : v);
+  const replacer = (_k: string, v: unknown) =>
+    v === undefined ? undefined : v;
 
   const createdFmt = job.createdAt
     ? new Date(job.createdAt).toLocaleDateString(undefined, {
@@ -653,16 +736,30 @@ export default async function JobDetailPage({
   // ✅ Build prefilled /apply URL (works for all current & future jobs)
   const applyHref = buildApplyHref(job);
 
+  // For internal links block
+  const marketSlug = inferMarketSlugFromJob(job);
+  const marketCityLabel = marketSlug ? cityLabelFromSlug(marketSlug) : null;
+  const marketJobsHref = marketSlug
+    ? jobsListingHrefForMarketSlug(marketSlug)
+    : "/jobs";
+  const bpSimulatorHref = `/bp-simulator?src=job_${encodeURIComponent(
+    job.slug,
+  )}`;
+
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white">
       {/* JSON-LD */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPosting, replacer) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jobPosting, replacer),
+        }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb, replacer) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumb, replacer),
+        }}
       />
 
       {/* soft ambient background */}
@@ -692,7 +789,9 @@ export default async function JobDetailPage({
                   </span>
                 ) : null}
                 {createdFmt ? (
-                  <span className="text-xs text-white/70">Posted {createdFmt}</span>
+                  <span className="text-xs text-white/70">
+                    Posted {createdFmt}
+                  </span>
                 ) : null}
               </div>
 
@@ -737,15 +836,84 @@ export default async function JobDetailPage({
           {body ? (
             <MarkdownLite text={body} />
           ) : (
-            <p className="text-neutral-300">Details available upon request.</p>
+            <p className="text-neutral-300">
+              Details available upon request.
+            </p>
           )}
+        </section>
+
+        {/* 🔗 Market insights & tools – internal links block for SEO */}
+        <section className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+          <h2 className="text-lg font-semibold">
+            Market insights &amp; tools
+          </h2>
+          <p className="mt-2 text-sm text-neutral-300">
+            Use these links to explore the market, benchmark your move and stay
+            in touch with Executive Partners.
+          </p>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {marketSlug && (
+              <div className="space-y-1 text-sm">
+                <Link
+                  href={`/en/markets/${marketSlug}`}
+                  className="font-semibold text-[#F4D270] underline underline-offset-2"
+                >
+                  Deep dive: Private Banking in {marketCityLabel}
+                </Link>
+                <p className="text-neutral-300">
+                  Licensing, compensation benchmarks, hiring pulse and
+                  relocation notes for {marketCityLabel}.
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-1 text-sm">
+              <Link
+                href={marketJobsHref}
+                className="font-semibold text-[#F4D270] underline underline-offset-2"
+              >
+                View more roles in this market
+              </Link>
+              <p className="text-neutral-300">
+                Browse additional Private Banking opportunities in the same
+                region.
+              </p>
+            </div>
+
+            <div className="space-y-1 text-sm">
+              <Link
+                href="/candidates"
+                className="font-semibold text-[#F4D270] underline underline-offset-2"
+              >
+                Candidates hub
+              </Link>
+              <p className="text-neutral-300">
+                Register confidentially and be considered for future mandates
+                that match your book and seniority.
+              </p>
+            </div>
+
+            <div className="space-y-1 text-sm">
+              <Link
+                href={bpSimulatorHref}
+                className="font-semibold text-[#F4D270] underline underline-offset-2"
+              >
+                Run Business Plan Simulator
+              </Link>
+              <p className="text-neutral-300">
+                Model revenue, ROA and portability assumptions for your move
+                before speaking with a platform.
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* Footer CTA */}
         <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-center text-neutral-300 md:text-left">
-              Not an exact match? We share <span className="font-semibold">confidential</span> mandates
+              Not an exact match? We share{" "}
+              <span className="font-semibold">confidential</span> mandates
               directly with qualified bankers.
             </p>
             <div className="flex gap-3">
