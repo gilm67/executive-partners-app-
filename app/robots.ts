@@ -1,22 +1,19 @@
-// app/robots.ts
-import type { MetadataRoute } from "next";
-
-function siteBase() {
-  const raw =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
-    "https://www.execpartners.ch";
-  const url = raw.startsWith("http") ? raw : `https://${raw}`;
-  return url.replace(/\/+$/, "");
-}
+import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const SITE = siteBase();
+  const isVercelPreview =
+    process.env.VERCEL_ENV !== "production";
+
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-    },
-    sitemap: [`${SITE}/sitemap.xml`, `${SITE}/rss.xml`],
+    rules: isVercelPreview
+      ? {
+          userAgent: "*",
+          disallow: "/",
+        }
+      : {
+          userAgent: "*",
+          allow: "/",
+        },
+    sitemap: "https://www.execpartners.ch/sitemap.xml",
   };
 }
