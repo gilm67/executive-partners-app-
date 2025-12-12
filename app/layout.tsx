@@ -24,27 +24,35 @@ const playfair = Playfair_Display({
 
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  (process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "https://www.execpartners.ch");
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.execpartners.ch");
 
 const OG_IMAGE = `${SITE}/og.png`;
+
+// Keep this *without* the brand suffix (template already adds it)
+const DEFAULT_TITLE = "Executive Search & Private Banking Recruitment | Geneva";
+const DEFAULT_DESCRIPTION =
+  "Executive search boutique in Geneva specialised in Private Banking & Wealth Management recruitment for senior RMs, Team Heads and leaders across global wealth hubs.";
 
 // ----------------- GLOBAL METADATA (SEO) -----------------
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
+
+  // Safe global canonical (pages can override with alternates.canonical)
+  alternates: {
+    canonical: SITE,
+  },
+
   title: {
-    default:
-      "Executive Search & Private Banking Recruitment | Geneva | Executive Partners",
+    default: DEFAULT_TITLE,
     template: "%s | Executive Partners",
   },
-  description:
-    "Executive search boutique in Geneva specialised in Private Banking & Wealth Management recruitment for senior RMs, Team Heads and leaders across global wealth hubs.",
+
+  description: DEFAULT_DESCRIPTION,
+
   openGraph: {
     type: "website",
     url: SITE,
-    title:
-      "Executive Search & Private Banking Recruitment | Geneva | Executive Partners",
+    title: DEFAULT_TITLE,
     description:
       "Executive search for Private Banking & Wealth Management: senior Relationship Managers, Team Heads and leadership roles across Switzerland, the UK, US, Dubai, Singapore and Hong Kong.",
     siteName: "Executive Partners",
@@ -57,10 +65,10 @@ export const metadata: Metadata = {
       },
     ],
   },
+
   twitter: {
     card: "summary_large_image",
-    title:
-      "Executive Search & Private Banking Recruitment | Geneva | Executive Partners",
+    title: DEFAULT_TITLE,
     description:
       "Executive search boutique for Private Banking & Wealth Management. We advise and place senior RMs, Team Heads and leaders across the main global wealth hubs.",
     images: [OG_IMAGE],
@@ -74,11 +82,7 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   // ---------- Structured Data (JSON-LD) ----------
   const orgJsonLd = {
     "@context": "https://schema.org",
@@ -142,7 +146,6 @@ export default function RootLayout({
           Skip to content
         </a>
 
-        {/* Sticky, blurred header with fixed height */}
         <header
           role="banner"
           className="sticky inset-x-0 top-0 z-50 h-16 bg-[#0B0F1A]/80 backdrop-blur-md md:h-20"
@@ -154,7 +157,6 @@ export default function RootLayout({
 
         <Footer />
 
-        {/* Vercel Web Analytics */}
         <Analytics />
       </body>
     </html>

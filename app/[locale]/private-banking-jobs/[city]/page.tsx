@@ -22,9 +22,9 @@ type CityKey =
 
 type CityConfig = {
   key: CityKey;
-  label: string;              // for H1
-  locationMatch: RegExp;      // filter jobsList.location
-  marketSlug?: string;        // /en/markets/{slug} if exists
+  label: string; // for H1
+  locationMatch: RegExp; // filter jobsList.location
+  marketSlug?: string; // /en/markets/{slug} if exists
   intro: {
     p1: string;
     p2: string;
@@ -258,18 +258,22 @@ export async function generateMetadata({
   const { city } = await params;
   const key = city as CityKey;
   const cfg = CITY[key];
+
   if (!cfg) return { robots: { index: false, follow: true } };
 
   const canonical = `${SITE}/en/private-banking-jobs/${cfg.key}`;
+  const pageTitle = `Private Banking Jobs in ${cfg.label} | Executive Partners`;
 
   return {
-    title: `Private Banking Jobs in ${cfg.label} | Executive Partners`,
+    // ✅ prevents app/layout.tsx title.template from appending again
+    title: { absolute: pageTitle },
+
     description: `Explore confidential Private Banking jobs in ${cfg.label}. Senior Relationship Manager, Team Head and leadership mandates via Executive Partners.`,
     alternates: { canonical },
     openGraph: {
       type: "article",
       url: canonical,
-      title: `Private Banking Jobs in ${cfg.label} | Executive Partners`,
+      title: pageTitle,
       description: `Confidential private banking and wealth management mandates in ${cfg.label}.`,
       siteName: "Executive Partners",
     },
@@ -320,24 +324,28 @@ export default async function CityJobsHubPage({
             >
               View all Jobs ({cfg.label})
             </Link>
+
             <Link
               href={marketHref}
               className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
             >
               {cfg.label} Market Overview
             </Link>
+
             <Link
               href="/en/candidates"
               className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
             >
               Candidates
             </Link>
+
             <Link
               href="/en/contact"
               className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
             >
               Contact
             </Link>
+
             <Link
               href={`/bp-simulator?src=${cfg.key}_jobs_hub`}
               className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
@@ -351,11 +359,13 @@ export default async function CityJobsHubPage({
         <article className="max-w-3xl space-y-4 text-neutral-200">
           <p>{cfg.intro.p1}</p>
           <p>{cfg.intro.p2}</p>
+
           <ul className="space-y-2 pt-1 text-neutral-100">
             {cfg.intro.bullets.map((b) => (
               <li key={b}>• {b}</li>
             ))}
           </ul>
+
           <p className="pt-1">{cfg.intro.p3}</p>
 
           <p className="pt-2 text-neutral-300">
@@ -384,8 +394,8 @@ export default async function CityJobsHubPage({
 
           {cityJobs.length === 0 ? (
             <p className="text-neutral-300">
-              No roles are publicly listed for {cfg.label} at the moment. Many mandates are
-              handled confidentially—speak with us directly.
+              No roles are publicly listed for {cfg.label} at the moment. Many mandates are handled
+              confidentially—speak with us directly.
             </p>
           ) : (
             <div className="grid gap-6 md:grid-cols-2">
