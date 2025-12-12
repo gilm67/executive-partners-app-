@@ -28,7 +28,7 @@ function normalize(base: string, path: string): string {
   return collapsed === `${base}/` ? `${base}/` : collapsed.replace(/\/+$/, "");
 }
 
-/** Coerce active flag coming from API (can be boolean OR "true"/"false") */
+/** Coerce active flag (API may return boolean or string) */
 function isActive(v: unknown): boolean {
   if (typeof v === "boolean") return v;
   if (typeof v === "string") return v.toLowerCase() === "true";
@@ -102,16 +102,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       slug,
       active: true,
       createdAt: nowISO,
-    })) as unknown as PublicJob[]; // safe fallback shape
+    })) as unknown as PublicJob[];
   }
 
   const jobEntries: MetadataRoute.Sitemap = jobs
     .filter((j) => j?.slug && isActive((j as any).active))
     .map((j) => {
       const last =
-        (j.updatedAt && new Date(j.updatedAt as any)) ||
-        (j.createdAt && new Date(j.createdAt as any)) ||
-        now;
+        j.createdAt ? new Date(j.createdAt as any) : now;
 
       return {
         url: normalize(base, `/jobs/${j.slug!}`),
