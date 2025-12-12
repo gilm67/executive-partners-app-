@@ -22,24 +22,41 @@ const playfair = Playfair_Display({
   preload: false,
 });
 
+/**
+ * 🔐 CANONICAL DOMAIN (ABSOLUTE TRUTH FOR SEO)
+ * Never changes. Never points to Vercel.
+ */
+const CANONICAL_DOMAIN = "https://www.execpartners.ch";
+
+/**
+ * 🌍 RUNTIME SITE URL (for OG images, previews, JSON-LD)
+ * Can be Vercel in non-prod environments.
+ */
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.execpartners.ch");
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : CANONICAL_DOMAIN);
 
 const OG_IMAGE = `${SITE}/og.png`;
 
-// Keep this *without* the brand suffix (template already adds it)
 const DEFAULT_TITLE = "Executive Search & Private Banking Recruitment | Geneva";
 const DEFAULT_DESCRIPTION =
   "Executive search boutique in Geneva specialised in Private Banking & Wealth Management recruitment for senior RMs, Team Heads and leaders across global wealth hubs.";
 
 // ----------------- GLOBAL METADATA (SEO) -----------------
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE),
+  /**
+   * ✅ Force canonical base to execpartners.ch
+   */
+  metadataBase: new URL(CANONICAL_DOMAIN),
 
-  // Safe global canonical (pages can override with alternates.canonical)
+  /**
+   * ✅ Canonical is path-based, not domain-based
+   * Next.js will resolve /about → https://www.execpartners.ch/about
+   */
   alternates: {
-    canonical: SITE,
+    canonical: "/",
   },
 
   title: {
@@ -51,7 +68,7 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: "website",
-    url: SITE,
+    url: CANONICAL_DOMAIN,
     title: DEFAULT_TITLE,
     description:
       "Executive search for Private Banking & Wealth Management: senior Relationship Managers, Team Heads and leadership roles across Switzerland, the UK, US, Dubai, Singapore and Hong Kong.",
@@ -88,9 +105,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     "@context": "https://schema.org",
     "@type": ["Organization", "ProfessionalService"],
     name: "Executive Partners",
-    url: SITE,
+    url: CANONICAL_DOMAIN,
     sameAs: ["https://www.linkedin.com/company/executive-partners/"],
-    logo: `${SITE}/ep-logo.png`,
+    logo: `${CANONICAL_DOMAIN}/ep-logo.png`,
     address: {
       "@type": "PostalAddress",
       addressLocality: "Geneva",
@@ -110,10 +127,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Executive Partners",
-    url: SITE,
+    url: CANONICAL_DOMAIN,
     potentialAction: {
       "@type": "SearchAction",
-      target: `${SITE}/en/insights?query={search_term_string}`,
+      target: `${CANONICAL_DOMAIN}/en/insights?query={search_term_string}`,
       "query-input": "required name=search_term_string",
     },
   };
