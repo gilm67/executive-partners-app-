@@ -1,14 +1,7 @@
 // app/sitemap.ts
 import type { MetadataRoute } from "next";
-import { getAllJobsPublic } from "@/lib/jobs-public";
+import { getAllJobsPublic, type PublicJob } from "@/lib/jobs-public";
 import { MARKET_SLUGS } from "@/lib/markets/data";
-
-type PublicJob = {
-  slug?: string;
-  active?: boolean;
-  updatedAt?: string;
-  createdAt?: string;
-};
 
 /** 🔐 Canonical base — NEVER use env or Vercel here */
 const CANONICAL_BASE = "https://www.execpartners.ch";
@@ -33,6 +26,13 @@ function normalize(base: string, path: string): string {
   const raw = `${base}${path.startsWith("/") ? path : `/${path}`}`;
   const collapsed = raw.replace(/([^:]\/)\/+/g, "$1");
   return collapsed === `${base}/` ? `${base}/` : collapsed.replace(/\/+$/, "");
+}
+
+/** Coerce active flag coming from API (can be boolean OR "true"/"false") */
+function isActive(v: unknown): boolean {
+  if (typeof v === "boolean") return v;
+  if (typeof v === "string") return v.toLowerCase() === "true";
+  return true; // default: include unless explicitly false
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -102,15 +102,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       slug,
       active: true,
       createdAt: nowISO,
-    }));
+    })) as unknown as PublicJob[]; // safe fallback shape
   }
 
   const jobEntries: MetadataRoute.Sitemap = jobs
-    .filter((j) => j?.slug && j?.active !== false)
+    .filter((j) => j?.slug && isActive((j as any).active))
     .map((j) => {
       const last =
-        (j.updatedAt && new Date(j.updatedAt)) ||
-        (j.createdAt && new Date(j.createdAt)) ||
+        (j.updatedAt && new Date(j.updatedAt as any)) ||
+        (j.createdAt && new Date(j.createdAt as any)) ||
         now;
 
       return {
