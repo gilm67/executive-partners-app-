@@ -2,17 +2,17 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const SUPPORTED_LOCALES = ["en", "fr", "de"]; // adjust to what you actually use
-const DEFAULT_LOCALE = "en";
+const SUPPORTED_LOCALES = ["en", "fr", "de"] as const;
+const DEFAULT_LOCALE: (typeof SUPPORTED_LOCALES)[number] = "en";
 
 function detectLocale(req: NextRequest): string {
-  // 1) From cookie (if you use NEXT_LOCALE or similar)
-  const cookieLocale = req.cookies.get("NEXT_LOCALE")?.value;
-  if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale)) {
+  // 1) Cookie
+  const cookieLocale = req.cookies.get("NEXT_LOCALE")?.value?.toLowerCase();
+  if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale as any)) {
     return cookieLocale;
   }
 
-  // 2) From Accept-Language header
+  // 2) Accept-Language header
   const header = req.headers.get("accept-language");
   if (header) {
     const preferred = header
@@ -22,7 +22,7 @@ function detectLocale(req: NextRequest): string {
 
     for (const lang of preferred) {
       const base = lang.slice(0, 2).toLowerCase();
-      if (SUPPORTED_LOCALES.includes(base)) return base;
+      if (SUPPORTED_LOCALES.includes(base as any)) return base;
     }
   }
 
@@ -33,18 +33,19 @@ function detectLocale(req: NextRequest): string {
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Only handle the root /portability route
-  if (pathname === "/portability") {
-    const locale = detectLocale(req);
-    const url = req.nextUrl.clone();
-    url.pathname = `/${locale}/portability`;
-    return NextResponse.redirect(url);
+  // ✅ ONLY handle the root /portability route (no /private logic here)
+  if (pathname !== "/portability") {
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  const locale = detectLocale(req);
+  const url = req.nextUrl.clone();
+  url.pathname = `/${locale}/portability`;
+
+  return NextResponse.redirect(url);
 }
 
-// Limit middleware to paths we care about
+// ✅ Run middleware ONLY for the exact path we need
 export const config = {
   matcher: ["/portability"],
 };

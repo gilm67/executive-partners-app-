@@ -1,38 +1,49 @@
-# Node
+# ===============================
+# Node / Next.js
+# ===============================
 node_modules/
 .next/
 out/
 
-# Env & OS
+# ===============================
+# Environment & OS
+# ===============================
 .env*
+!.env.example
 .DS_Store
 
-# Python
+# ===============================
+# Vercel
+# ===============================
+.vercel/
+
+# ===============================
+# Editor / backups
+# ===============================
+*.bak
+*.backup
+*.swp
+
+# ===============================
+# Python (if ever used locally)
+# ===============================
 .venv/
 __pycache__/
 *.pyc
 
-# Streamlit local secrets (never commit!)
-// local-only secrets live here; production secrets go to Vercel env vars
+# ===============================
+# Streamlit (local only)
+# ===============================
 .streamlit/
 
-# Secrets / tokens (never commit!)
+# ===============================
+# Secrets / tokens (NEVER COMMIT)
+# ===============================
 .tokens/
-.vercel/
 service_account.json
-
-# Local Streamlit secrets (only for local dev)
-.streamlit/
-
-# local secrets
 private_key.b64
-.env.local
-.vercel
-.env*.local
-!public/*.json
-!public/*.json
-.github/workflows/fly-deploy.yml
 
-# editor backups
-*.bak
-service_account.json
+# ===============================
+# Local backups (safe to ignore)
+# ===============================
+_backup/
