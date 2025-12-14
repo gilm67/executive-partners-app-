@@ -1,0 +1,70 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+export default function AuthClient({ token }: { token: string | null }) {
+  const router = useRouter();
+  const [status, setStatus] = useState<"checking" | "ok" | "fail">("checking");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function run() {
+      if (!token) {
+        if (!cancelled) setStatus("fail");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/magic-link/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        });
+
+        if (!res.ok) throw new Error("verify_failed");
+        if (!cancelled) setStatus("ok");
+
+        // cookie is set by the API; now go to private area
+        router.replace("/private");
+        router.refresh();
+      } catch {
+        if (!cancelled) setStatus("fail");
+      }
+    }
+
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [token, router]);
+
+  return (
+    <main className="mx-auto max-w-xl px-6 py-16">
+      <h1 className="text-2xl font-semibold">Private Access</h1>
+
+      {status === "checking" && (
+        <p className="mt-3 text-white/70">Verifying your secure link…</p>
+      )}
+
+      {status === "ok" && (
+        <p className="mt-3 text-white/70">Access confirmed. Redirecting…</p>
+      )}
+
+      {status === "fail" && (
+        <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-5">
+          <p className="text-white/80">
+            This link is invalid or expired. Please request a new one.
+          </p>
+          <a
+            className="mt-4 inline-block rounded-lg bg-white px-4 py-2 text-sm font-medium text-black"
+            href="/private/auth/request"
+          >
+            Request a new link
+          </a>
+        </div>
+      )}
+    </main>
+  );
+}
