@@ -1,8 +1,8 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { cookies } from "next/headers";
 import { requireAdmin } from "@/app/private/lib/require-admin";
+import { supabaseAdmin } from "@/lib/supabase-server";
 
 type ReqRow = {
   id: string;
@@ -21,37 +21,35 @@ type ReqRow = {
   } | null;
 };
 
-function getAppUrl() {
-  // ✅ Prefer a server-only absolute URL for API fetches
-  const fromEnv = (process.env.PRIVATE_APP_URL || "").replace(/\/$/, "");
-  if (fromEnv) return fromEnv;
-
-  const canonical = (process.env.NEXT_PUBLIC_CANONICAL_URL || "").replace(/\/$/, "");
-  if (canonical) return canonical;
-
-  return "http://localhost:3000";
-}
-
 async function fetchRequests(): Promise<ReqRow[]> {
-  const appUrl = getAppUrl();
-  const cookieHeader = (await cookies()).toString();
+  const { data, error } = await supabaseAdmin
+    .from("private_profile_access_requests")
+    .select(`
+      id,
+      created_at,
+      status,
+      requester_email,
+      requester_org,
+      message,
+      profile_id,
+      profile:private_profiles (
+        headline,
+        market,
+        seniority,
+        aum_band,
+        book_type
+      )
+    `)
+    .order("created_at", { ascending: false });
 
-  const res = await fetch(`${appUrl}/api/private/admin/requests`, {
-    method: "GET",
-    cache: "no-store",
-    // ✅ Forward auth cookie so the API sees your admin session
-    headers: {
-      cookie: cookieHeader,
-    },
-  }).catch(() => null);
-
-  if (!res || !res.ok) return [];
-  const data = await res.json().catch(() => null);
-  return Array.isArray(data?.rows) ? (data.rows as ReqRow[]) : [];
+  if (error || !data) return [];
+  return data as ReqRow[];
 }
 
 export default async function AdminRequestsPage() {
+  // 🔐 HARD ADMIN GATE (cookie + DB + role)
   await requireAdmin();
+
   const rows = await fetchRequests();
 
   return (
@@ -96,7 +94,6 @@ export default async function AdminRequestsPage() {
                   <form
                     action={`/api/private/admin/requests/${r.id}/status`}
                     method="POST"
-                    className="flex gap-2"
                   >
                     <input type="hidden" name="status" value="approved" />
                     <button className="rounded-lg bg-white px-3 py-2 text-xs font-medium text-black hover:opacity-90">
@@ -107,7 +104,6 @@ export default async function AdminRequestsPage() {
                   <form
                     action={`/api/private/admin/requests/${r.id}/status`}
                     method="POST"
-                    className="flex gap-2"
                   >
                     <input type="hidden" name="status" value="denied" />
                     <button className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-white hover:bg-white/10">
@@ -118,10 +114,14 @@ export default async function AdminRequestsPage() {
               </div>
 
               <div className="mt-4 rounded-lg border border-white/10 bg-black/20 p-4">
-                <div className="text-sm font-medium">{r.profile?.headline || "Profile"}</div>
+                <div className="text-sm font-medium">
+                  {r.profile?.headline || "Profile"}
+                </div>
                 <div className="mt-1 text-xs text-white/70">
-                  {(r.profile?.market || "—").toUpperCase()} · {r.profile?.seniority || "—"} ·
-                  AUM: {r.profile?.aum_band || "—"} · Book: {r.profile?.book_type || "—"}
+                  {(r.profile?.market || "—").toUpperCase()} ·{" "}
+                  {r.profile?.seniority || "—"} · AUM:{" "}
+                  {r.profile?.aum_band || "—"} · Book:{" "}
+                  {r.profile?.book_type || "—"}
                 </div>
 
                 {r.message ? (
