@@ -32,13 +32,18 @@ export async function requirePrivateSession(requiredRole?: string) {
     redirect("/private/auth/request");
   }
 
-  // Optional: update last_seen_at (don’t block page if update fails)
-  supabaseAdmin
-    .from("private_sessions")
-    .update({ last_seen_at: nowIso })
-    .eq("session_hash", sessionHash)
-    .then(() => {})
-    .catch(() => {});
+  // ✅ Optional: update last_seen_at (best-effort; never blocks)
+  try {
+    const { error: pingErr } = await supabaseAdmin
+      .from("private_sessions")
+      .update({ last_seen_at: nowIso })
+      .eq("session_hash", sessionHash);
 
-  return session; // { email, role }
+    // Intentionally ignore pingErr to keep auth flow robust
+    void pingErr;
+  } catch {
+    // ignore on purpose
+  }
+
+  return session; // { email, role, expires_at, revoked_at }
 }
