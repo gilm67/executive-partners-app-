@@ -35,19 +35,20 @@ export function middleware(req: NextRequest) {
 
   /**
    * ✅ 1) PRIVATE AREA PROTECTION
-   * Only redirect to /private/auth/request when there is NO private_session cookie.
-   * (Allow auth pages to be reached without session.)
+   * Redirect to /private/auth/request when there is NO ep_private cookie.
+   * Allow auth pages to be reached without session.
    */
   if (pathname.startsWith("/private")) {
-    const hasSession = req.cookies.get("private_session")?.value;
+    // ✅ FIX: cookie name must match what /api/magic-link/verify sets
+    const hasSession = req.cookies.get("ep_private")?.value;
 
-    const isAuthRequestPage = pathname === "/private/auth/request";
-    const isAuthVerifyPage = pathname === "/private/auth"; // /private/auth?token=...
+    // allow all auth routes
+    const isAuthRoute = pathname.startsWith("/private/auth");
 
-    if (!hasSession && !isAuthRequestPage && !isAuthVerifyPage) {
+    if (!hasSession && !isAuthRoute) {
       const url = req.nextUrl.clone();
       url.pathname = "/private/auth/request";
-      url.search = ""; // keep it clean
+      url.search = "";
       return NextResponse.redirect(url);
     }
 
