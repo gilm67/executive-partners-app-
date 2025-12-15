@@ -4,11 +4,12 @@ export const revalidate = 0;
 import AuthClient from "./AuthClient";
 
 type PageProps = {
-  searchParams: Promise<{ token?: string | string[] }>;
+  searchParams?: { token?: string | string[] };
 };
 
 export default async function PrivateAuthPage({ searchParams }: PageProps) {
-  const sp = await searchParams;
+  // ✅ Next 15: treat searchParams as async + await before reading
+  const sp = await Promise.resolve(searchParams);
 
   const raw = sp?.token;
   const token =
