@@ -98,16 +98,17 @@ export async function POST(req: Request) {
     ).toISOString();
 
     const role = "candidate";
+    const email = String(data.email || "").trim().toLowerCase();
 
     // ✅ Revoke any previous active sessions for this email
     const { error: revokeErr } = await supabaseAdmin
       .from("private_sessions")
       .update({ revoked_at: nowIso })
-      .eq("email", data.email)
+      .eq("email", email)
       .is("revoked_at", null);
 
     if (revokeErr) {
-      await audit(req, "magic_link_verify_revoke_failed", data.email, {
+      await audit(req, "magic_link_verify_revoke_failed", email, {
         reason: "revoke_update_error",
       });
     }
@@ -115,7 +116,7 @@ export async function POST(req: Request) {
     // ✅ Insert new session
     const { error: sessErr } = await supabaseAdmin.from("private_sessions").insert({
       session_hash: sessionHash,
-      email: data.email,
+      email,
       role,
       expires_at: expiresAtIso,
       revoked_at: null,
@@ -126,7 +127,7 @@ export async function POST(req: Request) {
     });
 
     if (sessErr) {
-      await audit(req, "magic_link_verify_failed", data.email, {
+      await audit(req, "magic_link_verify_failed", email, {
         reason: "session_insert_failed",
       });
       return NextResponse.json({ ok: false }, { status: 500 });
@@ -142,11 +143,12 @@ export async function POST(req: Request) {
       secure: isProd,
       sameSite: "lax",
       path: "/",
+      // ✅ Share across apex + www
       ...(isProd ? { domain: ".execpartners.ch" } : {}),
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
-    await audit(req, "magic_link_verify_ok", data.email, {
+    await audit(req, "magic_link_verify_ok", email, {
       session: "issued",
       role,
       expires_days: 7,
