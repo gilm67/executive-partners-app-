@@ -1,5 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // keep anything else you truly need, but NO redirects()
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "execpartners.ch",
+          },
+        ],
+        destination: "https://www.execpartners.ch/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
+
 module.exports = nextConfig;
