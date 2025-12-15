@@ -2,6 +2,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase-server";
 
+const PRIVATE_COOKIE_NAME = "ep_private" as const;
+
 function parseList(raw?: string | null): string[] {
   return (raw ?? "")
     // support comma / semicolon / newlines just in case
@@ -19,16 +21,17 @@ function isAllowedDomain(email: string): boolean {
   return email.endsWith(`@${domain}`);
 }
 
+function parseExpiryMs(expiresAt: unknown): number {
+  const ms = new Date(String(expiresAt ?? "")).getTime();
+  return Number.isFinite(ms) ? ms : NaN;
+}
+
 export async function requireAdmin() {
   // Next.js 15: cookies() must be awaited
   const cookieStore = await cookies();
+  const sessionHash = cookieStore.get(PRIVATE_COOKIE_NAME)?.value;
 
-  // ✅ must match the cookie you actually set in your app
-  const sessionHash = cookieStore.get("ep_private")?.value;
-
-  if (!sessionHash) {
-    redirect("/private/auth/request");
-  }
+  if (!sessionHash) redirect("/private/auth/request");
 
   const { data: session, error } = await supabaseAdmin
     .from("private_sessions")
@@ -37,29 +40,30 @@ export async function requireAdmin() {
     .is("revoked_at", null)
     .maybeSingle();
 
-  if (error || !session) {
+  if (error || !session) redirect("/private/auth/request");
+
+  const expiresMs = parseExpiryMs((session as any).expires_at);
+  if (!Number.isFinite(expiresMs) || expiresMs < Date.now()) {
     redirect("/private/auth/request");
   }
 
-  const expires = new Date(session.expires_at as any).getTime();
-  if (!Number.isFinite(expires) || expires < Date.now()) {
-    redirect("/private/auth/request");
-  }
+  const email = String((session as any).email ?? "").trim().toLowerCase();
+  if (!email) redirect("/private/auth/request");
 
-  const email = String(session.email ?? "").trim().toLowerCase();
   const admins = parseList(process.env.PRIVATE_ADMIN_EMAILS);
 
   // Allow either:
   // - role === 'admin' OR
   // - email is allowlisted via PRIVATE_ADMIN_EMAILS OR
   // - email matches PRIVATE_ADMIN_DOMAIN (optional)
-  const isAdminByRole = session.role === "admin";
-  const isAdminByEmail = admins.length > 0 && admins.includes(email);
-  const isAdminByDomain = !!email && isAllowedDomain(email);
+  const role = String((session as any).role ?? "").toLowerCase();
+  const isAdminByRole = role === "admin";
+  const isAdminByEmail = admins.includes(email);
+  const isAdminByDomain = isAllowedDomain(email);
 
   if (!isAdminByRole && !isAdminByEmail && !isAdminByDomain) {
     redirect("/private");
   }
 
-  return session; // { email, role, ... }
+  return session; // { email, role, expires_at, ... }
 }
