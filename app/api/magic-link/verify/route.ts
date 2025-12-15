@@ -38,7 +38,9 @@ export async function POST(req: Request) {
     const token = typeof body?.token === "string" ? body.token : "";
 
     if (!token) {
-      await audit(req, "magic_link_verify_failed", undefined, { reason: "missing_token" });
+      await audit(req, "magic_link_verify_failed", undefined, {
+        reason: "missing_token",
+      });
       return NextResponse.json({ ok: false }, { status: 400 });
     }
 
@@ -52,7 +54,9 @@ export async function POST(req: Request) {
       .maybeSingle();
 
     if (error || !data) {
-      await audit(req, "magic_link_verify_failed", undefined, { reason: "not_found" });
+      await audit(req, "magic_link_verify_failed", undefined, {
+        reason: "not_found",
+      });
       return NextResponse.json({ ok: false }, { status: 401 });
     }
 
@@ -89,10 +93,13 @@ export async function POST(req: Request) {
 
     const { ip, user_agent } = getClientMeta(req);
 
-    const expiresAtIso = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const expiresAtIso = new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000
+    ).toISOString();
+
     const role = "candidate";
 
-    // ✅ Revoke any previous active sessions for this email (keeps only latest login active)
+    // ✅ Revoke any previous active sessions for this email
     const { error: revokeErr } = await supabaseAdmin
       .from("private_sessions")
       .update({ revoked_at: nowIso })
@@ -100,7 +107,6 @@ export async function POST(req: Request) {
       .is("revoked_at", null);
 
     if (revokeErr) {
-      // Not fatal — we still allow login, but log it
       await audit(req, "magic_link_verify_revoke_failed", data.email, {
         reason: "revoke_update_error",
       });
@@ -126,13 +132,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false }, { status: 500 });
     }
 
-    // 4) Set cookie
+    // 4) ✅ Set cookie (CRITICAL FIX: share across execpartners.ch + www.execpartners.ch)
     const res = NextResponse.json({ ok: true }, { status: 200 });
+
+    const isProd = process.env.NODE_ENV === "production";
+
     res.cookies.set("ep_private", sessionHash, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isProd,
       sameSite: "lax",
       path: "/",
+      ...(isProd ? { domain: ".execpartners.ch" } : {}),
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
@@ -144,7 +154,9 @@ export async function POST(req: Request) {
 
     return res;
   } catch {
-    await audit(req, "magic_link_verify_failed", undefined, { reason: "exception" });
+    await audit(req, "magic_link_verify_failed", undefined, {
+      reason: "exception",
+    });
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 }
