@@ -28,8 +28,34 @@ function detectLocale(req: NextRequest): string {
 }
 
 export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  const { pathname, search } = req.nextUrl;
 
+  /**
+   * ✅ 1) PRIVATE AREA PROTECTION
+   * Cookie name MUST match /api/magic-link/verify:
+   * -> res.cookies.set("ep_private", ...)
+   */
+  if (pathname.startsWith("/private")) {
+    const hasSession = !!req.cookies.get("ep_private")?.value;
+
+    const isAuthRequestPage = pathname === "/private/auth/request";
+    const isAuthVerifyPage = pathname === "/private/auth"; // /private/auth?token=...
+
+    if (!hasSession && !isAuthRequestPage && !isAuthVerifyPage) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/private/auth/request";
+      // ✅ preserve original destination so login returns there
+      url.searchParams.set("next", pathname + search);
+      return NextResponse.redirect(url);
+    }
+
+    return NextResponse.next();
+  }
+
+  /**
+   * ✅ 2) LOCALE REDIRECT FOR ROOT /portability ONLY
+   * /portability -> /{locale}/portability
+   */
   if (pathname === "/portability") {
     const locale = detectLocale(req);
     const url = req.nextUrl.clone();
@@ -41,5 +67,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/portability"],
+  matcher: ["/private/:path*", "/portability"],
 };
