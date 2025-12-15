@@ -114,17 +114,19 @@ export async function POST(req: Request) {
     }
 
     // ✅ Insert new session
-    const { error: sessErr } = await supabaseAdmin.from("private_sessions").insert({
-      session_hash: sessionHash,
-      email,
-      role,
-      expires_at: expiresAtIso,
-      revoked_at: null,
-      last_seen_at: nowIso,
-      ip,
-      user_agent,
-      meta: { via: "magic_link" },
-    });
+    const { error: sessErr } = await supabaseAdmin
+      .from("private_sessions")
+      .insert({
+        session_hash: sessionHash,
+        email,
+        role,
+        expires_at: expiresAtIso,
+        revoked_at: null,
+        last_seen_at: nowIso,
+        ip,
+        user_agent,
+        meta: { via: "magic_link" },
+      });
 
     if (sessErr) {
       await audit(req, "magic_link_verify_failed", email, {
@@ -133,7 +135,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false }, { status: 500 });
     }
 
-    // 4) ✅ Set cookie (CRITICAL FIX: share across execpartners.ch + www.execpartners.ch)
+    // 4) ✅ Set cookie (share across execpartners.ch + www.execpartners.ch)
     const res = NextResponse.json({ ok: true }, { status: 200 });
 
     const isProd = process.env.NODE_ENV === "production";
@@ -143,8 +145,7 @@ export async function POST(req: Request) {
       secure: isProd,
       sameSite: "lax",
       path: "/",
-      // ✅ Share across apex + www
-      ...(isProd ? { domain: ".execpartners.ch" } : {}),
+      domain: isProd ? ".execpartners.ch" : undefined, // ✅ explicit
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 

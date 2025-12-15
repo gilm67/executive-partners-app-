@@ -1,9 +1,20 @@
-import type { ReactNode } from "react";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-export const metadata = {
-  robots: { index: false, follow: false },
-};
+import { cookies } from "next/headers";
 
-export default function PrivateLayout({ children }: { children: ReactNode }) {
-  return children;
+export default async function PrivateLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const cookieStore = cookies();
+
+  const session = cookieStore.get("private_session");
+
+  // ❌ DO NOT REDIRECT HERE
+  // ❌ DO NOT CHECK ROLE HERE
+  // ❌ DO NOT TOUCH AUTH HERE
+
+  return <>{children}</>;
 }

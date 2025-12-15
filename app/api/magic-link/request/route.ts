@@ -8,24 +8,41 @@ const CANONICAL = (
 ).replace(/\/$/, "");
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
-const RESEND_FROM = process.env.RESEND_FROM || "Executive Partners <recruiter@execpartners.ch>";
+const RESEND_FROM =
+  process.env.RESEND_FROM ||
+  "Executive Partners <recruiter@execpartners.ch>";
 
 function sha256(input: string) {
   return crypto.createHash("sha256").update(input).digest("hex");
 }
 
 function getBaseUrl(req: Request) {
-  // Prefer origin (works in dev + most deployments)
   const origin = req.headers.get("origin");
   if (origin) return origin.replace(/\/$/, "");
 
-  // Fallback for proxies
   const host = req.headers.get("host");
   const proto = req.headers.get("x-forwarded-proto") ?? "http";
   if (host) return `${proto}://${host}`.replace(/\/$/, "");
 
-  // Final fallback
   return CANONICAL;
+}
+
+/**
+ * Only allow internal redirects.
+ * - Must start with "/"
+ * - Must NOT start with "//"
+ * - Must NOT contain "http" etc.
+ */
+function sanitizeNext(nextRaw: unknown): string | null {
+  if (typeof nextRaw !== "string") return null;
+  const next = nextRaw.trim();
+  if (!next) return null;
+  if (!next.startsWith("/")) return null;
+  if (next.startsWith("//")) return null;
+  if (next.includes("://")) return null;
+  // Optional: keep it inside private area only
+  if (!next.startsWith("/private")) return null;
+  return next;
 }
 
 function buildEmailHtml(link: string) {
@@ -47,6 +64,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
     const emailRaw = typeof body?.email === "string" ? body.email : "";
+    const next = sanitizeNext(body?.next);
 
     // Always return ok to avoid email enumeration
     if (!emailRaw) {
@@ -76,11 +94,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true }, { status: 200 });
     }
 
-    // Build link (dev uses current origin, prod uses canonical)
+    // Build link
     const baseUrl =
       process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
 
-    const link = `${baseUrl}/private/auth?token=${token}`;
+    const url = new URL(`${baseUrl}/private/auth`);
+    url.searchParams.set("token", token);
+    if (next) url.searchParams.set("next", next);
+
+    const link = url.toString();
 
     // Send email (if configured)
     if (RESEND_API_KEY) {
@@ -98,14 +120,12 @@ export async function POST(req: Request) {
           console.log("Resend: magic link email sent to", email);
         }
       } catch (e) {
-        // Do not leak; keep flow robust
         if (process.env.NODE_ENV !== "production") {
           console.error("Resend send error:", e);
           console.log("MAGIC LINK (fallback):", link);
         }
       }
     } else {
-      // No Resend key => dev fallback
       if (process.env.NODE_ENV !== "production") {
         console.log("RESEND_API_KEY missing — MAGIC LINK:", link);
       }
