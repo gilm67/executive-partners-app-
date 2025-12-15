@@ -1,50 +1,58 @@
-"use client";
+// app/private/auth/request/page.tsx
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-import { useState } from "react";
+type PageProps = {
+  searchParams?: { next?: string | string[] };
+};
 
-export default function RequestLinkPage() {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
+function pickFirst(v?: string | string[]) {
+  if (!v) return null;
+  return typeof v === "string" ? v : v[0] ?? null;
+}
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSent(false);
-
-    await fetch("/api/magic-link/request", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-
-    setSent(true);
-  }
+export default async function PrivateAuthRequestPage({ searchParams }: PageProps) {
+  const next = pickFirst(searchParams?.next);
 
   return (
-    <div className="mx-auto max-w-xl px-6 py-20">
-      <h1 className="text-2xl font-semibold">Request access link</h1>
-      <p className="mt-4 text-white/80">
-        Enter your email to receive a time-limited secure link. If your access is approved, you will receive instructions.
+    <main className="mx-auto max-w-xl px-6 py-16 text-white">
+      <h1 className="text-2xl font-semibold">Request secure access</h1>
+      <p className="mt-2 text-white/70">
+        Enter your email. We will send a single-use link (valid 20 minutes).
       </p>
 
-      <form onSubmit={onSubmit} className="mt-8 space-y-3">
+      <form
+        className="mt-6 space-y-3"
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const form = e.currentTarget as HTMLFormElement;
+          const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+          const nextValue = (form.elements.namedItem("next") as HTMLInputElement).value || null;
+
+          await fetch("/api/magic-link/request", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, next: nextValue }),
+          });
+
+          alert("If this email is allowed, a secure link has been sent.");
+        }}
+      >
         <input
+          name="email"
           type="email"
           required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
           placeholder="you@domain.com"
-          className="w-full rounded-md bg-white/5 px-4 py-3 outline-none ring-1 ring-white/10 focus:ring-white/30"
+          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none"
         />
-        <button className="w-full rounded-md bg-white/10 px-4 py-3 font-medium hover:bg-white/15">
+
+        {/* ✅ forward next to the API */}
+        <input type="hidden" name="next" value={next ?? ""} />
+
+        <button className="w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-black">
           Send secure link
         </button>
       </form>
-
-      {sent && (
-        <p className="mt-6 text-white/70">
-          If this email is eligible, a secure link has been sent. Please check your inbox.
-        </p>
-      )}
-    </div>
+    </main>
   );
 }
