@@ -33,19 +33,42 @@ function detectLocale(req: NextRequest): string {
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // ✅ ONLY handle the root /portability route (no /private logic here)
-  if (pathname !== "/portability") {
+  /**
+   * ✅ 1) PRIVATE AREA PROTECTION
+   * Only redirect to /private/auth/request when there is NO private_session cookie.
+   * (Allow auth pages to be reached without session.)
+   */
+  if (pathname.startsWith("/private")) {
+    const hasSession = req.cookies.get("private_session")?.value;
+
+    const isAuthRequestPage = pathname === "/private/auth/request";
+    const isAuthVerifyPage = pathname === "/private/auth"; // /private/auth?token=...
+
+    if (!hasSession && !isAuthRequestPage && !isAuthVerifyPage) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/private/auth/request";
+      url.search = ""; // keep it clean
+      return NextResponse.redirect(url);
+    }
+
     return NextResponse.next();
   }
 
-  const locale = detectLocale(req);
-  const url = req.nextUrl.clone();
-  url.pathname = `/${locale}/portability`;
+  /**
+   * ✅ 2) LOCALE REDIRECT FOR ROOT /portability ONLY
+   * /portability -> /{locale}/portability
+   */
+  if (pathname === "/portability") {
+    const locale = detectLocale(req);
+    const url = req.nextUrl.clone();
+    url.pathname = `/${locale}/portability`;
+    return NextResponse.redirect(url);
+  }
 
-  return NextResponse.redirect(url);
+  return NextResponse.next();
 }
 
-// ✅ Run middleware ONLY for the exact path we need
+// ✅ Run middleware only where needed
 export const config = {
-  matcher: ["/portability"],
+  matcher: ["/private/:path*", "/portability"],
 };
