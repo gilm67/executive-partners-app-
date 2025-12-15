@@ -511,8 +511,7 @@ function NetNewMoney({
   const fmt = (n: number) =>
     new Intl.NumberFormat("en-CH", { style: "currency", currency, maximumFractionDigits: 0 }).format(n || 0);
 
-  const toDisplay = (val: number) =>
-    Number.isFinite(val) && val !== 0 ? val / 1_000_000 : "";
+  const toDisplay = (val: number) => (Number.isFinite(val) && val !== 0 ? val / 1_000_000 : "");
 
   return (
     <section className="container-max py-6 overflow-visible">
@@ -1242,49 +1241,31 @@ function FinalAnalysis({
 
   const targetNetMargin = 0.35;
   const revNeededForTarget = useMemo(() => (1 - targetNetMargin > 0 ? fixed / (1 - targetNetMargin) : 0), [fixed]);
-  const roaNeededPct = useMemo(
-    () => (nnmY3 > 0 ? (revNeededForTarget / nnmY3) * 100 : 0),
-    [revNeededForTarget, nnmY3]
-  );
+  const roaNeededPct = useMemo(() => (nnmY3 > 0 ? (revNeededForTarget / nnmY3) * 100 : 0), [revNeededForTarget, nnmY3]);
   const roaGapBps = Math.max(0, Math.round((roaNeededPct - roaY3) * 100));
 
   const warnings: string[] = [];
-  if (serviceMixSum && Math.abs(100 - serviceMixSum) > 5)
-    warnings.push(`Service mix totals ${serviceMixSum.toFixed(0)}% (aim ~100%).`);
-  if (assetTierSum && Math.abs(100 - assetTierSum) > 5)
-    warnings.push(`Asset tiers total ${assetTierSum.toFixed(0)}% (aim ~100%).`);
-  if (domicileSum && Math.abs(100 - domicileSum) > 5)
-    warnings.push(`Domicile shares total ${domicileSum.toFixed(0)}% (aim ~100%).`);
+  if (serviceMixSum && Math.abs(100 - serviceMixSum) > 5) warnings.push(`Service mix totals ${serviceMixSum.toFixed(0)}% (aim ~100%).`);
+  if (assetTierSum && Math.abs(100 - assetTierSum) > 5) warnings.push(`Asset tiers total ${assetTierSum.toFixed(0)}% (aim ~100%).`);
+  if (domicileSum && Math.abs(100 - domicileSum) > 5) warnings.push(`Domicile shares total ${domicileSum.toFixed(0)}% (aim ~100%).`);
   if (pep === "Yes") warnings.push("PEP exposure flagged — expect enhanced onboarding/monitoring timelines.");
 
   const recs = [
     netMarginY3Pct < 28
-      ? `Raise Y3 ROA from ${roaY3.toFixed(2)}% toward ~${roaNeededPct.toFixed(
-          2
-        )}% (+${roaGapBps} bps) or lift Y3 NNM by ~${fmtCurrency(
+      ? `Raise Y3 ROA from ${roaY3.toFixed(2)}% toward ~${roaNeededPct.toFixed(2)}% (+${roaGapBps} bps) or lift Y3 NNM by ~${fmtCurrency(
           Math.max(0, revNeededForTarget - rev3) / (roaY3 / 100 || 0.0001),
           currency
         )} to achieve ≈35% net margin.`
-      : `Maintain Y3 ROA ≈ ${roaY3.toFixed(2)}% and protect pricing; discounting would compress the current ${netMarginY3Pct.toFixed(
-          1
-        )}% net margin.`,
+      : `Maintain Y3 ROA ≈ ${roaY3.toFixed(2)}% and protect pricing; discounting would compress the current ${netMarginY3Pct.toFixed(1)}% net margin.`,
     fixedAsPctOfRev3 > 60
-      ? `Fixed cost burden is ${fixedAsPctOfRev3.toFixed(
-          0
-        )}% of Y3 revenue — renegotiate desk/support allocations or phase hiring until revenue run-rate exceeds ${fmtCurrency(
+      ? `Fixed cost burden is ${fixedAsPctOfRev3.toFixed(0)}% of Y3 revenue — renegotiate desk/support allocations or phase hiring until revenue run-rate exceeds ${fmtCurrency(
           fixed / 0.6,
           currency
         )}.`
-      : `Fixed cost discipline adequate (${fixedAsPctOfRev3.toFixed(
-          0
-        )}% of Y3 revenue). Keep a variable-heavy cost stack.`,
+      : `Fixed cost discipline adequate (${fixedAsPctOfRev3.toFixed(0)}% of Y3 revenue). Keep a variable-heavy cost stack.`,
     nnmCAGR < 10
-      ? `NNM CAGR at ${nnmCAGR.toFixed(
-          1
-        )}% — concentrate pipeline on 3–5 anchor prospects; pre-commit custody and FX lines to accelerate conversion.`
-      : `NNM growth ${nnmCAGR.toFixed(
-          1
-        )}% — ensure pipeline depth to backfill slippage and sustain trajectory.`,
+      ? `NNM CAGR at ${nnmCAGR.toFixed(1)}% — concentrate pipeline on 3–5 anchor prospects; pre-commit custody and FX lines to accelerate conversion.`
+      : `NNM growth ${nnmCAGR.toFixed(1)}% — ensure pipeline depth to backfill slippage and sustain trajectory.`,
     exec === "Yes" && (prodCredit === "Yes" || prodStruct === "Yes" || prodHFPE === "Yes")
       ? `Leverage executive/entrepreneur footprint with structured yields and Lombard overlays; bundle treasury/FX to defend ROA.`
       : `Clarify monetization levers (advisory retainers, DPM tiers, financing spreads) to stabilize ROA.`,
@@ -1391,9 +1372,7 @@ async function exportPdf(el: HTMLElement, candidateName?: string) {
     heightLeft -= pdf.internal.pageSize.getHeight();
   }
 
-  const safeName = candidateName
-    ? `bp-simulator-${candidateName.trim().replace(/\s+/g, "-")}.pdf`
-    : "bp-simulator.pdf";
+  const safeName = candidateName ? `bp-simulator-${candidateName.trim().replace(/\s+/g, "-")}.pdf` : "bp-simulator.pdf";
   pdf.save(safeName);
 }
 
@@ -1420,9 +1399,7 @@ ROA% Y3,${roaY3}
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = candidateName
-    ? `bp-simulator-${candidateName.trim().replace(/\s+/g, "-")}.csv`
-    : "bp-simulator.csv";
+  a.download = candidateName ? `bp-simulator-${candidateName.trim().replace(/\s+/g, "-")}.csv` : "bp-simulator.csv";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -1434,6 +1411,29 @@ ROA% Y3,${roaY3}
    =========================================================== */
 export default function BpSimulatorClient() {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // ✅ PATCH 3 — Smart secure badge (checks server session)
+  const [sessionState, setSessionState] = useState<"checking" | "active" | "inactive">("checking");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function check() {
+      try {
+        const res = await fetch("/api/private/me", { cache: "no-store" });
+        if (!res.ok) throw new Error("no_session");
+        const data = await res.json();
+        if (!cancelled) setSessionState(data?.ok ? "active" : "inactive");
+      } catch {
+        if (!cancelled) setSessionState("inactive");
+      }
+    }
+
+    check();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const [showTips, setShowTips] = useState(true);
   const [exporting, setExporting] = useState(false);
@@ -1447,24 +1447,19 @@ export default function BpSimulatorClient() {
   const [roaY2, setRoaY2] = useState<number>(1.0);
   const [roaY3, setRoaY3] = useState<number>(1.0);
   const [netMarginPctY3, setNetMarginPctY3] = useState<number>(0);
+
   // -----------------------------------------
-// Minimum input validation to show analytics
-// -----------------------------------------
-const hasMinimumInputs = useMemo(() => {
-  const hasBase = candidate?.baseSalary && candidate.baseSalary > 0;
+  // Minimum input validation to show analytics
+  // -----------------------------------------
+  const hasMinimumInputs = useMemo(() => {
+    const hasBase = candidate?.baseSalary && candidate.baseSalary > 0;
 
-  const hasRoa =
-    (roaY1 && roaY1 > 0) ||
-    (roaY2 && roaY2 > 0) ||
-    (roaY3 && roaY3 > 0);
+    const hasRoa = (roaY1 && roaY1 > 0) || (roaY2 && roaY2 > 0) || (roaY3 && roaY3 > 0);
 
-  const hasNnm =
-    (nnmY1 && nnmY1 > 0) ||
-    (nnmY2 && nnmY2 > 0) ||
-    (nnmY3 && nnmY3 > 0);
+    const hasNnm = (nnmY1 && nnmY1 > 0) || (nnmY2 && nnmY2 > 0) || (nnmY3 && nnmY3 > 0);
 
-  return hasBase && hasRoa && hasNnm;
-}, [candidate.baseSalary, roaY1, roaY2, roaY3, nnmY1, nnmY2, nnmY3]);
+    return hasBase && hasRoa && hasNnm;
+  }, [candidate.baseSalary, roaY1, roaY2, roaY3, nnmY1, nnmY2, nnmY3]);
 
   // start with one default prospect so it’s obvious
   const [prospects, setProspects] = useState<ProspectRow[]>([
@@ -1563,19 +1558,40 @@ const hasMinimumInputs = useMemo(() => {
     }
   };
 
-  const handleExportCsv = () =>
-    exportCsvSimple({ netMarginPctY3, candidateName: candidate.name, roaY1, roaY2, roaY3 });
+  const handleExportCsv = () => exportCsvSimple({ netMarginPctY3, candidateName: candidate.name, roaY1, roaY2, roaY3 });
 
   return (
     <main className="min-h-screen overflow-visible pb-10" ref={containerRef}>
       <section className="container-max py-8 md:py-10 overflow-visible">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Business Plan Simulator</h1>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Business Plan Simulator</h1>
+
+              <span
+                className={[
+                  "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs border",
+                  sessionState === "active"
+                    ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-200"
+                    : sessionState === "checking"
+                    ? "border-white/15 bg-white/5 text-white/70"
+                    : "border-amber-400/30 bg-amber-400/10 text-amber-200",
+                ].join(" ")}
+                title="Secure session status"
+              >
+                {sessionState === "active"
+                  ? "🔒 Secure session active"
+                  : sessionState === "checking"
+                  ? "🔄 Checking session…"
+                  : "🔓 Session inactive"}
+              </span>
+            </div>
+
             <p className="mt-2 text-white/80">
               Model AuM portability, revenue & net margins with strategy panels, NNM, charts, and exportable outputs.
             </p>
           </div>
+
           <label className="inline-flex items-center gap-2 text-sm">
             <input
               type="checkbox"
@@ -1625,80 +1641,79 @@ const hasMinimumInputs = useMemo(() => {
       />
 
       {hasMinimumInputs ? (
-  <RevenueCostsSimple
-    currency={candidate.currency || "CHF"}
-    baseSalary={candidate.baseSalary}
-    useAutoFixed={autoFixedFromBase}
-    customFixedPerYear={customFixedPerYear}
-    nnmY1={nnmY1}
-    nnmY2={nnmY2}
-    nnmY3={nnmY3}
-    roaY1={roaY1}
-    roaY2={roaY2}
-    roaY3={roaY3}
-    onChangeRoa={(p) => {
-      if (p.roaY1 !== undefined) setRoaY1(p.roaY1);
-      if (p.roaY2 !== undefined) setRoaY2(p.roaY2);
-      if (p.roaY3 !== undefined) setRoaY3(p.roaY3);
-    }}
-    onNetMarginY3={setNetMarginPctY3}
-    showTips={showTips}
-  />
-) : (
-  <section className="container-max py-10">
-    <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10 backdrop-blur">
-      <h3 className="text-lg font-semibold text-white mb-1">📊 Waiting for Inputs</h3>
-      <p className="text-sm text-white/70">
-        Enter <strong>Base Salary</strong>, <strong>ROA%</strong> and <strong>NNM</strong> to generate the revenue,
-        fixed cost and net-margin analysis.
-      </p>
-      <ul className="list-disc text-white/60 text-xs pl-5 mt-3 space-y-1.5">
-        <li>Base Salary &gt; 0</li>
-        <li>At least one ROA year &gt; 0%</li>
-        <li>At least one NNM year &gt; 0</li>
-      </ul>
-    </div>
-  </section>
-)}
-{hasMinimumInputs ? (
-  <FinalAnalysis
-    exporting={exporting}
-    onExportPdf={handleExportPdf}
-    onExportCsv={handleExportCsv}
-    insights={{
-      netMarginY3Pct: netMarginPctY3,
-      rev3,
-      fixed,
-      roaY1,
-      roaY2,
-      roaY3,
-      nnmY1,
-      nnmY2,
-      nnmY3,
-      currency: candidate.currency || "CHF",
-      serviceMixSum,
-      assetTierSum,
-      domicileSum,
-      pep: candidate.client_pep,
-      exec: candidate.client_executive,
-      company: candidate.client_company,
-      prodCredit: candidate.prod_creditLombard,
-      prodStruct: candidate.prod_structuredProducts,
-      prodHFPE: candidate.prod_hedgeFundsPE,
-    }}
-  />
-) : (
-  <section className="container-max py-6">
-    <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10 backdrop-blur text-white/80">
-      <h3 className="text-lg font-semibold mb-1">📈 Analysis Pending</h3>
-      <p className="text-sm">
-        Complete the inputs above to unlock the full <strong>3-year business plan</strong>  
-        with revenue, NNM, ROA and net-margin diagnostics.
-      </p>
-    </div>
-  </section>
-)}
-      
+        <RevenueCostsSimple
+          currency={candidate.currency || "CHF"}
+          baseSalary={candidate.baseSalary}
+          useAutoFixed={autoFixedFromBase}
+          customFixedPerYear={customFixedPerYear}
+          nnmY1={nnmY1}
+          nnmY2={nnmY2}
+          nnmY3={nnmY3}
+          roaY1={roaY1}
+          roaY2={roaY2}
+          roaY3={roaY3}
+          onChangeRoa={(p) => {
+            if (p.roaY1 !== undefined) setRoaY1(p.roaY1);
+            if (p.roaY2 !== undefined) setRoaY2(p.roaY2);
+            if (p.roaY3 !== undefined) setRoaY3(p.roaY3);
+          }}
+          onNetMarginY3={setNetMarginPctY3}
+          showTips={showTips}
+        />
+      ) : (
+        <section className="container-max py-10">
+          <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10 backdrop-blur">
+            <h3 className="text-lg font-semibold text-white mb-1">📊 Waiting for Inputs</h3>
+            <p className="text-sm text-white/70">
+              Enter <strong>Base Salary</strong>, <strong>ROA%</strong> and <strong>NNM</strong> to generate the revenue,
+              fixed cost and net-margin analysis.
+            </p>
+            <ul className="list-disc text-white/60 text-xs pl-5 mt-3 space-y-1.5">
+              <li>Base Salary &gt; 0</li>
+              <li>At least one ROA year &gt; 0%</li>
+              <li>At least one NNM year &gt; 0</li>
+            </ul>
+          </div>
+        </section>
+      )}
+
+      {hasMinimumInputs ? (
+        <FinalAnalysis
+          exporting={exporting}
+          onExportPdf={handleExportPdf}
+          onExportCsv={handleExportCsv}
+          insights={{
+            netMarginY3Pct: netMarginPctY3,
+            rev3,
+            fixed,
+            roaY1,
+            roaY2,
+            roaY3,
+            nnmY1,
+            nnmY2,
+            nnmY3,
+            currency: candidate.currency || "CHF",
+            serviceMixSum,
+            assetTierSum,
+            domicileSum,
+            pep: candidate.client_pep,
+            exec: candidate.client_executive,
+            company: candidate.client_company,
+            prodCredit: candidate.prod_creditLombard,
+            prodStruct: candidate.prod_structuredProducts,
+            prodHFPE: candidate.prod_hedgeFundsPE,
+          }}
+        />
+      ) : (
+        <section className="container-max py-6">
+          <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10 backdrop-blur text-white/80">
+            <h3 className="text-lg font-semibold mb-1">📈 Analysis Pending</h3>
+            <p className="text-sm">
+              Complete the inputs above to unlock the full <strong>3-year business plan</strong> with revenue, NNM, ROA and net-margin diagnostics.
+            </p>
+          </div>
+        </section>
+      )}
     </main>
   );
 }
