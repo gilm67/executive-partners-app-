@@ -2,6 +2,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import {
   Search,
   MapPin,
@@ -386,6 +388,13 @@ export default async function JobsPage({
   // ✅ Next 15 expects a Promise here; await it below
   searchParams?: Promise<Record<string, string | string[]>>;
 }) {
+  // ✅ Exclusive access gate (Jobs index is private)
+  const cookieStore = await cookies();
+  const hasSession = cookieStore.get("ep_private")?.value;
+  if (!hasSession) {
+    redirect("/private/auth/request");
+  }
+
   const sp = (await searchParams) ?? {};
   const q = typeof sp.q === "string" ? sp.q : "";
   const market = typeof sp.market === "string" ? sp.market : "";
