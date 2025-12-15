@@ -6,13 +6,11 @@ const SUPPORTED_LOCALES = ["en", "fr", "de"] as const;
 const DEFAULT_LOCALE: (typeof SUPPORTED_LOCALES)[number] = "en";
 
 function detectLocale(req: NextRequest): string {
-  // 1) Cookie
   const cookieLocale = req.cookies.get("NEXT_LOCALE")?.value?.toLowerCase();
-  if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale as any)) {
+  if (cookieLocale && (SUPPORTED_LOCALES as readonly string[]).includes(cookieLocale)) {
     return cookieLocale;
   }
 
-  // 2) Accept-Language header
   const header = req.headers.get("accept-language");
   if (header) {
     const preferred = header
@@ -22,43 +20,16 @@ function detectLocale(req: NextRequest): string {
 
     for (const lang of preferred) {
       const base = lang.slice(0, 2).toLowerCase();
-      if (SUPPORTED_LOCALES.includes(base as any)) return base;
+      if ((SUPPORTED_LOCALES as readonly string[]).includes(base)) return base;
     }
   }
 
-  // 3) Fallback
   return DEFAULT_LOCALE;
 }
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  /**
-   * ✅ 1) PRIVATE AREA PROTECTION
-   * Redirect to /private/auth/request when there is NO ep_private cookie.
-   * Allow auth pages to be reached without session.
-   */
-  if (pathname.startsWith("/private")) {
-    // ✅ FIX: cookie name must match what /api/magic-link/verify sets
-    const hasSession = req.cookies.get("ep_private")?.value;
-
-    // allow all auth routes
-    const isAuthRoute = pathname.startsWith("/private/auth");
-
-    if (!hasSession && !isAuthRoute) {
-      const url = req.nextUrl.clone();
-      url.pathname = "/private/auth/request";
-      url.search = "";
-      return NextResponse.redirect(url);
-    }
-
-    return NextResponse.next();
-  }
-
-  /**
-   * ✅ 2) LOCALE REDIRECT FOR ROOT /portability ONLY
-   * /portability -> /{locale}/portability
-   */
   if (pathname === "/portability") {
     const locale = detectLocale(req);
     const url = req.nextUrl.clone();
@@ -69,7 +40,6 @@ export function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
-// ✅ Run middleware only where needed
 export const config = {
-  matcher: ["/private/:path*", "/portability"],
+  matcher: ["/portability"],
 };
