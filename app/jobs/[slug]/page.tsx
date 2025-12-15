@@ -1,7 +1,8 @@
 // app/jobs/[slug]/page.tsx
 import Link from "next/link";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import MarkdownLite from "../MarkdownLite";
 
 /* 🔗 Use your canonical data (single source of truth) */
@@ -410,9 +411,7 @@ export function generateStaticParams() {
  * 2) If not found, try canonical fuzzy match
  * 3) If still not found, fall back to your KNOWN_JOBS + rich markdown bodies
  */
-async function resolveJobBySlug(
-  requestedSlug: string,
-): Promise<Job | null> {
+async function resolveJobBySlug(requestedSlug: string): Promise<Job | null> {
   const wanted = norm(requestedSlug);
 
   // 1) Exact from canonical data (raw, then normalized)
@@ -563,6 +562,13 @@ export default async function JobDetailPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  // ✅ Exclusive access gate (Jobs details are private)
+  const cookieStore = await cookies();
+  const hasSession = cookieStore.get("ep_private")?.value;
+  if (!hasSession) {
+    redirect("/private/auth/request");
+  }
+
   const { slug } = await params;
   const job = await resolveJobBySlug(slug);
 
@@ -836,17 +842,13 @@ export default async function JobDetailPage({
           {body ? (
             <MarkdownLite text={body} />
           ) : (
-            <p className="text-neutral-300">
-              Details available upon request.
-            </p>
+            <p className="text-neutral-300">Details available upon request.</p>
           )}
         </section>
 
         {/* 🔗 Market insights & tools – internal links block for SEO */}
         <section className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-          <h2 className="text-lg font-semibold">
-            Market insights &amp; tools
-          </h2>
+          <h2 className="text-lg font-semibold">Market insights &amp; tools</h2>
           <p className="mt-2 text-sm text-neutral-300">
             Use these links to explore the market, benchmark your move and stay
             in touch with Executive Partners.
