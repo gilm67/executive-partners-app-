@@ -43,7 +43,6 @@ export async function GET(req: Request) {
     process.env.SUPABASE_SERVICE_ROLE_KEY ||
     process.env.SUPABASE_SERVICE_ROLE ||
     process.env.SUPABASE_SERVICE_KEY ||
-    process.env.SUPABASE_SERVICE_KEY ||
     "";
 
   if (!supabaseUrl || !serviceRole) {
@@ -79,12 +78,14 @@ export async function GET(req: Request) {
   }
 
   // Optional: update last_seen_at (don’t fail auth if this update fails)
-  supabaseAdmin
-    .from("private_sessions")
-    .update({ last_seen_at: nowIso })
-    .eq("id", session.id)
-    .then(() => {})
-    .catch(() => {});
+  try {
+    await supabaseAdmin
+      .from("private_sessions")
+      .update({ last_seen_at: nowIso })
+      .eq("id", session.id);
+  } catch {
+    // ignore
+  }
 
   return NextResponse.json(
     {
