@@ -39,21 +39,22 @@ function getSessionHashFromReq(req?: Request) {
   return parsed[PRIVATE_COOKIE_NAME] ?? null;
 }
 
-function getSessionHashFromNextCookies() {
-  // cookies() is synchronous in Next.js route/server context
-  const cookieStore = cookies();
+async function getSessionHashFromNextCookies() {
+  // Next.js 15+: cookies() may be async depending on context
+  const cookieStore = await cookies();
   return cookieStore.get(PRIVATE_COOKIE_NAME)?.value ?? null;
 }
 
 export async function requireAdminApi(req?: Request) {
   // 1) Read cookie either from Request (Route Handlers / fetch / curl)
   //    OR from Next cookies() (Server Components)
-  const sessionHash = getSessionHashFromReq(req) ?? getSessionHashFromNextCookies();
+  const sessionHash = getSessionHashFromReq(req) ?? (await getSessionHashFromNextCookies());
 
   const debug = process.env.DEBUG_ADMIN_AUTH === "1";
   if (debug) {
     const hasReq = Boolean(req);
     const hasCookieHeader = Boolean(req?.headers.get("cookie"));
+    // eslint-disable-next-line no-console
     console.log("[requireAdminApi]", {
       hasReq,
       hasCookieHeader,
@@ -78,9 +79,10 @@ export async function requireAdminApi(req?: Request) {
     .maybeSingle();
 
   if (debug) {
+    // eslint-disable-next-line no-console
     console.log("[requireAdminApi] session lookup", {
       ok: Boolean(session) && !error,
-      error: error ? String(error.message ?? error) : null,
+      error: error ? String((error as any).message ?? error) : null,
       role: session?.role ?? null,
       expires_at: session?.expires_at ?? null,
     });
