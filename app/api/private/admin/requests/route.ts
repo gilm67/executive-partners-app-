@@ -1,55 +1,42 @@
+// app/api/private/admin/requests/route.ts
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/app/private/lib/require-admin";
-import { supabaseAdmin } from "@/lib/supabase-server";
+import { requireAdminApi } from "@/app/private/lib/require-admin-api";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
-export async function GET() {
-  // Gate
-  await requireAdmin();
+const noStoreHeaders = {
+  "Cache-Control": "no-store, max-age=0",
+  Pragma: "no-cache",
+};
 
-  // Pull latest requests + join basic profile info
-  const { data, error } = await supabaseAdmin
-    .from("private_profile_access_requests")
-    .select(
-      `
-      id,
-      created_at,
-      status,
-      requester_email,
-      requester_org,
-      message,
-      profile_id,
-      private_profiles:profile_id (
-        headline,
-        market,
-        seniority,
-        aum_band,
-        book_type
-      )
-    `
-    )
-    .order("created_at", { ascending: false })
-    .limit(200);
+export async function GET(req: Request) {
+  // ✅ Works for browser + curl (cookie comes from req.headers.cookie)
+  const auth = await requireAdminApi(req);
 
-  if (error) {
-    if (process.env.NODE_ENV !== "production") {
-      console.error("admin requests GET error:", error);
-    }
-    // Keep UI stable
-    return NextResponse.json({ ok: false, rows: [] }, { status: 200 });
+  if (!auth.ok) {
+    return NextResponse.json(
+      { ok: false, error: auth.error },
+      { status: auth.status, headers: noStoreHeaders }
+    );
   }
 
-  const rows = (data ?? []).map((r: any) => ({
-    id: r.id,
-    created_at: r.created_at,
-    status: r.status,
-    requester_email: r.requester_email,
-    requester_org: r.requester_org,
-    message: r.message,
-    profile_id: r.profile_id,
-    profile: r.private_profiles ?? null,
-  }));
+  const { supabaseAdmin } = auth;
 
-  return NextResponse.json({ ok: true, rows }, { status: 200 });
+  const { data, error } = await supabaseAdmin
+    .from("private_profile_access_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return NextResponse.json(
+      { ok: false, error: "query_failed" },
+      { status: 500, headers: noStoreHeaders }
+    );
+  }
+
+  return NextResponse.json(
+    { ok: true, data: data ?? [] },
+    { status: 200, headers: noStoreHeaders }
+  );
 }

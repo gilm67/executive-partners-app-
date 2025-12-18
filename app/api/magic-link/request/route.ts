@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { Resend } from "resend";
-import { supabaseAdmin } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-server";
 
-const CANONICAL = (
-  process.env.NEXT_PUBLIC_CANONICAL_URL || "https://www.execpartners.ch"
-).replace(/\/$/, "");
+const CANONICAL = (process.env.NEXT_PUBLIC_CANONICAL_URL || "https://www.execpartners.ch").replace(/\/$/, "");
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
-const RESEND_FROM =
-  process.env.RESEND_FROM ||
-  "Executive Partners <recruiter@execpartners.ch>";
+const RESEND_FROM = process.env.RESEND_FROM || "Executive Partners <recruiter@execpartners.ch>";
 
 function sha256(input: string) {
   return crypto.createHash("sha256").update(input).digest("hex");
@@ -73,6 +69,9 @@ export async function POST(req: Request) {
 
     const email = emailRaw.trim().toLowerCase();
 
+    // ✅ Create admin client (new async getter)
+    const supabaseAdmin = await getSupabaseAdmin();
+
     // token + hash
     const token = crypto.randomBytes(32).toString("hex");
     const tokenHash = sha256(token);
@@ -95,8 +94,7 @@ export async function POST(req: Request) {
     }
 
     // Build link
-    const baseUrl =
-      process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
+    const baseUrl = process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
 
     const url = new URL(`${baseUrl}/private/auth`);
     url.searchParams.set("token", token);

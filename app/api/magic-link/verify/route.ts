@@ -1,6 +1,7 @@
+// app/api/magic-link/verify/route.ts
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import { supabaseAdmin } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-server";
 
 function sha256(input: string) {
   return crypto.createHash("sha256").update(input).digest("hex");
@@ -17,10 +18,18 @@ function getClientMeta(req: Request) {
   return { ip, user_agent };
 }
 
-async function audit(req: Request, action: string, email?: string, meta?: any) {
+async function audit(
+  req: Request,
+  action: string,
+  email?: string,
+  meta?: any,
+  supabaseAdmin?: any
+) {
   try {
+    const admin = supabaseAdmin ?? (await getSupabaseAdmin());
     const { ip, user_agent } = getClientMeta(req);
-    await supabaseAdmin.from("private_audit_log").insert({
+
+    await admin.from("private_audit_log").insert({
       action,
       email: email ?? null,
       ip,
@@ -34,13 +43,19 @@ async function audit(req: Request, action: string, email?: string, meta?: any) {
 
 export async function POST(req: Request) {
   try {
+    const supabaseAdmin = await getSupabaseAdmin();
+
     const body = await req.json().catch(() => ({}));
     const token = typeof body?.token === "string" ? body.token : "";
 
     if (!token) {
-      await audit(req, "magic_link_verify_failed", undefined, {
-        reason: "missing_token",
-      });
+      await audit(
+        req,
+        "magic_link_verify_failed",
+        undefined,
+        { reason: "missing_token" },
+        supabaseAdmin
+      );
       return NextResponse.json({ ok: false }, { status: 400 });
     }
 
@@ -54,9 +69,13 @@ export async function POST(req: Request) {
       .maybeSingle();
 
     if (error || !data) {
-      await audit(req, "magic_link_verify_failed", undefined, {
-        reason: "not_found",
-      });
+      await audit(
+        req,
+        "magic_link_verify_failed",
+        undefined,
+        { reason: "not_found" },
+        supabaseAdmin
+      );
       return NextResponse.json({ ok: false }, { status: 401 });
     }
 
@@ -64,9 +83,13 @@ export async function POST(req: Request) {
     const used = !!data.used_at;
 
     if (expired || used) {
-      await audit(req, "magic_link_verify_failed", data.email, {
-        reason: expired ? "expired" : "used",
-      });
+      await audit(
+        req,
+        "magic_link_verify_failed",
+        data.email,
+        { reason: expired ? "expired" : "used" },
+        supabaseAdmin
+      );
       return NextResponse.json({ ok: false }, { status: 401 });
     }
 
@@ -81,9 +104,13 @@ export async function POST(req: Request) {
       .maybeSingle();
 
     if (useErr || !usedRow) {
-      await audit(req, "magic_link_verify_failed", data.email, {
-        reason: useErr ? "use_update_error" : "already_used_race",
-      });
+      await audit(
+        req,
+        "magic_link_verify_failed",
+        data.email,
+        { reason: useErr ? "use_update_error" : "already_used_race" },
+        supabaseAdmin
+      );
       return NextResponse.json({ ok: false }, { status: 401 });
     }
 
@@ -97,8 +124,20 @@ export async function POST(req: Request) {
       Date.now() + 7 * 24 * 60 * 60 * 1000
     ).toISOString();
 
-    const role = "candidate";
     const email = String(data.email || "").trim().toLowerCase();
+
+    // ✅ Resolve role from private_users (source of truth)
+    let role = "candidate";
+
+    const { data: userRow, error: userErr } = await supabaseAdmin
+      .from("private_users")
+      .select("role")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (!userErr && userRow?.role) {
+      role = String(userRow.role);
+    }
 
     // ✅ Revoke any previous active sessions for this email
     const { error: revokeErr } = await supabaseAdmin
@@ -108,9 +147,13 @@ export async function POST(req: Request) {
       .is("revoked_at", null);
 
     if (revokeErr) {
-      await audit(req, "magic_link_verify_revoke_failed", email, {
-        reason: "revoke_update_error",
-      });
+      await audit(
+        req,
+        "magic_link_verify_revoke_failed",
+        email,
+        { reason: "revoke_update_error" },
+        supabaseAdmin
+      );
     }
 
     // ✅ Insert new session
@@ -129,9 +172,13 @@ export async function POST(req: Request) {
       });
 
     if (sessErr) {
-      await audit(req, "magic_link_verify_failed", email, {
-        reason: "session_insert_failed",
-      });
+      await audit(
+        req,
+        "magic_link_verify_failed",
+        email,
+        { reason: "session_insert_failed" },
+        supabaseAdmin
+      );
       return NextResponse.json({ ok: false }, { status: 500 });
     }
 
@@ -145,18 +192,21 @@ export async function POST(req: Request) {
       secure: isProd,
       sameSite: "lax",
       path: "/",
-      domain: isProd ? ".execpartners.ch" : undefined, // ✅ explicit
+      domain: isProd ? ".execpartners.ch" : undefined,
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
-    await audit(req, "magic_link_verify_ok", email, {
-      session: "issued",
-      role,
-      expires_days: 7,
-    });
+    await audit(
+      req,
+      "magic_link_verify_ok",
+      email,
+      { session: "issued", role, expires_days: 7 },
+      supabaseAdmin
+    );
 
     return res;
   } catch {
+    // best effort audit (might fail if env is missing)
     await audit(req, "magic_link_verify_failed", undefined, {
       reason: "exception",
     });

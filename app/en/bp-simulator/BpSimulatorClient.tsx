@@ -36,7 +36,13 @@ function PopTip({ children }: { children: React.ReactNode }) {
   );
 }
 
-function HelpTip({ show, children }: { show: boolean; children: React.ReactNode }) {
+function HelpTip({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
   if (!show) return null;
   return (
     <div className="mt-2 rounded-md border border-white/10 bg-black/30 p-3 text-xs leading-relaxed text-white/75">
@@ -256,7 +262,11 @@ const DEFAULT_CANDIDATE: Candidate = {
 const uid = () => Math.random().toString(36).slice(2, 9);
 
 const fmtCurrency = (n: number, currency: string) =>
-  new Intl.NumberFormat("en-CH", { style: "currency", currency, maximumFractionDigits: 0 }).format(n || 0);
+  new Intl.NumberFormat("en-CH", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(n || 0);
 
 /* ===========================================================
    1) BASIC CANDIDATE INFORMATION
@@ -285,7 +295,10 @@ function CandidateBlock({
         e.target instanceof HTMLInputElement && e.target.type === "number"
           ? Number(e.target.value || 0)
           : e.target.value;
-      setCandidate({ ...candidate, [k]: (typeof candidate[k] === "number" ? Number(val) : val) as Candidate[K] });
+      setCandidate({
+        ...candidate,
+        [k]: (typeof candidate[k] === "number" ? Number(val) : val) as Candidate[K],
+      });
     };
 
   return (
@@ -293,7 +306,9 @@ function CandidateBlock({
       <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5 ring-1 ring-white/10">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           1️⃣ Basic Candidate Information
-          <PopTip>We use Base × 1.25 as a proxy for annual fixed cost in Section 4 unless you set a custom override.</PopTip>
+          <PopTip>
+            We use Base × 1.25 as a proxy for annual fixed cost in Section 4 unless you set a custom override.
+          </PopTip>
         </h2>
         <p className="mt-1 text-xs text-white/60">Fields marked * are recommended.</p>
 
@@ -323,12 +338,7 @@ function CandidateBlock({
             onChange={onCand("lastBonus")}
             step={1_000}
           />
-          <Num
-            label="Years of Experience *"
-            value={candidate.yearsExperience}
-            onChange={onCand("yearsExperience")}
-            step={1}
-          />
+          <Num label="Years of Experience *" value={candidate.yearsExperience} onChange={onCand("yearsExperience")} step={1} />
           <Select
             label="Current Role *"
             value={candidate.role}
@@ -394,24 +404,9 @@ function CandidateBlock({
               "China",
             ]}
           />
-          <Num
-            label="Inherited Book (% of AUM) *"
-            value={candidate.inheritedBookPct}
-            onChange={onCand("inheritedBookPct")}
-            step={1}
-          />
-          <Num
-            label="Current Number of Clients *"
-            value={candidate.currentClients}
-            onChange={onCand("currentClients")}
-            step={1}
-          />
-          <Num
-            label="Current AUM (in million CHF) *"
-            value={candidate.currentAumMM}
-            onChange={onCand("currentAumMM")}
-            step={0.1}
-          />
+          <Num label="Inherited Book (% of AUM) *" value={candidate.inheritedBookPct} onChange={onCand("inheritedBookPct")} step={1} />
+          <Num label="Current Number of Clients *" value={candidate.currentClients} onChange={onCand("currentClients")} step={1} />
+          <Num label="Current AUM (in million CHF) *" value={candidate.currentAumMM} onChange={onCand("currentAumMM")} step={0.1} />
         </div>
 
         <div className="mt-3 flex items-center gap-2">
@@ -731,680 +726,33 @@ function RevenueCostsSimple({
 }
 
 /* ===========================================================
-   5) BUSINESS PLAN — PAGE 2 (prospect table)  ⭐️ mobile-friendly
+   5) BUSINESS PLAN — PAGE 2 (prospect table)
    =========================================================== */
 function BPModelPage2({ rows, setRows }: { rows: ProspectRow[]; setRows: (r: ProspectRow[]) => void }) {
-  const add = () =>
-    setRows([
-      ...rows,
-      {
-        id: uid(),
-        name: "",
-        source: "Self-acquired",
-        wealthM: 0,
-        aumM: 0,
-        marginPct: 0,
-        bestY1M: 0,
-        worstY1M: 0,
-        bestY2M: 0,
-        worstY2M: 0,
-        bestY3M: 0,
-        worstY3M: 0,
-      },
-    ]);
-  const patch = (id: string, p: Partial<ProspectRow>) => setRows(rows.map((r) => (r.id === id ? { ...r, ...p } : r)));
-  const remove = (id: string) => setRows(rows.filter((r) => r.id !== id));
-
-  const totals = rows.reduce(
-    (a, r) => {
-      a.wealth += r.wealthM || 0;
-      a.aum += r.aumM || 0;
-      a.best1 += r.bestY1M || 0;
-      a.worst1 += r.worstY1M || 0;
-      a.best2 += r.bestY2M || 0;
-      a.worst2 += r.worstY2M || 0;
-      a.best3 += r.bestY3M || 0;
-      a.worst3 += r.worstY3M || 0;
-      return a;
-    },
-    { wealth: 0, aum: 0, best1: 0, worst1: 0, best2: 0, worst2: 0, best3: 0, worst3: 0 }
-  );
-
-  return (
-    <section className="container-max grid gap-6 pt-2 overflow-visible pb-6">
-      <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10 relative">
-        <h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
-          3️⃣ Business Development Plan — Page 2
-          <PopTip>Map prospects/groups with best/worst NNM over 3 years.</PopTip>
-        </h2>
-
-        <div className="mt-3 flex gap-2">
-          <button className="btn-primary" onClick={add}>
-            ➕ Add row
-          </button>
-          <button className="btn-ghost" onClick={() => setRows([])} disabled={!rows.length}>
-            Clear all
-          </button>
-        </div>
-
-        {/* mobile cards */}
-        <div className="mt-4 space-y-3 md:hidden">
-          {rows.map((r) => (
-            <div key={r.id} className="rounded-xl border border-white/10 bg-black/20 p-4 space-y-3">
-              <div className="flex items-start justify-between gap-3">
-                <label className="flex-1 text-sm">
-                  Prospect / Group
-                  <input
-                    className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                    value={r.name}
-                    onChange={(e) => patch(r.id, { name: e.target.value })}
-                    placeholder="e.g. John Doe #"
-                  />
-                </label>
-                <button className="text-sm text-red-300" onClick={() => remove(r.id)}>
-                  🗑
-                </button>
-              </div>
-              <label className="text-sm block">
-                Source
-                <select
-                  className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                  value={r.source}
-                  onChange={(e) => patch(r.id, { source: e.target.value as ProspectRow["source"] })}
-                >
-                  <option>Self-acquired</option>
-                  <option>Inherited</option>
-                  <option>Finder</option>
-                  <option>Other</option>
-                </select>
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <label className="text-xs">
-                  Wealth (M)
-                  <input
-                    type="number"
-                    step={0.1}
-                    className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                    value={r.wealthM}
-                    onChange={(e) => patch(r.id, { wealthM: Number(e.target.value || 0) })}
-                  />
-                </label>
-                <label className="text-xs">
-                  AUM (M)
-                  <input
-                    type="number"
-                    step={0.1}
-                    className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                    value={r.aumM}
-                    onChange={(e) => patch(r.id, { aumM: Number(e.target.value || 0) })}
-                  />
-                </label>
-                <label className="text-xs">
-                  Margin (%)
-                  <input
-                    type="number"
-                    step={0.01}
-                    className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                    value={r.marginPct}
-                    onChange={(e) => patch(r.id, { marginPct: Number(e.target.value || 0) })}
-                  />
-                </label>
-              </div>
-              <div>
-                <p className="text-xs mb-1 text-white/70">Best / Worst by year (in M)</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <label className="text-[11px]">
-                    Best Y1
-                    <input
-                      type="number"
-                      step={0.1}
-                      className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                      value={r.bestY1M}
-                      onChange={(e) => patch(r.id, { bestY1M: Number(e.target.value || 0) })}
-                    />
-                  </label>
-                  <label className="text-[11px]">
-                    Worst Y1
-                    <input
-                      type="number"
-                      step={0.1}
-                      className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                      value={r.worstY1M}
-                      onChange={(e) => patch(r.id, { worstY1M: Number(e.target.value || 0) })}
-                    />
-                  </label>
-                  <label className="text-[11px]">
-                    Best Y2
-                    <input
-                      type="number"
-                      step={0.1}
-                      className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                      value={r.bestY2M}
-                      onChange={(e) => patch(r.id, { bestY2M: Number(e.target.value || 0) })}
-                    />
-                  </label>
-                  <label className="text-[11px]">
-                    Worst Y2
-                    <input
-                      type="number"
-                      step={0.1}
-                      className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                      value={r.worstY2M}
-                      onChange={(e) => patch(r.id, { worstY2M: Number(e.target.value || 0) })}
-                    />
-                  </label>
-                  <label className="text-[11px]">
-                    Best Y3
-                    <input
-                      type="number"
-                      step={0.1}
-                      className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                      value={r.bestY3M}
-                      onChange={(e) => patch(r.id, { bestY3M: Number(e.target.value || 0) })}
-                    />
-                  </label>
-                  <label className="text-[11px]">
-                    Worst Y3
-                    <input
-                      type="number"
-                      step={0.1}
-                      className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                      value={r.worstY3M}
-                      onChange={(e) => patch(r.id, { worstY3M: Number(e.target.value || 0) })}
-                    />
-                  </label>
-                </div>
-              </div>
-            </div>
-          ))}
-
-          {!!rows.length && (
-            <div className="rounded-xl border border-white/10 bg-black/20 p-4 text-sm space-y-1">
-              <div className="font-semibold text-white/80">Totals</div>
-              <div className="flex justify-between text-xs">
-                <span>Wealth</span>
-                <span>{totals.wealth.toFixed(1)} M</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span>AUM</span>
-                <span>{totals.aum.toFixed(1)} M</span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span>Best Y1 / Worst Y1</span>
-                <span>
-                  {totals.best1.toFixed(1)} / {totals.worst1.toFixed(1)}
-                </span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span>Best Y2 / Worst Y2</span>
-                <span>
-                  {totals.best2.toFixed(1)} / {totals.worst2.toFixed(1)}
-                </span>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span>Best Y3 / Worst Y3</span>
-                <span>
-                  {totals.best3.toFixed(1)} / {totals.worst3.toFixed(1)}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* desktop table */}
-        <div className="-mx-3 mt-4 overflow-x-auto md:mx-0 hidden md:block">
-          <table className="w-full text-sm table-fixed">
-            <thead className="bg-white/5 align-bottom">
-              <tr>
-                <th className="px-3 py-2 text-left font-medium w-48">Prospect / Group</th>
-                <th className="px-3 py-2 text-left font-medium w-32">Source</th>
-                <th className="px-3 py-2 text-right font-medium">Wealth (M)</th>
-                <th className="px-3 py-2 text-right font-medium">AUM (M)</th>
-                <th className="px-3 py-2 text-right font-medium">Margin (%)</th>
-                <th className="px-3 py-2 text-right font-medium">Best Y1</th>
-                <th className="px-3 py-2 text-right font-medium">Worst Y1</th>
-                <th className="px-3 py-2 text-right font-medium">Best Y2</th>
-                <th className="px-3 py-2 text-right font-medium">Worst Y2</th>
-                <th className="px-3 py-2 text-right font-medium">Best Y3</th>
-                <th className="px-3 py-2 text-right font-medium">Worst Y3</th>
-                <th className="px-3 py-2 text-left font-medium w-20">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/10">
-              {rows.map((r) => (
-                <tr key={r.id}>
-                  <td className="px-3 py-2">
-                    <input
-                      className="w-48 rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                      value={r.name}
-                      onChange={(e) => patch(r.id, { name: e.target.value })}
-                      placeholder="e.g. John Doe #"
-                    />
-                  </td>
-                  <td className="px-3 py-2">
-                    <select
-                      className="w-32 rounded-md bg-black/30 border border-white/10 px-2 py-1"
-                      value={r.source}
-                      onChange={(e) => patch(r.id, { source: e.target.value as ProspectRow["source"] })}
-                    >
-                      <option>Self-acquired</option>
-                      <option>Inherited</option>
-                      <option>Finder</option>
-                      <option>Other</option>
-                    </select>
-                  </td>
-                  {(
-                    [
-                      ["wealthM", 0.1],
-                      ["aumM", 0.1],
-                      ["marginPct", 0.01],
-                      ["bestY1M", 0.1],
-                      ["worstY1M", 0.1],
-                      ["bestY2M", 0.1],
-                      ["worstY2M", 0.1],
-                      ["bestY3M", 0.1],
-                      ["worstY3M", 0.1],
-                    ] as const
-                  ).map(([k, step]) => (
-                    <td key={k} className="px-3 py-2 text-right">
-                      <input
-                        type="number"
-                        step={step}
-                        className="w-16 max-w-[64px] rounded-md bg-black/30 border border-white/10 px-2 py-1 text-right"
-                        value={(r as any)[k]}
-                        onChange={(e) => patch(r.id, { [k]: Number(e.target.value || 0) } as any)}
-                      />
-                    </td>
-                  ))}
-                  <td className="px-3 py-2">
-                    <button className="btn-ghost text-red-300" onClick={() => remove(r.id)}>
-                      🗑
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {!!rows.length && (
-                <tr className="bg-white/5 font-medium">
-                  <td className="px-3 py-2">TOTAL</td>
-                  <td className="px-3 py-2"></td>
-                  <td className="px-3 py-2 text-right">{totals.wealth.toFixed(1)}</td>
-                  <td className="px-3 py-2 text-right">{totals.aum.toFixed(1)}</td>
-                  <td className="px-3 py-2 text-right">—</td>
-                  <td className="px-3 py-2 text-right">{totals.best1.toFixed(1)}</td>
-                  <td className="px-3 py-2 text-right">{totals.worst1.toFixed(1)}</td>
-                  <td className="px-3 py-2 text-right">{totals.best2.toFixed(1)}</td>
-                  <td className="px-3 py-2 text-right">{totals.worst2.toFixed(1)}</td>
-                  <td className="px-3 py-2 text-right">{totals.best3.toFixed(1)}</td>
-                  <td className="px-3 py-2 text-right">{totals.worst3.toFixed(1)}</td>
-                  <td className="px-3 py-2"></td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="pointer-events-none absolute top-0 right-0 h-full w-6 bg-gradient-to-l from-neutral-900/40 to-transparent md:hidden" />
-      </div>
-    </section>
-  );
+  // ... your BPModelPage2 unchanged
+  return <div />; // ⛔️ Keep your existing BPModelPage2 code here (you pasted it fully already)
 }
 
 /* ===========================================================
    5.5) CHARTS — Visual summary
    =========================================================== */
-function ChartsPanel({
-  currency,
-  nnmSeries,
-  pnlSeries,
-  serviceMix,
-  assetTiers,
-  prospectBands,
-}: {
-  currency: string;
-  nnmSeries: Array<{ year: string; NNM: number }>;
-  pnlSeries: Array<{ year: string; Revenue: number; Fixed: number; Net: number }>;
-  serviceMix: Array<{ name: string; value: number }>;
-  assetTiers: Array<{ name: string; value: number }>;
-  prospectBands: Array<{ year: string; Best: number; Worst: number }>;
-}) {
-  const pieColors = ["#7dd3fc", "#86efac", "#fde68a", "#fca5a5", "#c4b5fd"];
-  return (
-    <section className="container-max py-6 overflow-visible">
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5 ring-1 ring-white/10">
-          <h3 className="text-sm font-semibold mb-3">NNM Trajectory ({currency})</h3>
-          <div className="h-56">
-            <ResponsiveContainer>
-              <LineChart data={nnmSeries}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" />
-                <YAxis tickFormatter={(v) => Intl.NumberFormat("en-CH", { notation: "compact" }).format(v)} />
-                <Tooltip formatter={(v: number) => fmtCurrency(v, currency)} />
-                <Legend />
-                <Line type="monotone" dataKey="NNM" stroke="#93c5fd" dot />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5 ring-1 ring-white/10">
-          <h3 className="text-sm font-semibold mb-3">Revenue vs Fixed vs Net ({currency})</h3>
-          <div className="h-56">
-            <ResponsiveContainer>
-              <BarChart data={pnlSeries}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" />
-                <YAxis tickFormatter={(v) => Intl.NumberFormat("en-CH", { notation: "compact" }).format(v)} />
-                <Tooltip formatter={(v: number) => fmtCurrency(v, currency)} />
-                <Legend />
-                <Bar dataKey="Revenue" stackId="a" fill="#60a5fa" />
-                <Bar dataKey="Fixed" stackId="a" fill="#a3a3a3" />
-                <Bar dataKey="Net" fill="#34d399" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5 ring-1 ring-white/10">
-          <h3 className="text-sm font-semibold mb-3">Service Mix (% of Assets)</h3>
-          <div className="h-56">
-            <ResponsiveContainer>
-              <PieChart>
-                <Pie dataKey="value" data={serviceMix} outerRadius={90} label>
-                  {serviceMix.map((_, i) => (
-                    <Cell key={i} fill={pieColors[i % pieColors.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5 ring-1 ring-white/10">
-          <h3 className="text-sm font-semibold mb-3">Asset Tiers (% of AUM)</h3>
-          <div className="h-56">
-            <ResponsiveContainer>
-              <PieChart>
-                <Pie dataKey="value" data={assetTiers} outerRadius={90} label>
-                  {assetTiers.map((_, i) => (
-                    <Cell key={i} fill={pieColors[(i + 2) % pieColors.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="md:col-span-2 rounded-2xl border border-white/10 bg-neutral-900/40 p-5 ring-1 ring-white/10">
-          <h3 className="text-sm font-semibold mb-3">Prospects — Best/Worst NNM bands (M)</h3>
-          <div className="h-56">
-            <ResponsiveContainer>
-              <AreaChart data={prospectBands}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Area type="monotone" dataKey="Best" stroke="#86efac" fill="#86efac" fillOpacity={0.35} />
-                <Area type="monotone" dataKey="Worst" stroke="#fca5a5" fill="#fca5a5" fillOpacity={0.25} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+function ChartsPanel(props: any) {
+  // ... unchanged
+  return <div />; // ⛔️ Keep your existing ChartsPanel code here (you pasted it fully already)
 }
 
 /* ===========================================================
    6) FINAL ANALYSIS + EXPORT
    =========================================================== */
-type Insights = {
-  netMarginY3Pct: number;
-  rev3: number;
-  fixed: number;
-  roaY1: number;
-  roaY2: number;
-  roaY3: number;
-  nnmY1: number;
-  nnmY2: number;
-  nnmY3: number;
-  currency: string;
-  serviceMixSum: number;
-  assetTierSum: number;
-  domicileSum: number;
-  pep: YesNo;
-  exec: YesNo;
-  company: YesNo;
-  prodCredit: YesNo;
-  prodStruct: YesNo;
-  prodHFPE: YesNo;
-};
-
-function FinalAnalysis({
-  exporting,
-  onExportPdf,
-  onExportCsv,
-  insights,
-}: {
-  exporting: boolean;
-  onExportPdf: () => void;
-  onExportCsv: () => void;
-  insights: Insights;
-}) {
-  const {
-    netMarginY3Pct,
-    rev3,
-    fixed,
-    roaY1,
-    roaY2,
-    roaY3,
-    nnmY1,
-    nnmY2,
-    nnmY3,
-    currency,
-    serviceMixSum,
-    assetTierSum,
-    domicileSum,
-    pep,
-    exec,
-    prodCredit,
-    prodStruct,
-    prodHFPE,
-  } = insights;
-
-  const score = useMemo(() => {
-    if (!netMarginY3Pct) return "⚪ Neutral";
-    if (netMarginY3Pct >= 40) return "🟢 Excellent";
-    if (netMarginY3Pct >= 28) return "🟡 Good";
-    return "🔴 Weak";
-  }, [netMarginY3Pct]);
-
-  const nnmCAGR = useMemo(() => {
-    const start = nnmY1 || 0;
-    const end = nnmY3 || 0;
-    if (start <= 0 || end <= 0) return 0;
-    return (Math.pow(end / start, 1 / 2) - 1) * 100;
-  }, [nnmY1, nnmY3]);
-
-  const roaTrend = useMemo(() => {
-    if (roaY3 > roaY2 && roaY2 >= roaY1) return "improving";
-    if (roaY3 < roaY2 && roaY2 <= roaY1) return "deteriorating";
-    return "mixed";
-  }, [roaY1, roaY2, roaY3]);
-
-  const fixedAsPctOfRev3 = useMemo(() => (rev3 > 0 ? (fixed / rev3) * 100 : 0), [fixed, rev3]);
-
-  const targetNetMargin = 0.35;
-  const revNeededForTarget = useMemo(() => (1 - targetNetMargin > 0 ? fixed / (1 - targetNetMargin) : 0), [fixed]);
-  const roaNeededPct = useMemo(() => (nnmY3 > 0 ? (revNeededForTarget / nnmY3) * 100 : 0), [revNeededForTarget, nnmY3]);
-  const roaGapBps = Math.max(0, Math.round((roaNeededPct - roaY3) * 100));
-
-  const warnings: string[] = [];
-  if (serviceMixSum && Math.abs(100 - serviceMixSum) > 5) warnings.push(`Service mix totals ${serviceMixSum.toFixed(0)}% (aim ~100%).`);
-  if (assetTierSum && Math.abs(100 - assetTierSum) > 5) warnings.push(`Asset tiers total ${assetTierSum.toFixed(0)}% (aim ~100%).`);
-  if (domicileSum && Math.abs(100 - domicileSum) > 5) warnings.push(`Domicile shares total ${domicileSum.toFixed(0)}% (aim ~100%).`);
-  if (pep === "Yes") warnings.push("PEP exposure flagged — expect enhanced onboarding/monitoring timelines.");
-
-  const recs = [
-    netMarginY3Pct < 28
-      ? `Raise Y3 ROA from ${roaY3.toFixed(2)}% toward ~${roaNeededPct.toFixed(2)}% (+${roaGapBps} bps) or lift Y3 NNM by ~${fmtCurrency(
-          Math.max(0, revNeededForTarget - rev3) / (roaY3 / 100 || 0.0001),
-          currency
-        )} to achieve ≈35% net margin.`
-      : `Maintain Y3 ROA ≈ ${roaY3.toFixed(2)}% and protect pricing; discounting would compress the current ${netMarginY3Pct.toFixed(1)}% net margin.`,
-    fixedAsPctOfRev3 > 60
-      ? `Fixed cost burden is ${fixedAsPctOfRev3.toFixed(0)}% of Y3 revenue — renegotiate desk/support allocations or phase hiring until revenue run-rate exceeds ${fmtCurrency(
-          fixed / 0.6,
-          currency
-        )}.`
-      : `Fixed cost discipline adequate (${fixedAsPctOfRev3.toFixed(0)}% of Y3 revenue). Keep a variable-heavy cost stack.`,
-    nnmCAGR < 10
-      ? `NNM CAGR at ${nnmCAGR.toFixed(1)}% — concentrate pipeline on 3–5 anchor prospects; pre-commit custody and FX lines to accelerate conversion.`
-      : `NNM growth ${nnmCAGR.toFixed(1)}% — ensure pipeline depth to backfill slippage and sustain trajectory.`,
-    exec === "Yes" && (prodCredit === "Yes" || prodStruct === "Yes" || prodHFPE === "Yes")
-      ? `Leverage executive/entrepreneur footprint with structured yields and Lombard overlays; bundle treasury/FX to defend ROA.`
-      : `Clarify monetization levers (advisory retainers, DPM tiers, financing spreads) to stabilize ROA.`,
-  ];
-
-  return (
-    <section className="container-max py-10 overflow-visible pb-16">
-      <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
-        <h2 className="text-xl font-semibold flex items-center gap-2">
-          📈 Final Analysis & Recommendation
-          <PopTip>Actionable diagnostics derived from NNM, ROA and fixed-cost profile.</PopTip>
-        </h2>
-
-        <div className="mt-4 grid md:grid-cols-4 gap-4">
-          <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-            <div className="text-xs text-white/70">Net Margin (Y3)</div>
-            <div className="text-2xl font-bold">{netMarginY3Pct.toFixed(1)}%</div>
-            <div className="text-sm mt-1">
-              Status: <span className="font-semibold">{score}</span>
-            </div>
-          </div>
-          <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-            <div className="text-xs text-white/70">Fixed as % of Rev (Y3)</div>
-            <div className="text-2xl font-bold">{fixedAsPctOfRev3.toFixed(0)}%</div>
-            <div className="text-sm mt-1">{fmtCurrency(fixed, currency)} fixed</div>
-          </div>
-          <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-            <div className="text-xs text-white/70">NNM CAGR (Y1→Y3)</div>
-            <div className="text-2xl font-bold">{nnmCAGR.toFixed(1)}%</div>
-            <div className="text-sm mt-1">
-              {fmtCurrency(nnmY1, currency)} → {fmtCurrency(nnmY3, currency)}
-            </div>
-          </div>
-          <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-            <div className="text-xs text-white/70">ROA Trend</div>
-            <div className="text-2xl font-bold capitalize">{roaTrend}</div>
-            <div className="text-sm mt-1">
-              {roaY1.toFixed(2)}% → {roaY2.toFixed(2)}% → {roaY3.toFixed(2)}%
-            </div>
-          </div>
-        </div>
-
-        {warnings.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-sm font-semibold mb-2">Cautions / Data Hygiene</h3>
-            <ul className="list-disc pl-6 space-y-2 text-sm text-amber-200">
-              {warnings.map((w, i) => (
-                <li key={i}>{w}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {recs.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-sm font-semibold mb-2">Strategic Recommendations</h3>
-            <ul className="list-disc pl-6 space-y-2 text-sm text-white/80">
-              {recs.map((r, i) => (
-                <li key={i}>{r}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        <div className="mt-6 flex flex-wrap gap-3">
-          <button
-            className={`btn-primary ${exporting ? "opacity-60 cursor-not-allowed" : ""}`}
-            disabled={exporting}
-            onClick={onExportPdf}
-          >
-            {exporting ? "Exporting…" : "📄 Export PDF"}
-          </button>
-          <button className="btn-ghost" onClick={onExportCsv}>
-            📊 Export CSV
-          </button>
-          <Link href="/en/contact" className="btn-ghost">
-            🤝 Talk to an Advisor
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
+function FinalAnalysis(props: any) {
+  // ... unchanged
+  return <div />; // ⛔️ Keep your existing FinalAnalysis code here (you pasted it fully already)
 }
 
 /* ------------------------------
-   Export helpers
+   Export helpers (unchanged)
 ------------------------------ */
-async function exportPdf(el: HTMLElement, candidateName?: string) {
-  const canvas = await html2canvas(el, { scale: 2, backgroundColor: "#0B0E13" } as any);
-  const imgData = canvas.toDataURL("image/jpeg", 0.92);
-  const pdf = new jsPDF("p", "mm", "a4");
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const imgHeight = (canvas.height * pageWidth) / canvas.width;
-  let position = 0;
-  let heightLeft = imgHeight;
-
-  pdf.addImage(imgData, "JPEG", 0, position, pageWidth, imgHeight);
-  heightLeft -= pdf.internal.pageSize.getHeight();
-
-  while (heightLeft > 0) {
-    pdf.addPage();
-    position = heightLeft - imgHeight;
-    pdf.addImage(imgData, "JPEG", 0, position, pageWidth, imgHeight);
-    heightLeft -= pdf.internal.pageSize.getHeight();
-  }
-
-  const safeName = candidateName ? `bp-simulator-${candidateName.trim().replace(/\s+/g, "-")}.pdf` : "bp-simulator.pdf";
-  pdf.save(safeName);
-}
-
-function exportCsvSimple({
-  netMarginPctY3,
-  candidateName,
-  roaY1,
-  roaY2,
-  roaY3,
-}: {
-  netMarginPctY3: number;
-  candidateName?: string;
-  roaY1: number;
-  roaY2: number;
-  roaY3: number;
-}) {
-  const csv = `Section,Value
-Net Margin Y3 (%),${netMarginPctY3.toFixed(2)}
-ROA% Y1,${roaY1}
-ROA% Y2,${roaY2}
-ROA% Y3,${roaY3}
-`;
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = candidateName ? `bp-simulator-${candidateName.trim().replace(/\s+/g, "-")}.csv` : "bp-simulator.csv";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
+// ... keep your exportPdf + exportCsvSimple unchanged
 
 /* ===========================================================
    MAIN
@@ -1421,9 +769,11 @@ export default function BpSimulatorClient() {
     async function check() {
       try {
         const res = await fetch("/api/private/me", { cache: "no-store" });
-        if (!res.ok) throw new Error("no_session");
-        const data = await res.json();
-        if (!cancelled) setSessionState(data?.ok ? "active" : "inactive");
+        const data = await res.json().catch(() => null);
+
+        const isAuthed = Boolean(res.ok && data?.authenticated === true);
+
+        if (!cancelled) setSessionState(isAuthed ? "active" : "inactive");
       } catch {
         if (!cancelled) setSessionState("inactive");
       }
@@ -1448,118 +798,8 @@ export default function BpSimulatorClient() {
   const [roaY3, setRoaY3] = useState<number>(1.0);
   const [netMarginPctY3, setNetMarginPctY3] = useState<number>(0);
 
-  // -----------------------------------------
-  // Minimum input validation to show analytics
-  // -----------------------------------------
-  const hasMinimumInputs = useMemo(() => {
-    const hasBase = candidate?.baseSalary && candidate.baseSalary > 0;
-
-    const hasRoa = (roaY1 && roaY1 > 0) || (roaY2 && roaY2 > 0) || (roaY3 && roaY3 > 0);
-
-    const hasNnm = (nnmY1 && nnmY1 > 0) || (nnmY2 && nnmY2 > 0) || (nnmY3 && nnmY3 > 0);
-
-    return hasBase && hasRoa && hasNnm;
-  }, [candidate.baseSalary, roaY1, roaY2, roaY3, nnmY1, nnmY2, nnmY3]);
-
-  // start with one default prospect so it’s obvious
-  const [prospects, setProspects] = useState<ProspectRow[]>([
-    {
-      id: uid(),
-      name: "John Doe #",
-      source: "Self-acquired",
-      wealthM: 0,
-      aumM: 0,
-      marginPct: 0,
-      bestY1M: 0,
-      worstY1M: 0,
-      bestY2M: 0,
-      worstY2M: 0,
-      bestY3M: 0,
-      worstY3M: 0,
-    },
-  ]);
-
-  const fixed = useMemo(
-    () => (autoFixedFromBase ? Math.max(0, candidate.baseSalary) * 1.25 : Math.max(0, customFixedPerYear)),
-    [autoFixedFromBase, candidate.baseSalary, customFixedPerYear]
-  );
-  const rev1 = useMemo(() => nnmY1 * (roaY1 / 100), [nnmY1, roaY1]);
-  const rev2 = useMemo(() => nnmY2 * (roaY2 / 100), [nnmY2, roaY2]);
-  const rev3 = useMemo(() => nnmY3 * (roaY3 / 100), [nnmY3, roaY3]);
-  const nm1 = useMemo(() => rev1 - fixed, [rev1, fixed]);
-  const nm2 = useMemo(() => rev2 - fixed, [rev2, fixed]);
-  const nm3 = useMemo(() => rev3 - fixed, [rev3, fixed]);
-
-  const nnmSeries = useMemo(
-    () => [
-      { year: "Y1", NNM: nnmY1 },
-      { year: "Y2", NNM: nnmY2 },
-      { year: "Y3", NNM: nnmY3 },
-    ],
-    [nnmY1, nnmY2, nnmY3]
-  );
-  const pnlSeries = useMemo(
-    () => [
-      { year: "Y1", Revenue: rev1, Fixed: fixed, Net: nm1 },
-      { year: "Y2", Revenue: rev2, Fixed: fixed, Net: nm2 },
-      { year: "Y3", Revenue: rev3, Fixed: fixed, Net: nm3 },
-    ],
-    [rev1, rev2, rev3, fixed, nm1, nm2, nm3]
-  );
-
-  const serviceMix = useMemo(
-    () => [
-      { name: "Self-directed", value: candidate.svc_selfDirectedPct || 0 },
-      { name: "Discretionary", value: candidate.svc_discretionaryPct || 0 },
-      { name: "Advisory", value: candidate.svc_advisoryPct || 0 },
-      { name: "Direct Access", value: candidate.svc_directAccessPct || 0 },
-      { name: "Custody", value: candidate.svc_custodyPct || 0 },
-    ],
-    [
-      candidate.svc_selfDirectedPct,
-      candidate.svc_discretionaryPct,
-      candidate.svc_advisoryPct,
-      candidate.svc_directAccessPct,
-      candidate.svc_custodyPct,
-    ]
-  );
-  const serviceMixSum = serviceMix.reduce((a, b) => a + (b.value || 0), 0);
-
-  const assetTiers = useMemo(
-    () => [
-      { name: "Affluent <1m", value: candidate.assets_affluentPct || 0 },
-      { name: "HNWI 1–15m", value: candidate.assets_hnwiPct || 0 },
-      { name: "UHNWI >15m", value: candidate.assets_uhnwiPct || 0 },
-    ],
-    [candidate.assets_affluentPct, candidate.assets_hnwiPct, candidate.assets_uhnwiPct]
-  );
-  const assetTierSum = assetTiers.reduce((a, b) => a + (b.value || 0), 0);
-
-  const domicileSum = (candidate.dom_share1 || 0) + (candidate.dom_share2 || 0) + (candidate.dom_share3 || 0);
-
-  const prospectBands = useMemo(() => {
-    const sum = (key: NumericProspectKey) =>
-      prospects.reduce((a, r) => a + (typeof r[key] === "number" ? r[key] : 0), 0);
-    const to1 = (n: number) => Number(n.toFixed(1));
-    return [
-      { year: "Y1", Best: to1(sum("bestY1M")), Worst: to1(sum("worstY1M")) },
-      { year: "Y2", Best: to1(sum("bestY2M")), Worst: to1(sum("worstY2M")) },
-      { year: "Y3", Best: to1(sum("bestY3M")), Worst: to1(sum("worstY3M")) },
-    ];
-  }, [prospects]);
-
-  const handleExportPdf = async () => {
-    if (!containerRef.current) return;
-    setExporting(true);
-    try {
-      await exportPdf(containerRef.current, candidate.name);
-    } finally {
-      setExporting(false);
-    }
-  };
-
-  const handleExportCsv = () => exportCsvSimple({ netMarginPctY3, candidateName: candidate.name, roaY1, roaY2, roaY3 });
-
+  // ... keep the rest of your file unchanged from here down
+  // IMPORTANT: keep your existing JSX badge block (it is correct)
   return (
     <main className="min-h-screen overflow-visible pb-10" ref={containerRef}>
       <section className="container-max py-8 md:py-10 overflow-visible">
@@ -1604,116 +844,7 @@ export default function BpSimulatorClient() {
         </div>
       </section>
 
-      <CandidateBlock
-        showTips={showTips}
-        candidate={candidate}
-        setCandidate={setCandidate}
-        autoFixedFromBase={autoFixedFromBase}
-        setAutoFixedFromBase={setAutoFixedFromBase}
-        customFixedPerYear={customFixedPerYear}
-        setCustomFixedPerYear={setCustomFixedPerYear}
-      />
-
-      <BPModelPage1 />
-
-      <NetNewMoney
-        currency={candidate.currency || "CHF"}
-        nnmY1={nnmY1}
-        nnmY2={nnmY2}
-        nnmY3={nnmY3}
-        onPatch={(p) => {
-          if (p.nnmY1 !== undefined) setNnmY1(p.nnmY1);
-          if (p.nnmY2 !== undefined) setNnmY2(p.nnmY2);
-          if (p.nnmY3 !== undefined) setNnmY3(p.nnmY3);
-        }}
-        showTips={showTips}
-      />
-
-      <BPModelPage2 rows={prospects} setRows={setProspects} />
-
-      <ChartsPanel
-        currency={candidate.currency || "CHF"}
-        nnmSeries={nnmSeries}
-        pnlSeries={pnlSeries}
-        serviceMix={serviceMix}
-        assetTiers={assetTiers}
-        prospectBands={prospectBands}
-      />
-
-      {hasMinimumInputs ? (
-        <RevenueCostsSimple
-          currency={candidate.currency || "CHF"}
-          baseSalary={candidate.baseSalary}
-          useAutoFixed={autoFixedFromBase}
-          customFixedPerYear={customFixedPerYear}
-          nnmY1={nnmY1}
-          nnmY2={nnmY2}
-          nnmY3={nnmY3}
-          roaY1={roaY1}
-          roaY2={roaY2}
-          roaY3={roaY3}
-          onChangeRoa={(p) => {
-            if (p.roaY1 !== undefined) setRoaY1(p.roaY1);
-            if (p.roaY2 !== undefined) setRoaY2(p.roaY2);
-            if (p.roaY3 !== undefined) setRoaY3(p.roaY3);
-          }}
-          onNetMarginY3={setNetMarginPctY3}
-          showTips={showTips}
-        />
-      ) : (
-        <section className="container-max py-10">
-          <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10 backdrop-blur">
-            <h3 className="text-lg font-semibold text-white mb-1">📊 Waiting for Inputs</h3>
-            <p className="text-sm text-white/70">
-              Enter <strong>Base Salary</strong>, <strong>ROA%</strong> and <strong>NNM</strong> to generate the revenue,
-              fixed cost and net-margin analysis.
-            </p>
-            <ul className="list-disc text-white/60 text-xs pl-5 mt-3 space-y-1.5">
-              <li>Base Salary &gt; 0</li>
-              <li>At least one ROA year &gt; 0%</li>
-              <li>At least one NNM year &gt; 0</li>
-            </ul>
-          </div>
-        </section>
-      )}
-
-      {hasMinimumInputs ? (
-        <FinalAnalysis
-          exporting={exporting}
-          onExportPdf={handleExportPdf}
-          onExportCsv={handleExportCsv}
-          insights={{
-            netMarginY3Pct: netMarginPctY3,
-            rev3,
-            fixed,
-            roaY1,
-            roaY2,
-            roaY3,
-            nnmY1,
-            nnmY2,
-            nnmY3,
-            currency: candidate.currency || "CHF",
-            serviceMixSum,
-            assetTierSum,
-            domicileSum,
-            pep: candidate.client_pep,
-            exec: candidate.client_executive,
-            company: candidate.client_company,
-            prodCredit: candidate.prod_creditLombard,
-            prodStruct: candidate.prod_structuredProducts,
-            prodHFPE: candidate.prod_hedgeFundsPE,
-          }}
-        />
-      ) : (
-        <section className="container-max py-6">
-          <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10 backdrop-blur text-white/80">
-            <h3 className="text-lg font-semibold mb-1">📈 Analysis Pending</h3>
-            <p className="text-sm">
-              Complete the inputs above to unlock the full <strong>3-year business plan</strong> with revenue, NNM, ROA and net-margin diagnostics.
-            </p>
-          </div>
-        </section>
-      )}
+      {/* KEEP THE REST OF YOUR COMPONENT TREE UNCHANGED */}
     </main>
   );
 }

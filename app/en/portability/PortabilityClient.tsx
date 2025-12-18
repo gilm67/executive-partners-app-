@@ -1,9 +1,7 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SecondaryButton from "@/components/ui/SecondaryButton";
@@ -108,13 +106,24 @@ type ProfileState = {
   pepsShare: number;
 };
 
+type ApiGateError =
+  | "access_required"
+  | "invalid_session"
+  | "unauthorized"
+  | "server_error"
+  | null;
+
 /* ------------------------------
    Component
 ------------------------------ */
 
 export default function PortabilityClient() {
-  /* ----- Section 1: Basic profile ----- */
+  /* ----- Access / session safety ----- */
+  const [gateError, setGateError] = useState<ApiGateError>(null);
+  const [gateChecking, setGateChecking] = useState<boolean>(true);
+  const [exporting, setExporting] = useState<boolean>(false);
 
+  /* ----- Section 1: Basic profile ----- */
   const [profile, setProfile] = useState<ProfileState>({
     market: "CH Onshore",
     mainHub: "Geneva",
@@ -125,7 +134,6 @@ export default function PortabilityClient() {
   });
 
   /* ----- Section 2: Core dimensions ----- */
-
   const [coreScores, setCoreScores] = useState<Record<CoreDimensionKey, number>>(
     {
       custodian: 3,
@@ -138,7 +146,6 @@ export default function PortabilityClient() {
   );
 
   /* ----- Section 3: Advanced factors ----- */
-
   const [advancedScores, setAdvancedScores] = useState<
     Record<AdvancedKey, number>
   >({
@@ -152,13 +159,13 @@ export default function PortabilityClient() {
     platformFit: 3,
   });
 
-  const [bookingCentres, setBookingCentres] = useState<
-    Record<string, boolean>
-  >(() => {
-    const initial: Record<string, boolean> = {};
-    for (const bc of BOOKING_CENTRES) initial[bc] = false;
-    return initial;
-  });
+  const [bookingCentres, setBookingCentres] = useState<Record<string, boolean>>(
+    () => {
+      const initial: Record<string, boolean> = {};
+      for (const bc of BOOKING_CENTRES) initial[bc] = false;
+      return initial;
+    }
+  );
 
   const [permissions, setPermissions] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
@@ -166,12 +173,11 @@ export default function PortabilityClient() {
     return initial;
   });
 
-  /* ----- PDF capture ----- */
-
+  /* ----- Capture ref (optional, but OK to keep) ----- */
   const captureRef = useRef<HTMLDivElement | null>(null);
 
   /* ------------------------------
-     Score computations
+     Score computations (unchanged)
   ------------------------------ */
 
   const {
@@ -189,8 +195,7 @@ export default function PortabilityClient() {
     const coreVals = Object.values(coreScores);
     const coreSum = coreVals.reduce((acc, v) => acc + v, 0);
     const coreMax = coreVals.length * 5;
-    const corePct =
-      coreMax > 0 ? Math.round((coreSum / coreMax) * 100) : 0;
+    const corePct = coreMax > 0 ? Math.round((coreSum / coreMax) * 100) : 0;
 
     const coreLevel =
       corePct >= 80
@@ -205,8 +210,7 @@ export default function PortabilityClient() {
     const advVals = Object.values(advancedScores);
     const advSum = advVals.reduce((acc, v) => acc + v, 0);
     const advMax = advVals.length * 5;
-    const advBasePct =
-      advMax > 0 ? (advSum / advMax) * 100 : 0;
+    const advBasePct = advMax > 0 ? (advSum / advMax) * 100 : 0;
 
     // Booking centre coverage multiplier
     const selectedBC = Object.values(bookingCentres).filter(Boolean).length;
@@ -232,7 +236,7 @@ export default function PortabilityClient() {
         ? 1.05
         : 1.1;
 
-    let advancedPct = Math.round(
+    const advancedPct = Math.round(
       Math.min(100, advBasePct * bcFactor * permFactor)
     );
 
@@ -278,7 +282,7 @@ export default function PortabilityClient() {
         : "There may be value in strengthening certain dimensions before approaching Tier-1 platforms.",
       advancedScores.legalComplexity >= 4
         ? "Legal/tax complexity will likely require additional compliance review and can slow onboarding."
-        : "Legal/tax complexity appears manageable for most booking centres."
+        : "Legal/tax complexity appears manageable for most booking centres.",
     ];
 
     return {
@@ -295,25 +299,117 @@ export default function PortabilityClient() {
   }, [coreScores, advancedScores, bookingCentres, permissions]);
 
   /* ------------------------------
-     PDF download handler
+     Hard gate check (BP-grade)
+  ------------------------------ */
+
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      setGateChecking(true);
+      setGateError(null);
+
+      try {
+        const res = await fetch("/api/portability/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ ping: true }),
+        });
+
+        if (!mounted) return;
+
+        if (res.status === 401) {
+          setGateError("invalid_session");
+          return;
+        }
+        if (res.status === 403) {
+          setGateError("access_required");
+          return;
+        }
+        if (!res.ok) {
+          setGateError("server_error");
+          return;
+        }
+
+        setGateError(null);
+      } catch {
+        if (!mounted) return;
+        setGateError("server_error");
+      } finally {
+        if (mounted) setGateChecking(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  /* ------------------------------
+     Server-gated PDF export
   ------------------------------ */
 
   const handleDownload = async () => {
-    if (!captureRef.current) return;
-    const element = captureRef.current;
+    if (exporting) return;
 
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      backgroundColor: "#0B0E13",
-    });
+    setExporting(true);
+    try {
+      const payload = {
+        profile,
+        coreScores,
+        advancedScores,
+        bookingCentres,
+        permissions,
+        computed: {
+          corePct,
+          advancedPct,
+          overallPct,
+          coreLevel,
+          advancedLevel,
+          overallLevel,
+          expectedTransferRange,
+          onboardingSpeed,
+          commentary,
+        },
+      };
 
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const res = await fetch("/api/portability/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
 
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("portability-diagnostic-executive-partners.pdf");
+      if (res.status === 401) {
+        setGateError("invalid_session");
+        alert("Your session has expired. Please log in again.");
+        return;
+      }
+      if (res.status === 403) {
+        setGateError("access_required");
+        alert("Access required. Please request access to use this tool.");
+        return;
+      }
+      if (!res.ok) {
+        alert("Export failed. Please try again.");
+        return;
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "portability-diagnostic-executive-partners.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      window.URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
   };
 
   /* ------------------------------
@@ -330,7 +426,51 @@ export default function PortabilityClient() {
     setPermissions((prev) => ({ ...prev, [p]: !prev[p] }));
 
   /* ------------------------------
-     JSX
+     Gate UX
+  ------------------------------ */
+
+  if (gateChecking) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16 text-white">
+        <div className="rounded-2xl border border-white/10 bg-black/40 p-6">
+          <div className="text-sm text-white/80">Loading Portability tool…</div>
+          <div className="mt-2 text-xs text-white/50">Verifying access.</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (gateError) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16 text-white">
+        <div className="rounded-2xl border border-white/10 bg-black/40 p-6">
+          <h2 className="text-lg font-semibold">
+            {gateError === "access_required"
+              ? "Access required"
+              : gateError === "invalid_session"
+              ? "Session expired"
+              : "Temporary issue"}
+          </h2>
+          <p className="mt-2 text-sm text-white/70">
+            {gateError === "access_required"
+              ? "Your access is not approved for this tool. Please request access and we will enable it once reviewed."
+              : gateError === "invalid_session"
+              ? "Please log in again to continue."
+              : "Please refresh and try again."}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <PrimaryButton href="/en/contact">
+              Contact Executive Partners
+            </PrimaryButton>
+            <SecondaryButton href="/en/portability">Refresh page</SecondaryButton>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ------------------------------
+     JSX (your original UI restored)
   ------------------------------ */
 
   return (
@@ -352,10 +492,12 @@ export default function PortabilityClient() {
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <button
+            type="button"
             onClick={handleDownload}
-            className="rounded-full bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brandGold/90 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            disabled={exporting}
+            className="rounded-full bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brandGold/90 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           >
-            Download full PDF diagnostic
+            {exporting ? "Preparing PDF…" : "Download full PDF diagnostic"}
           </button>
           <PrimaryButton href="/en/contact" className="whitespace-nowrap">
             Discuss results confidentially
@@ -363,7 +505,7 @@ export default function PortabilityClient() {
         </div>
       </div>
 
-      {/* All content below captured into PDF */}
+      {/* All content below captured visually; export is server-gated now */}
       <div ref={captureRef} className="space-y-10">
         {/* Section 1 – Profile */}
         <motion.section
@@ -394,28 +536,27 @@ export default function PortabilityClient() {
                 </label>
                 <select
                   value={profile.market}
-                  onChange={(e) =>
-                    updateProfile({ market: e.target.value })
-                  }
+                  onChange={(e) => updateProfile({ market: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
                 >
                   <option className="bg-[#0B0E13]">CH Onshore</option>
-                  <option className="bg-[#0B0E13]">International (CH Booking)</option>
+                  <option className="bg-[#0B0E13]">
+                    International (CH Booking)
+                  </option>
                   <option className="bg-[#0B0E13]">MEA / GCC</option>
                   <option className="bg-[#0B0E13]">LatAm</option>
                   <option className="bg-[#0B0E13]">Europe (EU/UK)</option>
                   <option className="bg-[#0B0E13]">Asia (SG/HK)</option>
                 </select>
               </div>
+
               <div>
                 <label className="block text-xs font-medium text-gray-300">
                   Main booking hub today
                 </label>
                 <select
                   value={profile.mainHub}
-                  onChange={(e) =>
-                    updateProfile({ mainHub: e.target.value })
-                  }
+                  onChange={(e) => updateProfile({ mainHub: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
                 >
                   <option className="bg-[#0B0E13]">Geneva</option>
@@ -444,7 +585,8 @@ export default function PortabilityClient() {
                   className="mt-1 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
                 />
                 <p className="mt-1 text-[11px] text-gray-400">
-                  Typical CH onshore: ~65–90 bps; international books often higher.
+                  Typical CH onshore: ~65–90 bps; international books often
+                  higher.
                 </p>
               </div>
 
@@ -511,7 +653,7 @@ export default function PortabilityClient() {
           </div>
         </motion.section>
 
-        {/* Section 2 – Core portability dimensions (original model) */}
+        {/* Section 2 – Core portability dimensions */}
         <motion.section
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -534,9 +676,7 @@ export default function PortabilityClient() {
               <div className="font-semibold text-brandGold">
                 Core score: {corePct}%
               </div>
-              <div className="mt-1 text-[11px] text-gray-300">
-                {coreLevel}
-              </div>
+              <div className="mt-1 text-[11px] text-gray-300">{coreLevel}</div>
             </div>
           </div>
 
@@ -544,9 +684,7 @@ export default function PortabilityClient() {
             {CORE_DIMENSIONS.map((dim) => (
               <div key={dim.key} className="space-y-1">
                 <div className="flex items-center justify-between gap-4">
-                  <p className="text-sm font-medium text-white">
-                    {dim.label}
-                  </p>
+                  <p className="text-sm font-medium text-white">{dim.label}</p>
                   <p className="text-sm text-gray-300">
                     {coreScores[dim.key]}/5
                   </p>
@@ -605,7 +743,6 @@ export default function PortabilityClient() {
           <div className="grid gap-5 md:grid-cols-2">
             {/* Left column */}
             <div className="space-y-4">
-              {/* AUM diversification */}
               <div>
                 <div className="flex items-center justify-between text-sm">
                   <span>AUM diversification (Advisory / DPM / Lending)</span>
@@ -632,7 +769,6 @@ export default function PortabilityClient() {
                 </p>
               </div>
 
-              {/* Alternatives / structured */}
               <div>
                 <div className="flex items-center justify-between text-sm">
                   <span>Alternatives / structured usage</span>
@@ -659,7 +795,6 @@ export default function PortabilityClient() {
                 </p>
               </div>
 
-              {/* Legal complexity */}
               <div>
                 <div className="flex items-center justify-between text-sm">
                   <span>Legal / tax complexity</span>
@@ -686,7 +821,6 @@ export default function PortabilityClient() {
                 </p>
               </div>
 
-              {/* KYC reuse */}
               <div>
                 <div className="flex items-center justify-between text-sm">
                   <span>KYC / documentation reusability</span>
@@ -716,7 +850,6 @@ export default function PortabilityClient() {
 
             {/* Right column */}
             <div className="space-y-4">
-              {/* Past portability */}
               <div>
                 <div className="flex items-center justify-between text-sm">
                   <span>Past portability track-record</span>
@@ -743,7 +876,6 @@ export default function PortabilityClient() {
                 </p>
               </div>
 
-              {/* Relationship depth */}
               <div>
                 <div className="flex items-center justify-between text-sm">
                   <span>Relationship depth & contact frequency</span>
@@ -770,7 +902,6 @@ export default function PortabilityClient() {
                 </p>
               </div>
 
-              {/* Team dependency */}
               <div>
                 <div className="flex items-center justify-between text-sm">
                   <span>Team dependency</span>
@@ -797,7 +928,6 @@ export default function PortabilityClient() {
                 </p>
               </div>
 
-              {/* Platform fit */}
               <div>
                 <div className="flex items-center justify-between text-sm">
                   <span>Fit with Tier-1 private banking platform</span>
@@ -841,7 +971,12 @@ export default function PortabilityClient() {
                   <button
                     key={bc}
                     type="button"
-                    onClick={() => toggleBC(bc)}
+                    onClick={() =>
+                      setBookingCentres((prev) => ({
+                        ...prev,
+                        [bc]: !prev[bc],
+                      }))
+                    }
                     className={
                       "rounded-full border px-3 py-1 text-xs transition " +
                       (bookingCentres[bc]
@@ -866,7 +1001,9 @@ export default function PortabilityClient() {
                   <button
                     key={p}
                     type="button"
-                    onClick={() => togglePerm(p)}
+                    onClick={() =>
+                      setPermissions((prev) => ({ ...prev, [p]: !prev[p] }))
+                    }
                     className={
                       "rounded-full border px-3 py-1 text-xs transition " +
                       (permissions[p]
@@ -897,9 +1034,7 @@ export default function PortabilityClient() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-300">Combined score</p>
-                <p className="text-3xl font-bold text-brandGold">
-                  {overallPct}%
-                </p>
+                <p className="text-3xl font-bold text-brandGold">{overallPct}%</p>
                 <p className="mt-1 text-xs text-gray-300">{overallLevel}</p>
               </div>
               <div className="h-16 w-16 rounded-full bg-brandGold/15 ring-4 ring-brandGold/40" />
@@ -941,7 +1076,7 @@ export default function PortabilityClient() {
             </div>
           </div>
 
-          {/* Commentary & suggested usage */}
+          {/* Commentary */}
           <div className="space-y-3 rounded-2xl border border-white/15 bg-black/60 p-4">
             <h3 className="text-sm font-semibold text-white">
               How a hiring bank might read this
