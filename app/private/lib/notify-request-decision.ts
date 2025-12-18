@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import type { CreateEmailOptions } from "resend";
 
 type Decision = "approved" | "rejected";
 
@@ -40,9 +41,10 @@ export async function notifyRequestDecision(args: NotifyArgs) {
   const apiKey = mustGetEnv("RESEND_API_KEY");
   const resend = new Resend(apiKey);
 
-  // ✅ force sender identity (single source of truth)
-  const from = "Executive Partners <recruiter@execpartners.ch>";
-  const replyTo = "recruiter@execpartners.ch";
+  // ✅ single source of truth identity
+  const RECRUITER_MAILBOX = "recruiter@execpartners.ch";
+  const from = `Executive Partners <${RECRUITER_MAILBOX}>`;
+  const replyTo = RECRUITER_MAILBOX;
 
   const to = safeEmail(args.requesterEmail);
 
@@ -101,7 +103,6 @@ export async function notifyRequestDecision(args: NotifyArgs) {
     `Request ID: ${args.requestId}`,
     `Organization: ${args.requesterOrg ?? "—"}`,
     `Reviewed at: ${reviewedAtHuman}`,
-    args.reason ? `` : ``,
     args.reason ? `Reason: ${args.reason}` : ``,
     ``,
     `Executive Partners • Private & Confidential`,
@@ -109,19 +110,18 @@ export async function notifyRequestDecision(args: NotifyArgs) {
     .filter(Boolean)
     .join("\n");
 
-  const payload = {
+  // ✅ FIX: strongly type the payload to Resend's CreateEmailOptions
+  // ✅ FIX: bcc must be string[] (safe across SDK versions)
+  const payload: CreateEmailOptions = {
     from,
     to,
     replyTo,
     subject,
     html,
     text,
-
-    // ✅ internal copy ALWAYS goes to recruiter mailbox (never to adminEmail)
-    bcc: "recruiter@execpartners.ch",
-
+    bcc: [RECRUITER_MAILBOX],
     tags: [{ name: "module", value: "private-access" }],
-  } as const;
+  };
 
   const res = await resend.emails.send(payload);
 
