@@ -23,6 +23,14 @@ function normalizeRequestType(v: unknown): RequestType {
   return "profile";
 }
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+const noStoreHeaders = {
+  "Cache-Control": "no-store, max-age=0",
+  Pragma: "no-cache",
+};
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -54,20 +62,23 @@ export async function POST(req: Request) {
     if (request_type === "profile" && !profile_id) {
       return NextResponse.json(
         { ok: false, error: "missing_profile_id" },
-        { status: 400 }
+        { status: 400, headers: noStoreHeaders }
       );
     }
 
     // 1) Read session cookie (Next.js 15 requires await)
     const sessionHash = (await cookies()).get("ep_private")?.value ?? null;
     if (!sessionHash) {
-      return NextResponse.json({ ok: false, error: "no_session" }, { status: 401 });
+      return NextResponse.json(
+        { ok: false, error: "no_session" },
+        { status: 401, headers: noStoreHeaders }
+      );
     }
 
-    // 2) Get Supabase admin client
+    // 2) Supabase admin client
     const supabaseAdmin = await getSupabaseAdmin();
 
-    // 3) Validate session in DB
+    // 3) Validate session
     const { data: session, error: sessErr } = await supabaseAdmin
       .from("private_sessions")
       .select("email, role, expires_at, revoked_at")
@@ -76,15 +87,21 @@ export async function POST(req: Request) {
       .maybeSingle();
 
     if (sessErr || !session) {
-      return NextResponse.json({ ok: false, error: "invalid_session" }, { status: 401 });
+      return NextResponse.json(
+        { ok: false, error: "invalid_session" },
+        { status: 401, headers: noStoreHeaders }
+      );
     }
 
     if (new Date(session.expires_at).getTime() < Date.now()) {
-      return NextResponse.json({ ok: false, error: "session_expired" }, { status: 401 });
+      return NextResponse.json(
+        { ok: false, error: "session_expired" },
+        { status: 401, headers: noStoreHeaders }
+      );
     }
 
-    // 4) Insert access request (DB is source of truth)
-    // ✅ profile_id should be null for bp/portability (requires DB column nullable)
+    // 4) Insert access request
+    // ✅ profile_id must be nullable in DB for bp/portability
     const insertPayload = {
       request_type,
       profile_id: request_type === "profile" ? profile_id : null,
@@ -105,13 +122,21 @@ export async function POST(req: Request) {
         // eslint-disable-next-line no-console
         console.error("access-request insert error:", insErr);
       }
-      return NextResponse.json({ ok: false, error: "insert_failed" }, { status: 500 });
+      return NextResponse.json(
+        { ok: false, error: "insert_failed" },
+        { status: 500, headers: noStoreHeaders }
+      );
     }
 
-    // 5) Fetch profile details for the email (best effort)
-    // ✅ only attempt if we actually have a profile_id
+    // 5) Fetch profile details (only if profile_id exists)
     let profile:
-      | { headline?: string | null; market?: string | null; seniority?: string | null; aum_band?: string | null; book_type?: string | null }
+      | {
+          headline?: string | null;
+          market?: string | null;
+          seniority?: string | null;
+          aum_band?: string | null;
+          book_type?: string | null;
+        }
       | null = null;
 
     if (inserted.profile_id) {
@@ -120,6 +145,7 @@ export async function POST(req: Request) {
         .select("headline, market, seniority, aum_band, book_type")
         .eq("id", inserted.profile_id)
         .maybeSingle();
+
       profile = data ?? null;
     }
 
@@ -127,7 +153,6 @@ export async function POST(req: Request) {
     // ✅ Only recruiter@execpartners.ch is ever used for from/to/replyTo.
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
-    // ✅ Stable base URL: prefer env, else infer from request
     const appUrl = process.env.PRIVATE_APP_URL || new URL(req.url).origin;
 
     if (RESEND_API_KEY) {
@@ -153,7 +178,6 @@ export async function POST(req: Request) {
       const book = profile?.book_type || "—";
 
       const createdAt = inserted.created_at || new Date().toISOString();
-
       const safeMessage = message ? escapeHtml(message) : "—";
       const safeOrg = requester_org ? escapeHtml(requester_org) : "—";
 
@@ -220,22 +244,23 @@ export async function POST(req: Request) {
             console.error("resend notify error:", e);
           }
         });
-    } else {
-      if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
-        console.warn("Missing RESEND_API_KEY");
-      }
+    } else if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
+      console.warn("Missing RESEND_API_KEY");
     }
 
     return NextResponse.json(
       { ok: true, data: { id: inserted.id, request_type } },
-      { status: 200 }
+      { status: 200, headers: noStoreHeaders }
     );
   } catch (e) {
     if (process.env.NODE_ENV !== "production") {
       // eslint-disable-next-line no-console
       console.error("access-request exception:", e);
     }
-    return NextResponse.json({ ok: false, error: "exception" }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: "exception" },
+      { status: 500, headers: noStoreHeaders }
+    );
   }
 }
