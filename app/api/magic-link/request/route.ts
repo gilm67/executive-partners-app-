@@ -3,10 +3,17 @@ import crypto from "crypto";
 import { Resend } from "resend";
 import { getSupabaseAdmin } from "@/lib/supabase-server";
 
-const CANONICAL = (process.env.NEXT_PUBLIC_CANONICAL_URL || "https://www.execpartners.ch").replace(/\/$/, "");
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+const CANONICAL = (process.env.NEXT_PUBLIC_CANONICAL_URL || "https://www.execpartners.ch").replace(
+  /\/$/,
+  ""
+);
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
-const RESEND_FROM = process.env.RESEND_FROM || "Executive Partners <recruiter@execpartners.ch>";
+const RESEND_FROM =
+  process.env.RESEND_FROM || "Executive Partners <recruiter@execpartners.ch>";
 
 function sha256(input: string) {
   return crypto.createHash("sha256").update(input).digest("hex");
@@ -24,20 +31,36 @@ function getBaseUrl(req: Request) {
 }
 
 /**
- * Only allow internal redirects.
- * - Must start with "/"
- * - Must NOT start with "//"
- * - Must NOT contain "http" etc.
+ * ✅ SAFE INTERNAL REDIRECTS ONLY
+ * - internal only (no scheme)
+ * - normalizes common paths to the correct localized routes
+ * - strict allow-list to avoid “/private” being the accidental default
  */
 function sanitizeNext(nextRaw: unknown): string | null {
   if (typeof nextRaw !== "string") return null;
-  const next = nextRaw.trim();
+
+  let next = nextRaw.trim();
   if (!next) return null;
+
+  // internal-only
   if (!next.startsWith("/")) return null;
   if (next.startsWith("//")) return null;
   if (next.includes("://")) return null;
-  // Optional: keep it inside private area only
-  if (!next.startsWith("/private")) return null;
+
+  // ✅ normalize common variants
+  if (next === "/portability") next = "/en/portability";
+  if (next === "/bp-simulator") next = "/en/bp-simulator";
+  if (next === "/en/portability/") next = "/en/portability";
+  if (next === "/en/bp-simulator/") next = "/en/bp-simulator";
+  if (next === "/private/") next = "/private";
+
+  // ✅ strict allow-list (exact paths + /private area)
+  const ALLOWED = ["/en/portability", "/en/bp-simulator", "/private"];
+  const isAllowed =
+    ALLOWED.includes(next) || next.startsWith("/private/");
+
+  if (!isAllowed) return null;
+
   return next;
 }
 
@@ -45,10 +68,10 @@ function buildEmailHtml(link: string) {
   return `
   <div style="font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; line-height:1.5; color:#111;">
     <h2 style="margin:0 0 12px;">Your secure access link</h2>
-    <p style="margin:0 0 12px;">Click the button below to access the private candidate profiles.</p>
+    <p style="margin:0 0 12px;">Click the button below to continue securely.</p>
     <p style="margin:0 0 18px;">
       <a href="${link}" style="display:inline-block; padding:10px 14px; background:#111; color:#fff; text-decoration:none; border-radius:8px;">
-        Access private profiles
+        Continue
       </a>
     </p>
     <p style="margin:0 0 8px; color:#555;">This link expires in 20 minutes and can be used once.</p>
@@ -62,38 +85,33 @@ export async function POST(req: Request) {
     const emailRaw = typeof body?.email === "string" ? body.email : "";
     const next = sanitizeNext(body?.next);
 
-    // Always return ok to avoid email enumeration
+    // Anti-enumeration: always OK
     if (!emailRaw) {
       return NextResponse.json({ ok: true }, { status: 200 });
     }
 
     const email = emailRaw.trim().toLowerCase();
 
-    // ✅ Create admin client (new async getter)
-    const supabaseAdmin = await getSupabaseAdmin();
-
-    // token + hash
     const token = crypto.randomBytes(32).toString("hex");
     const tokenHash = sha256(token);
-
-    // 20 minutes expiry
     const expiresAt = new Date(Date.now() + 20 * 60 * 1000).toISOString();
 
-    const { error } = await supabaseAdmin.from("magic_links").insert({
+    const supabaseAdmin = await getSupabaseAdmin();
+
+    const { error: insertErr } = await supabaseAdmin.from("magic_links").insert({
       email,
       token_hash: tokenHash,
       expires_at: expiresAt,
     });
 
-    // Even on error, don't reveal anything
-    if (error) {
+    // Still anti-enumeration, but don’t send a link if insert failed
+    if (insertErr) {
       if (process.env.NODE_ENV !== "production") {
-        console.error("magic-link insert error:", error);
+        console.error("magic_links insert error:", insertErr);
       }
       return NextResponse.json({ ok: true }, { status: 200 });
     }
 
-    // Build link
     const baseUrl = process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
 
     const url = new URL(`${baseUrl}/private/auth`);
@@ -102,10 +120,8 @@ export async function POST(req: Request) {
 
     const link = url.toString();
 
-    // Send email (if configured)
     if (RESEND_API_KEY) {
       const resend = new Resend(RESEND_API_KEY);
-
       try {
         await resend.emails.send({
           from: RESEND_FROM,
@@ -113,10 +129,6 @@ export async function POST(req: Request) {
           subject: "Your secure access link — Executive Partners",
           html: buildEmailHtml(link),
         });
-
-        if (process.env.NODE_ENV !== "production") {
-          console.log("Resend: magic link email sent to", email);
-        }
       } catch (e) {
         if (process.env.NODE_ENV !== "production") {
           console.error("Resend send error:", e);

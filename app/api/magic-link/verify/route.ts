@@ -18,6 +18,24 @@ function getClientMeta(req: Request) {
   return { ip, user_agent };
 }
 
+/**
+ * ✅ SAFE INTERNAL REDIRECTS ONLY (must match request route allow-list)
+ */
+function sanitizeNext(nextRaw: unknown): string | null {
+  if (typeof nextRaw !== "string") return null;
+
+  const next = nextRaw.trim();
+  if (!next) return null;
+  if (!next.startsWith("/")) return null;
+  if (next.startsWith("//")) return null;
+  if (next.includes("://")) return null;
+
+  const ALLOWED_PREFIXES = ["/private", "/en/portability", "/en/bp-simulator"];
+  if (!ALLOWED_PREFIXES.some((p) => next.startsWith(p))) return null;
+
+  return next;
+}
+
 async function audit(
   req: Request,
   action: string,
@@ -47,6 +65,7 @@ export async function POST(req: Request) {
 
     const body = await req.json().catch(() => ({}));
     const token = typeof body?.token === "string" ? body.token : "";
+    const next = sanitizeNext(body?.next); // ✅ accept next from client
 
     if (!token) {
       await audit(
@@ -120,10 +139,7 @@ export async function POST(req: Request) {
 
     const { ip, user_agent } = getClientMeta(req);
 
-    const expiresAtIso = new Date(
-      Date.now() + 7 * 24 * 60 * 60 * 1000
-    ).toISOString();
-
+    const expiresAtIso = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
     const email = String(data.email || "").trim().toLowerCase();
 
     // ✅ Resolve role from private_users (source of truth)
@@ -157,19 +173,17 @@ export async function POST(req: Request) {
     }
 
     // ✅ Insert new session
-    const { error: sessErr } = await supabaseAdmin
-      .from("private_sessions")
-      .insert({
-        session_hash: sessionHash,
-        email,
-        role,
-        expires_at: expiresAtIso,
-        revoked_at: null,
-        last_seen_at: nowIso,
-        ip,
-        user_agent,
-        meta: { via: "magic_link" },
-      });
+    const { error: sessErr } = await supabaseAdmin.from("private_sessions").insert({
+      session_hash: sessionHash,
+      email,
+      role,
+      expires_at: expiresAtIso,
+      revoked_at: null,
+      last_seen_at: nowIso,
+      ip,
+      user_agent,
+      meta: { via: "magic_link" },
+    });
 
     if (sessErr) {
       await audit(
@@ -183,9 +197,17 @@ export async function POST(req: Request) {
     }
 
     // 4) ✅ Set cookie (share across execpartners.ch + www.execpartners.ch)
-    const res = NextResponse.json({ ok: true }, { status: 200 });
-
     const isProd = process.env.NODE_ENV === "production";
+
+    const res = NextResponse.json(
+      {
+        ok: true,
+        // ✅ return next so /private/auth can redirect reliably
+        next: next ?? null,
+        role,
+      },
+      { status: 200 }
+    );
 
     res.cookies.set("ep_private", sessionHash, {
       httpOnly: true,
@@ -200,16 +222,13 @@ export async function POST(req: Request) {
       req,
       "magic_link_verify_ok",
       email,
-      { session: "issued", role, expires_days: 7 },
+      { session: "issued", role, expires_days: 7, next: next ?? null },
       supabaseAdmin
     );
 
     return res;
   } catch {
-    // best effort audit (might fail if env is missing)
-    await audit(req, "magic_link_verify_failed", undefined, {
-      reason: "exception",
-    });
+    await audit(req, "magic_link_verify_failed", undefined, { reason: "exception" });
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 }

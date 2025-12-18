@@ -10,34 +10,36 @@ import { useEffect, useMemo, useState } from "react";
  *  - /en/bp-simulator
  *  - /en/...
  *
- * Block:
- *  - absolute URLs
- *  - protocol-relative //
+ * Default:
+ *  - /en/portability  (prevents accidental landing on /private)
  */
 function safeNext(nextRaw: string | null): string {
-  if (!nextRaw) return "/private";
+  const DEFAULT = "/en/portability";
 
-  const next = nextRaw.trim();
-  if (!next) return "/private";
+  if (!nextRaw) return DEFAULT;
+
+  let next = nextRaw.trim();
+  if (!next) return DEFAULT;
 
   // must be internal
-  if (!next.startsWith("/")) return "/private";
-  if (next.startsWith("//")) return "/private";
-  if (next.includes("://")) return "/private";
+  if (!next.startsWith("/")) return DEFAULT;
+  if (next.startsWith("//")) return DEFAULT;
+  if (next.includes("://")) return DEFAULT;
+
+  // normalize common variants
+  if (next === "/portability") next = "/en/portability";
+  if (next === "/bp-simulator") next = "/en/bp-simulator";
+  if (next === "/en/portability/") next = "/en/portability";
+  if (next === "/en/bp-simulator/") next = "/en/bp-simulator";
+  if (next === "/private/") next = "/private";
 
   // allowed internal areas
-  const allowedPrefixes = [
-    "/private",
-    "/en/portability",
-    "/en/bp-simulator",
-    "/en",
-  ];
+  const allowedPrefixes = ["/private", "/en/portability", "/en/bp-simulator", "/en"];
 
-  if (!allowedPrefixes.some((p) => next === p || next.startsWith(p + "/"))) {
-    return "/private";
-  }
+  const allowed =
+    allowedPrefixes.some((p) => next === p || next.startsWith(p + "/"));
 
-  return next;
+  return allowed ? next : DEFAULT;
 }
 
 export default function AuthClient({
@@ -67,7 +69,6 @@ export default function AuthClient({
         });
 
         if (!res.ok) throw new Error("verify_failed");
-
         if (!cancelled) setStatus("ok");
 
         // 🔑 HARD redirect so cookie is guaranteed

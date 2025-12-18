@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SecondaryButton from "@/components/ui/SecondaryButton";
 
@@ -14,6 +15,13 @@ type Props = {
   requestId?: string | null;
 };
 
+function getNextPath(requestType: Props["requestType"]) {
+  if (requestType === "bp") return "/en/bp-simulator";
+  if (requestType === "portability") return "/en/portability";
+  // default for profile access (adjust if your canonical page differs)
+  return "/private/candidate-profiles";
+}
+
 export default function AccessRequestGate({
   requestType,
   title,
@@ -21,17 +29,24 @@ export default function AccessRequestGate({
   status = "pending",
   requestId = null,
 }: Props) {
+  const router = useRouter();
+
   const [org, setOrg] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<string | null>(requestId);
 
   const effectiveStatus: GateStatus = useMemo(() => {
-    // If a request already exists, show its status; otherwise treat as pending (requestable)
     return status ?? "pending";
   }, [status]);
 
   const canRequest = effectiveStatus !== "approved";
+
+  const nextPath = useMemo(() => getNextPath(requestType), [requestType]);
+  const authHref = useMemo(
+    () => `/private/auth?next=${encodeURIComponent(nextPath)}`,
+    [nextPath]
+  );
 
   async function submitRequest() {
     if (submitting) return;
@@ -51,8 +66,10 @@ export default function AccessRequestGate({
 
       const json = await res.json().catch(() => ({}));
 
+      // ✅ If not logged in (or cookie missing), send them to private auth
+      // and bring them back to the right tool after verification.
       if (res.status === 401) {
-        alert("Session expired. Please log in again.");
+        router.push(authHref);
         return;
       }
 
@@ -103,7 +120,8 @@ export default function AccessRequestGate({
 
             <div className="flex gap-2">
               <SecondaryButton href="/en/contact">Contact</SecondaryButton>
-              <SecondaryButton href="/en/portability">Refresh</SecondaryButton>
+              {/* ✅ refresh must return to the page that is gated */}
+              <SecondaryButton href={nextPath}>Refresh</SecondaryButton>
             </div>
           </div>
         </div>
@@ -143,9 +161,11 @@ export default function AccessRequestGate({
               >
                 {submitting ? "Sending…" : "Request access"}
               </button>
-              <PrimaryButton href="/en/contact">
-                Discuss confidentially
-              </PrimaryButton>
+
+              {/* ✅ If they need to authenticate first, this takes them to auth with the correct return path */}
+              <PrimaryButton href={authHref}>Request link</PrimaryButton>
+
+              <PrimaryButton href="/en/contact">Discuss confidentially</PrimaryButton>
             </div>
 
             <p className="text-[11px] text-white/50">
@@ -154,9 +174,8 @@ export default function AccessRequestGate({
           </div>
         ) : (
           <div className="mt-5">
-            <PrimaryButton href="/en/portability">
-              Continue to tool
-            </PrimaryButton>
+            {/* ✅ continue should go to the correct tool page */}
+            <PrimaryButton href={nextPath}>Continue to tool</PrimaryButton>
           </div>
         )}
       </div>
