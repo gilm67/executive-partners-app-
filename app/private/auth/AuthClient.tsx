@@ -2,16 +2,40 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+/**
+ * Allow ONLY internal redirects.
+ * Supported:
+ *  - /private/...
+ *  - /en/portability
+ *  - /en/bp-simulator
+ *  - /en/...
+ *
+ * Block:
+ *  - absolute URLs
+ *  - protocol-relative //
+ */
 function safeNext(nextRaw: string | null): string {
-  // ✅ Only allow internal /private paths (prevents open-redirects)
   if (!nextRaw) return "/private";
 
   const next = nextRaw.trim();
   if (!next) return "/private";
+
+  // must be internal
   if (!next.startsWith("/")) return "/private";
   if (next.startsWith("//")) return "/private";
-  if (next.includes("://")) return "/private"; // blocks http/https/etc.
-  if (!next.startsWith("/private")) return "/private"; // keep it inside private area
+  if (next.includes("://")) return "/private";
+
+  // allowed internal areas
+  const allowedPrefixes = [
+    "/private",
+    "/en/portability",
+    "/en/bp-simulator",
+    "/en",
+  ];
+
+  if (!allowedPrefixes.some((p) => next === p || next.startsWith(p + "/"))) {
+    return "/private";
+  }
 
   return next;
 }
@@ -43,9 +67,10 @@ export default function AuthClient({
         });
 
         if (!res.ok) throw new Error("verify_failed");
+
         if (!cancelled) setStatus("ok");
 
-        // ✅ Hard navigation so the cookie is definitely present on the next request
+        // 🔑 HARD redirect so cookie is guaranteed
         window.location.assign(target);
       } catch {
         if (!cancelled) setStatus("fail");
