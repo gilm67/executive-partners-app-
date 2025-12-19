@@ -1,4 +1,5 @@
 // app/en/portability/page.tsx
+import React from "react";
 import { requirePrivateSession } from "@/app/private/lib/require-session";
 import { getSupabaseAdmin } from "@/lib/supabase-server";
 import PortabilityClient from "./PortabilityClient";
@@ -8,7 +9,6 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 type Status = "pending" | "approved" | "rejected";
-type GateStatus = Status; // what AccessRequestGate expects
 
 function normalizeStatus(input: unknown): Status {
   const s = String(input || "").toLowerCase();
@@ -28,13 +28,15 @@ function GateShell({ children }: { children: React.ReactNode }) {
             "radial-gradient(1200px 420px at 18% -10%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 55%), radial-gradient(1000px 380px at 110% 0%, rgba(245,231,192,.20) 0%, rgba(245,231,192,0) 60%)",
         }}
       />
-      <div className="relative mx-auto max-w-6xl px-4 py-8 md:py-12">{children}</div>
+      <div className="relative mx-auto max-w-6xl px-4 py-8 md:py-12">
+        {children}
+      </div>
     </main>
   );
 }
 
 export default async function PortabilityPage() {
-  // ✅ Preserve intended destination for the auth flow
+  // ✅ preserves "return to /en/portability" if user must authenticate
   const session = await requirePrivateSession(undefined, "/en/portability");
 
   const supabaseAdmin = await getSupabaseAdmin();
@@ -48,7 +50,7 @@ export default async function PortabilityPage() {
     .limit(1)
     .maybeSingle();
 
-  const status: GateStatus = error ? "pending" : normalizeStatus(data?.status);
+  const status: Status = error ? "pending" : normalizeStatus(data?.status);
 
   if (status !== "approved") {
     return (
