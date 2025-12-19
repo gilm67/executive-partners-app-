@@ -54,7 +54,10 @@ export default function AccessRequestGate({
 
     (async () => {
       try {
-        const res = await fetch("/api/private/me", { cache: "no-store" });
+        const res = await fetch("/api/private/me", {
+          cache: "no-store",
+          credentials: "include",
+        });
         const data = await res.json().catch(() => null);
         const authed = Boolean(res.ok && data?.authenticated === true);
         if (!cancelled) setSessionState(authed ? "active" : "inactive");
@@ -75,16 +78,10 @@ export default function AccessRequestGate({
 
   // ✅ Primary CTA logic (single action)
   const primary = useMemo(() => {
-    // Still checking session => keep user calm, offer refresh only
     if (sessionState === "checking") {
-      return {
-        label: "Checking session…",
-        href: refresh,
-        disabled: true,
-      };
+      return { label: "Checking session…", href: refresh, disabled: true };
     }
 
-    // Not authenticated => Get secure link (magic link)
     if (sessionState !== "active") {
       return {
         label: "Get secure link",
@@ -93,13 +90,11 @@ export default function AccessRequestGate({
       };
     }
 
-    // Authenticated:
     if (effectiveStatus === "approved") {
       return { label: "Continue", href: refresh, disabled: false };
     }
 
     if (effectiveStatus === "pending") {
-      // Request already pending → avoid allowing spam requests
       return { label: "Refresh", href: refresh, disabled: false };
     }
 
@@ -126,7 +121,6 @@ export default function AccessRequestGate({
       const json = await res.json().catch(() => ({}));
 
       if (res.status === 401) {
-        // session missing/expired → push them to magic link flow
         window.location.assign(
           `/private/auth/request?next=${encodeURIComponent(refresh)}`
         );
@@ -140,8 +134,6 @@ export default function AccessRequestGate({
 
       setSubmittedId(json?.data?.id ?? null);
       alert("Access request sent. We will review and confirm by email.");
-
-      // After request: best UX is to refresh the page so status updates
       window.location.assign(refresh);
     } finally {
       setSubmitting(false);
@@ -164,9 +156,7 @@ export default function AccessRequestGate({
       ? "Your request is under review. We’ll confirm by email once approved."
       : effectiveStatus === "rejected"
       ? "Your request was rejected. You may submit a new request with more context."
-      : effectiveStatus === "approved"
-      ? "Access is enabled for your account."
-      : "Request access to unlock this tool.";
+      : "Access is enabled for your account.";
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -207,53 +197,49 @@ export default function AccessRequestGate({
         {/* ✅ ONE PRIMARY CTA */}
         <div className="mt-5">
           {primary.href === "#request" ? (
-            <>
-              <div id="request" className="space-y-3">
-                <div>
-                  <label className="block text-xs font-medium text-white/70">
-                    Organisation (optional)
-                  </label>
-                  <input
-                    value={org}
-                    onChange={(e) => setOrg(e.target.value)}
-                    className="mt-1 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
-                    placeholder="e.g. UBS, Julius Baer, Family Office, etc."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-white/70">
-                    Message (optional)
-                  </label>
-                  <textarea
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    className="mt-1 min-h-[90px] w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
-                    placeholder="Brief context (market, coverage, reason for access)…"
-                  />
-                </div>
-
-                <button
-                  type="button"
-                  onClick={submitRequest}
-                  disabled={submitting}
-                  className="rounded-full bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60"
-                >
-                  {submitting ? "Sending…" : "Request access"}
-                </button>
-
-                <p className="text-[11px] text-white/50">
-                  Confirmations are sent from recruiter@execpartners.ch.
-                </p>
+            <div id="request" className="space-y-3">
+              <div>
+                <label className="block text-xs font-medium text-white/70">
+                  Organisation (optional)
+                </label>
+                <input
+                  value={org}
+                  onChange={(e) => setOrg(e.target.value)}
+                  className="mt-1 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
+                  placeholder="e.g. UBS, Julius Baer, Family Office, etc."
+                />
               </div>
-            </>
+
+              <div>
+                <label className="block text-xs font-medium text-white/70">
+                  Message (optional)
+                </label>
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="mt-1 min-h-[90px] w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
+                  placeholder="Brief context (market, coverage, reason for access)…"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={submitRequest}
+                disabled={submitting}
+                className="rounded-full bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60"
+              >
+                {submitting ? "Sending…" : "Request access"}
+              </button>
+
+              <p className="text-[11px] text-white/50">
+                Confirmations are sent from recruiter@execpartners.ch.
+              </p>
+            </div>
           ) : (
-            <PrimaryButton href={primary.href}>
-              {primary.label}
-            </PrimaryButton>
+            <PrimaryButton href={primary.href}>{primary.label}</PrimaryButton>
           )}
         </div>
       </div>
     </div>
   );
-}code 
+}
