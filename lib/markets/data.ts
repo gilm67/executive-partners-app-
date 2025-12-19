@@ -92,12 +92,7 @@ export const MARKETS: Market[] = [
     summary:
       "Switzerland’s most international private banking hub, with deep UHNW coverage, cross-border franchises, and a highly developed EAM ecosystem. Regulatory scrutiny, pricing discipline and client sophistication are materially higher than in neighbouring markets.",
     compensation: [
-      {
-        role: "RM / Senior Advisor",
-        baseMin: 150_000,
-        baseMax: 200_000,
-        bonusPct: "40–80%",
-      },
+      { role: "RM / Senior Advisor", baseMin: 150_000, baseMax: 200_000, bonusPct: "40–80%" },
       {
         role: "Senior RM / Director",
         baseMin: 180_000,
@@ -106,12 +101,7 @@ export const MARKETS: Market[] = [
         topQuartileNote:
           "Top performers with multi-year revenue history and portable UHNW books may exceed 100%.",
       },
-      {
-        role: "Team Lead / Market Head",
-        baseMin: 220_000,
-        baseMax: 300_000,
-        bonusPct: "60–120%",
-      },
+      { role: "Team Lead / Market Head", baseMin: 220_000, baseMax: 300_000, bonusPct: "60–120%" },
     ],
     licensing: {
       regulator: "FINMA (Switzerland)",
@@ -139,16 +129,8 @@ export const MARKETS: Market[] = [
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
     hiringPulse: {
-      hotRoles: [
-        "Senior RM Switzerland Onshore",
-        "Team Lead MEA",
-        "UHNW Banker with structured solutions exposure",
-      ],
-      hotSkills: [
-        "Lombard lending & credit structuring",
-        "Alternatives/Private Markets distribution",
-        "Cross-border frameworks (EU/MEA/LatAm)",
-      ],
+      hotRoles: ["Senior RM Switzerland Onshore", "Team Lead MEA", "UHNW Banker with structured solutions exposure"],
+      hotSkills: ["Lombard lending & credit structuring", "Alternatives/Private Markets distribution", "Cross-border frameworks (EU/MEA/LatAm)"],
       notes:
         "Hiring remains selective. Business cases must demonstrate verifiable revenue, clear portability assumptions and ROA uplift. Teams hiring for MEA and LatAm are particularly active across Tier-1 banks.",
     },
@@ -159,13 +141,7 @@ export const MARKETS: Market[] = [
       { label: "Ecosystem", value: "High-density EAM/FO network" },
     ],
     ecosystem: {
-      bookingCentres: [
-        "Geneva (primary Swiss booking centre)",
-        "Zurich",
-        "Lugano",
-        "Luxembourg",
-        "Monaco",
-      ],
+      bookingCentres: ["Geneva (primary Swiss booking centre)", "Zurich", "Lugano", "Luxembourg", "Monaco"],
       keyBanks: [
         "UBS",
         "Julius Baer",
@@ -182,10 +158,7 @@ export const MARKETS: Market[] = [
         "Multi-family offices with Geneva investment teams",
         "Single-family offices of international UHNW families",
       ],
-      regulators: [
-        "FINMA (Swiss Financial Market Supervisory Authority)",
-        "Swiss Federal Tax Administration (SFTA)",
-      ],
+      regulators: ["FINMA (Swiss Financial Market Supervisory Authority)", "Swiss Federal Tax Administration (SFTA)"],
     },
   },
 
@@ -202,32 +175,13 @@ export const MARKETS: Market[] = [
     summary:
       "The largest Swiss wealth hub, with deep balance sheet, strong product factories, and proximity to German-speaking entrepreneurs and family offices.",
     compensation: [
-      {
-        role: "RM / Senior Advisor",
-        baseMin: 160_000,
-        baseMax: 210_000,
-        bonusPct: "40–80%",
-      },
-      {
-        role: "Senior RM / Director",
-        baseMin: 190_000,
-        baseMax: 260_000,
-        bonusPct: "50–100%",
-      },
-      {
-        role: "Team Lead / Market Head",
-        baseMin: 230_000,
-        baseMax: 320_000,
-        bonusPct: "60–120%",
-      },
+      { role: "RM / Senior Advisor", baseMin: 160_000, baseMax: 210_000, bonusPct: "40–80%" },
+      { role: "Senior RM / Director", baseMin: 190_000, baseMax: 260_000, bonusPct: "50–100%" },
+      { role: "Team Lead / Market Head", baseMin: 230_000, baseMax: 320_000, bonusPct: "60–120%" },
     ],
     licensing: {
       regulator: "FINMA (Switzerland)",
-      mustHaveCerts: [
-        "FATCA/CRS competence",
-        "Cross-border rules (EU/UK)",
-        "Local suitability & appropriateness framework",
-      ],
+      mustHaveCerts: ["FATCA/CRS competence", "Cross-border rules (EU/UK)", "Local suitability & appropriateness framework"],
       notes:
         "German language is strongly preferred for DACH onshore; English is required; Italian/French are useful for cross-border segments.",
     },
@@ -249,8 +203,7 @@ export const MARKETS: Market[] = [
     hiringPulse: {
       hotRoles: ["CH Onshore Senior RM", "DACH Market Head"],
       hotSkills: ["DPM penetration", "Credit structuring", "Alts distribution"],
-      notes:
-        "Strong preference for German-speaking profiles with portable, well-documented books.",
+      notes: "Strong preference for German-speaking profiles with portable, well-documented books.",
     },
     atAGlance: [
       { label: "Focus", value: "Onshore DACH + Intl" },
@@ -259,13 +212,7 @@ export const MARKETS: Market[] = [
       { label: "EAM", value: "Very active" },
     ],
     ecosystem: {
-      bookingCentres: [
-        "Zurich (Swiss booking centre)",
-        "Geneva",
-        "Basel",
-        "Lugano",
-        "Luxembourg",
-      ],
+      bookingCentres: ["Zurich (Swiss booking centre)", "Geneva", "Basel", "Lugano", "Luxembourg"],
       keyBanks: [
         "UBS",
         "Julius Baer",
@@ -298,34 +245,19 @@ export const MARKETS: Market[] = [
     summary:
       "Global wealth gateway with multi-jurisdiction platforms and intense competition among international private banks, wealth managers and multi-family offices.",
     compensation: [
-      {
-        role: "RM / Senior Banker",
-        baseMin: 140_000,
-        baseMax: 220_000,
-        bonusPct: "50–100%",
-      },
+      { role: "RM / Senior Banker", baseMin: 140_000, baseMax: 220_000, bonusPct: "50–100%" },
       {
         role: "Director / Senior RM",
         baseMin: 180_000,
         baseMax: 300_000,
         bonusPct: "60–125%",
-        topQuartileNote:
-          "High upside possible for top performers, especially post bonus-cap changes.",
+        topQuartileNote: "High upside possible for top performers, especially post bonus-cap changes.",
       },
-      {
-        role: "Team Lead / MD",
-        baseMin: 220_000,
-        baseMax: 350_000,
-        bonusPct: "70–150%",
-      },
+      { role: "Team Lead / MD", baseMin: 220_000, baseMax: 350_000, bonusPct: "70–150%" },
     ],
     licensing: {
       regulator: "FCA (UK)",
-      mustHaveCerts: [
-        "FCA Certification Regime alignment",
-        "MiFID II suitability/appropriateness knowledge",
-        "Local KYC/AML standards",
-      ],
+      mustHaveCerts: ["FCA Certification Regime alignment", "MiFID II suitability/appropriateness knowledge", "Local KYC/AML standards"],
       notes:
         "Institutional-grade advice models and documented suitability are critical. Deferrals and clawbacks are common at seniority.",
     },
@@ -347,8 +279,7 @@ export const MARKETS: Market[] = [
     hiringPulse: {
       hotRoles: ["UHNW Banker", "Team Lead Europe", "Non-Resident RM"],
       hotSkills: ["Cross-border structuring", "Alts access", "Credit expertise"],
-      notes:
-        "Strong demand for portable non-resident and FO-linked books with documented advice processes.",
+      notes: "Strong demand for portable non-resident and FO-linked books with documented advice processes.",
     },
     atAGlance: [
       { label: "Focus", value: "International UHNW" },
@@ -357,14 +288,7 @@ export const MARKETS: Market[] = [
       { label: "Deferrals", value: "Common at seniority" },
     ],
     ecosystem: {
-      bookingCentres: [
-        "London (UK booking centre)",
-        "Jersey",
-        "Guernsey",
-        "Isle of Man",
-        "Zurich",
-        "Geneva",
-      ],
+      bookingCentres: ["London (UK booking centre)", "Jersey", "Guernsey", "Isle of Man", "Zurich", "Geneva"],
       keyBanks: [
         "UBS",
         "Julius Baer",
@@ -380,10 +304,7 @@ export const MARKETS: Market[] = [
         "Multi-family offices in Mayfair and the City",
         "Single-family offices of UHNW families",
       ],
-      regulators: [
-        "FCA (Financial Conduct Authority)",
-        "PRA (Prudential Regulation Authority)",
-      ],
+      regulators: ["FCA (Financial Conduct Authority)", "PRA (Prudential Regulation Authority)"],
     },
   },
 
@@ -400,58 +321,37 @@ export const MARKETS: Market[] = [
     summary:
       "Tax-advantaged MENA hub with DIFC/ADGM frameworks and expanding platforms targeting GCC, NRI, African and global expat wealth.",
     compensation: [
-      {
-        role: "RM / Senior Advisor",
-        baseMin: 350_000,
-        baseMax: 550_000,
-        bonusPct: "30–80%",
-      },
+      { role: "RM / Senior Advisor", baseMin: 350_000, baseMax: 550_000, bonusPct: "30–80%" },
       {
         role: "Senior RM / Director",
         baseMin: 500_000,
         baseMax: 750_000,
         bonusPct: "40–100%",
-        topQuartileNote:
-          "Packages at some platforms include housing/schooling allowances and relocation support.",
+        topQuartileNote: "Packages at some platforms include housing/schooling allowances and relocation support.",
       },
-      {
-        role: "Team Lead / Market Head",
-        baseMin: 700_000,
-        baseMax: 1_000_000,
-        bonusPct: "50–120%",
-      },
+      { role: "Team Lead / Market Head", baseMin: 700_000, baseMax: 1_000_000, bonusPct: "50–120%" },
     ],
     licensing: {
       regulator: "DFSA (DIFC) / FSRA (ADGM) / UAE SCA",
-      mustHaveCerts: [
-        "Local approvals (DFSA/FSRA as applicable)",
-        "Cross-border MEA/India model understanding",
-        "Sharia product familiarity where relevant",
-      ],
+      mustHaveCerts: ["Local approvals (DFSA/FSRA as applicable)", "Cross-border MEA/India model understanding", "Sharia product familiarity where relevant"],
       notes:
         "Tax-free salary; schooling/housing packages are material. Relationship culture is intense; compliance around legacy CIS/Russia flows is strict.",
     },
     clientBase: {
-      sourcing: [
-        "GCC/UAE onshore and resident UHNW/HNW",
-        "NRI and South Asia entrepreneurs and families",
-        "African and global expats using UAE as a regional base",
-      ],
+      sourcing: ["GCC/UAE onshore and resident UHNW/HNW", "NRI and South Asia entrepreneurs and families", "African and global expats using UAE as a regional base"],
     },
     relocation: {
       oneParagraph:
         "Dubai offers rapid client-acquisition potential with regional mobility and a tax-free salary environment. Schooling, housing and DIFC/ADGM licensing timelines are central in relocation negotiations.",
       officialLinkLabel: "DIFC — regulations",
-      officialLinkUrl:
-        "https://www.difc.ae/business/operating/regulatory-framework/",
+      officialLinkUrl: "https://www.difc.ae/business/operating/regulatory-framework/",
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
     hiringPulse: {
       hotRoles: ["Senior RM GCC", "Team Lead South Asia", "NRI Banker"],
       hotSkills: ["Sharia awareness", "Cross-border MEA/India", "Credit + Lombard"],
-      notes:
-        "Demand strongest for bankers with portable GCC/NRI books and clean, well-documented KYC histories.",
+      notes: "Demand strongest for bankers with portable GCC/NRI books and clean, well-documented KYC histories.",
     },
     atAGlance: [
       { label: "Tax", value: "Salary tax-free" },
@@ -460,14 +360,7 @@ export const MARKETS: Market[] = [
       { label: "Time-to-Live", value: "Fast onboarding" },
     ],
     ecosystem: {
-      bookingCentres: [
-        "Dubai (DIFC)",
-        "Abu Dhabi (ADGM)",
-        "Geneva",
-        "Zurich",
-        "Singapore",
-        "Luxembourg",
-      ],
+      bookingCentres: ["Dubai (DIFC)", "Abu Dhabi (ADGM)", "Geneva", "Zurich", "Singapore", "Luxembourg"],
       keyBanks: [
         "Julius Baer",
         "UBS",
@@ -479,11 +372,7 @@ export const MARKETS: Market[] = [
         "HSBC Global Private Banking",
         "Standard Chartered Private Bank",
       ],
-      eamsAndFOs: [
-        "DIFC-based multi-family offices",
-        "ADGM-based wealth managers",
-        "Single-family offices of GCC families",
-      ],
+      eamsAndFOs: ["DIFC-based multi-family offices", "ADGM-based wealth managers", "Single-family offices of GCC families"],
       regulators: [
         "DFSA (Dubai Financial Services Authority)",
         "FSRA (Financial Services Regulatory Authority, ADGM)",
@@ -505,41 +394,18 @@ export const MARKETS: Market[] = [
     summary:
       "Stable APAC hub with favourable tax, robust MAS governance and significant regional booking-centre activity for ASEAN and North Asia wealth.",
     compensation: [
-      {
-        role: "RM / Associate Director",
-        baseMin: 180_000,
-        baseMax: 240_000,
-        bonusPct: "40–80%",
-      },
-      {
-        role: "Director / Senior RM",
-        baseMin: 220_000,
-        baseMax: 320_000,
-        bonusPct: "50–100%",
-      },
-      {
-        role: "Team Lead / Market Head",
-        baseMin: 280_000,
-        baseMax: 380_000,
-        bonusPct: "60–120%",
-      },
+      { role: "RM / Associate Director", baseMin: 180_000, baseMax: 240_000, bonusPct: "40–80%" },
+      { role: "Director / Senior RM", baseMin: 220_000, baseMax: 320_000, bonusPct: "50–100%" },
+      { role: "Team Lead / Market Head", baseMin: 280_000, baseMax: 380_000, bonusPct: "60–120%" },
     ],
     licensing: {
       regulator: "MAS (Singapore)",
-      mustHaveCerts: [
-        "MAS fit & proper criteria",
-        "Relevant CMFAS modules",
-        "Cross-border APAC rules awareness",
-      ],
+      mustHaveCerts: ["MAS fit & proper criteria", "Relevant CMFAS modules", "Cross-border APAC rules awareness"],
       notes:
         "Mandarin, Malay or Indonesian are highly valued. Deferrals are common at senior levels; suitability and product-governance files must be robust.",
     },
     clientBase: {
-      sourcing: [
-        "SEA/ASEAN onshore and regional cross-border clients",
-        "Entrepreneurs, tech founders and family business owners",
-        "High adoption of DPM, Alts and Lombard lending",
-      ],
+      sourcing: ["SEA/ASEAN onshore and regional cross-border clients", "Entrepreneurs, tech founders and family business owners", "High adoption of DPM, Alts and Lombard lending"],
     },
     relocation: {
       oneParagraph:
@@ -551,13 +417,8 @@ export const MARKETS: Market[] = [
     legalDisclaimer: DEFAULT_DISCLAIMER,
     hiringPulse: {
       hotRoles: ["RM SE Asia", "North Asia RM (SG booking)", "Credit-led RM"],
-      hotSkills: [
-        "Mandarin/Indonesian",
-        "Alts distribution",
-        "Credit structuring",
-      ],
-      notes:
-        "Language skills and cross-border expertise are decisive; competition for top profiles is intense.",
+      hotSkills: ["Mandarin/Indonesian", "Alts distribution", "Credit structuring"],
+      notes: "Language skills and cross-border expertise are decisive; competition for top profiles is intense.",
     },
     atAGlance: [
       { label: "Tax", value: "Favourable" },
@@ -566,13 +427,7 @@ export const MARKETS: Market[] = [
       { label: "Ecosystem", value: "Regional booking centre" },
     ],
     ecosystem: {
-      bookingCentres: [
-        "Singapore",
-        "Hong Kong",
-        "Zurich",
-        "Geneva",
-        "Offshore centres used by Asian clients",
-      ],
+      bookingCentres: ["Singapore", "Hong Kong", "Zurich", "Geneva", "Offshore centres used by Asian clients"],
       keyBanks: [
         "UBS",
         "Credit Suisse legacy (UBS integration)",
@@ -585,11 +440,7 @@ export const MARKETS: Market[] = [
         "HSBC Global Private Banking",
         "Standard Chartered Private Bank",
       ],
-      eamsAndFOs: [
-        "MAS-licensed external asset managers",
-        "Multi-family offices serving ASEAN and North Asia",
-        "Single-family offices under Singapore FO/VCC regimes",
-      ],
+      eamsAndFOs: ["MAS-licensed external asset managers", "Multi-family offices serving ASEAN and North Asia", "Single-family offices under Singapore FO/VCC regimes"],
       regulators: ["MAS (Monetary Authority of Singapore)"],
     },
   },
@@ -607,41 +458,17 @@ export const MARKETS: Market[] = [
     summary:
       "APAC powerhouse with access to Mainland China flows; strong SFC oversight and competitive compensation at senior levels for North Asia-focused bankers.",
     compensation: [
-      {
-        role: "RM / Senior Advisor",
-        baseMin: 1_200_000,
-        baseMax: 1_800_000,
-        bonusPct: "40–80%",
-      },
-      {
-        role: "Senior RM / Director",
-        baseMin: 1_500_000,
-        baseMax: 2_500_000,
-        bonusPct: "50–110%",
-      },
-      {
-        role: "Team Lead / Market Head",
-        baseMin: 2_000_000,
-        baseMax: 3_500_000,
-        bonusPct: "60–130%",
-      },
+      { role: "RM / Senior Advisor", baseMin: 1_200_000, baseMax: 1_800_000, bonusPct: "40–80%" },
+      { role: "Senior RM / Director", baseMin: 1_500_000, baseMax: 2_500_000, bonusPct: "50–110%" },
+      { role: "Team Lead / Market Head", baseMin: 2_000_000, baseMax: 3_500_000, bonusPct: "60–130%" },
     ],
     licensing: {
       regulator: "SFC (Hong Kong)",
-      mustHaveCerts: [
-        "Relevant SFC licences (e.g. Type 1 & 4)",
-        "Cross-border Mainland China rules",
-        "Enhanced due diligence for PEP/AML",
-      ],
-      notes:
-        "Cantonese/Mandarin are highly valued; deferrals and clawbacks are standard for senior roles.",
+      mustHaveCerts: ["Relevant SFC licences (e.g. Type 1 & 4)", "Cross-border Mainland China rules", "Enhanced due diligence for PEP/AML"],
+      notes: "Cantonese/Mandarin are highly valued; deferrals and clawbacks are standard for senior roles.",
     },
     clientBase: {
-      sourcing: [
-        "Mainland China and regional UHNW/HNW",
-        "Family offices, next-gen and tech wealth",
-        "High adoption of Alts and structured products",
-      ],
+      sourcing: ["Mainland China and regional UHNW/HNW", "Family offices, next-gen and tech wealth", "High adoption of Alts and structured products"],
     },
     relocation: {
       oneParagraph:
@@ -654,8 +481,7 @@ export const MARKETS: Market[] = [
     hiringPulse: {
       hotRoles: ["North Asia RM", "China offshore RM", "UHNW Team Lead"],
       hotSkills: ["Cantonese/Mandarin", "Structured products/Alts", "CN cross-border"],
-      notes:
-        "Language plus Mainland China client access are decisive differentiators.",
+      notes: "Language plus Mainland China client access are decisive differentiators.",
     },
     atAGlance: [
       { label: "Focus", value: "Mainland CN + Regional" },
@@ -664,13 +490,7 @@ export const MARKETS: Market[] = [
       { label: "Booking", value: "HK / SG" },
     ],
     ecosystem: {
-      bookingCentres: [
-        "Hong Kong",
-        "Singapore",
-        "Zurich",
-        "Geneva",
-        "Offshore centres used by North Asia clients",
-      ],
+      bookingCentres: ["Hong Kong", "Singapore", "Zurich", "Geneva", "Offshore centres used by North Asia clients"],
       keyBanks: [
         "UBS",
         "Credit Suisse legacy (UBS integration)",
@@ -680,14 +500,8 @@ export const MARKETS: Market[] = [
         "J.P. Morgan Private Bank",
         "Goldman Sachs Private Wealth Management",
       ],
-      eamsAndFOs: [
-        "SFC-licensed external asset managers",
-        "Hong Kong-based multi-family offices",
-      ],
-      regulators: [
-        "SFC (Securities and Futures Commission)",
-        "HKMA (Hong Kong Monetary Authority)",
-      ],
+      eamsAndFOs: ["SFC-licensed external asset managers", "Hong Kong-based multi-family offices"],
+      regulators: ["SFC (Securities and Futures Commission)", "HKMA (Hong Kong Monetary Authority)"],
     },
   },
 
@@ -704,32 +518,13 @@ export const MARKETS: Market[] = [
     summary:
       "Premier US wealth centre with fierce competition among wirehouses, global private banks and ultra-lean multi-family offices.",
     compensation: [
-      {
-        role: "RM / Private Banker",
-        baseMin: 180_000,
-        baseMax: 250_000,
-        bonusPct: "40–90%",
-      },
-      {
-        role: "Senior RM / Director",
-        baseMin: 220_000,
-        baseMax: 350_000,
-        bonusPct: "50–125%",
-      },
-      {
-        role: "Team Lead / Market Head",
-        baseMin: 280_000,
-        baseMax: 450_000,
-        bonusPct: "60–150%",
-      },
+      { role: "RM / Private Banker", baseMin: 180_000, baseMax: 250_000, bonusPct: "40–90%" },
+      { role: "Senior RM / Director", baseMin: 220_000, baseMax: 350_000, bonusPct: "50–125%" },
+      { role: "Team Lead / Market Head", baseMin: 280_000, baseMax: 450_000, bonusPct: "60–150%" },
     ],
     licensing: {
       regulator: "SEC/FINRA (United States)",
-      mustHaveCerts: [
-        "Series 7",
-        "Series 66 (or 63 + 65)",
-        "Insurance licences for certain products",
-      ],
+      mustHaveCerts: ["Series 7", "Series 66 (or 63 + 65)", "Insurance licences for certain products"],
       notes:
         "Reg BI, robust AML/KYC and household-level suitability are central. Some boutiques use revenue-share/1099 frameworks.",
     },
@@ -744,16 +539,14 @@ export const MARKETS: Market[] = [
       oneParagraph:
         "NYC packages often combine meaningful variable compensation with deferrals. State/city tax, housing and schooling should be evaluated in net terms, not just base/bonus headline figures.",
       officialLinkLabel: "FINRA — qualifications",
-      officialLinkUrl:
-        "https://www.finra.org/registration-exams-ce/qualifications",
+      officialLinkUrl: "https://www.finra.org/registration-exams-ce/qualifications",
     },
     cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
     legalDisclaimer: DEFAULT_DISCLAIMER,
     hiringPulse: {
       hotRoles: ["UHNW Banker", "Team Lead LatAm", "Credit-led PB"],
       hotSkills: ["Private credit", "Secondaries/Alts", "Complex lending"],
-      notes:
-        "Books with fee yield, Alts penetration and credit usage command premium terms.",
+      notes: "Books with fee yield, Alts penetration and credit usage command premium terms.",
     },
     atAGlance: [
       { label: "Focus", value: "Onshore UHNW" },
@@ -762,13 +555,7 @@ export const MARKETS: Market[] = [
       { label: "Comp Shape", value: "High variable + deferrals" },
     ],
     ecosystem: {
-      bookingCentres: [
-        "New York",
-        "Miami",
-        "Delaware trusts",
-        "Zurich",
-        "Geneva",
-      ],
+      bookingCentres: ["New York", "Miami", "Delaware trusts", "Zurich", "Geneva"],
       keyBanks: [
         "J.P. Morgan Private Bank",
         "Morgan Stanley Private Wealth Management",
@@ -778,10 +565,7 @@ export const MARKETS: Market[] = [
         "Credit Suisse legacy (UBS integration)",
         "Northern Trust",
       ],
-      eamsAndFOs: [
-        "US-registered RIAs focused on UHNW",
-        "New York-based multi-family offices",
-      ],
+      eamsAndFOs: ["US-registered RIAs focused on UHNW", "New York-based multi-family offices"],
       regulators: ["SEC (Securities and Exchange Commission)", "FINRA"],
     },
   },
@@ -799,32 +583,13 @@ export const MARKETS: Market[] = [
     summary:
       "US offshore gateway for LatAm wealth with a growing local UHNW base and strong presence of international private banks and MFOs.",
     compensation: [
-      {
-        role: "RM / Private Banker",
-        baseMin: 140_000,
-        baseMax: 200_000,
-        bonusPct: "30–80%",
-      },
-      {
-        role: "Senior RM / Director",
-        baseMin: 170_000,
-        baseMax: 260_000,
-        bonusPct: "40–110%",
-      },
-      {
-        role: "Team Lead / Market Head",
-        baseMin: 220_000,
-        baseMax: 350_000,
-        bonusPct: "50–130%",
-      },
+      { role: "RM / Private Banker", baseMin: 140_000, baseMax: 200_000, bonusPct: "30–80%" },
+      { role: "Senior RM / Director", baseMin: 170_000, baseMax: 260_000, bonusPct: "40–110%" },
+      { role: "Team Lead / Market Head", baseMin: 220_000, baseMax: 350_000, bonusPct: "50–130%" },
     ],
     licensing: {
       regulator: "SEC/FINRA (United States) + Florida insurance where applicable",
-      mustHaveCerts: [
-        "Series 7",
-        "Series 66 (or 63 + 65)",
-        "AML/cross-border training",
-      ],
+      mustHaveCerts: ["Series 7", "Series 66 (or 63 + 65)", "AML/cross-border training"],
       notes:
         "Spanish and often Portuguese are highly valued. Suitability must reconcile US and LatAm frameworks.",
     },
@@ -846,8 +611,7 @@ export const MARKETS: Market[] = [
     hiringPulse: {
       hotRoles: ["LatAm RM", "Offshore Private Banker", "UHNW Team Lead"],
       hotSkills: ["Spanish/Portuguese", "Cross-border AML", "Credit"],
-      notes:
-        "Bilingual + portable LatAm books are among the most sought-after profiles in Miami.",
+      notes: "Bilingual + portable LatAm books are among the most sought-after profiles in Miami.",
     },
     atAGlance: [
       { label: "Focus", value: "US offshore + LatAm" },
@@ -856,14 +620,7 @@ export const MARKETS: Market[] = [
       { label: "Migration", value: "Strong inflows" },
     ],
     ecosystem: {
-      bookingCentres: [
-        "Miami",
-        "New York",
-        "Delaware trusts",
-        "Bahamas",
-        "Zurich",
-        "Geneva",
-      ],
+      bookingCentres: ["Miami", "New York", "Delaware trusts", "Bahamas", "Zurich", "Geneva"],
       keyBanks: [
         "J.P. Morgan Private Bank",
         "Citi Private Bank",
@@ -872,10 +629,7 @@ export const MARKETS: Market[] = [
         "Santander Private Banking International",
         "BTG Pactual (US/LatAm platform)",
       ],
-      eamsAndFOs: [
-        "RIAs and broker-dealers focused on LatAm HNW/UHNW",
-        "Miami-based multi-family offices",
-      ],
+      eamsAndFOs: ["RIAs and broker-dealers focused on LatAm HNW/UHNW", "Miami-based multi-family offices"],
       regulators: ["SEC", "FINRA"],
     },
   },
@@ -893,24 +647,9 @@ export const MARKETS: Market[] = [
     summary:
       "Onshore EU wealth hub with a strong domestic client base, growing family-office ecosystem and close connectivity to Swiss and Luxembourg booking platforms.",
     compensation: [
-      {
-        role: "RM / Private Banker",
-        baseMin: 70_000,
-        baseMax: 110_000,
-        bonusPct: "20–50%",
-      },
-      {
-        role: "Senior RM / Director",
-        baseMin: 110_000,
-        baseMax: 150_000,
-        bonusPct: "30–60%",
-      },
-      {
-        role: "Team Lead / Market Head",
-        baseMin: 140_000,
-        baseMax: 185_000,
-        bonusPct: "40–80%",
-      },
+      { role: "RM / Private Banker", baseMin: 70_000, baseMax: 110_000, bonusPct: "20–50%" },
+      { role: "Senior RM / Director", baseMin: 110_000, baseMax: 150_000, bonusPct: "30–60%" },
+      { role: "Team Lead / Market Head", baseMin: 140_000, baseMax: 185_000, bonusPct: "40–80%" },
     ],
     licensing: {
       regulator: "AMF (France)",
@@ -936,8 +675,7 @@ export const MARKETS: Market[] = [
     hiringPulse: {
       hotRoles: ["Onshore PB", "UHNW Advisor", "FO Coverage RM"],
       hotSkills: ["Insurance wrappers", "Structuring", "Alts access"],
-      notes:
-        "Onshore quality, FO connectivity and tax-aware planning are the main differentiators.",
+      notes: "Onshore quality, FO connectivity and tax-aware planning are the main differentiators.",
     },
     atAGlance: [
       { label: "Focus", value: "Onshore EU" },
@@ -955,14 +693,93 @@ export const MARKETS: Market[] = [
         "UBS",
         "Julius Baer (coverage)",
       ],
+      eamsAndFOs: ["Growing Paris-based multi-family offices", "Boutique EAMs focusing on French UHNW"],
+      regulators: ["AMF (Autorité des marchés financiers)", "ACPR (Autorité de contrôle prudentiel et de résolution)"],
+    },
+  },
+
+  /* =========================
+     Spain — Madrid
+     ========================= */
+  {
+    slug: "madrid",
+    city: "Madrid",
+    country: "Spain",
+    currency: "EUR",
+    locale: "es-ES",
+    heroImage: "/markets/madrid.jpg",
+    summary:
+      "Spain’s main onshore private banking hub, with strong entrepreneur and family wealth, a growing family-office ecosystem, and frequent cross-border interplay with Luxembourg and Switzerland platforms.",
+    compensation: [
+      { role: "RM / Private Banker", baseMin: 70_000, baseMax: 115_000, bonusPct: "20–50%" },
+      {
+        role: "Senior RM / Director",
+        baseMin: 110_000,
+        baseMax: 160_000,
+        bonusPct: "30–70%",
+        topQuartileNote:
+          "Top quartile is driven by recurring revenues, strong lending penetration, and well-documented portable relationships.",
+      },
+      { role: "Team Lead / Market Head", baseMin: 150_000, baseMax: 200_000, bonusPct: "40–90%" },
+    ],
+    licensing: {
+      regulator: "CNMV (Spain) + Banco de España (banking supervision)",
+      mustHaveCerts: [
+        "MiFID II suitability/appropriateness competence",
+        "AML/KYC standards and documentation discipline",
+        "Local product governance and client classification knowledge",
+      ],
+      notes:
+        "Spanish is essential for onshore coverage; English is valuable for internationally mobile families and cross-border coordination. Suitability expectations align with EU/ESMA principles as implemented through the CNMV framework.",
+    },
+    clientBase: {
+      sourcing: [
+        "Onshore Spanish entrepreneurs, industrial families, and executives (often multi-banked)",
+        "Next-gen and business-owner liquidity events with planning-led advisory needs",
+        "Cross-border coordination with Luxembourg/Switzerland booking where relevant (structures, custody, product access)",
+      ],
+    },
+    relocation: {
+      oneParagraph:
+        "Madrid offers a deep domestic client base, strong professional-services networks (tax, legal, corporate advisory), and improving family-office density. Success is typically planning-led (succession, corporate liquidity, credit, and portfolio governance) with high expectations on documentation and suitability files.",
+      officialLinkLabel: "CNMV — official portal",
+      officialLinkUrl: "https://www.cnmv.es/",
+    },
+    cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
+    legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["Onshore Private Banker (HNW/UHNW)", "Senior RM (Entrepreneurs)", "Team Lead (Madrid)"],
+      hotSkills: [
+        "Planning-led advisory (succession / corporate liquidity)",
+        "Credit & Lombard-style solutions",
+        "Alternatives access and portfolio construction governance",
+      ],
+      notes:
+        "Madrid hiring is relationship-quality driven: documented advice process, clean KYC, and credible business plans matter more than headline AUM. Teams value bankers who can evidence recurring revenues and strong client tenure.",
+    },
+    atAGlance: [
+      { label: "Focus", value: "Onshore Spain" },
+      { label: "Languages", value: "ES/EN" },
+      { label: "Deal Style", value: "Planning-led + Credit" },
+      { label: "Cross-border", value: "LU/CH coordination (select cases)" },
+    ],
+    ecosystem: {
+      bookingCentres: ["Madrid (onshore)", "Luxembourg", "Zurich", "Geneva", "Madrid + EU platforms (where applicable)"],
+      keyBanks: [
+        "Banco Santander Private Banking",
+        "BBVA Private Banking",
+        "CaixaBank Banca Privada",
+        "Bankinter Banca Privada",
+        "UBS (coverage)",
+        "Julius Baer (coverage)",
+        "Credit Suisse legacy (UBS integration) (coverage)",
+      ],
       eamsAndFOs: [
-        "Growing Paris-based multi-family offices",
-        "Boutique EAMs focusing on French UHNW",
+        "Madrid-based multi-family offices and independent advisory firms",
+        "Boutique wealth managers focused on entrepreneur families",
+        "Professional-services ecosystem (tax/legal/corporate) feeding referrals",
       ],
-      regulators: [
-        "AMF (Autorité des marchés financiers)",
-        "ACPR (Autorité de contrôle prudentiel et de résolution)",
-      ],
+      regulators: ["CNMV (Comisión Nacional del Mercado de Valores)", "Banco de España"],
     },
   },
 
@@ -979,24 +796,9 @@ export const MARKETS: Market[] = [
     summary:
       "Northern Italy wealth centre serving entrepreneurs and family-business owners, with growing interest in Alts and cross-border solutions.",
     compensation: [
-      {
-        role: "RM / Private Banker",
-        baseMin: 60_000,
-        baseMax: 100_000,
-        bonusPct: "20–50%",
-      },
-      {
-        role: "Senior RM / Director",
-        baseMin: 100_000,
-        baseMax: 140_000,
-        bonusPct: "30–60%",
-      },
-      {
-        role: "Team Lead / Market Head",
-        baseMin: 130_000,
-        baseMax: 160_000,
-        bonusPct: "40–80%",
-      },
+      { role: "RM / Private Banker", baseMin: 60_000, baseMax: 100_000, bonusPct: "20–50%" },
+      { role: "Senior RM / Director", baseMin: 100_000, baseMax: 140_000, bonusPct: "30–60%" },
+      { role: "Team Lead / Market Head", baseMin: 130_000, baseMax: 160_000, bonusPct: "40–80%" },
     ],
     licensing: {
       regulator: "Banca d’Italia / CONSOB",
@@ -1022,8 +824,7 @@ export const MARKETS: Market[] = [
     hiringPulse: {
       hotRoles: ["Onshore PB", "UHNW RM", "Team Lead North"],
       hotSkills: ["Insurance wrappers", "Alts", "Succession planning"],
-      notes:
-        "Entrepreneur/family business relationships and tax-aware planning are key.",
+      notes: "Entrepreneur/family business relationships and tax-aware planning are key.",
     },
     atAGlance: [
       { label: "Focus", value: "Onshore Italy" },
@@ -1033,17 +834,8 @@ export const MARKETS: Market[] = [
     ],
     ecosystem: {
       bookingCentres: ["Milan", "Luxembourg", "Zurich", "Geneva"],
-      keyBanks: [
-        "Intesa Sanpaolo Private Banking",
-        "UniCredit Private Banking",
-        "Banca Generali",
-        "UBS",
-        "Credit Suisse legacy (UBS integration)",
-      ],
-      eamsAndFOs: [
-        "Italian multi-family offices",
-        "Private offices for industrial families",
-      ],
+      keyBanks: ["Intesa Sanpaolo Private Banking", "UniCredit Private Banking", "Banca Generali", "UBS", "Credit Suisse legacy (UBS integration)"],
+      eamsAndFOs: ["Italian multi-family offices", "Private offices for industrial families"],
       regulators: ["Banca d’Italia", "CONSOB"],
     },
   },
@@ -1061,24 +853,9 @@ export const MARKETS: Market[] = [
     summary:
       "Emerging EU wealth node with a growing expat base; roles often blend affluent/HNW private banking with wealth planning and FO-style services.",
     compensation: [
-      {
-        role: "RM / Private Banker",
-        baseMin: 40_000,
-        baseMax: 70_000,
-        bonusPct: "15–40%",
-      },
-      {
-        role: "Senior RM / Director",
-        baseMin: 60_000,
-        baseMax: 90_000,
-        bonusPct: "20–50%",
-      },
-      {
-        role: "Team Lead / Market Head",
-        baseMin: 80_000,
-        baseMax: 120_000,
-        bonusPct: "25–60%",
-      },
+      { role: "RM / Private Banker", baseMin: 40_000, baseMax: 70_000, bonusPct: "15–40%" },
+      { role: "Senior RM / Director", baseMin: 60_000, baseMax: 90_000, bonusPct: "20–50%" },
+      { role: "Team Lead / Market Head", baseMin: 80_000, baseMax: 120_000, bonusPct: "25–60%" },
     ],
     licensing: {
       regulator: "CMVM (Portugal)",
@@ -1104,8 +881,7 @@ export const MARKETS: Market[] = [
     hiringPulse: {
       hotRoles: ["Affluent-to-HNW RM", "FO Services RM"],
       hotSkills: ["Insurance wrappers", "Real-estate wealth", "Cross-border basics"],
-      notes:
-        "Smaller PB market; language, local networks and lifestyle fit are key selling points.",
+      notes: "Smaller PB market; language, local networks and lifestyle fit are key selling points.",
     },
     atAGlance: [
       { label: "Focus", value: "Onshore + Expats" },
@@ -1122,14 +898,8 @@ export const MARKETS: Market[] = [
         "Santander Private Banking",
         "International private banks (select coverage)",
       ],
-      eamsAndFOs: [
-        "Boutique family offices",
-        "Local wealth managers focused on HNW/upper affluent",
-      ],
-      regulators: [
-        "CMVM (Comissão do Mercado de Valores Mobiliários)",
-        "Banco de Portugal",
-      ],
+      eamsAndFOs: ["Boutique family offices", "Local wealth managers focused on HNW/upper affluent"],
+      regulators: ["CMVM (Comissão do Mercado de Valores Mobiliários)", "Banco de Portugal"],
     },
   },
 ];
