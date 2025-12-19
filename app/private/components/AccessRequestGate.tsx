@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SecondaryButton from "@/components/ui/SecondaryButton";
 
@@ -13,40 +12,100 @@ type Props = {
   description?: string;
   status?: GateStatus;
   requestId?: string | null;
+
+  // where to refresh / where to return after auth
+  refreshHref?: string; // e.g. "/en/portability" or "/en/bp-simulator"
 };
 
-function getNextPath(requestType: Props["requestType"]) {
-  if (requestType === "bp") return "/en/bp-simulator";
-  if (requestType === "portability") return "/en/portability";
-  // default for profile access (adjust if your canonical page differs)
-  return "/private/candidate-profiles";
+function defaultHrefForType(t: Props["requestType"]) {
+  if (t === "bp") return "/en/bp-simulator";
+  if (t === "portability") return "/en/portability";
+  return "/private";
+}
+
+function normalizeStatus(s?: GateStatus): GateStatus {
+  if (s === "approved") return "approved";
+  if (s === "rejected") return "rejected";
+  return "pending";
 }
 
 export default function AccessRequestGate({
   requestType,
   title,
   description,
-  status = "pending",
+  status,
   requestId = null,
+  refreshHref,
 }: Props) {
-  const router = useRouter();
-
   const [org, setOrg] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<string | null>(requestId);
 
-  const effectiveStatus: GateStatus = useMemo(() => {
-    return status ?? "pending";
-  }, [status]);
+  const refresh = refreshHref || defaultHrefForType(requestType);
 
-  const canRequest = effectiveStatus !== "approved";
+  // Detect whether user is authenticated
+  const [sessionState, setSessionState] = useState<
+    "checking" | "active" | "inactive"
+  >("checking");
 
-  const nextPath = useMemo(() => getNextPath(requestType), [requestType]);
-  const authHref = useMemo(
-    () => `/private/auth?next=${encodeURIComponent(nextPath)}`,
-    [nextPath]
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await fetch("/api/private/me", { cache: "no-store" });
+        const data = await res.json().catch(() => null);
+        const authed = Boolean(res.ok && data?.authenticated === true);
+        if (!cancelled) setSessionState(authed ? "active" : "inactive");
+      } catch {
+        if (!cancelled) setSessionState("inactive");
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const effectiveStatus: GateStatus = useMemo(
+    () => normalizeStatus(status),
+    [status]
   );
+
+  // ✅ Primary CTA logic (single action)
+  const primary = useMemo(() => {
+    // Still checking session => keep user calm, offer refresh only
+    if (sessionState === "checking") {
+      return {
+        label: "Checking session…",
+        href: refresh,
+        disabled: true,
+      };
+    }
+
+    // Not authenticated => Get secure link (magic link)
+    if (sessionState !== "active") {
+      return {
+        label: "Get secure link",
+        href: `/private/auth/request?next=${encodeURIComponent(refresh)}`,
+        disabled: false,
+      };
+    }
+
+    // Authenticated:
+    if (effectiveStatus === "approved") {
+      return { label: "Continue", href: refresh, disabled: false };
+    }
+
+    if (effectiveStatus === "pending") {
+      // Request already pending → avoid allowing spam requests
+      return { label: "Refresh", href: refresh, disabled: false };
+    }
+
+    // rejected → allow requesting again
+    return { label: "Request access", href: "#request", disabled: false };
+  }, [sessionState, effectiveStatus, refresh]);
 
   async function submitRequest() {
     if (submitting) return;
@@ -66,10 +125,11 @@ export default function AccessRequestGate({
 
       const json = await res.json().catch(() => ({}));
 
-      // ✅ If not logged in (or cookie missing), send them to private auth
-      // and bring them back to the right tool after verification.
       if (res.status === 401) {
-        router.push(authHref);
+        // session missing/expired → push them to magic link flow
+        window.location.assign(
+          `/private/auth/request?next=${encodeURIComponent(refresh)}`
+        );
         return;
       }
 
@@ -79,11 +139,34 @@ export default function AccessRequestGate({
       }
 
       setSubmittedId(json?.data?.id ?? null);
-      alert("Request sent. We will review and confirm by email.");
+      alert("Access request sent. We will review and confirm by email.");
+
+      // After request: best UX is to refresh the page so status updates
+      window.location.assign(refresh);
     } finally {
       setSubmitting(false);
     }
   }
+
+  const statusLabel =
+    sessionState !== "active"
+      ? "Not authenticated"
+      : effectiveStatus === "approved"
+      ? "Approved"
+      : effectiveStatus === "rejected"
+      ? "Rejected"
+      : "Pending / Under review";
+
+  const statusHint =
+    sessionState !== "active"
+      ? "Get a secure link to authenticate first."
+      : effectiveStatus === "pending"
+      ? "Your request is under review. We’ll confirm by email once approved."
+      : effectiveStatus === "rejected"
+      ? "Your request was rejected. You may submit a new request with more context."
+      : effectiveStatus === "approved"
+      ? "Access is enabled for your account."
+      : "Request access to unlock this tool.";
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -99,20 +182,16 @@ export default function AccessRequestGate({
         ) : null}
 
         <div className="mt-4 rounded-xl border border-white/10 bg-black/50 p-4 text-sm text-white/80">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <div className="text-xs uppercase tracking-wide text-white/50">
                 Current status
               </div>
-              <div className="mt-1 font-semibold">
-                {effectiveStatus === "approved"
-                  ? "Approved"
-                  : effectiveStatus === "rejected"
-                  ? "Rejected"
-                  : "Pending / Not approved yet"}
-              </div>
+              <div className="mt-1 font-semibold">{statusLabel}</div>
+              <div className="mt-1 text-xs text-white/55">{statusHint}</div>
+
               {submittedId ? (
-                <div className="mt-1 text-xs text-white/50">
+                <div className="mt-2 text-xs text-white/50">
                   Request ID: <span className="font-mono">{submittedId}</span>
                 </div>
               ) : null}
@@ -120,65 +199,61 @@ export default function AccessRequestGate({
 
             <div className="flex gap-2">
               <SecondaryButton href="/en/contact">Contact</SecondaryButton>
-              {/* ✅ refresh must return to the page that is gated */}
-              <SecondaryButton href={nextPath}>Refresh</SecondaryButton>
+              <SecondaryButton href={refresh}>Refresh</SecondaryButton>
             </div>
           </div>
         </div>
 
-        {canRequest ? (
-          <div className="mt-5 space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-white/70">
-                Organisation (optional)
-              </label>
-              <input
-                value={org}
-                onChange={(e) => setOrg(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
-                placeholder="e.g. UBS, Julius Baer, Family Office, etc."
-              />
-            </div>
+        {/* ✅ ONE PRIMARY CTA */}
+        <div className="mt-5">
+          {primary.href === "#request" ? (
+            <>
+              <div id="request" className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-white/70">
+                    Organisation (optional)
+                  </label>
+                  <input
+                    value={org}
+                    onChange={(e) => setOrg(e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
+                    placeholder="e.g. UBS, Julius Baer, Family Office, etc."
+                  />
+                </div>
 
-            <div>
-              <label className="block text-xs font-medium text-white/70">
-                Message (optional)
-              </label>
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="mt-1 min-h-[90px] w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
-                placeholder="Brief context (market, coverage, reason for access)…"
-              />
-            </div>
+                <div>
+                  <label className="block text-xs font-medium text-white/70">
+                    Message (optional)
+                  </label>
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="mt-1 min-h-[90px] w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
+                    placeholder="Brief context (market, coverage, reason for access)…"
+                  />
+                </div>
 
-            <div className="flex flex-wrap gap-3 pt-1">
-              <button
-                type="button"
-                onClick={submitRequest}
-                disabled={submitting}
-                className="rounded-full bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60"
-              >
-                {submitting ? "Sending…" : "Request access"}
-              </button>
+                <button
+                  type="button"
+                  onClick={submitRequest}
+                  disabled={submitting}
+                  className="rounded-full bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60"
+                >
+                  {submitting ? "Sending…" : "Request access"}
+                </button>
 
-              {/* ✅ If they need to authenticate first, this takes them to auth with the correct return path */}
-              <PrimaryButton href={authHref}>Request link</PrimaryButton>
-
-              <PrimaryButton href="/en/contact">Discuss confidentially</PrimaryButton>
-            </div>
-
-            <p className="text-[11px] text-white/50">
-              Important: all confirmations are sent from recruiter@execpartners.ch.
-            </p>
-          </div>
-        ) : (
-          <div className="mt-5">
-            {/* ✅ continue should go to the correct tool page */}
-            <PrimaryButton href={nextPath}>Continue to tool</PrimaryButton>
-          </div>
-        )}
+                <p className="text-[11px] text-white/50">
+                  Confirmations are sent from recruiter@execpartners.ch.
+                </p>
+              </div>
+            </>
+          ) : (
+            <PrimaryButton href={primary.href}>
+              {primary.label}
+            </PrimaryButton>
+          )}
+        </div>
       </div>
     </div>
   );
-}
+}code 

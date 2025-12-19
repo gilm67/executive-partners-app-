@@ -50,6 +50,7 @@ export default async function PortabilityPage() {
     .limit(1)
     .maybeSingle();
 
+  // ✅ if query fails OR no row yet => pending
   const status: Status = error ? "pending" : normalizeStatus(data?.status);
 
   if (status !== "approved") {
@@ -61,6 +62,7 @@ export default async function PortabilityPage() {
           description="Request access to unlock the full diagnostic."
           status={status}
           requestId={data?.id ?? null}
+          refreshHref="/en/portability"
         />
       </GateShell>
     );
