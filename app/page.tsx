@@ -1,10 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
+import HomeClient from "./(marketing)/HomeClient";
+import type { ReactNode } from "react";
+import { ArrowRight, Sparkles, Calculator } from "lucide-react";
 
 /* Public assets */
 const HERO = "/hero-skyline-hq.jpg";
-const LADY = "/candidate-eurasian.jpg";
-const MAN = "/manager-portrait.jpg";
 
 export const dynamic = "force-static";
 export const revalidate = false;
@@ -12,7 +13,7 @@ export const revalidate = false;
 export default function HomePage() {
   return (
     <main className="relative min-h-screen body-grain text-white">
-      {/* ===== HERO (taller so KPI can overlap near bottom) ===== */}
+      {/* ===== HERO ===== */}
       <section className="relative overflow-hidden">
         <div className="relative h-[72vh] min-h-[560px] w-full">
           <Image
@@ -29,22 +30,21 @@ export default function HomePage() {
           />
 
           <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4">
-            {/* === Dark glass overlay for title === */}
             <div className="max-w-3xl rounded-xl bg-black/45 px-6 py-5 text-center backdrop-blur-sm">
-              <h1 className="font-[var(--font-playfair)] text-5xl font-semibold tracking-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] md:text-6xl">
+              <h1 className="font-[var(--font-playfair)] text-5xl font-semibold tracking-tight text-white md:text-6xl">
                 International &amp; Swiss{" "}
                 <span className="gold">Private Banking</span>
               </h1>
-              <p className="mt-4 text-base text-white/90 md:text-lg">
+              <p className="mt-4 text-white/90">
                 Executive Search &amp; Talent Advisory for HNW/UHNW banking.
                 Geneva-based, globally connected.
               </p>
             </div>
 
-            <div className="mt-8 flex justify-center">
+            <div className="mt-8">
               <Link
                 href="/apply"
-                className="btn-primary btn-xl text-center rounded-full px-8 shadow-lg shadow-black/40"
+                className="btn-primary btn-xl rounded-full px-8 shadow-lg"
               >
                 Apply Confidentially
               </Link>
@@ -52,10 +52,10 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ===== KPI BAR — WHITE, placed near bottom of skyline ===== */}
+        {/* KPI BAR */}
         <div className="relative mx-auto -mt-20 max-w-6xl px-4 pb-6">
-          <div className="rounded-2xl border border-black/10 bg-white text-[#0B0E13] shadow-xl">
-            <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-3 md:p-6">
+          <div className="rounded-2xl bg-white text-[#0B0E13] shadow-xl">
+            <div className="grid gap-4 p-6 md:grid-cols-3">
               <KpiCard
                 title="Placements"
                 value="200+"
@@ -74,209 +74,19 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
 
-      {/* ===== SEO COPY: EXECUTIVE SEARCH EXPLAINER ===== */}
-      <section className="container-max mt-10 px-4">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-sm">
-          <h2 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
-            Executive search for Private Banking &amp; Wealth Management
-          </h2>
-          <p className="mt-3 text-sm text-white/75 md:text-[0.95rem]">
-            Executive Partners is a Geneva-based{" "}
-            <span className="font-semibold">
-              executive search boutique focused exclusively on Private Banking
-              &amp; Wealth Management
-            </span>
-            . We advise and place Senior Relationship Managers, Team Heads and
-            Market Leaders across{" "}
-            <Link
-              href="/en/markets"
-              className="underline decoration-[#D4AF37]/70 underline-offset-4 hover:text-[#F5D778]"
-            >
-              the main global booking centres
-            </Link>
-            , with a constant emphasis on proven AUM portability, revenue
-            quality and compliance.
-          </p>
-
-          <p className="mt-3 text-sm text-white/75 md:text-[0.95rem]">
-            For{" "}
-            <Link
-              href="/candidates"
-              className="underline decoration-[#D4AF37]/70 underline-offset-4 hover:text-[#F5D778]"
-            >
-              senior Private Bankers
-            </Link>
-            , we provide discreet career advice, compensation calibration and
-            business-plan support before any move is initiated. For{" "}
-            <Link
-              href="/hiring-managers"
-              className="underline decoration-[#D4AF37]/70 underline-offset-4 hover:text-[#F5D778]"
-            >
-              hiring managers and platform leaders
-            </Link>
-            , we deliver tightly curated shortlists with realistic views on
-            portability, ROA and P&amp;L contribution.
-          </p>
-
-          <p className="mt-3 text-sm text-white/75 md:text-[0.95rem]">
-            Our weekly{" "}
-            <Link
-              href="/insights"
-              className="underline decoration-[#D4AF37]/70 underline-offset-4 hover:text-[#F5D778]"
-            >
-              Private Wealth Pulse insights
-            </Link>{" "}
-            track restructuring, hiring trends and bonus dynamics across Swiss
-            and international banks. This market intelligence feeds directly
-            into the mandates we run and the guidance we provide to both
-            candidates and clients.
-          </p>
+        {/* ===== STRATEGIC GATEWAY PANEL (TOOLS ONLY) ===== */}
+        <div className="relative mx-auto -mt-6 max-w-6xl px-4 pb-10">
+          <GatewayPanel />
         </div>
       </section>
 
-      {/* ===== BEAUTIFIED + CENTERED: SEO internal links block for private banker jobs ===== */}
-      <section className="container-max mt-12 px-4">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-black/40 p-8 shadow-2xl backdrop-blur-sm">
-          {/* HEADER */}
-          <div className="flex flex-col items-center text-center">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white/60">
-              Private Banker Hubs
-            </p>
+      {/* ===== SEO COPY + HUBS (KEEP YOUR ORIGINAL BLOCKS HERE) ===== */}
+      {/* IMPORTANT: paste your existing SEO COPY section + HUB CHIPS section here unchanged */}
 
-            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white md:text-3xl">
-              Explore confidential opportunities in key booking centres
-            </h2>
-
-            <p className="mt-3 max-w-2xl text-sm text-white/75 md:text-base">
-              Start from the hub where your franchise is strongest. We focus on
-              senior RMs, Team Leads and Market Heads with portable,
-              well-documented revenue.
-            </p>
-
-            <div className="mt-5">
-              <Link
-                href="/en/private-banker-jobs"
-                className="inline-flex items-center rounded-full bg-gradient-to-r from-[#D4AF37] to-[#f5d778] px-6 py-2.5 text-sm font-semibold text-black shadow-lg shadow-black/40 transition hover:brightness-110"
-              >
-                View all Private Banker hubs →
-              </Link>
-            </div>
-          </div>
-
-          {/* HUB CHIPS */}
-          <div className="mt-8 flex flex-wrap justify-center gap-3 text-xs md:text-sm">
-            <HubChip
-              href="/en/private-banker-jobs/geneva"
-              label="Geneva · Switzerland"
-            />
-            <HubChip
-              href="/en/private-banker-jobs/zurich"
-              label="Zurich · Switzerland"
-            />
-            <HubChip
-              href="/en/private-banker-jobs/london"
-              label="London · UK"
-            />
-            <HubChip href="/en/private-banker-jobs/dubai" label="Dubai · UAE" />
-            <HubChip
-              href="/en/private-banker-jobs/singapore"
-              label="Singapore"
-            />
-            <HubChip
-              href="/en/private-banker-jobs/hong-kong"
-              label="Hong Kong"
-            />
-            <HubChip
-              href="/en/private-banker-jobs/new-york"
-              label="New York · US"
-            />
-            <HubChip href="/en/private-banker-jobs/miami" label="Miami · US" />
-            <HubChip
-              href="/en/private-banker-jobs/paris"
-              label="Paris · France"
-            />
-            <HubChip
-              href="/en/private-banker-jobs/milan"
-              label="Milan · Italy"
-            />
-            <HubChip
-              href="/en/private-banker-jobs/madrid"
-              label="Madrid · Spain"
-            />
-            <HubChip
-              href="/en/private-banker-jobs/lisbon"
-              label="Lisbon · Portugal"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ===== SIDE-IMAGE FEATURE PANELS (tall portraits; faces visible) ===== */}
-      <section className="relative mx-auto mt-10 max-w-6xl space-y-6 px-4">
-        <FeaturePanel
-          imageSrc={LADY}
-          imageAlt="Eurasian private banker reviewing a client portfolio in a Geneva office"
-          title="For Candidates"
-          copy="Advance your career with discreet, tailored search. Explore live mandates and roles that match your market, seniority and portability."
-          primary={{ href: "/jobs", label: "Explore Opportunities" }}
-          secondary={{ href: "/candidates", label: "Candidate Hub" }}
-          imageLeft
-        />
-        <FeaturePanel
-          imageSrc={MAN}
-          imageAlt="Private banking hiring manager reviewing senior RM shortlists"
-          title="For Hiring Managers"
-          copy="Market mapping, calibrated outreach and vetted shortlists with real portability. Brief a new role or ask us to approach specific bankers."
-          primary={{ href: "/hiring-managers", label: "Find Top Talent" }}
-          secondary={{ href: "/contact", label: "Talk to Us" }}
-        />
-      </section>
-
-      {/* ===== DUE-DILIGENCE TOOLS (Portability + BP Simulator) ===== */}
-      <section className="container-max mt-14 px-4 pb-16">
-        <h2 className="text-center text-3xl font-semibold">
-          Due-Diligence Tools
-        </h2>
-        <p className="mx-auto mt-2 max-w-3xl text-center text-white/75">
-          Validate portability and strengthen approvals before you move.
-        </p>
-
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
-          <ToolCard
-            title="Portability Score™"
-            bullets={[
-              "Estimate AUM portability",
-              "Flag risks early",
-              "Evidence pack for approvals",
-            ]}
-            primary={{ href: "/portability-score", label: "Calculate Score" }}
-          />
-          <ToolCard
-            title="Business Plan Simulator"
-            bullets={[
-              "Model revenue scenarios",
-              "Document assumptions",
-              "Export for review",
-            ]}
-            primary={{ href: "/bp-simulator", label: "Run Simulation" }}
-          />
-        </div>
-      </section>
+      {/* 🔥 NEW MODERN FLOW */}
+      <HomeClient />
     </main>
-  );
-}
-
-/* ===== Small hub chip component ===== */
-function HubChip({ href, label }: { href: string; label: string }) {
-  return (
-    <Link
-      href={href}
-      className="inline-flex items-center rounded-full bg-white/5 px-3 py-1.5 text-neutral-100 ring-1 ring-white/10 transition hover:bg-[#D4AF37] hover:text-black hover:ring-[#D4AF37]"
-    >
-      {label}
-    </Link>
   );
 }
 
@@ -306,92 +116,128 @@ function KpiCard({
   );
 }
 
-function FeaturePanel({
-  imageSrc,
-  imageAlt,
-  title,
-  copy,
-  primary,
-  secondary,
-  imageLeft = false,
-}: {
-  imageSrc: string;
-  imageAlt: string;
-  title: string;
-  copy: string;
-  primary: { href: string; label: string };
-  secondary: { href: string; label: string };
-  imageLeft?: boolean;
-}) {
+/* ===== Strategic Gateway Panel (2 CTAs only, luxe) ===== */
+
+function GatewayPanel() {
   return (
-    <article className="grid overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur md:grid-cols-2">
-      {/* IMAGE SIDE — taller and focused higher to hide bottom triangle */}
-      <div className={imageLeft ? "order-1" : "order-2"}>
-        <div className="relative h-[460px] w-full md:h-[520px]">
-          <Image
-            src={imageSrc}
-            alt={imageAlt}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover object-[50%_15%] md:object-[50%_22%]"
-            priority
-          />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(900px_220px_at_90%_0%,rgba(158,203,255,.18),transparent_60%)]" />
-        </div>
+    <section
+      aria-label="Primary tools"
+      className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0B0F1A]/72 p-4 backdrop-blur-xl shadow-[0_26px_90px_rgba(0,0,0,.55)]"
+    >
+      {/* subtle luxe glow */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-3xl"
+        style={{
+          background:
+            "radial-gradient(900px 260px at 18% 0%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 60%), radial-gradient(900px 260px at 92% 25%, rgba(158,203,255,.16) 0%, rgba(158,203,255,0) 55%), linear-gradient(to bottom, rgba(255,255,255,.06), rgba(0,0,0,0))",
+        }}
+      />
+
+      <div className="relative grid gap-4 md:grid-cols-2">
+        {/* Primary */}
+        <ActionCard
+          href="/portability"
+          icon={<Sparkles className="h-5 w-5" />}
+          eyebrow="Signature tool"
+          title="Calculate Portability Score™"
+          desc="Estimate realistic AUM transfer potential before you move."
+          variant="gold"
+        />
+
+        {/* Secondary */}
+        <ActionCard
+          href="/bp-simulator"
+          icon={<Calculator className="h-5 w-5" />}
+          eyebrow="Approval tool"
+          title="Business Plan Simulator"
+          desc="Model revenue, break-even timeline and approval readiness."
+          variant="ice"
+        />
       </div>
 
-      {/* CONTENT SIDE */}
-      <div className={imageLeft ? "order-2" : "order-1"}>
-        <div className="flex h-full flex-col justify-center gap-4 p-6 md:p-10">
-          <h3 className="text-2xl font-semibold">{title}</h3>
-          <p className="text-white/85">{copy}</p>
-          <div className="mt-2 flex flex-wrap gap-3">
-            <Link
-              href={primary.href}
-              className="btn-primary rounded-full px-6 py-2.5 text-sm font-semibold shadow-lg shadow-black/30"
-            >
-              {primary.label}
-            </Link>
-            <Link
-              href={secondary.href}
-              className="btn-ghost rounded-full px-6 py-2.5 text-sm font-semibold text-white/90 ring-1 ring-white/15 bg-white/5 hover:bg-white/10"
-            >
-              {secondary.label}
-            </Link>
-          </div>
-        </div>
+      <div className="relative px-2 pt-4 text-center">
+        <span className="text-xs text-white/55">
+          Private access • Discreet usage • Built for senior private banking moves
+        </span>
       </div>
-    </article>
+    </section>
   );
 }
 
-function ToolCard({
+function ActionCard({
+  href,
+  icon,
+  eyebrow,
   title,
-  bullets,
-  primary,
+  desc,
+  variant = "gold",
 }: {
+  href: string;
+  icon: ReactNode;
+  eyebrow: string;
   title: string;
-  bullets: string[];
-  primary: { href: string; label: string };
+  desc: string;
+  variant?: "gold" | "ice";
 }) {
+  const styles =
+    variant === "gold"
+      ? "border-[#D4AF37]/28 bg-gradient-to-b from-[#D4AF37]/12 to-white/[0.03] hover:border-[#F5D778]/45"
+      : "border-[#9ECBFF]/26 bg-gradient-to-b from-[#9ECBFF]/12 to-white/[0.03] hover:border-[#CFE6FF]/45";
+
+  const iconWrap =
+    variant === "gold"
+      ? "bg-[#D4AF37]/16 ring-1 ring-[#F5D778]/28 text-[#F5D778]"
+      : "bg-[#9ECBFF]/16 ring-1 ring-[#CFE6FF]/26 text-[#CFE6FF]";
+
+  const ctaText = variant === "gold" ? "Open" : "Open";
+
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur">
-      <h3 className="text-xl font-semibold">{title}</h3>
-      <ul className="mt-3 space-y-1 text-white/80">
-        {bullets.map((b) => (
-          <li key={b} className="list-disc pl-5">
-            {b}
-          </li>
-        ))}
-      </ul>
-      <div className="mt-5">
-        <Link
-          href={primary.href}
-          className="btn-primary rounded-full px-6 py-2.5 text-sm font-semibold shadow-lg shadow-black/30"
+    <Link
+      href={href}
+      className={[
+        "group relative overflow-hidden rounded-2xl border p-6 backdrop-blur-md transition",
+        "shadow-[0_18px_55px_rgba(0,0,0,.45)] hover:shadow-[0_26px_78px_rgba(0,0,0,.60)]",
+        styles,
+      ].join(" ")}
+    >
+      {/* micro highlight */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100"
+        style={{
+          background:
+            "radial-gradient(650px 260px at 22% 0%, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 60%)",
+        }}
+      />
+
+      <div className="relative flex items-start gap-4">
+        <div
+          className={[
+            "h-11 w-11 rounded-xl grid place-items-center",
+            iconWrap,
+          ].join(" ")}
         >
-          {primary.label}
-        </Link>
+          {icon}
+        </div>
+
+        <div className="min-w-0">
+          <div className="text-[11px] uppercase tracking-[0.22em] text-white/65">
+            {eyebrow}
+          </div>
+
+          <div className="mt-1 font-[var(--font-playfair)] text-2xl leading-tight text-white">
+            {title}
+          </div>
+
+          <div className="mt-2 text-sm text-white/75">{desc}</div>
+
+          <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white/90">
+            {ctaText}
+            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+          </div>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }

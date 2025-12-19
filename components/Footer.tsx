@@ -1,116 +1,140 @@
-'use client';
-
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+// components/Footer.tsx
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 export default function Footer() {
-  const pathname = usePathname();
-  const base = pathname?.startsWith('/en') ? '/en' : '';
-
-  const markets = [
-    { label: 'Geneva', href: '/private-banking-recruiter-geneva' },
-    { label: 'Zurich', href: '/private-banking-recruiter-zurich' },
-    { label: 'Paris', href: '/private-banking-recruiter-paris' },
-    { label: 'Madrid', href: '/private-banking-recruiter-madrid' },
-    { label: 'Lisbon', href: '/private-banking-recruiter-lisbon' },
-    { label: 'Dubai', href: '/private-banking-recruiter-dubai' },
-    { label: 'Singapore', href: '/private-banking-recruiter-singapore' },
-    { label: 'Hong Kong', href: '/private-banking-recruiter-hong-kong' },
-    { label: 'London', href: '/private-banking-recruiter-london' },
-    { label: 'New York', href: '/private-banking-recruiter-new-york' },
-    { label: 'Miami', href: '/private-banking-recruiter-miami' },
-  ];
-
   return (
-    <footer className="mt-20 border-t border-white/10 bg-[#0B0E13] text-white">
-      <div className="mx-auto w-full max-w-6xl px-4 py-10">
-        <div className="grid gap-10 md:grid-cols-3">
-          {/* Col 1 */}
+    <footer className="relative border-t border-white/10 bg-[#070A10] text-white">
+      {/* Subtle luxe glow */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(900px 380px at 18% 0%, rgba(201,161,74,.14) 0%, rgba(201,161,74,0) 62%), radial-gradient(800px 340px at 92% 20%, rgba(158,203,255,.10) 0%, rgba(158,203,255,0) 55%)",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+        {/* Top grid */}
+        <div className="grid gap-10 md:grid-cols-4">
+          {/* Brand */}
           <div>
-            <h3 className="text-sm font-semibold">Executive Partners</h3>
-            <p className="mt-2 text-sm text-white/70">
-              Geneva-based executive search focused on Private Banking &amp; Wealth Management.
+            <div className="text-lg font-semibold tracking-tight">
+              Executive Partners
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-white/70">
+              Geneva-based executive search for{" "}
+              <span className="text-white/85">Private Banking</span> &{" "}
+              <span className="text-white/85">Wealth Management</span>.
             </p>
+
+            <Link
+              href="/contact"
+              className="mt-6 inline-flex items-center rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/10 hover:bg-white/10 transition"
+            >
+              Speak with us <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </div>
 
-          {/* Col 2 (Markets + Company) */}
-          <div className="grid grid-cols-2 gap-8 md:col-span-2 md:grid-cols-3">
-            {/* Markets */}
-            <div>
-              <h4 className="text-sm font-semibold">Markets we serve</h4>
-              <ul className="mt-2 space-y-1 text-sm text-white/80">
-                {markets.map((m) => (
-                  <li key={m.href}>
-                    <Link href={`${base}${m.href}`} className="hover:text-white">
-                      {m.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-3">
-                <Link
-                  href={`${base}/markets`}
-                  className="text-white/80 hover:text-white"
-                >
-                  View all markets →
+          {/* For Candidates */}
+          <div>
+            <h4 className="text-sm font-semibold tracking-wide text-white">
+              For Candidates
+            </h4>
+            <ul className="mt-4 space-y-3 text-sm text-white/70">
+              <li>
+                <Link href="/jobs" className="hover:text-white transition">
+                  Browse Jobs
                 </Link>
-              </div>
-            </div>
+              </li>
+              <li>
+                <Link href="/candidates" className="hover:text-white transition">
+                  Career Guidance
+                </Link>
+              </li>
+              <li>
+                <Link href="/portability" className="hover:text-white transition">
+                  Tools
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-            {/* Spacer */}
-            <div className="hidden md:block" aria-hidden />
+          {/* For Employers */}
+          <div>
+            <h4 className="text-sm font-semibold tracking-wide text-white">
+              For Employers
+            </h4>
+            <ul className="mt-4 space-y-3 text-sm text-white/70">
+              <li>
+                <Link
+                  href="/hiring-managers/brief"
+                  className="hover:text-white transition"
+                >
+                  Brief a Role
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/hiring-managers"
+                  className="hover:text-white transition"
+                >
+                  Our Process
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="hover:text-white transition"
+                >
+                  Pricing
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-            {/* Company */}
-            <div>
-              <h4 className="text-sm font-semibold">Company</h4>
-              <ul className="mt-2 space-y-1 text-sm text-white/80">
-                <li>
-                  <Link href={`${base}/jobs`} className="hover:underline">
-                    Jobs
-                  </Link>
-                </li>
-                <li>
-                  <Link href={`${base}/insights`} className="hover:underline">
-                    Insights
-                  </Link>
-                </li>
-                <li>
-                  <Link href={`${base}/candidates`} className="hover:underline">
-                    Candidates
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={`${base}/hiring-managers`}
-                    className="hover:underline"
-                  >
-                    Hiring Managers
-                  </Link>
-                </li>
-                <li>
-                  <Link href={`${base}/contact`} className="hover:underline">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
+          {/* Company */}
+          <div>
+            <h4 className="text-sm font-semibold tracking-wide text-white">
+              Company
+            </h4>
+            <ul className="mt-4 space-y-3 text-sm text-white/70">
+              <li>
+                <Link href="/about" className="hover:text-white transition">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="/insights" className="hover:text-white transition">
+                  Insights
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-white transition">
+                  Contact
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
 
-        <hr className="my-8 border-white/10" />
+        {/* Divider */}
+        <div className="my-10 h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-        <div className="flex flex-col items-start justify-between gap-3 text-sm text-white/60 sm:flex-row sm:items-center">
-          <span>
+        {/* Bottom bar */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between text-xs text-white/55">
+          <div>
             © {new Date().getFullYear()} Executive Partners. All rights reserved.
-          </span>
-          <a
-            href="https://www.linkedin.com/company/executive-partners"
-            className="hover:text-white"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            LinkedIn
-          </a>
+          </div>
+
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <Link href="/privacy" className="hover:text-white transition">
+              GDPR Compliant
+            </Link>
+            <span className="hidden md:inline">•</span>
+            <span>Confidentiality Guaranteed</span>
+          </div>
         </div>
       </div>
     </footer>

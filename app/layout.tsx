@@ -5,6 +5,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import { Inter, Playfair_Display } from "next/font/google";
+
 import TopNav from "@/components/TopNav";
 import Footer from "@/components/Footer";
 
@@ -34,9 +35,7 @@ const CANONICAL_DOMAIN = "https://www.execpartners.ch";
  */
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  (process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : CANONICAL_DOMAIN);
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : CANONICAL_DOMAIN);
 
 const OG_IMAGE = `${SITE}/og.png`;
 
@@ -46,15 +45,8 @@ const DEFAULT_DESCRIPTION =
 
 // ----------------- GLOBAL METADATA (SEO) -----------------
 export const metadata: Metadata = {
-  /**
-   * ✅ Force canonical base to execpartners.ch
-   */
   metadataBase: new URL(CANONICAL_DOMAIN),
 
-  /**
-   * ✅ Canonical is path-based, not domain-based
-   * Next.js will resolve /about → https://www.execpartners.ch/about
-   */
   alternates: {
     canonical: "/",
   },
@@ -170,8 +162,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <TopNav />
         </header>
 
-        <main id="main">{children}</main>
+        <main id="main" className="min-h-[70vh]">
+          {children}
+        </main>
 
+        {/* Site-wide luxury footer */}
         <Footer />
 
         <Analytics />
