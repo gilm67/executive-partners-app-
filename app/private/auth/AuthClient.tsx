@@ -5,13 +5,13 @@ import { useEffect, useMemo, useState } from "react";
 /**
  * Allow ONLY internal redirects.
  * Supported:
- *  - /private/...
- *  - /en/portability
- *  - /en/bp-simulator
- *  - /en/...
+ *  - /private...
+ *  - /en/portability...
+ *  - /en/bp-simulator...
+ *  - /en...
  *
  * Default:
- *  - /en/portability  (prevents accidental landing on /private)
+ *  - /en/portability (prevents accidental landing on /private)
  */
 function safeNext(nextRaw: string | null): string {
   const DEFAULT = "/en/portability";
@@ -29,15 +29,18 @@ function safeNext(nextRaw: string | null): string {
   // normalize common variants
   if (next === "/portability") next = "/en/portability";
   if (next === "/bp-simulator") next = "/en/bp-simulator";
-  if (next === "/en/portability/") next = "/en/portability";
-  if (next === "/en/bp-simulator/") next = "/en/bp-simulator";
+
+  // normalize trailing slash (keep query/hash intact)
+  // e.g. "/en/portability/?x=1" -> "/en/portability?x=1"
+  next = next.replace(/\/(\?|#|$)/, "$1");
+
+  // If someone explicitly asks for /private, allow it
   if (next === "/private/") next = "/private";
 
-  // allowed internal areas
+  // allowed internal areas (prefix match supports querystrings)
   const allowedPrefixes = ["/private", "/en/portability", "/en/bp-simulator", "/en"];
 
-  const allowed =
-    allowedPrefixes.some((p) => next === p || next.startsWith(p + "/"));
+  const allowed = allowedPrefixes.some((p) => next === p || next.startsWith(p));
 
   return allowed ? next : DEFAULT;
 }
@@ -66,6 +69,7 @@ export default function AuthClient({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token }),
+          credentials: "include",
         });
 
         if (!res.ok) throw new Error("verify_failed");
@@ -84,6 +88,7 @@ export default function AuthClient({
     };
   }, [token, target]);
 
+  // keep the same target when requesting a new link
   const requestHref = `/private/auth/request?next=${encodeURIComponent(target)}`;
 
   return (
