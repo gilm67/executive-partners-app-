@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   CheckCircle,
@@ -21,7 +22,9 @@ export default function HomeClient() {
   const [showEmailPopup, setShowEmailPopup] = useState(false);
   const [email, setEmail] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // ✅ Use a stable key (question string) instead of index
+  const [openFaqKey, setOpenFaqKey] = useState<string | null>(null);
   const [showAllFaq, setShowAllFaq] = useState(false);
 
   const canSubmit = useMemo(() => email.trim().includes("@"), [email]);
@@ -80,86 +83,163 @@ export default function HomeClient() {
     },
   ];
 
+  // Duplicate testimonials to ensure seamless looping
+  const marqueeItems = [...testimonials, ...testimonials, ...testimonials];
+
   /**
-   * FAQ — 18 questions (luxe accordion)
-   * If you want the exact original wording from your file, paste it and I’ll swap it in 1:1.
+   * ✅ Candidate FAQ — 18 questions (corrected spelling/encoding)
    */
   const faq: FaqItem[] = [
-  {
-    q: "Do I pay any fees for your services?",
-    a: "No. Our fees are paid entirely by hiring banks. You never pay anything to work with Executive Partners. This is standard in executive recruitment across the banking sector — employers value top talent and invest accordingly.",
-  },
-  {
-    q: "How confidential is this process?",
-    a: "Completely confidential. We never contact your current employer or disclose your interest in moving to anyone without your explicit permission. Most conversations happen outside office hours and we use personal email addresses, not work emails. This reflects best practice in executive recruitment and our commitment to protecting your career.",
-  },
-  {
-    q: "I'm not actively looking but want to understand my options. Can I still talk to you?",
-    a: "Absolutely. Most of our best placements come from passive candidates — professionals who were not actively job hunting but open to the right opportunity. These hires bring stability, proven track records, and strong client relationships, which is exactly what hiring banks value. There is no obligation or risk in exploring your options.",
-  },
-  {
-    q: "How long does a typical placement take?",
-    a: "From first conversation to signed offer, the process typically takes 8–16 weeks. Timelines depend on bank approval processes, regulatory requirements, your notice period, and the complexity of your client portfolio. Senior RM moves often sit at the longer end due to deeper due diligence on AUM and client relationships.",
-  },
-  {
-    q: "Do you have roles in specific cities?",
-    a: "Yes. We work across Europe (Geneva, Zurich, London, Frankfurt, Paris, Madrid, Milano), the Middle East (Dubai, Abu Dhabi), Asia-Pacific (Singapore, Hong Kong), and the Americas (New York, Miami). If no current role matches, we keep your profile active and can also provide proactive market mapping.",
-  },
-  {
-    q: "What if my AUM isn't fully portable?",
-    a: "Most relationship managers transfer between 30% and 80% of their book. Portability depends on client composition, jurisdiction, relationship depth, and regulatory constraints. Banks understand this and structure offers accordingly. Our Portability Score helps you build realistic, credible assumptions.",
-  },
-  {
-    q: "How do you verify my AUM claims?",
-    a: "Verification is done by the hiring bank during due diligence. We prepare you for what banks will request, including anonymised client lists, portfolio statements, revenue reports, concentration analysis, and non-compete constraints, so there are no surprises during approvals.",
-  },
-  {
-    q: "What if some of my clients have compliance issues?",
-    a: "Transparency is essential. Compliance issues do not automatically disqualify a candidate, but undisclosed issues can derail offers late in the process. We help you frame risks honestly, demonstrate sound risk management, and prepare appropriate disclosures early.",
-  },
-  {
-    q: "How does your candidate vetting process work?",
-    a: "We assess your book, portability, regulatory profile, career goals, and cultural fit with target banks. If there is a genuine match with an active mandate, we manage the introduction and process. If not, we maintain the relationship for future opportunities.",
-  },
-  {
-    q: "What is your role in the hiring process?",
-    a: "We act as advisor and advocate throughout: positioning your profile, introducing you to the right banks, advising on compensation and non-compete clauses, preparing you for interviews and due diligence, and supporting closing and onboarding.",
-  },
-  {
-    q: "What if I want to stay confidential while exploring?",
-    a: "That is exactly how most candidates engage with us. No work emails, no LinkedIn outreach, no employer contact without written permission. We manage introductions discreetly and can position you as a passive candidate approached by the bank.",
-  },
-  {
-    q: "What kind of compensation should I expect?",
-    a: "Compensation depends on geography, bank type, seniority, and revenue generation. Switzerland, the UK, and the Middle East generally offer higher packages than continental Europe. We provide realistic benchmarks and negotiate on your behalf.",
-  },
-  {
-    q: "Are there roles for different experience levels?",
-    a: "Yes. We work with experienced RMs (7+ years), rising talents (3–7 years), and professionals relocating geographically. Most mandates are senior, but we are transparent about what is realistic for each profile.",
-  },
-  {
-    q: "What happens after I sign an offer?",
-    a: "We stay involved through regulatory approvals, notice period management, client transition planning, and your first 90 days at the new bank. Early execution often determines long-term success.",
-  },
-  {
-    q: "What if the placement doesn't work out?",
-    a: "This is rare, but if it happens, we help analyse the situation and support your next step. Long-term retention matters more than short-term placements in private banking.",
-  },
-  {
-    q: "How do I get started?",
-    a: "Send us your LinkedIn profile or a short CV. We will schedule a confidential discussion to understand your background, assess current mandates, and advise honestly on next steps. There is no obligation.",
-  },
-  {
-    q: "How long before you contact me with opportunities?",
-    a: "If there is a strong match, typically within 2–4 weeks. Otherwise, your profile remains active and we reach out when market demand aligns. Private banking recruitment is cyclical, and timing matters.",
-  },
-  {
-    q: "Is there any cost to work with you?",
-    a: "No. Hiring banks pay all fees. Your only investment is time spent in confidential discussions with us and potential employers.",
-  },
-];
+    {
+      q: "Do I pay any fees for your services?",
+      a: "No. Our fees are paid entirely by hiring banks. You never pay anything to work with Executive Partners. This is standard in executive recruitment across the banking sector — employers value top talent and invest accordingly.",
+    },
+    {
+      q: "How confidential is this process?",
+      a: "Completely confidential. We never contact your current employer or disclose your interest in moving to anyone without your explicit permission. Most conversations happen outside office hours and we use personal email addresses, not work emails. This reflects best practice in executive recruitment and our commitment to protecting your career.",
+    },
+    {
+      q: "I'm not actively looking but want to understand my options. Can I still talk to you?",
+      a: "Absolutely. Most of our best placements come from passive candidates — professionals who were not actively job hunting but open to the right opportunity. These hires bring stability, proven track records, and strong client relationships, which is exactly what hiring banks value. There is no obligation or risk in exploring your options.",
+    },
+    {
+      q: "How long does a typical placement take?",
+      a: "From first conversation to signed offer, the process typically takes 8–16 weeks. Timelines depend on bank approval processes, regulatory requirements, your notice period, and the complexity of your client portfolio. Senior RM moves often sit at the longer end due to deeper due diligence on AUM and client relationships.",
+    },
+    {
+      q: "Do you have roles in specific cities?",
+      a: "Yes. We work across Europe (Geneva, Zurich, London, Frankfurt, Paris, Madrid, Milan), the Middle East (Dubai, Abu Dhabi), Asia-Pacific (Singapore, Hong Kong), and the Americas (New York, Miami). If no current role matches, we keep your profile active and can also provide proactive market mapping.",
+    },
+    {
+      q: "What if my AUM isn't fully portable?",
+      a: "Most relationship managers transfer between 30% and 80% of their book. Portability depends on client composition, jurisdiction, relationship depth, and regulatory constraints. Banks understand this and structure offers accordingly. Our Portability Score helps you build realistic, credible assumptions.",
+    },
+    {
+      q: "How do you verify my AUM claims?",
+      a: "Verification is done by the hiring bank during due diligence. We prepare you for what banks will request, including anonymized client lists, portfolio statements, revenue reports, concentration analysis, and non-compete constraints, so there are no surprises during approvals.",
+    },
+    {
+      q: "What if some of my clients have compliance issues?",
+      a: "Transparency is essential. Compliance issues do not automatically disqualify a candidate, but undisclosed issues can derail offers late in the process. We help you frame risks honestly, demonstrate sound risk management, and prepare appropriate disclosures early.",
+    },
+    {
+      q: "How does your candidate vetting process work?",
+      a: "We assess your book, portability, regulatory profile, career goals, and cultural fit with target banks. If there is a genuine match with an active mandate, we manage the introduction and process. If not, we maintain the relationship for future opportunities.",
+    },
+    {
+      q: "What is your role in the hiring process?",
+      a: "We act as advisor and advocate throughout: positioning your profile, introducing you to the right banks, advising on compensation and non-compete clauses, preparing you for interviews and due diligence, and supporting closing and onboarding.",
+    },
+    {
+      q: "What if I want to stay confidential while exploring?",
+      a: "That is exactly how most candidates engage with us. No work emails, no LinkedIn outreach, no employer contact without written permission. We manage introductions discreetly and can position you as a passive candidate approached by the bank.",
+    },
+    {
+      q: "What kind of compensation should I expect?",
+      a: "Compensation depends on geography, bank type, seniority, and revenue generation. Switzerland, the UK, and the Middle East generally offer higher packages than continental Europe. We provide realistic benchmarks and negotiate on your behalf.",
+    },
+    {
+      q: "Are there roles for different experience levels?",
+      a: "Yes. We work with experienced RMs (7+ years), rising talents (3–7 years), and professionals relocating geographically. Most mandates are senior, but we are transparent about what is realistic for each profile.",
+    },
+    {
+      q: "What happens after I sign an offer?",
+      a: "We stay involved through regulatory approvals, notice period management, client transition planning, and your first 90 days at the new bank. Early execution often determines long-term success.",
+    },
+    {
+      q: "What if the placement doesn't work out?",
+      a: "This is rare, but if it happens, we help analyze the situation and support your next step. Long-term retention matters more than short-term placements in private banking.",
+    },
+    {
+      q: "How do I get started?",
+      a: "Send us your LinkedIn profile or a short CV. We will schedule a confidential discussion to understand your background, assess current mandates, and advise honestly on next steps. There is no obligation.",
+    },
+    {
+      q: "How long before you contact me with opportunities?",
+      a: "If there is a strong match, typically within 2–4 weeks. Otherwise, your profile remains active and we reach out when market demand aligns. Private banking recruitment is cyclical, and timing matters.",
+    },
+    {
+      q: "Is there any cost to work with you?",
+      a: "No. Hiring banks pay all fees. Your only investment is time spent in confidential discussions with us and potential employers.",
+    },
+  ];
 
   const visibleFaq = showAllFaq ? faq : faq.slice(0, 8);
+
+  // ✅ Reusable value card (used for mobile carousel + desktop grid)
+  const ValueCard = ({
+    imageSrc,
+    accent,
+    icon,
+    title,
+    items,
+    href,
+    cta,
+    radial,
+    buttonVariant = "gold",
+  }: {
+    imageSrc: string;
+    accent: "gold" | "blue";
+    icon: React.ReactNode;
+    title: string;
+    items: string[];
+    href: string;
+    cta: string;
+    radial: string;
+    buttonVariant?: "gold" | "white";
+  }) => (
+    <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.05] p-6 sm:p-8 backdrop-blur shadow-[0_18px_55px_rgba(0,0,0,.45)] transition hover:bg-white/[0.07] min-h-[320px] sm:min-h-0">
+      <div className="pointer-events-none absolute inset-0">
+        <Image
+          src={imageSrc}
+          alt=""
+          fill
+          sizes="(max-width: 768px) 92vw, 50vw"
+          className="object-cover opacity-[0.26] scale-[1.03] transition duration-700 group-hover:scale-[1.06]"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/45 to-black/75" />
+        <div className={`absolute inset-0 ${radial}`} />
+      </div>
+
+      <div className="relative">
+        <div className="flex items-center gap-3">
+          <div
+            className={`h-10 w-10 rounded-xl flex items-center justify-center ring-1 ${
+              accent === "gold"
+                ? "bg-[#C9A14A]/15 ring-[#C9A14A]/35"
+                : "bg-[#9ECBFF]/15 ring-[#9ECBFF]/30"
+            }`}
+          >
+            {icon}
+          </div>
+          <h3 className="text-lg sm:text-xl font-semibold">{title}</h3>
+        </div>
+
+        <ul className="mt-5 space-y-2 text-sm text-white/85">
+          {items.map((txt) => (
+            <li key={txt} className="flex items-start gap-2">
+              <CheckCircle className="mt-0.5 h-4 w-4 text-emerald-300" />
+              {txt}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-7">
+          <Link
+            href={href}
+            className={
+              buttonVariant === "gold"
+                ? "inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F5D778] px-6 py-3.5 sm:py-3 text-black font-semibold shadow-lg shadow-black/40 hover:brightness-110 transition"
+                : "inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-3.5 sm:py-3 text-black font-semibold shadow-lg shadow-black/30 hover:bg-gray-100 transition"
+            }
+          >
+            {cta} <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="relative text-white">
@@ -191,79 +271,98 @@ export default function HomeClient() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Candidates */}
-            <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-8 backdrop-blur shadow-[0_18px_55px_rgba(0,0,0,.45)]">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-[#C9A14A]/15 ring-1 ring-[#C9A14A]/35 flex items-center justify-center">
-                  <Users className="h-5 w-5 text-[#F5D778]" />
+          {/* MOBILE: swipeable carousel */}
+          <div className="md:hidden">
+            <div className="relative">
+              <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 [-webkit-overflow-scrolling:touch] scrollbar-hide">
+                <div className="snap-center shrink-0 w-[92%]">
+                  <ValueCard
+                    imageSrc="/home/candidates.jpg"
+                    accent="gold"
+                    icon={<Users className="h-5 w-5 text-[#F5D778]" />}
+                    title="For Private Bankers"
+                    items={[
+                      "Discreet market calibration",
+                      "Portability & business plan review",
+                      "Negotiation & onboarding support",
+                    ]}
+                    href="/jobs"
+                    cta="Explore Opportunities"
+                    radial="bg-[radial-gradient(800px_360px_at_20%_20%,rgba(212,175,55,.18),transparent_60%)]"
+                    buttonVariant="gold"
+                  />
                 </div>
-                <h3 className="text-xl font-semibold">For Private Bankers</h3>
+
+                <div className="snap-center shrink-0 w-[92%]">
+                  <ValueCard
+                    imageSrc="/home/hiring-managers.jpg"
+                    accent="blue"
+                    icon={<TrendingUp className="h-5 w-5 text-[#DDEFFF]" />}
+                    title="For Hiring Managers"
+                    items={[
+                      "Senior banker mapping",
+                      "Verified portability logic",
+                      "Clean compliance profiles",
+                    ]}
+                    href="/hiring-managers"
+                    cta="Brief a Role"
+                    radial="bg-[radial-gradient(900px_380px_at_80%_20%,rgba(158,203,255,.16),transparent_60%)]"
+                    buttonVariant="white"
+                  />
+                </div>
               </div>
 
-              <ul className="mt-5 space-y-2 text-sm text-white/85">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="mt-0.5 h-4 w-4 text-emerald-300" />
-                  Discreet market calibration
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="mt-0.5 h-4 w-4 text-emerald-300" />
-                  Portability &amp; business plan review
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="mt-0.5 h-4 w-4 text-emerald-300" />
-                  Negotiation &amp; onboarding support
-                </li>
-              </ul>
+              {/* swipe hint */}
+              <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-white/70 backdrop-blur">
+                Swipe →
+              </div>
 
-              <div className="mt-7">
-                <Link
-                  href="/jobs"
-                  className="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F5D778] px-6 py-3 text-black font-semibold shadow-lg shadow-black/40 hover:brightness-110 transition"
-                >
-                  Explore Opportunities <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+              {/* dots (simple visual cue) */}
+              <div className="mt-2 flex justify-center gap-2">
+                <span className="h-1.5 w-6 rounded-full bg-white/30" />
+                <span className="h-1.5 w-6 rounded-full bg-white/10" />
               </div>
             </div>
+          </div>
 
-            {/* Hiring Managers */}
-            <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-8 backdrop-blur shadow-[0_18px_55px_rgba(0,0,0,.45)]">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-[#9ECBFF]/15 ring-1 ring-[#9ECBFF]/30 flex items-center justify-center">
-                  <TrendingUp className="h-5 w-5 text-[#DDEFFF]" />
-                </div>
-                <h3 className="text-xl font-semibold">For Hiring Managers</h3>
-              </div>
+          {/* DESKTOP: keep grid */}
+          <div className="hidden md:grid md:grid-cols-2 gap-6">
+            <ValueCard
+              imageSrc="/home/candidates.jpg"
+              accent="gold"
+              icon={<Users className="h-5 w-5 text-[#F5D778]" />}
+              title="For Private Bankers"
+              items={[
+                "Discreet market calibration",
+                "Portability & business plan review",
+                "Negotiation & onboarding support",
+              ]}
+              href="/jobs"
+              cta="Explore Opportunities"
+              radial="bg-[radial-gradient(800px_360px_at_20%_20%,rgba(212,175,55,.18),transparent_60%)]"
+              buttonVariant="gold"
+            />
 
-              <ul className="mt-5 space-y-2 text-sm text-white/85">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="mt-0.5 h-4 w-4 text-emerald-300" />
-                  Senior banker mapping
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="mt-0.5 h-4 w-4 text-emerald-300" />
-                  Verified portability logic
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="mt-0.5 h-4 w-4 text-emerald-300" />
-                  Clean compliance profiles
-                </li>
-              </ul>
-
-              <div className="mt-7">
-                <Link
-                  href="/hiring-managers"
-                  className="inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-3 text-black font-semibold shadow-lg shadow-black/30 hover:bg-gray-100 transition"
-                >
-                  Brief a Role <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </div>
-            </div>
+            <ValueCard
+              imageSrc="/home/hiring-managers.jpg"
+              accent="blue"
+              icon={<TrendingUp className="h-5 w-5 text-[#DDEFFF]" />}
+              title="For Hiring Managers"
+              items={[
+                "Senior banker mapping",
+                "Verified portability logic",
+                "Clean compliance profiles",
+              ]}
+              href="/hiring-managers"
+              cta="Brief a Role"
+              radial="bg-[radial-gradient(900px_380px_at_80%_20%,rgba(158,203,255,.16),transparent_60%)]"
+              buttonVariant="white"
+            />
           </div>
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
+      {/* TESTIMONIALS (AUTO-SCROLL / INFINITE) */}
       <section className="py-14 border-y border-white/10 bg-black/20">
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex items-end justify-between flex-wrap gap-6 mb-8">
@@ -286,23 +385,48 @@ export default function HomeClient() {
             </Link>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <div
-                key={i}
-                className="rounded-2xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur shadow-[0_14px_40px_rgba(0,0,0,.35)]"
-              >
-                <Quote className="h-4 w-4 text-[#F5D778]" />
-                <p className="mt-3 text-sm text-white/85 leading-relaxed">
-                  “{t.quote}”
-                </p>
-                <div className="mt-4 border-t border-white/10 pt-3">
-                  <div className="text-sm font-semibold">{t.meta}</div>
-                  <div className="text-xs text-emerald-300 mt-1">✓ {t.result}</div>
-                </div>
+          {/* marquee */}
+          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md">
+            {/* edge fades */}
+            <div className="pointer-events-none absolute left-0 top-0 h-full w-20 bg-gradient-to-r from-black/40 to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-black/40 to-transparent" />
+
+            <div className="group py-6">
+              <div className="flex w-max gap-5 pr-5 animate-[marquee_28s_linear_infinite] group-hover:[animation-play-state:paused]">
+                {marqueeItems.map((t, i) => (
+                  <div
+                    key={`${t.meta}-${i}`}
+                    className="w-[320px] sm:w-[360px] rounded-2xl border border-white/10 bg-white/[0.06] p-6 backdrop-blur shadow-[0_14px_40px_rgba(0,0,0,.35)]"
+                  >
+                    <Quote className="h-4 w-4 text-[#F5D778]" />
+                    <p className="mt-3 text-sm text-white/85 leading-relaxed">
+                      “{t.quote}”
+                    </p>
+                    <div className="mt-4 border-t border-white/10 pt-3">
+                      <div className="text-sm font-semibold">{t.meta}</div>
+                      <div className="text-xs text-emerald-300 mt-1">
+                        ✓ {t.result}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+
+              {/* CSS keyframes (scoped) */}
+              <style jsx>{`
+                @keyframes marquee {
+                  0% {
+                    transform: translateX(0);
+                  }
+                  100% {
+                    transform: translateX(-33.333%);
+                  }
+                }
+              `}</style>
+            </div>
           </div>
+
+          <p className="mt-3 text-xs text-white/45 text-center">Tip: hover to pause.</p>
         </div>
       </section>
 
@@ -324,15 +448,16 @@ export default function HomeClient() {
           </div>
 
           <div className="space-y-3">
-            {visibleFaq.map((item, i) => {
-              const isOpen = openFaq === i;
+            {visibleFaq.map((item) => {
+              const isOpen = openFaqKey === item.q;
+
               return (
                 <div
-                  key={i}
+                  key={item.q}
                   className="rounded-xl border border-white/10 bg-white/[0.05] backdrop-blur"
                 >
                   <button
-                    onClick={() => setOpenFaq(isOpen ? null : i)}
+                    onClick={() => setOpenFaqKey(isOpen ? null : item.q)}
                     className="w-full flex justify-between items-center gap-4 px-5 py-4 text-left"
                     aria-expanded={isOpen}
                   >
@@ -358,7 +483,7 @@ export default function HomeClient() {
             <button
               onClick={() => {
                 setShowAllFaq((v) => !v);
-                setOpenFaq(null);
+                setOpenFaqKey(null);
               }}
               className="inline-flex items-center justify-center rounded-full bg-white/5 px-6 py-3 text-sm font-semibold text-white ring-1 ring-white/12 hover:bg-white/10 transition"
             >
@@ -395,8 +520,10 @@ export default function HomeClient() {
             {cities.map((city) => (
               <Link
                 key={city}
-                href={`/private-banking-jobs/${citySlug(city)}`}
-                className="rounded-xl border border-white/10 bg-white/[0.05] px-4 py-3 hover:bg-white/[0.08] transition"
+                href={`/en/markets/${citySlug(city)}`}
+                className="block rounded-xl border border-white/10 bg-white/[0.05] px-4 py-3 hover:bg-white/[0.08] transition cursor-pointer"
+                aria-label={`Market ${city}`}
+                prefetch={false}
               >
                 <span className="font-semibold text-white/90">{city}</span>
               </Link>
@@ -480,6 +607,17 @@ export default function HomeClient() {
           </div>
         </div>
       )}
+
+      {/* global utility: hide scrollbars */}
+      <style jsx global>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 }
