@@ -49,13 +49,15 @@ export default function AccessRequestGate({
   const [submitting, setSubmitting] = useState(false);
 
   // ✅ Local authoritative state (prefer /api/private/me live status)
-  const [liveStatus, setLiveStatus] = useState<GateStatus>(normalizeStatus(status));
+  const [liveStatus, setLiveStatus] = useState<GateStatus>(
+    normalizeStatus(status)
+  );
   const [submittedId, setSubmittedId] = useState<string | null>(requestId);
 
   // Detect whether user is authenticated
-  const [sessionState, setSessionState] = useState<"checking" | "active" | "inactive">(
-    "checking"
-  );
+  const [sessionState, setSessionState] = useState<
+    "checking" | "active" | "inactive"
+  >("checking");
 
   async function refreshFromMe() {
     try {
@@ -123,7 +125,11 @@ export default function AccessRequestGate({
     }
 
     // ✅ none / pending / rejected → show request form
-    return { label: liveStatus === "pending" ? "Request sent" : "Request access", href: "#request", disabled: false };
+    return {
+      label: liveStatus === "pending" ? "Request sent" : "Request access",
+      href: "#request",
+      disabled: false,
+    };
   }, [sessionState, liveStatus, refresh]);
 
   async function submitRequest() {
@@ -145,7 +151,9 @@ export default function AccessRequestGate({
       const json = await res.json().catch(() => ({}));
 
       if (res.status === 401) {
-        window.location.assign(`/private/auth/request?next=${encodeURIComponent(refresh)}`);
+        window.location.assign(
+          `/private/auth/request?next=${encodeURIComponent(refresh)}`
+        );
         return;
       }
 
@@ -163,9 +171,9 @@ export default function AccessRequestGate({
       if (!autoApproveTool) {
         alert("Access request sent. We will review and confirm by email.");
       } else {
-        // for tools: if it isn't approved yet, tell them to refresh (but no more “stuck”)
+        // for tools: if it isn't approved yet, tell them to refresh
         if (liveStatus !== "approved") {
-          alert("Request received. If not unlocked instantly, click Refresh in a few seconds.");
+          alert("Request received. If not unlocked instantly, click Refresh status in a few seconds.");
         }
       }
     } finally {
@@ -208,12 +216,16 @@ export default function AccessRequestGate({
 
         <h1 className="mt-3 text-2xl font-bold text-white">{title}</h1>
 
-        {description ? <p className="mt-2 text-sm text-white/70">{description}</p> : null}
+        {description ? (
+          <p className="mt-2 text-sm text-white/70">{description}</p>
+        ) : null}
 
         <div className="mt-4 rounded-xl border border-white/10 bg-black/50 p-4 text-sm text-white/80">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <div className="text-xs uppercase tracking-wide text-white/50">Current status</div>
+              <div className="text-xs uppercase tracking-wide text-white/50">
+                Current status
+              </div>
               <div className="mt-1 font-semibold">{statusLabel}</div>
               <div className="mt-1 text-xs text-white/55">{statusHint}</div>
 
@@ -224,16 +236,18 @@ export default function AccessRequestGate({
               ) : null}
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <SecondaryButton href="/en/contact">Contact</SecondaryButton>
-              <SecondaryButton
-                href={refresh}
-                onClick={() => {
-                  void refreshFromMe();
-                }}
+              <SecondaryButton href={refresh}>Refresh</SecondaryButton>
+
+              {/* ✅ real button (SecondaryButton doesn't support onClick) */}
+              <button
+                type="button"
+                onClick={() => void refreshFromMe()}
+                className="inline-flex rounded-2xl border border-white/15 px-4 py-2 text-sm text-white/80 hover:text-white hover:border-white/25"
               >
-                Refresh
-              </SecondaryButton>
+                Refresh status
+              </button>
             </div>
           </div>
         </div>
@@ -276,7 +290,11 @@ export default function AccessRequestGate({
                 disabled={submitting}
                 className="rounded-full bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60"
               >
-                {submitting ? "Sending…" : autoApproveTool ? "Unlock now" : "Request access"}
+                {submitting
+                  ? "Sending…"
+                  : autoApproveTool
+                  ? "Unlock now"
+                  : "Request access"}
               </button>
 
               <p className="text-[11px] text-white/50">
