@@ -1,6 +1,6 @@
 // app/private/(secure)/dashboard/requests/page.tsx
 import Link from "next/link";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { requireAdmin } from "@/app/private/lib/require-admin";
 
 export const dynamic = "force-dynamic";
@@ -23,25 +23,31 @@ function fmt(iso?: string | null) {
   return d.toLocaleString("en-CH", { dateStyle: "medium", timeStyle: "short" });
 }
 
+function getOriginFromHeaders() {
+  // Works reliably on Vercel (prod + preview) and behind proxies
+  const h = headers();
+  const proto = h.get("x-forwarded-proto") ?? "https";
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  return host ? `${proto}://${host}` : "";
+}
+
 async function fetchRequests(): Promise<ReqRow[]> {
-  // same-origin call inside server component
-  const cookieStore = await cookies();
+  const cookieStore = cookies();
   const cookieHeader = cookieStore
     .getAll()
     .map((c) => `${c.name}=${c.value}`)
     .join("; ");
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/private/admin/requests`, {
+  const origin = getOriginFromHeaders();
+
+  const res = await fetch(`${origin}/api/private/admin/requests`, {
     method: "GET",
-    headers: {
-      cookie: cookieHeader,
-    },
+    headers: { cookie: cookieHeader },
     cache: "no-store",
   });
 
-  if (!res.ok) return [];
   const json = await res.json().catch(() => null);
-  return (json?.ok && Array.isArray(json.data)) ? (json.data as ReqRow[]) : [];
+  return json?.ok && Array.isArray(json.data) ? (json.data as ReqRow[]) : [];
 }
 
 export default async function AdminRequestsPage() {
