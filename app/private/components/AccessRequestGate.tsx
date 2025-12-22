@@ -171,9 +171,10 @@ export default function AccessRequestGate({
       if (!autoApproveTool) {
         alert("Access request sent. We will review and confirm by email.");
       } else {
-        // for tools: if it isn't approved yet, tell them to refresh
         if (liveStatus !== "approved") {
-          alert("Request received. If not unlocked instantly, click Refresh status in a few seconds.");
+          alert(
+            "Request received. If not unlocked instantly, click Refresh status in a few seconds."
+          );
         }
       }
     } finally {
@@ -255,9 +256,17 @@ export default function AccessRequestGate({
         {/* ✅ ONE PRIMARY CTA / FORM */}
         <div className="mt-5">
           {!showForm ? (
-            <PrimaryButton href={primary.href} disabled={primary.disabled}>
-              {primary.label}
-            </PrimaryButton>
+            primary.disabled ? (
+              <button
+                type="button"
+                disabled
+                className="inline-flex items-center justify-center rounded-full bg-brandGold px-5 py-3 text-sm font-semibold text-black opacity-60"
+              >
+                {primary.label}
+              </button>
+            ) : (
+              <PrimaryButton href={primary.href}>{primary.label}</PrimaryButton>
+            )
           ) : (
             <div id="request" className="space-y-3">
               <div>
