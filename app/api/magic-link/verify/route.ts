@@ -55,7 +55,7 @@ async function audit(
       meta: meta ?? null,
     });
   } catch {
-    // ignore on purpose (keeps auth flow robust)
+    // keep auth flow robust
   }
 }
 
@@ -65,7 +65,7 @@ export async function POST(req: Request) {
 
     const body = await req.json().catch(() => ({}));
     const token = typeof body?.token === "string" ? body.token : "";
-    const next = sanitizeNext(body?.next); // ✅ accept next from client
+    const next = sanitizeNext(body?.next);
 
     if (!token) {
       await audit(
@@ -133,27 +133,65 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false }, { status: 401 });
     }
 
+    // ✅ Normalize email once
+    const email = String(data.email || "").trim().toLowerCase();
+    if (!email) {
+      await audit(
+        req,
+        "magic_link_verify_failed",
+        undefined,
+        { reason: "bad_email" },
+        supabaseAdmin
+      );
+      return NextResponse.json({ ok: false }, { status: 400 });
+    }
+
+    // ✅ AUTO-APPROVE FOR TOOLS: ensure private_users row exists.
+    // IMPORTANT: do NOT overwrite an existing role (admin stays admin).
+    let role = "candidate";
+
+    const { data: existingUser, error: existingErr } = await supabaseAdmin
+      .from("private_users")
+      .select("email, role, created_at")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (!existingErr && existingUser?.role) {
+      role = String(existingUser.role);
+    }
+
+    // Only set created_at if missing; always bump updated_at.
+    const upsertPayload: any = {
+      email,
+      role: role || "candidate",
+      updated_at: nowIso,
+    };
+    if (!existingUser?.created_at) upsertPayload.created_at = nowIso;
+
+    const { error: upsertErr } = await supabaseAdmin
+      .from("private_users")
+      .upsert(upsertPayload, { onConflict: "email" });
+
+    if (upsertErr) {
+      // ✅ Don't block login; just audit it.
+      await audit(
+        req,
+        "magic_link_verify_user_upsert_failed",
+        email,
+        { reason: "private_users_upsert_failed", detail: String((upsertErr as any)?.message || upsertErr) },
+        supabaseAdmin
+      );
+      // continue with role = candidate (or existing role if fetched)
+    }
+
     // 3) Create session (DB + cookie)
     const sessionRaw = crypto.randomBytes(32).toString("hex");
     const sessionHash = sha256(sessionRaw);
 
     const { ip, user_agent } = getClientMeta(req);
-
-    const expiresAtIso = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-    const email = String(data.email || "").trim().toLowerCase();
-
-    // ✅ Resolve role from private_users (source of truth)
-    let role = "candidate";
-
-    const { data: userRow, error: userErr } = await supabaseAdmin
-      .from("private_users")
-      .select("role")
-      .eq("email", email)
-      .maybeSingle();
-
-    if (!userErr && userRow?.role) {
-      role = String(userRow.role);
-    }
+    const expiresAtIso = new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000
+    ).toISOString();
 
     // ✅ Revoke any previous active sessions for this email
     const { error: revokeErr } = await supabaseAdmin
@@ -176,7 +214,7 @@ export async function POST(req: Request) {
     const { error: sessErr } = await supabaseAdmin.from("private_sessions").insert({
       session_hash: sessionHash,
       email,
-      role,
+      role: role || "candidate",
       expires_at: expiresAtIso,
       revoked_at: null,
       last_seen_at: nowIso,
@@ -200,12 +238,7 @@ export async function POST(req: Request) {
     const isProd = process.env.NODE_ENV === "production";
 
     const res = NextResponse.json(
-      {
-        ok: true,
-        // ✅ return next so /private/auth can redirect reliably
-        next: next ?? null,
-        role,
-      },
+      { ok: true, next: next ?? null, role: role || "candidate" },
       { status: 200 }
     );
 
@@ -222,7 +255,7 @@ export async function POST(req: Request) {
       req,
       "magic_link_verify_ok",
       email,
-      { session: "issued", role, expires_days: 7, next: next ?? null },
+      { session: "issued", role: role || "candidate", expires_days: 7, next: next ?? null },
       supabaseAdmin
     );
 
