@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllInsights } from "@/lib/insights/posts";
+import { linkedInArticles } from "@/lib/insights/linkedin";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SecondaryButton from "@/components/ui/SecondaryButton";
 
@@ -19,6 +20,20 @@ const PAGE_URL = `${SITE}/insights`;
 
 const isIsoDate = (value: string | undefined) =>
   !!value && /^\d{4}-\d{2}-\d{2}$/.test(value.trim());
+
+function cleanLinkedInUrl(url: string) {
+  try {
+    const u = new URL(url);
+    u.search = ""; // strips trackingId etc.
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
+function resolveUrl(hrefOrUrl: string) {
+  return hrefOrUrl.startsWith("http") ? hrefOrUrl : `${SITE}${hrefOrUrl}`;
+}
 
 /* SEO */
 export const metadata: Metadata = {
@@ -44,6 +59,12 @@ export const revalidate = 1800;
 export default function InsightsPage() {
   const insights = getAllInsights();
 
+  // LinkedIn list: newest first + ensure URLs are clean (no tracking params)
+  // IMPORTANT: crash-proof fallback if import/export mismatch ever happens
+  const linkedinSorted = (Array.isArray(linkedInArticles) ? linkedInArticles : [])
+    .map((it) => ({ ...it, url: cleanLinkedInUrl(it.url) }))
+    .sort((a, b) => Date.parse(b.dateISO) - Date.parse(a.dateISO));
+
   // sort: ISO dates (YYYY-MM-DD) first, newest to oldest; others stay in title order
   const sorted = [...insights].sort((a, b) => {
     const ad = a.date?.trim() ?? "";
@@ -52,9 +73,7 @@ export default function InsightsPage() {
     const aIso = isIsoDate(ad);
     const bIso = isIsoDate(bd);
 
-    if (!aIso && !bIso) {
-      return a.title.localeCompare(b.title);
-    }
+    if (!aIso && !bIso) return a.title.localeCompare(b.title);
     if (!aIso) return 1;
     if (!bIso) return -1;
 
@@ -63,16 +82,26 @@ export default function InsightsPage() {
     return db - da;
   });
 
+  // JSON-LD: include BOTH on-site insights + LinkedIn articles
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    itemListElement: sorted.map((it, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      url: `${SITE}${it.href}`,
-      name: it.title,
-    })),
+    itemListElement: [
+      ...linkedinSorted.map((it, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: resolveUrl(it.url),
+        name: it.title,
+      })),
+      ...sorted.map((it, i) => ({
+        "@type": "ListItem",
+        position: linkedinSorted.length + i + 1,
+        url: resolveUrl(it.href),
+        name: it.title,
+      })),
+    ],
   };
+
   const blogJsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
@@ -159,8 +188,94 @@ export default function InsightsPage() {
           </div>
         </section>
 
+        {/* LinkedIn section */}
+        <section className="mt-8">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-brandGoldSoft/90">
+                Latest on LinkedIn
+              </p>
+              <h2 className="mt-2 text-xl font-semibold md:text-2xl">
+                Private Wealth Pulse — LinkedIn Articles
+              </h2>
+              <p className="mt-2 text-sm text-neutral-300">
+                Short, high-signal reads. Clean links (no tracking parameters).
+              </p>
+            </div>
+
+            <a
+              href="https://www.linkedin.com/pulse/"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-2 inline-flex w-fit rounded-2xl border border-white/15 bg-white/[0.04] px-4 py-2 text-sm text-neutral-200 hover:border-white/25 hover:text-white"
+            >
+              Browse LinkedIn Pulse ↗
+            </a>
+          </div>
+
+          <div className="mt-5 grid gap-6 md:grid-cols-2">
+            {linkedinSorted.map((it) => {
+              const parsed = Date.parse(it.dateISO);
+              const displayDate = Number.isNaN(parsed)
+                ? it.dateISO
+                : new Date(parsed).toLocaleDateString("en-CH", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  });
+
+              return (
+                <article
+                  key={it.url}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur"
+                >
+                  <p className="text-xs uppercase tracking-wide text-brandGoldSoft/80">
+                    LinkedIn Pulse
+                  </p>
+
+                  <h3 className="mt-2 text-lg font-semibold leading-snug">
+                    <a
+                      href={it.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:underline"
+                    >
+                      {it.title}
+                    </a>
+                  </h3>
+
+                  <p className="mt-1 text-xs text-white/50">{displayDate}</p>
+
+                  {it.summary ? (
+                    <p className="mt-3 line-clamp-3 text-sm text-neutral-200">
+                      {it.summary}
+                    </p>
+                  ) : null}
+
+                  <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
+                    <a
+                      href={it.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-medium text-brandGoldSoft underline-offset-4 hover:text-brandGold hover:underline"
+                    >
+                      Read on LinkedIn ↗
+                    </a>
+
+                    {it.tags?.length ? (
+                      <span className="text-xs text-white/50">
+                        {it.tags.slice(0, 3).join(" · ")}
+                      </span>
+                    ) : null}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
         {/* List */}
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
           {sorted.map((it) => {
             let displayDate = "—";
 
@@ -169,15 +284,13 @@ export default function InsightsPage() {
 
               if (isIsoDate(trimmed)) {
                 const parsed = Date.parse(trimmed);
-                if (!Number.isNaN(parsed)) {
-                  displayDate = new Date(parsed).toLocaleDateString("en-CH", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  });
-                } else {
-                  displayDate = trimmed;
-                }
+                displayDate = Number.isNaN(parsed)
+                  ? trimmed
+                  : new Date(parsed).toLocaleDateString("en-CH", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    });
               } else {
                 displayDate = trimmed;
               }
@@ -211,7 +324,7 @@ export default function InsightsPage() {
                   </Link>
                   {it.linkedin ? (
                     <a
-                      href={it.linkedin}
+                      href={cleanLinkedInUrl(it.linkedin)}
                       target="_blank"
                       rel="noreferrer"
                       className="text-neutral-300 hover:text-white"
