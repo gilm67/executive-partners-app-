@@ -23,22 +23,23 @@ function fmt(iso?: string | null) {
   return d.toLocaleString("en-CH", { dateStyle: "medium", timeStyle: "short" });
 }
 
-function getOriginFromHeaders() {
-  // Works reliably on Vercel (prod + preview) and behind proxies
-  const h = headers();
+async function getOriginFromHeaders() {
+  // ✅ In your Next.js types, headers() is async (Promise<ReadonlyHeaders>)
+  const h = await headers();
   const proto = h.get("x-forwarded-proto") ?? "https";
   const host = h.get("x-forwarded-host") ?? h.get("host");
   return host ? `${proto}://${host}` : "";
 }
 
 async function fetchRequests(): Promise<ReqRow[]> {
-  const cookieStore = cookies();
+  // ✅ In your Next.js types, cookies() is async too
+  const cookieStore = await cookies();
   const cookieHeader = cookieStore
     .getAll()
     .map((c) => `${c.name}=${c.value}`)
     .join("; ");
 
-  const origin = getOriginFromHeaders();
+  const origin = await getOriginFromHeaders();
 
   const res = await fetch(`${origin}/api/private/admin/requests`, {
     method: "GET",
