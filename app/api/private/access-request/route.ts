@@ -35,12 +35,10 @@ export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
 
-    // ✅ support snake_case + camelCase
     const request_type = normalizeRequestType(
       (body as any)?.request_type ?? (body as any)?.requestType
     );
 
-    // profile_id is ONLY required for request_type === "profile"
     const profile_id =
       (typeof (body as any)?.profile_id === "string" && (body as any).profile_id) ||
       (typeof (body as any)?.profileId === "string" && (body as any).profileId) ||
@@ -58,7 +56,7 @@ export async function POST(req: Request) {
         ? (body as any).requesterOrg.trim().slice(0, 200)
         : null;
 
-    // ✅ FIX: only enforce profile_id for profile requests
+    // Only enforce profile_id for profile requests
     if (request_type === "profile" && !profile_id) {
       return NextResponse.json(
         { ok: false, error: "missing_profile_id" },
@@ -66,7 +64,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 1) Read session cookie (Next.js 15 requires await)
+    // 1) Read session cookie
     const sessionHash = (await cookies()).get("ep_private")?.value ?? null;
     if (!sessionHash) {
       return NextResponse.json(
@@ -100,31 +98,78 @@ export async function POST(req: Request) {
       );
     }
 
+    const nowIso = new Date().toISOString();
+    const requesterEmail = String(session.email || "").trim().toLowerCase();
+    const normalizedProfileId = request_type === "profile" ? profile_id : null;
+
+    // ✅ Auto-approve BP + Portability (profiles remain manual)
+    const autoApprove = request_type === "bp" || request_type === "portability";
+    const desiredStatus = autoApprove ? "approved" : "pending";
+
+    // ✅ Dedup:
+    // - For BP/Portability: return existing approved OR pending (either means "don’t create more rows")
+    // - For Profile: return existing pending only (so recruiter still reviews one request)
+    const dedupStatuses = autoApprove ? ["approved", "pending"] : ["pending"];
+
+    const baseDedupQuery = supabaseAdmin
+      .from("private_profile_access_requests")
+      .select("id, created_at, request_type, profile_id, status")
+      .eq("requester_email", requesterEmail)
+      .eq("request_type", request_type)
+      .in("status", dedupStatuses as any);
+
+    const { data: existing, error: dedupErr } = normalizedProfileId
+      ? await baseDedupQuery.eq("profile_id", normalizedProfileId).maybeSingle()
+      : await baseDedupQuery.is("profile_id", null).maybeSingle();
+
+    if (!dedupErr && existing?.id) {
+      return NextResponse.json(
+        {
+          ok: true,
+          data: {
+            id: existing.id,
+            request_type,
+            status: existing.status,
+            deduped: true,
+          },
+        },
+        { status: 200, headers: noStoreHeaders }
+      );
+    }
+
     // 4) Insert access request
-    // ✅ profile_id must be nullable in DB for bp/portability
-    const insertPayload = {
+    const insertPayload: any = {
       request_type,
-      profile_id: request_type === "profile" ? profile_id : null,
-      requester_email: session.email,
+      profile_id: normalizedProfileId,
+      requester_email: requesterEmail,
       requester_org,
       message,
-      status: "pending",
+      status: desiredStatus,
+      reviewed_at: autoApprove ? nowIso : null,
+      reviewed_by: autoApprove ? "auto" : null,
     };
 
     const { data: inserted, error: insErr } = await supabaseAdmin
       .from("private_profile_access_requests")
       .insert(insertPayload)
-      .select("id, created_at, request_type, profile_id")
+      .select("id, created_at, request_type, profile_id, status")
       .maybeSingle();
 
     if (insErr || !inserted) {
       if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
         console.error("access-request insert error:", insErr);
       }
       return NextResponse.json(
         { ok: false, error: "insert_failed" },
         { status: 500, headers: noStoreHeaders }
+      );
+    }
+
+    // ✅ If auto-approved, DO NOT email recruiter
+    if (autoApprove) {
+      return NextResponse.json(
+        { ok: true, data: { id: inserted.id, request_type, status: inserted.status } },
+        { status: 200, headers: noStoreHeaders }
       );
     }
 
@@ -149,70 +194,48 @@ export async function POST(req: Request) {
       profile = data ?? null;
     }
 
-    // 6) Send internal notification email (NON-BLOCKING)
-    // ✅ Only recruiter@execpartners.ch is ever used for from/to/replyTo.
+    // 6) Send internal notification email (NON-BLOCKING) — profiles only
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
-
     const appUrl = process.env.PRIVATE_APP_URL || new URL(req.url).origin;
 
     if (RESEND_API_KEY) {
       const resend = new Resend(RESEND_API_KEY);
 
-      const subject =
-        request_type === "bp"
-          ? "🔒 Business Plan access request — Executive Partners"
-          : request_type === "portability"
-          ? "🔒 Portability access request — Executive Partners"
-          : "🔒 Private profile access request — Executive Partners";
+      const subject = "🔒 Private profile access request — Executive Partners";
 
-      const headline =
-        request_type === "profile"
-          ? profile?.headline || "Private Candidate Profile"
-          : request_type === "bp"
-          ? "Business Plan Simulator"
-          : "Portability Readiness Score™";
-
+      const headline = profile?.headline || "Private Candidate Profile";
       const market = profile?.market ? String(profile.market).toUpperCase() : "—";
       const seniority = profile?.seniority || "—";
       const aum = profile?.aum_band || "—";
       const book = profile?.book_type || "—";
 
-      const createdAt = inserted.created_at || new Date().toISOString();
+      const createdAt = inserted.created_at || nowIso;
       const safeMessage = message ? escapeHtml(message) : "—";
       const safeOrg = requester_org ? escapeHtml(requester_org) : "—";
 
-      const profileBlock =
-        request_type === "profile" && inserted.profile_id
-          ? `
-            <div style="padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px; margin-bottom:14px;">
-              <div style="font-weight:700; margin-bottom:6px;">${escapeHtml(headline)}</div>
-              <div style="color:#4b5563; font-size:14px;">
-                ${escapeHtml(market)} · ${escapeHtml(seniority)} · AUM: ${escapeHtml(aum)} · Book: ${escapeHtml(book)}
-              </div>
+      const profileBlock = inserted.profile_id
+        ? `
+          <div style="padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px; margin-bottom:14px;">
+            <div style="font-weight:700; margin-bottom:6px;">${escapeHtml(headline)}</div>
+            <div style="color:#4b5563; font-size:14px;">
+              ${escapeHtml(market)} · ${escapeHtml(seniority)} · AUM: ${escapeHtml(aum)} · Book: ${escapeHtml(book)}
             </div>
-          `
-          : `
-            <div style="padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px; margin-bottom:14px;">
-              <div style="font-weight:700; margin-bottom:6px;">${escapeHtml(headline)}</div>
-              <div style="color:#4b5563; font-size:14px;">
-                Tool access request (${escapeHtml(request_type)})
-              </div>
-            </div>
-          `;
+          </div>
+        `
+        : "";
 
-      const profileIdLine =
-        inserted.profile_id
-          ? `<div><b>Profile ID:</b> <code>${escapeHtml(String(inserted.profile_id))}</code></div>`
-          : "";
+      const profileIdLine = inserted.profile_id
+        ? `<div><b>Profile ID:</b> <code>${escapeHtml(String(inserted.profile_id))}</code></div>`
+        : "";
 
       const html = `
         <div style="font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;">
-          <h2 style="margin:0 0 12px;">New access request (${escapeHtml(request_type)})</h2>
+          <h2 style="margin:0 0 12px;">New access request (profile)</h2>
 
           ${profileBlock}
 
           <div style="font-size:14px; line-height:1.6;">
-            <div><b>Requester:</b> ${escapeHtml(session.email)}</div>
+            <div><b>Requester:</b> ${escapeHtml(requesterEmail)}</div>
             <div><b>Organisation:</b> ${safeOrg}</div>
             <div><b>Message:</b> ${safeMessage}</div>
             <div><b>Status:</b> pending</div>
@@ -236,26 +259,23 @@ export async function POST(req: Request) {
           replyTo: RECRUITER_MAILBOX,
           subject,
           html,
-          tags: [{ name: "module", value: `access-${request_type}` }],
+          tags: [{ name: "module", value: "access-profile" }],
         })
         .catch((e) => {
           if (process.env.NODE_ENV !== "production") {
-            // eslint-disable-next-line no-console
             console.error("resend notify error:", e);
           }
         });
     } else if (process.env.NODE_ENV !== "production") {
-      // eslint-disable-next-line no-console
       console.warn("Missing RESEND_API_KEY");
     }
 
     return NextResponse.json(
-      { ok: true, data: { id: inserted.id, request_type } },
+      { ok: true, data: { id: inserted.id, request_type, status: "pending" } },
       { status: 200, headers: noStoreHeaders }
     );
   } catch (e) {
     if (process.env.NODE_ENV !== "production") {
-      // eslint-disable-next-line no-console
       console.error("access-request exception:", e);
     }
     return NextResponse.json(
