@@ -1,5 +1,6 @@
 // app/private/(secure)/dashboard/requests/page.tsx
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { requireAdmin } from "@/app/private/lib/require-admin";
 
 export const dynamic = "force-dynamic";
@@ -18,33 +19,36 @@ type ReqRow = {
 function fmt(iso?: string | null) {
   if (!iso) return "—";
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
+  if (Number.isNaN(d.getTime())) return String(iso);
   return d.toLocaleString("en-CH", { dateStyle: "medium", timeStyle: "short" });
+}
+
+async function fetchRequests(): Promise<ReqRow[]> {
+  // same-origin call inside server component
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore
+    .getAll()
+    .map((c) => `${c.name}=${c.value}`)
+    .join("; ");
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/private/admin/requests`, {
+    method: "GET",
+    headers: {
+      cookie: cookieHeader,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) return [];
+  const json = await res.json().catch(() => null);
+  return (json?.ok && Array.isArray(json.data)) ? (json.data as ReqRow[]) : [];
 }
 
 export default async function AdminRequestsPage() {
   // ✅ Hard protection: only admins can view this page
-  const auth = await requireAdmin();
-  const supabaseAdmin = auth.supabaseAdmin;
+  await requireAdmin();
 
-  const { data, error } = await supabaseAdmin
-    .from("private_profile_access_requests")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    return (
-      <main className="mx-auto max-w-6xl px-4 py-10 text-white">
-        <h1 className="text-2xl font-semibold">Access Requests</h1>
-        <p className="mt-3 text-white/70">Failed to load requests.</p>
-        <pre className="mt-4 rounded-xl bg-white/5 p-4 text-xs text-white/80 overflow-auto">
-          {JSON.stringify(error, null, 2)}
-        </pre>
-      </main>
-    );
-  }
-
-  const rows = (data ?? []) as ReqRow[];
+  const rows = await fetchRequests();
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 text-white">
@@ -84,7 +88,7 @@ export default async function AdminRequestsPage() {
             {rows.length === 0 ? (
               <tr>
                 <td className="p-4 text-white/70" colSpan={7}>
-                  No requests yet.
+                  No requests yet (or you are not authenticated as admin).
                 </td>
               </tr>
             ) : (
@@ -113,7 +117,7 @@ export default async function AdminRequestsPage() {
       </div>
 
       <p className="mt-5 text-xs text-white/50">
-        Tip: API is at <code>/api/private/admin/requests</code>.
+        API: <code>/api/private/admin/requests</code>
       </p>
     </main>
   );
