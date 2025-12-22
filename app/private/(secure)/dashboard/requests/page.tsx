@@ -1,68 +1,120 @@
+// app/private/(secure)/dashboard/requests/page.tsx
+import Link from "next/link";
 import { requireAdmin } from "@/app/private/lib/require-admin";
-import { getSupabaseAdmin } from "@/lib/supabase-server";
-import RequestsTable, { type ReqRow } from "./requests-table.client";
 
 export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
 
-export default async function RequestsPage() {
-  await requireAdmin();
+type ReqRow = {
+  id: string;
+  created_at?: string | null;
+  requester_email?: string | null;
+  requester_org?: string | null;
+  request_type?: "profile" | "bp" | "portability" | string;
+  profile_id?: string | null;
+  status?: "pending" | "approved" | "denied" | string;
+  message?: string | null;
+};
 
-  const supabaseAdmin = await getSupabaseAdmin();
+function fmt(iso?: string | null) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleString("en-CH", { dateStyle: "medium", timeStyle: "short" });
+}
+
+export default async function AdminRequestsPage() {
+  // ✅ Hard protection: only admins can view this page
+  const auth = await requireAdmin();
+  const supabaseAdmin = auth.supabaseAdmin;
 
   const { data, error } = await supabaseAdmin
     .from("private_profile_access_requests")
-    .select(
-      "id, created_at, profile_id, requester_email, requester_org, message, status, reviewed_at, reviewed_by"
-    )
+    .select("*")
     .order("created_at", { ascending: false });
 
-  const rows: ReqRow[] = Array.isArray(data)
-    ? data.map((r: any) => ({
-        id: String(r.id),
-        created_at: String(r.created_at),
-        profile_id: String(r.profile_id),
-        requester_email: String(r.requester_email),
-        requester_org: typeof r.requester_org === "string" ? r.requester_org : null,
-        message: typeof r.message === "string" ? r.message : null,
-        status: normalizeStatus(r.status),
-        reviewed_at: r.reviewed_at ? String(r.reviewed_at) : null,
-        reviewed_by: r.reviewed_by ? String(r.reviewed_by) : null,
-      }))
-    : [];
+  if (error) {
+    return (
+      <main className="mx-auto max-w-6xl px-4 py-10 text-white">
+        <h1 className="text-2xl font-semibold">Access Requests</h1>
+        <p className="mt-3 text-white/70">Failed to load requests.</p>
+        <pre className="mt-4 rounded-xl bg-white/5 p-4 text-xs text-white/80 overflow-auto">
+          {JSON.stringify(error, null, 2)}
+        </pre>
+      </main>
+    );
+  }
+
+  const rows = (data ?? []) as ReqRow[];
 
   return (
-    <div className="container-max py-10">
-      <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="text-xl font-semibold">Access Requests</h1>
-          <div className="text-xs text-white/50">
-            Total: <span className="text-white/80">{rows.length}</span>
-          </div>
+    <main className="mx-auto max-w-6xl px-4 py-10 text-white">
+      <div className="flex items-end justify-between gap-6">
+        <div>
+          <p className="text-xs uppercase tracking-widest text-white/60">Admin</p>
+          <h1 className="mt-2 text-2xl md:text-3xl font-semibold">
+            Access Requests
+          </h1>
+          <p className="mt-2 text-white/70">
+            Approve or deny BP Simulator / Portability / Profile access.
+          </p>
         </div>
 
-        {error ? (
-          <div className="mt-3 rounded-xl border border-red-500/20 bg-red-500/5 p-4">
-            <p className="text-sm text-red-200">
-              Failed to load requests. (Check server logs)
-            </p>
-            <p className="mt-2 text-xs text-red-200/70">
-              {typeof error?.message === "string" ? error.message : JSON.stringify(error)}
-            </p>
-          </div>
-        ) : rows.length === 0 ? (
-          <p className="mt-3 text-sm text-white/70">No requests yet.</p>
-        ) : (
-          <RequestsTable initialRows={rows} />
-        )}
+        <Link
+          href="/private"
+          className="inline-flex rounded-2xl border border-white/15 px-4 py-2 text-sm text-white/80 hover:text-white hover:border-white/25"
+        >
+          Back to Private →
+        </Link>
       </div>
-    </div>
-  );
-}
 
-function normalizeStatus(input: unknown): ReqRow["status"] {
-  const s = String(input || "").toLowerCase();
-  if (s === "approved") return "approved";
-  if (s === "rejected") return "rejected";
-  return "pending";
+      <div className="mt-8 overflow-x-auto rounded-2xl border border-white/10 bg-white/5">
+        <table className="w-full min-w-[1000px] text-sm">
+          <thead className="text-white/70">
+            <tr className="border-b border-white/10">
+              <th className="p-3 text-left">Created</th>
+              <th className="p-3 text-left">Requester</th>
+              <th className="p-3 text-left">Org</th>
+              <th className="p-3 text-left">Type</th>
+              <th className="p-3 text-left">Profile</th>
+              <th className="p-3 text-left">Status</th>
+              <th className="p-3 text-left">Message</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length === 0 ? (
+              <tr>
+                <td className="p-4 text-white/70" colSpan={7}>
+                  No requests yet.
+                </td>
+              </tr>
+            ) : (
+              rows.map((r) => (
+                <tr key={r.id} className="border-b border-white/10 align-top">
+                  <td className="p-3 whitespace-nowrap">{fmt(r.created_at)}</td>
+                  <td className="p-3">{r.requester_email ?? "—"}</td>
+                  <td className="p-3">{r.requester_org ?? "—"}</td>
+                  <td className="p-3 whitespace-nowrap">{r.request_type ?? "—"}</td>
+                  <td className="p-3 whitespace-nowrap">
+                    {r.profile_id ? (
+                      <code className="text-xs text-white/70">{r.profile_id}</code>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                  <td className="p-3 whitespace-nowrap">{r.status ?? "—"}</td>
+                  <td className="p-3 max-w-[420px] text-white/70">
+                    {r.message ?? "—"}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="mt-5 text-xs text-white/50">
+        Tip: API is at <code>/api/private/admin/requests</code>.
+      </p>
+    </main>
+  );
 }
