@@ -49,15 +49,13 @@ export default function AccessRequestGate({
   const [submitting, setSubmitting] = useState(false);
 
   // ✅ Local authoritative state (prefer /api/private/me live status)
-  const [liveStatus, setLiveStatus] = useState<GateStatus>(
-    normalizeStatus(status)
-  );
+  const [liveStatus, setLiveStatus] = useState<GateStatus>(normalizeStatus(status));
   const [submittedId, setSubmittedId] = useState<string | null>(requestId);
 
   // Detect whether user is authenticated
-  const [sessionState, setSessionState] = useState<
-    "checking" | "active" | "inactive"
-  >("checking");
+  const [sessionState, setSessionState] = useState<"checking" | "active" | "inactive">(
+    "checking"
+  );
 
   async function refreshFromMe() {
     try {
@@ -69,7 +67,6 @@ export default function AccessRequestGate({
 
       const authed = Boolean(res.ok && data?.authenticated === true);
       setSessionState(authed ? "active" : "inactive");
-
       if (!authed) return;
 
       // ✅ Use new response: data.access[requestType].status + requestId
@@ -77,11 +74,15 @@ export default function AccessRequestGate({
       const rid = data?.access?.[requestType]?.requestId ?? null;
 
       setLiveStatus(s);
-      if (rid && !submittedId) setSubmittedId(String(rid));
+      if (rid) setSubmittedId(String(rid));
 
-      // ✅ Auto-redirect for tools as soon as approved is observed
+      // ✅ Blink/loop fix:
+      // Only redirect if target path is different from current path.
       if (autoApproveTool && s === "approved") {
-        window.location.assign(refresh);
+        if (typeof window !== "undefined") {
+          const here = window.location.pathname;
+          if (here !== refresh) window.location.assign(refresh);
+        }
       }
     } catch {
       setSessionState("inactive");
@@ -151,9 +152,7 @@ export default function AccessRequestGate({
       const json = await res.json().catch(() => ({}));
 
       if (res.status === 401) {
-        window.location.assign(
-          `/private/auth/request?next=${encodeURIComponent(refresh)}`
-        );
+        window.location.assign(`/private/auth/request?next=${encodeURIComponent(refresh)}`);
         return;
       }
 
@@ -167,15 +166,12 @@ export default function AccessRequestGate({
       // ✅ After submitting: refresh from /me (source of truth)
       await refreshFromMe();
 
-      // If still not approved:
       if (!autoApproveTool) {
         alert("Access request sent. We will review and confirm by email.");
       } else {
-        if (liveStatus !== "approved") {
-          alert(
-            "Request received. If not unlocked instantly, click Refresh status in a few seconds."
-          );
-        }
+        // note: liveStatus may not reflect the updated value until refreshFromMe resolves
+        // so we just guide the user
+        alert("Request received. Click “Refresh status” if it doesn't unlock instantly.");
       }
     } finally {
       setSubmitting(false);
@@ -217,16 +213,12 @@ export default function AccessRequestGate({
 
         <h1 className="mt-3 text-2xl font-bold text-white">{title}</h1>
 
-        {description ? (
-          <p className="mt-2 text-sm text-white/70">{description}</p>
-        ) : null}
+        {description ? <p className="mt-2 text-sm text-white/70">{description}</p> : null}
 
         <div className="mt-4 rounded-xl border border-white/10 bg-black/50 p-4 text-sm text-white/80">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <div className="text-xs uppercase tracking-wide text-white/50">
-                Current status
-              </div>
+              <div className="text-xs uppercase tracking-wide text-white/50">Current status</div>
               <div className="mt-1 font-semibold">{statusLabel}</div>
               <div className="mt-1 text-xs text-white/55">{statusHint}</div>
 
@@ -299,11 +291,7 @@ export default function AccessRequestGate({
                 disabled={submitting}
                 className="rounded-full bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60"
               >
-                {submitting
-                  ? "Sending…"
-                  : autoApproveTool
-                  ? "Unlock now"
-                  : "Request access"}
+                {submitting ? "Sending…" : autoApproveTool ? "Unlock now" : "Request access"}
               </button>
 
               <p className="text-[11px] text-white/50">
