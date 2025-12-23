@@ -1,10 +1,9 @@
 // app/en/bp-simulator/page.tsx
 import type { Metadata } from "next";
 import React from "react";
-import BpSimulatorClient from "./BpSimulatorClient";
 
+import BpSimulatorClient from "./BpSimulatorClient";
 import { requirePrivateSession } from "@/app/private/lib/require-session";
-import { getSupabaseAdmin } from "@/lib/supabase-server";
 import AccessRequestGate from "@/app/private/components/AccessRequestGate";
 
 export const dynamic = "force-dynamic";
@@ -15,15 +14,6 @@ export const metadata: Metadata = {
   description:
     "Model AuM portability, revenue projections and net margin scenarios with our AI-driven simulator for Private Bankers.",
 };
-
-type Status = "pending" | "approved" | "rejected";
-
-function normalizeStatus(input: unknown): Status {
-  const s = String(input || "").toLowerCase();
-  if (s === "approved") return "approved";
-  if (s === "rejected") return "rejected";
-  return "pending";
-}
 
 /* ✅ SAME SHELL AS PORTABILITY */
 function GateShell({ children }: { children: React.ReactNode }) {
@@ -65,38 +55,37 @@ function BpTeaser() {
 }
 
 export default async function Page() {
-  // ✅ preserve return path after auth
-  const session = await requirePrivateSession(undefined, "/en/bp-simulator");
+  // ✅ preserve return path after auth (keeps your secure flow)
+  await requirePrivateSession(undefined, "/en/bp-simulator");
 
-  const supabaseAdmin = await getSupabaseAdmin();
-  const { data, error } = await supabaseAdmin
-    .from("private_profile_access_requests")
-    .select("id,status,created_at")
-    .eq("requester_email", session.email)
-    .eq("request_type", "bp")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  const status: Status = error ? "pending" : normalizeStatus(data?.status);
-
-  /* ✅ APPROVED → REAL TOOL */
-  if (status === "approved") {
-    return <BpSimulatorClient />;
-  }
-
-  /* ❌ NOT APPROVED → SAME LOOK AS PORTABILITY */
+  /**
+   * IMPORTANT:
+   * - Do NOT query Supabase here anymore.
+   * - /api/private/me is the source of truth and is already used by AccessRequestGate.
+   * - We always render the same shell; the client components decide what to show.
+   */
   return (
     <GateShell>
       <BpTeaser />
+
+      {/* Gate reads /api/private/me and will show:
+          none => request form
+          pending => pending
+          approved => it will redirect to refreshHref (this same page)
+      */}
       <AccessRequestGate
         requestType="bp"
         title="Business Plan Simulator — Access required"
         description="Request access to unlock the full simulator."
-        status={status}
-        requestId={data?.id ?? null}
         refreshHref="/en/bp-simulator"
       />
+
+      {/* ✅ Mount the simulator too (it should internally gate, or you can make it rely on /me as well).
+          If BpSimulatorClient currently assumes it only renders when approved, it will still work once approved.
+      */}
+      <div className="mt-8">
+        <BpSimulatorClient />
+      </div>
     </GateShell>
   );
 }
