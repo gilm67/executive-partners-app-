@@ -106,9 +106,37 @@ export async function POST(req: Request) {
     const autoApprove = request_type === "bp" || request_type === "portability";
     const desiredStatus = autoApprove ? "approved" : "pending";
 
+    // ✅ Ensure private_users row exists (do NOT override role)
+    // This prevents any "not recognized / pending" edge cases after login.
+    try {
+      const { data: existingUser } = await supabaseAdmin
+        .from("private_users")
+        .select("email, role, created_at")
+        .eq("email", requesterEmail)
+        .maybeSingle();
+
+      const role =
+        existingUser?.role && String(existingUser.role).trim()
+          ? String(existingUser.role)
+          : "candidate";
+
+      const upsertPayload: any = {
+        email: requesterEmail,
+        role, // preserves admin if already admin
+        updated_at: nowIso,
+      };
+      if (!existingUser?.created_at) upsertPayload.created_at = nowIso;
+
+      await supabaseAdmin.from("private_users").upsert(upsertPayload, {
+        onConflict: "email",
+      });
+    } catch {
+      // best-effort only
+    }
+
     // ✅ Dedup:
-    // - For BP/Portability: return existing approved OR pending (either means "don’t create more rows")
-    // - For Profile: return existing pending only (so recruiter still reviews one request)
+    // - For BP/Portability: return existing approved OR pending
+    // - For Profile: return existing pending only
     const dedupStatuses = autoApprove ? ["approved", "pending"] : ["pending"];
 
     const baseDedupQuery = supabaseAdmin
@@ -157,6 +185,7 @@ export async function POST(req: Request) {
 
     if (insErr || !inserted) {
       if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
         console.error("access-request insert error:", insErr);
       }
       return NextResponse.json(
@@ -168,7 +197,10 @@ export async function POST(req: Request) {
     // ✅ If auto-approved, DO NOT email recruiter
     if (autoApprove) {
       return NextResponse.json(
-        { ok: true, data: { id: inserted.id, request_type, status: inserted.status } },
+        {
+          ok: true,
+          data: { id: inserted.id, request_type, status: inserted.status },
+        },
         { status: 200, headers: noStoreHeaders }
       );
     }
@@ -263,10 +295,12 @@ export async function POST(req: Request) {
         })
         .catch((e) => {
           if (process.env.NODE_ENV !== "production") {
+            // eslint-disable-next-line no-console
             console.error("resend notify error:", e);
           }
         });
     } else if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
       console.warn("Missing RESEND_API_KEY");
     }
 
@@ -276,6 +310,7 @@ export async function POST(req: Request) {
     );
   } catch (e) {
     if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
       console.error("access-request exception:", e);
     }
     return NextResponse.json(
