@@ -2,17 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type NavItem = { href: string; label: string; external?: boolean };
 
-const NAV: NavItem[] = [
-  { href: "/en/markets", label: "Markets" },
+// ✅ Define routes *without* locale, then we prefix with base (/en or "")
+const NAV_RAW: NavItem[] = [
+  { href: "/markets", label: "Markets" },
   { href: "/jobs", label: "Jobs" },
   { href: "/candidates", label: "Candidates" },
   { href: "/hiring-managers", label: "Hiring Managers" },
+
+  // ✅ Always point to TOOL routes
   { href: "/bp-simulator", label: "BP Simulator" },
   { href: "/portability", label: "Portability" },
+
   { href: "/insights", label: "Insights" },
   {
     href: "/insights/private-banking-career-intelligence",
@@ -22,10 +26,30 @@ const NAV: NavItem[] = [
   { href: "/contact", label: "Contact" },
 ];
 
+function withBase(base: string, href: string) {
+  if (!href.startsWith("/")) return href;
+  if (!base) return href;
+  // avoid double-prefix
+  if (href.startsWith("/en/")) return href;
+  return `${base}${href}`;
+}
+
 export default function TopNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // ✅ locale-aware base
+  const base = useMemo(() => (pathname?.startsWith("/en") ? "/en" : ""), [pathname]);
+
+  // ✅ Apply base to internal routes (external untouched)
+  const NAV = useMemo(
+    () =>
+      NAV_RAW.map((item) =>
+        item.external ? item : { ...item, href: withBase(base, item.href) }
+      ),
+    [base]
+  );
 
   // Body scroll lock when mobile menu is open
   useEffect(() => {
@@ -61,15 +85,12 @@ export default function TopNav() {
       ? "border-b border-white/10 bg-[#050814]/80 backdrop-blur supports-[backdrop-filter]:bg-[#050814]/65"
       : "bg-transparent");
 
-  const isActive = (href: string) =>
-    pathname === href || pathname?.startsWith(href + "/");
+  const isActive = (href: string) => pathname === href || pathname?.startsWith(href + "/");
 
   const linkClasses = (active: boolean) =>
     [
       "relative rounded-full px-3 py-1.5 text-sm whitespace-nowrap transition-colors",
-      active
-        ? "text-[#F5D778] bg-white/5"
-        : "text-slate-200 hover:text-white hover:bg-white/5",
+      active ? "text-[#F5D778] bg-white/5" : "text-slate-200 hover:text-white hover:bg-white/5",
     ].join(" ");
 
   return (
@@ -78,7 +99,7 @@ export default function TopNav() {
         <div className="flex items-center justify-between gap-3">
           {/* Brand */}
           <Link
-            href="/"
+            href={base || "/"}
             className="shrink-0 text-base sm:text-lg font-semibold tracking-tight text-white hover:text-[#F5D778] transition-colors"
             aria-label="Executive Partners — Home"
           >
@@ -138,9 +159,7 @@ export default function TopNav() {
               const active = isActive(item.href);
               const cls = [
                 "block rounded-md px-3 py-2 text-sm transition-colors",
-                active
-                  ? "bg-white/10 text-[#F5D778]"
-                  : "text-slate-200 hover:text-white hover:bg-white/5",
+                active ? "bg-white/10 text-[#F5D778]" : "text-slate-200 hover:text-white hover:bg-white/5",
               ].join(" ");
 
               return (

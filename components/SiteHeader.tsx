@@ -16,34 +16,46 @@ export default function SiteHeader() {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; };
+    return () => {
+      document.body.style.overflow = prev;
+    };
   }, [open]);
 
   // Close on route change
-  useEffect(() => { setOpen(false); }, [pathname]);
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   // Close on Escape and focus the first control
   useEffect(() => {
     if (!open) return;
     closeBtnRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
+  /**
+   * ✅ IMPORTANT:
+   * - BP Simulator must point to the TOOL route (not marketing landing).
+   * - Portability must point to the TOOL route.
+   * With your base logic, these are:
+   *   /en/bp-simulator and /en/portability (when base="/en")
+   */
   const nav = [
+    ['Markets', `${base}/markets`],
     ['Jobs', `${base}/jobs`],
     ['Candidates', `${base}/candidates`],
     ['Hiring Managers', `${base}/hiring-managers`],
-    ['BP Simulator', `${base}/bp-simulator`],
-    ['Markets', `${base}/markets`],
-    ['Portability', `${base}/portability`],
+    ['BP Simulator', `${base}/bp-simulator`],      // ✅ tool route
+    ['Portability', `${base}/portability`],        // ✅ tool route
     ['Insights', `${base}/insights`],
     ['Contact', `${base}/contact`],
   ] as const;
 
-  const isActive = (href: string) =>
-    href !== `${base}/` && pathname?.startsWith(href);
+  const isActive = (href: string) => href !== `${base}/` && pathname?.startsWith(href);
 
   return (
     <header
@@ -53,7 +65,7 @@ export default function SiteHeader() {
       {/* Top bar */}
       <div className="mx-auto flex h-14 items-center justify-between px-4 sm:h-16 sm:px-6 lg:px-8">
         <Link
-          href={base || '/en'}
+          href={base || '/'}
           className="text-[13px] font-extrabold tracking-wide text-white"
           aria-label="Executive Partners — Home"
         >
@@ -84,7 +96,13 @@ export default function SiteHeader() {
           className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/90"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+            <path
+              d="M4 6h16M4 12h16M4 18h16"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              fill="none"
+            />
           </svg>
         </button>
       </div>
@@ -119,7 +137,13 @@ export default function SiteHeader() {
               className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/90"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                <path
+                  d="M6 6l12 12M18 6l-12 12"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  fill="none"
+                />
               </svg>
             </button>
           </div>
