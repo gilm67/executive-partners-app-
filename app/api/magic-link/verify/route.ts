@@ -146,8 +146,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false }, { status: 400 });
     }
 
-    // ✅ AUTO-APPROVE FOR TOOLS: ensure private_users row exists.
-    // IMPORTANT: do NOT overwrite an existing role (admin stays admin).
+    // ✅ Ensure private_users exists (do NOT overwrite role)
     let role = "candidate";
 
     const { data: existingUser, error: existingErr } = await supabaseAdmin
@@ -160,7 +159,6 @@ export async function POST(req: Request) {
       role = String(existingUser.role);
     }
 
-    // Only set created_at if missing; always bump updated_at.
     const upsertPayload: any = {
       email,
       role: role || "candidate",
@@ -173,15 +171,56 @@ export async function POST(req: Request) {
       .upsert(upsertPayload, { onConflict: "email" });
 
     if (upsertErr) {
-      // ✅ Don't block login; just audit it.
       await audit(
         req,
         "magic_link_verify_user_upsert_failed",
         email,
-        { reason: "private_users_upsert_failed", detail: String((upsertErr as any)?.message || upsertErr) },
+        {
+          reason: "private_users_upsert_failed",
+          detail: String((upsertErr as any)?.message || upsertErr),
+        },
         supabaseAdmin
       );
-      // continue with role = candidate (or existing role if fetched)
+      // continue
+    }
+
+    // ✅ AUTO-GRANT: BP + Portability instantly on login (no manual work)
+    try {
+      const toolTypes = ["bp", "portability"] as const;
+
+      for (const t of toolTypes) {
+        const { data: alreadyApproved } = await supabaseAdmin
+          .from("private_profile_access_requests")
+          .select("id")
+          .eq("requester_email", email)
+          .eq("request_type", t)
+          .eq("status", "approved")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (alreadyApproved?.id) continue;
+
+        await supabaseAdmin.from("private_profile_access_requests").insert({
+          request_type: t,
+          profile_id: null,
+          requester_email: email,
+          requester_org: null,
+          message: null,
+          status: "approved",
+          reviewed_at: nowIso,
+          reviewed_by: "auto",
+        });
+      }
+    } catch (e) {
+      await audit(
+        req,
+        "tool_auto_grant_failed",
+        email,
+        { error: String((e as any)?.message || e) },
+        supabaseAdmin
+      );
+      // best-effort only; never break login
     }
 
     // 3) Create session (DB + cookie)
