@@ -49,13 +49,15 @@ export default function AccessRequestGate({
   const [submitting, setSubmitting] = useState(false);
 
   // ✅ Local authoritative state (prefer /api/private/me live status)
-  const [liveStatus, setLiveStatus] = useState<GateStatus>(normalizeStatus(status));
+  const [liveStatus, setLiveStatus] = useState<GateStatus>(
+    normalizeStatus(status)
+  );
   const [submittedId, setSubmittedId] = useState<string | null>(requestId);
 
   // Detect whether user is authenticated
-  const [sessionState, setSessionState] = useState<"checking" | "active" | "inactive">(
-    "checking"
-  );
+  const [sessionState, setSessionState] = useState<
+    "checking" | "active" | "inactive"
+  >("checking");
 
   async function refreshFromMe() {
     try {
@@ -152,7 +154,9 @@ export default function AccessRequestGate({
       const json = await res.json().catch(() => ({}));
 
       if (res.status === 401) {
-        window.location.assign(`/private/auth/request?next=${encodeURIComponent(refresh)}`);
+        window.location.assign(
+          `/private/auth/request?next=${encodeURIComponent(refresh)}`
+        );
         return;
       }
 
@@ -166,12 +170,12 @@ export default function AccessRequestGate({
       // ✅ After submitting: refresh from /me (source of truth)
       await refreshFromMe();
 
-      if (!autoApproveTool) {
-        alert("Access request sent. We will review and confirm by email.");
+      // ✅ Professional UX:
+      // Tools are auto-granted; email is confirmation/audit, not a dependency.
+      if (autoApproveTool) {
+        alert("Access granted — confirmation sent by email.");
       } else {
-        // note: liveStatus may not reflect the updated value until refreshFromMe resolves
-        // so we just guide the user
-        alert("Request received. Click “Refresh status” if it doesn't unlock instantly.");
+        alert("Access request sent. We’ll confirm by email once approved.");
       }
     } finally {
       setSubmitting(false);
@@ -189,17 +193,22 @@ export default function AccessRequestGate({
       ? "Pending / Under review"
       : "Access required";
 
+  // ✅ Professional UX copy (your request)
   const statusHint =
     sessionState !== "active"
       ? "Get a secure link to authenticate first."
       : liveStatus === "approved"
-      ? "Access is enabled for your account."
+      ? autoApproveTool
+        ? "Access granted — confirmation sent by email."
+        : "Access granted — we’ll confirm by email."
       : liveStatus === "rejected"
-      ? "Your request was rejected. You may submit a new request with more context."
+      ? "Request declined. You can submit a new request with more context."
       : liveStatus === "pending"
-      ? "Your request is being processed."
+      ? autoApproveTool
+        ? "Processing… this tool unlocks automatically. If it doesn’t, click “Refresh status”."
+        : "Under review — we’ll confirm by email once approved."
       : autoApproveTool
-      ? "Click Unlock now to request access (should unlock automatically)."
+      ? "Click “Unlock now” — access is granted instantly and a confirmation email is sent."
       : "Request access to unlock this area.";
 
   const showForm = sessionState === "active" && liveStatus !== "approved";
@@ -213,12 +222,16 @@ export default function AccessRequestGate({
 
         <h1 className="mt-3 text-2xl font-bold text-white">{title}</h1>
 
-        {description ? <p className="mt-2 text-sm text-white/70">{description}</p> : null}
+        {description ? (
+          <p className="mt-2 text-sm text-white/70">{description}</p>
+        ) : null}
 
         <div className="mt-4 rounded-xl border border-white/10 bg-black/50 p-4 text-sm text-white/80">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <div className="text-xs uppercase tracking-wide text-white/50">Current status</div>
+              <div className="text-xs uppercase tracking-wide text-white/50">
+                Current status
+              </div>
               <div className="mt-1 font-semibold">{statusLabel}</div>
               <div className="mt-1 text-xs text-white/55">{statusHint}</div>
 
@@ -291,7 +304,11 @@ export default function AccessRequestGate({
                 disabled={submitting}
                 className="rounded-full bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60"
               >
-                {submitting ? "Sending…" : autoApproveTool ? "Unlock now" : "Request access"}
+                {submitting
+                  ? "Sending…"
+                  : autoApproveTool
+                  ? "Unlock now"
+                  : "Request access"}
               </button>
 
               <p className="text-[11px] text-white/50">
