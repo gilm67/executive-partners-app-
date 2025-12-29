@@ -101,12 +101,15 @@ function buildEmailHtml(link: string) {
  * Resend requires a verified sender/domain; invalid FROM often leads to non-delivery.
  */
 function looksLikeEmailFrom(from: string) {
-  return /<[^<>@\s]+@[^<>@\s]+\.[^<>@\s]+>/.test(from) || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(from);
+  return (
+    /<[^<>@\s]+@[^<>@\s]+\.[^<>@\s]+>/.test(from) ||
+    /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(from)
+  );
 }
 
 export async function POST(req: Request) {
-  // Optional debug flag (does not break anti-enumeration for normal users)
-  const debug = req.nextUrl?.searchParams?.get("debug") === "1";
+  // ✅ FIX: Request has no nextUrl — parse from req.url
+  const debug = new URL(req.url).searchParams.get("debug") === "1";
 
   try {
     const body = await req.json().catch(() => ({}));
@@ -139,7 +142,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true }, { status: 200 });
     }
 
-    const baseUrl = process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
+    const baseUrl =
+      process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
 
     const url = new URL(`${baseUrl}/private/auth`);
     url.searchParams.set("token", token);
@@ -151,9 +155,11 @@ export async function POST(req: Request) {
     const hasKey = !!RESEND_API_KEY;
     const fromOk = looksLikeEmailFrom(RESEND_FROM);
 
-    // Always log config issues in prod (this is operational, not sensitive content)
-    if (!hasKey) console.error("[magic-link] RESEND_API_KEY missing (prod will not send)");
-    if (!fromOk) console.error("[magic-link] RESEND_FROM looks invalid:", RESEND_FROM);
+    // Operational logs (safe)
+    if (!hasKey)
+      console.error("[magic-link] RESEND_API_KEY missing (prod will not send)");
+    if (!fromOk)
+      console.error("[magic-link] RESEND_FROM looks invalid:", RESEND_FROM);
 
     let sendStatus: "sent" | "skipped" | "error" = "skipped";
     let sendMeta: any = undefined;
@@ -164,12 +170,11 @@ export async function POST(req: Request) {
 
         const result = await resend.emails.send({
           from: RESEND_FROM,
-          to: email, // prefer string; most reliable
+          to: email, // string is most reliable
           subject: "Your secure access link — Executive Partners",
           html: buildEmailHtml(link),
         });
 
-        // Resend returns { data, error } in many SDK versions
         const maybeError = (result as any)?.error;
         if (maybeError) {
           sendStatus = "error";
@@ -188,7 +193,7 @@ export async function POST(req: Request) {
     }
 
     // Response remains anti-enumeration by default.
-    // With debug=1, you can see operational status (useful for you while testing).
+    // With debug=1, you can see operational status (useful while testing).
     const resBody: any = { ok: true };
     if (debug) {
       resBody.debug = {
@@ -204,7 +209,6 @@ export async function POST(req: Request) {
     }
 
     const res = NextResponse.json(resBody, { status: 200 });
-    // Handy for quick curl checks (not exposing link)
     res.headers.set("x-magic-link-send", sendStatus);
     return res;
   } catch (e: any) {
