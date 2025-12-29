@@ -3,7 +3,7 @@
 import React, { useRef, useState } from "react";
 import Link from "next/link";
 
-// ✅ This is your real simulator UI that loads Sections 1–5
+// ✅ Real simulator UI (Sections 1–5)
 import BPClient from "./BPClient";
 
 export default function BpSimulatorClient() {
