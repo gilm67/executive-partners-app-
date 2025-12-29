@@ -33,6 +33,39 @@ function normalizeStatus(s?: any): GateStatus {
   return "none";
 }
 
+/**
+ * ✅ Robust status reader for /api/private/me
+ * Supports:
+ *  - New:   access.bp = { status: "approved", requestId: "..." }
+ *  - Old:   access.bp = "approved"
+ *  - Fast:  toolAccess.bpApproved = true
+ */
+function readMeStatus(data: any, requestType: ReqType): { status: GateStatus; requestId: string | null } {
+  // Fast booleans (newer API)
+  if (requestType === "bp" && data?.toolAccess?.bpApproved === true) {
+    return { status: "approved", requestId: String(data?.access?.bp?.requestId ?? data?.access?.bp?.id ?? "") || null };
+  }
+  if (requestType === "portability" && data?.toolAccess?.portabilityApproved === true) {
+    return { status: "approved", requestId: String(data?.access?.portability?.requestId ?? data?.access?.portability?.id ?? "") || null };
+  }
+
+  const node = data?.access?.[requestType];
+
+  // New shape: object with .status + requestId
+  if (node && typeof node === "object") {
+    const s = normalizeStatus(node.status);
+    const rid = node.requestId ?? node.id ?? null;
+    return { status: s, requestId: rid ? String(rid) : null };
+  }
+
+  // Old shape: string status
+  if (typeof node === "string") {
+    return { status: normalizeStatus(node), requestId: null };
+  }
+
+  return { status: "none", requestId: null };
+}
+
 export default function AccessRequestGate({
   requestType,
   title,
@@ -49,15 +82,11 @@ export default function AccessRequestGate({
   const [submitting, setSubmitting] = useState(false);
 
   // ✅ Local authoritative state (prefer /api/private/me live status)
-  const [liveStatus, setLiveStatus] = useState<GateStatus>(
-    normalizeStatus(status)
-  );
+  const [liveStatus, setLiveStatus] = useState<GateStatus>(normalizeStatus(status));
   const [submittedId, setSubmittedId] = useState<string | null>(requestId);
 
   // Detect whether user is authenticated
-  const [sessionState, setSessionState] = useState<
-    "checking" | "active" | "inactive"
-  >("checking");
+  const [sessionState, setSessionState] = useState<"checking" | "active" | "inactive">("checking");
 
   async function refreshFromMe() {
     try {
@@ -71,20 +100,15 @@ export default function AccessRequestGate({
       setSessionState(authed ? "active" : "inactive");
       if (!authed) return;
 
-      // ✅ Use new response: data.access[requestType].status + requestId
-      const s = normalizeStatus(data?.access?.[requestType]?.status);
-      const rid = data?.access?.[requestType]?.requestId ?? null;
+      const { status: s, requestId: rid } = readMeStatus(data, requestType);
 
       setLiveStatus(s);
-      if (rid) setSubmittedId(String(rid));
+      if (rid) setSubmittedId(rid);
 
-      // ✅ Blink/loop fix:
-      // Only redirect if target path is different from current path.
-      if (autoApproveTool && s === "approved") {
-        if (typeof window !== "undefined") {
-          const here = window.location.pathname;
-          if (here !== refresh) window.location.assign(refresh);
-        }
+      // ✅ Avoid redirect loops; only redirect if user isn't already on refresh route
+      if (autoApproveTool && s === "approved" && typeof window !== "undefined") {
+        const here = window.location.pathname;
+        if (here !== refresh) window.location.assign(refresh);
       }
     } catch {
       setSessionState("inactive");
@@ -127,7 +151,6 @@ export default function AccessRequestGate({
       return { label: "Continue", href: refresh, disabled: false };
     }
 
-    // ✅ none / pending / rejected → show request form
     return {
       label: liveStatus === "pending" ? "Request sent" : "Request access",
       href: "#request",
@@ -154,9 +177,7 @@ export default function AccessRequestGate({
       const json = await res.json().catch(() => ({}));
 
       if (res.status === 401) {
-        window.location.assign(
-          `/private/auth/request?next=${encodeURIComponent(refresh)}`
-        );
+        window.location.assign(`/private/auth/request?next=${encodeURIComponent(refresh)}`);
         return;
       }
 
@@ -170,8 +191,7 @@ export default function AccessRequestGate({
       // ✅ After submitting: refresh from /me (source of truth)
       await refreshFromMe();
 
-      // ✅ Professional UX:
-      // Tools are auto-granted; email is confirmation/audit, not a dependency.
+      // ✅ UX copy
       if (autoApproveTool) {
         alert("Access granted — confirmation sent by email.");
       } else {
@@ -193,7 +213,6 @@ export default function AccessRequestGate({
       ? "Pending / Under review"
       : "Access required";
 
-  // ✅ Professional UX copy (your request)
   const statusHint =
     sessionState !== "active"
       ? "Get a secure link to authenticate first."
@@ -222,16 +241,12 @@ export default function AccessRequestGate({
 
         <h1 className="mt-3 text-2xl font-bold text-white">{title}</h1>
 
-        {description ? (
-          <p className="mt-2 text-sm text-white/70">{description}</p>
-        ) : null}
+        {description ? <p className="mt-2 text-sm text-white/70">{description}</p> : null}
 
         <div className="mt-4 rounded-xl border border-white/10 bg-black/50 p-4 text-sm text-white/80">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <div className="text-xs uppercase tracking-wide text-white/50">
-                Current status
-              </div>
+              <div className="text-xs uppercase tracking-wide text-white/50">Current status</div>
               <div className="mt-1 font-semibold">{statusLabel}</div>
               <div className="mt-1 text-xs text-white/55">{statusHint}</div>
 
@@ -244,9 +259,11 @@ export default function AccessRequestGate({
 
             <div className="flex flex-wrap gap-2">
               <SecondaryButton href="/en/contact">Contact</SecondaryButton>
-              <SecondaryButton href={refresh}>Refresh</SecondaryButton>
 
-              {/* ✅ real button (SecondaryButton doesn't support onClick) */}
+              {/* Navigate/refresh page */}
+              <SecondaryButton href={refresh}>Open tool</SecondaryButton>
+
+              {/* Actual status refresh */}
               <button
                 type="button"
                 onClick={() => void refreshFromMe()}
@@ -258,7 +275,6 @@ export default function AccessRequestGate({
           </div>
         </div>
 
-        {/* ✅ ONE PRIMARY CTA / FORM */}
         <div className="mt-5">
           {!showForm ? (
             primary.disabled ? (
@@ -275,9 +291,7 @@ export default function AccessRequestGate({
           ) : (
             <div id="request" className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-white/70">
-                  Organisation (optional)
-                </label>
+                <label className="block text-xs font-medium text-white/70">Organisation (optional)</label>
                 <input
                   value={org}
                   onChange={(e) => setOrg(e.target.value)}
@@ -287,9 +301,7 @@ export default function AccessRequestGate({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-white/70">
-                  Message (optional)
-                </label>
+                <label className="block text-xs font-medium text-white/70">Message (optional)</label>
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
@@ -304,16 +316,10 @@ export default function AccessRequestGate({
                 disabled={submitting}
                 className="rounded-full bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60"
               >
-                {submitting
-                  ? "Sending…"
-                  : autoApproveTool
-                  ? "Unlock now"
-                  : "Request access"}
+                {submitting ? "Sending…" : autoApproveTool ? "Unlock now" : "Request access"}
               </button>
 
-              <p className="text-[11px] text-white/50">
-                Confirmations are sent from recruiter@execpartners.ch.
-              </p>
+              <p className="text-[11px] text-white/50">Confirmations are sent from recruiter@execpartners.ch.</p>
             </div>
           )}
         </div>
