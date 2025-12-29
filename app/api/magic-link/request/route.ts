@@ -7,7 +7,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VERSION = "ml-2025-12-29-b"; // 👈 bump when you change behavior
+const VERSION = "ml-2025-12-29-c"; // 👈 bumped
 
 const CANONICAL = (
   process.env.NEXT_PUBLIC_CANONICAL_URL ||
@@ -69,9 +69,8 @@ function sanitizeNext(nextRaw: unknown): string | null {
   if (next === "/en/bp-simulator/") next = "/en/bp-simulator";
   if (next === "/private/") next = "/private";
 
-  // ✅ THE ROOT FIX:
-  // Any request that tries to go to /private/bp-simulator should land on /en/bp-simulator
-  if (next === "/private/bp-simulator" || next.startsWith("/private/bp-simulator/")) {
+  // ✅ ROOT FIX: legacy private bp path -> public gated tool
+  if (next === "/private/bp-simulator" || next.startsWith("/private/bp-simulator")) {
     next = "/en/bp-simulator";
   }
 
@@ -142,9 +141,12 @@ export async function POST(req: Request) {
       return res;
     }
 
-    const baseUrl = process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
+    const baseUrl =
+      process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
 
-    const url = new URL(`${baseUrl}/private/auth`);
+    // ✅ CRITICAL: use the server callback that SETS COOKIE + REDIRECTS
+    // You must implement: app/api/magic-link/callback/route.ts
+    const url = new URL(`${baseUrl}/api/magic-link/callback`);
     url.searchParams.set("token", token);
     if (next) url.searchParams.set("next", next);
 
@@ -183,7 +185,17 @@ export async function POST(req: Request) {
     }
 
     const resBody: any = { ok: true };
-    if (debug) resBody.debug = { sendStatus, from: RESEND_FROM, baseUrl, next, link, sendMeta };
+    if (debug) {
+      resBody.debug = {
+        sendStatus,
+        from: RESEND_FROM,
+        baseUrl,
+        next,
+        link,
+        sendMeta,
+        version: VERSION,
+      };
+    }
 
     const res = NextResponse.json(resBody, { status: 200 });
     res.headers.set("x-magic-link-send", sendStatus);
