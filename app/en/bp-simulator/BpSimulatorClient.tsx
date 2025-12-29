@@ -184,7 +184,7 @@ type Candidate = {
   prod_otherNote: string;
 };
 
-// ... keep ALL your existing constants + sections (CandidateBlock, NNM, etc.) unchanged ...
+// ✅ KEEP all your existing constants + sections (CandidateBlock, NNM, charts, export helpers, etc.) unchanged…
 
 /* ===========================================================
    MAIN
@@ -204,7 +204,7 @@ export default function BpSimulatorClient() {
   const [autoFixedFromBase, setAutoFixedFromBase] = useState(true);
   const [customFixedPerYear, setCustomFixedPerYear] = useState<number>(350_000);
 
-  // Optional: keep a static badge (non-blocking)
+  // Non-blocking badge
   const sessionBadge = {
     cls: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
     text: "🔒 Secure access",
@@ -279,12 +279,68 @@ export default function BpSimulatorClient() {
           </div>
         </section>
 
-        {/* ✅ ALWAYS render simulator tree */}
+        {/* ✅ ALWAYS render simulator tree (THIS was missing) */}
         <div className="mt-8">
-          {/* KEEP THE REST OF YOUR COMPONENT TREE UNCHANGED */}
-          {/* (CandidateBlock, NNM, charts, export logic, etc.) */}
+          <SimulatorBody
+            showTips={showTips}
+            exporting={exporting}
+            setExporting={setExporting}
+            autoFixedFromBase={autoFixedFromBase}
+            setAutoFixedFromBase={setAutoFixedFromBase}
+            customFixedPerYear={customFixedPerYear}
+            setCustomFixedPerYear={setCustomFixedPerYear}
+          />
         </div>
       </div>
     </main>
+  );
+}
+
+/**
+ * ✅ Paste your existing simulator UI here.
+ * This is ONLY to ensure it actually mounts/render.
+ * Keep all your internal states/sections exactly as they were.
+ */
+function SimulatorBody(props: {
+  showTips: boolean;
+  exporting: boolean;
+  setExporting: React.Dispatch<React.SetStateAction<boolean>>;
+  autoFixedFromBase: boolean;
+  setAutoFixedFromBase: React.Dispatch<React.SetStateAction<boolean>>;
+  customFixedPerYear: number;
+  setCustomFixedPerYear: React.Dispatch<React.SetStateAction<number>>;
+}) {
+  const {
+    showTips,
+    exporting,
+    setExporting,
+    autoFixedFromBase,
+    setAutoFixedFromBase,
+    customFixedPerYear,
+    setCustomFixedPerYear,
+  } = props;
+
+  return (
+    <div className="space-y-6">
+      {/* ✅ TEMP sanity marker (remove later) */}
+      <div className="rounded-2xl border border-emerald-400/25 bg-emerald-400/10 p-4 text-sm text-emerald-100">
+        ✅ Simulator mounted. Now paste your real sections below this line.
+      </div>
+
+      {/* 🔥 IMPORTANT:
+         Replace this placeholder with your REAL component tree:
+         - CandidateBlock
+         - NNM section
+         - Charts
+         - Export panel
+         - Summary
+      */}
+      {/* Example:
+      <CandidateBlock showTips={showTips} />
+      <NnmSection showTips={showTips} />
+      <Charts />
+      <ExportPanel exporting={exporting} setExporting={setExporting} />
+      */}
+    </div>
   );
 }
