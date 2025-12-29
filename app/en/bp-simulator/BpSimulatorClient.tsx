@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import Link from "next/link";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -193,61 +193,22 @@ export default function BpSimulatorClient() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   /**
-   * ✅ IMPORTANT:
-   * Client is NOT a gate anymore.
-   * The page.tsx server gate is the only source of truth.
-   * Here we only show a non-blocking “secure badge”.
+   * ✅ FINAL RULE:
+   * - NO client auth / no /api/private/me calls
+   * - Page.tsx is the ONLY gate
+   * - Client ALWAYS renders the simulator UI
    */
-  const [sessionState, setSessionState] = useState<
-    "checking" | "active" | "inactive"
-  >("checking");
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function check() {
-      try {
-        const res = await fetch("/api/private/me", {
-          cache: "no-store",
-          credentials: "include",
-        });
-        const data = await res.json().catch(() => null);
-
-        const authed = Boolean(res.ok && data?.authenticated === true);
-        if (!cancelled) setSessionState(authed ? "active" : "inactive");
-      } catch {
-        if (!cancelled) setSessionState("inactive");
-      }
-    }
-
-    check();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const [showTips, setShowTips] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [autoFixedFromBase, setAutoFixedFromBase] = useState(true);
   const [customFixedPerYear, setCustomFixedPerYear] = useState<number>(350_000);
 
-  // ... keep ALL your state & logic unchanged from here down ...
-
-  const sessionBadge =
-    sessionState === "active"
-      ? {
-          cls: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
-          text: "🔒 Secure session active",
-        }
-      : sessionState === "checking"
-      ? {
-          cls: "border-white/15 bg-white/5 text-white/70",
-          text: "🔄 Checking session…",
-        }
-      : {
-          cls: "border-amber-400/30 bg-amber-400/10 text-amber-200",
-          text: "🔓 Session inactive",
-        };
+  // Optional: keep a static badge (non-blocking)
+  const sessionBadge = {
+    cls: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
+    text: "🔒 Secure access",
+  };
 
   return (
     <main
@@ -283,7 +244,7 @@ export default function BpSimulatorClient() {
                     "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs border",
                     sessionBadge.cls,
                   ].join(" ")}
-                  title="Session badge (non-blocking)"
+                  title="Non-blocking badge"
                 >
                   {sessionBadge.text}
                 </span>
@@ -294,19 +255,16 @@ export default function BpSimulatorClient() {
                 NNM, charts, and exportable outputs.
               </p>
 
-              {/* optional: show a tiny helper link only when inactive */}
-              {sessionState === "inactive" ? (
-                <div className="mt-3 text-xs text-white/60">
-                  If you expect to be logged in, refresh the page or request a new secure link{" "}
-                  <Link
-                    className="underline underline-offset-4 hover:text-white"
-                    href="/private/auth/request?next=/en/bp-simulator"
-                  >
-                    here
-                  </Link>
-                  .
-                </div>
-              ) : null}
+              <div className="mt-3 text-xs text-white/60">
+                If anything looks locked, request a fresh secure link{" "}
+                <Link
+                  className="underline underline-offset-4 hover:text-white"
+                  href="/private/auth/request?next=/en/bp-simulator"
+                >
+                  here
+                </Link>
+                .
+              </div>
             </div>
 
             <label className="inline-flex items-center gap-2 text-sm text-white/80">
@@ -321,9 +279,10 @@ export default function BpSimulatorClient() {
           </div>
         </section>
 
-        {/* ✅ CRITICAL: always render the simulator tree (no client gating) */}
+        {/* ✅ ALWAYS render simulator tree */}
         <div className="mt-8">
           {/* KEEP THE REST OF YOUR COMPONENT TREE UNCHANGED */}
+          {/* (CandidateBlock, NNM, charts, export logic, etc.) */}
         </div>
       </div>
     </main>
