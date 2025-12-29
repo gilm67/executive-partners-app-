@@ -2,6 +2,13 @@
 const nextConfig = {
   async redirects() {
     return [
+      // 🔧 Normalize trailing slash for jobs hub
+      {
+        source: "/en/jobs/",
+        destination: "/en/jobs",
+        permanent: true,
+      },
+
       // 1) Legacy form links -> canonical contact
       {
         source: "/form-view/:path*",
@@ -9,7 +16,7 @@ const nextConfig = {
         permanent: true,
       },
 
-      // 2) Legacy jobs links -> preserve slug (since you have /en/jobs/[slug])
+      // 2) Legacy jobs links -> preserve slug
       {
         source: "/jobs/:path*",
         destination: "/en/jobs/:path*",
