@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 import PrimaryButton from "@/components/ui/PrimaryButton";
@@ -118,9 +118,13 @@ type ApiGateError =
 ------------------------------ */
 
 export default function PortabilityClient() {
-  /* ----- Access / session safety ----- */
-  const [gateError, setGateError] = useState<ApiGateError>(null);
-  const [gateChecking, setGateChecking] = useState<boolean>(true);
+  /**
+   * ✅ FINAL RULE (same as BP):
+   * - NO client auth / no gate checks
+   * - page.tsx is the ONLY gate
+   * - Client ALWAYS renders the tool UI
+   */
+
   const [exporting, setExporting] = useState<boolean>(false);
 
   /* ----- Section 1: Basic profile ----- */
@@ -173,7 +177,7 @@ export default function PortabilityClient() {
     return initial;
   });
 
-  /* ----- Capture ref (optional, but OK to keep) ----- */
+  /* ----- Capture ref (optional) ----- */
   const captureRef = useRef<HTMLDivElement | null>(null);
 
   /* ------------------------------
@@ -299,55 +303,7 @@ export default function PortabilityClient() {
   }, [coreScores, advancedScores, bookingCentres, permissions]);
 
   /* ------------------------------
-     Hard gate check (BP-grade)
-  ------------------------------ */
-
-  useEffect(() => {
-    let mounted = true;
-
-    (async () => {
-      setGateChecking(true);
-      setGateError(null);
-
-      try {
-        const res = await fetch("/api/portability/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ ping: true }),
-        });
-
-        if (!mounted) return;
-
-        if (res.status === 401) {
-          setGateError("invalid_session");
-          return;
-        }
-        if (res.status === 403) {
-          setGateError("access_required");
-          return;
-        }
-        if (!res.ok) {
-          setGateError("server_error");
-          return;
-        }
-
-        setGateError(null);
-      } catch {
-        if (!mounted) return;
-        setGateError("server_error");
-      } finally {
-        if (mounted) setGateChecking(false);
-      }
-    })();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  /* ------------------------------
-     Server-gated PDF export
+     Server export (keep; non-blocking)
   ------------------------------ */
 
   const handleDownload = async () => {
@@ -382,13 +338,13 @@ export default function PortabilityClient() {
       });
 
       if (res.status === 401) {
-        setGateError("invalid_session");
-        alert("Your session has expired. Please log in again.");
+        alert("Your session has expired. Please request a new secure link.");
+        window.location.href = "/private/auth/request?next=/en/portability";
         return;
       }
       if (res.status === 403) {
-        setGateError("access_required");
         alert("Access required. Please request access to use this tool.");
+        window.location.href = "/private/auth/request?next=/en/portability";
         return;
       }
       if (!res.ok) {
@@ -419,58 +375,17 @@ export default function PortabilityClient() {
   const updateProfile = (patch: Partial<ProfileState>) =>
     setProfile((prev) => ({ ...prev, ...patch }));
 
-  const toggleBC = (bc: string) =>
-    setBookingCentres((prev) => ({ ...prev, [bc]: !prev[bc] }));
-
-  const togglePerm = (p: string) =>
-    setPermissions((prev) => ({ ...prev, [p]: !prev[p] }));
-
   /* ------------------------------
-     Gate UX
+     Non-blocking badge (cosmetic)
   ------------------------------ */
 
-  if (gateChecking) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 py-16 text-white">
-        <div className="rounded-2xl border border-white/10 bg-black/40 p-6">
-          <div className="text-sm text-white/80">Loading Portability tool…</div>
-          <div className="mt-2 text-xs text-white/50">Verifying access.</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (gateError) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 py-16 text-white">
-        <div className="rounded-2xl border border-white/10 bg-black/40 p-6">
-          <h2 className="text-lg font-semibold">
-            {gateError === "access_required"
-              ? "Access required"
-              : gateError === "invalid_session"
-              ? "Session expired"
-              : "Temporary issue"}
-          </h2>
-          <p className="mt-2 text-sm text-white/70">
-            {gateError === "access_required"
-              ? "Your access is not approved for this tool. Please request access and we will enable it once reviewed."
-              : gateError === "invalid_session"
-              ? "Please log in again to continue."
-              : "Please refresh and try again."}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <PrimaryButton href="/en/contact">
-              Contact Executive Partners
-            </PrimaryButton>
-            <SecondaryButton href="/en/portability">Refresh page</SecondaryButton>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const sessionBadge = {
+    cls: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
+    text: "🔒 Secure access",
+  };
 
   /* ------------------------------
-     JSX (your original UI restored)
+     JSX (your original UI)
   ------------------------------ */
 
   return (
@@ -478,9 +393,22 @@ export default function PortabilityClient() {
       {/* Header & actions */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full bg-brandGold/10 px-4 py-1 text-xs font-semibold text-brandGoldPale ring-1 ring-brandGold/40">
-            Executive Partners · Geneva · Global Private Banking &amp; WM
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="inline-flex items-center gap-2 rounded-full bg-brandGold/10 px-4 py-1 text-xs font-semibold text-brandGoldPale ring-1 ring-brandGold/40">
+              Executive Partners · Geneva · Global Private Banking &amp; WM
+            </p>
+
+            <span
+              className={[
+                "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs border",
+                sessionBadge.cls,
+              ].join(" ")}
+              title="Non-blocking badge"
+            >
+              {sessionBadge.text}
+            </span>
+          </div>
+
           <h1 className="mt-3 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
             Portability Readiness Score™ — Advanced Diagnostic
           </h1>
@@ -490,6 +418,7 @@ export default function PortabilityClient() {
             key EU hubs.
           </p>
         </div>
+
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <button
             type="button"
@@ -499,13 +428,14 @@ export default function PortabilityClient() {
           >
             {exporting ? "Preparing PDF…" : "Download full PDF diagnostic"}
           </button>
+
           <PrimaryButton href="/en/contact" className="whitespace-nowrap">
             Discuss results confidentially
           </PrimaryButton>
         </div>
       </div>
 
-      {/* All content below captured visually; export is server-gated now */}
+      {/* All content below captured visually; export is server-gated */}
       <div ref={captureRef} className="space-y-10">
         {/* Section 1 – Profile */}
         <motion.section
