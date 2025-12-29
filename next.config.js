@@ -2,17 +2,22 @@
 const nextConfig = {
   async redirects() {
     return [
-      // 1) Legacy form links -> canonical contact (avoid dead /form-view/* URLs)
+      // 1) Legacy form links -> canonical contact
       {
         source: "/form-view/:path*",
         destination: "/en/contact",
         permanent: true,
       },
 
-      // 2) Legacy jobs links -> canonical jobs hub
-      // (keeps it simple and prevents slug mismatches)
+      // 2) Legacy jobs links -> keep slug (you have /en/jobs/[slug])
       {
-        source: "/jobs/:path*",
+        source: "/jobs/:slug+",
+        destination: "/en/jobs/:slug*",
+        permanent: true,
+      },
+      // Optional: jobs index
+      {
+        source: "/jobs",
         destination: "/en/jobs",
         permanent: true,
       },
