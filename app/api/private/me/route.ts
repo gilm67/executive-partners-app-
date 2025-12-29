@@ -21,33 +21,35 @@ function getCookieValue(cookieHeader: string, name: string): string | null {
 type ReqType = "bp" | "portability" | "profile";
 type ReqStatus = "none" | "pending" | "approved" | "rejected";
 
-type LatestReq = {
-  id: string;
-  request_type: ReqType | string;
-  profile_id: string | null;
-  status: string | null;
-  created_at: string | null;
-  reviewed_at: string | null;
-  reviewed_by: string | null;
-};
+type AccessShape = Record<
+  ReqType,
+  {
+    status: ReqStatus;
+    requestId: string | null;
+    reviewedAt?: string | null;
+    reviewedBy?: string | null;
+  }
+>;
 
-function normalizeStatus(s: any): Exclude<ReqStatus, "none"> {
-  if (s === "approved") return "approved";
-  if (s === "rejected") return "rejected";
-  if (s === "pending") return "pending";
-  return "pending";
+function normalizeStatus(s: any): ReqStatus {
+  const v = String(s || "").toLowerCase();
+  if (v === "approved") return "approved";
+  if (v === "rejected") return "rejected";
+  if (v === "pending") return "pending";
+  return "none";
 }
 
 function emptyMe() {
+  const access: AccessShape = {
+    bp: { status: "none", requestId: null },
+    portability: { status: "none", requestId: null },
+    profile: { status: "none", requestId: null },
+  };
   return {
     ok: false,
     authenticated: false,
     user: null as any,
-    access: {
-      bp: { status: "none" as ReqStatus, requestId: null as string | null },
-      portability: { status: "none" as ReqStatus, requestId: null as string | null },
-      profile: { status: "none" as ReqStatus, requestId: null as string | null },
-    },
+    access,
     toolAccess: {
       bpApproved: false,
       portabilityApproved: false,
@@ -65,7 +67,7 @@ export async function GET(req: Request) {
       sessionHash.length >= 24 &&
       !["null", "undefined"].includes(sessionHash.toLowerCase());
 
-    // ✅ IMPORTANT: return 200 + authenticated:false (avoid client loops)
+    // ✅ Always 200 + stable JSON shape
     if (!hasCookie) {
       return NextResponse.json(emptyMe(), { status: 200, headers: noStoreHeaders });
     }
@@ -73,8 +75,8 @@ export async function GET(req: Request) {
     const supabaseAdmin = await getSupabaseAdmin();
     const nowIso = new Date().toISOString();
 
-    // 1) Validate session
-    const { data: session, error } = await supabaseAdmin
+    // 1) Validate session (session_hash column)
+    const { data: session, error: sessErr } = await supabaseAdmin
       .from("private_sessions")
       .select("id, email, role, expires_at, revoked_at")
       .eq("session_hash", sessionHash)
@@ -82,7 +84,7 @@ export async function GET(req: Request) {
       .gt("expires_at", nowIso)
       .maybeSingle();
 
-    if (error || !session?.email) {
+    if (sessErr || !session?.email) {
       return NextResponse.json(emptyMe(), { status: 200, headers: noStoreHeaders });
     }
 
@@ -92,9 +94,9 @@ export async function GET(req: Request) {
       .update({ last_seen_at: nowIso })
       .eq("id", session.id);
 
-    const email = String(session.email || "").trim().toLowerCase();
+    const email = String(session.email).trim().toLowerCase();
 
-    // 2) Source-of-truth role from private_users
+    // 2) Role source of truth: private_users
     let role = String(session.role || "candidate");
     try {
       const { data: u } = await supabaseAdmin
@@ -107,16 +109,8 @@ export async function GET(req: Request) {
       // ignore
     }
 
-    // 3) Live access status per tool (default none)
-    let access: Record<
-      ReqType,
-      {
-        status: ReqStatus;
-        requestId: string | null;
-        reviewedAt?: string | null;
-        reviewedBy?: string | null;
-      }
-    > = {
+    // 3) Access requests source of truth: access_requests (your actual table)
+    const access: AccessShape = {
       bp: { status: "none", requestId: null },
       portability: { status: "none", requestId: null },
       profile: { status: "none", requestId: null },
@@ -124,53 +118,32 @@ export async function GET(req: Request) {
 
     try {
       const { data: reqs } = await supabaseAdmin
-        .from("private_profile_access_requests")
-        .select("id,request_type,profile_id,status,created_at,reviewed_at,reviewed_by")
-        .eq("requester_email", email)
+        .from("access_requests")
+        .select("id, request_type, status, created_at, reviewed_at, reviewed_by")
+        .eq("email", email)
         .order("created_at", { ascending: false })
-        .limit(50);
+        .limit(100);
 
-      const latestByType: Record<string, LatestReq | undefined> = {};
-      for (const r of (reqs ?? []) as LatestReq[]) {
+      // pick latest row per request_type
+      const latest: Record<string, any> = {};
+      for (const r of reqs ?? []) {
         const t = String(r.request_type || "").toLowerCase();
-        if (t !== "bp" && t !== "portability" && t !== "profile") continue;
-        if (!latestByType[t]) latestByType[t] = r; // first = latest due to desc order
+        if (!["bp", "portability", "profile"].includes(t)) continue;
+        if (!latest[t]) latest[t] = r;
       }
 
-      const bpRow = latestByType["bp"];
-      const portRow = latestByType["portability"];
-      const profRow = latestByType["profile"];
-
-      access = {
-        bp: bpRow
-          ? {
-              status: normalizeStatus(bpRow.status),
-              requestId: bpRow.id,
-              reviewedAt: bpRow.reviewed_at,
-              reviewedBy: bpRow.reviewed_by,
-            }
-          : { status: "none", requestId: null },
-
-        portability: portRow
-          ? {
-              status: normalizeStatus(portRow.status),
-              requestId: portRow.id,
-              reviewedAt: portRow.reviewed_at,
-              reviewedBy: portRow.reviewed_by,
-            }
-          : { status: "none", requestId: null },
-
-        profile: profRow
-          ? {
-              status: normalizeStatus(profRow.status),
-              requestId: profRow.id,
-              reviewedAt: profRow.reviewed_at,
-              reviewedBy: profRow.reviewed_by,
-            }
-          : { status: "none", requestId: null },
-      };
+      for (const t of ["bp", "portability", "profile"] as ReqType[]) {
+        const row = latest[t];
+        if (!row) continue;
+        access[t] = {
+          status: normalizeStatus(row.status),
+          requestId: row.id ?? null,
+          reviewedAt: row.reviewed_at ?? null,
+          reviewedBy: row.reviewed_by ?? null,
+        };
+      }
     } catch {
-      // ignore, never block /me
+      // ignore (never block /me)
     }
 
     return NextResponse.json(
@@ -188,7 +161,6 @@ export async function GET(req: Request) {
     );
   } catch (e) {
     console.error("[/api/private/me] fatal:", e);
-    // ✅ Never return {} — always return a known shape
     return NextResponse.json(emptyMe(), { status: 200, headers: noStoreHeaders });
   }
 }
