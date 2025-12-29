@@ -9,16 +9,10 @@ const nextConfig = {
         permanent: true,
       },
 
-      // 2) Legacy jobs links -> keep slug (you have /en/jobs/[slug])
+      // 2) Legacy jobs links -> preserve slug (since you have /en/jobs/[slug])
       {
-        source: "/jobs/:slug+",
-        destination: "/en/jobs/:slug*",
-        permanent: true,
-      },
-      // Optional: jobs index
-      {
-        source: "/jobs",
-        destination: "/en/jobs",
+        source: "/jobs/:path*",
+        destination: "/en/jobs/:path*",
         permanent: true,
       },
 
