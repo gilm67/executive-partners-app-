@@ -71,15 +71,20 @@ async function isBpApproved(): Promise<boolean> {
     // 1) Validate active session
     const { data: session, error: sessErr } = await supabase
       .from("private_sessions")
-      .select("email, role, expires_at, revoked_at")
+      .select("email, expires_at, revoked_at")
       .eq("session_hash", sessionHash)
       .is("revoked_at", null)
       .maybeSingle();
 
     if (sessErr || !session?.email) return false;
-    if (session.expires_at && new Date(session.expires_at).getTime() < Date.now()) return false;
 
-    const email = String(session.email).toLowerCase();
+    if (session.expires_at) {
+      const exp = new Date(session.expires_at).getTime();
+      if (Number.isFinite(exp) && exp < Date.now()) return false;
+    }
+
+    const email = String(session.email).trim().toLowerCase();
+    if (!email) return false;
 
     // 2) Check latest access request for BP
     const { data: req, error: reqErr } = await supabase
@@ -92,7 +97,8 @@ async function isBpApproved(): Promise<boolean> {
       .maybeSingle();
 
     if (reqErr) return false;
-    return req?.status === "approved";
+
+    return String(req?.status || "").toLowerCase() === "approved";
   } catch {
     return false;
   }
