@@ -1,6 +1,7 @@
 // app/en/bp-simulator/page.tsx
 import type { Metadata } from "next";
 import React from "react";
+import { headers, cookies } from "next/headers";
 
 import BpSimulatorClient from "./BpSimulatorClient";
 import { requirePrivateSession } from "@/app/private/lib/require-session";
@@ -54,37 +55,64 @@ function BpTeaser() {
   );
 }
 
+/**
+ * ✅ Server-side decision (no flicker, no “approved but still blocked” UI)
+ * We call /api/private/me using the incoming cookie.
+ */
+async function getMeStatus(): Promise<{
+  ok: boolean;
+  session?: "active" | "none";
+  access?: { bp?: "approved" | "pending" | "none" };
+}> {
+  try {
+    const h = headers();
+    const host = h.get("x-forwarded-host") || h.get("host");
+    const proto = h.get("x-forwarded-proto") || "https";
+    const base = host ? `${proto}://${host}` : "https://www.execpartners.ch";
+
+    // Forward the cookie to the internal API
+    const cookieHeader = cookies().toString();
+
+    const res = await fetch(`${base}/api/private/me`, {
+      method: "GET",
+      headers: {
+        cookie: cookieHeader,
+      },
+      cache: "no-store",
+    });
+
+    if (!res.ok) return { ok: false };
+    return (await res.json()) as any;
+  } catch {
+    return { ok: false };
+  }
+}
+
 export default async function Page() {
-  // ✅ preserve return path after auth (keeps your secure flow)
+  // 🔐 Must be logged in (keeps your secure flow)
   await requirePrivateSession(undefined, "/en/bp-simulator");
 
-  /**
-   * IMPORTANT:
-   * - Do NOT query Supabase here anymore.
-   * - /api/private/me is the source of truth and is already used by AccessRequestGate.
-   * - We always render the same shell; the client components decide what to show.
-   */
+  // ✅ Decide server-side whether user is approved for BP
+  const me = await getMeStatus();
+  const bpStatus = me?.access?.bp || "none";
+  const approved = bpStatus === "approved";
+
   return (
     <GateShell>
       <BpTeaser />
 
-      {/* Gate reads /api/private/me and will show:
-          none => request form
-          pending => pending
-          approved => it will redirect to refreshHref (this same page)
-      */}
-      <AccessRequestGate
-        requestType="bp"
-        title="Business Plan Simulator — Access required"
-        description="Request access to unlock the full simulator."
-        refreshHref="/en/bp-simulator"
-      />
-
-      {/* ✅ Mount the simulator too (it should internally gate, or you can make it rely on /me as well).
-          If BpSimulatorClient currently assumes it only renders when approved, it will still work once approved.
-      */}
+      {/* ✅ CRITICAL: render ONE or the other, never both */}
       <div className="mt-8">
-        <BpSimulatorClient />
+        {approved ? (
+          <BpSimulatorClient />
+        ) : (
+          <AccessRequestGate
+            requestType="bp"
+            title="Business Plan Simulator — Access required"
+            description="Request access to unlock the full simulator."
+            refreshHref="/en/bp-simulator"
+          />
+        )}
       </div>
     </GateShell>
   );
