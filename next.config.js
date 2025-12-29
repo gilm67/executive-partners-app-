@@ -2,28 +2,22 @@
 const nextConfig = {
   async redirects() {
     return [
-      // 1) Legacy URL fixes (DO NOT create loops)
+      // 1) Legacy form links -> canonical contact (avoid dead /form-view/* URLs)
       {
-        source: "/form-view/:id*",
-        destination: "/apply",
+        source: "/form-view/:path*",
+        destination: "/en/contact",
         permanent: true,
       },
 
-      // ✅ Legacy jobs slugs -> your real jobs route
-      // If your jobs live under /en/jobs, keep this:
+      // 2) Legacy jobs links -> canonical jobs hub
+      // (keeps it simple and prevents slug mismatches)
       {
-        source: "/jobs/:slug+",
-        destination: "/en/jobs/:slug*",
-        permanent: true,
-      },
-      // Optional: send /jobs index to /en/jobs (remove if you want /jobs to be the real page)
-      {
-        source: "/jobs",
+        source: "/jobs/:path*",
         destination: "/en/jobs",
         permanent: true,
       },
 
-      // 2) Redirect apex -> www (host-based)
+      // 3) Apex -> www (host-based)
       {
         source: "/:path*",
         has: [{ type: "host", value: "execpartners.ch" }],
