@@ -137,7 +137,6 @@ type YesNo = "Yes" | "No";
 /* ------------------------------
    Types
 ------------------------------ */
-// ✅ keep your types exactly as-is below...
 type Candidate = {
   name: string;
   email: string;
@@ -194,16 +193,14 @@ export default function BpSimulatorClient() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   /**
-   * ✅ We must distinguish:
-   * - not logged in (no session)
-   * - logged in but BP not approved
-   * - logged in + BP approved
+   * ✅ IMPORTANT:
+   * Client is NOT a gate anymore.
+   * The page.tsx server gate is the only source of truth.
+   * Here we only show a non-blocking “secure badge”.
    */
-  const [gateState, setGateState] = useState<
-    "checking" | "no_session" | "not_approved" | "approved"
+  const [sessionState, setSessionState] = useState<
+    "checking" | "active" | "inactive"
   >("checking");
-
-  const [me, setMe] = useState<any>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -216,27 +213,10 @@ export default function BpSimulatorClient() {
         });
         const data = await res.json().catch(() => null);
 
-        if (cancelled) return;
-
-        setMe(data);
-
         const authed = Boolean(res.ok && data?.authenticated === true);
-
-        // IMPORTANT: your /api/private/me must expose something like:
-        // data.access.bp = "approved" | "pending" | "none"
-        const bpStatus =
-          data?.access?.bp ||
-          data?.bp_status || // fallback if you used another field name
-          data?.bp || // fallback
-          "none";
-
-        const approved = String(bpStatus).toLowerCase() === "approved";
-
-        if (!authed) setGateState("no_session");
-        else if (!approved) setGateState("not_approved");
-        else setGateState("approved");
+        if (!cancelled) setSessionState(authed ? "active" : "inactive");
       } catch {
-        if (!cancelled) setGateState("no_session");
+        if (!cancelled) setSessionState("inactive");
       }
     }
 
@@ -254,24 +234,19 @@ export default function BpSimulatorClient() {
   // ... keep ALL your state & logic unchanged from here down ...
 
   const sessionBadge =
-    gateState === "approved"
+    sessionState === "active"
       ? {
           cls: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
-          text: "🔒 Access approved",
+          text: "🔒 Secure session active",
         }
-      : gateState === "not_approved"
-      ? {
-          cls: "border-amber-400/30 bg-amber-400/10 text-amber-200",
-          text: "🟡 Access required",
-        }
-      : gateState === "checking"
+      : sessionState === "checking"
       ? {
           cls: "border-white/15 bg-white/5 text-white/70",
-          text: "🔄 Checking access…",
+          text: "🔄 Checking session…",
         }
       : {
-          cls: "border-rose-400/30 bg-rose-400/10 text-rose-200",
-          text: "🔓 Not logged in",
+          cls: "border-amber-400/30 bg-amber-400/10 text-amber-200",
+          text: "🔓 Session inactive",
         };
 
   return (
@@ -279,7 +254,7 @@ export default function BpSimulatorClient() {
       ref={containerRef}
       className="relative min-h-screen bg-[#0B0E13] text-white body-grain"
     >
-      {/* ✅ Portability-style background glow */}
+      {/* background glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -290,7 +265,7 @@ export default function BpSimulatorClient() {
       />
 
       <div className="relative mx-auto max-w-6xl px-4 py-8 md:py-12">
-        {/* ✅ Header card */}
+        {/* header */}
         <section className="rounded-2xl border border-white/10 bg-black/40 p-6 ring-1 ring-white/10">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
@@ -308,7 +283,7 @@ export default function BpSimulatorClient() {
                     "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs border",
                     sessionBadge.cls,
                   ].join(" ")}
-                  title="Secure session + BP access status"
+                  title="Session badge (non-blocking)"
                 >
                   {sessionBadge.text}
                 </span>
@@ -318,6 +293,20 @@ export default function BpSimulatorClient() {
                 Model AuM portability, revenue & net margins with strategy panels,
                 NNM, charts, and exportable outputs.
               </p>
+
+              {/* optional: show a tiny helper link only when inactive */}
+              {sessionState === "inactive" ? (
+                <div className="mt-3 text-xs text-white/60">
+                  If you expect to be logged in, refresh the page or request a new secure link{" "}
+                  <Link
+                    className="underline underline-offset-4 hover:text-white"
+                    href="/private/auth/request?next=/en/bp-simulator"
+                  >
+                    here
+                  </Link>
+                  .
+                </div>
+              ) : null}
             </div>
 
             <label className="inline-flex items-center gap-2 text-sm text-white/80">
@@ -332,53 +321,10 @@ export default function BpSimulatorClient() {
           </div>
         </section>
 
-        {/* ✅ HARD GATE: if not approved, do NOT render the simulator tree */}
-        {gateState !== "approved" ? (
-          <div className="mt-8 rounded-2xl border border-white/10 bg-black/40 p-6 ring-1 ring-white/10">
-            <h2 className="text-xl font-semibold">
-              {gateState === "checking"
-                ? "Checking secure access…"
-                : gateState === "no_session"
-                ? "Secure login required"
-                : "Access required"}
-            </h2>
-
-            <p className="mt-2 text-sm text-white/75">
-              {gateState === "checking"
-                ? "Please wait a moment."
-                : gateState === "no_session"
-                ? "You must log in via secure link to use the Business Plan Simulator."
-                : "Your session is active, but this tool is restricted. Request access to unlock it."}
-            </p>
-
-            <div className="mt-5 flex flex-wrap gap-3">
-              <Link
-                className="inline-flex items-center justify-center rounded-xl bg-white text-black px-4 py-2 text-sm font-semibold hover:bg-white/90"
-                href="/private/auth/request?next=/en/bp-simulator"
-              >
-                Request secure access
-              </Link>
-
-              <Link
-                className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
-                href="/en"
-              >
-                Back to home
-              </Link>
-            </div>
-
-            {/* Optional tiny debug (safe) */}
-            {process.env.NODE_ENV !== "production" && (
-              <pre className="mt-5 overflow-auto rounded-xl bg-black/40 p-3 text-xs text-white/70 border border-white/10">
-                {JSON.stringify(me, null, 2)}
-              </pre>
-            )}
-          </div>
-        ) : (
-          <div className="mt-8">
-            {/* KEEP THE REST OF YOUR COMPONENT TREE UNCHANGED */}
-          </div>
-        )}
+        {/* ✅ CRITICAL: always render the simulator tree (no client gating) */}
+        <div className="mt-8">
+          {/* KEEP THE REST OF YOUR COMPONENT TREE UNCHANGED */}
+        </div>
       </div>
     </main>
   );
