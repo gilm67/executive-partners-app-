@@ -57,8 +57,9 @@ function BpTeaser() {
 }
 
 /**
- * ✅ FINAL: server-only, no internal fetch calls
- * Reads ep_private cookie -> validates session -> checks latest BP access request status
+ * ✅ Server-only approval check
+ * Uses the SAME source-of-truth as /api/private/me:
+ * private_sessions + private_profile_access_requests (requester_email + request_type)
  */
 async function isBpApproved(): Promise<boolean> {
   try {
@@ -67,6 +68,7 @@ async function isBpApproved(): Promise<boolean> {
     if (!sessionHash) return false;
 
     const supabase = await getSupabaseAdmin();
+    const nowIso = new Date().toISOString();
 
     // 1) Validate active session
     const { data: session, error: sessErr } = await supabase
@@ -74,23 +76,19 @@ async function isBpApproved(): Promise<boolean> {
       .select("email, expires_at, revoked_at")
       .eq("session_hash", sessionHash)
       .is("revoked_at", null)
+      .gt("expires_at", nowIso)
       .maybeSingle();
 
     if (sessErr || !session?.email) return false;
 
-    if (session.expires_at) {
-      const exp = new Date(session.expires_at).getTime();
-      if (Number.isFinite(exp) && exp < Date.now()) return false;
-    }
-
     const email = String(session.email).trim().toLowerCase();
     if (!email) return false;
 
-    // 2) Check latest access request for BP
+    // 2) Latest BP access request (same table as /api/private/me)
     const { data: req, error: reqErr } = await supabase
-      .from("access_requests")
+      .from("private_profile_access_requests")
       .select("status")
-      .eq("email", email)
+      .eq("requester_email", email)
       .eq("request_type", "bp")
       .order("created_at", { ascending: false })
       .limit(1)
@@ -105,10 +103,10 @@ async function isBpApproved(): Promise<boolean> {
 }
 
 export default async function Page() {
-  // 🔐 Must be logged in (keeps your secure flow)
+  // 🔐 Must be logged in
   await requirePrivateSession(undefined, "/en/bp-simulator");
 
-  // ✅ Decide server-side (no flicker, no “approved but blocked”)
+  // ✅ Decide server-side (no flicker)
   const approved = await isBpApproved();
 
   return (
