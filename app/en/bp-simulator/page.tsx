@@ -1,11 +1,12 @@
 // app/en/bp-simulator/page.tsx
 import type { Metadata } from "next";
 import React from "react";
-import { headers, cookies } from "next/headers";
+import { cookies } from "next/headers";
 
 import BpSimulatorClient from "./BpSimulatorClient";
 import { requirePrivateSession } from "@/app/private/lib/require-session";
 import AccessRequestGate from "@/app/private/components/AccessRequestGate";
+import { getSupabaseAdmin } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -56,42 +57,44 @@ function BpTeaser() {
 }
 
 /**
- * ✅ Server-side decision (no flicker, no “approved but still blocked” UI)
- * We call /api/private/me using the incoming cookie.
+ * ✅ FINAL: server-only, no internal fetch calls
+ * Reads ep_private cookie -> validates session -> checks latest BP access request status
  */
-async function getMeStatus(): Promise<{
-  ok: boolean;
-  authenticated?: boolean;
-  session?: "active" | "none";
-  access?: { bp?: "approved" | "pending" | "none" };
-}> {
+async function isBpApproved(): Promise<boolean> {
   try {
-    // ✅ Next.js 15: headers() + cookies() are async
-    const h = await headers();
-    const c = await cookies();
+    const cookieStore = await cookies();
+    const sessionHash = cookieStore.get("ep_private")?.value || null;
+    if (!sessionHash) return false;
 
-    const host = h.get("x-forwarded-host") || h.get("host");
-    const proto = h.get("x-forwarded-proto") || "https";
-    const base = host ? `${proto}://${host}` : "https://www.execpartners.ch";
+    const supabase = await getSupabaseAdmin();
 
-    // Forward the cookie to the internal API
-    const cookieHeader = c.toString();
+    // 1) Validate active session
+    const { data: session, error: sessErr } = await supabase
+      .from("private_sessions")
+      .select("email, role, expires_at, revoked_at")
+      .eq("session_hash", sessionHash)
+      .is("revoked_at", null)
+      .maybeSingle();
 
-    const res = await fetch(`${base}/api/private/me`, {
-      method: "GET",
-      headers: { cookie: cookieHeader },
-      cache: "no-store",
-    });
+    if (sessErr || !session?.email) return false;
+    if (session.expires_at && new Date(session.expires_at).getTime() < Date.now()) return false;
 
-    if (!res.ok) return { ok: false };
+    const email = String(session.email).toLowerCase();
 
-    // /api/private/me may return { authenticated:true, access:{...} }
-    const data = (await res.json().catch(() => null)) as any;
-    if (!data) return { ok: false };
+    // 2) Check latest access request for BP
+    const { data: req, error: reqErr } = await supabase
+      .from("access_requests")
+      .select("status")
+      .eq("email", email)
+      .eq("request_type", "bp")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
-    return { ok: true, ...data };
+    if (reqErr) return false;
+    return req?.status === "approved";
   } catch {
-    return { ok: false };
+    return false;
   }
 }
 
@@ -99,16 +102,13 @@ export default async function Page() {
   // 🔐 Must be logged in (keeps your secure flow)
   await requirePrivateSession(undefined, "/en/bp-simulator");
 
-  // ✅ Decide server-side whether user is approved for BP
-  const me = await getMeStatus();
-  const bpStatus = me?.access?.bp || "none";
-  const approved = bpStatus === "approved";
+  // ✅ Decide server-side (no flicker, no “approved but blocked”)
+  const approved = await isBpApproved();
 
   return (
     <GateShell>
       <BpTeaser />
 
-      {/* ✅ CRITICAL: render ONE or the other, never both */}
       <div className="mt-8">
         {approved ? (
           <BpSimulatorClient />
