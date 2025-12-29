@@ -298,8 +298,8 @@ export default function BpSimulatorClient() {
 
 /**
  * ✅ Paste your existing simulator UI here.
- * This is ONLY to ensure it actually mounts/render.
- * Keep all your internal states/sections exactly as they were.
+ * This exists ONLY to guarantee your UI mounts/renders.
+ * Keep all your internal states/sections exactly as they were (paste them below).
  */
 function SimulatorBody(props: {
   showTips: boolean;
@@ -310,6 +310,7 @@ function SimulatorBody(props: {
   customFixedPerYear: number;
   setCustomFixedPerYear: React.Dispatch<React.SetStateAction<number>>;
 }) {
+  // props are available when you paste your real tree
   const {
     showTips,
     exporting,
@@ -328,14 +329,15 @@ function SimulatorBody(props: {
       </div>
 
       {/* 🔥 IMPORTANT:
-         Replace this placeholder with your REAL component tree:
+         Replace everything below with your REAL component tree:
          - CandidateBlock
          - NNM section
          - Charts
          - Export panel
          - Summary
       */}
-      {/* Example:
+
+      {/* Example skeleton (delete):
       <CandidateBlock showTips={showTips} />
       <NnmSection showTips={showTips} />
       <Charts />
