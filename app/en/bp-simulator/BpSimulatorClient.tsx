@@ -2,207 +2,20 @@
 
 import React, { useRef, useState } from "react";
 import Link from "next/link";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  CartesianGrid,
-  AreaChart,
-  Area,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
 
-/* ------------------------------
-   Tiny hover bulb tip (💡)
------------------------------- */
-function PopTip({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="relative group inline-flex items-center cursor-help select-none ml-1 align-middle">
-      💡
-      <span className="absolute z-20 left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block rounded-md bg-black/80 text-white text-xs px-3 py-2 whitespace-pre-line shadow-lg ring-1 ring-white/10">
-        {children}
-      </span>
-    </span>
-  );
-}
+// ✅ This is your real simulator UI that loads Sections 1–5
+import BPClient from "./BPClient";
 
-function HelpTip({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="mt-2 rounded-md border border-white/10 bg-black/30 p-3 text-xs leading-relaxed text-white/75">
-      <div className="mb-1 font-medium">💡 Tip</div>
-      <div>{children}</div>
-    </div>
-  );
-}
-
-function Text({
-  label,
-  value,
-  onChange,
-  type = "text",
-}: {
-  label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  type?: string;
-}) {
-  return (
-    <label className="text-sm">
-      {label}
-      <input
-        type={type}
-        className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
-        value={value}
-        onChange={onChange}
-      />
-    </label>
-  );
-}
-
-/* ✅ show empty field instead of 0 */
-function Num({
-  label,
-  value,
-  onChange,
-  step = 1,
-}: {
-  label: string;
-  value: number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  step?: number;
-}) {
-  return (
-    <label className="text-sm">
-      {label}
-      <input
-        type="number"
-        inputMode="decimal"
-        className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
-        value={Number.isFinite(value) ? (value === 0 ? "" : value) : ""}
-        onChange={onChange}
-        step={step}
-      />
-    </label>
-  );
-}
-
-function Select({
-  label,
-  value,
-  onChange,
-  options,
-}: {
-  label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  options: string[];
-}) {
-  return (
-    <label className="text-sm">
-      {label}
-      <select
-        className="mt-1 w-full rounded-md bg-black/30 border border-white/10 px-3 py-2"
-        value={value}
-        onChange={onChange}
-      >
-        {options.map((o) => (
-          <option key={o} value={o}>
-            {o}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
-}
-
-type YesNo = "Yes" | "No";
-
-/* ------------------------------
-   Types
------------------------------- */
-type Candidate = {
-  name: string;
-  email: string;
-  yearsExperience: number;
-  inheritedBookPct: number;
-  role: string;
-  location: string;
-  employer: string;
-  marketLabel: string;
-  currency: string;
-  baseSalary: number;
-  lastBonus: number;
-  currentClients: number;
-  currentAumMM: number;
-  assets_totalAumM: number;
-  assets_affluentPct: number;
-  assets_hnwiPct: number;
-  assets_uhnwiPct: number;
-  roa_averagePct: number;
-  roa_revYtdM: number;
-  roa_revLastYearM: number;
-  svc_selfDirectedPct: number;
-  svc_discretionaryPct: number;
-  svc_advisoryPct: number;
-  svc_directAccessPct: number;
-  svc_custodyPct: number;
-  dom_country1: string;
-  dom_share1: number;
-  dom_country2: string;
-  dom_share2: number;
-  dom_country3: string;
-  dom_share3: number;
-  client_pep: YesNo;
-  client_executive: YesNo;
-  client_inactive: YesNo;
-  client_company: YesNo;
-  client_finInstitutionEam: YesNo;
-  client_trust: YesNo;
-  prod_creditLombard: YesNo;
-  prod_mortgage: YesNo;
-  prod_wealthTaxPlanning: YesNo;
-  prod_structuredProducts: YesNo;
-  prod_hedgeFundsPE: YesNo;
-  prod_other: YesNo;
-  prod_otherNote: string;
-};
-
-// ✅ KEEP all your existing constants + sections (CandidateBlock, NNM, charts, export helpers, etc.) unchanged…
-
-/* ===========================================================
-   MAIN
-   =========================================================== */
 export default function BpSimulatorClient() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   /**
    * ✅ FINAL RULE:
    * - NO client auth / no /api/private/me calls
-   * - Page.tsx is the ONLY gate
+   * - page.tsx is the ONLY gate
    * - Client ALWAYS renders the simulator UI
    */
-
   const [showTips, setShowTips] = useState(true);
-  const [exporting, setExporting] = useState(false);
-  const [autoFixedFromBase, setAutoFixedFromBase] = useState(true);
-  const [customFixedPerYear, setCustomFixedPerYear] = useState<number>(350_000);
 
   // Non-blocking badge
   const sessionBadge = {
@@ -279,70 +92,11 @@ export default function BpSimulatorClient() {
           </div>
         </section>
 
-        {/* ✅ ALWAYS render simulator tree (THIS was missing) */}
+        {/* ✅ REAL SIMULATOR */}
         <div className="mt-8">
-          <SimulatorBody
-            showTips={showTips}
-            exporting={exporting}
-            setExporting={setExporting}
-            autoFixedFromBase={autoFixedFromBase}
-            setAutoFixedFromBase={setAutoFixedFromBase}
-            customFixedPerYear={customFixedPerYear}
-            setCustomFixedPerYear={setCustomFixedPerYear}
-          />
+          <BPClient />
         </div>
       </div>
     </main>
-  );
-}
-
-/**
- * ✅ Paste your existing simulator UI here.
- * This exists ONLY to guarantee your UI mounts/renders.
- * Keep all your internal states/sections exactly as they were (paste them below).
- */
-function SimulatorBody(props: {
-  showTips: boolean;
-  exporting: boolean;
-  setExporting: React.Dispatch<React.SetStateAction<boolean>>;
-  autoFixedFromBase: boolean;
-  setAutoFixedFromBase: React.Dispatch<React.SetStateAction<boolean>>;
-  customFixedPerYear: number;
-  setCustomFixedPerYear: React.Dispatch<React.SetStateAction<number>>;
-}) {
-  // props are available when you paste your real tree
-  const {
-    showTips,
-    exporting,
-    setExporting,
-    autoFixedFromBase,
-    setAutoFixedFromBase,
-    customFixedPerYear,
-    setCustomFixedPerYear,
-  } = props;
-
-  return (
-    <div className="space-y-6">
-      {/* ✅ TEMP sanity marker (remove later) */}
-      <div className="rounded-2xl border border-emerald-400/25 bg-emerald-400/10 p-4 text-sm text-emerald-100">
-        ✅ Simulator mounted. Now paste your real sections below this line.
-      </div>
-
-      {/* 🔥 IMPORTANT:
-         Replace everything below with your REAL component tree:
-         - CandidateBlock
-         - NNM section
-         - Charts
-         - Export panel
-         - Summary
-      */}
-
-      {/* Example skeleton (delete):
-      <CandidateBlock showTips={showTips} />
-      <NnmSection showTips={showTips} />
-      <Charts />
-      <ExportPanel exporting={exporting} setExporting={setExporting} />
-      */}
-    </div>
   );
 }
