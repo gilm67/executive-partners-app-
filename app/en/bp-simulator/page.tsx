@@ -61,28 +61,35 @@ function BpTeaser() {
  */
 async function getMeStatus(): Promise<{
   ok: boolean;
+  authenticated?: boolean;
   session?: "active" | "none";
   access?: { bp?: "approved" | "pending" | "none" };
 }> {
   try {
-    const h = headers();
+    // ✅ Next.js 15: headers() + cookies() are async
+    const h = await headers();
+    const c = await cookies();
+
     const host = h.get("x-forwarded-host") || h.get("host");
     const proto = h.get("x-forwarded-proto") || "https";
     const base = host ? `${proto}://${host}` : "https://www.execpartners.ch";
 
     // Forward the cookie to the internal API
-    const cookieHeader = cookies().toString();
+    const cookieHeader = c.toString();
 
     const res = await fetch(`${base}/api/private/me`, {
       method: "GET",
-      headers: {
-        cookie: cookieHeader,
-      },
+      headers: { cookie: cookieHeader },
       cache: "no-store",
     });
 
     if (!res.ok) return { ok: false };
-    return (await res.json()) as any;
+
+    // /api/private/me may return { authenticated:true, access:{...} }
+    const data = (await res.json().catch(() => null)) as any;
+    if (!data) return { ok: false };
+
+    return { ok: true, ...data };
   } catch {
     return { ok: false };
   }
