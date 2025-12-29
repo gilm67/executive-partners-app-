@@ -7,7 +7,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VERSION = "ml-2025-12-29-c"; // 👈 bumped
+const VERSION = "ml-2025-12-29-d"; // 👈 bump
 
 const CANONICAL = (
   process.env.NEXT_PUBLIC_CANONICAL_URL ||
@@ -110,7 +110,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
     const emailRaw = typeof body?.email === "string" ? body.email : "";
-    const next = sanitizeNext(body?.next);
+    const next = sanitizeNext(body?.next) ?? "/en/bp-simulator";
 
     // Anti-enumeration
     if (!emailRaw) {
@@ -144,9 +144,13 @@ export async function POST(req: Request) {
     const baseUrl =
       process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
 
-    // ✅ CRITICAL: use the server callback that SETS COOKIE + REDIRECTS
-    // You must implement: app/api/magic-link/callback/route.ts
-    const url = new URL(`${baseUrl}/api/magic-link/callback`);
+    /**
+     * ✅ FINAL FIX:
+     * Email must land on a browser page (/private/auth),
+     * which will POST /api/magic-link/verify with credentials: "include",
+     * so the cookie is reliably stored, then client redirects to `next`.
+     */
+    const url = new URL(`${baseUrl}/private/auth`);
     url.searchParams.set("token", token);
     if (next) url.searchParams.set("next", next);
 
