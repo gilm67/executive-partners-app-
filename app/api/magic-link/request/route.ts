@@ -7,6 +7,8 @@ import { getSupabaseAdmin } from "@/lib/supabase-server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const VERSION = "ml-2025-12-29-b"; // 👈 bump when you change behavior
+
 const CANONICAL = (
   process.env.NEXT_PUBLIC_CANONICAL_URL ||
   process.env.NEXT_PUBLIC_SITE_URL ||
@@ -15,26 +17,19 @@ const CANONICAL = (
 
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || "").trim();
 const RESEND_FROM = (
-  process.env.RESEND_FROM || "Executive Partners <recruiter@execpartners.ch>"
+  process.env.RESEND_FROM || "Executive Partners <no-reply@auth.execpartners.ch>"
 ).trim();
 
-/** hash helper */
 function sha256(input: string) {
   return crypto.createHash("sha256").update(input).digest("hex");
 }
 
-/**
- * Prefer canonical/public URL in prod.
- * In dev/preview, derive from headers, but DO NOT rely on Origin.
- */
 function getBaseUrl(req: Request) {
-  // 1) If explicitly configured, always prefer it
   const configured =
     (process.env.NEXT_PUBLIC_SITE_URL || "").trim() ||
     (process.env.NEXT_PUBLIC_CANONICAL_URL || "").trim();
   if (configured) return configured.replace(/\/$/, "");
 
-  // 2) Vercel headers
   const proto = req.headers.get("x-forwarded-proto") || "https";
   const host =
     req.headers.get("x-forwarded-host") ||
@@ -46,15 +41,12 @@ function getBaseUrl(req: Request) {
     return `${proto}://${cleanHost}`.replace(/\/$/, "");
   }
 
-  // 3) Fallback
   return CANONICAL;
 }
 
 /**
  * ✅ SAFE INTERNAL REDIRECTS ONLY
- * - internal only (no scheme)
- * - normalizes common paths to the correct localized routes
- * - strict allow-list
+ * Critical: normalize ANY bp-simulator legacy paths to /en/bp-simulator
  */
 function sanitizeNext(nextRaw: unknown): string | null {
   if (typeof nextRaw !== "string") return null;
@@ -67,6 +59,9 @@ function sanitizeNext(nextRaw: unknown): string | null {
   if (next.startsWith("//")) return null;
   if (next.includes("://")) return null;
 
+  // remove any accidental query/hash if ever passed
+  next = next.split("#")[0].split("?")[0];
+
   // normalize common variants
   if (next === "/portability") next = "/en/portability";
   if (next === "/bp-simulator") next = "/en/bp-simulator";
@@ -74,6 +69,13 @@ function sanitizeNext(nextRaw: unknown): string | null {
   if (next === "/en/bp-simulator/") next = "/en/bp-simulator";
   if (next === "/private/") next = "/private";
 
+  // ✅ THE ROOT FIX:
+  // Any request that tries to go to /private/bp-simulator should land on /en/bp-simulator
+  if (next === "/private/bp-simulator" || next.startsWith("/private/bp-simulator/")) {
+    next = "/en/bp-simulator";
+  }
+
+  // strict allow-list
   const ALLOWED = ["/en/portability", "/en/bp-simulator", "/private"];
   const isAllowed = ALLOWED.includes(next) || next.startsWith("/private/");
   if (!isAllowed) return null;
@@ -96,10 +98,6 @@ function buildEmailHtml(link: string) {
   </div>`;
 }
 
-/**
- * Minimal validation to catch common Resend “from” mistakes.
- * Resend requires a verified sender/domain; invalid FROM often leads to non-delivery.
- */
 function looksLikeEmailFrom(from: string) {
   return (
     /<[^<>@\s]+@[^<>@\s]+\.[^<>@\s]+>/.test(from) ||
@@ -108,7 +106,6 @@ function looksLikeEmailFrom(from: string) {
 }
 
 export async function POST(req: Request) {
-  // ✅ FIX: Request has no nextUrl — parse from req.url
   const debug = new URL(req.url).searchParams.get("debug") === "1";
 
   try {
@@ -116,34 +113,36 @@ export async function POST(req: Request) {
     const emailRaw = typeof body?.email === "string" ? body.email : "";
     const next = sanitizeNext(body?.next);
 
-    // Anti-enumeration: always OK
+    // Anti-enumeration
     if (!emailRaw) {
-      return NextResponse.json({ ok: true }, { status: 200 });
+      const res = NextResponse.json({ ok: true }, { status: 200 });
+      res.headers.set("x-magic-link-version", VERSION);
+      res.headers.set("x-magic-link-next", next ?? "null");
+      return res;
     }
 
     const email = emailRaw.trim().toLowerCase();
 
-    // Generate token + store hash
     const token = crypto.randomBytes(32).toString("hex");
     const tokenHash = sha256(token);
     const expiresAt = new Date(Date.now() + 20 * 60 * 1000).toISOString();
 
     const supabaseAdmin = await getSupabaseAdmin();
-
     const { error: insertErr } = await supabaseAdmin.from("magic_links").insert({
       email,
       token_hash: tokenHash,
       expires_at: expiresAt,
     });
 
-    // Still anti-enumeration, but don’t send a link if insert failed
     if (insertErr) {
       console.error("[magic-link] insert error:", insertErr);
-      return NextResponse.json({ ok: true }, { status: 200 });
+      const res = NextResponse.json({ ok: true }, { status: 200 });
+      res.headers.set("x-magic-link-version", VERSION);
+      res.headers.set("x-magic-link-next", next ?? "null");
+      return res;
     }
 
-    const baseUrl =
-      process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
+    const baseUrl = process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
 
     const url = new URL(`${baseUrl}/private/auth`);
     url.searchParams.set("token", token);
@@ -151,15 +150,8 @@ export async function POST(req: Request) {
 
     const link = url.toString();
 
-    // ---- Sending ----
     const hasKey = !!RESEND_API_KEY;
     const fromOk = looksLikeEmailFrom(RESEND_FROM);
-
-    // Operational logs (safe)
-    if (!hasKey)
-      console.error("[magic-link] RESEND_API_KEY missing (prod will not send)");
-    if (!fromOk)
-      console.error("[magic-link] RESEND_FROM looks invalid:", RESEND_FROM);
 
     let sendStatus: "sent" | "skipped" | "error" = "skipped";
     let sendMeta: any = undefined;
@@ -167,10 +159,9 @@ export async function POST(req: Request) {
     if (hasKey && fromOk) {
       try {
         const resend = new Resend(RESEND_API_KEY);
-
         const result = await resend.emails.send({
           from: RESEND_FROM,
-          to: email, // string is most reliable
+          to: email,
           subject: "Your secure access link — Executive Partners",
           html: buildEmailHtml(link),
         });
@@ -183,7 +174,6 @@ export async function POST(req: Request) {
         } else {
           sendStatus = "sent";
           sendMeta = (result as any)?.data ?? result;
-          console.log("[magic-link] Resend sent:", sendMeta);
         }
       } catch (e: any) {
         sendStatus = "error";
@@ -192,27 +182,19 @@ export async function POST(req: Request) {
       }
     }
 
-    // Response remains anti-enumeration by default.
-    // With debug=1, you can see operational status (useful while testing).
     const resBody: any = { ok: true };
-    if (debug) {
-      resBody.debug = {
-        sendStatus,
-        hasKey,
-        from: RESEND_FROM,
-        baseUrl,
-        next,
-        // link is sensitive; only expose in debug
-        link,
-        sendMeta,
-      };
-    }
+    if (debug) resBody.debug = { sendStatus, from: RESEND_FROM, baseUrl, next, link, sendMeta };
 
     const res = NextResponse.json(resBody, { status: 200 });
     res.headers.set("x-magic-link-send", sendStatus);
+    res.headers.set("x-magic-link-version", VERSION);
+    res.headers.set("x-magic-link-next", next ?? "null");
     return res;
   } catch (e: any) {
     console.error("[magic-link] unexpected error:", e?.message || e);
-    return NextResponse.json({ ok: true }, { status: 200 });
+    const res = NextResponse.json({ ok: true }, { status: 200 });
+    res.headers.set("x-magic-link-version", VERSION);
+    res.headers.set("x-magic-link-next", "null");
+    return res;
   }
 }

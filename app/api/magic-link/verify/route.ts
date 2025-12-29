@@ -20,15 +20,25 @@ function getClientMeta(req: Request) {
 
 /**
  * ✅ SAFE INTERNAL REDIRECTS ONLY (must match request route allow-list)
+ * Also normalize common aliases so "next=/private/bp-simulator" works.
  */
 function sanitizeNext(nextRaw: unknown): string | null {
   if (typeof nextRaw !== "string") return null;
 
-  const next = nextRaw.trim();
+  let next = nextRaw.trim();
   if (!next) return null;
+
+  // internal-only
   if (!next.startsWith("/")) return null;
   if (next.startsWith("//")) return null;
   if (next.includes("://")) return null;
+
+  // normalize common variants (mirror request route)
+  if (next === "/portability") next = "/en/portability";
+  if (next === "/bp-simulator") next = "/en/bp-simulator";
+  if (next === "/en/portability/") next = "/en/portability";
+  if (next === "/en/bp-simulator/") next = "/en/bp-simulator";
+  if (next === "/private/") next = "/private";
 
   const ALLOWED_PREFIXES = ["/private", "/en/portability", "/en/bp-simulator"];
   if (!ALLOWED_PREFIXES.some((p) => next.startsWith(p))) return null;
@@ -112,7 +122,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false }, { status: 401 });
     }
 
-    // 2) ATOMIC single-use: mark as used only if still unused
+    // 2) ATOMIC single-use
     const nowIso = new Date().toISOString();
     const { data: usedRow, error: useErr } = await supabaseAdmin
       .from("magic_links")
@@ -133,7 +143,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false }, { status: 401 });
     }
 
-    // ✅ Normalize email once
+    // Normalize email once
     const email = String(data.email || "").trim().toLowerCase();
     if (!email) {
       await audit(
@@ -146,7 +156,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false }, { status: 400 });
     }
 
-    // ✅ Ensure private_users exists (do NOT overwrite role)
+    // Ensure private_users exists (do NOT overwrite role)
     let role = "candidate";
 
     const { data: existingUser, error: existingErr } = await supabaseAdmin
@@ -184,7 +194,7 @@ export async function POST(req: Request) {
       // continue
     }
 
-    // ✅ AUTO-GRANT: BP + Portability instantly on login (no manual work)
+    // AUTO-GRANT: BP + Portability on login
     try {
       const toolTypes = ["bp", "portability"] as const;
 
@@ -220,7 +230,6 @@ export async function POST(req: Request) {
         { error: String((e as any)?.message || e) },
         supabaseAdmin
       );
-      // best-effort only; never break login
     }
 
     // 3) Create session (DB + cookie)
@@ -232,7 +241,7 @@ export async function POST(req: Request) {
       Date.now() + 7 * 24 * 60 * 60 * 1000
     ).toISOString();
 
-    // ✅ Revoke any previous active sessions for this email
+    // Revoke previous active sessions for this email
     const { error: revokeErr } = await supabaseAdmin
       .from("private_sessions")
       .update({ revoked_at: nowIso })
@@ -249,7 +258,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Insert new session
+    // Insert new session
     const { error: sessErr } = await supabaseAdmin.from("private_sessions").insert({
       session_hash: sessionHash,
       email,
@@ -273,7 +282,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false }, { status: 500 });
     }
 
-    // 4) ✅ Set cookie (share across execpartners.ch + www.execpartners.ch)
+    // 4) ✅ Set cookie so /en/* can read it + works on www + apex
     const isProd = process.env.NODE_ENV === "production";
 
     const res = NextResponse.json(
@@ -281,12 +290,17 @@ export async function POST(req: Request) {
       { status: 200 }
     );
 
-    res.cookies.set("ep_private", sessionHash, {
+    res.cookies.set({
+      name: "ep_private",
+      value: sessionHash,
       httpOnly: true,
-      secure: isProd,
+      // Vercel production is always HTTPS; keep secure on in prod.
+      secure: isProd ? true : false,
       sameSite: "lax",
+      // ✅ CRITICAL: must be "/" or /en/bp-simulator won't see it
       path: "/",
-      domain: isProd ? ".execpartners.ch" : undefined,
+      // ✅ Share across execpartners.ch + www.execpartners.ch
+      ...(isProd ? { domain: ".execpartners.ch" } : {}),
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
