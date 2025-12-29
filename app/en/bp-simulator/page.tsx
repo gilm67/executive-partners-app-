@@ -58,8 +58,9 @@ function BpTeaser() {
 
 /**
  * ✅ Server-only approval check
- * Uses the SAME source-of-truth as /api/private/me:
- * private_sessions + private_profile_access_requests (requester_email + request_type)
+ * Uses SAME source-of-truth as /api/private/me:
+ * - private_sessions (session_hash -> email, not expired, not revoked)
+ * - private_profile_access_requests (requester_email + request_type='bp' -> latest status)
  */
 async function isBpApproved(): Promise<boolean> {
   try {
@@ -84,7 +85,7 @@ async function isBpApproved(): Promise<boolean> {
     const email = String(session.email).trim().toLowerCase();
     if (!email) return false;
 
-    // 2) Latest BP access request (same table as /api/private/me)
+    // 2) Latest BP access request
     const { data: req, error: reqErr } = await supabase
       .from("private_profile_access_requests")
       .select("status")
@@ -103,7 +104,7 @@ async function isBpApproved(): Promise<boolean> {
 }
 
 export default async function Page() {
-  // 🔐 Must be logged in
+  // 🔐 Must be logged in (secure flow)
   await requirePrivateSession(undefined, "/en/bp-simulator");
 
   // ✅ Decide server-side (no flicker)
