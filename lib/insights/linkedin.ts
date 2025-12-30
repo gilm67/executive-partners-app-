@@ -33,3 +33,11 @@ export const linkedInArticles: LinkedInArticle[] = [
     tags: ["Switzerland", "Markets", "Wealth Management"],
   },
 ];
+
+/**
+ * Always returns the list sorted newest → oldest by dateISO.
+ * Safe helper to prevent ordering mistakes without changing your data.
+ */
+export function getLinkedInArticlesSorted(): LinkedInArticle[] {
+  return [...linkedInArticles].sort((a, b) => b.dateISO.localeCompare(a.dateISO));
+}
