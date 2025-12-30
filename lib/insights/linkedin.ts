@@ -1,4 +1,4 @@
-export type LinkedInArticle = {
+pexport type LinkedInArticle = {
   dateISO: string; // YYYY-MM-DD
   title: string;
   summary: string;
@@ -7,6 +7,15 @@ export type LinkedInArticle = {
 };
 
 export const linkedInArticles: LinkedInArticle[] = [
+  {
+    dateISO: "2025-12-30",
+    title:
+      "Billionaire Ambitions 2025: What UBS’s New Report Reveals About UHNW Migration and Portfolio Strategy",
+    summary:
+      "UBS’s Billionaire Ambitions 2025 highlights record global wealth, accelerating inheritance, and what it means for private banks: UHNW mobility, diversification into alternatives, and next-generation advisory priorities.",
+    url: "https://www.linkedin.com/pulse/billionaire-ambitions-2025-what-ubss-new-report-uhnw-gil-m-chalem--nelle/",
+    tags: ["UBS", "UHNW", "Wealth Management", "Switzerland", "Mobility"],
+  },
   {
     dateISO: "2025-12-22",
     title: "Final Chapter of 2025: UBS at a Crossroads — Swiss Banking Faces…",
