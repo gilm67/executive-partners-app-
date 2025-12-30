@@ -65,6 +65,28 @@ export default function InsightsPage() {
     url: cleanLinkedInUrl(it.url),
   }));
 
+  // JSON-LD: Schema.org Article for each LinkedIn entry (SEO-only)
+  const linkedInArticlesJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": linkedinSorted.map((it) => ({
+      "@type": "Article",
+      headline: it.title,
+      description: it.summary,
+      datePublished: it.dateISO, // YYYY-MM-DD
+      mainEntityOfPage: resolveUrl(it.url),
+      url: resolveUrl(it.url),
+      author: {
+        "@type": "Person",
+        name: "Gil M. Chalem",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Executive Partners",
+        url: SITE,
+      },
+    })),
+  };
+
   // sort: ISO dates (YYYY-MM-DD) first, newest to oldest; others stay in title order
   const sorted = [...insights].sort((a, b) => {
     const ad = a.date?.trim() ?? "";
@@ -122,6 +144,12 @@ export default function InsightsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(linkedInArticlesJsonLd),
+        }}
       />
 
       {/* Gold background glow */}
