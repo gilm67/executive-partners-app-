@@ -5,7 +5,7 @@ import { getAllInsights } from "@/lib/insights/posts";
 import { getLinkedInArticlesSorted } from "@/lib/insights/linkedin";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SecondaryButton from "@/components/ui/SecondaryButton";
-import OutboundLink from "@/app/components/ui/OutboundLink";
+import OutboundLink from "@/components/ui/OutboundLink";
 
 /* helpers */
 function siteBase() {
