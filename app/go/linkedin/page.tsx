@@ -1,9 +1,10 @@
 import Link from "next/link";
-import OutboundLink from "@/components/ui/OutboundLink";
+import OutboundLink from "@/app/components/ui/OutboundLink";
 
 export const metadata = {
   title: "LinkedIn — Executive Partners",
-  description: "Quick access to Gil M. Chalem’s LinkedIn articles and newsletter.",
+  description:
+    "Quick access to Gil M. Chalem’s LinkedIn articles and newsletter.",
   robots: { index: false, follow: false },
 };
 
@@ -15,9 +16,7 @@ export default function GoLinkedInPage() {
           External link
         </p>
 
-        <h1 className="mt-2 text-3xl font-semibold">
-          Open LinkedIn content
-        </h1>
+        <h1 className="mt-2 text-3xl font-semibold">Open LinkedIn content</h1>
 
         <p className="mt-3 text-white/70">
           LinkedIn sometimes blocks content for visitors who are not logged in.
