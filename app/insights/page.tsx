@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllInsights } from "@/lib/insights/posts";
-import { linkedInArticles } from "@/lib/insights/linkedin";
+import { getLinkedInArticlesSorted } from "@/lib/insights/linkedin";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SecondaryButton from "@/components/ui/SecondaryButton";
 
@@ -59,11 +59,11 @@ export const revalidate = 1800;
 export default function InsightsPage() {
   const insights = getAllInsights();
 
-  // LinkedIn list: newest first + ensure URLs are clean (no tracking params)
-  // IMPORTANT: crash-proof fallback if import/export mismatch ever happens
-  const linkedinSorted = (Array.isArray(linkedInArticles) ? linkedInArticles : [])
-    .map((it) => ({ ...it, url: cleanLinkedInUrl(it.url) }))
-    .sort((a, b) => Date.parse(b.dateISO) - Date.parse(a.dateISO));
+  // LinkedIn list: always newest first + ensure URLs are clean (no tracking params)
+  const linkedinSorted = getLinkedInArticlesSorted().map((it) => ({
+    ...it,
+    url: cleanLinkedInUrl(it.url),
+  }));
 
   // sort: ISO dates (YYYY-MM-DD) first, newest to oldest; others stay in title order
   const sorted = [...insights].sort((a, b) => {
