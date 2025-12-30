@@ -232,12 +232,12 @@ export default function InsightsPage() {
             </div>
 
             <a
-              href="https://www.linkedin.com/directory/articles"
+              href="https://www.linkedin.com/in/gil-m-chalem-35281916b/recent-activity/articles/"
               target="_blank"
               rel="noreferrer"
               className="mt-2 inline-flex w-fit rounded-2xl border border-white/15 bg-white/[0.04] px-4 py-2 text-sm text-neutral-200 hover:border-white/25 hover:text-white"
             >
-              Browse LinkedIn Pulse ↗
+              See my LinkedIn articles ↗
             </a>
           </div>
 
