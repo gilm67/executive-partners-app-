@@ -40,12 +40,13 @@ export default function GoLinkedInPage() {
             Subscribe to “Private Wealth Pulse” newsletter ↗
           </OutboundLink>
 
+          {/* Replaces the LinkedIn directory (often blocked for non-logged users) */}
           <OutboundLink
-            href="https://www.linkedin.com/directory/articles"
-            eventName="LinkedIn Directory Click"
+            href="https://www.linkedin.com/in/gil-m-chalem-35281916b/"
+            eventName="LinkedIn Profile Click"
             className="rounded-2xl border border-white/15 bg-white/[0.04] px-5 py-3 text-white/90 hover:border-white/25"
           >
-            Browse LinkedIn articles directory ↗
+            Open Gil’s LinkedIn profile ↗
           </OutboundLink>
         </div>
 
