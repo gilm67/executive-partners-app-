@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { linkedInArticles } from "@/lib/insights/linkedin";
+import { getLinkedInArticlesSorted } from "@/lib/insights/linkedin";
 
 function formatDate(iso: string) {
   const d = new Date(iso + "T00:00:00");
@@ -21,9 +21,10 @@ function cleanLinkedInUrl(url: string) {
 }
 
 export default function LinkedInInsights() {
-  const items = (Array.isArray(linkedInArticles) ? linkedInArticles : [])
-    .map((a) => ({ ...a, url: cleanLinkedInUrl(a.url) }))
-    .sort((a, b) => (a.dateISO < b.dateISO ? 1 : -1));
+  const items = getLinkedInArticlesSorted().map((a) => ({
+    ...a,
+    url: cleanLinkedInUrl(a.url),
+  }));
 
   return (
     <section className="w-full">
