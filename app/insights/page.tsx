@@ -5,6 +5,7 @@ import { getAllInsights } from "@/lib/insights/posts";
 import { getLinkedInArticlesSorted } from "@/lib/insights/linkedin";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SecondaryButton from "@/components/ui/SecondaryButton";
+import OutboundLink from "@/app/components/ui/OutboundLink";
 
 /* helpers */
 function siteBase() {
@@ -231,14 +232,13 @@ export default function InsightsPage() {
               </p>
             </div>
 
-            <a
-              href="https://www.linkedin.com/in/gil-m-chalem-35281916b/recent-activity/articles/"
-              target="_blank"
-              rel="noreferrer"
+            {/* fallback CTA (internal page) */}
+            <Link
+              href="/go/linkedin"
               className="mt-2 inline-flex w-fit rounded-2xl border border-white/15 bg-white/[0.04] px-4 py-2 text-sm text-neutral-200 hover:border-white/25 hover:text-white"
             >
               See my LinkedIn articles ↗
-            </a>
+            </Link>
           </div>
 
           <div className="mt-5 grid gap-6 md:grid-cols-2">
@@ -281,14 +281,13 @@ export default function InsightsPage() {
                   ) : null}
 
                   <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
-                    <a
+                    <OutboundLink
                       href={it.url}
-                      target="_blank"
-                      rel="noreferrer"
+                      eventName="LinkedIn Article Click"
                       className="font-medium text-brandGoldSoft underline-offset-4 hover:text-brandGold hover:underline"
                     >
                       Read on LinkedIn ↗
-                    </a>
+                    </OutboundLink>
 
                     {it.tags?.length ? (
                       <span className="text-xs text-white/50">
