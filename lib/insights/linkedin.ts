@@ -1,4 +1,4 @@
-pexport type LinkedInArticle = {
+export type LinkedInArticle = {
   dateISO: string; // YYYY-MM-DD
   title: string;
   summary: string;
