@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getLinkedInArticlesSorted } from "@/lib/insights/linkedin";
+import ExternalBadge from "@/app/components/ui/ExternalBadge";
 
 function formatDate(iso: string) {
   const d = new Date(iso + "T00:00:00");
@@ -92,7 +93,7 @@ export default function LinkedInInsights() {
                   Read on LinkedIn <span aria-hidden>→</span>
                 </Link>
 
-                <span className="text-xs text-white/50">LinkedIn Pulse</span>
+                <ExternalBadge label="External • LinkedIn" className="text-white/50" />
               </div>
             </article>
           ))}
