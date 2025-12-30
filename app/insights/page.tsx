@@ -232,7 +232,7 @@ export default function InsightsPage() {
             </div>
 
             <a
-              href="https://www.linkedin.com/pulse/"
+              href="https://www.linkedin.com/directory/articles"
               target="_blank"
               rel="noreferrer"
               className="mt-2 inline-flex w-fit rounded-2xl border border-white/15 bg-white/[0.04] px-4 py-2 text-sm text-neutral-200 hover:border-white/25 hover:text-white"
