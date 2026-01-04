@@ -2,6 +2,21 @@
 const nextConfig = {
   async redirects() {
     return [
+      // ✅ Fix wrong layout: /markets -> /en/markets
+      {
+        source: "/markets",
+        destination: "/en/markets",
+        permanent: true,
+      },
+
+      // ✅ Redirect only "page-like" paths under /markets (no file extension)
+      // This prevents breaking /public/markets/*.jpg
+      {
+        source: "/markets/:path((?!.*\\..*).*)",
+        destination: "/en/markets/:path",
+        permanent: true,
+      },
+
       // 🔧 Normalize trailing slash for jobs hub
       {
         source: "/en/jobs/",
