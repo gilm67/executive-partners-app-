@@ -2,10 +2,29 @@ import Link from "next/link";
 import Image from "next/image";
 import HomeClient from "./(marketing)/HomeClient";
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
 import { ArrowRight, Sparkles, Calculator } from "lucide-react";
 
 /* Public assets */
 const HERO = "/hero-skyline-hq.jpg";
+
+/* ===== SEO METADATA ===== */
+export const metadata: Metadata = {
+  title: "Executive Partners | Private Banking Executive Search | Geneva",
+  description:
+    "Leading executive search firm specializing in senior private banking roles across Geneva, Zurich, London, Dubai, Singapore. 200+ placements, 98% retention rate.",
+  openGraph: {
+    title: "Executive Partners | Private Banking Executive Search",
+    description:
+      "Global executive search for senior private banking professionals. Geneva-based, globally connected.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Executive Partners | Private Banking Executive Search",
+    description:
+      "Leading executive search for senior private banking roles worldwide.",
+  },
+};
 
 export const dynamic = "force-static";
 export const revalidate = false;
