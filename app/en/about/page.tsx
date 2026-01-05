@@ -1,209 +1,280 @@
 /* app/en/about/page.tsx */
-import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
-import HubsGrid from "@/components/HubsGrid";
+import type { Metadata } from "next";
+import PrimaryButton from "@/components/ui/PrimaryButton";
+import SecondaryButton from "@/components/ui/SecondaryButton";
+import { BreadcrumbSchema } from "@/components/StructuredData";
 
+/* Resolve absolute site URL from env or fallback */
+function siteBase() {
+  const raw =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.VERCEL_URL ||
+    "https://www.execpartners.ch";
+  const url = raw.startsWith("http") ? raw : `https://${raw}`;
+  return url.replace(/\/$/, "");
+}
+const SITE = siteBase();
+const PAGE_URL = `${SITE}/en/about`;
+
+export const revalidate = 60;
+
+/* ---------------- SEO ---------------- */
 export const metadata: Metadata = {
-  title: "About — Executive Partners",
+  title:
+    "About Executive Partners | Connecting Top Talent with Private Banking Excellence – In Switzerland & Beyond",
   description:
-    "Geneva-based executive search boutique specialized in Private Banking & Wealth Management across CH, UK, US, Dubai, Singapore, and Hong Kong.",
+    "Executive Partners is Switzerland's specialist recruiter for Private Banking & Wealth Management. Geneva-headquartered, delivering discreet search across Zurich, Dubai, Singapore, London & New York.",
+  alternates: { canonical: PAGE_URL },
   openGraph: {
-    title: "About — Executive Partners",
+    type: "website",
+    siteName: "Executive Partners",
+    url: PAGE_URL,
+    title:
+      "About Executive Partners | Connecting Top Talent with Private Banking Excellence – In Switzerland & Beyond",
     description:
-      "A specialist search partner for Private Banking & Wealth Management. We move revenue books with precision, confidentiality, and speed.",
+      "Boutique executive search for Private Banking & Wealth Management. Trusted by banks, EAMs and family offices across Switzerland and global hubs.",
+    images: [{ url: "/og.png" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title:
+      "About Executive Partners | Private Banking & Wealth Management Search",
+    description:
+      "Geneva-based boutique executive search for Private Banking & Wealth Management with international reach.",
+    images: ["/og.png"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function AboutPage() {
+  /* Organization schema */
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Executive Partners",
+    url: SITE,
+    logo: `${SITE}/icon.png`,
+    sameAs: ["https://www.linkedin.com/company/executive-partners", SITE],
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        contactType: "Recruitment",
+        areaServed: ["CH", "AE", "GB", "US", "SG", "HK"],
+        availableLanguage: ["en", "fr", "de", "pt", "ar"],
+        url: `${SITE}/contact`,
+      },
+    ],
+  };
+
+  /* AboutPage schema */
+  const aboutPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    name: "About Executive Partners",
+    url: PAGE_URL,
+    description:
+      "Boutique executive search for Private Banking & Wealth Management, headquartered in Geneva with global reach.",
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+      url: `${SITE}/og.png`,
+    },
+    mainEntityOfPage: PAGE_URL,
+    publisher: {
+      "@type": "Organization",
+      name: "Executive Partners",
+      url: SITE,
+      logo: { "@type": "ImageObject", url: `${SITE}/icon.png` },
+    },
+  };
+
   return (
-    <main className="relative">
-      {/* ===== Hero ===== */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <Image
-            src="/about/hero-geneva.jpg"
-            alt=""
-            fill
-            priority
-            className="object-cover opacity-60"
-          />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/60 to-black/20" />
-        </div>
-        <div className="container-max py-20 md:py-28">
-          <div className="max-w-3xl">
-            <h1 className="font-semibold tracking-tight text-4xl md:text-5xl">
-              We move books, not just CVs.
-            </h1>
-            <p className="mt-4 text-white/85 text-lg">
-              Executive Partners is a Geneva-based search boutique focused on Private Banking &amp; Wealth Management.
-              We help RMs, Team Heads, and Market Leaders transition their client franchises across Switzerland, the UK,
-              US, Dubai, Singapore, and Hong Kong—with discretion and data-driven certainty.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/en/markets" className="btn btn-ghost btn-xl">Explore Markets</Link>
-              <Link href="/en/contact" className="btn-primary btn btn-xl">Confidential Strategy Call</Link>
-            </div>
-          </div>
-        </div>
-      </section>
+    <>
+      {/* Breadcrumb Schema */}
+      <BreadcrumbSchema 
+        items={[
+          { name: "Home", url: SITE },
+          { name: "About", url: PAGE_URL }
+        ]}
+      />
 
-      {/* ===== Who We Are ===== */}
-      <section className="container-max py-14">
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">
-            Boutique Search. Global Reach.
-          </h2>
-          <p className="text-white/85 text-lg leading-relaxed">
-            Executive Partners is a boutique executive search firm focused exclusively on{" "}
-            <strong>Private Banking & Wealth Management</strong>. Headquartered in Geneva with an
-            international footprint, we advise private banks, EAMs, and family offices on critical
-            hires across Relationship Management, Desk &amp; Market Heads, and senior leadership.
+      <main className="relative min-h-screen bg-[#0B0E13] text-white">
+        {/* JSON-LD */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageJsonLd) }} />
+
+        {/* Gold background glow */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(1200px 420px at 20% -10%, rgba(255,215,130,0.10) 0%, rgba(0,0,0,0) 60%), radial-gradient(1200px 420px at 90% 0%, rgba(255,215,130,0.08) 0%, rgba(0,0,0,0) 60%)",
+          }}
+        />
+
+        <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
+
+          {/* Eyebrow Label */}
+          <div className="mx-auto w-fit rounded-full border border-brandGold/30 bg-brandGold/10 px-3 py-1 text-xs font-semibold text-brandGoldSoft shadow-sm backdrop-blur">
+            Private Banking &amp; Wealth Management — Executive Search
+          </div>
+
+          {/* Title */}
+          <h1 className="mt-3 text-center text-4xl font-extrabold tracking-tight md:text-5xl">
+            About Executive Partners — Connecting Top Talent with Excellence
+          </h1>
+
+          <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
+            Specialist search for <strong>Private Banking</strong> &amp;{" "}
+            <strong>Wealth Management</strong>. Based in Geneva, active across Zurich,
+            Dubai, Singapore, London & New York.
           </p>
-        </div>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {/* What we do */}
-          <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
-            <h3 className="text-lg font-semibold mb-3">What we do</h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li>• Front-office hires: Senior / Executive / Managing Directors</li>
-              <li>• Team Heads &amp; Market Leaders</li>
-              <li>• Strategic mandates: new-desk builds, market entries, M&amp;A integration</li>
-              <li>• Discreet outreach to targeted bankers or teams</li>
-              <li>• Advisory: portability, comp benchmarking, succession, team moves</li>
-            </ul>
-          </div>
+          {/* Who we are / What we do */}
+          <section className="mt-10 grid gap-6 md:grid-cols-2">
+            <article className="rounded-2xl border border-brandGold/20 bg-white/[0.03] p-6 shadow-[0_0_30px_rgba(0,0,0,0.35)]">
+              <h2 className="text-xl font-bold text-brandGoldSoft">Who we are</h2>
+              <p className="mt-3 text-sm leading-relaxed text-neutral-300">
+                Executive Partners is a boutique executive search firm focused on
+                Private Banking & Wealth Management. Headquartered in Geneva with
+                international reach.
+              </p>
+            </article>
+
+            <article className="rounded-2xl border border-brandGold/20 bg-white/[0.03] p-6 shadow-[0_0_30px_rgba(0,0,0,0.35)]">
+              <h2 className="text-xl font-bold text-brandGoldSoft">What we do</h2>
+              <ul className="mt-3 grid list-disc gap-2 pl-5 text-sm text-neutral-300">
+                <li><span className="font-medium text-white">Front-office hires:</span> Directors, ED, MD, Team Heads, Market Leads</li>
+                <li><span className="font-medium text-white">Strategic mandates:</span> Desk builds, expansions, M&A integration</li>
+                <li><span className="font-medium text-white">Discreet approach work:</span> Targeted outreach to specific bankers</li>
+                <li><span className="font-medium text-white">Advisory:</span> Portability, compensation benchmarking, team moves</li>
+              </ul>
+            </article>
+          </section>
 
           {/* Why clients trust us */}
-          <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
-            <h3 className="text-lg font-semibold mb-3">Why clients trust us</h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li>• True sector specialists — former front-office and talent leaders</li>
-              <li>• Fluent in cross-border, booking-centre and compliance realities</li>
-              <li>• Portability obsessed — we validate coverage &amp; wallet share before interviews</li>
-              <li>• Targeted, not transactional — research-led shortlists, no volume spam</li>
-              <li>• Confidential by design — quiet processes that protect brands and teams</li>
-            </ul>
-          </div>
+          <section className="mt-8 rounded-2xl border border-brandGold/20 bg-white/[0.05] p-6">
+            <h2 className="text-xl font-bold text-brandGoldSoft">Why clients trust us</h2>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              {[
+                ["True sector specialists", "Former front-office/in-house specialists who understand cross-border and compliance realities."],
+                ["Portability obsessed", "We validate coverage, wallet share and realistic transfer potential before interviews."],
+                ["Targeted, not transactional", "Research-led shortlists with actionable signals—never volume."],
+                ["Confidential by design", "Quiet, discreet processes for clients and candidates."],
+                ["Swiss execution, global reach", "Deep roots in CH with mandates across MEA, UK, US & APAC."],
+              ].map(([title, text]) => (
+                <div key={title} className="rounded-xl border border-brandGold/20 bg-neutral-900/40 p-4">
+                  <div className="text-sm font-semibold text-brandGold">{title}</div>
+                  <p className="mt-1 text-sm text-neutral-300">{text}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Coverage */}
+          <section className="mt-8 rounded-2xl border border-brandGold/20 bg-white/[0.04] p-6">
+            <h2 className="text-xl font-bold text-brandGoldSoft">Coverage</h2>
+            <div className="mt-4 grid gap-6 md:grid-cols-3">
+              {/* Switzerland */}
+              <div>
+                <div className="text-sm font-semibold text-brandGold">Switzerland (Onshore)</div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {["Geneva", "Zurich", "Lausanne"].map((t) => (
+                    <span key={t} className="rounded-full border border-brandGold/20 bg-brandGold/5 px-2.5 py-1 text-xs text-brandGoldSoft">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* International */}
+              <div>
+                <div className="text-sm font-semibold text-brandGold">International hubs</div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {["Dubai", "London", "New York", "Singapore", "Hong Kong"].map(
+                    (t) => (
+                      <span key={t} className="rounded-full border border-brandGold/20 bg-brandGold/5 px-2.5 py-1 text-xs text-brandGoldSoft">
+                        {t}
+                      </span>
+                    )
+                  )}
+                </div>
+              </div>
+
+              {/* Segments */}
+              <div>
+                <div className="text-sm font-semibold text-brandGold">Segments & Booking</div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {[
+                    "HNW",
+                    "UHNW",
+                    "Entrepreneurs",
+                    "Family Offices",
+                    "CH / EU / UK / UAE / US / APAC",
+                  ].map((t) => (
+                    <span key={t} className="rounded-full border border-brandGold/20 bg-brandGold/5 px-2.5 py-1 text-xs text-brandGoldSoft">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
 
           {/* How we work */}
-          <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
-            <h3 className="text-lg font-semibold mb-3">How we work</h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li>• Rigorous market mapping and shortlist curation</li>
-              <li>• Senior-only engagement from first call to signed offer</li>
-              <li>• Transparent, portable book evaluation</li>
-              <li>• Candidate control &amp; hiring velocity built in</li>
-            </ul>
-          </div>
+          <section className="mt-8 rounded-2xl border border-brandGold/20 bg-white/[0.04] p-6">
+            <h2 className="text-xl font-bold text-brandGoldSoft">How we work</h2>
+            <ol className="mt-4 grid gap-4 md:grid-cols-5">
+              {[
+                ["Brief & calibration", "Clear success profile & compliance constraints."],
+                ["Market map", "Define viable universe & check portability."],
+                ["Approach & vet", "Discreet outreach + structured evaluation."],
+                ["Shortlist", "3–5 candidates you'd credibly hire."],
+                ["Close & land", "Offer, risk checks & onboarding."],
+              ].map(([title, text], i) => (
+                <li key={i} className="rounded-xl border border-brandGold/20 bg-neutral-900/40 p-4">
+                  <div className="text-xs font-bold text-brandGoldSoft">Step {i + 1}</div>
+                  <div className="mt-1 text-sm font-semibold text-white">{title}</div>
+                  <p className="mt-1 text-sm text-neutral-300">{text}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
 
-          {/* Our footprint */}
-          <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 ring-1 ring-white/10">
-            <h3 className="text-lg font-semibold mb-3">Our footprint</h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li>• Deep roots in Geneva &amp; Zurich</li>
-              <li>• Active mandates across MEA, LATAM, UK &amp; Europe</li>
-              <li>• Strong coverage in the US (New York, Miami)</li>
-              <li>• APAC hubs: Singapore &amp; Hong Kong</li>
-              <li>• FR / Spain / Portugal emerging corridors</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== Why EP (Value Props) ===== */}
-      <section className="container-max py-10 md:py-14">
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-1">
-            <h2 className="text-2xl md:text-3xl font-semibold">What makes us different</h2>
-            <p className="mt-3 text-white/80">
-              We combine rigorous book analysis with discreet choreography across hiring committees, risk, and
-              cross-border compliance—so you land where your franchise compounds.
-            </p>
-          </div>
-          <div className="lg:col-span-2 grid gap-4 sm:grid-cols-2">
+          {/* Promise */}
+          <section className="mt-8 grid gap-6 md:grid-cols-3">
             {[
-              {
-                title: "Book-first methodology",
-                desc:
-                  "We underwrite your client revenues: ROA, NNA cadence, product mix (DPM/Alts/Lombard), and cross-border rules by market.",
-              },
-              {
-                title: "Real compensation intelligence",
-                desc:
-                  "Benchmarks by city and seniority with clarity on deferrals, clawbacks, and allowances—no guesswork.",
-              },
-              {
-                title: "Platform fit mapping",
-                desc:
-                  "We compare platforms: pricing grids, credit appetite, product shelf, EAM collaboration, and digital tooling.",
-              },
-              {
-                title: "Low-noise process",
-                desc:
-                  "Fewer, sharper conversations with genuine decision-makers. Confidentiality rigor from first call to sign.",
-              },
-            ].map((b) => (
-              <div key={b.title} className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5">
-                <h3 className="font-semibold">{b.title}</h3>
-                <p className="mt-2 text-white/80 text-sm">{b.desc}</p>
+              ["Integrity", "Candid advice, even when it is not yet ready."],
+              ["Discretion", "Quiet processes; zero market noise."],
+              ["Outcomes", "Hires that perform and stay."],
+            ].map(([title, text]) => (
+              <div key={title} className="rounded-2xl border border-brandGold/20 bg-white/[0.05] p-6">
+                <div className="text-lg font-bold text-brandGold">{title}</div>
+                <p className="mt-2 text-sm text-neutral-300">{text}</p>
               </div>
             ))}
-          </div>
+          </section>
+
+          {/* CTA */}
+          <section className="mt-10 rounded-2xl border border-brandGold/20 bg-white/[0.04] p-6 text-center">
+            <h3 className="text-xl font-bold text-brandGoldSoft">
+              Ready to discuss a mandate or explore a move?
+            </h3>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-neutral-300">
+              Hiring Managers: share your brief. Candidates: speak confidentially about your market, portability and next step.
+            </p>
+
+            <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <PrimaryButton href="/hiring-managers">Hire Talent</PrimaryButton>
+              <SecondaryButton href="/candidates">I'm a Candidate</SecondaryButton>
+              <SecondaryButton href="/jobs">Private Banking Jobs</SecondaryButton>
+              <SecondaryButton href="/contact">Contact Us</SecondaryButton>
+            </div>
+          </section>
+
         </div>
-      </section>
-
-      {/* ===== Global Hubs (cards replacing the map) ===== */}
-      <HubsGrid />
-
-      {/* ===== Timeline ===== */}
-      <section className="container-max py-10 md:py-14">
-        <h2 className="text-2xl md:text-3xl font-semibold">A process built for discretion & speed</h2>
-        <ol className="mt-6 relative border-s border-white/10 ps-6 space-y-6">
-          {[
-            { t: "Signal & Fit", d: "Off-record intake on book composition, constraints, and target platforms." },
-            { t: "Shortlist", d: "2–3 platforms that match pricing, credit appetite, cross-border, and culture." },
-            { t: "Deep Diligence", d: "Anonymous cases with Market Heads; indicative comp & platform guardrails." },
-            { t: "Confidential Introductions", d: "Structured meetings only with empowered decision-makers." },
-            { t: "Offer & Exit", d: "Deferrals, buy-outs, notice strategy, client communication choreography." },
-          ].map((i, idx) => (
-            <li key={i.t}>
-              <div className="absolute -start-2 mt-1.5 h-4 w-4 rounded-full bg-white/20 ring-2 ring-white/30" />
-              <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
-                <div className="text-sm text-white/60">Step {idx + 1}</div>
-                <div className="font-semibold">{i.t}</div>
-                <p className="text-white/80 text-sm mt-1">{i.d}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {/* ===== Quote ===== */}
-      <section className="container-max py-10 md:py-14">
-        <figure className="rounded-2xl border border-white/10 bg-gradient-to-br from-indigo-700/20 via-fuchsia-700/10 to-emerald-700/10 p-6 ring-1 ring-white/10">
-          <blockquote className="text-xl leading-relaxed">
-            “In Private Banking, timing and discretion are everything. We make sure both work in your favor—
-            with a move that upgrades your platform and compounds your franchise.”
-          </blockquote>
-          <figcaption className="mt-4 text-sm text-white/70">Executive Partners</figcaption>
-        </figure>
-      </section>
-
-      {/* ===== CTA ===== */}
-      <section className="container-max py-12">
-        <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h3 className="text-xl font-semibold">Let’s plan your next move</h3>
-            <p className="mt-1 text-white/80">Get a confidential, data-driven view of comp, platform fit, and timing.</p>
-          </div>
-          <div className="flex gap-3">
-            <Link href="/en/contact" className="btn-primary">Confidential Call</Link>
-            <Link href="/en/bp-simulator" className="btn-ghost">Upload Business Plan</Link>
-          </div>
-        </div>
-      </section>
-    </main>
+      </main>
+    </>
   );
 }
