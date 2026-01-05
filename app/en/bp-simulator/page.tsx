@@ -12,9 +12,20 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "Business Plan Simulator — Executive Partners",
+  title: "Business Plan Simulator | Private Banking | Executive Partners",
   description:
-    "Model AuM portability, revenue projections and net margin scenarios with our AI-driven simulator for Private Bankers.",
+    "Model AUM portability, revenue projections and net margin scenarios. AI-driven business plan simulator for private banking relationship managers.",
+  openGraph: {
+    title: "Business Plan Simulator | Executive Partners",
+    description:
+      "Bank-style business case builder to stress-test portability assumptions. Model NNM, ROA, revenues, and margins.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Business Plan Simulator | Executive Partners",
+    description:
+      "Model revenue, break-even timeline and approval readiness for private banking moves.",
+  },
 };
 
 /* ✅ SAME SHELL AS PORTABILITY */

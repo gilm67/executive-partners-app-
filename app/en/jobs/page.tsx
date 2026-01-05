@@ -35,11 +35,15 @@ export const metadata: Metadata = {
     title: "Private Banking Jobs in Switzerland | Executive Partners",
     description:
       "Confidential Private Banking opportunities in Geneva, Zurich and global hubs. Submit your CV or speak with our search team.",
-    // ✅ Canonical public URL
     url: `${SITE}/en/jobs`,
     images: [{ url: "/og.png" }],
   },
-  // ✅ Canonical public URL
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Jobs | Executive Partners",
+    description:
+      "Exclusive private banking opportunities across Geneva, Zurich, Dubai, Singapore, London, New York.",
+  },
   alternates: { canonical: `${SITE}/en/jobs` },
   robots: { index: true, follow: true },
 };
@@ -556,7 +560,7 @@ export default async function JobsPage({
 
         <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center">
           <p className="text-neutral-300">
-            Don’t see your exact market? We run confidential mandates
+            Don't see your exact market? We run confidential mandates
             continuously.
           </p>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-3">

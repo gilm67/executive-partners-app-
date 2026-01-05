@@ -14,9 +14,20 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "Portability — Executive Partners",
+  title: "AUM Portability Calculator | Private Banking | Executive Partners",
   description:
-    "Assess portability readiness with our Private Banking diagnostic (clients, domicile, products, constraints).",
+    "Calculate realistic AUM transfer potential before moving banks. Professional portability assessment tool for private banking relationship managers.",
+  openGraph: {
+    title: "Portability Score Calculator | Executive Partners",
+    description:
+      "Assess portability readiness with our Private Banking diagnostic. Analyze clients, domicile, products, and constraints.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AUM Portability Calculator | Executive Partners",
+    description:
+      "Calculate realistic book transfer potential for private banking moves.",
+  },
 };
 
 /* ✅ SAME SHELL AS BP */

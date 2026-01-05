@@ -1,6 +1,24 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SecondaryButton from "@/components/ui/SecondaryButton";
+
+export const metadata: Metadata = {
+  title: "For Hiring Managers | Private Banking Recruitment | Executive Partners",
+  description:
+    "Executive search for senior private banking hires. Targeted recruitment for Directors, MDs, Team Heads across Switzerland, Dubai, Singapore, London, New York.",
+  openGraph: {
+    title: "For Hiring Managers | Executive Partners",
+    description:
+      "Targeted senior hires in Private Banking & Wealth Management. Real AUM portability and long-term retention.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "For Hiring Managers | Executive Partners",
+    description:
+      "Executive search for senior private banking roles. Specialists in AUM portability assessment.",
+  },
+};
 
 export default function HiringManagersPage() {
   return (
