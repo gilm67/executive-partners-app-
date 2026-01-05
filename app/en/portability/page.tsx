@@ -6,12 +6,17 @@ import { cookies } from "next/headers";
 import { requirePrivateSession } from "@/app/private/lib/require-session";
 import AccessRequestGate from "@/app/private/components/AccessRequestGate";
 import { getSupabaseAdmin } from "@/lib/supabase-server";
-
-// ✅ IMPORTANT: change this import if your component name/path differs
+import { BreadcrumbSchema, ServiceSchema } from "@/components/StructuredData";
 import PortabilityClient from "./PortabilityClient";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+
+const SITE =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "https://www.execpartners.ch");
 
 export const metadata: Metadata = {
   title: "AUM Portability Calculator | Private Banking | Executive Partners",
@@ -30,7 +35,6 @@ export const metadata: Metadata = {
   },
 };
 
-/* ✅ SAME SHELL AS BP */
 function GateShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white body-grain">
@@ -69,11 +73,6 @@ function PortabilityTeaser() {
   );
 }
 
-/**
- * ✅ Server-only approval check (same logic as BP)
- * - ep_private cookie -> private_sessions
- * - latest request in private_profile_access_requests (requester_email + request_type)
- */
 async function isPortabilityApproved(): Promise<boolean> {
   try {
     const cookieStore = await cookies();
@@ -82,7 +81,6 @@ async function isPortabilityApproved(): Promise<boolean> {
 
     const supabase = await getSupabaseAdmin();
 
-    // 1) Validate active session (revoked_at null, and not expired if expires_at exists)
     const { data: session, error: sessErr } = await supabase
       .from("private_sessions")
       .select("email, expires_at, revoked_at")
@@ -92,7 +90,6 @@ async function isPortabilityApproved(): Promise<boolean> {
 
     if (sessErr || !session?.email) return false;
 
-    // expiry check (handles expires_at null safely)
     if (session.expires_at) {
       const exp = new Date(session.expires_at).getTime();
       if (Number.isFinite(exp) && exp < Date.now()) return false;
@@ -101,12 +98,11 @@ async function isPortabilityApproved(): Promise<boolean> {
     const email = String(session.email).trim().toLowerCase();
     if (!email) return false;
 
-    // 2) Latest Portability access request
     const { data: req, error: reqErr } = await supabase
       .from("private_profile_access_requests")
       .select("status")
       .eq("requester_email", email)
-      .eq("request_type", "portability") // ✅ matches your DB screenshot
+      .eq("request_type", "portability")
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -120,28 +116,40 @@ async function isPortabilityApproved(): Promise<boolean> {
 }
 
 export default async function Page() {
-  // 🔐 Must be logged in (same flow as BP)
   await requirePrivateSession(undefined, "/en/portability");
 
-  // ✅ Decide server-side (no flicker)
   const approved = await isPortabilityApproved();
 
   return (
-    <GateShell>
-      <PortabilityTeaser />
+    <>
+      <BreadcrumbSchema 
+        items={[
+          { name: "Home", url: SITE },
+          { name: "Portability Calculator", url: `${SITE}/en/portability` }
+        ]}
+      />
+      
+      <ServiceSchema
+        name="Portability Score Calculator"
+        description="Calculate realistic AUM transfer potential before moving banks. Professional portability assessment tool for private banking relationship managers analyzing clients, domicile, products, and constraints."
+      />
 
-      <div className="mt-8">
-        {approved ? (
-          <PortabilityClient />
-        ) : (
-          <AccessRequestGate
-            requestType="portability"
-            title="Portability — Access required"
-            description="Request access to unlock the full portability diagnostic."
-            refreshHref="/en/portability"
-          />
-        )}
-      </div>
-    </GateShell>
+      <GateShell>
+        <PortabilityTeaser />
+
+        <div className="mt-8">
+          {approved ? (
+            <PortabilityClient />
+          ) : (
+            <AccessRequestGate
+              requestType="portability"
+              title="Portability — Access required"
+              description="Request access to unlock the full portability diagnostic."
+              refreshHref="/en/portability"
+            />
+          )}
+        </div>
+      </GateShell>
+    </>
   );
 }

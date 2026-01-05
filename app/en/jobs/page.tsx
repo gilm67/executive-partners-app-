@@ -15,6 +15,7 @@ import {
 
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SecondaryButton from "@/components/ui/SecondaryButton";
+import { BreadcrumbSchema } from "@/components/StructuredData";
 
 /* 🔗 Central job data (single source of truth) */
 import { jobsList as CANONICAL_DATA } from "@/data/jobs";
@@ -455,122 +456,132 @@ export default async function JobsPage({
   };
 
   return (
-    <main className="relative min-h-screen bg-[#0B0E13] text-white">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(1400px 500px at 10% -10%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 55%), radial-gradient(1100px 420px at 110% 0%, rgba(245,231,192,.20) 0%, rgba(245,231,192,0) 60%)",
-        }}
+    <>
+      {/* Breadcrumb Schema */}
+      <BreadcrumbSchema 
+        items={[
+          { name: "Home", url: `${SITE}` },
+          { name: "Jobs", url: `${SITE}/en/jobs` }
+        ]}
       />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobsJsonLd) }}
-      />
+      <main className="relative min-h-screen bg-[#0B0E13] text-white">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(1400px 500px at 10% -10%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 55%), radial-gradient(1100px 420px at 110% 0%, rgba(245,231,192,.20) 0%, rgba(245,231,192,0) 60%)",
+          }}
+        />
 
-      <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-14">
-        <div className="text-center">
-          <p className="mx-auto text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">
-            Private Banking · Discreet Mandates
-          </p>
-          <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
-            Private Banking Jobs in Switzerland
-          </h1>
-          <p className="mx-auto mt-3 max-w-3xl text-neutral-300">
-            Live mandates across <strong>Geneva</strong> and{" "}
-            <strong>Zurich</strong>, with international coverage in{" "}
-            <strong>Dubai</strong>, <strong>Singapore</strong>,{" "}
-            <strong>London</strong> &amp; <strong>New York</strong>. We publish
-            a subset of searches; confidential roles are shared directly with
-            qualified bankers.
-          </p>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jobsJsonLd) }}
+        />
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
-            <Link
-              href="/en/apply"
-              className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
+        <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-14">
+          <div className="text-center">
+            <p className="mx-auto text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">
+              Private Banking · Discreet Mandates
+            </p>
+            <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
+              Private Banking Jobs in Switzerland
+            </h1>
+            <p className="mx-auto mt-3 max-w-3xl text-neutral-300">
+              Live mandates across <strong>Geneva</strong> and{" "}
+              <strong>Zurich</strong>, with international coverage in{" "}
+              <strong>Dubai</strong>, <strong>Singapore</strong>,{" "}
+              <strong>London</strong> &amp; <strong>New York</strong>. We publish
+              a subset of searches; confidential roles are shared directly with
+              qualified bankers.
+            </p>
+
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
+              <Link
+                href="/en/apply"
+                className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
+              >
+                Submit CV
+              </Link>
+              <Link
+                href="/en/candidates"
+                className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
+              >
+                Candidate Hub
+              </Link>
+              <Link
+                href="/en/contact"
+                className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
+              >
+                Contact a Recruiter
+              </Link>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <FilterBar
+              defaultQuery={q}
+              defaultFilters={{ market, location, seniority }}
+            />
+          </div>
+
+          <div className="mt-4 flex items-center justify-between text-sm text-white/70">
+            <div>
+              {jobs.length} role{jobs.length === 1 ? "" : "s"}
+            </div>
+            <form>
+              <select
+                name="sort"
+                defaultValue={sort}
+                className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none"
+              >
+                <option value="newest" className="bg-[#0B0E13]">
+                  Newest first
+                </option>
+                <option value="oldest" className="bg-[#0B0E13]">
+                  Oldest first
+                </option>
+                <option value="title" className="bg-[#0B0E13]">
+                  Title A–Z
+                </option>
+              </select>
+            </form>
+          </div>
+
+          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+            <Suspense
+              fallback={
+                <>
+                  <SkeletonCard />
+                  <SkeletonCard />
+                  <SkeletonCard />
+                  <SkeletonCard />
+                </>
+              }
             >
-              Submit CV
-            </Link>
-            <Link
-              href="/en/candidates"
-              className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
-            >
-              Candidate Hub
-            </Link>
-            <Link
-              href="/en/contact"
-              className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
-            >
-              Contact a Recruiter
-            </Link>
+              {jobs.length === 0 ? (
+                <EmptyState />
+              ) : (
+                jobs.map((job) => <Card key={job.slug} job={job} />)
+              )}
+            </Suspense>
+          </div>
+
+          <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center">
+            <p className="text-neutral-300">
+              Don't see your exact market? We run confidential mandates
+              continuously.
+            </p>
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
+              <PrimaryButton href="/en/contact">Contact us</PrimaryButton>
+              <SecondaryButton href="/en/candidates">
+                Register confidentially
+              </SecondaryButton>
+            </div>
           </div>
         </div>
-
-        <div className="mt-8">
-          <FilterBar
-            defaultQuery={q}
-            defaultFilters={{ market, location, seniority }}
-          />
-        </div>
-
-        <div className="mt-4 flex items-center justify-between text-sm text-white/70">
-          <div>
-            {jobs.length} role{jobs.length === 1 ? "" : "s"}
-          </div>
-          <form>
-            <select
-              name="sort"
-              defaultValue={sort}
-              className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none"
-            >
-              <option value="newest" className="bg-[#0B0E13]">
-                Newest first
-              </option>
-              <option value="oldest" className="bg-[#0B0E13]">
-                Oldest first
-              </option>
-              <option value="title" className="bg-[#0B0E13]">
-                Title A–Z
-              </option>
-            </select>
-          </form>
-        </div>
-
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Suspense
-            fallback={
-              <>
-                <SkeletonCard />
-                <SkeletonCard />
-                <SkeletonCard />
-                <SkeletonCard />
-              </>
-            }
-          >
-            {jobs.length === 0 ? (
-              <EmptyState />
-            ) : (
-              jobs.map((job) => <Card key={job.slug} job={job} />)
-            )}
-          </Suspense>
-        </div>
-
-        <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center">
-          <p className="text-neutral-300">
-            Don't see your exact market? We run confidential mandates
-            continuously.
-          </p>
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
-            <PrimaryButton href="/en/contact">Contact us</PrimaryButton>
-            <SecondaryButton href="/en/candidates">
-              Register confidentially
-            </SecondaryButton>
-          </div>
-        </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

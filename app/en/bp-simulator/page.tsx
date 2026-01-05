@@ -7,9 +7,16 @@ import BpSimulatorClient from "./BpSimulatorClient";
 import { requirePrivateSession } from "@/app/private/lib/require-session";
 import AccessRequestGate from "@/app/private/components/AccessRequestGate";
 import { getSupabaseAdmin } from "@/lib/supabase-server";
+import { BreadcrumbSchema, ServiceSchema } from "@/components/StructuredData";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+
+const SITE =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "https://www.execpartners.ch");
 
 export const metadata: Metadata = {
   title: "Business Plan Simulator | Private Banking | Executive Partners",
@@ -28,7 +35,6 @@ export const metadata: Metadata = {
   },
 };
 
-/* ✅ SAME SHELL AS PORTABILITY */
 function GateShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white body-grain">
@@ -67,12 +73,6 @@ function BpTeaser() {
   );
 }
 
-/**
- * ✅ Server-only approval check
- * Uses SAME source-of-truth as /api/private/me:
- * - private_sessions (session_hash -> email, not expired, not revoked)
- * - private_profile_access_requests (requester_email + request_type='bp' -> latest status)
- */
 async function isBpApproved(): Promise<boolean> {
   try {
     const cookieStore = await cookies();
@@ -82,7 +82,6 @@ async function isBpApproved(): Promise<boolean> {
     const supabase = await getSupabaseAdmin();
     const nowIso = new Date().toISOString();
 
-    // 1) Validate active session
     const { data: session, error: sessErr } = await supabase
       .from("private_sessions")
       .select("email, expires_at, revoked_at")
@@ -96,7 +95,6 @@ async function isBpApproved(): Promise<boolean> {
     const email = String(session.email).trim().toLowerCase();
     if (!email) return false;
 
-    // 2) Latest BP access request
     const { data: req, error: reqErr } = await supabase
       .from("private_profile_access_requests")
       .select("status")
@@ -115,28 +113,41 @@ async function isBpApproved(): Promise<boolean> {
 }
 
 export default async function Page() {
-  // 🔐 Must be logged in (secure flow)
   await requirePrivateSession(undefined, "/en/bp-simulator");
 
-  // ✅ Decide server-side (no flicker)
   const approved = await isBpApproved();
 
   return (
-    <GateShell>
-      <BpTeaser />
+    <>
+      <BreadcrumbSchema 
+        items={[
+          { name: "Home", url: SITE },
+          { name: "Business Plan Simulator", url: `${SITE}/en/bp-simulator` }
+        ]}
+      />
+      
+      <ServiceSchema
+        name="Business Plan Simulator"
+        description="Model AUM portability, revenue projections and net margin scenarios. AI-driven business plan simulator for private banking relationship managers to stress-test portability assumptions, model NNM, ROA, revenues, and margins."
+      />
 
-      <div className="mt-8">
-        {approved ? (
-          <BpSimulatorClient />
-        ) : (
-          <AccessRequestGate
-            requestType="bp"
-            title="Business Plan Simulator — Access required"
-            description="Request access to unlock the full simulator."
-            refreshHref="/en/bp-simulator"
-          />
-        )}
-      </div>
-    </GateShell>
+      <GateShell>
+        <BpTeaser />
+
+        <div className="mt-8">
+          {approved ? (
+            <BpSimulatorClient />
+          ) : (
+            <AccessRequestGate
+              requestType="bp"
+              title="Business Plan Simulator — Access required"
+              description="Request access to unlock the full simulator."
+              refreshHref="/en/bp-simulator"
+            />
+          )}
+        </div>
+      </GateShell>
+    </>
   );
 }
+

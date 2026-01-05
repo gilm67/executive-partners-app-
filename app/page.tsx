@@ -4,11 +4,10 @@ import HomeClient from "./(marketing)/HomeClient";
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { ArrowRight, Sparkles, Calculator } from "lucide-react";
+import { OrganizationSchema } from "@/components/StructuredData";
 
-/* Public assets */
 const HERO = "/hero-skyline-hq.jpg";
 
-/* ===== SEO METADATA ===== */
 export const metadata: Metadata = {
   title: "Executive Partners | Private Banking Executive Search | Geneva",
   description:
@@ -31,85 +30,79 @@ export const revalidate = false;
 
 export default function HomePage() {
   return (
-    <main className="relative min-h-screen body-grain text-white">
-      {/* ===== HERO ===== */}
-      <section className="relative overflow-hidden">
-        <div className="relative h-[72vh] min-h-[560px] w-full">
-          <Image
-            src={HERO}
-            alt="Executive Partners – global private banking hubs skyline at dusk"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-[radial-gradient(1200px_420px_at_18%_-10%,rgba(0,0,0,.45),transparent_60%),linear-gradient(to_bottom,rgba(0,0,0,.55),rgba(0,0,0,.22)_40%,rgba(0,0,0,.6))]"
-          />
+    <>
+      <OrganizationSchema />
+      <main className="relative min-h-screen body-grain text-white">
+        <section className="relative overflow-hidden">
+          <div className="relative h-[72vh] min-h-[560px] w-full">
+            <Image
+              src={HERO}
+              alt="Executive Partners – global private banking hubs skyline at dusk"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-[radial-gradient(1200px_420px_at_18%_-10%,rgba(0,0,0,.45),transparent_60%),linear-gradient(to_bottom,rgba(0,0,0,.55),rgba(0,0,0,.22)_40%,rgba(0,0,0,.6))]"
+            />
 
-          <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4">
-            <div className="max-w-3xl rounded-xl bg-black/45 px-6 py-5 text-center backdrop-blur-sm">
-              <h1 className="font-[var(--font-playfair)] text-5xl font-semibold tracking-tight text-white md:text-6xl">
-                International &amp; Swiss{" "}
-                <span className="gold">Private Banking</span>
-              </h1>
-              <p className="mt-4 text-white/90">
-                Executive Search &amp; Talent Advisory for HNW/UHNW banking.
-                Geneva-based, globally connected.
-              </p>
-            </div>
+            <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4">
+              <div className="max-w-3xl rounded-xl bg-black/45 px-6 py-5 text-center backdrop-blur-sm">
+                <h1 className="font-[var(--font-playfair)] text-5xl font-semibold tracking-tight text-white md:text-6xl">
+                  International &amp; Swiss{" "}
+                  <span className="gold">Private Banking</span>
+                </h1>
+                <p className="mt-4 text-white/90">
+                  Executive Search &amp; Talent Advisory for HNW/UHNW banking.
+                  Geneva-based, globally connected.
+                </p>
+              </div>
 
-            <div className="mt-8">
-              <Link
-                href="/apply"
-                className="btn-primary btn-xl rounded-full px-8 shadow-lg"
-              >
-                Apply Confidentially
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* KPI BAR */}
-        <div className="relative mx-auto -mt-20 max-w-6xl px-4 pb-6">
-          <div className="rounded-2xl bg-white text-[#0B0E13] shadow-xl">
-            <div className="grid gap-4 p-6 md:grid-cols-3">
-              <KpiCard
-                title="Placements"
-                value="200+"
-                note="Senior RMs & Private Bankers placed worldwide"
-              />
-              <KpiCard
-                title="12-month Retention"
-                value="98%"
-                note="Candidates still in seat after 12 months"
-              />
-              <KpiCard
-                title="Global Hubs"
-                value="12+"
-                note="Geneva, Zurich, London, Dubai, Singapore, Hong Kong, New York, Miami, Paris, Milan, Madrid, Lisbon"
-              />
+              <div className="mt-8">
+                <Link
+                  href="/apply"
+                  className="btn-primary btn-xl rounded-full px-8 shadow-lg"
+                >
+                  Apply Confidentially
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* ===== STRATEGIC GATEWAY PANEL (TOOLS ONLY) ===== */}
-        <div className="relative mx-auto -mt-6 max-w-6xl px-4 pb-10">
-          <GatewayPanel />
-        </div>
-      </section>
+          <div className="relative mx-auto -mt-20 max-w-6xl px-4 pb-6">
+            <div className="rounded-2xl bg-white text-[#0B0E13] shadow-xl">
+              <div className="grid gap-4 p-6 md:grid-cols-3">
+                <KpiCard
+                  title="Placements"
+                  value="200+"
+                  note="Senior RMs & Private Bankers placed worldwide"
+                />
+                <KpiCard
+                  title="12-month Retention"
+                  value="98%"
+                  note="Candidates still in seat after 12 months"
+                />
+                <KpiCard
+                  title="Global Hubs"
+                  value="12+"
+                  note="Geneva, Zurich, London, Dubai, Singapore, Hong Kong, New York, Miami, Paris, Milan, Madrid, Lisbon"
+                />
+              </div>
+            </div>
+          </div>
 
-      {/* ===== SEO COPY + HUBS (KEEP YOUR ORIGINAL BLOCKS HERE) ===== */}
-      {/* IMPORTANT: paste your existing SEO COPY section + HUB CHIPS section here unchanged */}
+          <div className="relative mx-auto -mt-6 max-w-6xl px-4 pb-10">
+            <GatewayPanel />
+          </div>
+        </section>
 
-      {/* 🔥 NEW MODERN FLOW */}
-      <HomeClient />
-    </main>
+        <HomeClient />
+      </main>
+    </>
   );
 }
-
-/* ===== Components ===== */
 
 function KpiCard({
   title,
@@ -135,15 +128,12 @@ function KpiCard({
   );
 }
 
-/* ===== Strategic Gateway Panel (2 CTAs only, luxe) ===== */
-
 function GatewayPanel() {
   return (
     <section
       aria-label="Primary tools"
       className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0B0F1A]/72 p-4 backdrop-blur-xl shadow-[0_26px_90px_rgba(0,0,0,.55)]"
     >
-      {/* subtle luxe glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 rounded-3xl"
@@ -154,7 +144,6 @@ function GatewayPanel() {
       />
 
       <div className="relative grid gap-4 md:grid-cols-2">
-        {/* Primary */}
         <ActionCard
           href="/portability"
           icon={<Sparkles className="h-5 w-5" />}
@@ -164,7 +153,6 @@ function GatewayPanel() {
           variant="gold"
         />
 
-        {/* Secondary */}
         <ActionCard
           href="/bp-simulator"
           icon={<Calculator className="h-5 w-5" />}
@@ -220,7 +208,6 @@ function ActionCard({
         styles,
       ].join(" ")}
     >
-      {/* micro highlight */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100"
