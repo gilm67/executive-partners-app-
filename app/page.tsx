@@ -3,9 +3,43 @@ import Image from "next/image";
 import HomeClient from "./(marketing)/HomeClient";
 import type { ReactNode } from "react";
 import { ArrowRight, Sparkles, Calculator } from "lucide-react";
+import type { Metadata } from "next";
 
 /* Public assets */
 const HERO = "/hero-skyline-hq.jpg";
+
+/* ===== SEO METADATA ===== */
+export const metadata: Metadata = {
+  title: "Executive Partners | Private Banking Executive Search | Geneva",
+  description:
+    "Leading executive search firm specializing in senior private banking roles across Geneva, Zurich, London, Dubai, Singapore. 200+ placements, 98% retention rate.",
+  keywords: [
+    "private banking recruitment",
+    "executive search Geneva",
+    "UHNW banking jobs",
+    "relationship manager recruitment",
+    "Swiss private banking careers",
+  ],
+  openGraph: {
+    title: "Executive Partners | Private Banking Executive Search",
+    description:
+      "Global executive search for senior private banking professionals. Geneva-based, globally connected.",
+    url: "https://www.execpartners.ch",
+    siteName: "Executive Partners",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Executive Partners | Private Banking Executive Search",
+    description:
+      "Leading executive search for senior private banking roles worldwide.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export const dynamic = "force-static";
 export const revalidate = false;
