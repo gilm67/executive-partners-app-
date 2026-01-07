@@ -311,7 +311,7 @@ a:hover {
   -webkit-appearance: none !important;
 }
 
-/* File-input “Choose file” button on Apply page */
+/* File-input "Choose file" button on Apply page */
 .apply-page input[type="file"]::file-selector-button,
 .apply-page input[type="file"]::-webkit-file-upload-button {
   -webkit-appearance: none !important;
@@ -402,4 +402,641 @@ a.btn-primary {
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE/Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+/* =========================
+   EXPRESS INTEREST FORM STYLES - LUXURY DARK THEME
+   Matches execpartners.ch brand colors (gold + dark)
+   ========================= */
+
+/* Express Interest Page Container */
+.express-interest-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Page Header */
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.page-header h1 {
+  font-size: clamp(2rem, 3.4vw, 2.8rem);
+  color: #f9fafb;
+  margin-bottom: 10px;
+  font-family: var(--font-playfair, "Times New Roman", serif);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.page-header p {
+  font-size: 1.1rem;
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* Info Box - Luxury gold tint */
+.info-box {
+  background: rgba(212, 175, 55, 0.08);
+  border-left: 4px solid #f5d778;
+  padding: 20px;
+  margin-bottom: 30px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.info-box h3 {
+  color: #f5d778;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.info-box ul {
+  list-style: none;
+  padding: 0;
+}
+
+.info-box li {
+  padding-left: 24px;
+  position: relative;
+  margin-bottom: 8px;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.info-box li:before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #f5d778;
+  font-weight: bold;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 30px;
+}
+
+.form-section h3 {
+  color: #f9fafb;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+  padding-bottom: 8px;
+  font-family: var(--font-playfair, "Times New Roman", serif);
+  font-weight: 600;
+}
+
+/* Input Groups */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-weight: 600;
+  color: #f9fafb;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.2s;
+  color: #f9fafb;
+  backdrop-filter: blur(10px);
+}
+
+.input-group input::placeholder {
+  color: #6b7280;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: rgba(245, 215, 120, 0.6);
+  box-shadow: 0 0 0 3px rgba(245, 215, 120, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Radio Group */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(10px);
+}
+
+.radio-item:hover {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: rgba(245, 215, 120, 0.4);
+  transform: translateX(4px);
+}
+
+.radio-item input {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  cursor: pointer;
+  accent-color: #f5d778;
+}
+
+.radio-item span {
+  color: #e5e7eb;
+  font-size: 0.95rem;
+}
+
+/* Checkbox Items */
+.checkbox-group {
+  margin-bottom: 20px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.checkbox-item input {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  accent-color: #f5d778;
+  cursor: pointer;
+}
+
+.checkbox-item span {
+  color: #e5e7eb;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Guarantee Box - Gold luxury accent */
+.guarantee-box {
+  background: rgba(212, 175, 55, 0.08);
+  border: 2px solid rgba(245, 215, 120, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 30px 0;
+  backdrop-filter: blur(10px);
+}
+
+.guarantee-box h4 {
+  color: #f5d778;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.guarantee-box h4:before {
+  content: "✓";
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(180deg, #ffe8a3 0%, #f6c859 45%, #d6a738 100%);
+  color: #1a1300;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  margin-right: 10px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.guarantee-box p {
+  margin-bottom: 6px;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+}
+
+/* Submit Button - Executive Partners Gold Gradient */
+.submit-btn {
+  background-image: linear-gradient(180deg, #ffe8a3 0%, #f6c859 45%, #d6a738 100%);
+  color: #1a1300;
+  border: none;
+  padding: 18px 40px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s;
+  box-shadow: 
+    0 10px 28px rgba(214, 167, 56, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 14px 36px rgba(214, 167, 56, 0.48),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.submit-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Error Messages */
+.error {
+  color: #ef4444;
+  font-size: 14px;
+  margin-top: 4px;
+  display: block;
+}
+
+.error-box {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  padding: 15px;
+  border-radius: 12px;
+  margin: 20px 0;
+  border-left: 4px solid #ef4444;
+  backdrop-filter: blur(10px);
+}
+
+/* Success Message */
+.success-message {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(180deg, #ffe8a3 0%, #f6c859 45%, #d6a738 100%);
+  color: #1a1300;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  margin: 0 auto 20px;
+  font-weight: bold;
+  box-shadow: 0 10px 28px rgba(214, 167, 56, 0.38);
+}
+
+.success-message h3 {
+  color: #f9fafb;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  font-family: var(--font-playfair, "Times New Roman", serif);
+}
+
+.success-message p {
+  color: #e5e7eb;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.success-note {
+  font-size: 14px;
+  color: #9ca3af;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* Helper Text */
+.helper-text {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* =========================
+   Sticky Widget - Luxury Dark
+   ========================= */
+.sticky-interest-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(11, 15, 26, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(245, 215, 120, 0.3);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 
+    0 0 0 1px rgba(212, 175, 55, 0.18),
+    0 10px 40px rgba(0, 0, 0, 0.65);
+  max-width: 260px;
+  z-index: 1000;
+  animation: slideInUp 0.6s ease-out;
+}
+
+.widget-header {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #f9fafb;
+  font-family: var(--font-playfair, "Times New Roman", serif);
+}
+
+.widget-benefits {
+  font-size: 13px;
+  margin-bottom: 15px;
+  line-height: 1.6;
+  color: #e5e7eb;
+}
+
+.widget-btn {
+  display: block;
+  background-image: linear-gradient(180deg, #ffe8a3 0%, #f6c859 45%, #d6a738 100%);
+  color: #1a1300;
+  text-align: center;
+  padding: 12px;
+  border-radius: 9999px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 
+    0 6px 18px rgba(214, 167, 56, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.widget-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 26px rgba(214, 167, 56, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* =========================
+   Mobile Bottom Bar
+   ========================= */
+.mobile-bottom-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sticky-interest-widget {
+    display: none;
+  }
+
+  .mobile-bottom-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(11, 15, 26, 0.98);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(245, 215, 120, 0.3);
+    padding: 15px 20px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+
+  .mobile-bar-text {
+    color: #f9fafb;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .mobile-bar-btn {
+    background-image: linear-gradient(180deg, #ffe8a3 0%, #f6c859 45%, #d6a738 100%);
+    color: #1a1300;
+    padding: 10px 20px;
+    border-radius: 9999px;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 14px;
+    box-shadow: 
+      0 6px 18px rgba(214, 167, 56, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    transition: all 0.2s;
+  }
+
+  .mobile-bar-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 
+      0 8px 22px rgba(214, 167, 56, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* =========================
+   Inline Interest Section (Job Pages)
+   ========================= */
+.inline-interest-section {
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(245, 215, 120, 0.3);
+  padding: 40px;
+  border-radius: 24px;
+  margin: 40px 0;
+  position: relative;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 0 0 1px rgba(212, 175, 55, 0.18),
+    0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.section-badge {
+  position: absolute;
+  top: -15px;
+  left: 30px;
+  background: linear-gradient(180deg, #ffe8a3 0%, #f6c859 45%, #d6a738 100%);
+  color: #1a1300;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 12px rgba(214, 167, 56, 0.35);
+}
+
+.inline-interest-section h2 {
+  color: #f9fafb;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  font-family: var(--font-playfair, "Times New Roman", serif);
+  font-weight: 600;
+}
+
+.two-column-apply {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.apply-option {
+  background: rgba(11, 15, 26, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.apply-option h3 {
+  color: #f9fafb;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  font-family: var(--font-playfair, "Times New Roman", serif);
+  font-weight: 600;
+}
+
+.apply-option p {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.apply-option ul {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0;
+}
+
+.apply-option li {
+  padding: 8px 0;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.apply-option li:before {
+  content: "✓";
+  color: #f5d778;
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.btn-full-apply {
+  display: inline-block;
+  margin-top: 20px;
+  background-image: linear-gradient(180deg, #ffe8a3 0%, #f6c859 45%, #d6a738 100%);
+  color: #1a1300;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.2s;
+  box-shadow: 
+    0 6px 18px rgba(214, 167, 56, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.btn-full-apply:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 26px rgba(214, 167, 56, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Page Footer */
+.page-footer {
+  text-align: center;
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.page-footer p {
+  color: #9ca3af;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.page-footer p strong {
+  color: #f5d778;
+  font-weight: 600;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .express-interest-page {
+    padding: 30px 16px;
+  }
+
+  .two-column-apply {
+    grid-template-columns: 1fr;
+  }
+
+  .inline-interest-section {
+    padding: 30px 20px;
+  }
+
+  .apply-option {
+    padding: 24px;
+  }
+
+  .page-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .page-header p {
+    font-size: 1rem;
+  }
+}
+
+/* Compact Form Variant (for inline use) */
+form.compact .info-box {
+  display: none;
+}
+
+form.compact .form-section h3 {
+  font-size: 1rem;
+}
+
+form.compact .input-group {
+  margin-bottom: 15px;
+}
+
+form.compact .radio-group,
+form.compact .checkbox-group {
+  gap: 8px;
+}
+
+form.compact .radio-item,
+form.compact .checkbox-item {
+  padding: 10px;
+}
+
+form.compact .submit-btn {
+  padding: 14px 32px;
+  font-size: 0.95rem;
 }
