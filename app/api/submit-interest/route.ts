@@ -1,101 +1,64 @@
-import { NextRequest, NextResponse } from 'next/server';
-import sgMail from '@sendgrid/mail';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
-// Initialize SendGrid
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+export const runtime = "nodejs";
 
-export async function POST(request: NextRequest) {
+const SUPABASE_URL = process.env.SUPABASE_URL!;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+function err(message: string, status = 500, details?: unknown) {
+  const body =
+    process.env.NODE_ENV === "production"
+      ? { error: message }
+      : { error: message, details };
+  return NextResponse.json(body, { status });
+}
+
+export async function POST(req: NextRequest) {
   try {
-    const data = await request.json();
+    if (!SUPABASE_URL) return err("SUPABASE_URL is missing", 500);
+    if (!SUPABASE_SERVICE_ROLE_KEY) return err("SUPABASE_SERVICE_ROLE_KEY is missing", 500);
 
-    // Validate data (basic example)
-    if (!data.email || !data.fullName || !data.phone) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+    const data = await req.json();
+
+    // minimal validation
+    if (!data?.email || !data?.fullName || !data?.phone) {
+      return err("Missing required fields", 400, {
+        email: !!data?.email,
+        fullName: !!data?.fullName,
+        phone: !!data?.phone,
+      });
     }
 
-    // Send email notification to you
-    const emailToYou = {
-      to: 'careers@execpartners.ch',
-      from: 'noreply@execpartners.ch',
-      subject: `New Interest: ${data.fullName} - ${data.jobId || 'General'}`,
-      html: `
-        <h2>New Express Interest Submission</h2>
-        <p><strong>Name:</strong> ${data.fullName}</p>
-        <p><strong>Email:</strong> ${data.email}</p>
-        <p><strong>Phone:</strong> ${data.phone}</p>
-        <p><strong>Portable AUM:</strong> ${data.portableAUM}</p>
-        <p><strong>Location Status:</strong> ${data.locationStatus}</p>
-        <p><strong>Current Compensation:</strong> ${data.compensation}</p>
-        <p><strong>Contact Method:</strong> ${data.contactMethod}</p>
-        <p><strong>Job ID:</strong> ${data.jobId || 'General inquiry'}</p>
-        <p><strong>Submitted:</strong> ${new Date().toISOString()}</p>
-      `
-    };
-
-    // Send confirmation email to candidate
-    const emailToCandidate = {
-      to: data.email,
-      from: 'careers@execpartners.ch',
-      subject: 'Thank You for Your Interest - Executive Partners',
-      html: `
-        <h2>Thank You for Your Interest, ${data.fullName.split(' ')[0]}!</h2>
-        
-        <p>We've received your interest in ${data.jobId ? 'the ' + data.jobId + ' opportunity' : 'our opportunities'} and will respond within 24 hours via your preferred contact method: <strong>${data.contactMethod}</strong>.</p>
-
-        <h3>What Happens Next:</h3>
-        <ul>
-          <li><strong>Within 24 hours:</strong> We'll review your profile and contact you</li>
-          <li><strong>If strong fit:</strong> We'll schedule a 30-minute confidential phone call</li>
-          <li><strong>During call:</strong> We'll discuss the opportunity in detail and reveal client identity</li>
-          <li><strong>No obligation:</strong> You can decline at any point in the process</li>
-        </ul>
-
-        <h3>Your Submitted Information:</h3>
-        <ul>
-          <li>Portable AUM: ${data.portableAUM}</li>
-          <li>Location Status: ${data.locationStatus}</li>
-          <li>Current Compensation: ${data.compensation}</li>
-          <li>Preferred Contact: ${data.contactMethod}</li>
-        </ul>
-
-        <p>We appreciate your time and look forward to speaking with you.</p>
-
-        <p>Best regards,<br>
-        <strong>Executive Partners</strong><br>
-        +41 XX XXX XX XX<br>
-        careers@execpartners.ch</p>
-
-        <hr>
-        <p style="font-size: 12px; color: #666;">
-          This email was sent because you expressed interest in a private banking 
-          opportunity via execpartners.ch. All information is kept strictly confidential 
-          in accordance with GDPR.
-        </p>
-      `
-    };
-
-    // Send emails
-    await Promise.all([
-      sgMail.send(emailToYou),
-      sgMail.send(emailToCandidate)
-    ]);
-
-    // Optional: Save to database
-    // await saveToDatabase(data);
-
-    return NextResponse.json({ 
-      success: true,
-      message: 'Interest submitted successfully'
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+      auth: { persistSession: false },
     });
 
-  } catch (error) {
-    console.error('Error processing submission:', error);
-    return NextResponse.json(
-      { error: 'Failed to process submission' },
-      { status: 500 }
-    );
+    // Map to DB columns (snake_case)
+    const payload = {
+      full_name: String(data.fullName),
+      email: String(data.email),
+      phone: String(data.phone),
+
+      portable_aum: data.portableAUM ? String(data.portableAUM) : null,
+      location_status: data.locationStatus ? String(data.locationStatus) : null,
+      compensation: data.compensation ? String(data.compensation) : null,
+      contact_method: data.contactMethod ? String(data.contactMethod) : null,
+
+      job_id: data.jobId ? String(data.jobId) : null,
+      job_title: data.jobTitle ? String(data.jobTitle) : null,
+      market: data.market ? String(data.market) : null,
+
+      user_agent: req.headers.get("user-agent"),
+      source: req.headers.get("referer") || "execpartners.ch",
+    };
+
+    const { error } = await supabase.from("express_interest").insert(payload);
+
+    if (error) return err("Supabase insert failed", 500, error);
+
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    return err("Failed to process submission", 500, e);
   }
 }
