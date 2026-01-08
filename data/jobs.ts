@@ -85,7 +85,7 @@ export const jobsBySlug: Record<string, Job> = {
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
-    createdAt: "2025-09-01",
+    createdAt: "2026-01-08",
   },
 
   // 2) Brazil — Zurich or Geneva
@@ -127,7 +127,7 @@ export const jobsBySlug: Record<string, Job> = {
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
-    createdAt: "2025-09-05",
+    createdAt: "2026-01-08",
   },
 
   // 3) Portugal — Geneva / Zurich
@@ -169,7 +169,7 @@ export const jobsBySlug: Record<string, Job> = {
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
-    createdAt: "2025-09-10",
+    createdAt: "2026-01-08",
   },
 
   // 4) CH Onshore — Zurich
@@ -210,7 +210,7 @@ export const jobsBySlug: Record<string, Job> = {
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
-    createdAt: "2025-09-12",
+    createdAt: "2026-01-08",
   },
 
   // 5) CH Onshore — Lausanne
@@ -251,7 +251,7 @@ export const jobsBySlug: Record<string, Job> = {
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
-    createdAt: "2025-09-15",
+    createdAt: "2026-01-08",
   },
 
   // 6) MEA — Zurich
@@ -292,7 +292,7 @@ export const jobsBySlug: Record<string, Job> = {
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
-    createdAt: "2025-09-20",
+    createdAt: "2026-01-08",
   },
 
   // 7) LATAM — New York
@@ -333,7 +333,7 @@ export const jobsBySlug: Record<string, Job> = {
     seniority: "Director / Executive Director / MD",
     confidential: true,
     active: true,
-    createdAt: "2025-10-09",
+    createdAt: "2026-01-08",
   },
 
   // 8) Nordics — Zurich
@@ -374,7 +374,7 @@ export const jobsBySlug: Record<string, Job> = {
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
-    createdAt: "2025-10-10",
+    createdAt: "2026-01-08",
   },
 
   // 9) US Onshore — Miami
@@ -415,7 +415,7 @@ export const jobsBySlug: Record<string, Job> = {
     seniority: "Director / Executive Director / MD",
     confidential: true,
     active: true,
-    createdAt: "2025-10-10",
+    createdAt: "2026-01-08",
   },
 
   // 10) LATAM — Miami
@@ -456,7 +456,7 @@ export const jobsBySlug: Record<string, Job> = {
     seniority: "Director / Executive Director / MD",
     confidential: true,
     active: true,
-    createdAt: "2025-10-10",
+    createdAt: "2026-01-08",
   },
 
   // 11) Turkey — Dubai
