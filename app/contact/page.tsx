@@ -141,7 +141,7 @@ export default function ContactPage() {
 
         <p className="mt-2 text-xs text-neutral-400">
           Prefer to start with a discreet email?{" "}
-          <RevealEmail email="info@execpartners.ch" />
+          <RevealEmail email="recruiter@execpartners.ch" />
         </p>
       </header>
 
