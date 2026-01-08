@@ -6,8 +6,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const resendApiKey = process.env.RESEND_API_KEY;
+
+// ✅ Default recipient changed to recruiter@execpartners.ch
 const CONTACT_TO_EMAIL =
-  process.env.CONTACT_TO_EMAIL || "contact@execpartners.ch";
+  process.env.CONTACT_TO_EMAIL || "recruiter@execpartners.ch";
+
 const CONTACT_FROM_EMAIL =
   process.env.CONTACT_FROM_EMAIL ||
   "Executive Partners <no-reply@execpartners.ch>";
@@ -162,7 +165,7 @@ export async function POST(req: Request) {
     await resend.emails.send({
       from: CONTACT_FROM_EMAIL,
       to: CONTACT_TO_EMAIL,
-      replyTo: email,   // FIXED (was reply_to)
+      replyTo: email, // ✅ correct field name
       subject,
       html,
       text,
@@ -171,7 +174,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("CONTACT_FORM_ERROR", err);
-    return NextResponse.json({ ok: false, error: "Server error" }, { status: 200 });
+    return NextResponse.json(
+      { ok: false, error: "Server error" },
+      { status: 200 }
+    );
   }
 }
 
