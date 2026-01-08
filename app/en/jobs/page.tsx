@@ -363,6 +363,7 @@ function FilterBar({
       </div>
 
       <div className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-3">
+        {/* ✅ UPDATED: All markets list */}
         <select
           name="market"
           defaultValue={defaultFilters?.market ?? ""}
@@ -371,11 +372,12 @@ function FilterBar({
           <option value="" className="bg-[#0B0E13]">
             All markets
           </option>
+
           <option value="Switzerland (Onshore)" className="bg-[#0B0E13]">
             Switzerland (Onshore)
           </option>
           <option value="Middle East & Africa (MEA)" className="bg-[#0B0E13]">
-            MEA
+            Middle East & Africa (MEA)
           </option>
           <option value="UK" className="bg-[#0B0E13]">
             UK
@@ -389,11 +391,65 @@ function FilterBar({
           <option value="Hong Kong" className="bg-[#0B0E13]">
             Hong Kong
           </option>
+          <option value="France" className="bg-[#0B0E13]">
+            France
+          </option>
+          <option value="Spain" className="bg-[#0B0E13]">
+            Spain
+          </option>
+          <option value="Turkey" className="bg-[#0B0E13]">
+            Turkey
+          </option>
+          <option value="Israel" className="bg-[#0B0E13]">
+            Israel
+          </option>
+          <option value="Italy" className="bg-[#0B0E13]">
+            Italy
+          </option>
+          <option value="NRI" className="bg-[#0B0E13]">
+            NRI
+          </option>
+          <option value="Nordics" className="bg-[#0B0E13]">
+            Nordics
+          </option>
+          <option value="Greece" className="bg-[#0B0E13]">
+            Greece
+          </option>
+          <option value="Germany" className="bg-[#0B0E13]">
+            Germany
+          </option>
+          <option value="Austria" className="bg-[#0B0E13]">
+            Austria
+          </option>
+          <option value="South Africa" className="bg-[#0B0E13]">
+            South Africa
+          </option>
+          <option value="CEE" className="bg-[#0B0E13]">
+            CEE
+          </option>
+          <option value="Poland" className="bg-[#0B0E13]">
+            Poland
+          </option>
+          <option value="CIS" className="bg-[#0B0E13]">
+            CIS
+          </option>
+          <option value="Brazil" className="bg-[#0B0E13]">
+            Brazil
+          </option>
+          <option value="Argentina" className="bg-[#0B0E13]">
+            Argentina
+          </option>
+          <option value="Conosur" className="bg-[#0B0E13]">
+            Conosur
+          </option>
+
+          {/* keep your existing label too */}
           <option value="Portugal (LatAm/Europe)" className="bg-[#0B0E13]">
             Portugal
           </option>
         </select>
 
+        {/* ✅ UPDATED: All locations list */}
         <select
           name="location"
           defaultValue={defaultFilters?.location ?? ""}
@@ -425,6 +481,20 @@ function FilterBar({
           </option>
           <option value="New York" className="bg-[#0B0E13]">
             New York
+          </option>
+
+          {/* added */}
+          <option value="Paris" className="bg-[#0B0E13]">
+            Paris
+          </option>
+          <option value="Milano" className="bg-[#0B0E13]">
+            Milano
+          </option>
+          <option value="Lisbon" className="bg-[#0B0E13]">
+            Lisbon
+          </option>
+          <option value="Miami" className="bg-[#0B0E13]">
+            Miami
           </option>
         </select>
 
