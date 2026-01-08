@@ -73,6 +73,7 @@ const CANONICAL_JOBS: Job[] = CANONICAL_DATA.map((j) => ({
   slug: j.slug,
   confidential: true,
   active: true,
+  createdAt: j.createdAt, // keep for sorting
 }));
 
 /* Hide retired/duplicate slugs */
@@ -134,12 +135,12 @@ function countryFromLocation(location: string | undefined): string | undefined {
   if (loc.includes("paris")) return "FR";
   if (loc.includes("madrid")) return "ES";
   if (loc.includes("lisbon")) return "PT";
-  if (loc.includes("milan")) return "IT";
+  if (loc.includes("milan") || loc.includes("milano")) return "IT";
 
   return undefined;
 }
 
-/* ---------------- local filtering + sorting (FIX) ---------------- */
+/* ---------------- local filtering + sorting ---------------- */
 function norm(s: string) {
   return s.trim().toLowerCase();
 }
@@ -205,6 +206,57 @@ function applyLocalFiltersAndSort(
   }
 
   return out;
+}
+
+/* ---------------- dropdown data: auto-populate from jobs ---------------- */
+function cleanLabel(s: string) {
+  return (s ?? "").replace(/\s+/g, " ").trim();
+}
+
+function titleCaseCity(s: string) {
+  // keep exact casing if user typed "New York" etc; this is a light normalizer
+  return cleanLabel(s);
+}
+
+function extractCityTokens(location: string): string[] {
+  // "Zurich or Geneva, Switzerland" => ["Zurich", "Geneva"]
+  // "Geneva / Zurich, Switzerland" => ["Geneva", "Zurich"]
+  // "Dubai, UAE" => ["Dubai"]
+  // "Miami, USA" => ["Miami"]
+  if (!location) return [];
+  const left = location.split(",")[0] ?? location; // take "City part" before country
+  return left
+    .split(/\/| or | and |&/i)
+    .map((x) => titleCaseCity(x))
+    .map((x) => x.replace(/\s*\(.*?\)\s*/g, "").trim())
+    .filter(Boolean);
+}
+
+function buildDropdownOptionsFromJobs(jobs: Job[]) {
+  const marketsSet = new Set<string>();
+  const locationsSet = new Set<string>();
+
+  for (const j of jobs) {
+    if (!j || j.active === false) continue;
+    if (HIDDEN_SLUGS.has(j.slug)) continue;
+
+    const m = cleanLabel(j.market ?? "");
+    if (m) marketsSet.add(m);
+
+    const loc = cleanLabel(j.location ?? "");
+    for (const city of extractCityTokens(loc)) {
+      if (city) locationsSet.add(city);
+    }
+  }
+
+  const markets = Array.from(marketsSet).sort((a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: "base" })
+  );
+  const locations = Array.from(locationsSet).sort((a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: "base" })
+  );
+
+  return { markets, locations };
 }
 
 /* ---------------- UI primitives ---------------- */
@@ -336,15 +388,19 @@ function EmptyState() {
   );
 }
 
-/* ---------------- Filter Bar (FIX: GET submit to /en/jobs) ---------------- */
+/* ---------------- Filter Bar (auto options) ---------------- */
 function FilterBar({
   defaultQuery,
   defaultFilters,
   sort,
+  markets,
+  locations,
 }: {
   defaultQuery?: string;
   defaultFilters?: Record<string, string>;
   sort?: string;
+  markets: string[];
+  locations: string[];
 }) {
   return (
     <form
@@ -363,7 +419,6 @@ function FilterBar({
       </div>
 
       <div className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-3">
-        {/* ✅ UPDATED: All markets list */}
         <select
           name="market"
           defaultValue={defaultFilters?.market ?? ""}
@@ -372,84 +427,13 @@ function FilterBar({
           <option value="" className="bg-[#0B0E13]">
             All markets
           </option>
-
-          <option value="Switzerland (Onshore)" className="bg-[#0B0E13]">
-            Switzerland (Onshore)
-          </option>
-          <option value="Middle East & Africa (MEA)" className="bg-[#0B0E13]">
-            Middle East & Africa (MEA)
-          </option>
-          <option value="UK" className="bg-[#0B0E13]">
-            UK
-          </option>
-          <option value="US" className="bg-[#0B0E13]">
-            US
-          </option>
-          <option value="Singapore" className="bg-[#0B0E13]">
-            Singapore
-          </option>
-          <option value="Hong Kong" className="bg-[#0B0E13]">
-            Hong Kong
-          </option>
-          <option value="France" className="bg-[#0B0E13]">
-            France
-          </option>
-          <option value="Spain" className="bg-[#0B0E13]">
-            Spain
-          </option>
-          <option value="Turkey" className="bg-[#0B0E13]">
-            Turkey
-          </option>
-          <option value="Israel" className="bg-[#0B0E13]">
-            Israel
-          </option>
-          <option value="Italy" className="bg-[#0B0E13]">
-            Italy
-          </option>
-          <option value="NRI" className="bg-[#0B0E13]">
-            NRI
-          </option>
-          <option value="Nordics" className="bg-[#0B0E13]">
-            Nordics
-          </option>
-          <option value="Greece" className="bg-[#0B0E13]">
-            Greece
-          </option>
-          <option value="Germany" className="bg-[#0B0E13]">
-            Germany
-          </option>
-          <option value="Austria" className="bg-[#0B0E13]">
-            Austria
-          </option>
-          <option value="South Africa" className="bg-[#0B0E13]">
-            South Africa
-          </option>
-          <option value="CEE" className="bg-[#0B0E13]">
-            CEE
-          </option>
-          <option value="Poland" className="bg-[#0B0E13]">
-            Poland
-          </option>
-          <option value="CIS" className="bg-[#0B0E13]">
-            CIS
-          </option>
-          <option value="Brazil" className="bg-[#0B0E13]">
-            Brazil
-          </option>
-          <option value="Argentina" className="bg-[#0B0E13]">
-            Argentina
-          </option>
-          <option value="Conosur" className="bg-[#0B0E13]">
-            Conosur
-          </option>
-
-          {/* keep your existing label too */}
-          <option value="Portugal (LatAm/Europe)" className="bg-[#0B0E13]">
-            Portugal
-          </option>
+          {markets.map((m) => (
+            <option key={m} value={m} className="bg-[#0B0E13]">
+              {m}
+            </option>
+          ))}
         </select>
 
-        {/* ✅ UPDATED: All locations list */}
         <select
           name="location"
           defaultValue={defaultFilters?.location ?? ""}
@@ -458,44 +442,11 @@ function FilterBar({
           <option value="" className="bg-[#0B0E13]">
             All locations
           </option>
-          <option value="Geneva" className="bg-[#0B0E13]">
-            Geneva
-          </option>
-          <option value="Zurich" className="bg-[#0B0E13]">
-            Zurich
-          </option>
-          <option value="Lausanne" className="bg-[#0B0E13]">
-            Lausanne
-          </option>
-          <option value="Dubai" className="bg-[#0B0E13]">
-            Dubai
-          </option>
-          <option value="Singapore" className="bg-[#0B0E13]">
-            Singapore
-          </option>
-          <option value="Hong Kong" className="bg-[#0B0E13]">
-            Hong Kong
-          </option>
-          <option value="London" className="bg-[#0B0E13]">
-            London
-          </option>
-          <option value="New York" className="bg-[#0B0E13]">
-            New York
-          </option>
-
-          {/* added */}
-          <option value="Paris" className="bg-[#0B0E13]">
-            Paris
-          </option>
-          <option value="Milano" className="bg-[#0B0E13]">
-            Milano
-          </option>
-          <option value="Lisbon" className="bg-[#0B0E13]">
-            Lisbon
-          </option>
-          <option value="Miami" className="bg-[#0B0E13]">
-            Miami
-          </option>
+          {locations.map((l) => (
+            <option key={l} value={l} className="bg-[#0B0E13]">
+              {l}
+            </option>
+          ))}
         </select>
 
         <select
@@ -565,6 +516,9 @@ export default async function JobsPage({
     seniority,
     sort,
   });
+
+  // ✅ Dropdowns auto-populate from your actual jobs (already filtered for active/hidden)
+  const { markets, locations } = buildDropdownOptionsFromJobs(CANONICAL_JOBS);
 
   const base = SITE;
 
@@ -677,6 +631,8 @@ export default async function JobsPage({
               defaultQuery={q}
               defaultFilters={{ market, location, seniority }}
               sort={sort}
+              markets={markets}
+              locations={locations}
             />
           </div>
 
