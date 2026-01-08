@@ -6,8 +6,8 @@ export type Job = {
   location: string;
   experience_min?: number;
   languages?: string[];
-  summary: string;               // short blurb for cards
-  overview: string[];            // long spec sections for the details page
+  summary: string; // short blurb for cards
+  overview: string[]; // long spec sections for the details page
   responsibilities: string[];
   qualifications: string[];
   offer: string[];
@@ -18,8 +18,8 @@ export type Job = {
   seniority?: string;
   confidential?: boolean;
   active?: boolean;
-  createdAt?: string;            // ISO date
-  body?: string;                 // if you want to supply a full markdown body
+  createdAt?: string; // ISO date
+  body?: string; // if you want to supply a full markdown body
 };
 
 /* ---------------- Helpers ---------------- */
@@ -30,6 +30,18 @@ function norm(s: string | undefined) {
     .replace(/[^a-z0-9-]+/g, "-")
     .replace(/--+/g, "-")
     .replace(/^-|-$/g, "");
+}
+
+/**
+ * Standardized EP intro sentence (adapted per region/location).
+ * Inserted as the FIRST line of overview[] for every job ad.
+ */
+function introSentence(market: string, location: string) {
+  return `Executive Partners is partnering with a leading global private bank to recruit a Senior Relationship Manager for the ${market} region, based in ${location}. This strategic role will manage and grow a portfolio of high-net-worth and ultra-high-net-worth clients, delivering bespoke wealth solutions rooted in strong fiduciary trust and international expertise.`;
+}
+
+function withIntro(market: string, location: string, bullets: string[]) {
+  return [introSentence(market, location), ...bullets];
 }
 
 /* ---------------- Data ---------------- */
@@ -43,33 +55,33 @@ export const jobsBySlug: Record<string, Job> = {
     experience_min: 7,
     languages: ["English", "Arabic (plus)"],
     summary:
-      "Cover UHNW/HNW MEA clients from Dubai; strong acquisition and cross-border expertise.",
-    overview: [
-      "Lead and grow a portfolio of MEA HNW/UHNW clients booked in UAE/CH/SG.",
-      "Deliver bespoke multi-asset solutions (DPM/Advisory, structured, alternatives, Lombard).",
-      "Coordinate with product desks and Geneva/Zurich booking centres.",
-    ],
+      "Build and develop MEA HNW/UHNW relationships from Dubai with access to Swiss booking and a disciplined cross-border framework.",
+    overview: withIntro("Middle East & Africa (MEA)", "Dubai, UAE", [
+      "Build and develop a portfolio of MEA private clients, acting as primary trusted advisor.",
+      "Deliver holistic solutions across advisory/discretionary mandates, credit, structured investments and wealth planning.",
+      "Partner with product and investment teams and relevant booking centres to ensure seamless delivery.",
+    ]),
     responsibilities: [
-      "Bring a portable network across GCC/KSA/MEA; originate consistent NNM.",
-      "Convert prospects via events, introducers and bank referrals.",
-      "Structure lending, FX, mandates and alternatives to suit client objectives.",
-      "Maintain rigorous cross-border governance and lifecycle documentation.",
+      "Originate sustainable net new money and deepen wallet share through targeted coverage and introducer channels.",
+      "Provide disciplined advisory across investments, FX, structured solutions and bespoke lending where appropriate.",
+      "Maintain robust pipeline management, suitability discipline and ongoing client documentation standards.",
     ],
     qualifications: [
-      "7+ years serving MEA clientele with proven NNM/AUM growth.",
-      "Credible introducer network (family offices, lawyers, corporate owners).",
-      "Strong advisory/lending knowledge; Islamic-finance awareness is a plus.",
+      "7–10+ years’ track record serving MEA HNW/UHNW clients with demonstrable NNM and AUM growth.",
+      "Established introducer network across GCC/KSA/MEA (families, entrepreneurs, family offices and professional intermediaries).",
+      "Strong advisory, credit and investment product knowledge; Islamic-finance awareness is a plus.",
+      "Fluent English required; Arabic desirable.",
     ],
     compliance: [
-      "Adhere to DFSA/CBUAE and bank cross-border frameworks.",
-      "Gold-standard KYC/AML, SoW/SoF and suitability.",
+      "Operate within applicable UAE and group cross-border frameworks; no compromise on governance standards.",
+      "Maintain FINMA-grade KYC/AML, source of wealth/source of funds, suitability and lifecycle documentation.",
     ],
     offer: [
-      "Highly competitive fixed + variable linked to quality of revenues and plan delivery.",
-      "Transition support possible for senior hires (subject to approval).",
+      "High-quality platform with specialist coverage and product depth.",
+      "Competitive fixed and variable compensation aligned with quality of revenue and plan delivery.",
     ],
     apply_note:
-      "Confidentially share your CV and brief business plan (AUM, NNM, pipeline).",
+      "Confidentially share your CV and a brief plan (current AUM, 12-month NNM, pipeline).",
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
@@ -85,30 +97,33 @@ export const jobsBySlug: Record<string, Job> = {
     experience_min: 7,
     languages: ["Portuguese", "English", "French (plus)"],
     summary:
-      "Acquire, develop and manage Brazilian HNW/UHNW clients in Switzerland; offshore diversification and advisory.",
-    overview: [
-      "Serve sophisticated Brazilian families and entrepreneurs seeking diversification via Swiss booking.",
-      "Deliver holistic coverage: DPM/Advisory, structured solutions, Lombard & bespoke lending.",
-      "Work with tax/legal partners to ensure compliant international setups.",
-    ],
+      "Build and develop Brazilian HNW/UHNW relationships from Switzerland, delivering compliant cross-border wealth and credit solutions.",
+    overview: withIntro("Brazil (LatAm)", "Zurich or Geneva, Switzerland", [
+      "Build and develop a portfolio of Brazilian private clients, acting as principal advisor in a Swiss booking environment.",
+      "Deliver holistic wealth management solutions across investments, credit, structured products and planning.",
+      "Work closely with internal specialists to ensure consistent, high-governance execution.",
+    ]),
     responsibilities: [
-      "Bring a portable Brazilian client base and develop new relationships.",
-      "Drive NNM via warm network, events and introducers.",
-      "Promote mandates, FX, lending and private markets access.",
+      "Drive sustainable asset growth through disciplined acquisition and deepening of existing relationships.",
+      "Originate tailored solutions in collaboration with investment advisory, lending and structuring teams.",
+      "Maintain robust client documentation and ongoing due diligence aligned with Swiss governance expectations.",
     ],
     qualifications: [
-      "7+ years PB with Brazilian clientele; consistent NNM track record.",
-      "Deep network with entrepreneurs and family offices.",
-      "Excellent product knowledge incl. alternatives and structured solutions.",
+      "7–10+ years’ private banking experience with Brazilian clients and demonstrated portfolio growth.",
+      "Strong network with entrepreneurs, families and family offices; credibility in the Brazilian wealth ecosystem.",
+      "Strong breadth in investment and structured solutions.",
+      "English required; Portuguese highly advantageous.",
     ],
     compliance: [
-      "Strict Swiss cross-border and Brazil-related constraints; perfect documentation.",
+      "Operate within Swiss cross-border policies and Brazil-related constraints; documentation quality is critical.",
+      "Consistently apply KYC/AML, suitability and lifecycle controls.",
     ],
     offer: [
-      "Competitive Swiss package + variable tied to NNM/revenue quality.",
-      "Relocation support where applicable; strong LatAm desk collaboration.",
+      "Swiss private banking platform with strong product and specialist support.",
+      "Competitive compensation aligned to revenue quality and sustainable growth.",
     ],
-    apply_note: "Send CV + short plan (AUM, NNM, pipeline).",
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
@@ -124,33 +139,33 @@ export const jobsBySlug: Record<string, Job> = {
     experience_min: 7,
     languages: ["Portuguese", "English", "French (plus)"],
     summary:
-      "Manage UHNW/HNW Portuguese clients booking in Switzerland; strong cross-border, advisory and acquisition expertise.",
-    overview: [
-      "Strengthen the bank’s Lusophone franchise via acquisition and retention of HNW/UHNW clients.",
-      "Provide bespoke investment and planning solutions from a top Swiss platform.",
-      "Leverage global reach for lending, FX and private markets opportunities.",
-    ],
+      "Build and develop Portuguese HNW/UHNW relationships from Switzerland with disciplined advisory delivery and strong governance.",
+    overview: withIntro("Portugal (LatAm/Europe)", "Geneva / Zurich, Switzerland", [
+      "Build and develop a portfolio of Portuguese private clients booking in Switzerland.",
+      "Deliver holistic advice across discretionary/advisory mandates, credit and wealth planning solutions.",
+      "Partner with internal specialists to deliver tailored outcomes in a controlled risk framework.",
+    ]),
     responsibilities: [
-      "Act as trusted advisor to Portuguese HNW/UHNW clients with bespoke solutions.",
-      "Bring and actively grow a personal book; build multi-generational ties.",
-      "Identify new opportunities via your network and qualified introducers.",
-      "Work closely with investment specialists, PMs and wealth planners.",
-      "Uphold the highest standards of compliance and cross-border rules.",
+      "Originate sustainable NNM via targeted outreach and professional networks.",
+      "Increase mandate penetration and deepen wallet share with disciplined advisory coverage.",
+      "Maintain high standards of KYC/AML, suitability and ongoing documentation.",
     ],
     qualifications: [
-      "7+ years managing Portuguese HNW/UHNW; proven AUM/NNM growth.",
-      "Strong network and credibility within the Portuguese wealth ecosystem.",
-      "Deep understanding of markets, products and planning solutions.",
-      "Fluent in Portuguese & English (French a plus).",
+      "7–10+ years’ experience with Portuguese clients; strong track record of portfolio growth.",
+      "Well-established network within the Portuguese wealth ecosystem.",
+      "Deep understanding of investment products, structured solutions and cross-border planning.",
+      "English required; Portuguese strongly preferred; French an advantage.",
+    ],
+    compliance: [
+      "Operate within Swiss cross-border policies; ensure consistent governance and documentation quality.",
+      "Maintain FINMA-grade KYC/AML and lifecycle controls.",
     ],
     offer: [
-      "Respected Swiss private bank with global reach.",
-      "Competitive compensation with attractive incentive scheme.",
-      "Full support from investment, advisory and product teams.",
-      "Opportunity to further develop the Portuguese market.",
+      "Geneva/Zurich platform with robust product depth and specialist support.",
+      "Competitive compensation aligned to sustainable growth and execution quality.",
     ],
     apply_note:
-      "👉 To apply: send your CV and a brief cover note via the Apply form or contact us for a confidential discussion.",
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
@@ -166,29 +181,32 @@ export const jobsBySlug: Record<string, Job> = {
     experience_min: 7,
     languages: ["German", "English"],
     summary:
-      "Manage Swiss-domiciled HNW/UHNW clients in Zurich/Deutschschweiz; mandates, lending and PM advisory.",
-    overview: [
-      "Advise entrepreneurs, executives and next-gen wealth in the Zurich region.",
-      "Promote DPM/Advisory, Lombard lending and private markets access.",
-      "Leverage bank brand, events and referrals for growth.",
-    ],
+      "Build and develop Swiss-domiciled HNW/UHNW relationships in Zurich with disciplined advisory, credit and governance standards.",
+    overview: withIntro("Switzerland (Onshore)", "Zurich, Switzerland", [
+      "Build and develop an onshore Swiss portfolio in Zurich/Deutschschweiz.",
+      "Advise entrepreneurs, executives and multi-generational families across investments and credit solutions.",
+      "Deliver solutions within a strict Swiss regulatory and internal governance framework.",
+    ]),
     responsibilities: [
-      "Develop a Zurich-centric onshore book with clear NNM targets.",
-      "Increase mandate penetration and wallet share.",
-      "Build introducer network (law/tax/corp-finance boutiques).",
+      "Drive sustainable NNM and asset growth through disciplined acquisition and relationship deepening.",
+      "Increase penetration of discretionary/advisory mandates, lending and planning solutions.",
+      "Maintain exemplary documentation standards across onboarding and ongoing review cycles.",
     ],
     qualifications: [
-      "7+ years with Swiss onshore clients; consistent delivery and references.",
-      "Strong reputation and network in Deutschschweiz.",
+      "7–10+ years’ Swiss onshore RM experience with a verifiable local network in Zurich/Deutschschweiz.",
+      "Strong advisory capability across investments and credit; client-centric long-term approach.",
+      "German and English typically expected for Zurich onshore coverage.",
     ],
     compliance: [
-      "Operate under LSFin/FinSA/MiFID-aligned policies; perfect documentation.",
+      "Operate under LSFin/FinSA-aligned policies and internal risk frameworks; no exceptions on documentation quality.",
+      "Maintain KYC/AML, suitability and ongoing monitoring to FINMA-grade standards.",
     ],
     offer: [
-      "Top-quartile Zurich package; upside tied to plan execution.",
-      "Strong product platform and local PM/advisory support.",
+      "Strong local platform with specialist support and disciplined governance.",
+      "Competitive Zurich compensation aligned to sustainable growth and plan delivery.",
     ],
-    apply_note: "Submit CV + brief plan; Zurich hiring window is open.",
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
@@ -204,34 +222,39 @@ export const jobsBySlug: Record<string, Job> = {
     experience_min: 7,
     languages: ["French", "English (plus)"],
     summary:
-      "Cover UHNW/HNW Swiss onshore clients in Romandie; focus on acquisition and cross-generational advisory.",
-    overview: [
-      "Develop domestic relationships across the Arc Lémanique (Lausanne/Nyon/Montreux).",
-      "Deliver mandates, lending, FX and planning with local specialists.",
-      "Engage via regional events, clubs and professional networks.",
-    ],
+      "Build and develop Swiss-domiciled HNW/UHNW relationships in Romandie with disciplined advisory delivery and strong governance.",
+    overview: withIntro("Switzerland (Onshore)", "Lausanne, Switzerland", [
+      "Build and develop an onshore Swiss portfolio in Lausanne/Romandie.",
+      "Deliver holistic advisory across investments, credit and planning solutions for private clients.",
+      "Partner with internal specialists to ensure high-quality execution and client outcomes.",
+    ]),
     responsibilities: [
-      "Acquire and deepen client relationships; manage retention and referrals.",
-      "Promote DPM/Advisory adoption and lending utilization.",
-      "Build introducer channels across the region.",
+      "Drive sustainable NNM and deepen wallet share through disciplined relationship management.",
+      "Promote discretionary/advisory mandates and credit solutions aligned with client objectives.",
+      "Maintain high standards of documentation, suitability and ongoing due diligence.",
     ],
     qualifications: [
-      "Proven onshore track record in Suisse Romande; strong NNM history.",
-      "Presence with entrepreneurs/professionals and family advisers.",
+      "7–10+ years’ Swiss onshore RM experience with a strong Romandie network.",
+      "Strong advisory capability and professional judgment in complex client situations.",
+      "French required; English strong.",
     ],
-    compliance: ["LSFin/FinSA rules strictly applied; suitability discipline."],
+    compliance: [
+      "Operate under LSFin/FinSA-aligned policies with rigorous documentation and governance standards.",
+      "Maintain FINMA-grade KYC/AML and lifecycle controls.",
+    ],
     offer: [
-      "Attractive fixed + variable; seniority-linked upside.",
-      "Prestigious Swiss brand with strong local heritage.",
+      "Romandie platform with strong product depth and specialist support.",
+      "Competitive compensation aligned to sustainable growth and execution quality.",
     ],
-    apply_note: "Confidential enquiries welcome; immediate interviews possible.",
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
     createdAt: "2025-09-15",
   },
 
-  // 6) MEA — Zurich (already present; kept)
+  // 6) MEA — Zurich
   "senior-relationship-manager-mea-zurich": {
     slug: "senior-relationship-manager-mea-zurich",
     title: "Senior Relationship Manager — MEA",
@@ -240,34 +263,39 @@ export const jobsBySlug: Record<string, Job> = {
     experience_min: 7,
     languages: ["English", "German (plus)", "Arabic (plus)"],
     summary:
-      "Cover UHNW/HNW MEA clients from Zurich; GCC and African markets focus.",
-    overview: [
-      "Serve MEA clients booked in Switzerland, combining Swiss platform safety with MEA origination.",
-      "Coordinate with Dubai/MEA teams and CH product desks.",
-      "Deliver multi-asset mandates, credit and alternatives.",
-    ],
+      "Build and develop MEA HNW/UHNW relationships from Zurich with disciplined cross-border governance and strong product access.",
+    overview: withIntro("Middle East & Africa (MEA)", "Zurich, Switzerland", [
+      "Build and develop a portfolio of MEA private clients from a Swiss booking centre.",
+      "Deliver holistic solutions across investments, credit, structured products and wealth planning.",
+      "Work closely with product and investment teams to ensure compliant delivery.",
+    ]),
     responsibilities: [
-      "Bring portable MEA relationships; grow NNM from Zurich hub.",
-      "Ensure best-in-class client experience and retention.",
-      "Travel regionally to maintain key relationships.",
+      "Originate sustainable NNM and deepen wallet share through targeted coverage and introducer channels.",
+      "Provide disciplined advisory across discretionary/advisory mandates and credit solutions.",
+      "Maintain strong documentation and lifecycle controls aligned to Swiss governance standards.",
     ],
     qualifications: [
-      "7+ years covering MEA; portable network; compliant practices.",
-      "Fluency in English; German/Arabic advantageous.",
+      "7–10+ years’ private banking experience with MEA clients and demonstrated acquisition capability.",
+      "Established network across GCC/MEA families and professional intermediaries.",
+      "English required; Arabic desirable.",
     ],
-    compliance: ["Swiss cross-border discipline; robust SoW/SoF documentation."],
+    compliance: [
+      "Operate within Swiss cross-border policies and internal risk frameworks; documentation quality is critical.",
+      "Maintain FINMA-grade KYC/AML, suitability and lifecycle controls.",
+    ],
     offer: [
-      "Competitive Swiss package with performance-linked variable.",
-      "Entrepreneurial environment with strong support functions.",
+      "Swiss platform with strong product access and specialist coverage.",
+      "Competitive compensation aligned to revenue quality and plan delivery.",
     ],
-    apply_note: "Contact us confidentially; Zurich MEA desk is growing.",
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
     createdAt: "2025-09-20",
   },
 
-  // 7) LATAM — New York (existing recent)
+  // 7) LATAM — New York
   "senior-relationship-manager-latam-new-york": {
     slug: "senior-relationship-manager-latam-new-york",
     title: "Senior Relationship Manager — LATAM (New York)",
@@ -276,42 +304,39 @@ export const jobsBySlug: Record<string, Job> = {
     experience_min: 7,
     languages: ["English", "Spanish (strong)", "Portuguese (plus)"],
     summary:
-      "Acquire and manage HNW/UHNW Latin American clients from a New York hub; cross-border advisory, lending and investment solutions.",
-    overview: [
-      "Lead client acquisition and relationship management for HNW/UHNW LATAM clients (Mexico, Andean region, Southern Cone, Brazil diaspora) from New York.",
-      "Provide holistic wealth management across advisory/DPM, structured products, credit (Lombard/RE), FX and estate planning coordination.",
-      "Leverage US platform breadth with international booking options (US/CH/SG as applicable) and specialist teams.",
-    ],
+      "Build and develop Latin American HNW/UHNW relationships from New York with disciplined cross-border advisory and governance.",
+    overview: withIntro("Latin America (LatAm)", "New York, USA", [
+      "Build and develop a portfolio of Latin American private clients from a New York hub.",
+      "Deliver holistic wealth advice across investments, credit, FX and planning solutions.",
+      "Coordinate with global product teams to deliver solutions within appropriate governance standards.",
+    ]),
     responsibilities: [
-      "Bring a portable network and originate consistent NNM via referrals, diaspora communities, and professional introducers.",
-      "Deliver tailored investment and credit solutions; coordinate with product, lending and planning specialists.",
-      "Maintain disciplined pipeline management, documenting opportunities and conversion.",
-      "Travel within the region as needed to maintain and expand key relationships.",
+      "Drive sustainable asset growth through disciplined acquisition and relationship deepening.",
+      "Originate tailored solutions across advisory/discretionary, lending and structured investments.",
+      "Maintain robust onboarding and ongoing due diligence aligned to relevant regulatory frameworks.",
     ],
     qualifications: [
-      "7–10+ years serving LATAM private clients with a proven AUM/NNM track record.",
-      "Deep understanding of cross-border considerations for LATAM clients banking in the US and abroad.",
-      "Strong product knowledge across multi-asset advisory/DPM, alternatives, and credit.",
-      "Fluent English with strong Spanish (Portuguese a plus); excellent communication and negotiation skills.",
+      "7–10+ years’ private banking experience with LATAM clients and demonstrated acquisition track record.",
+      "Strong network with families, entrepreneurs and intermediaries across Latin America.",
+      "English required; Spanish preferred; Portuguese a plus.",
     ],
     compliance: [
-      "Operate within US regulatory requirements and internal cross-border frameworks.",
-      "Exemplary KYC/AML, Source of Wealth/Funds and suitability standards; documentation excellence.",
+      "Operate within applicable US and cross-border policies; ensure strong documentation and controls.",
+      "Maintain high standards of KYC/AML, suitability and lifecycle monitoring.",
     ],
     offer: [
-      "Highly competitive US package with performance-linked variable; upside for quality, recurring revenues.",
-      "Access to a robust product shelf, private markets and specialized lending.",
-      "Entrepreneurial culture with senior support for strategic hires.",
+      "New York platform with international product access and specialist coverage.",
+      "Competitive compensation aligned to sustainable growth and execution quality.",
     ],
     apply_note:
-      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, early portability view).",
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
     seniority: "Director / Executive Director / MD",
     confidential: true,
     active: true,
     createdAt: "2025-10-09",
   },
 
-  // 8) NEW — Nordics from Zurich
+  // 8) Nordics — Zurich
   "senior-relationship-manager-nordics-zurich": {
     slug: "senior-relationship-manager-nordics-zurich",
     title: "Senior Relationship Manager — Nordics",
@@ -320,39 +345,39 @@ export const jobsBySlug: Record<string, Job> = {
     experience_min: 7,
     languages: ["English", "Swedish/Norwegian/Danish/Finnish (plus)"],
     summary:
-      "Acquire and advise HNW/UHNW Nordic clients from a Swiss booking centre; mandates, lending and cross-border expertise.",
-    overview: [
-      "Develop and manage a portfolio of Nordic entrepreneurs and families booking in Switzerland.",
-      "Deliver advisory/DPM, Lombard and structured solutions with strong FX and alternatives access.",
-      "Partner with Nordic introducers and Swiss product specialists to drive growth.",
-    ],
+      "Build and develop Nordic HNW/UHNW relationships from Zurich with disciplined advisory delivery and Swiss governance standards.",
+    overview: withIntro("Nordics (SE/NO/DK/FI/IS)", "Zurich, Switzerland", [
+      "Build and develop a portfolio of Nordic private clients booking in Switzerland.",
+      "Deliver holistic advice across investments, credit solutions and planning needs.",
+      "Partner with internal specialists to deliver tailored outcomes within a controlled risk framework.",
+    ]),
     responsibilities: [
-      "Bring a portable Nordic network and originate consistent NNM.",
-      "Increase mandate penetration and share of wallet with existing clients.",
-      "Build referral channels with lawyers, tax advisers and family offices.",
+      "Drive sustainable NNM through targeted outreach and professional networks.",
+      "Increase mandate penetration and deepen wallet share through disciplined advisory coverage.",
+      "Maintain exemplary documentation and ongoing due diligence standards.",
     ],
     qualifications: [
-      "7+ years covering Nordics private clients; proven AUM/NNM track record.",
-      "Cultural fluency and credibility with Nordic clients and intermediaries.",
-      "Solid knowledge of multi-asset advisory/DPM, credit and cross-border rules.",
+      "7–10+ years’ private banking experience with Nordic clients and a proven acquisition track record.",
+      "Strong network with Nordic entrepreneurs, executives and intermediaries.",
+      "English required; Nordic language(s) advantageous.",
     ],
     compliance: [
-      "Operate under Swiss cross-border policy and Nordic regulatory sensitivities.",
-      "Exemplary KYC/AML; clear SoW/SoF narrative and suitability documentation.",
+      "Operate within Swiss cross-border and internal governance frameworks; documentation quality is critical.",
+      "Maintain FINMA-grade KYC/AML, suitability and lifecycle controls.",
     ],
     offer: [
-      "Competitive Swiss package with performance upside.",
-      "Strong platform with private markets and specialized lending.",
-      "Entrepreneurial team with senior sponsorship for market build-out.",
+      "Swiss platform with strong product access and specialist support.",
+      "Competitive compensation aligned to sustainable growth and plan delivery.",
     ],
-    apply_note: "Send CV and a short business plan (AUM, NNM, 12–24 month view).",
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
     seniority: "Director / Executive Director",
     confidential: true,
     active: true,
     createdAt: "2025-10-10",
   },
 
-  // 9) NEW — US Onshore from Miami
+  // 9) US Onshore — Miami
   "senior-relationship-manager-us-miami": {
     slug: "senior-relationship-manager-us-miami",
     title: "Senior Relationship Manager — US Onshore (Miami)",
@@ -361,39 +386,39 @@ export const jobsBySlug: Record<string, Job> = {
     experience_min: 7,
     languages: ["English", "Spanish (plus)"],
     summary:
-      "Grow a book of HNW/UHNW US onshore clients from Miami; advisory/DPM, credit and private markets.",
-    overview: [
-      "Lead acquisition and relationship management for US onshore clients (entrepreneurs, executives, family offices).",
-      "Provide end-to-end wealth solutions including advisory/DPM, tailored lending (Lombard/RE) and private markets.",
-      "Leverage a Miami hub with national reach and strong product platform.",
-    ],
+      "Build and develop US onshore HNW/UHNW relationships from Miami with disciplined advisory delivery and governance standards.",
+    overview: withIntro("United States (Onshore)", "Miami, USA", [
+      "Build and develop a portfolio of US onshore private clients from Miami.",
+      "Deliver holistic advice across investments, credit and planning solutions.",
+      "Partner with internal specialists to deliver tailored outcomes for complex client needs.",
+    ]),
     responsibilities: [
-      "Bring a portable US network; deliver consistent NNM from targeted segments.",
-      "Calibrate proposals with investment/advisory and credit specialists.",
-      "Maintain a robust pipeline and deliver superior client experience.",
+      "Drive sustainable client acquisition and deepen existing relationships.",
+      "Originate advisory and lending solutions aligned with client objectives and risk appetite.",
+      "Maintain strong documentation, suitability discipline and ongoing monitoring.",
     ],
     qualifications: [
-      "7–10+ years advising US HNW/UHNW clients; strong revenue and NNM record.",
-      "Deep knowledge of investment solutions, lending and planning coordination.",
-      "Excellent communication; ability to win and retain sophisticated clients.",
+      "7–10+ years’ US onshore private banking experience with demonstrated acquisition capability.",
+      "Strong network in South Florida/US private wealth ecosystem.",
+      "English required; Spanish advantageous.",
     ],
     compliance: [
-      "Operate under US regulatory requirements and firm policies.",
-      "Impeccable KYC/AML and suitability standards; audit-ready documentation.",
+      "Operate within applicable US regulatory and internal governance frameworks; no compromise on documentation quality.",
+      "Maintain KYC/AML, suitability and lifecycle monitoring standards.",
     ],
     offer: [
-      "Attractive US package with variable tied to quality revenues.",
-      "Access to differentiated alternatives, credit and platform resources.",
-      "Senior sponsorship and resources for market development.",
+      "Miami platform with strong product access and specialist coverage.",
+      "Competitive compensation aligned to sustainable growth and execution quality.",
     ],
-    apply_note: "Apply with CV + brief plan (current AUM, 12-month NNM, pipeline view).",
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
     seniority: "Director / Executive Director / MD",
     confidential: true,
     active: true,
     createdAt: "2025-10-10",
   },
 
-  // 10) NEW — LATAM from Miami
+  // 10) LATAM — Miami
   "senior-relationship-manager-latam-miami": {
     slug: "senior-relationship-manager-latam-miami",
     title: "Senior Relationship Manager — LATAM (Miami)",
@@ -402,37 +427,203 @@ export const jobsBySlug: Record<string, Job> = {
     experience_min: 7,
     languages: ["Spanish", "English", "Portuguese (plus)"],
     summary:
-      "Acquire and manage HNW/UHNW LATAM clients from a Miami hub; cross-border advisory, FX and credit.",
-    overview: [
-      "Build and grow relationships with LATAM clients (Mexico, Andean, Southern Cone, Brazil diaspora) booking US/CH.",
-      "Deliver multi-asset advisory/DPM, structured products, Lombard and real-estate lending, plus FX solutions.",
-      "Leverage Miami’s regional connectivity and a global booking platform.",
-    ],
+      "Build and develop Latin American HNW/UHNW relationships from Miami with disciplined cross-border advisory and strong governance.",
+    overview: withIntro("Latin America (LatAm)", "Miami, USA", [
+      "Build and develop a portfolio of Latin American private clients from Miami.",
+      "Deliver holistic advice across investments, credit, FX and planning solutions.",
+      "Coordinate with product teams to deliver solutions within appropriate governance standards.",
+    ]),
     responsibilities: [
-      "Bring a portable LATAM network and originate NNM via diaspora, introducers and events.",
-      "Coordinate proposals with product desks, lending and wealth planners.",
-      "Maintain high-tempo pipeline discipline and conversion reporting.",
+      "Drive sustainable NNM through targeted coverage, introducer networks and diaspora channels.",
+      "Increase mandate penetration and deepen wallet share through disciplined advisory delivery.",
+      "Maintain robust onboarding, suitability discipline and ongoing due diligence.",
     ],
     qualifications: [
-      "7–10+ years with LATAM private clients; proven AUM/NNM growth.",
-      "Strong cross-border understanding (US/LATAM) and product fluency.",
-      "Native/near-native Spanish; English fluent; Portuguese a plus.",
+      "7–10+ years’ private banking experience with LATAM clients and demonstrated acquisition track record.",
+      "Strong network across key LATAM corridors; proven ability to convert and retain relationships.",
+      "English required; Spanish preferred; Portuguese a plus.",
     ],
     compliance: [
-      "Operate within US regulations and cross-border frameworks.",
-      "Exemplary KYC/AML, SoW/SoF and suitability; meticulous files.",
+      "Operate within applicable US and cross-border frameworks; documentation quality is critical.",
+      "Maintain high standards of KYC/AML, suitability and lifecycle monitoring.",
     ],
     offer: [
-      "Competitive package with meaningful upside for recurring revenues.",
-      "Robust product shelf including private markets and tailored credit.",
-      "Entrepreneurial culture; senior sponsorship for strategic hires.",
+      "Miami platform with international product access and specialist coverage.",
+      "Competitive compensation aligned to sustainable growth and execution quality.",
     ],
     apply_note:
-      "Share CV and a concise plan (AUM today, targeted NNM, early portability view).",
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
     seniority: "Director / Executive Director / MD",
     confidential: true,
     active: true,
     createdAt: "2025-10-10",
+  },
+
+  // 11) Turkey — Dubai (NEW)
+  "senior-relationship-manager-turkey-dubai": {
+    slug: "senior-relationship-manager-turkey-dubai",
+    title: "Senior Relationship Manager — Turkey",
+    market: "Turkey",
+    location: "Dubai, UAE",
+    experience_min: 7,
+    languages: ["Turkish", "English", "Arabic (plus)"],
+    summary:
+      "Build and develop Turkish HNW/UHNW relationships from Dubai with disciplined cross-border advisory and robust governance standards.",
+    overview: withIntro("Turkey", "Dubai, UAE", [
+      "Build and develop a portfolio of Turkish private clients from Dubai, acting as primary trusted advisor.",
+      "Deliver holistic solutions across investments, discretionary/advisory mandates, credit and wealth structuring.",
+      "Partner with product and investment teams and relevant booking centres to ensure seamless delivery within a controlled risk framework.",
+    ]),
+    responsibilities: [
+      "Originate sustainable NNM through targeted coverage, client referrals and introducer networks (entrepreneurs, family offices, intermediaries).",
+      "Increase mandate penetration and deepen wallet share through disciplined advisory delivery and solution-led coverage.",
+      "Maintain robust onboarding, suitability discipline and ongoing due diligence; ensure consistently high documentation standards.",
+    ],
+    qualifications: [
+      "7–10+ years’ private banking experience with Turkish HNW/UHNW clients and a demonstrated acquisition track record.",
+      "Strong network across Turkey/UAE corridors; proven ability to convert and retain relationships.",
+      "Turkish and English required; Arabic desirable.",
+      "Solid product fluency across multi-asset advisory/DPM, structured solutions and bespoke lending.",
+    ],
+    compliance: [
+      "Operate within applicable UAE and group cross-border frameworks; no compromise on governance standards.",
+      "Maintain FINMA-grade KYC/AML, source of wealth/source of funds, suitability and lifecycle documentation.",
+    ],
+    offer: [
+      "High-quality Dubai platform with specialist coverage and product depth.",
+      "Competitive compensation aligned to sustainable growth and execution quality.",
+    ],
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2026-01-08",
+  },
+
+  // 12) CH Onshore — Geneva (NEW)
+  "senior-relationship-manager-ch-onshore-geneva": {
+    slug: "senior-relationship-manager-ch-onshore-geneva",
+    title: "Senior Relationship Manager — CH Onshore",
+    market: "Switzerland (Onshore)",
+    location: "Geneva, Switzerland",
+    experience_min: 7,
+    languages: ["French", "English"],
+    summary:
+      "Build and develop Swiss-domiciled HNW/UHNW relationships in Geneva with disciplined advisory, credit and governance standards.",
+    overview: withIntro("Switzerland (Onshore)", "Geneva, Switzerland", [
+      "Build and develop an onshore Swiss portfolio in Geneva and the broader Arc Lémanique.",
+      "Advise entrepreneurs, executives and multi-generational families across investments, credit and planning solutions.",
+      "Partner with internal specialists to deliver tailored outcomes within a strict Swiss regulatory and internal governance framework.",
+    ]),
+    responsibilities: [
+      "Drive sustainable NNM and asset growth through disciplined acquisition and relationship deepening.",
+      "Increase penetration of discretionary/advisory mandates and lending solutions aligned with client objectives.",
+      "Maintain exemplary documentation standards across onboarding, suitability and ongoing review cycles.",
+    ],
+    qualifications: [
+      "7–10+ years’ Swiss onshore RM experience with a verifiable local network in Geneva/Romandie.",
+      "Strong advisory capability across investments and credit; client-centric long-term approach.",
+      "French required; English strong (additional languages an advantage).",
+    ],
+    compliance: [
+      "Operate under LSFin/FinSA-aligned policies and internal risk frameworks; no exceptions on documentation quality.",
+      "Maintain FINMA-grade KYC/AML, suitability and lifecycle monitoring standards.",
+    ],
+    offer: [
+      "Top-tier Geneva platform with strong specialist support and product depth.",
+      "Competitive compensation aligned to sustainable growth and plan delivery.",
+    ],
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2026-01-08",
+  },
+
+  // 13) Portugal — Lisbon (NEW)
+  "senior-relationship-manager-portugal-lisbon": {
+    slug: "senior-relationship-manager-portugal-lisbon",
+    title: "Senior Relationship Manager — Portugal Market",
+    market: "Portugal",
+    location: "Lisbon, Portugal",
+    experience_min: 7,
+    languages: ["Portuguese", "English", "Spanish (plus)"],
+    summary:
+      "Build and develop Portuguese HNW/UHNW relationships from Lisbon with disciplined advisory delivery and robust governance standards.",
+    overview: withIntro("Portugal", "Lisbon, Portugal", [
+      "Build and develop a portfolio of Portuguese private clients from Lisbon, acting as primary trusted advisor.",
+      "Deliver holistic advice across investments, discretionary/advisory mandates, credit solutions, FX and planning coordination.",
+      "Partner with investment specialists and product teams to deliver tailored outcomes within a controlled risk framework.",
+    ]),
+    responsibilities: [
+      "Drive sustainable NNM through targeted acquisition, client referrals and professional introducer channels.",
+      "Increase mandate penetration and deepen wallet share through disciplined advisory delivery and solution-led coverage.",
+      "Maintain robust onboarding, suitability discipline and ongoing due diligence; ensure audit-ready documentation.",
+    ],
+    qualifications: [
+      "7–10+ years’ private banking experience with Portuguese HNW/UHNW clients and a demonstrated acquisition track record.",
+      "Strong network across Portugal and key international corridors; proven ability to convert and retain relationships.",
+      "Portuguese and English required; Spanish desirable.",
+      "Solid product fluency across multi-asset advisory/DPM, structured solutions and bespoke lending.",
+    ],
+    compliance: [
+      "Operate within applicable local frameworks and internal governance standards; documentation quality is critical.",
+      "Maintain high standards of KYC/AML, source of wealth/source of funds, suitability and lifecycle monitoring.",
+    ],
+    offer: [
+      "High-quality platform with specialist coverage and strong product depth.",
+      "Competitive compensation aligned to sustainable growth and execution quality.",
+    ],
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2026-01-08",
+  },
+
+  // 14) Spain — Madrid (NEW)
+  "senior-relationship-manager-spain-madrid": {
+    slug: "senior-relationship-manager-spain-madrid",
+    title: "Senior Relationship Manager — Spain",
+    market: "Spain",
+    location: "Madrid, Spain",
+    experience_min: 7,
+    languages: ["Spanish", "English", "French (plus)"],
+    summary:
+      "Build and develop Spanish HNW/UHNW relationships from Madrid with disciplined advisory delivery and robust governance standards.",
+    overview: withIntro("Spain", "Madrid, Spain", [
+      "Build and develop a portfolio of Spanish private clients from Madrid, acting as primary trusted advisor.",
+      "Deliver holistic advice across investments, discretionary/advisory mandates, credit solutions, FX and planning coordination.",
+      "Partner with product and investment teams to deliver tailored solutions within a controlled risk framework.",
+    ]),
+    responsibilities: [
+      "Drive sustainable NNM through targeted coverage, introducer networks and client referrals.",
+      "Increase mandate penetration and deepen wallet share through disciplined advisory delivery and structured credit-led solutions where appropriate.",
+      "Maintain robust onboarding, suitability discipline and ongoing due diligence; ensure audit-ready documentation standards.",
+    ],
+    qualifications: [
+      "7–10+ years’ private banking experience with Spanish HNW/UHNW clients and demonstrated acquisition capability.",
+      "Strong network across Spain; proven ability to convert prospects and retain relationships.",
+      "Spanish and English required; French desirable.",
+      "Strong product knowledge across multi-asset advisory/DPM, structured solutions and bespoke lending.",
+    ],
+    compliance: [
+      "Operate within applicable local frameworks and internal governance standards; documentation quality is critical.",
+      "Maintain high standards of KYC/AML, source of wealth/source of funds, suitability and lifecycle monitoring.",
+    ],
+    offer: [
+      "High-quality platform with specialist coverage and strong product depth.",
+      "Competitive compensation aligned to sustainable growth and execution quality.",
+    ],
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2026-01-08",
   },
 };
 
@@ -454,7 +645,9 @@ export function getJobBySlug(slug: string): Job | null {
 
   // 2) normalized exact
   const wanted = norm(slug);
-  const byNormKey = Object.values(jobsBySlug).find((j) => norm(j.slug) === wanted);
+  const byNormKey = Object.values(jobsBySlug).find(
+    (j) => norm(j.slug) === wanted
+  );
   if (byNormKey) return byNormKey;
 
   // 3) fuzzy (startsWith / includes on normalized fields)
@@ -463,7 +656,9 @@ export function getJobBySlug(slug: string): Job | null {
     Object.values(jobsBySlug).find((j) => wanted.startsWith(norm(j.slug))) ||
     Object.values(jobsBySlug).find((j) => norm(j.title).includes(wanted)) ||
     Object.values(jobsBySlug).find((j) =>
-      (norm(j.title) + "-" + norm(j.location) + "-" + norm(j.market)).includes(wanted)
+      (norm(j.title) + "-" + norm(j.location) + "-" + norm(j.market)).includes(
+        wanted
+      )
     );
 
   return fuzzy ?? null;
