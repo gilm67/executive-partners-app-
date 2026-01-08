@@ -459,7 +459,7 @@ export const jobsBySlug: Record<string, Job> = {
     createdAt: "2025-10-10",
   },
 
-  // 11) Turkey — Dubai (NEW)
+  // 11) Turkey — Dubai
   "senior-relationship-manager-turkey-dubai": {
     slug: "senior-relationship-manager-turkey-dubai",
     title: "Senior Relationship Manager — Turkey",
@@ -501,7 +501,7 @@ export const jobsBySlug: Record<string, Job> = {
     createdAt: "2026-01-08",
   },
 
-  // 12) CH Onshore — Geneva (NEW)
+  // 12) CH Onshore — Geneva
   "senior-relationship-manager-ch-onshore-geneva": {
     slug: "senior-relationship-manager-ch-onshore-geneva",
     title: "Senior Relationship Manager — CH Onshore",
@@ -542,7 +542,7 @@ export const jobsBySlug: Record<string, Job> = {
     createdAt: "2026-01-08",
   },
 
-  // 13) Portugal — Lisbon (NEW)
+  // 13) Portugal — Lisbon
   "senior-relationship-manager-portugal-lisbon": {
     slug: "senior-relationship-manager-portugal-lisbon",
     title: "Senior Relationship Manager — Portugal Market",
@@ -584,7 +584,7 @@ export const jobsBySlug: Record<string, Job> = {
     createdAt: "2026-01-08",
   },
 
-  // 14) Spain — Madrid (NEW)
+  // 14) Spain — Madrid
   "senior-relationship-manager-spain-madrid": {
     slug: "senior-relationship-manager-spain-madrid",
     title: "Senior Relationship Manager — Spain",
@@ -625,6 +625,90 @@ export const jobsBySlug: Record<string, Job> = {
     active: true,
     createdAt: "2026-01-08",
   },
+
+  // 15) France — Paris (NEW)
+  "senior-relationship-manager-france-paris": {
+    slug: "senior-relationship-manager-france-paris",
+    title: "Senior Relationship Manager — France",
+    market: "France",
+    location: "Paris, France",
+    experience_min: 7,
+    languages: ["French", "English (strong)"],
+    summary:
+      "Build and develop a French HNW/UHNW client portfolio from Paris, delivering bespoke wealth and credit solutions with strong governance and disciplined advisory.",
+    overview: withIntro("France", "Paris, France", [
+      "Build and develop a portfolio of French private clients, acting as primary trusted advisor.",
+      "Deliver holistic solutions across discretionary/advisory mandates, lending and wealth planning.",
+      "Partner with investment and product specialists to deliver tailored outcomes with consistent execution.",
+    ]),
+    responsibilities: [
+      "Originate sustainable net new money and deepen wallet share through targeted coverage and introducer channels.",
+      "Provide disciplined advice across investments, portfolio construction, structured solutions and bespoke lending where appropriate.",
+      "Maintain robust pipeline management, suitability discipline and high-quality client documentation standards.",
+    ],
+    qualifications: [
+      "7–10+ years’ private banking track record serving French HNW/UHNW clients with demonstrable NNM and AUM growth.",
+      "Established network across Paris and key French wealth corridors (entrepreneurs, families, family offices and professional intermediaries).",
+      "Strong advisory, credit and investment product knowledge; experience with structured solutions is a plus.",
+      "Fluent French required; English strong.",
+    ],
+    compliance: [
+      "Operate within applicable French and group governance frameworks; no compromise on conduct and documentation standards.",
+      "Maintain FINMA-grade KYC/AML mindset: source of wealth/source of funds, suitability and lifecycle documentation.",
+    ],
+    offer: [
+      "High-quality platform with specialist coverage and product depth.",
+      "Competitive fixed and variable compensation aligned with quality of revenue and plan delivery.",
+    ],
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2026-01-08",
+  },
+
+  // 16) Benelux — Geneva (NEW)
+  "senior-relationship-manager-benelux-geneva": {
+    slug: "senior-relationship-manager-benelux-geneva",
+    title: "Senior Relationship Manager — Benelux",
+    market: "Benelux (Belgium / Netherlands / Luxembourg)",
+    location: "Geneva, Switzerland",
+    experience_min: 7,
+    languages: ["English", "French (strong)", "Dutch (plus)"],
+    summary:
+      "Build and develop a Benelux HNW/UHNW client portfolio from Geneva, leveraging a Swiss booking centre and a disciplined cross-border framework.",
+    overview: withIntro("Benelux (Belgium / Netherlands / Luxembourg)", "Geneva, Switzerland", [
+      "Build and develop a portfolio of Benelux private clients booking in Switzerland, acting as primary trusted advisor.",
+      "Deliver holistic solutions across investments, credit, structured products and wealth planning.",
+      "Coordinate with internal specialists and relevant booking centres to ensure seamless delivery and governance.",
+    ]),
+    responsibilities: [
+      "Originate sustainable NNM through targeted coverage, introducer channels and professional networks across Benelux.",
+      "Increase mandate penetration and deepen wallet share with disciplined advisory and lending solutions.",
+      "Maintain exemplary documentation standards across onboarding, suitability and ongoing review cycles.",
+    ],
+    qualifications: [
+      "7–10+ years’ private banking experience covering Benelux HNW/UHNW clients with proven portfolio growth.",
+      "Strong network with entrepreneurs, families and professional intermediaries (lawyers, tax advisors, family offices).",
+      "Strong advisory and credit competence; structured investment exposure is a plus.",
+      "English required; French strong; Dutch an advantage.",
+    ],
+    compliance: [
+      "Operate within Swiss and EU-related cross-border policies; documentation quality is critical.",
+      "Maintain FINMA-grade KYC/AML, suitability and lifecycle controls with no exceptions.",
+    ],
+    offer: [
+      "Geneva platform with strong product depth and specialist support.",
+      "Competitive compensation aligned to sustainable growth and execution quality.",
+    ],
+    apply_note:
+      "Apply confidentially with CV and a brief plan (current AUM, 12-month NNM, pipeline).",
+    seniority: "Director / Executive Director",
+    confidential: true,
+    active: true,
+    createdAt: "2026-01-08",
+  },
 };
 
 /* ---------------- Exports ---------------- */
@@ -645,9 +729,7 @@ export function getJobBySlug(slug: string): Job | null {
 
   // 2) normalized exact
   const wanted = norm(slug);
-  const byNormKey = Object.values(jobsBySlug).find(
-    (j) => norm(j.slug) === wanted
-  );
+  const byNormKey = Object.values(jobsBySlug).find((j) => norm(j.slug) === wanted);
   if (byNormKey) return byNormKey;
 
   // 3) fuzzy (startsWith / includes on normalized fields)
@@ -656,9 +738,7 @@ export function getJobBySlug(slug: string): Job | null {
     Object.values(jobsBySlug).find((j) => wanted.startsWith(norm(j.slug))) ||
     Object.values(jobsBySlug).find((j) => norm(j.title).includes(wanted)) ||
     Object.values(jobsBySlug).find((j) =>
-      (norm(j.title) + "-" + norm(j.location) + "-" + norm(j.market)).includes(
-        wanted
-      )
+      (norm(j.title) + "-" + norm(j.location) + "-" + norm(j.market)).includes(wanted)
     );
 
   return fuzzy ?? null;
