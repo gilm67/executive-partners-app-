@@ -139,6 +139,74 @@ function countryFromLocation(location: string | undefined): string | undefined {
   return undefined;
 }
 
+/* ---------------- local filtering + sorting (FIX) ---------------- */
+function norm(s: string) {
+  return s.trim().toLowerCase();
+}
+
+function applyLocalFiltersAndSort(
+  list: Job[],
+  {
+    q,
+    market,
+    location,
+    seniority,
+    sort,
+  }: {
+    q: string;
+    market: string;
+    location: string;
+    seniority: string;
+    sort: string;
+  }
+) {
+  const qN = norm(q);
+  const mN = norm(market);
+  const lN = norm(location);
+  const sN = norm(seniority);
+
+  let out = list.filter((j) => j?.active !== false && !HIDDEN_SLUGS.has(j.slug));
+
+  if (qN) {
+    out = out.filter((j) => {
+      const hay = [
+        j.title ?? "",
+        j.location ?? "",
+        j.market ?? "",
+        j.seniority ?? "",
+        j.summary ?? "",
+      ]
+        .map(norm)
+        .join(" ");
+      return hay.includes(qN);
+    });
+  }
+
+  // Use "includes" instead of strict equality to tolerate slightly different labels
+  if (mN) out = out.filter((j) => norm(j.market ?? "").includes(mN));
+  if (lN) out = out.filter((j) => norm(j.location ?? "").includes(lN));
+  if (sN) out = out.filter((j) => norm(j.seniority ?? "").includes(sN));
+
+  if (sort === "oldest") {
+    out = out.sort((a, b) => {
+      const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return da - db;
+    });
+  } else if (sort === "title") {
+    out = out.sort((a, b) => (a.title ?? "").localeCompare(b.title ?? ""));
+  } else {
+    // newest (default)
+    out = out.sort((a, b) => {
+      const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return db - da;
+    });
+  }
+
+  return out;
+}
+
 /* ---------------- UI primitives ---------------- */
 function Chip({ children }: { children: React.ReactNode }) {
   return (
@@ -170,7 +238,6 @@ function BadgeTone({ market }: { market?: string }) {
 }
 
 function Card({ job }: { job: Job }) {
-  // ✅ Canonical job detail route
   const href = `/en/jobs/${job.slug}`;
 
   const created = job.createdAt ? new Date(job.createdAt) : null;
@@ -269,16 +336,22 @@ function EmptyState() {
   );
 }
 
-/* ---------------- Filter Bar ---------------- */
+/* ---------------- Filter Bar (FIX: GET submit to /en/jobs) ---------------- */
 function FilterBar({
   defaultQuery,
   defaultFilters,
+  sort,
 }: {
   defaultQuery?: string;
   defaultFilters?: Record<string, string>;
+  sort?: string;
 }) {
   return (
-    <form className="flex w-full flex-col gap-3 rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-4 md:flex-row md:items-center">
+    <form
+      method="get"
+      action="/en/jobs"
+      className="flex w-full flex-col gap-3 rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-4 md:flex-row md:items-center"
+    >
       <div className="relative flex-1">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60" />
         <input
@@ -378,7 +451,13 @@ function FilterBar({
         </select>
       </div>
 
-      <button className="inline-flex items-center gap-2 rounded-xl border border-brandGold/70 bg-brandGold/15 px-4 py-2 text-sm font-semibold text-brandGoldPale hover:bg-brandGold/25 hover:text-white">
+      {/* keep sort when applying filters */}
+      <input type="hidden" name="sort" value={sort ?? "newest"} />
+
+      <button
+        type="submit"
+        className="inline-flex items-center gap-2 rounded-xl border border-brandGold/70 bg-brandGold/15 px-4 py-2 text-sm font-semibold text-brandGoldPale hover:bg-brandGold/25 hover:text-white"
+      >
         <Filter className="h-4 w-4" /> Apply
       </button>
     </form>
@@ -389,11 +468,11 @@ function FilterBar({
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams?: Promise<Record<string, string | string[]>>;
+  // ✅ FIX: in your Next build, searchParams is async → await it
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  // ✅ PUBLIC: no cookie gating, no redirects.
-
   const sp = (await searchParams) ?? {};
+
   const q = typeof sp.q === "string" ? sp.q : "";
   const market = typeof sp.market === "string" ? sp.market : "";
   const location = typeof sp.location === "string" ? sp.location : "";
@@ -407,9 +486,15 @@ export default async function JobsPage({
   if (sort) filters.sort = sort;
 
   const rawJobs: Job[] = await getJobs(q, filters);
-  const jobs = rawJobs.filter(
-    (j) => j?.active !== false && !HIDDEN_SLUGS.has(j.slug)
-  );
+
+  // ✅ FIX: filter + sort locally so it always works
+  const jobs = applyLocalFiltersAndSort(rawJobs, {
+    q,
+    market,
+    location,
+    seniority,
+    sort,
+  });
 
   const base = SITE;
 
@@ -448,7 +533,6 @@ export default async function JobsPage({
       return {
         "@type": "ListItem",
         position: idx + 1,
-        // ✅ Canonical job detail route
         url: `${base}/en/jobs/${j.slug}`,
         item: jobPosting,
       };
@@ -457,11 +541,10 @@ export default async function JobsPage({
 
   return (
     <>
-      {/* Breadcrumb Schema */}
-      <BreadcrumbSchema 
+      <BreadcrumbSchema
         items={[
           { name: "Home", url: `${SITE}` },
-          { name: "Jobs", url: `${SITE}/en/jobs` }
+          { name: "Jobs", url: `${SITE}/en/jobs` },
         ]}
       />
 
@@ -523,6 +606,7 @@ export default async function JobsPage({
             <FilterBar
               defaultQuery={q}
               defaultFilters={{ market, location, seniority }}
+              sort={sort}
             />
           </div>
 
@@ -530,7 +614,13 @@ export default async function JobsPage({
             <div>
               {jobs.length} role{jobs.length === 1 ? "" : "s"}
             </div>
-            <form>
+
+            <form method="get" action="/en/jobs" className="flex items-center gap-2">
+              {q ? <input type="hidden" name="q" value={q} /> : null}
+              {market ? <input type="hidden" name="market" value={market} /> : null}
+              {location ? <input type="hidden" name="location" value={location} /> : null}
+              {seniority ? <input type="hidden" name="seniority" value={seniority} /> : null}
+
               <select
                 name="sort"
                 defaultValue={sort}
@@ -546,6 +636,13 @@ export default async function JobsPage({
                   Title A–Z
                 </option>
               </select>
+
+              <button
+                type="submit"
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/80 hover:bg-white/10"
+              >
+                Apply sort
+              </button>
             </form>
           </div>
 
