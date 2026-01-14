@@ -27,8 +27,25 @@ function detectLocale(req: NextRequest): string {
   return DEFAULT_LOCALE;
 }
 
+/**
+ * ✅ Only allow INTERNAL safe redirect targets
+ * - must start with "/"
+ * - no "//", no scheme "://"
+ * - strip hash/query
+ */
+function sanitizeNext(nextRaw: string | null): string {
+  if (!nextRaw) return "";
+  let next = nextRaw.trim();
+  if (!next) return "";
+  if (!next.startsWith("/")) return "";
+  if (next.startsWith("//")) return "";
+  if (next.includes("://")) return "";
+  next = next.split("#")[0].split("?")[0];
+  return next;
+}
+
 export function middleware(req: NextRequest) {
-  const { pathname, search } = req.nextUrl;
+  const { pathname } = req.nextUrl;
 
   /**
    * ✅ 1) PRIVATE AREA PROTECTION
@@ -38,14 +55,22 @@ export function middleware(req: NextRequest) {
   if (pathname.startsWith("/private")) {
     const hasSession = !!req.cookies.get("ep_private")?.value;
 
-    const isAuthRequestPage = pathname === "/private/auth/request";
-    const isAuthVerifyPage = pathname === "/private/auth"; // /private/auth?token=...
+    // ✅ IMPORTANT: auth flow must be PUBLIC (no session required)
+    // Covers:
+    // - /private/auth
+    // - /private/auth/request
+    // - /private/auth/request/sent
+    // - /private/auth/verify (if any)
+    const isAuthFlow = pathname === "/private/auth" || pathname.startsWith("/private/auth/");
 
-    if (!hasSession && !isAuthRequestPage && !isAuthVerifyPage) {
+    if (!hasSession && !isAuthFlow) {
       const url = req.nextUrl.clone();
       url.pathname = "/private/auth/request";
-      // ✅ preserve original destination so login returns there
-      url.searchParams.set("next", pathname + search);
+
+      // ✅ preserve intended destination safely
+      const next = sanitizeNext(pathname);
+      if (next) url.searchParams.set("next", next);
+
       return NextResponse.redirect(url);
     }
 

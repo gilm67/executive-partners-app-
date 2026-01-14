@@ -23,7 +23,7 @@ function safeNext(raw: string | null) {
   next = next.split("#")[0].split("?")[0];
 
   // allow-list (tight)
-  const ALLOWED = ["/en/portability", "/en/bp-simulator", "/private"];
+  const ALLOWED = ["/en/portability", "/en/bp-simulator", "/private", "/en/portability/tool"];
   const ok = ALLOWED.includes(next) || next.startsWith("/private/");
   if (!ok) return "";
 
@@ -39,6 +39,8 @@ export default function PrivateAuthRequestPage() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending">("idle");
   const [error, setError] = useState<string | null>(null);
+
+  const backHref = next || "/en/portability";
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white body-grain">
@@ -57,9 +59,7 @@ export default function PrivateAuthRequestPage() {
           Executive Partners · Secure Access
         </p>
 
-        <h1 className="mt-4 text-3xl font-bold md:text-4xl">
-          Request secure access
-        </h1>
+        <h1 className="mt-4 text-3xl font-bold md:text-4xl">Request secure access</h1>
 
         <p className="mt-3 text-sm text-white/75 md:text-base">
           Enter your email to receive a single-use link (valid for 20 minutes).
@@ -84,13 +84,12 @@ export default function PrivateAuthRequestPage() {
                 setError(err?.message || "Something went wrong. Please try again.");
               } finally {
                 setStatus("idle");
-                router.push("/private/auth/request/sent");
+                const qs = next ? `?next=${encodeURIComponent(next)}` : "";
+                router.push(`/private/auth/request/sent${qs}`);
               }
             }}
           >
-            <label className="block text-xs font-semibold text-white/70">
-              Email
-            </label>
+            <label className="block text-xs font-semibold text-white/70">Email</label>
 
             <input
               name="email"
@@ -110,11 +109,7 @@ export default function PrivateAuthRequestPage() {
               {status === "sending" ? "Sending…" : "Send secure link"}
             </button>
 
-            {error && (
-              <p className="text-xs text-red-300">
-                {error}
-              </p>
-            )}
+            {error && <p className="text-xs text-red-300">{error}</p>}
 
             <p className="text-xs text-white/55">
               For security, we don’t confirm whether an email exists in our system.
@@ -124,7 +119,7 @@ export default function PrivateAuthRequestPage() {
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Link
-            href={next || "/en/portability"}
+            href={backHref}
             className="inline-flex justify-center rounded-xl border border-white/15 px-5 py-3 text-sm font-semibold text-white/80 hover:bg-white/5"
           >
             Back
