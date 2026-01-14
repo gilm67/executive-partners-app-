@@ -25,7 +25,7 @@ out/
 *.swp
 
 # ===============================
-# Python (if ever used locally)
+# Python (local tooling only)
 # ===============================
 .venv/
 __pycache__/
@@ -44,6 +44,7 @@ service_account.json
 private_key.b64
 
 # ===============================
-# Local backups (safe to ignore)
+# Local backups / experiments (NEVER DEPLOY)
 # ===============================
 _backup/
+app/en/test-interest/
