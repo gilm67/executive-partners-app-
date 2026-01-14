@@ -16,8 +16,16 @@ const CANONICAL = (
 ).replace(/\/$/, "");
 
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || "").trim();
+
+// ✅ DEV/Preview safe fallback sender (works immediately)
+// - If RESEND_FROM env var is set, we respect it.
+// - Otherwise: in non-production we use onboarding@resend.dev (verified by Resend).
+// - In production we keep your intended domain sender.
 const RESEND_FROM = (
-  process.env.RESEND_FROM || "Executive Partners <no-reply@auth.execpartners.ch>"
+  process.env.RESEND_FROM ||
+  (process.env.NODE_ENV !== "production"
+    ? "Executive Partners <onboarding@resend.dev>"
+    : "Executive Partners <no-reply@auth.execpartners.ch>")
 ).trim();
 
 function sha256(input: string) {
@@ -74,9 +82,19 @@ function sanitizeNext(nextRaw: unknown): string | null {
     next = "/en/bp-simulator";
   }
 
-  // strict allow-list
-  const ALLOWED = ["/en/portability", "/en/bp-simulator", "/private"];
-  const isAllowed = ALLOWED.includes(next) || next.startsWith("/private/");
+  /**
+   * ✅ STRICT ALLOW-LIST (safe)
+   * Allow exact roots + their subpaths:
+   * - /en/portability and /en/portability/*
+   * - /en/bp-simulator and /en/bp-simulator/*
+   * - /private and /private/*
+   */
+  const ALLOWED_EXACT = ["/en/portability", "/en/bp-simulator", "/private"];
+  const ALLOWED_PREFIXES = ["/en/portability/", "/en/bp-simulator/", "/private/"];
+
+  const isAllowed =
+    ALLOWED_EXACT.includes(next) || ALLOWED_PREFIXES.some((p) => next.startsWith(p));
+
   if (!isAllowed) return null;
 
   return next;
@@ -186,6 +204,32 @@ export async function POST(req: Request) {
         sendMeta = { message: e?.message || String(e) };
         console.error("[magic-link] Resend threw:", e?.message || e);
       }
+    } else {
+      // keep meta in debug to explain why sending was skipped
+      if (!hasKey) sendMeta = { reason: "missing_RESEND_API_KEY" };
+      else if (!fromOk) sendMeta = { reason: "invalid_RESEND_FROM", from: RESEND_FROM };
+    }
+
+    // ✅ IMPORTANT: if user provided email but delivery failed, return non-200 so UI can show it.
+    // This does NOT leak user existence; it only reports delivery status for the request made.
+    if (sendStatus === "error") {
+      const resBody: any = { ok: false, error: "EMAIL_DELIVERY_FAILED" };
+      if (debug) {
+        resBody.debug = {
+          sendStatus,
+          from: RESEND_FROM,
+          baseUrl,
+          next,
+          link,
+          sendMeta,
+          version: VERSION,
+        };
+      }
+      const res = NextResponse.json(resBody, { status: 500 });
+      res.headers.set("x-magic-link-send", sendStatus);
+      res.headers.set("x-magic-link-version", VERSION);
+      res.headers.set("x-magic-link-next", next ?? "null");
+      return res;
     }
 
     const resBody: any = { ok: true };
