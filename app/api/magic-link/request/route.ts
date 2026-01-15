@@ -7,20 +7,19 @@ import { getSupabaseAdmin } from "@/lib/supabase-server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VERSION = "ml-2025-12-29-e"; // 👈 bump (changed)
+const VERSION = "ml-2025-12-29-e"; // 👈 bump
 
 const CANONICAL = (
   process.env.NEXT_PUBLIC_CANONICAL_URL ||
   process.env.NEXT_PUBLIC_SITE_URL ||
   "https://www.execpartners.ch"
-).replace(/\/$/, "");
+)
+  .trim()
+  .replace(/\/$/, "");
 
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || "").trim();
 
-// ✅ DEV/Preview safe fallback sender (works immediately)
-// - If RESEND_FROM env var is set, we respect it.
-// - Otherwise: in non-production we use onboarding@resend.dev (verified by Resend).
-// - In production we keep your intended domain sender.
+// DEV/Preview safe fallback sender (works immediately)
 const RESEND_FROM = (
   process.env.RESEND_FROM ||
   (process.env.NODE_ENV !== "production"
@@ -38,11 +37,13 @@ function getBaseUrl(req: Request) {
     (process.env.NEXT_PUBLIC_CANONICAL_URL || "").trim();
   if (configured) return configured.replace(/\/$/, "");
 
-  const proto = req.headers.get("x-forwarded-proto") || "https";
+  const proto = (req.headers.get("x-forwarded-proto") || "https").trim();
   const host =
-    req.headers.get("x-forwarded-host") ||
-    req.headers.get("host") ||
-    req.headers.get("x-vercel-deployment-url");
+    (req.headers.get("x-forwarded-host") ||
+      req.headers.get("host") ||
+      req.headers.get("x-vercel-deployment-url") ||
+      "")
+      .trim();
 
   if (host) {
     const cleanHost = host.replace(/^https?:\/\//, "").replace(/\/$/, "");
@@ -53,8 +54,7 @@ function getBaseUrl(req: Request) {
 }
 
 /**
- * ✅ SAFE INTERNAL REDIRECTS ONLY
- * Critical: normalize ANY bp-simulator legacy paths to /en/bp-simulator
+ * SAFE INTERNAL REDIRECTS ONLY
  */
 function sanitizeNext(nextRaw: unknown): string | null {
   if (typeof nextRaw !== "string") return null;
@@ -62,33 +62,22 @@ function sanitizeNext(nextRaw: unknown): string | null {
   let next = nextRaw.trim();
   if (!next) return null;
 
-  // internal-only
   if (!next.startsWith("/")) return null;
   if (next.startsWith("//")) return null;
   if (next.includes("://")) return null;
 
-  // remove any accidental query/hash if ever passed
   next = next.split("#")[0].split("?")[0];
 
-  // normalize common variants
   if (next === "/portability") next = "/en/portability";
   if (next === "/bp-simulator") next = "/en/bp-simulator";
   if (next === "/en/portability/") next = "/en/portability";
   if (next === "/en/bp-simulator/") next = "/en/bp-simulator";
   if (next === "/private/") next = "/private";
 
-  // ✅ ROOT FIX: legacy private bp path -> public gated tool
   if (next === "/private/bp-simulator" || next.startsWith("/private/bp-simulator")) {
     next = "/en/bp-simulator";
   }
 
-  /**
-   * ✅ STRICT ALLOW-LIST (safe)
-   * Allow exact roots + their subpaths:
-   * - /en/portability and /en/portability/*
-   * - /en/bp-simulator and /en/bp-simulator/*
-   * - /private and /private/*
-   */
   const ALLOWED_EXACT = ["/en/portability", "/en/bp-simulator", "/private"];
   const ALLOWED_PREFIXES = ["/en/portability/", "/en/bp-simulator/", "/private/"];
 
@@ -101,33 +90,38 @@ function sanitizeNext(nextRaw: unknown): string | null {
 }
 
 /**
- * ✅ ENFORCEMENT: only APPROVED emails can receive magic links
+ * ENFORCEMENT: only APPROVED emails can receive magic links
  * for /en/portability/* and /en/bp-simulator/*
  */
 async function isApprovedEmail(email: string, next: string) {
-  const profileId =
-    next.startsWith("/en/portability") ? "portability" :
-    next.startsWith("/en/bp-simulator") ? "bp-simulator" :
-    null;
+  const profileId = next.startsWith("/en/portability")
+    ? "portability"
+    : next.startsWith("/en/bp-simulator")
+      ? "bp-simulator"
+      : null;
 
   // If it’s not one of the gated public tools, allow.
   if (!profileId) return true;
 
   const supabaseAdmin = await getSupabaseAdmin();
+
+  // ✅ take latest request and check status (more reliable than filtering status in SQL)
   const { data, error } = await supabaseAdmin
     .from("private_profile_access_requests")
-    .select("status")
+    .select("status, created_at")
     .eq("profile_id", profileId)
     .eq("requester_email", email)
-    .eq("status", "approved")
-    .limit(1);
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
   if (error) {
     console.error("[magic-link] approval check error:", error);
     return false; // safest
   }
 
-  return (data?.length || 0) > 0;
+  const status = String(data?.status || "").trim().toLowerCase();
+  return status === "approved";
 }
 
 function buildEmailHtml(link: string) {
@@ -148,7 +142,7 @@ function buildEmailHtml(link: string) {
 function looksLikeEmailFrom(from: string) {
   return (
     /<[^<>@\s]+@[^<>@\s]+\.[^<>@\s]+>/.test(from) ||
-    /^[^@\s]+@[^@\s]+\.[^<>@\s]+$/.test(from)
+    /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(from)
   );
 }
 
@@ -178,6 +172,7 @@ export async function POST(req: Request) {
         resBody.debug = {
           sendStatus: "skipped",
           reason: "NOT_APPROVED",
+          email,
           next,
           version: VERSION,
         };
@@ -211,8 +206,7 @@ export async function POST(req: Request) {
     const baseUrl =
       process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
 
-    // Email lands on /private/auth which sets cookie, then redirects to `next`
-    const url = new URL(`${baseUrl}/private/auth`);
+    const url = new URL(`${String(baseUrl).trim()}/private/auth`);
     url.searchParams.set("token", token);
     if (next) url.searchParams.set("next", next);
 
@@ -253,7 +247,6 @@ export async function POST(req: Request) {
       else if (!fromOk) sendMeta = { reason: "invalid_RESEND_FROM", from: RESEND_FROM };
     }
 
-    // If delivery failed, return non-200 so UI can show it.
     if (sendStatus === "error") {
       const resBody: any = { ok: false, error: "EMAIL_DELIVERY_FAILED" };
       if (debug) {
