@@ -7,7 +7,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VERSION = "ml-2025-12-29-d"; // 👈 bump
+const VERSION = "ml-2025-12-29-e"; // 👈 bump (changed)
 
 const CANONICAL = (
   process.env.NEXT_PUBLIC_CANONICAL_URL ||
@@ -100,6 +100,36 @@ function sanitizeNext(nextRaw: unknown): string | null {
   return next;
 }
 
+/**
+ * ✅ ENFORCEMENT: only APPROVED emails can receive magic links
+ * for /en/portability/* and /en/bp-simulator/*
+ */
+async function isApprovedEmail(email: string, next: string) {
+  const profileId =
+    next.startsWith("/en/portability") ? "portability" :
+    next.startsWith("/en/bp-simulator") ? "bp-simulator" :
+    null;
+
+  // If it’s not one of the gated public tools, allow.
+  if (!profileId) return true;
+
+  const supabaseAdmin = await getSupabaseAdmin();
+  const { data, error } = await supabaseAdmin
+    .from("private_profile_access_requests")
+    .select("status")
+    .eq("profile_id", profileId)
+    .eq("requester_email", email)
+    .eq("status", "approved")
+    .limit(1);
+
+  if (error) {
+    console.error("[magic-link] approval check error:", error);
+    return false; // safest
+  }
+
+  return (data?.length || 0) > 0;
+}
+
 function buildEmailHtml(link: string) {
   return `
   <div style="font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; line-height:1.5; color:#111;">
@@ -118,7 +148,7 @@ function buildEmailHtml(link: string) {
 function looksLikeEmailFrom(from: string) {
   return (
     /<[^<>@\s]+@[^<>@\s]+\.[^<>@\s]+>/.test(from) ||
-    /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(from)
+    /^[^@\s]+@[^@\s]+\.[^<>@\s]+$/.test(from)
   );
 }
 
@@ -139,6 +169,25 @@ export async function POST(req: Request) {
     }
 
     const email = emailRaw.trim().toLowerCase();
+
+    // ✅ ENFORCE APPROVAL BEFORE token creation + sending
+    const approved = await isApprovedEmail(email, next);
+    if (!approved) {
+      const resBody: any = { ok: true };
+      if (debug) {
+        resBody.debug = {
+          sendStatus: "skipped",
+          reason: "NOT_APPROVED",
+          next,
+          version: VERSION,
+        };
+      }
+      const res = NextResponse.json(resBody, { status: 200 });
+      res.headers.set("x-magic-link-send", "skipped");
+      res.headers.set("x-magic-link-version", VERSION);
+      res.headers.set("x-magic-link-next", next ?? "null");
+      return res;
+    }
 
     const token = crypto.randomBytes(32).toString("hex");
     const tokenHash = sha256(token);
@@ -162,12 +211,7 @@ export async function POST(req: Request) {
     const baseUrl =
       process.env.NODE_ENV === "production" ? CANONICAL : getBaseUrl(req);
 
-    /**
-     * ✅ FINAL FIX:
-     * Email must land on a browser page (/private/auth),
-     * which will POST /api/magic-link/verify with credentials: "include",
-     * so the cookie is reliably stored, then client redirects to `next`.
-     */
+    // Email lands on /private/auth which sets cookie, then redirects to `next`
     const url = new URL(`${baseUrl}/private/auth`);
     url.searchParams.set("token", token);
     if (next) url.searchParams.set("next", next);
@@ -205,13 +249,11 @@ export async function POST(req: Request) {
         console.error("[magic-link] Resend threw:", e?.message || e);
       }
     } else {
-      // keep meta in debug to explain why sending was skipped
       if (!hasKey) sendMeta = { reason: "missing_RESEND_API_KEY" };
       else if (!fromOk) sendMeta = { reason: "invalid_RESEND_FROM", from: RESEND_FROM };
     }
 
-    // ✅ IMPORTANT: if user provided email but delivery failed, return non-200 so UI can show it.
-    // This does NOT leak user existence; it only reports delivery status for the request made.
+    // If delivery failed, return non-200 so UI can show it.
     if (sendStatus === "error") {
       const resBody: any = { ok: false, error: "EMAIL_DELIVERY_FAILED" };
       if (debug) {
