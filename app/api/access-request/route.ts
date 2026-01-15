@@ -6,7 +6,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VERSION = "ar-2026-01-15-b"; // 👈 bump (changed)
+const VERSION = "ar-2026-01-15-c"; // 👈 bump
 
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || "").trim();
 
@@ -19,7 +19,7 @@ const ADMIN_EMAIL = (
 
 // Sender:
 // - Dev/Preview: onboarding@resend.dev works immediately
-// - Prod: use your verified sender (auth.execpartners.ch) once confirmed
+// - Prod: use your verified sender once confirmed
 const RESEND_FROM = (
   process.env.RESEND_FROM ||
   (process.env.NODE_ENV !== "production"
@@ -27,8 +27,9 @@ const RESEND_FROM = (
     : "Executive Partners <no-reply@auth.execpartners.ch>")
 ).trim();
 
-// ✅ Approval gate “profile” identifier (matches your table’s profile_id usage)
-const PROFILE_ID = "portability";
+// ✅ Option A gate identifiers (TEXT)
+const REQUEST_TYPE = "portability"; // table v2 request_type
+const PROFILE_ID = "portability";   // table v2 profile_id
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -127,7 +128,7 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}));
 
     const name = clean(body?.name, 120);
-    const role = clean(body?.role, 180); // used as requester_org
+    const role = clean(body?.role, 180); // requester_org
     const market = clean(body?.market, 120);
     const linkedin = clean(body?.linkedin, 300);
     const email = clean(body?.email, 160).toLowerCase();
@@ -136,9 +137,6 @@ export async function POST(req: Request) {
     if (!email || !isValidEmail(email)) {
       return NextResponse.json({ ok: false, error: "INVALID_EMAIL" }, { status: 400 });
     }
-
-    // ✅ 1) Insert (or update) request row (approval workflow)
-    const supabaseAdmin = await getSupabaseAdmin();
 
     const combinedMessage = [
       message ? `Message: ${message}` : null,
@@ -149,64 +147,104 @@ export async function POST(req: Request) {
       .filter(Boolean)
       .join("\n");
 
+    const supabaseAdmin = await getSupabaseAdmin();
+
     /**
-     * ✅ IMPORTANT:
-     * Use UPSERT so repeated submissions don't spam your table.
-     * Requires a UNIQUE constraint on (profile_id, requester_email).
+     * ✅ IMPORTANT BEHAVIOR:
+     * - If the person is already approved/rejected, do NOT reset them to pending.
+     * - If they are pending (or no row), update/insert as pending and refresh details.
+     *
+     * We do this by:
+     * 1) checking existing status
+     * 2) only forcing "pending" if no row or status === "pending"
      */
+    const { data: existing, error: existingErr } = await supabaseAdmin
+      .from("private_profile_access_requests_v2")
+      .select("id,status")
+      .eq("request_type", REQUEST_TYPE)
+      .eq("profile_id", PROFILE_ID)
+      .eq("requester_email", email)
+      .limit(1);
+
+    if (existingErr) {
+      console.error("[access-request] select error:", existingErr);
+      return NextResponse.json({ ok: false, error: "DB_SELECT_FAILED" }, { status: 500 });
+    }
+
+    const existingRow = existing?.[0];
+    const existingStatus = existingRow?.status as string | undefined;
+
+    // only set status to pending if they are not already approved/rejected
+    const nextStatus =
+      existingStatus === "approved" || existingStatus === "rejected"
+        ? existingStatus
+        : "pending";
+
+    const upsertPayload = {
+      request_type: REQUEST_TYPE,
+      profile_id: PROFILE_ID,
+      requester_email: email,
+      requester_org: role || null,
+      message: combinedMessage || null,
+      status: nextStatus,
+      // reviewed_* intentionally not touched here
+    };
+
     const { error: upsertErr } = await supabaseAdmin
-      .from("private_profile_access_requests")
-      .upsert(
-        {
-          profile_id: PROFILE_ID,
-          requester_email: email,
-          requester_org: role || null,
-          message: combinedMessage || null,
-          status: "pending",
-        },
-        { onConflict: "profile_id,requester_email" }
-      );
+      .from("private_profile_access_requests_v2")
+      .upsert(upsertPayload, {
+        onConflict: "request_type,profile_id,requester_email",
+      });
 
     if (upsertErr) {
       console.error("[access-request] upsert error:", upsertErr);
-      return NextResponse.json(
-        { ok: false, error: "DB_INSERT_FAILED" },
-        { status: 500 }
-      );
+      return NextResponse.json({ ok: false, error: "DB_INSERT_FAILED" }, { status: 500 });
     }
 
-    // ✅ 2) Email notifications (non-blocking if RESEND_API_KEY missing)
+    /**
+     * ✅ Emails are best-effort:
+     * DB success should not be blocked by Resend delivery issues.
+     */
+    let emailSending: "enabled" | "skipped" | "failed" = "skipped";
     if (RESEND_API_KEY) {
-      const resend = new Resend(RESEND_API_KEY);
+      try {
+        const resend = new Resend(RESEND_API_KEY);
 
-      // admin notification
-      await resend.emails.send({
-        from: RESEND_FROM,
-        to: ADMIN_EMAIL,
-        replyTo: email,
-        subject: `Access request — Portability Score (${name || email})`,
-        html: buildAdminEmail({ name, role, market, linkedin, email, message }),
-      });
+        await resend.emails.send({
+          from: RESEND_FROM,
+          to: ADMIN_EMAIL,
+          replyTo: email,
+          subject: `Access request — Portability Score (${name || email})`,
+          html: buildAdminEmail({ name, role, market, linkedin, email, message }),
+        });
 
-      // requester confirmation
-      await resend.emails.send({
-        from: RESEND_FROM,
-        to: email,
-        subject: "We received your request — Executive Partners",
-        html: buildRequesterConfirmationEmail(name),
-      });
-    } else {
-      console.warn("[access-request] RESEND_API_KEY missing — emails skipped");
+        await resend.emails.send({
+          from: RESEND_FROM,
+          to: email,
+          subject: "We received your request — Executive Partners",
+          html: buildRequesterConfirmationEmail(name),
+        });
+
+        emailSending = "enabled";
+      } catch (e: any) {
+        emailSending = "failed";
+        console.error("[access-request] email send error:", e?.message || e);
+      }
     }
 
-    const resBody: any = { ok: true };
+    const resBody: any = {
+      ok: true,
+      status: nextStatus, // helpful for frontend messaging if you want it
+    };
+
     if (debug) {
       resBody.debug = {
         version: VERSION,
-        profileId: PROFILE_ID,
+        request_type: REQUEST_TYPE,
+        profile_id: PROFILE_ID,
         adminEmail: ADMIN_EMAIL,
         resendFrom: RESEND_FROM,
-        emailSending: RESEND_API_KEY ? "enabled" : "skipped",
+        emailSending,
       };
     }
 
