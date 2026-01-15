@@ -7,7 +7,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VERSION = "ml-2025-12-29-e"; // 👈 bump
+const VERSION = "ml-2026-01-15-b"; // 👈 bump
 
 const CANONICAL = (
   process.env.NEXT_PUBLIC_CANONICAL_URL ||
@@ -90,27 +90,30 @@ function sanitizeNext(nextRaw: unknown): string | null {
 }
 
 /**
- * ENFORCEMENT: only APPROVED emails can receive magic links
- * for /en/portability/* and /en/bp-simulator/*
+ * ✅ ENFORCEMENT (MATCHES YOUR TABLE):
+ * - request_type = 'portability' OR 'bp'
+ * - profile_id IS NULL
+ * - requester_email = email
+ * - latest status must be 'approved'
  */
 async function isApprovedEmail(email: string, next: string) {
-  const profileId = next.startsWith("/en/portability")
+  const requestType = next.startsWith("/en/portability")
     ? "portability"
     : next.startsWith("/en/bp-simulator")
-      ? "bp-simulator"
+      ? "bp"
       : null;
 
   // If it’s not one of the gated public tools, allow.
-  if (!profileId) return true;
+  if (!requestType) return true;
 
   const supabaseAdmin = await getSupabaseAdmin();
 
-  // ✅ take latest request and check status (more reliable than filtering status in SQL)
   const { data, error } = await supabaseAdmin
     .from("private_profile_access_requests")
     .select("status, created_at")
-    .eq("profile_id", profileId)
+    .eq("request_type", requestType)
     .eq("requester_email", email)
+    .is("profile_id", null) // ✅ critical
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -142,6 +145,7 @@ function buildEmailHtml(link: string) {
 function looksLikeEmailFrom(from: string) {
   return (
     /<[^<>@\s]+@[^<>@\s]+\.[^<>@\s]+>/.test(from) ||
+    /^[^@\s]+@[^@\s]+\.[^@\s]+\.[^@\s]+$/.test(from) ||
     /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(from)
   );
 }
@@ -250,15 +254,7 @@ export async function POST(req: Request) {
     if (sendStatus === "error") {
       const resBody: any = { ok: false, error: "EMAIL_DELIVERY_FAILED" };
       if (debug) {
-        resBody.debug = {
-          sendStatus,
-          from: RESEND_FROM,
-          baseUrl,
-          next,
-          link,
-          sendMeta,
-          version: VERSION,
-        };
+        resBody.debug = { sendStatus, from: RESEND_FROM, baseUrl, next, link, sendMeta, version: VERSION };
       }
       const res = NextResponse.json(resBody, { status: 500 });
       res.headers.set("x-magic-link-send", sendStatus);
@@ -269,15 +265,7 @@ export async function POST(req: Request) {
 
     const resBody: any = { ok: true };
     if (debug) {
-      resBody.debug = {
-        sendStatus,
-        from: RESEND_FROM,
-        baseUrl,
-        next,
-        link,
-        sendMeta,
-        version: VERSION,
-      };
+      resBody.debug = { sendStatus, from: RESEND_FROM, baseUrl, next, link, sendMeta, version: VERSION };
     }
 
     const res = NextResponse.json(resBody, { status: 200 });
