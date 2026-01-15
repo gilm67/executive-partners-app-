@@ -1,9 +1,12 @@
 // app/api/access-request/route.ts
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { getSupabaseAdmin } from "@/lib/supabase-server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+const VERSION = "ar-2026-01-15-a"; // bump when changing logic
 
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || "").trim();
 
@@ -23,6 +26,9 @@ const RESEND_FROM = (
     ? "Executive Partners <onboarding@resend.dev>"
     : "Executive Partners <no-reply@auth.execpartners.ch>")
 ).trim();
+
+// ✅ Approval gate “profile” identifier (matches your table’s profile_id usage)
+const PROFILE_ID = "portability";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -115,6 +121,8 @@ function buildRequesterConfirmationEmail(name: string) {
 }
 
 export async function POST(req: Request) {
+  const debug = new URL(req.url).searchParams.get("debug") === "1";
+
   try {
     if (!RESEND_API_KEY) {
       return NextResponse.json(
@@ -126,19 +134,53 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}));
 
     const name = clean(body?.name, 120);
-    const role = clean(body?.role, 180);
+    const role = clean(body?.role, 180); // used as requester_org
     const market = clean(body?.market, 120);
     const linkedin = clean(body?.linkedin, 300);
     const email = clean(body?.email, 160).toLowerCase();
     const message = clean(body?.message, 2000);
 
     if (!email || !isValidEmail(email)) {
-      return NextResponse.json({ ok: false, error: "INVALID_EMAIL" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "INVALID_EMAIL" },
+        { status: 400 }
+      );
+    }
+
+    // ✅ 1) Insert request row (approval workflow)
+    const supabaseAdmin = await getSupabaseAdmin();
+
+    const combinedMessage = [
+      message ? `Message: ${message}` : null,
+      market ? `Market: ${market}` : null,
+      linkedin ? `LinkedIn: ${linkedin}` : null,
+      name ? `Name: ${name}` : null,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const { error: insertErr } = await supabaseAdmin
+      .from("private_profile_access_requests")
+      .insert({
+        profile_id: PROFILE_ID,
+        requester_email: email,
+        requester_org: role || null,
+        message: combinedMessage || null,
+        status: "pending",
+        // reviewed_at / reviewed_by left null until you approve
+      });
+
+    if (insertErr) {
+      console.error("[access-request] insert error:", insertErr);
+      return NextResponse.json(
+        { ok: false, error: "DB_INSERT_FAILED" },
+        { status: 500 }
+      );
     }
 
     const resend = new Resend(RESEND_API_KEY);
 
-    // 1) Email to you
+    // ✅ 2) Email to you (admin)
     await resend.emails.send({
       from: RESEND_FROM,
       to: ADMIN_EMAIL,
@@ -147,7 +189,7 @@ export async function POST(req: Request) {
       html: buildAdminEmail({ name, role, market, linkedin, email, message }),
     });
 
-    // 2) Confirmation email to requester (recommended)
+    // ✅ 3) Confirmation email to requester
     await resend.emails.send({
       from: RESEND_FROM,
       to: email,
@@ -155,9 +197,22 @@ export async function POST(req: Request) {
       html: buildRequesterConfirmationEmail(name),
     });
 
-    return NextResponse.json({ ok: true }, { status: 200 });
+    const res = NextResponse.json({ ok: true }, { status: 200 });
+    res.headers.set("x-access-request-version", VERSION);
+
+    if (debug) {
+      res.headers.set("x-access-request-admin", ADMIN_EMAIL);
+      res.headers.set("x-access-request-profile", PROFILE_ID);
+    }
+
+    return res;
   } catch (e: any) {
     console.error("[access-request] error:", e?.message || e);
-    return NextResponse.json({ ok: false, error: "INTERNAL_ERROR" }, { status: 500 });
+    const res = NextResponse.json(
+      { ok: false, error: "INTERNAL_ERROR" },
+      { status: 500 }
+    );
+    res.headers.set("x-access-request-version", VERSION);
+    return res;
   }
 }
