@@ -7,7 +7,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VERSION = "ml-2026-01-15-b"; // 👈 bump
+const VERSION = "ml-2026-01-15-c"; // ✅ bump
 
 const CANONICAL = (
   process.env.NEXT_PUBLIC_CANONICAL_URL ||
@@ -90,41 +90,76 @@ function sanitizeNext(nextRaw: unknown): string | null {
 }
 
 /**
- * ✅ ENFORCEMENT (MATCHES YOUR TABLE):
+ * ✅ ENFORCEMENT:
  * - request_type = 'portability' OR 'bp'
  * - profile_id IS NULL
  * - requester_email = email
  * - latest status must be 'approved'
+ *
+ * ✅ Compatibility:
+ * checks BOTH tables:
+ * - private_profile_access_requests_v2
+ * - private_profile_access_requests
  */
-async function isApprovedEmail(email: string, next: string) {
+async function isApprovedEmail(
+  email: string,
+  next: string
+): Promise<{ approved: boolean; debug?: any }> {
   const requestType = next.startsWith("/en/portability")
     ? "portability"
     : next.startsWith("/en/bp-simulator")
       ? "bp"
       : null;
 
-  // If it’s not one of the gated public tools, allow.
-  if (!requestType) return true;
+  if (!requestType) return { approved: true, debug: { reason: "NOT_GATED" } };
 
   const supabaseAdmin = await getSupabaseAdmin();
 
-  const { data, error } = await supabaseAdmin
-    .from("private_profile_access_requests")
-    .select("status, created_at")
-    .eq("request_type", requestType)
-    .eq("requester_email", email)
-    .is("profile_id", null) // ✅ critical
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const tables = ["private_profile_access_requests_v2", "private_profile_access_requests"];
 
-  if (error) {
-    console.error("[magic-link] approval check error:", error);
-    return false; // safest
+  for (const table of tables) {
+    const { data, error } = await supabaseAdmin
+      .from(table as any)
+      .select("status, reviewed_at, created_at, request_type, profile_id")
+      .eq("request_type", requestType)
+      .eq("requester_email", email)
+      .is("profile_id", null)
+      .order("reviewed_at", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) {
+      console.error(`[magic-link] approval check error (${table}):`, error);
+      continue;
+    }
+
+    const status = String(data?.status || "").trim().toLowerCase();
+
+    if (status === "approved") {
+      return {
+        approved: true,
+        debug: { table, found: data, normalizedStatus: status },
+      };
+    }
+
+    // If a row exists but not approved, return debug and keep checking the other table (just in case)
+    if (data) {
+      const maybe = {
+        table,
+        found: data,
+        normalizedStatus: status,
+      };
+      // keep looping; we might find approved in the other table
+      // but preserve "maybe" in case nothing else matches
+      var lastSeen = maybe;
+    }
   }
 
-  const status = String(data?.status || "").trim().toLowerCase();
-  return status === "approved";
+  return {
+    approved: false,
+    debug: { reason: "NOT_APPROVED", requestType, lastSeen: (globalThis as any).lastSeen ?? undefined },
+  };
 }
 
 function buildEmailHtml(link: string) {
@@ -145,7 +180,6 @@ function buildEmailHtml(link: string) {
 function looksLikeEmailFrom(from: string) {
   return (
     /<[^<>@\s]+@[^<>@\s]+\.[^<>@\s]+>/.test(from) ||
-    /^[^@\s]+@[^@\s]+\.[^@\s]+\.[^@\s]+$/.test(from) ||
     /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(from)
   );
 }
@@ -169,8 +203,9 @@ export async function POST(req: Request) {
     const email = emailRaw.trim().toLowerCase();
 
     // ✅ ENFORCE APPROVAL BEFORE token creation + sending
-    const approved = await isApprovedEmail(email, next);
-    if (!approved) {
+    const check = await isApprovedEmail(email, next);
+
+    if (!check.approved) {
       const resBody: any = { ok: true };
       if (debug) {
         resBody.debug = {
@@ -179,6 +214,7 @@ export async function POST(req: Request) {
           email,
           next,
           version: VERSION,
+          approvalDebug: check.debug,
         };
       }
       const res = NextResponse.json(resBody, { status: 200 });
@@ -254,7 +290,16 @@ export async function POST(req: Request) {
     if (sendStatus === "error") {
       const resBody: any = { ok: false, error: "EMAIL_DELIVERY_FAILED" };
       if (debug) {
-        resBody.debug = { sendStatus, from: RESEND_FROM, baseUrl, next, link, sendMeta, version: VERSION };
+        resBody.debug = {
+          sendStatus,
+          from: RESEND_FROM,
+          baseUrl,
+          next,
+          link,
+          sendMeta,
+          version: VERSION,
+          approvalDebug: check.debug,
+        };
       }
       const res = NextResponse.json(resBody, { status: 500 });
       res.headers.set("x-magic-link-send", sendStatus);
@@ -265,7 +310,16 @@ export async function POST(req: Request) {
 
     const resBody: any = { ok: true };
     if (debug) {
-      resBody.debug = { sendStatus, from: RESEND_FROM, baseUrl, next, link, sendMeta, version: VERSION };
+      resBody.debug = {
+        sendStatus,
+        from: RESEND_FROM,
+        baseUrl,
+        next,
+        link,
+        sendMeta,
+        version: VERSION,
+        approvalDebug: check.debug,
+      };
     }
 
     const res = NextResponse.json(resBody, { status: 200 });
