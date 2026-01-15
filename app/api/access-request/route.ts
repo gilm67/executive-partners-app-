@@ -1,3 +1,4 @@
+// app/api/access-request/route.ts
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getSupabaseAdmin } from "@/lib/supabase-server";
@@ -59,24 +60,15 @@ function escapeHtml(s: string) {
     .replaceAll("'", "&#039;");
 }
 
-function buildApproveUrl(params: {
-  requester_email: string;
-  requester_org?: string | null;
-  action?: "approve" | "reject";
-}) {
-  // If key is missing, we still send email (but without the button)
+function buildApproveUrl(params: { requester_email: string; requester_org?: string | null }) {
   if (!PRIVATE_ADMIN_KEY) return null;
 
   const url = new URL(`${CANONICAL}/api/private/admin/approve-access`);
   url.searchParams.set("key", PRIVATE_ADMIN_KEY);
-  url.searchParams.set("type", REQUEST_TYPE);
+  url.searchParams.set("type", REQUEST_TYPE); // portability | bp | profile
   url.searchParams.set("email", params.requester_email);
 
-  // Optional: carry org for insert fallback (nice-to-have)
   if (params.requester_org) url.searchParams.set("org", params.requester_org);
-
-  // Optional action (only if you implement reject; safe to include anyway)
-  if (params.action) url.searchParams.set("action", params.action);
 
   // profile_id only for type="profile" (not for portability/bp)
   return url.toString();
@@ -121,13 +113,6 @@ function buildAdminEmail(payload: {
   const approveUrl = buildApproveUrl({
     requester_email: payload.email,
     requester_org: payload.role || null,
-    action: "approve",
-  });
-
-  const rejectUrl = buildApproveUrl({
-    requester_email: payload.email,
-    requester_org: payload.role || null,
-    action: "reject",
   });
 
   const ctaBlock = approveUrl
@@ -135,22 +120,16 @@ function buildAdminEmail(payload: {
       <div style="margin:18px 0 8px;">
         <a href="${approveUrl}"
            style="display:inline-block; padding:12px 16px; background:#C9A14A; color:#111; text-decoration:none; border-radius:10px; font-weight:700;">
-          Approve access (1 click)
-        </a>
-      </div>
-      <div style="margin:6px 0 0; font-size:12px; color:#666;">
-        Optional:
-        <a href="${rejectUrl || "#"}" style="color:#666; text-decoration:underline;">
-          Reject
+          ✅ Approve access (1 click)
         </a>
       </div>
       <div style="margin:10px 0 0; font-size:12px; color:#888;">
-        (This link is protected by your PRIVATE_ADMIN_KEY.)
+        (Protected by PRIVATE_ADMIN_KEY.)
       </div>
     `
     : `
       <div style="margin:18px 0 0; padding:12px 14px; border:1px solid #eee; border-radius:10px; background:#fafafa; color:#666; font-size:12px;">
-        Approval button is disabled because <strong>PRIVATE_ADMIN_KEY</strong> is not set in Vercel.
+        Approve button disabled because <strong>PRIVATE_ADMIN_KEY</strong> is not set in Vercel.
       </div>
     `;
 
@@ -208,9 +187,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: "INVALID_EMAIL" }, { status: 400 });
     }
 
-    // ✅ 1) UPSERT into v2 table
-    const supabaseAdmin = await getSupabaseAdmin();
-
     const combinedMessage = [
       message ? `Message: ${message}` : null,
       market ? `Market: ${market}` : null,
@@ -220,27 +196,58 @@ export async function POST(req: Request) {
       .filter(Boolean)
       .join("\n");
 
-    // Note: we always keep status pending here; approval happens via admin endpoint.
-    const { error: upsertErr } = await supabaseAdmin
+    const supabaseAdmin = await getSupabaseAdmin();
+
+    /**
+     * ✅ IMPORTANT:
+     * Because profile_id is NULL for portability/bp, relying on UPSERT with onConflict
+     * is unreliable (NULLs do not collide in Postgres unique indexes).
+     *
+     * So we do:
+     * 1) find latest row for (request_type + email + profile_id NULL)
+     * 2) if exists and already approved => keep approved
+     * 3) else insert a new pending row
+     */
+    const { data: latest, error: findErr } = await supabaseAdmin
       .from("private_profile_access_requests_v2")
-      .upsert(
-        {
+      .select("id,status,created_at")
+      .eq("request_type", REQUEST_TYPE)
+      .eq("requester_email", email)
+      .is("profile_id", null)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (findErr) {
+      console.error("[access-request] find error:", findErr);
+      return NextResponse.json({ ok: false, error: "DB_FIND_FAILED" }, { status: 500 });
+    }
+
+    const latestStatus = String(latest?.status || "").trim().toLowerCase();
+
+    if (latest?.id && latestStatus === "approved") {
+      // ✅ Do NOT downgrade approved -> pending
+      // We still send emails so you can see the request came again (optional).
+    } else {
+      // Insert a fresh pending row
+      const { error: insErr } = await supabaseAdmin
+        .from("private_profile_access_requests_v2")
+        .insert({
           request_type: REQUEST_TYPE,
-          profile_id: PROFILE_ID, // NULL for portability/bp per your schema
+          profile_id: PROFILE_ID, // null
           requester_email: email,
           requester_org: role || null,
           message: combinedMessage || null,
           status: "pending",
-        },
-        { onConflict: "request_type,profile_id,requester_email" }
-      );
+        });
 
-    if (upsertErr) {
-      console.error("[access-request] upsert error:", upsertErr);
-      return NextResponse.json({ ok: false, error: "DB_UPSERT_FAILED" }, { status: 500 });
+      if (insErr) {
+        console.error("[access-request] insert error:", insErr);
+        return NextResponse.json({ ok: false, error: "DB_INSERT_FAILED" }, { status: 500 });
+      }
     }
 
-    // ✅ 2) Emails (admin + requester)
+    // ✅ Emails (admin + requester)
     if (RESEND_API_KEY) {
       const resend = new Resend(RESEND_API_KEY);
 
