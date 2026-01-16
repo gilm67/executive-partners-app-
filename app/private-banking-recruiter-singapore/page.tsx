@@ -141,7 +141,7 @@ export default function PrivateBankingRecruiterParisPage() {
           "Mid-market entrepreneurs and family businesses",
           "Non-resident French / cross-border EU",
         ]}
-        pdfHref="/pdfs/private-banking-career-intelligence-2025.pdf"
+        pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
             label: "Swiss Private Banking: Thriving Against the Odds",

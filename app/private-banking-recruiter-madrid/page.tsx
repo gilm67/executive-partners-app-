@@ -138,7 +138,7 @@ export default function PrivateBankingRecruiterMadridPage() {
           "LatAm-linked client books",
           "Returning expatriates and non-resident Spaniards",
         ]}
-        pdfHref="/pdfs/private-banking-career-intelligence-2025.pdf"
+        pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
             label: "La Dolce Vita Returns: Why Italy Has Become Europe’s…",

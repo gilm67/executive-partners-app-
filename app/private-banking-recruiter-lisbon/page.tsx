@@ -138,7 +138,7 @@ export default function PrivateBankingRecruiterLisbonPage() {
           "Real-estate and hospitality investors",
           "Returning Portuguese families / expats",
         ]}
-        pdfHref="/pdfs/private-banking-career-intelligence-2025.pdf"
+        pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
             label:

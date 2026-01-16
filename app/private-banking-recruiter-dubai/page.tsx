@@ -75,7 +75,7 @@ export default function PrivateBankingRecruiterDubaiPage() {
         "NRI (India, Pakistan, Sri Lanka)",
         "Africa UHNW / entrepreneurs",
       ]}
-      pdfHref="/pdfs/private-banking-career-intelligence-2025.pdf"
+      pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
       insightsLinks={[
         {
           label:

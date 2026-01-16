@@ -138,7 +138,7 @@ export default function PrivateBankingRecruiterLondonPage() {
           "Family Offices & entrepreneurs",
           "Global NRI / international wealth",
         ]}
-        pdfHref="/pdfs/private-banking-career-intelligence-2025.pdf"
+        pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
             label:

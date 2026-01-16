@@ -138,7 +138,7 @@ export default function PrivateBankingRecruiterNewYorkPage() {
           "International entrepreneurs booking into the US",
           "Family offices and private investment offices",
         ]}
-        pdfHref="/pdfs/private-banking-career-intelligence-2025.pdf"
+        pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
             label:

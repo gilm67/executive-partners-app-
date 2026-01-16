@@ -137,7 +137,7 @@ export default function PrivateBankingRecruiterHongKongPage() {
           "North Asia (Taiwan, Korea, Japan)",
           "Family offices & listed-company owners",
         ]}
-        pdfHref="/pdfs/private-banking-career-intelligence-2025.pdf"
+        pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
             label: "The Great UBS Paradox",

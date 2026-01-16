@@ -138,7 +138,7 @@ export default function PrivateBankingRecruiterMiamiPage() {
           "Mexico & Central America",
           "Andean region (Colombia, Peru, etc.)",
         ]}
-        pdfHref="/pdfs/private-banking-career-intelligence-2025.pdf"
+        pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
             label:
