@@ -47,4 +47,4 @@ private_key.b64
 # Local backups / experiments (NEVER DEPLOY)
 # ===============================
 _backup/
-app/en/test-interest/
+app/en/test-interest/tmp/pdf/
