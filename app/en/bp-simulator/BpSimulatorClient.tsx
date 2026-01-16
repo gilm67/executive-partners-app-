@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 // ✅ Real simulator UI (Sections 1–5)
 import BPClient from "./BPClient";
@@ -29,22 +29,7 @@ export default function BpSimulatorClient() {
 
   // ✅ Cross-tool prefill payload (Portability -> BP)
   const [prefill, setPrefill] = useState<ToolPrefill>(null);
-  const [prefillStatus, setPrefillStatus] = useState<PrefillStatus>("idle");
-
-  const statusLabel = useMemo(() => {
-    switch (prefillStatus) {
-      case "loading":
-        return "Syncing profile…";
-      case "loaded":
-        return "Profile synced";
-      case "skipped":
-        return "No saved profile";
-      case "error":
-        return "Sync unavailable";
-      default:
-        return "";
-    }
-  }, [prefillStatus]);
+  const [, setPrefillStatus] = useState<PrefillStatus>("idle"); // keep internal, no UI output
 
   useEffect(() => {
     const controller = new AbortController();
@@ -120,14 +105,9 @@ export default function BpSimulatorClient() {
         }}
       />
 
-      <div className="relative mx-auto max-w-6xl px-4 py-6 md:py-8">
-        {/* Minimal tool toolbar */}
-        <div className="mb-5 flex items-center justify-end gap-3">
-          {/* Optional: tiny non-blocking indicator */}
-          {statusLabel ? (
-            <span className="text-xs text-white/45">{statusLabel}</span>
-          ) : null}
-
+      <div className="relative mx-auto max-w-6xl px-4 py-4 md:py-6">
+        {/* Minimal tool toolbar (internal UI feel) */}
+        <div className="mb-4 flex items-center justify-end">
           <label className="inline-flex items-center gap-2 text-sm text-white/70">
             <input
               type="checkbox"
