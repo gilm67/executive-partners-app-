@@ -3,17 +3,17 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Career Intelligence 2025 | Executive Partners",
+    absolute: "Private Banking Career Intelligence 2026 | Executive Partners",
   },
   description:
-    "Fact-checked 2025 benchmarks for Private Banking careers across Geneva, Zurich, London, New York, Miami, Singapore, Hong Kong, Dubai and other key hubs. Download the PDF guide prepared by Executive Partners.",
+    "Fact-checked 2026 benchmarks for Private Banking careers across Geneva, Zurich, London, New York, Miami, Singapore, Hong Kong, Dubai and other key hubs. Download the PDF guide prepared by Executive Partners.",
   alternates: {
     canonical: "/insights/private-banking-career-intelligence",
   },
   openGraph: {
     type: "article",
     url: "/insights/private-banking-career-intelligence",
-    title: "Private Banking Career Intelligence 2025 — Executive Partners",
+    title: "Private Banking Career Intelligence 2026 — Executive Partners",
     description:
       "Global market benchmarks, AUM portability framework, compensation ranges and readiness scorecard for senior Private Bankers.",
     siteName: "Executive Partners",
@@ -30,7 +30,7 @@ export default function PrivateBankingCareerIntelligencePage() {
           Private Banking &amp; Wealth Management
         </p>
         <h1 className="mt-3 text-3xl md:text-4xl">
-          Private Banking Career Intelligence 2025
+          Private Banking Career Intelligence 2026
         </h1>
         <p className="mt-4 text-sm text-neutral-300 md:text-[0.95rem]">
           Fact-checked benchmarks for senior Relationship Managers, Team Heads
@@ -63,7 +63,7 @@ export default function PrivateBankingCareerIntelligencePage() {
             banks when evaluating hires.
           </li>
           <li>
-            • 2024–2025 compensation ranges and bonus structures by key markets.
+            • 2024–2026 compensation ranges and bonus structures by key markets.
           </li>
           <li>
             • Candidate readiness scorecard and list of critical red flags
@@ -74,7 +74,7 @@ export default function PrivateBankingCareerIntelligencePage() {
         {/* Download + secondary actions */}
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <a
-            href="/pdfs/private-banking-career-intelligence-2025.pdf"
+            href="/pdfs/private-banking-career-intelligence-2026.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-primary btn-xl w-full sm:w-auto"
@@ -91,7 +91,7 @@ export default function PrivateBankingCareerIntelligencePage() {
         </div>
 
         <p className="mt-4 text-center text-[11px] text-neutral-500">
-          Last updated: 2025. The information is indicative and for professional
+          Last updated: 2026. The information is indicative and for professional
           use only. Exact packages and conditions vary by bank and jurisdiction.
         </p>
       </section>
