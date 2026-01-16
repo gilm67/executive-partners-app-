@@ -197,7 +197,7 @@ export default function InsightsPage() {
                 Premium PDF · Career Move Intelligence
               </p>
               <h2 className="mt-2 text-xl font-semibold md:text-2xl">
-                Private Banking Career Intelligence 2025
+                Private Banking Career Intelligence 2026
               </h2>
               <p className="mt-2 text-sm text-neutral-200">
                 Fact-checked benchmarks for Geneva, Zurich, London, New York,
@@ -373,7 +373,7 @@ export default function InsightsPage() {
               href="/insights/private-banking-career-intelligence"
               className="underline decoration-brandGold/70 underline-offset-4 hover:text-white"
             >
-              Private Banking Career Intelligence 2025 (PDF guide)
+              Private Banking Career Intelligence 2026 (PDF guide)
             </Link>
             <Link
               href="/private-banking-jobs-switzerland"

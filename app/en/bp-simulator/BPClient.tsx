@@ -98,14 +98,14 @@ export default function BPClient({ showTips = true, prefill = null }: BPClientPr
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* ✅ Tool header (NOT marketing) */}
-      <div className="rounded-2xl border border-white/10 bg-black/30 p-5 ring-1 ring-white/10">
+      <div className="rounded-2xl border border-white/10 bg-black/30 p-4 ring-1 ring-white/10">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs text-white/70 ring-1 ring-white/10">
               Executive Partners · Private Tool
             </div>
 
-            <h1 className="mt-2 text-2xl md:text-3xl font-semibold tracking-tight">
+            <h1 className="mt-1 text-2xl md:text-3xl font-semibold tracking-tight">
               Business Plan Simulator
             </h1>
 
@@ -114,17 +114,8 @@ export default function BPClient({ showTips = true, prefill = null }: BPClientPr
             </p>
           </div>
 
-          <div className="text-xs text-white/55">
-            {prefill ? (
-              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-emerald-200">
-                Prefill loaded
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                No prefill
-              </span>
-            )}
-          </div>
+          {/* ✅ Removed duplicated "Prefill loaded / No prefill" pill:
+              keep only the top-right system indicator in BpSimulatorClient */}
         </div>
       </div>
 

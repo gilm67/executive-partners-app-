@@ -132,12 +132,12 @@ export default function PrivateBankingRecruiterGenevaPage() {
                 Discuss a mandate or move
               </Link>
               <Link
-                href="/pdfs/private-banking-career-intelligence-2025.pdf"
+                href="/pdfs/private-banking-career-intelligence-2026.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-ghost"
               >
-                Download Career Intelligence 2025 (PDF)
+                Download Career Intelligence 2026 (PDF)
               </Link>
             </div>
           </header>

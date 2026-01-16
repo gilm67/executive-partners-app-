@@ -207,7 +207,7 @@ export default function CityRecruiterPage(props: CityRecruiterPageProps) {
           {/* Career Intelligence PDF */}
           <div className="flex h-full flex-col rounded-3xl border border-white/10 bg-black/40 p-6 md:p-7">
             <h3 className="text-sm font-semibold text-neutral-50">
-              Private Banking Career Intelligence 2025
+              Private Banking Career Intelligence 2026
             </h3>
             <p className="mt-2 text-xs text-neutral-400">
               Download our fact-checked 2025 benchmarks for senior
@@ -222,7 +222,7 @@ export default function CityRecruiterPage(props: CityRecruiterPageProps) {
                 rel="noopener noreferrer"
                 className="btn btn-primary btn-xl w-full sm:w-auto"
               >
-                Download Career Intelligence 2025 (PDF)
+                Download Career Intelligence 2026 (PDF)
               </a>
             </div>
 

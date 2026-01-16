@@ -52,7 +52,7 @@ export default function ApplySuccessPage() {
         <p className="mt-6 text-sm text-neutral-300">
           While you wait, you can access our{" "}
           <span className="text-[#F5D778] font-semibold">
-            Private Banking Career Intelligence 2025
+            Private Banking Career Intelligence 2026
           </span>{" "}
           — market benchmarks across Geneva, Zurich, London, New York, Miami,
           Dubai, Singapore, Hong Kong, Paris, Madrid and Lisbon.
