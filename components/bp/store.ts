@@ -4,9 +4,9 @@ import { create } from 'zustand';
 export type Prospect = {
   name: string;
   source: 'Self Acquired' | 'Inherited' | 'Finder';
-  wealth_m: number;       // M CHF
-  best_nnm_m: number;     // M CHF
-  worst_nnm_m: number;    // M CHF
+  wealth_m: number; // M CHF
+  best_nnm_m: number; // M CHF
+  worst_nnm_m: number; // M CHF
 };
 
 export type Inputs = {
@@ -24,6 +24,11 @@ export type Inputs = {
   last_bonus: number;
   current_number_clients: number;
   current_assets_m: number;
+
+  // (Optional) ROA inputs if your UI uses them
+  roa_y1?: number; // % (e.g. 0.85)
+  roa_y2?: number;
+  roa_y3?: number;
 
   // Section 2
   nnm_y1_m: number;
@@ -48,9 +53,19 @@ export type Inputs = {
   ai_notes?: string;
 };
 
+export type Readiness = 'red' | 'amber' | 'green';
+
 type BPState = {
   i: Inputs;
   set: (patch: Partial<Inputs>) => void;
+
+  // ✅ Prefill support (Portability -> BP)
+  prefillApplied: boolean;
+  applyPrefillOnce: (payload: any) => void;
+  resetPrefillApplied: () => void;
+
+  // Convenience
+  getReadiness: () => { readiness: Readiness; label: string };
 
   resetProspectForm: () => void;
   addProspect: () => void;
@@ -65,6 +80,54 @@ type BPState = {
 export function n(v: unknown): number {
   const x = Number(v ?? 0);
   return Number.isFinite(x) ? x : 0;
+}
+
+function cleanStr(v: unknown, max = 250) {
+  const s = typeof v === 'string' ? v.trim() : '';
+  if (!s) return '';
+  return s.replace(/\s+/g, ' ').slice(0, max);
+}
+
+function cleanLower(v: unknown, max = 250) {
+  return cleanStr(v, max).toLowerCase();
+}
+
+/**
+ * Try to read nested values from many possible shapes.
+ * Example: pick(payload, ['profile.portability.email', 'email', 'user.email'])
+ */
+function pick(obj: any, paths: string[]): any {
+  for (const p of paths) {
+    const parts = p.split('.');
+    let cur = obj;
+    let ok = true;
+    for (const k of parts) {
+      if (!cur || typeof cur !== 'object' || !(k in cur)) {
+        ok = false;
+        break;
+      }
+      cur = cur[k];
+    }
+    if (ok && cur !== undefined && cur !== null && cur !== '') return cur;
+  }
+  return undefined;
+}
+
+function looksLikeEmail(v: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+}
+
+/**
+ * Normalizes an AUM value to "millions".
+ * - If value is already in millions, keep it.
+ * - If value looks like a full amount (e.g. 250000000), convert to 250.
+ */
+function toMillions(v: unknown): number {
+  const x = n(v);
+  if (!x) return 0;
+  // heuristic: if > 10,000 it's almost certainly a full amount, not "millions"
+  if (x > 10000) return Math.round((x / 1_000_000) * 100) / 100;
+  return x;
 }
 
 /** Returns average ROA in % (e.g., 0.9 means 0.9%) */
@@ -114,6 +177,14 @@ export function computePortability(i: Partial<Inputs>): number {
   return Math.max(0, Math.min(100, Math.round(p)));
 }
 
+/** ✅ Traffic-light readiness based on score */
+export function readinessFromScore(score: unknown): { readiness: Readiness; label: string } {
+  const s = n(score);
+  if (s >= 75) return { readiness: 'green', label: '🟢 Bank-ready' };
+  if (s >= 55) return { readiness: 'amber', label: '🟠 Needs work' };
+  return { readiness: 'red', label: '🔴 Not ready' };
+}
+
 /* ---------- Zustand store ---------- */
 const defaultProspectDraft = {
   p_name: '',
@@ -160,6 +231,138 @@ export const useBP = create<BPState>((set, get) => ({
 
   set: (patch) => set((s) => ({ i: { ...s.i, ...patch } })),
 
+  /* ---------------- Prefill ---------------- */
+  prefillApplied: false,
+
+  /**
+   * ✅ Applies prefill exactly once per page load.
+   * - Never overwrites user-entered values (only fills empty/zero/default placeholder fields).
+   * - Flexible mapping: accepts many payload shapes from /api/private/tool-profile.
+   */
+  applyPrefillOnce: (payload: any) => {
+    const st = get();
+    if (st.prefillApplied) return;
+
+    const i = st.i;
+
+    // Extract likely values from many shapes
+    const emailRaw =
+      pick(payload, ['email', 'user.email', 'profile.email', 'profile.portability.email', 'profile.bp.email']) ??
+      '';
+    const fullNameRaw =
+      pick(payload, [
+        'fullName',
+        'name',
+        'profile.fullName',
+        'profile.name',
+        'profile.portability.fullName',
+        'profile.portability.full_name',
+        'profile.portability.candidate_name',
+      ]) ?? '';
+    const locationRaw =
+      pick(payload, ['location', 'profile.location', 'profile.portability.location', 'profile.portability.candidate_location']) ??
+      '';
+    const marketRaw =
+      pick(payload, ['market', 'current_market', 'profile.market', 'profile.portability.market', 'profile.portability.current_market']) ??
+      '';
+    const bankRaw =
+      pick(payload, [
+        'bank',
+        'employer',
+        'current_employer',
+        'profile.bank',
+        'profile.portability.bank',
+        'profile.portability.current_employer',
+      ]) ?? '';
+    const roleRaw =
+      pick(payload, [
+        'roleTitle',
+        'role',
+        'current_role',
+        'profile.roleTitle',
+        'profile.portability.roleTitle',
+        'profile.portability.current_role',
+      ]) ?? '';
+    const currencyRaw =
+      pick(payload, ['currency', 'profile.currency', 'profile.portability.currency']) ?? '';
+
+    // Portability numeric hints
+    const aumMaybe =
+      pick(payload, [
+        'portabilityAum',
+        'profile.portability.aum',
+        'profile.portability.aum_m',
+        'profile.portability.current_assets',
+        'profile.portability.current_assets_m',
+      ]) ?? 0;
+
+    const nnmY1Maybe =
+      pick(payload, ['portabilityNnmY1', 'profile.portability.nnm_y1_m', 'profile.portability.nnmY1', 'profile.portability.nnm_y1']) ??
+      0;
+
+    const nnmY2Maybe =
+      pick(payload, ['portabilityNnmY2', 'profile.portability.nnm_y2_m', 'profile.portability.nnmY2', 'profile.portability.nnm_y2']) ??
+      0;
+
+    const nnmY3Maybe =
+      pick(payload, ['portabilityNnmY3', 'profile.portability.nnm_y3_m', 'profile.portability.nnmY3', 'profile.portability.nnm_y3']) ??
+      0;
+
+    const roaBpsMaybe =
+      pick(payload, ['portabilityRoaBps', 'profile.portability.roa_bps', 'profile.portability.roaBps']) ?? 0;
+
+    const email = cleanLower(emailRaw, 180);
+    const fullName = cleanStr(fullNameRaw, 180);
+    const location = cleanStr(locationRaw, 180);
+    const market = cleanStr(marketRaw, 120);
+    const bank = cleanStr(bankRaw, 180);
+    const role = cleanStr(roleRaw, 180);
+    const currency = cleanStr(currencyRaw, 10);
+
+    // Only patch empty-ish fields
+    const patch: Partial<Inputs> = {};
+
+    if (!i.candidate_email && email && looksLikeEmail(email)) patch.candidate_email = email;
+    if (!i.candidate_name && fullName) patch.candidate_name = fullName;
+
+    if ((i.candidate_location === '' || i.candidate_location === '— Select —') && location) {
+      patch.candidate_location = location;
+    }
+
+    if ((!i.current_market || i.current_market === '— Select —') && market) patch.current_market = market;
+    if (!i.current_employer && bank) patch.current_employer = bank;
+
+    // Don't overwrite default role unless user hasn't touched it and we have a good value
+    if ((i.current_role === '' || i.current_role === 'Relationship Manager') && role) patch.current_role = role;
+
+    if ((i.currency === '' || i.currency === 'CHF') && currency) patch.currency = currency;
+
+    // Cross-tool numeric: only fill if current is 0
+    if (n(i.current_assets_m) === 0) patch.current_assets_m = toMillions(aumMaybe);
+
+    if (n(i.nnm_y1_m) === 0) patch.nnm_y1_m = toMillions(nnmY1Maybe);
+    if (n(i.nnm_y2_m) === 0) patch.nnm_y2_m = toMillions(nnmY2Maybe);
+    if (n(i.nnm_y3_m) === 0) patch.nnm_y3_m = toMillions(nnmY3Maybe);
+
+    // If ROA bps exists, map to % (bps -> percent)
+    // e.g. 80 bps => 0.80 (%)
+    const roaPct = n(roaBpsMaybe) ? Math.round((n(roaBpsMaybe) / 100) * 100) / 100 : 0;
+    if (!n(i.roa_y1) && roaPct) patch.roa_y1 = roaPct;
+    if (!n(i.roa_y2) && roaPct) patch.roa_y2 = roaPct;
+    if (!n(i.roa_y3) && roaPct) patch.roa_y3 = roaPct;
+
+    // Apply patch (if any), then mark as applied no matter what (prevents loops)
+    set((s) => ({
+      prefillApplied: true,
+      i: Object.keys(patch).length ? { ...s.i, ...patch } : s.i,
+    }));
+  },
+
+  resetPrefillApplied: () => set(() => ({ prefillApplied: false })),
+
+  getReadiness: () => readinessFromScore(get().i.score),
+
+  /* ---------------- Prospects ---------------- */
   resetProspectForm: () => set((s) => ({ i: { ...s.i, ...defaultProspectDraft } })),
 
   addProspect: () => {
@@ -211,11 +414,16 @@ export const useBP = create<BPState>((set, get) => ({
     set((s) => {
       const next = s.i.prospects.slice();
       if (index >= 0 && index < next.length) next.splice(index, 1);
-      return { i: { ...s.i, prospects: next, ...(s.i.edit_index === index ? defaultProspectDraft : {}) } };
+      return {
+        i: {
+          ...s.i,
+          prospects: next,
+          ...(s.i.edit_index === index ? defaultProspectDraft : {}),
+        },
+      };
     }),
 
   cancelEditProspect: () => set((s) => ({ i: { ...s.i, ...defaultProspectDraft } })),
 
-  importProspects: (rows: Prospect[]) =>
-    set((s) => ({ i: { ...s.i, prospects: [...s.i.prospects, ...rows] } })),
+  importProspects: (rows: Prospect[]) => set((s) => ({ i: { ...s.i, prospects: [...s.i.prospects, ...rows] } })),
 }));

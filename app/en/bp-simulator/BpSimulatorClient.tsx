@@ -1,9 +1,20 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 // ✅ Real simulator UI (Sections 1–5)
 import BPClient from "./BPClient";
+
+// Keep this loose so you can map whatever your API returns
+type ToolPrefill = Record<string, any> | null;
+
+type PrefillStatus = "idle" | "loading" | "loaded" | "skipped" | "error";
+
+const PREFILL_ENDPOINT = "/api/private/tool-profile";
+
+function isObject(v: unknown): v is Record<string, any> {
+  return !!v && typeof v === "object" && !Array.isArray(v);
+}
 
 export default function BpSimulatorClient() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -15,6 +26,87 @@ export default function BpSimulatorClient() {
    * - Client ALWAYS renders the simulator UI
    */
   const [showTips, setShowTips] = useState(true);
+
+  // ✅ Cross-tool prefill payload (Portability -> BP)
+  const [prefill, setPrefill] = useState<ToolPrefill>(null);
+  const [prefillStatus, setPrefillStatus] = useState<PrefillStatus>("idle");
+
+  const statusLabel = useMemo(() => {
+    switch (prefillStatus) {
+      case "loading":
+        return "Syncing profile…";
+      case "loaded":
+        return "Profile synced";
+      case "skipped":
+        return "No saved profile";
+      case "error":
+        return "Sync unavailable";
+      default:
+        return "";
+    }
+  }, [prefillStatus]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let alive = true;
+
+    async function loadPrefill() {
+      setPrefillStatus("loading");
+
+      try {
+        const res = await fetch(PREFILL_ENDPOINT, {
+          method: "GET",
+          cache: "no-store",
+          headers: { Accept: "application/json" },
+          signal: controller.signal,
+        });
+
+        if (!alive) return;
+
+        // Not authorized / no profile / endpoint not deployed yet — don't block the tool.
+        if (!res.ok) {
+          setPrefillStatus("skipped");
+          return;
+        }
+
+        // Avoid exceptions if the endpoint returns non-JSON (edge cases).
+        const ct = res.headers.get("content-type") || "";
+        const isJson = ct.includes("application/json");
+
+        const json = isJson ? await res.json().catch(() => null) : null;
+
+        if (!alive) return;
+
+        // Accept:
+        // - { ok: true, ... }  -> load
+        // - { ... } (no ok)    -> load (backwards compatible)
+        // - { ok: false }      -> skip
+        if (isObject(json)) {
+          const hasOk = Object.prototype.hasOwnProperty.call(json, "ok");
+          const ok = hasOk ? Boolean((json as any).ok) : true;
+
+          if (ok) {
+            setPrefill(json);
+            setPrefillStatus("loaded");
+            return;
+          }
+        }
+
+        setPrefillStatus("skipped");
+      } catch (e: any) {
+        if (!alive || controller.signal.aborted) return;
+        setPrefillStatus("error");
+        // Silent fail: tool still works without prefill
+      }
+    }
+
+    loadPrefill();
+
+    return () => {
+      alive = false;
+      controller.abort();
+    };
+  }, []);
 
   return (
     <main ref={containerRef} className="relative text-white">
@@ -30,7 +122,12 @@ export default function BpSimulatorClient() {
 
       <div className="relative mx-auto max-w-6xl px-4 py-6 md:py-8">
         {/* Minimal tool toolbar */}
-        <div className="mb-5 flex items-center justify-end">
+        <div className="mb-5 flex items-center justify-end gap-3">
+          {/* Optional: tiny non-blocking indicator */}
+          {statusLabel ? (
+            <span className="text-xs text-white/45">{statusLabel}</span>
+          ) : null}
+
           <label className="inline-flex items-center gap-2 text-sm text-white/70">
             <input
               type="checkbox"
@@ -43,8 +140,7 @@ export default function BpSimulatorClient() {
         </div>
 
         {/* ✅ REAL SIMULATOR */}
-        {/* If BPClient supports it, pass showTips; otherwise keep as-is. */}
-        <BPClient />
+        <BPClient prefill={prefill} showTips={showTips} />
       </div>
     </main>
   );
