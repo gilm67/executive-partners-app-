@@ -6,7 +6,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VERSION = "ar-2026-01-15-d"; // 👈 bump
+const VERSION = "ar-2026-01-16-a"; // 👈 bump
 
 const RESEND_API_KEY = (process.env.RESEND_API_KEY || "").trim();
 
@@ -41,6 +41,9 @@ const PRIVATE_ADMIN_KEY = (process.env.PRIVATE_ADMIN_KEY || "").trim();
 const REQUEST_TYPE = "portability" as const; // "portability" | "bp" | "profile"
 const PROFILE_ID: string | null = null; // portability/bp use NULL profile_id in your schema
 
+// ✅ Where candidate should land after clicking the magic link
+const DEFAULT_NEXT = "/en/portability/tool";
+
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
@@ -60,7 +63,17 @@ function escapeHtml(s: string) {
     .replaceAll("'", "&#039;");
 }
 
-function buildApproveUrl(params: { requester_email: string; requester_org?: string | null }) {
+/**
+ * ✅ Approve button URL
+ * IMPORTANT:
+ * We add `next=/en/portability/tool`
+ * so the approve endpoint can email a magic link that lands on the tool directly.
+ */
+function buildApproveUrl(params: {
+  requester_email: string;
+  requester_org?: string | null;
+  next?: string;
+}) {
   if (!PRIVATE_ADMIN_KEY) return null;
 
   const url = new URL(`${CANONICAL}/api/private/admin/approve-access`);
@@ -69,6 +82,9 @@ function buildApproveUrl(params: { requester_email: string; requester_org?: stri
   url.searchParams.set("email", params.requester_email);
 
   if (params.requester_org) url.searchParams.set("org", params.requester_org);
+
+  // ✅ critical: tells approve endpoint what to embed in the magic link email
+  url.searchParams.set("next", params.next || DEFAULT_NEXT);
 
   // profile_id only for type="profile" (not for portability/bp)
   return url.toString();
@@ -113,6 +129,7 @@ function buildAdminEmail(payload: {
   const approveUrl = buildApproveUrl({
     requester_email: payload.email,
     requester_org: payload.role || null,
+    next: DEFAULT_NEXT, // ✅ added
   });
 
   const ctaBlock = approveUrl
@@ -200,12 +217,12 @@ export async function POST(req: Request) {
 
     /**
      * ✅ IMPORTANT:
-     * Because profile_id is NULL for portability/bp, relying on UPSERT with onConflict
-     * is unreliable (NULLs do not collide in Postgres unique indexes).
+     * Because profile_id is NULL for portability/bp, UPSERT on a unique index is unreliable
+     * (NULLs do not collide).
      *
-     * So we do:
-     * 1) find latest row for (request_type + email + profile_id NULL)
-     * 2) if exists and already approved => keep approved
+     * So:
+     * 1) find latest row
+     * 2) if latest is approved -> do not downgrade
      * 3) else insert a new pending row
      */
     const { data: latest, error: findErr } = await supabaseAdmin
@@ -225,11 +242,7 @@ export async function POST(req: Request) {
 
     const latestStatus = String(latest?.status || "").trim().toLowerCase();
 
-    if (latest?.id && latestStatus === "approved") {
-      // ✅ Do NOT downgrade approved -> pending
-      // We still send emails so you can see the request came again (optional).
-    } else {
-      // Insert a fresh pending row
+    if (!(latest?.id && latestStatus === "approved")) {
       const { error: insErr } = await supabaseAdmin
         .from("private_profile_access_requests_v2")
         .insert({
@@ -276,6 +289,7 @@ export async function POST(req: Request) {
         canonical: CANONICAL,
         request_type: REQUEST_TYPE,
         profile_id: PROFILE_ID,
+        approveNext: DEFAULT_NEXT,
         adminEmail: ADMIN_EMAIL,
         resendFrom: RESEND_FROM,
         hasPrivateAdminKey: !!PRIVATE_ADMIN_KEY,
