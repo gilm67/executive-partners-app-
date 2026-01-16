@@ -20,7 +20,7 @@ const NAV_RAW: NavItem[] = [
   { href: "/insights", label: "Insights" },
   {
     href: "/insights/private-banking-career-intelligence",
-    label: "Career Intelligence 2025",
+    label: "Career Intelligence 2026",
   },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
@@ -50,6 +50,12 @@ export default function TopNav() {
       ),
     [base]
   );
+
+  // ✅ Normalize pathname for active matching (strip /en)
+  const normalizedPath = useMemo(() => {
+    if (!pathname) return "";
+    return pathname.startsWith("/en/") ? pathname.slice(3) : pathname; // "/en/xyz" -> "/xyz"
+  }, [pathname]);
 
   // Body scroll lock when mobile menu is open
   useEffect(() => {
@@ -85,12 +91,16 @@ export default function TopNav() {
       ? "border-b border-white/10 bg-[#050814]/80 backdrop-blur supports-[backdrop-filter]:bg-[#050814]/65"
       : "bg-transparent");
 
-  const isActive = (href: string) => pathname === href || pathname?.startsWith(href + "/");
+  // ✅ Active check uses normalizedPath and unprefixed route
+  const isActive = (href: string) =>
+    normalizedPath === href || normalizedPath.startsWith(href + "/");
 
   const linkClasses = (active: boolean) =>
     [
       "relative rounded-full px-3 py-1.5 text-sm whitespace-nowrap transition-colors",
-      active ? "text-[#F5D778] bg-white/5" : "text-slate-200 hover:text-white hover:bg-white/5",
+      active
+        ? "text-[#F5D778] bg-white/5"
+        : "text-slate-200 hover:text-white hover:bg-white/5",
     ].join(" ");
 
   return (
@@ -159,7 +169,9 @@ export default function TopNav() {
               const active = isActive(item.href);
               const cls = [
                 "block rounded-md px-3 py-2 text-sm transition-colors",
-                active ? "bg-white/10 text-[#F5D778]" : "text-slate-200 hover:text-white hover:bg-white/5",
+                active
+                  ? "bg-white/10 text-[#F5D778]"
+                  : "text-slate-200 hover:text-white hover:bg-white/5",
               ].join(" ");
 
               return (
