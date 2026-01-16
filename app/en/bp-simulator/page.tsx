@@ -1,4 +1,4 @@
-// app/en/bp-simulator/page.tsx
+ // app/en/bp-simulator/page.tsx
 import type { Metadata } from "next";
 import React from "react";
 import { cookies } from "next/headers";
@@ -65,14 +65,22 @@ function BpTeaser() {
           Business Plan Simulator — Preview
         </h1>
         <p className="mt-2 max-w-3xl text-sm text-white/75 md:text-base">
-          A bank-style business case builder to stress-test portability assumptions
-          (NNM, ROA, revenues, margins) before you engage with a platform.
+          A bank-style business case builder to stress-test portability
+          assumptions (NNM, ROA, revenues, margins) before you engage with a
+          platform.
         </p>
       </div>
     </div>
   );
 }
 
+/**
+ * ✅ Uses the SAME approval source-of-truth as your endpoints:
+ * private_profile_access_requests_v2 with:
+ * - request_type = "bp"
+ * - profile_id IS NULL
+ * - latest status must be "approved"
+ */
 async function isBpApproved(): Promise<boolean> {
   try {
     const cookieStore = await cookies();
@@ -82,6 +90,7 @@ async function isBpApproved(): Promise<boolean> {
     const supabase = await getSupabaseAdmin();
     const nowIso = new Date().toISOString();
 
+    // 1) resolve session -> email
     const { data: session, error: sessErr } = await supabase
       .from("private_sessions")
       .select("email, expires_at, revoked_at")
@@ -95,37 +104,40 @@ async function isBpApproved(): Promise<boolean> {
     const email = String(session.email).trim().toLowerCase();
     if (!email) return false;
 
+    // 2) check latest approval row (v2 table)
     const { data: req, error: reqErr } = await supabase
-      .from("private_profile_access_requests")
-      .select("status")
-      .eq("requester_email", email)
+      .from("private_profile_access_requests_v2")
+      .select("status, created_at, reviewed_at")
       .eq("request_type", "bp")
+      .eq("requester_email", email)
+      .is("profile_id", null)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
 
     if (reqErr) return false;
 
-    return String(req?.status || "").toLowerCase() === "approved";
+    return String(req?.status || "").trim().toLowerCase() === "approved";
   } catch {
     return false;
   }
 }
 
 export default async function Page() {
+  // ✅ Candidate lands on /en/bp-simulator after magic link
   await requirePrivateSession(undefined, "/en/bp-simulator");
 
   const approved = await isBpApproved();
 
   return (
     <>
-      <BreadcrumbSchema 
+      <BreadcrumbSchema
         items={[
           { name: "Home", url: SITE },
-          { name: "Business Plan Simulator", url: `${SITE}/en/bp-simulator` }
+          { name: "Business Plan Simulator", url: `${SITE}/en/bp-simulator` },
         ]}
       />
-      
+
       <ServiceSchema
         name="Business Plan Simulator"
         description="Model AUM portability, revenue projections and net margin scenarios. AI-driven business plan simulator for private banking relationship managers to stress-test portability assumptions, model NNM, ROA, revenues, and margins."
@@ -150,4 +162,3 @@ export default async function Page() {
     </>
   );
 }
-
