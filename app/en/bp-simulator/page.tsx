@@ -1,4 +1,4 @@
- // app/en/bp-simulator/page.tsx
+// app/en/bp-simulator/page.tsx
 import type { Metadata } from "next";
 import React from "react";
 import { cookies } from "next/headers";
@@ -74,6 +74,34 @@ function BpTeaser() {
   );
 }
 
+function SecureHeader() {
+  return (
+    <div className="mb-6 rounded-2xl border border-white/10 bg-black/35 p-5 md:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="inline-flex items-center gap-2 rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-200 ring-1 ring-emerald-400/30">
+            🔒 Secure access
+          </p>
+          <h1 className="mt-3 text-2xl font-semibold tracking-tight md:text-3xl">
+            Business Plan Simulator
+          </h1>
+          <p className="mt-2 max-w-3xl text-sm text-white/70">
+            Build a bank-ready business case: NNM, ROA, revenues, margins, and
+            export-ready outputs.
+          </p>
+        </div>
+
+        <a
+          href="/private/auth/request?next=/en/bp-simulator"
+          className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
+        >
+          Request a fresh link
+        </a>
+      </div>
+    </div>
+  );
+}
+
 /**
  * ✅ Uses the SAME approval source-of-truth as your endpoints:
  * private_profile_access_requests_v2 with:
@@ -144,20 +172,26 @@ export default async function Page() {
       />
 
       <GateShell>
-        <BpTeaser />
-
-        <div className="mt-8">
-          {approved ? (
+        {approved ? (
+          <>
+            {/* ✅ Approved users: no teaser, just secure header + tool */}
+            <SecureHeader />
             <BpSimulatorClient />
-          ) : (
-            <AccessRequestGate
-              requestType="bp"
-              title="Business Plan Simulator — Access required"
-              description="Request access to unlock the full simulator."
-              refreshHref="/en/bp-simulator"
-            />
-          )}
-        </div>
+          </>
+        ) : (
+          <>
+            {/* ❌ Not approved: teaser + access gate */}
+            <BpTeaser />
+            <div className="mt-8">
+              <AccessRequestGate
+                requestType="bp"
+                title="Business Plan Simulator — Access required"
+                description="Request access to unlock the full simulator."
+                refreshHref="/en/bp-simulator"
+              />
+            </div>
+          </>
+        )}
       </GateShell>
     </>
   );
