@@ -7,6 +7,32 @@ export type LinkedInArticle = {
 };
 
 export const linkedInArticles: LinkedInArticle[] = [
+  /* =========================
+     JANUARY 2026 (NEW)
+  ========================= */
+
+  {
+    dateISO: "2026-01-14",
+    title: "Bonus Season Intelligence: Global Compensation Guide 2025",
+    summary:
+      "A global, fact-checked guide to bonus season mechanics across Switzerland, London, New York, Dubai, and Asia — including payout timing, leverage windows, and how senior private bankers should position themselves for 2025–2026.",
+    url: "https://www.linkedin.com/pulse/bonus-season-intelligence-global-compensation-guide-2025-m-chalem--widde/",
+    tags: ["Compensation", "Bonus Season", "Private Banking", "Global Markets"],
+  },
+
+  {
+    dateISO: "2026-01-13",
+    title: "Swiss Private Banking Compensation Blueprint 2025",
+    summary:
+      "A definitive breakdown of Swiss private banking compensation structures: base salaries, bonus mechanics, portability leverage, and why Switzerland remains structurally different from London, Dubai, and the US.",
+    url: "https://www.linkedin.com/pulse/swiss-private-banking-compensation-blueprint-2025-gil-m-chalem--dhvnf/",
+    tags: ["Switzerland", "Compensation", "Private Banking", "Recruitment"],
+  },
+
+  /* =========================
+     DECEMBER 2025
+  ========================= */
+
   {
     dateISO: "2025-12-30",
     title:
@@ -16,6 +42,7 @@ export const linkedInArticles: LinkedInArticle[] = [
     url: "https://www.linkedin.com/pulse/billionaire-ambitions-2025-what-ubss-new-report-uhnw-gil-m-chalem--nelle/",
     tags: ["UBS", "UHNW", "Wealth Management", "Switzerland", "Mobility"],
   },
+
   {
     dateISO: "2025-12-22",
     title: "Final Chapter of 2025: UBS at a Crossroads — Swiss Banking Faces…",
@@ -24,6 +51,7 @@ export const linkedInArticles: LinkedInArticle[] = [
     url: "https://www.linkedin.com/pulse/final-chapter-2025-ubs-crossroads-swiss-banking-faces-gil-m-chalem--lj27e/",
     tags: ["Switzerland", "UBS", "Private Banking"],
   },
+
   {
     dateISO: "2025-12-15",
     title: "Swiss Banking’s Pivotal Week: UBS Hits a 17-Year High While…",
@@ -36,8 +64,10 @@ export const linkedInArticles: LinkedInArticle[] = [
 
 /**
  * Always returns the list sorted newest → oldest by dateISO.
- * Safe helper to prevent ordering mistakes without changing your data.
+ * Centralised guardrail so ordering never breaks again.
  */
 export function getLinkedInArticlesSorted(): LinkedInArticle[] {
-  return [...linkedInArticles].sort((a, b) => b.dateISO.localeCompare(a.dateISO));
+  return [...linkedInArticles].sort((a, b) =>
+    b.dateISO.localeCompare(a.dateISO)
+  );
 }
