@@ -1,118 +1,98 @@
-// components/portability/Section1Profile.tsx
-'use client';
+// components/portability/store.ts
+import { create } from 'zustand';
 
-import { usePortability } from './store';
+export type PortabilityState = {
+  // Section 1: Basic Profile
+  candidate_name: string;
+  candidate_email: string;
+  years_experience: number;
+  current_bank: string;
+  current_role: string;
+  current_market: string;
+  
+  // Section 2: Book Composition
+  total_aum_m: number;
+  number_clients: number;
+  avg_client_size_m: number;
+  inherited_book_pct: number;
+  self_acquired_pct: number;
+  top_3_concentration_pct: number;
+  
+  // Section 3: Geography & Products
+  booking_centres: string[];
+  cross_border_licenses: number;
+  primary_products: string[];
+  advisory_aum_pct: number;
+  dpm_aum_pct: number;
+  lending_exposure_m: number;
+  alternatives_aum_pct: number;
+  
+  // Section 4: Client Relationships
+  avg_relationship_years: number;
+  clients_known_personally_pct: number;
+  multi_generational_pct: number;
+  client_referral_rate_pct: number;
+  kyc_portability: number;
+  
+  // Section 5: Results
+  score: number;
+  portability_dimensions: {
+    client_quality: number;
+    regulatory: number;
+    product_dependency: number;
+    relationship_strength: number;
+  };
+  risk_flags: string[];
+  recommendations: string[];
+};
 
-const MARKETS = [
-  'CH - Switzerland',
-  'UK - United Kingdom',
-  'UAE - Dubai',
-  'SG - Singapore',
-  'HK - Hong Kong',
-  'LU - Luxembourg',
-  'US - United States',
-];
+type Actions = {
+  set: (partial: Partial<PortabilityState>) => void;
+  reset: () => void;
+};
 
-export default function Section1Profile() {
-  const state = usePortability();
+const initialState: PortabilityState = {
+  candidate_name: '',
+  candidate_email: '',
+  years_experience: 0,
+  current_bank: '',
+  current_role: '',
+  current_market: 'CH',
+  
+  total_aum_m: 0,
+  number_clients: 0,
+  avg_client_size_m: 0,
+  inherited_book_pct: 0,
+  self_acquired_pct: 100,
+  top_3_concentration_pct: 0,
+  
+  booking_centres: [],
+  cross_border_licenses: 1,
+  primary_products: [],
+  advisory_aum_pct: 0,
+  dpm_aum_pct: 0,
+  lending_exposure_m: 0,
+  alternatives_aum_pct: 0,
+  
+  avg_relationship_years: 0,
+  clients_known_personally_pct: 0,
+  multi_generational_pct: 0,
+  client_referral_rate_pct: 0,
+  kyc_portability: 1,
+  
+  score: 0,
+  portability_dimensions: {
+    client_quality: 0,
+    regulatory: 0,
+    product_dependency: 0,
+    relationship_strength: 0,
+  },
+  risk_flags: [],
+  recommendations: [],
+};
 
-  return (
-    <section className="space-y-6">
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <h2 className="text-xl font-semibold text-white mb-4">
-          1️⃣ Basic Profile & Market Context
-        </h2>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          {/* Name */}
-          <div>
-            <label className="block text-sm font-medium text-white/90 mb-1">
-              Full Name
-            </label>
-            <input
-              type="text"
-              value={state.candidate_name}
-              onChange={(e) => state.set({ candidate_name: e.target.value })}
-              className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-white"
-              placeholder="John Doe"
-            />
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-white/90 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              value={state.candidate_email}
-              onChange={(e) => state.set({ candidate_email: e.target.value })}
-              className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-white"
-              placeholder="john@example.com"
-            />
-          </div>
-
-          {/* Current Bank */}
-          <div>
-            <label className="block text-sm font-medium text-white/90 mb-1">
-              Current Bank
-            </label>
-            <input
-              type="text"
-              value={state.current_bank}
-              onChange={(e) => state.set({ current_bank: e.target.value })}
-              className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-white"
-              placeholder="UBS, Credit Suisse, etc."
-            />
-          </div>
-
-          {/* Current Role */}
-          <div>
-            <label className="block text-sm font-medium text-white/90 mb-1">
-              Current Role
-            </label>
-            <input
-              type="text"
-              value={state.current_role}
-              onChange={(e) => state.set({ current_role: e.target.value })}
-              className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-white"
-              placeholder="Senior Relationship Manager"
-            />
-          </div>
-
-          {/* Years Experience */}
-          <div>
-            <label className="block text-sm font-medium text-white/90 mb-1">
-              Years in Private Banking
-            </label>
-            <input
-              type="number"
-              min="0"
-              value={state.years_experience || ''}
-              onChange={(e) => state.set({ years_experience: Number(e.target.value) })}
-              className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-white"
-            />
-          </div>
-
-          {/* Market */}
-          <div>
-            <label className="block text-sm font-medium text-white/90 mb-1">
-              Primary Market
-            </label>
-            <select
-              value={state.current_market}
-              onChange={(e) => state.set({ current_market: e.target.value })}
-              className="w-full rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-white"
-            >
-              {MARKETS.map((m) => (
-                <option key={m} value={m.split(' - ')[0]}>
-                  {m}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+export const usePortability = create<PortabilityState & Actions>((set) => ({
+  ...initialState,
+  set: (partial) => set((state) => ({ ...state, ...partial })),
+  reset: () => set(initialState),
+}));
