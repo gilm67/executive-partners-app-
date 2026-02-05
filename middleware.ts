@@ -77,20 +77,9 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  /**
-   * ✅ 2) LOCALE REDIRECT FOR ROOT /portability ONLY
-   * /portability -> /{locale}/portability
-   */
-  if (pathname === "/portability") {
-    const locale = detectLocale(req);
-    const url = req.nextUrl.clone();
-    url.pathname = `/${locale}/portability`;
-    return NextResponse.redirect(url);
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/private/:path*", "/portability"],
+  matcher: ["/private/:path*"],
 };
