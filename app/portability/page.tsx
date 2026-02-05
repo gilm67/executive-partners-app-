@@ -27,4 +27,4 @@ export const metadata: Metadata = {
 
 export default function PortabilityPage() {
   return <PortabilityClient />;
-}
+}// Force rebuild Thu Feb  5 21:11:32 CET 2026
