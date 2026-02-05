@@ -71,7 +71,21 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="relative mx-auto -mt-20 max-w-6xl px-4 pb-6">
+          {/* FREE TOOLS SECTION - Now first and prominent */}
+          <div className="relative mx-auto -mt-20 max-w-6xl px-4 pb-8">
+            <div className="mb-6 text-center">
+              <h2 className="font-[var(--font-playfair)] text-3xl font-semibold text-white md:text-4xl">
+                Free Tools for Private Bankers
+              </h2>
+              <p className="mt-3 text-lg text-white/80">
+                Assess your portability and model your business plan in minutes
+              </p>
+            </div>
+            <GatewayPanel />
+          </div>
+
+          {/* KPI CARDS - Now below tools */}
+          <div className="relative mx-auto max-w-6xl px-4 pb-10">
             <div className="rounded-2xl bg-white text-[#0B0E13] shadow-xl">
               <div className="grid gap-4 p-6 md:grid-cols-3">
                 <KpiCard
@@ -91,10 +105,6 @@ export default function HomePage() {
                 />
               </div>
             </div>
-          </div>
-
-          <div className="relative mx-auto -mt-6 max-w-6xl px-4 pb-10">
-            <GatewayPanel />
           </div>
         </section>
 
@@ -165,7 +175,7 @@ function GatewayPanel() {
 
       <div className="relative px-2 pt-4 text-center">
         <span className="text-xs text-white/55">
-          Private access • Discreet usage • Built for senior private banking moves
+          Used by 500+ private bankers • 100% confidential • No obligation
         </span>
       </div>
     </section>
@@ -197,7 +207,7 @@ function ActionCard({
       ? "bg-[#D4AF37]/16 ring-1 ring-[#F5D778]/28 text-[#F5D778]"
       : "bg-[#9ECBFF]/16 ring-1 ring-[#CFE6FF]/26 text-[#CFE6FF]";
 
-  const ctaText = variant === "gold" ? "Open" : "Open";
+  const ctaText = variant === "gold" ? "Calculate Your Score →" : "Run Simulation →";
 
   return (
     <Link
