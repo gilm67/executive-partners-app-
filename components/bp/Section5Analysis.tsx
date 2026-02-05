@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useBP } from './store';
+import EmailGateModal from '@/components/EmailGateModal';
 
 function Bar({ value }: { value: number }) {
   const pct = Math.max(0, Math.min(100, Math.round(value)));
@@ -29,6 +30,8 @@ export default function Section5Analysis() {
 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState<null | 'ok' | 'err'>(null);
+  const [showEmailGate, setShowEmailGate] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const pdfRef = useRef<HTMLDivElement>(null);
 
   // -------- Derived inputs --------
@@ -152,8 +155,44 @@ export default function Section5Analysis() {
     i.prospects
   ]);
 
-  // ---------- Save + PDF ----------
-  async function onSaveAndPDF() {
+  // ---------- Email gate handler ----------
+  const handleEmailSubmit = async (email: string) => {
+    const inputData = {
+      ...i,
+      score,
+      portability_score: portabilityScore,
+      verdict,
+    };
+
+    try {
+      const response = await fetch("/api/tool-leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          tool_name: "bp_simulator",
+          score,
+          input_data: inputData,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit");
+      }
+
+      setUserEmail(email);
+      setShowEmailGate(false);
+      
+      // Now trigger the actual save/PDF
+      setTimeout(() => performSaveAndPDF(), 100);
+    } catch (error) {
+      console.error("Error submitting email:", error);
+      throw error;
+    }
+  };
+
+  // ---------- Save + PDF (actual logic) ----------
+  async function performSaveAndPDF() {
     try {
       setSaving(true);
       setSaved(null);
@@ -173,7 +212,7 @@ export default function Section5Analysis() {
       if (!res.ok || json?.ok !== true) throw new Error(json?.message || `Save failed (${res.status})`);
       setSaved('ok');
 
-      // 2) Generate PDF snapshot of the analysis card(s)
+      // 2) Generate PDF snapshot
       const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
         import('html2canvas'),
         import('jspdf'),
@@ -187,12 +226,10 @@ export default function Section5Analysis() {
       const pageW = pdf.internal.pageSize.getWidth();
       const pageH = pdf.internal.pageSize.getHeight();
 
-      // Title
       pdf.setTextColor(30);
       pdf.setFontSize(14);
       pdf.text('Business Plan Simulator – Analysis Summary', 30, 40);
 
-      // Watermark fallback-safe
       const anyPdf = pdf as any;
       try {
         if (anyPdf.GState && anyPdf.setGState) {
@@ -213,7 +250,6 @@ export default function Section5Analysis() {
         pdf.text('Executive Partners', pageW / 2, pageH / 2, { align: 'center', angle: 30 });
       }
 
-      // Snapshot image
       const imgW = pageW - 60;
       const imgH = (canvas.height / canvas.width) * imgW;
       pdf.addImage(imgData, 'PNG', 30, 60, imgW, imgH, undefined, 'FAST');
@@ -227,6 +263,15 @@ export default function Section5Analysis() {
     } finally {
       setSaving(false);
     }
+  }
+
+  // ---------- Button handler (checks email gate first) ----------
+  function onSaveAndPDF() {
+    if (!userEmail) {
+      setShowEmailGate(true);
+      return;
+    }
+    performSaveAndPDF();
   }
 
   const contactHref = `${base}/contact?subject=${encodeURIComponent('BP Simulator – Request a Call')}`
@@ -323,7 +368,7 @@ export default function Section5Analysis() {
         </button>
 
         <Link
-          href={`${base}/contact?subject=${encodeURIComponent('BP Simulator – Request a Call')}`}
+          href={contactHref}
           className="inline-flex items-center rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
         >
           Request a Call
@@ -338,6 +383,14 @@ export default function Section5Analysis() {
         Recruiter note: Use portability ≥70 and 3Y NNM ≥100M as a strong signal for senior mandates; 40–70 needs
         onboarding/product fit review; &lt;40 only for niche coverage or team-play scenarios.
       </div>
+
+      <EmailGateModal
+        isOpen={showEmailGate}
+        onClose={() => setShowEmailGate(false)}
+        onSubmit={handleEmailSubmit}
+        score={score}
+        toolName="bp_simulator"
+      />
     </section>
   );
 }
