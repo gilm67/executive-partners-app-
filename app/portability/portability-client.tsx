@@ -1,4 +1,6 @@
 // app/portability/portability-client.tsx
 'use client';
 
-export { default } from '@/components/portability/PortabilityClient';
+import PortabilityClient from '@/components/portability/PortabilityClient';
+
+export default PortabilityClient;
