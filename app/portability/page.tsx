@@ -27,4 +27,4 @@ export const metadata: Metadata = {
 
 export default function PortabilityPage() {
   return <ClientWrapper />;
-}
+}// Updated Fri Feb  6 08:42:45 CET 2026
