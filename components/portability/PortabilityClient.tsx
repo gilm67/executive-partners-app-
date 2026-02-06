@@ -1,33 +1,11 @@
 // components/portability/PortabilityClient.tsx
 'use client';
 
-import dynamic from 'next/dynamic';
-
-// Dynamic imports for sections
-const Section1Profile = dynamic(() => import('./Section1Profile'), {
-  ssr: false,
-  loading: () => <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-white/70">Loading profile section...</div>,
-});
-
-const Section2Book = dynamic(() => import('./Section2Book'), {
-  ssr: false,
-  loading: () => <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-white/70">Loading book composition...</div>,
-});
-
-const Section3Geography = dynamic(() => import('./Section3Geography'), {
-  ssr: false,
-  loading: () => <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-white/70">Loading geography section...</div>,
-});
-
-const Section4Relationships = dynamic(() => import('./Section4Relationships'), {
-  ssr: false,
-  loading: () => <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-white/70">Loading relationships...</div>,
-});
-
-const Section5Analysis = dynamic(() => import('./Section5Analysis'), {
-  ssr: false,
-  loading: () => <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-white/70">Loading analysis...</div>,
-});
+import Section1Profile from './Section1Profile';
+import Section2Book from './Section2Book';
+import Section3Geography from './Section3Geography';
+import Section4Relationships from './Section4Relationships';
+import Section5Analysis from './Section5Analysis';
 
 export default function PortabilityClient() {
   return (
