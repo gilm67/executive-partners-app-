@@ -18,10 +18,12 @@ function formatDate(iso: string) {
 
 export default function InsightsPage() {
   const sorted = [...INSIGHTS].sort((a, b) => (a.date < b.date ? 1 : -1));
+
   const featured = sorted.filter((a) => a.featured).slice(0, 6);
 
-  const popular = [...INSIGHTS]
-    .filter((a) => typeof a.engagementScore === "number")
+  // ✅ IMPORTANT: exclude featured from "popular" to avoid duplicates
+  const popular = sorted
+    .filter((a) => !a.featured && typeof a.engagementScore === "number")
     .sort((a, b) => (b.engagementScore ?? 0) - (a.engagementScore ?? 0))
     .slice(0, 3);
 
@@ -99,13 +101,9 @@ export default function InsightsPage() {
                   <div className="text-xs text-white/60">Score: {a.engagementScore}</div>
                 </div>
 
-                <div className="mt-2 text-base font-semibold text-white">
-                  {a.title}
-                </div>
+                <div className="mt-2 text-base font-semibold text-white">{a.title}</div>
 
-                <div className="mt-3 text-sm text-white/70">
-                  {a.summary}
-                </div>
+                <div className="mt-3 text-sm text-white/70">{a.summary}</div>
 
                 <div className="mt-5 inline-flex items-center text-sm font-semibold text-[#D4AF37]">
                   Read on LinkedIn →
