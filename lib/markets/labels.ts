@@ -1,11 +1,8 @@
-// lib/markets/marketLabel.ts
+// lib/markets/labels.ts
+import type { MarketCode } from "./types";
 
-/**
- * Canonical market label resolver
- * Single source of truth across Insights, Portability, Jobs, PDFs
- */
-export const MARKET_LABELS = {
-  // Core booking hubs
+export const MARKET_LABELS: Record<MarketCode, string> = {
+  // Core hubs
   CH: "Switzerland",
   UK: "United Kingdom",
   US: "United States",
@@ -23,18 +20,18 @@ export const MARKET_LABELS = {
   BE: "Belgium",
   AT: "Austria",
   GR: "Greece",
-  BENELUX: "Benelux (Belgium, Netherlands, Luxembourg)",
   NORDICS: "Nordics (Sweden, Norway, Denmark, Finland)",
+  BENELUX: "Benelux",
   CEE: "Central & Eastern Europe",
 
-  // Middle East & Africa
+  // MEA
   MEA: "Middle East & Africa",
   SA: "Saudi Arabia",
   IL: "Israel",
   TR: "Turkey",
 
   // CIS
-  CIS: "CIS (Russia, Kazakhstan, Ukraine, etc.)",
+  CIS: "CIS (Russia, Kazakhstan, etc.)",
 
   // LATAM
   LATAM: "Latin America",
@@ -42,23 +39,18 @@ export const MARKET_LABELS = {
   AR: "Argentina",
   CL: "Chile",
   PA: "Panama",
-  CONOSUR: "Southern Cone (Cono Sur)",
+  CONOSUR: "Cono Sur (Southern Cone)",
 
   // Asia (regional)
-  ASIA: "Asia (Regional)",
+  Asia: "Asia (Regional)",
   CN: "China",
   IN: "India",
 
-  // Fallback / manual
+  // Manual / fallback
   OTHER: "Other market",
-} as const;
+};
 
-export type MarketCode = keyof typeof MARKET_LABELS;
-
-/**
- * Resolve market code to human-readable label
- */
-export function marketLabel(code?: string): string {
-  if (!code) return "";
-  return MARKET_LABELS[code as MarketCode] ?? code;
+export function marketLabel(code: string) {
+  // Safe runtime fallback (keeps UI stable even if a string slips in)
+  return (MARKET_LABELS as Record<string, string>)[code] ?? code;
 }
