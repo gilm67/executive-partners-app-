@@ -990,9 +990,13 @@ export default function Section5Analysis() {
         });
 
         // Save PDF
+        
         const bytes = await doc.save();
-        const blob = new Blob([bytes], { type: "application/pdf" });
-        const url = URL.createObjectURL(blob);
+
+// ✅ Convert Uint8Array -> ArrayBuffer (strict TS-safe)
+const ab = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+
+const blob = new Blob([ab], { type: "application/pdf" });
 
         const a = document.createElement("a");
         a.href = url;
