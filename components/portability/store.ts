@@ -17,6 +17,9 @@ export type PortabilityState = {
   current_role: string;
   current_market: string;
 
+  // ✅ NEW: manual market (only used when current_market === "OTHER")
+  current_market_other: string;
+
   // Section 2: Book Composition
   total_aum_m: number;
   number_clients: number;
@@ -65,6 +68,9 @@ function createInitialState(): PortabilityState {
     current_bank: "",
     current_role: "",
     current_market: "CH",
+
+    // ✅ NEW
+    current_market_other: "",
 
     total_aum_m: 0,
     number_clients: 0,
