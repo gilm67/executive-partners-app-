@@ -4,11 +4,8 @@ import ClientWrapper from "./ClientWrapper";
 
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  (process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "https://www.execpartners.ch");
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.execpartners.ch");
 
-export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
@@ -18,8 +15,7 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE}/portability` },
   openGraph: {
     title: "Portability Score Calculator | Executive Partners",
-    description:
-      "Assess your book's portability potential across markets in 5 minutes.",
+    description: "Assess your book's portability potential across markets in 5 minutes.",
     url: `${SITE}/portability`,
     images: [{ url: "/og.png" }],
   },
@@ -27,4 +23,4 @@ export const metadata: Metadata = {
 
 export default function PortabilityPage() {
   return <ClientWrapper />;
-}// Updated Fri Feb  6 08:42:45 CET 2026
+}
