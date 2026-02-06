@@ -117,7 +117,11 @@ export default function Section5Analysis() {
       (p) => p.includes("Private Equity") || p.includes("Hedge") || p.includes("Real Estate")
     );
 
-    if (hasLending && (total_aum_m ?? 0) > 0 && (lending_exposure_m ?? 0) > (total_aum_m ?? 0) * 0.3)
+    if (
+      hasLending &&
+      (total_aum_m ?? 0) > 0 &&
+      (lending_exposure_m ?? 0) > (total_aum_m ?? 0) * 0.3
+    )
       productDep -= 20;
     else if (hasLending) productDep += 10;
 
@@ -578,7 +582,14 @@ export default function Section5Analysis() {
 
         const drawCard = (x: number, yTop: number, w: number, h: number, accentBar?: boolean) => {
           const y = yTop - h;
-          page.drawRectangle({ x: x + 2, y: y - 2, width: w, height: h, color: rgb(0, 0, 0), opacity: 0.15 });
+          page.drawRectangle({
+            x: x + 2,
+            y: y - 2,
+            width: w,
+            height: h,
+            color: rgb(0, 0, 0),
+            opacity: 0.15,
+          });
           page.drawRectangle({ x, y, width: w, height: h, color: C_CARD, borderColor: C_BORDER, borderWidth: 0.5 });
           if (accentBar) page.drawRectangle({ x, y: yTop, width: w, height: 3, color: C_GOLD });
         };
@@ -643,7 +654,7 @@ export default function Section5Analysis() {
               y: 400,
               size: 72,
               font: fontB,
-              color: rgb(0.10, 0.12, 0.16),
+              color: rgb(0.1, 0.12, 0.16),
               rotate: degrees(25),
               opacity: 0.08,
             });
@@ -710,7 +721,13 @@ export default function Section5Analysis() {
         });
 
         drawText({ text: `${overallScore}`, x: heroX, y: heroY - 50, size: 56, bold: true, color: C_GOLD });
-        page.drawText("/100", { x: heroX + (overallScore >= 100 ? 85 : 70), y: heroY - 40, size: 18, font, color: C_MUTED });
+        page.drawText("/100", {
+          x: heroX + (overallScore >= 100 ? 85 : 70),
+          y: heroY - 40,
+          size: 18,
+          font,
+          color: C_MUTED,
+        });
 
         const interpY = heroY - 88;
         drawText({
@@ -947,7 +964,7 @@ export default function Section5Analysis() {
         const metrics: Array<[string, string]> = [
           ["Total AUM", `${total_aum_m ?? 0}M`],
           ["Number of Clients", `${number_clients ?? 0}`],
-          ["Avg Client Size", `${((avg_client_size_m ?? 0) as number).toFixed(1)}M`],
+          ["Avg Client Size", `${(avg_client_size_m ?? 0).toFixed(1)}M`],
           ["Self-Acquired Portfolio", `${self_acquired_pct ?? 0}%`],
           ["Top-3 Concentration", `${top_3_concentration_pct ?? 0}%`],
           ["Booking Centres", `${(booking_centres ?? []).join(", ") || "None"}`],
@@ -989,14 +1006,14 @@ export default function Section5Analysis() {
           lineHeight: 12,
         });
 
-        // Save PDF
-        
+        // ==================== SAVE PDF (FIXED FOR VERCEL TS) ====================
         const bytes = await doc.save();
 
-// ✅ Convert Uint8Array -> ArrayBuffer (strict TS-safe)
-const ab = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+        // ✅ TS-safe on Vercel: force a new Uint8Array backed by a normal ArrayBuffer
+        const u8 = new Uint8Array(bytes);
 
-const blob = new Blob([ab], { type: "application/pdf" });
+        const blob = new Blob([u8], { type: "application/pdf" });
+        const url = URL.createObjectURL(blob);
 
         const a = document.createElement("a");
         a.href = url;
