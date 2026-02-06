@@ -1,11 +1,6 @@
 // app/portability/page.tsx
 import type { Metadata } from "next";
-import dynamicImport from 'next/dynamic';
-
-const PortabilityClient = dynamicImport(
-  () => import('./portability-client'),
-  { ssr: false }
-);
+import ClientWrapper from "./ClientWrapper";
 
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -31,5 +26,5 @@ export const metadata: Metadata = {
 };
 
 export default function PortabilityPage() {
-  return <PortabilityClient />;
+  return <ClientWrapper />;
 }
