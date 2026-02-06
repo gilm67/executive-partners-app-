@@ -1,8 +1,8 @@
 // app/portability/page.tsx
 import type { Metadata } from "next";
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 
-const PortabilityClient = dynamic(
+const PortabilityClient = dynamicImport(
   () => import('./portability-client'),
   { ssr: false }
 );
