@@ -49,3 +49,5 @@ private_key.b64
 _backup/
 app/en/test-interest/tmp/pdf/
 tmp/pdf/
+app/api/portability/pdf/
+lib/pdf/
