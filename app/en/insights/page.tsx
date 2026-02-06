@@ -1,64 +1,64 @@
-// lib/markets/marketLabel.ts
+"use client";
 
-/**
- * Canonical market label resolver
- * Single source of truth across Insights, Portability, Jobs, PDFs
- */
-export const MARKET_LABELS = {
-  // Core booking hubs
-  CH: "Switzerland",
-  UK: "United Kingdom",
-  US: "United States",
-  UAE: "Dubai / United Arab Emirates",
-  SG: "Singapore",
-  HK: "Hong Kong",
-  LU: "Luxembourg",
+import Link from "next/link";
+import { INSIGHTS } from "./articles";
+import { marketLabel } from "@/lib/markets/marketLabel";
 
-  // Europe
-  DE: "Germany",
-  FR: "France",
-  IT: "Italy",
-  ES: "Spain",
-  NL: "Netherlands",
-  BE: "Belgium",
-  AT: "Austria",
-  GR: "Greece",
-  BENELUX: "Benelux (Belgium, Netherlands, Luxembourg)",
-  NORDICS: "Nordics (Sweden, Norway, Denmark, Finland)",
-  CEE: "Central & Eastern Europe",
+function formatDate(iso: string) {
+  try {
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(new Date(iso));
+  } catch {
+    return iso;
+  }
+}
 
-  // Middle East & Africa
-  MEA: "Middle East & Africa",
-  SA: "Saudi Arabia",
-  IL: "Israel",
-  TR: "Turkey",
+export default function InsightsPage() {
+  const items = [...INSIGHTS].sort((a, b) => (a.date < b.date ? 1 : -1));
 
-  // CIS
-  CIS: "CIS (Russia, Kazakhstan, Ukraine, etc.)",
+  return (
+    <main className="mx-auto w-full max-w-6xl px-4 py-14">
+      <div className="mb-10">
+        <h1 className="text-3xl font-semibold text-white">Insights</h1>
+        <p className="mt-2 max-w-2xl text-white/70">
+          Market intelligence and hiring signals across private banking and wealth management.
+        </p>
+      </div>
 
-  // LATAM
-  LATAM: "Latin America",
-  BR: "Brazil",
-  AR: "Argentina",
-  CL: "Chile",
-  PA: "Panama",
-  CONOSUR: "Southern Cone (Cono Sur)",
+      <div className="grid gap-6 md:grid-cols-3">
+        {items.map((a) => (
+          <Link
+            key={a.slug}
+            href={`/en/insights/${a.slug}`}
+            className="group rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:bg-white/10"
+          >
+            <div className="text-xs text-white/60">{formatDate(a.date)}</div>
 
-  // Asia (regional)
-  ASIA: "Asia (Regional)",
-  CN: "China",
-  IN: "India",
+            <div className="mt-2 text-lg font-semibold text-white">{a.title}</div>
 
-  // Fallback / manual
-  OTHER: "Other market",
-} as const;
+            <div className="mt-3 text-sm text-white/70">{a.summary}</div>
 
-export type MarketCode = keyof typeof MARKET_LABELS;
+            <div className="mt-4 flex flex-wrap gap-2">
+              {a.markets.map((m) => (
+                <span
+                  key={m}
+                  className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/75"
+                  title={marketLabel(m)}
+                >
+                  {marketLabel(m)}
+                </span>
+              ))}
+            </div>
 
-/**
- * Resolve market code to human-readable label
- */
-export function marketLabel(code?: string): string {
-  if (!code) return "";
-  return MARKET_LABELS[code as MarketCode] ?? code;
+            <div className="mt-6 inline-flex items-center text-sm font-semibold text-[#D4AF37]">
+              Read summary →
+            </div>
+          </Link>
+        ))}
+      </div>
+    </main>
+  );
 }
