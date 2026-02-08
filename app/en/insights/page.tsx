@@ -16,6 +16,25 @@ function formatDate(iso: string) {
   }
 }
 
+const P1_SUBTHEMES = [
+  { key: "Positioning", title: "Positioning", href: "/en/insights/subtheme/positioning" },
+  { key: "ScaleVsBoutique", title: "Scale vs Boutique", href: "/en/insights/subtheme/scale-vs-boutique" },
+  { key: "ROAPlatform", title: "ROA & Platform", href: "/en/insights/subtheme/roa-platform" },
+  { key: "M&ARestructuring", title: "M&A & Restructuring", href: "/en/insights/subtheme/m-a-restructuring" },
+] as const;
+
+const PILLARS = [
+  {
+    code: "P1",
+    title: "Pillar I — Strategy & Power Structures",
+    desc: "Competitive moves, operating models, ROA pressure, M&A realities.",
+    href: "/en/insights/pillar/p1",
+  },
+  { code: "P2", title: "Pillar II", desc: "Coming soon.", href: "/en/insights" },
+  { code: "P3", title: "Pillar III", desc: "Coming soon.", href: "/en/insights" },
+  { code: "P4", title: "Pillar IV", desc: "Coming soon.", href: "/en/insights" },
+] as const;
+
 export default function InsightsPage() {
   const sorted = [...INSIGHTS].sort((a, b) => (a.date < b.date ? 1 : -1));
 
@@ -34,6 +53,63 @@ export default function InsightsPage() {
         <p className="mt-2 max-w-2xl text-white/70">
           Market intelligence and hiring signals across private banking and wealth management.
         </p>
+
+        {/* ✅ NEW: Browse by Sub-Theme (Pillar I) */}
+        <div className="mt-8">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
+                Browse by Sub-Theme (Pillar I)
+              </p>
+              <h2 className="mt-2 text-lg font-semibold text-white">
+                Choose your angle
+              </h2>
+              <p className="mt-1 text-sm text-white/60">
+                Four strategic chapters. Built for binge-reading.
+              </p>
+            </div>
+
+            <Link
+              href="/en/insights/pillar/p1"
+              className="text-sm text-white/70 hover:text-white underline underline-offset-4"
+            >
+              Open Pillar I →
+            </Link>
+          </div>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {P1_SUBTHEMES.map((s) => (
+              <Link
+                key={s.href}
+                href={s.href}
+                className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
+              >
+                <div className="text-sm font-semibold text-white">{s.title}</div>
+                <div className="mt-2 text-xs text-white/60">Explore →</div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* ✅ NEW: Browse by Pillar */}
+        <div className="mt-10">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
+            Browse by Pillar
+          </p>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {PILLARS.map((p) => (
+              <Link
+                key={p.code}
+                href={p.href}
+                className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
+              >
+                <div className="text-sm font-semibold text-white">{p.title}</div>
+                <div className="mt-2 text-xs text-white/60">{p.desc}</div>
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Featured */}
