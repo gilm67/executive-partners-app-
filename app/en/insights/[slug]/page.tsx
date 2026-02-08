@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { INSIGHTS } from "../articles";
+import {
+  INSIGHTS,
+  type PillarCode,
+  type Pillar1SubTheme,
+} from "../articles";
 import { marketLabel } from "@/lib/markets/marketLabel";
-import { getRelatedInsights } from "@/lib/insights/related";
+import {
+  getRelatedInsights,
+  getInsightsBySubTheme,
+} from "@/lib/insights/related";
 
 type Props = { params: { slug: string } };
 
@@ -43,6 +50,52 @@ function cleanLinkedInUrl(url: string) {
   } catch {
     return url;
   }
+}
+
+// --- Pillar / Sub-theme helpers (typed defensively) ---
+function isPillar(x: unknown): x is PillarCode {
+  return x === "P1" || x === "P2" || x === "P3" || x === "P4";
+}
+
+function isP1SubTheme(x: unknown): x is Pillar1SubTheme {
+  return (
+    x === "Positioning" ||
+    x === "ScaleVsBoutique" ||
+    x === "ROAPlatform" ||
+    x === "M&ARestructuring"
+  );
+}
+
+function pillarHubHref(pillar?: unknown) {
+  if (!isPillar(pillar)) return "/en/insights";
+  return `/en/insights/pillar/${pillar.toLowerCase()}`;
+}
+
+function pillarLabel(pillar?: unknown) {
+  if (!isPillar(pillar)) return null;
+
+  if (pillar === "P1") return "Pillar I — Strategy & Power Structures";
+  if (pillar === "P2") return "Pillar II";
+  if (pillar === "P3") return "Pillar III";
+  if (pillar === "P4") return "Pillar IV";
+  return null;
+}
+
+function subThemeLabel(subTheme?: unknown) {
+  if (!subTheme) return null;
+
+  // Only map P1 sub-themes for now (safe fallback for future pillars)
+  if (isP1SubTheme(subTheme)) {
+    const map: Record<Pillar1SubTheme, string> = {
+      Positioning: "Positioning",
+      ScaleVsBoutique: "Scale vs Boutique",
+      ROAPlatform: "ROA & Platform",
+      "M&ARestructuring": "M&A & Restructuring",
+    };
+    return map[subTheme];
+  }
+
+  return typeof subTheme === "string" ? subTheme : null;
 }
 
 /**
@@ -89,8 +142,20 @@ export default function InsightDetailPage({ params }: Props) {
   const article = INSIGHTS.find((a) => a.slug === params.slug);
   if (!article) return notFound();
 
-  // ✅ centralised related logic (pillar > markets > year)
+  // ✅ centralised related logic (pillar/sub-theme > markets > recency)
   const related = getRelatedInsights(article, 5);
+
+  // ✅ strict: more on same pillar + subTheme (no fallback)
+  const moreOnSubThemeRaw = getInsightsBySubTheme(article, 8);
+  const moreOnSubTheme = moreOnSubThemeRaw
+    .slice()
+    .sort((a, b) => {
+      const ae = typeof a.engagementScore === "number" ? a.engagementScore : 0;
+      const be = typeof b.engagementScore === "number" ? b.engagementScore : 0;
+      if (be !== ae) return be - ae;
+      return Date.parse(b.date) - Date.parse(a.date);
+    })
+    .slice(0, 4);
 
   const pageUrl = `${SITE}/en/insights/${article.slug}`;
 
@@ -117,6 +182,14 @@ export default function InsightDetailPage({ params }: Props) {
     ],
   };
 
+  const keywords =
+    (article.keywords && article.keywords.length
+      ? [...article.keywords]
+      : article.markets.map((m) => marketLabel(m))) || [];
+
+  const pillarText = article.pillar ? pillarLabel(article.pillar) ?? article.pillar : null;
+  const subThemeText = article.subTheme ? subThemeLabel(article.subTheme) ?? article.subTheme : null;
+
   /**
    * ✅ JSON-LD Article (strong SEO signal)
    */
@@ -137,11 +210,15 @@ export default function InsightDetailPage({ params }: Props) {
     mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
     url: pageUrl,
     articleSection: "Private Wealth Pulse",
-    keywords: article.markets.map((m) => marketLabel(m)).join(", "),
-    about: article.markets.map((m) => ({
-      "@type": "Thing",
-      name: marketLabel(m),
-    })),
+    keywords: keywords.join(", "),
+    about: [
+      ...article.markets.map((m) => ({
+        "@type": "Thing",
+        name: marketLabel(m),
+      })),
+      ...(pillarText ? [{ "@type": "Thing", name: pillarText }] : []),
+      ...(subThemeText ? [{ "@type": "Thing", name: subThemeText }] : []),
+    ],
   };
 
   /**
@@ -184,6 +261,9 @@ export default function InsightDetailPage({ params }: Props) {
         }
       : null;
 
+  const pillar = article.pillar;
+  const subTheme = article.subTheme;
+
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-14">
       {/* ✅ JSON-LD */}
@@ -224,9 +304,28 @@ export default function InsightDetailPage({ params }: Props) {
 
       <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6">
         <div className="text-xs text-white/60">{formatDate(article.date)}</div>
+
         <h1 className="mt-2 text-2xl font-semibold text-white">
           {article.title}
         </h1>
+
+        {/* ✅ Pillar / Sub-theme (internal linking boost) */}
+        {isPillar(pillar) ? (
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Link
+              href={pillarHubHref(pillar)}
+              className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold text-white/80 hover:bg-white/10"
+            >
+              {pillarLabel(pillar) ?? pillar}
+            </Link>
+
+            {subTheme ? (
+              <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] text-white/70">
+                {subThemeLabel(subTheme) ?? subTheme}
+              </span>
+            ) : null}
+          </div>
+        ) : null}
 
         <div className="mt-4 flex flex-wrap gap-2">
           {article.markets.map((m) => (
@@ -291,13 +390,98 @@ export default function InsightDetailPage({ params }: Props) {
                 className="rounded-2xl border border-white/10 bg-white/5 p-5"
               >
                 <div className="flex items-center justify-between gap-3">
-                  <div className="text-xs text-white/60">{formatDate(r.date)}</div>
+                  <div className="text-xs text-white/60">
+                    {formatDate(r.date)}
+                  </div>
 
-                  {/* ✅ Debug / UX badge (keep for now, remove later if you want) */}
                   {r.pillar ? (
                     <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
                       {r.pillar}
-                      {r.subTheme ? ` · ${r.subTheme}` : ""}
+                      {r.subTheme ? ` · ${subThemeLabel(r.subTheme) ?? r.subTheme}` : ""}
+                    </span>
+                  ) : null}
+                </div>
+
+                <h3 className="mt-2 text-base font-semibold text-white leading-snug">
+                  <Link
+                    href={`/en/insights/${r.slug}`}
+                    className="hover:underline"
+                  >
+                    {r.title}
+                  </Link>
+                </h3>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {r.markets.slice(0, 3).map((m) => (
+                    <span
+                      key={m}
+                      className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[11px] text-white/70"
+                    >
+                      {marketLabel(m)}
+                    </span>
+                  ))}
+                </div>
+
+                {r.summary ? (
+                  <p className="mt-3 line-clamp-2 text-sm text-white/75">
+                    {r.summary}
+                  </p>
+                ) : null}
+
+                <div className="mt-4">
+                  <Link
+                    href={`/en/insights/${r.slug}`}
+                    className="text-sm font-semibold text-white/80 hover:text-white underline underline-offset-4"
+                  >
+                    Read →
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {/* ✅ MORE ON THIS SUB-THEME (deep internal linking) */}
+      {subTheme && moreOnSubTheme.length ? (
+        <section className="mt-10">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
+                More on this sub-theme
+              </p>
+              <h2 className="mt-2 text-lg font-semibold text-white">
+                More on “{subThemeLabel(subTheme) ?? subTheme}”
+              </h2>
+              <p className="mt-1 text-sm text-white/60">
+                Same pillar + sub-theme, ranked by engagement (then recency).
+              </p>
+            </div>
+
+            {isPillar(pillar) ? (
+              <Link
+                href={pillarHubHref(pillar)}
+                className="text-sm text-white/70 hover:text-white underline underline-offset-4"
+              >
+                Browse Pillar →
+              </Link>
+            ) : null}
+          </div>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            {moreOnSubTheme.map((r) => (
+              <article
+                key={r.slug}
+                className="rounded-2xl border border-white/10 bg-white/5 p-5"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-xs text-white/60">
+                    {formatDate(r.date)}
+                  </div>
+
+                  {r.engagementScore ? (
+                    <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
+                      Score {r.engagementScore}
                     </span>
                   ) : null}
                 </div>
