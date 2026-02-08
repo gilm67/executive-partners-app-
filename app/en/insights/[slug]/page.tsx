@@ -89,7 +89,7 @@ export default function InsightDetailPage({ params }: Props) {
   const article = INSIGHTS.find((a) => a.slug === params.slug);
   if (!article) return notFound();
 
-  // ✅ centralised related logic
+  // ✅ centralised related logic (pillar > markets > year)
   const related = getRelatedInsights(article, 5);
 
   const pageUrl = `${SITE}/en/insights/${article.slug}`;
@@ -126,7 +126,6 @@ export default function InsightDetailPage({ params }: Props) {
     headline: article.title,
     description: article.summary,
     datePublished: article.date,
-    // dateModified: article.date, // keep if you don't track modifications yet
     inLanguage: "en",
     author: { "@type": "Person", name: "Gil M. Chalem" },
     publisher: {
@@ -147,7 +146,6 @@ export default function InsightDetailPage({ params }: Props) {
 
   /**
    * ✅ FAQ Schema (only on selected pillar articles)
-   * Add more slugs over time.
    */
   const faqJsonLd =
     article.slug === "investment-advisor-replacing-rm"
@@ -274,7 +272,7 @@ export default function InsightDetailPage({ params }: Props) {
                 Related Insights
               </h2>
               <p className="mt-1 text-sm text-white/60">
-                Suggested by market overlap (then year).
+                Suggested by pillar/sub-theme, then market overlap, then recency.
               </p>
             </div>
 
@@ -292,8 +290,16 @@ export default function InsightDetailPage({ params }: Props) {
                 key={r.slug}
                 className="rounded-2xl border border-white/10 bg-white/5 p-5"
               >
-                <div className="text-xs text-white/60">
-                  {formatDate(r.date)}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-xs text-white/60">{formatDate(r.date)}</div>
+
+                  {/* ✅ Debug / UX badge (keep for now, remove later if you want) */}
+                  {r.pillar ? (
+                    <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
+                      {r.pillar}
+                      {r.subTheme ? ` · ${r.subTheme}` : ""}
+                    </span>
+                  ) : null}
                 </div>
 
                 <h3 className="mt-2 text-base font-semibold text-white leading-snug">
