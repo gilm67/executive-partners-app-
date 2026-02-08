@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { INSIGHTS } from "@/app/en/insights/articles";
 import { subThemeToSlug } from "@/lib/insights/subTheme";
+import StickyToc from "./StickyToc";
 
 function formatDate(iso: string) {
   try {
@@ -47,11 +48,11 @@ const SUBTHEME_ORDER = [
 
 const TOC = [
   { id: "chapters", label: "Browse by Sub-Theme" },
+  { id: "all-articles", label: "All articles" },
   { id: "positioning", label: "Positioning" },
   { id: "scale-vs-boutique", label: "Scale vs Boutique" },
   { id: "roa-platform", label: "ROA & Platform" },
   { id: "m-a-restructuring", label: "M&A & Restructuring" },
-  { id: "all-articles", label: "All articles" },
 ] as const;
 
 function sectionIdForSubTheme(key: (typeof SUBTHEME_ORDER)[number]) {
@@ -71,7 +72,7 @@ export default function PillarP1Page() {
     return acc;
   }, {});
 
-  // sort each group by date desc (stable UI)
+  // sort each group by date desc
   for (const k of Object.keys(groups)) {
     groups[k] = groups[k].slice().sort((a, b) => safeMs(b.date) - safeMs(a.date));
   }
@@ -100,7 +101,7 @@ export default function PillarP1Page() {
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-14">
       <div className="grid gap-10 lg:grid-cols-[1fr_320px] lg:items-start">
-        {/* LEFT: content */}
+        {/* LEFT */}
         <div>
           <nav className="text-xs text-white/60">
             <Link href="/en" className="hover:text-white">
@@ -142,7 +143,7 @@ export default function PillarP1Page() {
             </div>
           </div>
 
-          {/* ✅ Browse by Sub-Theme (chapters) */}
+          {/* Chapters */}
           <section id="chapters" className="mt-10 scroll-mt-28">
             <div className="flex items-end justify-between gap-4">
               <div>
@@ -162,14 +163,11 @@ export default function PillarP1Page() {
                 const label = SUBTHEME_LABEL[key];
                 if (!meta.count) return null;
 
-                const anchorId = sectionIdForSubTheme(key);
-
                 return (
                   <Link
                     key={key}
-                    id={anchorId}
                     href={meta.href}
-                    className="group scroll-mt-28 rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:bg-white/10"
+                    className="group rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:bg-white/10"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
@@ -197,89 +195,91 @@ export default function PillarP1Page() {
             </div>
           </section>
 
-          {/* Existing grouped sections */}
-          <section id="all-articles" className="mt-10 grid gap-6 scroll-mt-28">
-            {orderedKeys.map((key) => {
-              const meta = SUBTHEME_LABEL[key] || {
-                title: key,
-                desc: "Articles in this sub-theme.",
-              };
-              const items = groups[key] || [];
+          {/* All articles */}
+          <section id="all-articles" className="mt-10 scroll-mt-28">
+            <div className="mb-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
+                Articles
+              </p>
+              <h2 className="mt-2 text-lg font-semibold text-white">All articles</h2>
+            </div>
 
-              const hubHref =
-                key !== "Unclassified"
-                  ? `/en/insights/subtheme/${subThemeToSlug(key as any)}`
-                  : null;
+            <div className="grid gap-6">
+              {orderedKeys.map((key) => {
+                const meta = SUBTHEME_LABEL[key] || {
+                  title: key,
+                  desc: "Articles in this sub-theme.",
+                };
+                const items = groups[key] || [];
+                const hubHref =
+                  key !== "Unclassified"
+                    ? `/en/insights/subtheme/${subThemeToSlug(key as any)}`
+                    : null;
 
-              return (
-                <div key={key} className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex flex-col gap-1">
-                      <h2 className="text-lg font-semibold text-white">{meta.title}</h2>
-                      <p className="text-sm text-white/60">{meta.desc}</p>
+                // ✅ anchor for TOC highlight
+                const sectionId =
+                  key === "Unclassified" ? "unclassified" : sectionIdForSubTheme(key as any);
+
+                return (
+                  <section
+                    key={key}
+                    id={sectionId}
+                    className="scroll-mt-28 rounded-2xl border border-white/10 bg-white/5 p-6"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex flex-col gap-1">
+                        <h3 className="text-lg font-semibold text-white">{meta.title}</h3>
+                        <p className="text-sm text-white/60">{meta.desc}</p>
+                      </div>
+
+                      {hubHref ? (
+                        <Link
+                          href={hubHref}
+                          className="shrink-0 text-sm font-semibold text-white/70 hover:text-white underline underline-offset-4"
+                        >
+                          View all →
+                        </Link>
+                      ) : null}
                     </div>
 
-                    {hubHref ? (
-                      <Link
-                        href={hubHref}
-                        className="shrink-0 text-sm font-semibold text-white/70 hover:text-white underline underline-offset-4"
-                      >
-                        View all →
-                      </Link>
-                    ) : null}
-                  </div>
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      {items.map((a) => (
+                        <article
+                          key={a.slug}
+                          className="rounded-2xl border border-white/10 bg-white/5 p-5"
+                        >
+                          <div className="text-xs text-white/60">{formatDate(a.date)}</div>
 
-                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                    {items.map((a) => (
-                      <article
-                        key={a.slug}
-                        className="rounded-2xl border border-white/10 bg-white/5 p-5"
-                      >
-                        <div className="text-xs text-white/60">{formatDate(a.date)}</div>
+                          <h4 className="mt-2 text-base font-semibold text-white leading-snug">
+                            <Link href={`/en/insights/${a.slug}`} className="hover:underline">
+                              {a.title}
+                            </Link>
+                          </h4>
 
-                        <h3 className="mt-2 text-base font-semibold text-white leading-snug">
-                          <Link href={`/en/insights/${a.slug}`} className="hover:underline">
-                            {a.title}
-                          </Link>
-                        </h3>
+                          <p className="mt-2 line-clamp-2 text-sm text-white/75">{a.summary}</p>
 
-                        <p className="mt-2 line-clamp-2 text-sm text-white/75">{a.summary}</p>
-
-                        <div className="mt-4">
-                          <Link
-                            href={`/en/insights/${a.slug}`}
-                            className="text-sm font-semibold text-white/80 hover:text-white underline underline-offset-4"
-                          >
-                            Read →
-                          </Link>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
+                          <div className="mt-4">
+                            <Link
+                              href={`/en/insights/${a.slug}`}
+                              className="text-sm font-semibold text-white/80 hover:text-white underline underline-offset-4"
+                            >
+                              Read →
+                            </Link>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
           </section>
         </div>
 
         {/* RIGHT: sticky TOC (desktop only) */}
         <aside className="hidden lg:block">
           <div className="sticky top-24 rounded-2xl border border-white/10 bg-white/5 p-5">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
-              Table of contents
-            </div>
-
-            <nav className="mt-4 flex flex-col gap-2">
-              {TOC.map((it) => (
-                <a
-                  key={it.id}
-                  href={`#${it.id}`}
-                  className="rounded-lg px-2 py-1.5 text-sm text-white/70 hover:bg-white/10 hover:text-white"
-                >
-                  {it.label}
-                </a>
-              ))}
-            </nav>
+            <StickyToc items={TOC} />
 
             <div className="mt-5 border-t border-white/10 pt-4">
               <Link
