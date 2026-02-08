@@ -20,7 +20,7 @@ function safeMs(iso?: string) {
   return Number.isNaN(t) ? 0 : t;
 }
 
-const SUBTHEME_LABEL: Record<string, { title: string; desc: string }> = {
+const SUBTHEME_LABEL = {
   Positioning: {
     title: "Positioning",
     desc: "Who is winning, who is losing, and why (banks, competitive moves).",
@@ -37,7 +37,7 @@ const SUBTHEME_LABEL: Record<string, { title: string; desc: string }> = {
     title: "M&A & Restructuring",
     desc: "M&A, integration failures, silent restructurings.",
   },
-};
+} as const;
 
 const SUBTHEME_ORDER = [
   "Positioning",
@@ -48,11 +48,11 @@ const SUBTHEME_ORDER = [
 
 const TOC = [
   { id: "chapters", label: "Browse by Sub-Theme" },
-  { id: "all-articles", label: "All articles" },
   { id: "positioning", label: "Positioning" },
   { id: "scale-vs-boutique", label: "Scale vs Boutique" },
   { id: "roa-platform", label: "ROA & Platform" },
   { id: "m-a-restructuring", label: "M&A & Restructuring" },
+  { id: "all-articles", label: "All articles" },
 ] as const;
 
 function sectionIdForSubTheme(key: (typeof SUBTHEME_ORDER)[number]) {
@@ -63,9 +63,9 @@ function sectionIdForSubTheme(key: (typeof SUBTHEME_ORDER)[number]) {
 }
 
 export default function PillarP1Page() {
-  const p1 = INSIGHTS.filter((a) => a.pillar === "P1").slice();
+  const p1 = INSIGHTS.filter((a) => a.pillar === "P1");
 
-  // group by subTheme
+  // group by subTheme (including Unclassified)
   const groups = p1.reduce<Record<string, typeof p1>>((acc, a) => {
     const key = a.subTheme || "Unclassified";
     (acc[key] ||= []).push(a);
@@ -82,12 +82,13 @@ export default function PillarP1Page() {
     SUBTHEME_ORDER.map((key) => {
       const items = groups[key] || [];
       const lastUpdated = items[0]?.date;
+
       return [
         key,
         {
           count: items.length,
           lastUpdated,
-          href: `/en/insights/subtheme/${subThemeToSlug(key as any)}`,
+          href: `/en/insights/subtheme/${subThemeToSlug(key)}`,
         },
       ];
     })
@@ -96,7 +97,7 @@ export default function PillarP1Page() {
     { count: number; lastUpdated?: string; href: string }
   >;
 
-  const orderedKeys = [...SUBTHEME_ORDER, "Unclassified"].filter((k) => groups[k]?.length);
+  const orderedKeys = [...SUBTHEME_ORDER, "Unclassified"].filter((k) => (groups[k] || []).length);
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-14">
@@ -206,19 +207,20 @@ export default function PillarP1Page() {
 
             <div className="grid gap-6">
               {orderedKeys.map((key) => {
-                const meta = SUBTHEME_LABEL[key] || {
-                  title: key,
-                  desc: "Articles in this sub-theme.",
-                };
-                const items = groups[key] || [];
-                const hubHref =
-                  key !== "Unclassified"
-                    ? `/en/insights/subtheme/${subThemeToSlug(key as any)}`
-                    : null;
+                const meta =
+                  key in SUBTHEME_LABEL
+                    ? SUBTHEME_LABEL[key as keyof typeof SUBTHEME_LABEL]
+                    : { title: key, desc: "Articles in this sub-theme." };
 
-                // ✅ anchor for TOC highlight
+                const items = groups[key] || [];
+
+                const hubHref =
+                  key !== "Unclassified" ? `/en/insights/subtheme/${subThemeToSlug(key as any)}` : null;
+
                 const sectionId =
-                  key === "Unclassified" ? "unclassified" : sectionIdForSubTheme(key as any);
+                  key === "Unclassified"
+                    ? "unclassified"
+                    : sectionIdForSubTheme(key as (typeof SUBTHEME_ORDER)[number]);
 
                 return (
                   <section
