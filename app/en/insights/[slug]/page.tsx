@@ -1,16 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  INSIGHTS,
-  type PillarCode,
-  type Pillar1SubTheme,
-} from "../articles";
+import { INSIGHTS, type PillarCode, type Pillar1SubTheme } from "../articles";
 import { marketLabel } from "@/lib/markets/marketLabel";
-import {
-  getRelatedInsights,
-  getInsightsBySubTheme,
-} from "@/lib/insights/related";
+import { getRelatedInsights, getInsightsBySubTheme } from "@/lib/insights/related";
 
 type Props = { params: { slug: string } };
 
@@ -84,7 +77,6 @@ function pillarLabel(pillar?: unknown) {
 function subThemeLabel(subTheme?: unknown) {
   if (!subTheme) return null;
 
-  // Only map P1 sub-themes for now (safe fallback for future pillars)
   if (isP1SubTheme(subTheme)) {
     const map: Record<Pillar1SubTheme, string> = {
       Positioning: "Positioning",
@@ -96,6 +88,28 @@ function subThemeLabel(subTheme?: unknown) {
   }
 
   return typeof subTheme === "string" ? subTheme : null;
+}
+
+/**
+ * Sub-theme hub slug (URL-safe)
+ * Example: ROAPlatform -> roa-platform
+ */
+function subThemeSlug(subTheme?: unknown) {
+  if (!isP1SubTheme(subTheme)) return null;
+
+  const map: Record<Pillar1SubTheme, string> = {
+    Positioning: "positioning",
+    ScaleVsBoutique: "scale-vs-boutique",
+    ROAPlatform: "roa-platform",
+    "M&ARestructuring": "m-a-restructuring",
+  };
+  return map[subTheme];
+}
+
+function subThemeHubHref(subTheme?: unknown) {
+  const slug = subThemeSlug(subTheme);
+  if (!slug) return null;
+  return `/en/insights/subtheme/${slug}`;
 }
 
 /**
@@ -167,18 +181,8 @@ export default function InsightDetailPage({ params }: Props) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/en` },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Insights",
-        item: `${SITE}/en/insights`,
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: article.title,
-        item: pageUrl,
-      },
+      { "@type": "ListItem", position: 2, name: "Insights", item: `${SITE}/en/insights` },
+      { "@type": "ListItem", position: 3, name: article.title, item: pageUrl },
     ],
   };
 
@@ -212,10 +216,7 @@ export default function InsightDetailPage({ params }: Props) {
     articleSection: "Private Wealth Pulse",
     keywords: keywords.join(", "),
     about: [
-      ...article.markets.map((m) => ({
-        "@type": "Thing",
-        name: marketLabel(m),
-      })),
+      ...article.markets.map((m) => ({ "@type": "Thing", name: marketLabel(m) })),
       ...(pillarText ? [{ "@type": "Thing", name: pillarText }] : []),
       ...(subThemeText ? [{ "@type": "Thing", name: subThemeText }] : []),
     ],
@@ -263,6 +264,7 @@ export default function InsightDetailPage({ params }: Props) {
 
   const pillar = article.pillar;
   const subTheme = article.subTheme;
+  const subThemeHub = subThemeHubHref(subTheme);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-14">
@@ -305,9 +307,7 @@ export default function InsightDetailPage({ params }: Props) {
       <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6">
         <div className="text-xs text-white/60">{formatDate(article.date)}</div>
 
-        <h1 className="mt-2 text-2xl font-semibold text-white">
-          {article.title}
-        </h1>
+        <h1 className="mt-2 text-2xl font-semibold text-white">{article.title}</h1>
 
         {/* ✅ Pillar / Sub-theme (internal linking boost) */}
         {isPillar(pillar) ? (
@@ -319,9 +319,17 @@ export default function InsightDetailPage({ params }: Props) {
               {pillarLabel(pillar) ?? pillar}
             </Link>
 
-            {subTheme ? (
+            {/* ✅ subTheme as link to hub (only if mapped) */}
+            {subThemeHub ? (
+              <Link
+                href={subThemeHub}
+                className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] text-white/70 hover:bg-white/10"
+              >
+                {subThemeLabel(subTheme) ?? String(subTheme)}
+              </Link>
+            ) : subTheme ? (
               <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] text-white/70">
-                {subThemeLabel(subTheme) ?? subTheme}
+                {subThemeLabel(subTheme) ?? String(subTheme)}
               </span>
             ) : null}
           </div>
@@ -367,9 +375,7 @@ export default function InsightDetailPage({ params }: Props) {
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
                 Keep reading
               </p>
-              <h2 className="mt-2 text-lg font-semibold text-white">
-                Related Insights
-              </h2>
+              <h2 className="mt-2 text-lg font-semibold text-white">Related Insights</h2>
               <p className="mt-1 text-sm text-white/60">
                 Suggested by pillar/sub-theme, then market overlap, then recency.
               </p>
@@ -385,14 +391,9 @@ export default function InsightDetailPage({ params }: Props) {
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {related.map((r) => (
-              <article
-                key={r.slug}
-                className="rounded-2xl border border-white/10 bg-white/5 p-5"
-              >
+              <article key={r.slug} className="rounded-2xl border border-white/10 bg-white/5 p-5">
                 <div className="flex items-center justify-between gap-3">
-                  <div className="text-xs text-white/60">
-                    {formatDate(r.date)}
-                  </div>
+                  <div className="text-xs text-white/60">{formatDate(r.date)}</div>
 
                   {r.pillar ? (
                     <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
@@ -403,10 +404,7 @@ export default function InsightDetailPage({ params }: Props) {
                 </div>
 
                 <h3 className="mt-2 text-base font-semibold text-white leading-snug">
-                  <Link
-                    href={`/en/insights/${r.slug}`}
-                    className="hover:underline"
-                  >
+                  <Link href={`/en/insights/${r.slug}`} className="hover:underline">
                     {r.title}
                   </Link>
                 </h3>
@@ -423,9 +421,7 @@ export default function InsightDetailPage({ params }: Props) {
                 </div>
 
                 {r.summary ? (
-                  <p className="mt-3 line-clamp-2 text-sm text-white/75">
-                    {r.summary}
-                  </p>
+                  <p className="mt-3 line-clamp-2 text-sm text-white/75">{r.summary}</p>
                 ) : null}
 
                 <div className="mt-4">
@@ -451,14 +447,21 @@ export default function InsightDetailPage({ params }: Props) {
                 More on this sub-theme
               </p>
               <h2 className="mt-2 text-lg font-semibold text-white">
-                More on “{subThemeLabel(subTheme) ?? subTheme}”
+                More on “{subThemeLabel(subTheme) ?? String(subTheme)}”
               </h2>
               <p className="mt-1 text-sm text-white/60">
                 Same pillar + sub-theme, ranked by engagement (then recency).
               </p>
             </div>
 
-            {isPillar(pillar) ? (
+            {subThemeHub ? (
+              <Link
+                href={subThemeHub}
+                className="text-sm text-white/70 hover:text-white underline underline-offset-4"
+              >
+                Browse this sub-theme →
+              </Link>
+            ) : isPillar(pillar) ? (
               <Link
                 href={pillarHubHref(pillar)}
                 className="text-sm text-white/70 hover:text-white underline underline-offset-4"
@@ -470,16 +473,11 @@ export default function InsightDetailPage({ params }: Props) {
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {moreOnSubTheme.map((r) => (
-              <article
-                key={r.slug}
-                className="rounded-2xl border border-white/10 bg-white/5 p-5"
-              >
+              <article key={r.slug} className="rounded-2xl border border-white/10 bg-white/5 p-5">
                 <div className="flex items-center justify-between gap-3">
-                  <div className="text-xs text-white/60">
-                    {formatDate(r.date)}
-                  </div>
+                  <div className="text-xs text-white/60">{formatDate(r.date)}</div>
 
-                  {r.engagementScore ? (
+                  {typeof r.engagementScore === "number" ? (
                     <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
                       Score {r.engagementScore}
                     </span>
@@ -487,10 +485,7 @@ export default function InsightDetailPage({ params }: Props) {
                 </div>
 
                 <h3 className="mt-2 text-base font-semibold text-white leading-snug">
-                  <Link
-                    href={`/en/insights/${r.slug}`}
-                    className="hover:underline"
-                  >
+                  <Link href={`/en/insights/${r.slug}`} className="hover:underline">
                     {r.title}
                   </Link>
                 </h3>
@@ -507,9 +502,7 @@ export default function InsightDetailPage({ params }: Props) {
                 </div>
 
                 {r.summary ? (
-                  <p className="mt-3 line-clamp-2 text-sm text-white/75">
-                    {r.summary}
-                  </p>
+                  <p className="mt-3 line-clamp-2 text-sm text-white/75">{r.summary}</p>
                 ) : null}
 
                 <div className="mt-4">
