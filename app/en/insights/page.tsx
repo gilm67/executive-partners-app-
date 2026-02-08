@@ -17,10 +17,30 @@ function formatDate(iso: string) {
 }
 
 const P1_SUBTHEMES = [
-  { key: "Positioning", title: "Positioning", href: "/en/insights/subtheme/positioning" },
-  { key: "ScaleVsBoutique", title: "Scale vs Boutique", href: "/en/insights/subtheme/scale-vs-boutique" },
-  { key: "ROAPlatform", title: "ROA & Platform", href: "/en/insights/subtheme/roa-platform" },
-  { key: "M&ARestructuring", title: "M&A & Restructuring", href: "/en/insights/subtheme/m-a-restructuring" },
+  {
+    key: "Positioning",
+    title: "Positioning",
+    href: "/en/insights/subtheme/positioning",
+    desc: "Who is winning, who is losing — and why.",
+  },
+  {
+    key: "ScaleVsBoutique",
+    title: "Scale vs Boutique",
+    href: "/en/insights/subtheme/scale-vs-boutique",
+    desc: "Economics of scale vs boutique models.",
+  },
+  {
+    key: "ROAPlatform",
+    title: "ROA & Platform",
+    href: "/en/insights/subtheme/roa-platform",
+    desc: "ROA pressure, platforms, cost of compliance.",
+  },
+  {
+    key: "M&ARestructuring",
+    title: "M&A & Restructuring",
+    href: "/en/insights/subtheme/m-a-restructuring",
+    desc: "M&A, integrations, silent restructurings.",
+  },
 ] as const;
 
 const PILLARS = [
@@ -29,10 +49,11 @@ const PILLARS = [
     title: "Pillar I — Strategy & Power Structures",
     desc: "Competitive moves, operating models, ROA pressure, M&A realities.",
     href: "/en/insights/pillar/p1",
+    enabled: true,
   },
-  { code: "P2", title: "Pillar II", desc: "Coming soon.", href: "/en/insights" },
-  { code: "P3", title: "Pillar III", desc: "Coming soon.", href: "/en/insights" },
-  { code: "P4", title: "Pillar IV", desc: "Coming soon.", href: "/en/insights" },
+  { code: "P2", title: "Pillar II", desc: "Coming soon.", href: "/en/insights", enabled: false },
+  { code: "P3", title: "Pillar III", desc: "Coming soon.", href: "/en/insights", enabled: false },
+  { code: "P4", title: "Pillar IV", desc: "Coming soon.", href: "/en/insights", enabled: false },
 ] as const;
 
 export default function InsightsPage() {
@@ -46,6 +67,12 @@ export default function InsightsPage() {
     .sort((a, b) => (b.engagementScore ?? 0) - (a.engagementScore ?? 0))
     .slice(0, 3);
 
+  // ✅ counts for sub-theme cards (Pillar I only)
+  const p1Counts = P1_SUBTHEMES.reduce<Record<string, number>>((acc, s) => {
+    acc[s.key] = INSIGHTS.filter((a) => a.pillar === "P1" && a.subTheme === s.key).length;
+    return acc;
+  }, {});
+
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-14">
       <div className="mb-10">
@@ -54,16 +81,14 @@ export default function InsightsPage() {
           Market intelligence and hiring signals across private banking and wealth management.
         </p>
 
-        {/* ✅ NEW: Browse by Sub-Theme (Pillar I) */}
+        {/* ✅ Browse by Sub-Theme (Pillar I) */}
         <div className="mt-8">
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
                 Browse by Sub-Theme (Pillar I)
               </p>
-              <h2 className="mt-2 text-lg font-semibold text-white">
-                Choose your angle
-              </h2>
+              <h2 className="mt-2 text-lg font-semibold text-white">Choose your angle</h2>
               <p className="mt-1 text-sm text-white/60">
                 Four strategic chapters. Built for binge-reading.
               </p>
@@ -78,36 +103,66 @@ export default function InsightsPage() {
           </div>
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {P1_SUBTHEMES.map((s) => (
-              <Link
-                key={s.href}
-                href={s.href}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
-              >
-                <div className="text-sm font-semibold text-white">{s.title}</div>
-                <div className="mt-2 text-xs text-white/60">Explore →</div>
-              </Link>
-            ))}
+            {P1_SUBTHEMES.map((s) => {
+              const count = p1Counts[s.key] ?? 0;
+
+              return (
+                <Link
+                  key={s.href}
+                  href={s.href}
+                  className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="text-sm font-semibold text-white">{s.title}</div>
+                    <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
+                      {count} {count === 1 ? "insight" : "insights"}
+                    </span>
+                  </div>
+
+                  <div className="mt-2 text-xs text-white/60">{s.desc}</div>
+
+                  <div className="mt-4 inline-flex items-center text-xs font-semibold text-[#D4AF37]">
+                    Explore →
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
 
-        {/* ✅ NEW: Browse by Pillar */}
+        {/* ✅ Browse by Pillar */}
         <div className="mt-10">
           <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
             Browse by Pillar
           </p>
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {PILLARS.map((p) => (
-              <Link
-                key={p.code}
-                href={p.href}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
-              >
-                <div className="text-sm font-semibold text-white">{p.title}</div>
-                <div className="mt-2 text-xs text-white/60">{p.desc}</div>
-              </Link>
-            ))}
+            {PILLARS.map((p) =>
+              p.enabled ? (
+                <Link
+                  key={p.code}
+                  href={p.href}
+                  className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
+                >
+                  <div className="text-sm font-semibold text-white">{p.title}</div>
+                  <div className="mt-2 text-xs text-white/60">{p.desc}</div>
+                  <div className="mt-4 inline-flex items-center text-xs font-semibold text-[#D4AF37]">
+                    Open →
+                  </div>
+                </Link>
+              ) : (
+                <div
+                  key={p.code}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-5 opacity-60"
+                >
+                  <div className="text-sm font-semibold text-white">{p.title}</div>
+                  <div className="mt-2 text-xs text-white/60">{p.desc}</div>
+                  <div className="mt-4 inline-flex items-center text-xs font-semibold text-white/60">
+                    Coming soon
+                  </div>
+                </div>
+              )
+            )}
           </div>
         </div>
       </div>
@@ -178,7 +233,6 @@ export default function InsightsPage() {
                 </div>
 
                 <div className="mt-2 text-base font-semibold text-white">{a.title}</div>
-
                 <div className="mt-3 text-sm text-white/70">{a.summary}</div>
 
                 <div className="mt-5 inline-flex items-center text-sm font-semibold text-[#D4AF37]">
