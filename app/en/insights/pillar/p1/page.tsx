@@ -14,6 +14,11 @@ function formatDate(iso: string) {
   }
 }
 
+function safeMs(iso?: string) {
+  const t = Date.parse((iso || "").trim());
+  return Number.isNaN(t) ? 0 : t;
+}
+
 const SUBTHEME_LABEL: Record<string, { title: string; desc: string }> = {
   Positioning: {
     title: "Positioning",
@@ -41,20 +46,40 @@ const SUBTHEME_ORDER = [
 ] as const;
 
 export default function PillarP1Page() {
-  const p1 = INSIGHTS.filter((a) => a.pillar === "P1").sort(
-    (a, b) => Date.parse(b.date) - Date.parse(a.date)
-  );
+  const p1 = INSIGHTS.filter((a) => a.pillar === "P1").slice();
 
+  // group by subTheme
   const groups = p1.reduce<Record<string, typeof p1>>((acc, a) => {
     const key = a.subTheme || "Unclassified";
     (acc[key] ||= []).push(a);
     return acc;
   }, {});
 
-  const orderedKeys = [
-    ...SUBTHEME_ORDER,
-    "Unclassified",
-  ].filter((k) => groups[k]?.length);
+  // sort each group by date desc (stable UI)
+  for (const k of Object.keys(groups)) {
+    groups[k] = groups[k].slice().sort((a, b) => safeMs(b.date) - safeMs(a.date));
+  }
+
+  // meta for the 4 official sub-themes (count + lastUpdated)
+  const subThemeMeta = Object.fromEntries(
+    SUBTHEME_ORDER.map((key) => {
+      const items = groups[key] || [];
+      const lastUpdated = items[0]?.date;
+      return [
+        key,
+        {
+          count: items.length,
+          lastUpdated,
+          href: `/en/insights/subtheme/${subThemeToSlug(key as any)}`,
+        },
+      ];
+    })
+  ) as Record<
+    (typeof SUBTHEME_ORDER)[number],
+    { count: number; lastUpdated?: string; href: string }
+  >;
+
+  const orderedKeys = [...SUBTHEME_ORDER, "Unclassified"].filter((k) => groups[k]?.length);
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-14">
@@ -78,8 +103,8 @@ export default function PillarP1Page() {
           Pillar I — Private Banking Strategy & Power Structures
         </h1>
         <p className="mt-3 max-w-3xl text-white/75">
-          Strategy-focused analysis on who is winning, who is losing, and why —
-          across Switzerland and major booking centres (UK, US, UAE, Asia).
+          Strategy-focused analysis on who is winning, who is losing, and why — across Switzerland
+          and major booking centres (UK, US, UAE, Asia).
         </p>
 
         <div className="mt-6 flex flex-wrap gap-3">
@@ -105,44 +130,44 @@ export default function PillarP1Page() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
               Browse by Sub-Theme
             </p>
-            <h2 className="mt-2 text-lg font-semibold text-white">
-              Choose a chapter
-            </h2>
+            <h2 className="mt-2 text-lg font-semibold text-white">Choose a chapter</h2>
             <p className="mt-1 text-sm text-white/60">
-              Explore Pillar I by strategic angle — each sub-theme is its own hub.
+              Four strategic clusters — each one has its own dedicated hub.
             </p>
           </div>
         </div>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {SUBTHEME_ORDER.map((key) => {
-            if (!groups[key]?.length) return null;
-            const meta = SUBTHEME_LABEL[key];
-            const href = `/en/insights/subtheme/${subThemeToSlug(key as any)}`;
+            const meta = subThemeMeta[key];
+            const label = SUBTHEME_LABEL[key];
+            if (!meta.count) return null;
 
             return (
               <Link
                 key={key}
-                href={href}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10"
+                href={meta.href}
+                className="group rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:bg-white/10"
               >
-                <div className="flex items-center justify-between gap-4">
-                  <h3 className="text-base font-semibold text-white">
-                    {meta.title}
-                  </h3>
-                  <span className="text-sm font-semibold text-white/70 group-hover:text-white">
-                    Explore →
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-base font-semibold text-white">{label.title}</h3>
+                    <p className="mt-1 text-sm text-white/60">{label.desc}</p>
+                  </div>
+
+                  <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
+                    {meta.count} {meta.count === 1 ? "insight" : "insights"}
                   </span>
                 </div>
 
-                <p className="mt-2 text-sm text-white/60">{meta.desc}</p>
-
-                <div className="mt-4 flex items-center gap-2 text-[11px] text-white/60">
-                  <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5">
-                    {groups[key].length} insight{groups[key].length === 1 ? "" : "s"}
-                  </span>
-                  <span className="text-white/40">•</span>
-                  <span>Open hub</span>
+                <div className="mt-4 flex items-center justify-between gap-3 text-xs text-white/60">
+                  <div>
+                    Last updated:{" "}
+                    <span className="text-white/75">
+                      {meta.lastUpdated ? formatDate(meta.lastUpdated) : "—"}
+                    </span>
+                  </div>
+                  <div className="font-semibold text-[#D4AF37]">Open hub →</div>
                 </div>
               </Link>
             );
@@ -157,12 +182,10 @@ export default function PillarP1Page() {
             title: key,
             desc: "Articles in this sub-theme.",
           };
-          const items = groups[key];
+          const items = groups[key] || [];
 
           const hubHref =
-            key !== "Unclassified"
-              ? `/en/insights/subtheme/${subThemeToSlug(key as any)}`
-              : null;
+            key !== "Unclassified" ? `/en/insights/subtheme/${subThemeToSlug(key as any)}` : null;
 
           return (
             <div
@@ -171,9 +194,7 @@ export default function PillarP1Page() {
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex flex-col gap-1">
-                  <h2 className="text-lg font-semibold text-white">
-                    {meta.title}
-                  </h2>
+                  <h2 className="text-lg font-semibold text-white">{meta.title}</h2>
                   <p className="text-sm text-white/60">{meta.desc}</p>
                 </div>
 
@@ -193,22 +214,15 @@ export default function PillarP1Page() {
                     key={a.slug}
                     className="rounded-2xl border border-white/10 bg-white/5 p-5"
                   >
-                    <div className="text-xs text-white/60">
-                      {formatDate(a.date)}
-                    </div>
+                    <div className="text-xs text-white/60">{formatDate(a.date)}</div>
 
                     <h3 className="mt-2 text-base font-semibold text-white leading-snug">
-                      <Link
-                        href={`/en/insights/${a.slug}`}
-                        className="hover:underline"
-                      >
+                      <Link href={`/en/insights/${a.slug}`} className="hover:underline">
                         {a.title}
                       </Link>
                     </h3>
 
-                    <p className="mt-2 line-clamp-2 text-sm text-white/75">
-                      {a.summary}
-                    </p>
+                    <p className="mt-2 line-clamp-2 text-sm text-white/75">{a.summary}</p>
 
                     <div className="mt-4">
                       <Link
