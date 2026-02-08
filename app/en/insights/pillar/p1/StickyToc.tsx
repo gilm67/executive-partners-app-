@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type TocItem = { id: string; label: string };
+export type TocItem = { id: string; label: string };
 
 export default function StickyToc({
   items,
   className = "",
 }: {
-  items: TocItem[];
+  items: readonly TocItem[]; // ✅ accept readonly arrays
   className?: string;
 }) {
   const ids = useMemo(() => items.map((i) => i.id), [items]);
@@ -23,14 +23,11 @@ export default function StickyToc({
 
     if (!els.length) return;
 
-    // Choose the section that is currently "most" in view around the top
     const observer = new IntersectionObserver(
       (entries) => {
-        // keep only visible
         const visible = entries.filter((e) => e.isIntersecting);
         if (!visible.length) return;
 
-        // pick the one closest to the top (smallest top value)
         visible.sort((a, b) => {
           const at = a.boundingClientRect.top;
           const bt = b.boundingClientRect.top;
@@ -41,7 +38,6 @@ export default function StickyToc({
         if (best) setActiveId(best);
       },
       {
-        // tweak if your header height differs
         root: null,
         rootMargin: "-120px 0px -70% 0px",
         threshold: [0.1, 0.2, 0.4],
