@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { INSIGHTS } from "./articles";
+import { INSIGHTS, type InsightArticle } from "./articles";
 import { marketLabel } from "@/lib/markets/marketLabel";
 
 function formatDate(iso: string) {
@@ -21,19 +21,23 @@ function safeDateMs(iso?: string) {
   return Number.isNaN(t) ? 0 : t;
 }
 
-function pickTopArticle(items: typeof INSIGHTS) {
+function pickTopArticle(items: readonly InsightArticle[]) {
   if (!items.length) return null;
 
-  const withScore = items.filter((a) => typeof a.engagementScore === "number");
+  const arr = [...items]; // ✅ convert readonly -> mutable
+  const withScore = arr.filter((a) => typeof a.engagementScore === "number");
+
   if (withScore.length) {
-    return withScore.sort(
-      (a, b) =>
-        (b.engagementScore ?? 0) - (a.engagementScore ?? 0) ||
-        safeDateMs(b.date) - safeDateMs(a.date)
-    )[0];
+    return withScore
+      .slice()
+      .sort(
+        (a, b) =>
+          (b.engagementScore ?? 0) - (a.engagementScore ?? 0) ||
+          safeDateMs(b.date) - safeDateMs(a.date)
+      )[0];
   }
 
-  return items.sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))[0];
+  return arr.slice().sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))[0];
 }
 
 const P1_SUBTHEMES = [
@@ -76,6 +80,14 @@ const PILLARS = [
   { code: "P4", title: "Pillar IV", desc: "Coming soon.", href: "/en/insights", enabled: false },
 ] as const;
 
+type P1SubThemeKey = (typeof P1_SUBTHEMES)[number]["key"];
+
+type SubThemeMeta = {
+  count: number;
+  lastUpdated?: string;
+  top: InsightArticle | null;
+};
+
 export default function InsightsPage() {
   const sorted = [...INSIGHTS].sort((a, b) => (a.date < b.date ? 1 : -1));
 
@@ -90,19 +102,21 @@ export default function InsightsPage() {
   // ✅ Build P1 sub-theme meta (count + last updated + top article)
   const p1Items = sorted.filter((a) => a.pillar === "P1" && a.subTheme);
 
-  const p1BySubTheme = p1Items.reduce<Record<string, typeof sorted>>((acc, a) => {
+  const p1BySubTheme = p1Items.reduce<Record<string, InsightArticle[]>>((acc, a) => {
     const key = String(a.subTheme);
-    (acc[key] ||= []).push(a);
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(a);
     return acc;
   }, {});
 
   const p1SubThemeMeta = Object.fromEntries(
     P1_SUBTHEMES.map((s) => {
-      const items = (p1BySubTheme[s.key] || []).slice();
-      items.sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date));
+      const items = [...(p1BySubTheme[s.key] || [])].sort(
+        (a, b) => safeDateMs(b.date) - safeDateMs(a.date)
+      );
 
       const lastUpdated = items[0]?.date;
-      const top = pickTopArticle(items as any);
+      const top = pickTopArticle(items);
 
       return [
         s.key,
@@ -110,13 +124,10 @@ export default function InsightsPage() {
           count: items.length,
           lastUpdated,
           top,
-        },
+        } satisfies SubThemeMeta,
       ];
     })
-  ) as Record<
-    string,
-    { count: number; lastUpdated?: string; top: (typeof INSIGHTS)[number] | null }
-  >;
+  ) as Record<P1SubThemeKey, SubThemeMeta>;
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-14">
@@ -149,7 +160,7 @@ export default function InsightsPage() {
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {P1_SUBTHEMES.map((s) => {
-              const meta = p1SubThemeMeta[s.key] || { count: 0, lastUpdated: undefined, top: null };
+              const meta = p1SubThemeMeta[s.key] ?? { count: 0, lastUpdated: undefined, top: null };
               const top = meta.top;
 
               return (
@@ -227,10 +238,7 @@ export default function InsightsPage() {
                   </div>
                 </Link>
               ) : (
-                <div
-                  key={p.code}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-5 opacity-60"
-                >
+                <div key={p.code} className="rounded-2xl border border-white/10 bg-white/5 p-5 opacity-60">
                   <div className="text-sm font-semibold text-white">{p.title}</div>
                   <div className="mt-2 text-xs text-white/60">{p.desc}</div>
                   <div className="mt-4 inline-flex items-center text-xs font-semibold text-white/60">
@@ -246,10 +254,7 @@ export default function InsightsPage() {
       {/* Featured */}
       <div className="mb-10 flex items-end justify-between gap-4">
         <h2 className="text-lg font-semibold text-white">Featured</h2>
-        <Link
-          href="/en/insights/archive"
-          className="text-sm font-semibold text-white/75 hover:text-white"
-        >
+        <Link href="/en/insights/archive" className="text-sm font-semibold text-white/75 hover:text-white">
           Browse archive →
         </Link>
       </div>
@@ -289,9 +294,7 @@ export default function InsightsPage() {
         <>
           <div className="mt-14 mb-6">
             <h2 className="text-lg font-semibold text-white">Popular on LinkedIn</h2>
-            <p className="mt-1 text-sm text-white/60">
-              Based on engagement score (manual ranking for now).
-            </p>
+            <p className="mt-1 text-sm text-white/60">Based on engagement score (manual ranking for now).</p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
