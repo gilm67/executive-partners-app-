@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { INSIGHTS } from "../articles";
 import { marketLabel } from "@/lib/markets/marketLabel";
+import { getRelatedInsights } from "@/lib/insights/related";
 
 type Props = { params: { slug: string } };
 
@@ -34,25 +35,6 @@ function formatDate(value: string) {
   }
 }
 
-function getYear(iso: string) {
-  const y = Number(iso?.slice(0, 4));
-  return Number.isFinite(y) ? y : null;
-}
-
-function sortByDateDesc(a: { date: string }, b: { date: string }) {
-  const ad = a.date?.trim() ?? "";
-  const bd = b.date?.trim() ?? "";
-
-  const aIso = isIsoDate(ad);
-  const bIso = isIsoDate(bd);
-
-  if (!aIso && !bIso) return 0;
-  if (!aIso) return 1;
-  if (!bIso) return -1;
-
-  return Date.parse(bd) - Date.parse(ad);
-}
-
 function cleanLinkedInUrl(url: string) {
   try {
     const u = new URL(url);
@@ -61,44 +43,6 @@ function cleanLinkedInUrl(url: string) {
   } catch {
     return url;
   }
-}
-
-function getRelatedInsights(slug: string, limit = 5) {
-  const current = INSIGHTS.find((a) => a.slug === slug);
-  if (!current) return [];
-
-  const currentYear = getYear(current.date);
-  const currentMarkets = new Set(current.markets);
-
-  const others = INSIGHTS.filter((a) => a.slug !== slug);
-
-  // 1) market overlap (priority)
-  const sameMarket = others
-    .filter((a) => a.markets.some((m) => currentMarkets.has(m)))
-    .sort(sortByDateDesc);
-
-  // 2) same year fallback
-  const sameYear =
-    currentYear === null
-      ? []
-      : others
-          .filter((a) => getYear(a.date) === currentYear)
-          .sort(sortByDateDesc);
-
-  // 3) newest fallback
-  const newest = [...others].sort(sortByDateDesc);
-
-  // Merge unique by slug
-  const merged: typeof others = [];
-  const seen = new Set<string>();
-
-  for (const a of [...sameMarket, ...sameYear, ...newest]) {
-    if (seen.has(a.slug)) continue;
-    seen.add(a.slug);
-    merged.push(a);
-    if (merged.length >= limit) break;
-  }
-  return merged;
 }
 
 /**
@@ -145,7 +89,9 @@ export default function InsightDetailPage({ params }: Props) {
   const article = INSIGHTS.find((a) => a.slug === params.slug);
   if (!article) return notFound();
 
-  const related = getRelatedInsights(article.slug, 5);
+  // ✅ centralised related logic
+  const related = getRelatedInsights(article, 5);
+
   const pageUrl = `${SITE}/en/insights/${article.slug}`;
 
   /**
@@ -346,7 +292,9 @@ export default function InsightDetailPage({ params }: Props) {
                 key={r.slug}
                 className="rounded-2xl border border-white/10 bg-white/5 p-5"
               >
-                <div className="text-xs text-white/60">{formatDate(r.date)}</div>
+                <div className="text-xs text-white/60">
+                  {formatDate(r.date)}
+                </div>
 
                 <h3 className="mt-2 text-base font-semibold text-white leading-snug">
                   <Link
