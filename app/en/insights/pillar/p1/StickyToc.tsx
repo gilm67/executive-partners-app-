@@ -8,7 +8,7 @@ export default function StickyToc({
   items,
   className = "",
 }: {
-  items: readonly TocItem[]; // ✅ accept readonly arrays
+  items: readonly TocItem[]; // ✅ accept readonly arrays (e.g. `as const`)
   className?: string;
 }) {
   const ids = useMemo(() => items.map((i) => i.id), [items]);
@@ -28,6 +28,7 @@ export default function StickyToc({
         const visible = entries.filter((e) => e.isIntersecting);
         if (!visible.length) return;
 
+        // pick the one closest to the top (smallest absolute top distance)
         visible.sort((a, b) => {
           const at = a.boundingClientRect.top;
           const bt = b.boundingClientRect.top;
