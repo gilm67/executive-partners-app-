@@ -16,6 +16,26 @@ function formatDate(iso: string) {
   }
 }
 
+function safeDateMs(iso?: string) {
+  const t = Date.parse((iso || "").trim());
+  return Number.isNaN(t) ? 0 : t;
+}
+
+function pickTopArticle(items: typeof INSIGHTS) {
+  if (!items.length) return null;
+
+  const withScore = items.filter((a) => typeof a.engagementScore === "number");
+  if (withScore.length) {
+    return withScore.sort(
+      (a, b) =>
+        (b.engagementScore ?? 0) - (a.engagementScore ?? 0) ||
+        safeDateMs(b.date) - safeDateMs(a.date)
+    )[0];
+  }
+
+  return items.sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))[0];
+}
+
 const P1_SUBTHEMES = [
   {
     key: "Positioning",
@@ -67,11 +87,36 @@ export default function InsightsPage() {
     .sort((a, b) => (b.engagementScore ?? 0) - (a.engagementScore ?? 0))
     .slice(0, 3);
 
-  // ✅ counts for sub-theme cards (Pillar I only)
-  const p1Counts = P1_SUBTHEMES.reduce<Record<string, number>>((acc, s) => {
-    acc[s.key] = INSIGHTS.filter((a) => a.pillar === "P1" && a.subTheme === s.key).length;
+  // ✅ Build P1 sub-theme meta (count + last updated + top article)
+  const p1Items = sorted.filter((a) => a.pillar === "P1" && a.subTheme);
+
+  const p1BySubTheme = p1Items.reduce<Record<string, typeof sorted>>((acc, a) => {
+    const key = String(a.subTheme);
+    (acc[key] ||= []).push(a);
     return acc;
   }, {});
+
+  const p1SubThemeMeta = Object.fromEntries(
+    P1_SUBTHEMES.map((s) => {
+      const items = (p1BySubTheme[s.key] || []).slice();
+      items.sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date));
+
+      const lastUpdated = items[0]?.date;
+      const top = pickTopArticle(items as any);
+
+      return [
+        s.key,
+        {
+          count: items.length,
+          lastUpdated,
+          top,
+        },
+      ];
+    })
+  ) as Record<
+    string,
+    { count: number; lastUpdated?: string; top: (typeof INSIGHTS)[number] | null }
+  >;
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-14">
@@ -104,7 +149,8 @@ export default function InsightsPage() {
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {P1_SUBTHEMES.map((s) => {
-              const count = p1Counts[s.key] ?? 0;
+              const meta = p1SubThemeMeta[s.key] || { count: 0, lastUpdated: undefined, top: null };
+              const top = meta.top;
 
               return (
                 <Link
@@ -115,11 +161,41 @@ export default function InsightsPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="text-sm font-semibold text-white">{s.title}</div>
                     <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
-                      {count} {count === 1 ? "insight" : "insights"}
+                      {meta.count} {meta.count === 1 ? "insight" : "insights"}
                     </span>
                   </div>
 
                   <div className="mt-2 text-xs text-white/60">{s.desc}</div>
+
+                  <div className="mt-3 text-xs text-white/60">
+                    Last updated:{" "}
+                    <span className="text-white/70">
+                      {meta.lastUpdated ? formatDate(meta.lastUpdated) : "—"}
+                    </span>
+                  </div>
+
+                  {top ? (
+                    <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3">
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/50">
+                        Top article
+                      </div>
+                      <div className="mt-1 line-clamp-2 text-sm font-semibold text-white">
+                        {top.title}
+                      </div>
+                      <div className="mt-1 line-clamp-2 text-xs text-white/60">
+                        {top.summary}
+                      </div>
+                      {typeof top.engagementScore === "number" ? (
+                        <div className="mt-2 text-[11px] text-white/50">
+                          Score: <span className="text-white/70">{top.engagementScore}</span>
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3">
+                      <div className="text-sm text-white/60">No articles yet. Coming soon.</div>
+                    </div>
+                  )}
 
                   <div className="mt-4 inline-flex items-center text-xs font-semibold text-[#D4AF37]">
                     Explore →
