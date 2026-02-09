@@ -1,7 +1,10 @@
+// app/en/insights/pillar/p1/page.tsx
+
 import Link from "next/link";
 import { INSIGHTS } from "@/app/en/insights/articles";
 import { subThemeToSlug } from "@/lib/insights/subTheme";
 import StickyToc from "./StickyToc";
+import MobileToc from "./MobileToc";
 
 function formatDate(iso: string) {
   try {
@@ -46,6 +49,7 @@ const SUBTHEME_ORDER = [
   "M&ARestructuring",
 ] as const;
 
+// ✅ IMPORTANT: readonly-friendly (prevents Vercel TS error with "as const")
 const TOC = [
   { id: "chapters", label: "Browse by Sub-Theme" },
   { id: "positioning", label: "Positioning" },
@@ -53,7 +57,7 @@ const TOC = [
   { id: "roa-platform", label: "ROA & Platform" },
   { id: "m-a-restructuring", label: "M&A & Restructuring" },
   { id: "all-articles", label: "All articles" },
-] as const;
+] as const satisfies readonly { id: string; label: string }[];
 
 function sectionIdForSubTheme(key: (typeof SUBTHEME_ORDER)[number]) {
   if (key === "Positioning") return "positioning";
@@ -101,6 +105,11 @@ export default function PillarP1Page() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-14">
+      {/* ✅ MOBILE: sticky horizontal TOC */}
+      <div className="lg:hidden">
+        <MobileToc items={TOC} />
+      </div>
+
       <div className="grid gap-10 lg:grid-cols-[1fr_320px] lg:items-start">
         {/* LEFT */}
         <div>
@@ -215,7 +224,9 @@ export default function PillarP1Page() {
                 const items = groups[key] || [];
 
                 const hubHref =
-                  key !== "Unclassified" ? `/en/insights/subtheme/${subThemeToSlug(key as any)}` : null;
+                  key !== "Unclassified"
+                    ? `/en/insights/subtheme/${subThemeToSlug(key as any)}`
+                    : null;
 
                 const sectionId =
                   key === "Unclassified"
@@ -294,6 +305,14 @@ export default function PillarP1Page() {
           </div>
         </aside>
       </div>
+
+      {/* ✅ MOBILE: floating back to top */}
+      <a
+        href="#chapters"
+        className="lg:hidden fixed bottom-5 right-5 z-50 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold text-white backdrop-blur hover:bg-white/15"
+      >
+        Back to top ↑
+      </a>
     </main>
   );
 }

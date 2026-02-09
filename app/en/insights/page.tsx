@@ -4,6 +4,8 @@ import Link from "next/link";
 import { INSIGHTS, type InsightArticle } from "./articles";
 import { marketLabel } from "@/lib/markets/marketLabel";
 
+/* -------------------------------- helpers -------------------------------- */
+
 function formatDate(iso: string) {
   try {
     return new Intl.DateTimeFormat("en-GB", {
@@ -40,6 +42,8 @@ function pickTopArticle(items: readonly InsightArticle[]) {
   return arr.slice().sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))[0];
 }
 
+/* -------------------------------- config -------------------------------- */
+
 const P1_SUBTHEMES = [
   {
     key: "Positioning",
@@ -70,14 +74,14 @@ const P1_SUBTHEMES = [
 const PILLARS = [
   {
     code: "P1",
-    title: "Pillar I — Strategy & Power Structures",
-    desc: "Competitive moves, operating models, ROA pressure, M&A realities.",
+    title: "Strategy & Power Structures",
+    desc: "Competitive moves, ROA pressure, operating models, M&A realities.",
     href: "/en/insights/pillar/p1",
     enabled: true,
   },
-  { code: "P2", title: "Pillar II", desc: "Coming soon.", href: "/en/insights", enabled: false },
-  { code: "P3", title: "Pillar III", desc: "Coming soon.", href: "/en/insights", enabled: false },
-  { code: "P4", title: "Pillar IV", desc: "Coming soon.", href: "/en/insights", enabled: false },
+  { code: "P2", title: "Talent & Compensation", desc: "Coming soon.", href: "#", enabled: false },
+  { code: "P3", title: "Client Behaviour", desc: "Coming soon.", href: "#", enabled: false },
+  { code: "P4", title: "Regulation & Compliance", desc: "Coming soon.", href: "#", enabled: false },
 ] as const;
 
 type P1SubThemeKey = (typeof P1_SUBTHEMES)[number]["key"];
@@ -88,33 +92,28 @@ type SubThemeMeta = {
   top: InsightArticle | null;
 };
 
+/* -------------------------------- page -------------------------------- */
+
 export default function InsightsPage() {
-  const sorted = [...INSIGHTS].sort((a, b) => (a.date < b.date ? 1 : -1));
+  const sorted = [...INSIGHTS].sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date));
 
   const featured = sorted.filter((a) => a.featured).slice(0, 6);
 
-  // ✅ IMPORTANT: exclude featured from "popular" to avoid duplicates
   const popular = sorted
     .filter((a) => !a.featured && typeof a.engagementScore === "number")
     .sort((a, b) => (b.engagementScore ?? 0) - (a.engagementScore ?? 0))
     .slice(0, 3);
 
-  // ✅ Build P1 sub-theme meta (count + last updated + top article)
   const p1Items = sorted.filter((a) => a.pillar === "P1" && a.subTheme);
 
   const p1BySubTheme = p1Items.reduce<Record<string, InsightArticle[]>>((acc, a) => {
-    const key = String(a.subTheme);
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(a);
+    (acc[a.subTheme as string] ||= []).push(a);
     return acc;
   }, {});
 
   const p1SubThemeMeta = Object.fromEntries(
     P1_SUBTHEMES.map((s) => {
-      const items = [...(p1BySubTheme[s.key] || [])].sort(
-        (a, b) => safeDateMs(b.date) - safeDateMs(a.date)
-      );
-
+      const items = [...(p1BySubTheme[s.key] || [])];
       const lastUpdated = items[0]?.date;
       const top = pickTopArticle(items);
 
@@ -132,138 +131,107 @@ export default function InsightsPage() {
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-14">
       {/* HERO */}
-      <div className="mb-10">
+      <header className="mb-12">
         <h1 className="text-3xl font-semibold text-white">Insights</h1>
         <p className="mt-2 max-w-2xl text-white/70">
-          Market intelligence and hiring signals across private banking and wealth management.
+          Private banking intelligence on strategy, compensation, and market moves.
         </p>
 
-        {/* ✅ Single primary action */}
-        <div className="mt-6">
-          <a
-            href="#latest"
-            className="inline-flex rounded-xl border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/15"
-          >
-            Start with the latest →
-          </a>
-        </div>
-      </div>
+        <a
+          href="#latest"
+          className="mt-6 inline-flex rounded-xl border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/15"
+        >
+          Start with the latest →
+        </a>
+      </header>
 
-      {/* ✅ PRIMARY: Featured / Latest */}
-      <div id="latest" className="mb-10 flex items-end justify-between gap-4 scroll-mt-28">
-        <div>
-          <h2 className="text-lg font-semibold text-white">Latest intelligence</h2>
-          <p className="mt-1 text-sm text-white/60">Your best starting point.</p>
-        </div>
-
-        <Link href="/en/insights/archive" className="text-sm font-semibold text-white/75 hover:text-white">
-          Browse archive →
-        </Link>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-3">
-        {featured.map((a) => (
-          <Link
-            key={a.slug}
-            href={`/en/insights/${a.slug}`}
-            className="group rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:bg-white/10"
-          >
-            <div className="text-xs text-white/60">{formatDate(a.date)}</div>
-            <div className="mt-2 text-lg font-semibold text-white">{a.title}</div>
-            <div className="mt-3 text-sm text-white/70">{a.summary}</div>
-
-            <div className="mt-4 flex flex-wrap gap-2">
-              {a.markets.map((m) => (
-                <span
-                  key={m}
-                  className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/75"
-                  title={marketLabel(m)}
-                >
-                  {marketLabel(m)}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-6 inline-flex items-center text-sm font-semibold text-[#D4AF37]">
-              Read summary →
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      {/* ✅ SECONDARY: Sub-themes (lighter cards) */}
-      <section className="mt-14">
-        <div className="flex items-end justify-between gap-4">
+      {/* LATEST */}
+      <section id="latest" className="mb-12 scroll-mt-28">
+        <div className="mb-6 flex items-end justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
-              Browse by Sub-Theme
-            </p>
-            <h2 className="mt-2 text-lg font-semibold text-white">Choose your angle</h2>
-            <p className="mt-1 text-sm text-white/60">
-              Four strategic chapters for deeper reading (Pillar I).
-            </p>
+            <h2 className="text-lg font-semibold text-white">Latest intelligence</h2>
+            <p className="text-sm text-white/60">Best entry point.</p>
           </div>
 
-          <Link
-            href="/en/insights/pillar/p1"
-            className="text-sm text-white/70 hover:text-white underline underline-offset-4"
-          >
-            Open Pillar I →
+          <Link href="/en/insights/archive" className="text-sm text-white/70 hover:text-white">
+            Browse archive →
           </Link>
         </div>
 
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-3">
+          {featured.map((a) => (
+            <Link
+              key={a.slug}
+              href={`/en/insights/${a.slug}`}
+              className="rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10"
+            >
+              <div className="text-xs text-white/60">{formatDate(a.date)}</div>
+              <h3 className="mt-2 text-lg font-semibold text-white">{a.title}</h3>
+              <p className="mt-3 text-sm text-white/70">{a.summary}</p>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {a.markets.map((m) => (
+                  <span
+                    key={m}
+                    className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/75"
+                  >
+                    {marketLabel(m)}
+                  </span>
+                ))}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* SUB-THEMES */}
+      <section className="mt-14">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.24em] text-white/60">
+              Strategy — Pillar I
+            </p>
+            <h2 className="mt-2 text-lg font-semibold text-white">Browse by sub-theme</h2>
+          </div>
+
+          <Link href="/en/insights/pillar/p1" className="text-sm text-white/70 hover:text-white">
+            Open Pillar →
+          </Link>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {P1_SUBTHEMES.map((s) => {
-            const meta = p1SubThemeMeta[s.key] ?? { count: 0, lastUpdated: undefined, top: null };
-            const top = meta.top;
+            const meta = p1SubThemeMeta[s.key];
+            const top = meta?.top;
 
             return (
               <Link
                 key={s.href}
                 href={s.href}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
+                className="rounded-2xl border border-white/10 bg-white/5 p-5 hover:bg-white/10"
               >
-                {/* Header */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="text-sm font-semibold text-white">{s.title}</div>
+                <div className="flex items-start justify-between">
+                  <h3 className="text-sm font-semibold text-white">{s.title}</h3>
                   <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
-                    {meta.count} {meta.count === 1 ? "insight" : "insights"}
+                    {meta.count}
                   </span>
                 </div>
 
-                {/* Short desc */}
-                <div className="mt-2 text-xs text-white/60">{s.desc}</div>
+                <p className="mt-2 text-xs text-white/60">{s.desc}</p>
 
-                {/* Meta row */}
-                <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-white/60">
-                  <div>
-                    Updated{" "}
-                    <span className="text-white/70">
-                      {meta.lastUpdated ? formatDate(meta.lastUpdated) : "—"}
-                    </span>
-                  </div>
-                  <div className="font-semibold text-[#D4AF37]">Explore →</div>
+                <div className="mt-3 text-[11px] text-white/60">
+                  Updated {meta.lastUpdated ? formatDate(meta.lastUpdated) : "—"}
                 </div>
 
-                {/* ✅ Compact Top Article (single line) */}
-                <div className="mt-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
+                {/* Compact top article */}
+                <div className="mt-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-[11px] text-white/70">
                   {top ? (
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="min-w-0 text-[11px] text-white/60">
-                        <span className="font-semibold uppercase tracking-[0.18em] text-white/45">
-                          Top:
-                        </span>{" "}
-                        <span className="text-white/75 line-clamp-1">{top.title}</span>
-                      </div>
-
-                      {typeof top.engagementScore === "number" ? (
-                        <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/60">
-                          {top.engagementScore}
-                        </span>
-                      ) : null}
-                    </div>
+                    <>
+                      <span className="uppercase tracking-[0.18em] text-white/45">Top:</span>{" "}
+                      <span className="line-clamp-1">{top.title}</span>
+                    </>
                   ) : (
-                    <div className="text-[11px] text-white/60">No articles yet.</div>
+                    "No articles yet."
                   )}
                 </div>
               </Link>
@@ -272,47 +240,34 @@ export default function InsightsPage() {
         </div>
       </section>
 
-      {/* ✅ OPTIONAL: Popular */}
+      {/* POPULAR */}
       {popular.length > 0 && (
-        <section className="mt-14">
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-white">Popular on LinkedIn</h2>
-            <p className="mt-1 text-sm text-white/60">
-              Based on engagement score (manual ranking for now).
-            </p>
-          </div>
+        <section className="mt-16">
+          <h2 className="text-lg font-semibold text-white">Popular on LinkedIn</h2>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
             {popular.map((a) => (
               <a
                 key={a.slug}
                 href={a.linkedinUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
+                className="rounded-2xl border border-white/10 bg-white/5 p-5 hover:bg-white/10"
               >
-                <div className="flex items-center justify-between">
-                  <div className="text-xs text-white/60">{formatDate(a.date)}</div>
-                  <div className="text-xs text-white/60">Score: {a.engagementScore}</div>
+                <div className="text-xs text-white/60">
+                  {formatDate(a.date)} · Score {a.engagementScore}
                 </div>
-
-                <div className="mt-2 text-base font-semibold text-white">{a.title}</div>
-                <div className="mt-3 text-sm text-white/70">{a.summary}</div>
-
-                <div className="mt-5 inline-flex items-center text-sm font-semibold text-[#D4AF37]">
-                  Read on LinkedIn →
-                </div>
+                <h3 className="mt-2 text-base font-semibold text-white">{a.title}</h3>
+                <p className="mt-3 text-sm text-white/70">{a.summary}</p>
               </a>
             ))}
           </div>
         </section>
       )}
 
-      {/* ✅ OPTIONAL: Pillars (kept at bottom to reduce load) */}
-      <section className="mt-14">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
-          Browse by Pillar
-        </p>
+      {/* PILLARS */}
+      <section className="mt-16">
+        <p className="text-[11px] uppercase tracking-[0.24em] text-white/60">Explore by theme</p>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {PILLARS.map((p) =>
@@ -320,21 +275,18 @@ export default function InsightsPage() {
               <Link
                 key={p.code}
                 href={p.href}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
+                className="rounded-2xl border border-white/10 bg-white/5 p-5 hover:bg-white/10"
               >
-                <div className="text-sm font-semibold text-white">{p.title}</div>
-                <div className="mt-2 text-xs text-white/60">{p.desc}</div>
-                <div className="mt-4 inline-flex items-center text-xs font-semibold text-[#D4AF37]">
-                  Open →
-                </div>
+                <h3 className="text-sm font-semibold text-white">{p.title}</h3>
+                <p className="mt-2 text-xs text-white/60">{p.desc}</p>
               </Link>
             ) : (
-              <div key={p.code} className="rounded-2xl border border-white/10 bg-white/5 p-5 opacity-60">
-                <div className="text-sm font-semibold text-white">{p.title}</div>
-                <div className="mt-2 text-xs text-white/60">{p.desc}</div>
-                <div className="mt-4 inline-flex items-center text-xs font-semibold text-white/60">
-                  Coming soon
-                </div>
+              <div
+                key={p.code}
+                className="rounded-2xl border border-white/10 bg-white/5 p-5 opacity-60"
+              >
+                <h3 className="text-sm font-semibold text-white">{p.title}</h3>
+                <p className="mt-2 text-xs text-white/60">{p.desc}</p>
               </div>
             )
           )}
