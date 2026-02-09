@@ -24,7 +24,7 @@ function safeDateMs(iso?: string) {
 function pickTopArticle(items: readonly InsightArticle[]) {
   if (!items.length) return null;
 
-  const arr = [...items]; // ✅ convert readonly -> mutable
+  const arr = [...items];
   const withScore = arr.filter((a) => typeof a.engagementScore === "number");
 
   if (withScore.length) {
@@ -156,10 +156,7 @@ export default function InsightsPage() {
           <p className="mt-1 text-sm text-white/60">Your best starting point.</p>
         </div>
 
-        <Link
-          href="/en/insights/archive"
-          className="text-sm font-semibold text-white/75 hover:text-white"
-        >
+        <Link href="/en/insights/archive" className="text-sm font-semibold text-white/75 hover:text-white">
           Browse archive →
         </Link>
       </div>
@@ -194,7 +191,7 @@ export default function InsightsPage() {
         ))}
       </div>
 
-      {/* ✅ SECONDARY: Sub-themes */}
+      {/* ✅ SECONDARY: Sub-themes (lighter cards) */}
       <section className="mt-14">
         <div className="flex items-end justify-between gap-4">
           <div>
@@ -226,6 +223,7 @@ export default function InsightsPage() {
                 href={s.href}
                 className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
               >
+                {/* Header */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="text-sm font-semibold text-white">{s.title}</div>
                   <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
@@ -233,38 +231,40 @@ export default function InsightsPage() {
                   </span>
                 </div>
 
+                {/* Short desc */}
                 <div className="mt-2 text-xs text-white/60">{s.desc}</div>
 
-                <div className="mt-3 text-xs text-white/60">
-                  Last updated:{" "}
-                  <span className="text-white/70">
-                    {meta.lastUpdated ? formatDate(meta.lastUpdated) : "—"}
-                  </span>
+                {/* Meta row */}
+                <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-white/60">
+                  <div>
+                    Updated{" "}
+                    <span className="text-white/70">
+                      {meta.lastUpdated ? formatDate(meta.lastUpdated) : "—"}
+                    </span>
+                  </div>
+                  <div className="font-semibold text-[#D4AF37]">Explore →</div>
                 </div>
 
-                {top ? (
-                  <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3">
-                    <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/50">
-                      Top article
-                    </div>
-                    <div className="mt-1 line-clamp-2 text-sm font-semibold text-white">
-                      {top.title}
-                    </div>
-                    <div className="mt-1 line-clamp-2 text-xs text-white/60">{top.summary}</div>
-                    {typeof top.engagementScore === "number" ? (
-                      <div className="mt-2 text-[11px] text-white/50">
-                        Score: <span className="text-white/70">{top.engagementScore}</span>
+                {/* ✅ Compact Top Article (single line) */}
+                <div className="mt-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
+                  {top ? (
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0 text-[11px] text-white/60">
+                        <span className="font-semibold uppercase tracking-[0.18em] text-white/45">
+                          Top:
+                        </span>{" "}
+                        <span className="text-white/75 line-clamp-1">{top.title}</span>
                       </div>
-                    ) : null}
-                  </div>
-                ) : (
-                  <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3">
-                    <div className="text-sm text-white/60">No articles yet. Coming soon.</div>
-                  </div>
-                )}
 
-                <div className="mt-4 inline-flex items-center text-xs font-semibold text-[#D4AF37]">
-                  Explore →
+                      {typeof top.engagementScore === "number" ? (
+                        <span className="shrink-0 rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/60">
+                          {top.engagementScore}
+                        </span>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <div className="text-[11px] text-white/60">No articles yet.</div>
+                  )}
                 </div>
               </Link>
             );
@@ -308,7 +308,7 @@ export default function InsightsPage() {
         </section>
       )}
 
-      {/* ✅ OPTIONAL: Pillars (move to bottom to reduce cognitive load) */}
+      {/* ✅ OPTIONAL: Pillars (kept at bottom to reduce load) */}
       <section className="mt-14">
         <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
           Browse by Pillar
@@ -329,10 +329,7 @@ export default function InsightsPage() {
                 </div>
               </Link>
             ) : (
-              <div
-                key={p.code}
-                className="rounded-2xl border border-white/10 bg-white/5 p-5 opacity-60"
-              >
+              <div key={p.code} className="rounded-2xl border border-white/10 bg-white/5 p-5 opacity-60">
                 <div className="text-sm font-semibold text-white">{p.title}</div>
                 <div className="mt-2 text-xs text-white/60">{p.desc}</div>
                 <div className="mt-4 inline-flex items-center text-xs font-semibold text-white/60">
