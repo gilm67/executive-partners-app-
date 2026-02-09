@@ -72,24 +72,6 @@ const P1_SUBTHEMES = [
   },
 ] as const;
 
-const PILLARS = [
-  {
-    code: "P1",
-    title: "Strategy & Power Structures",
-    desc: "Competitive moves, ROA pressure, operating models, M&A realities.",
-    href: "/en/insights/pillar/p1",
-    enabled: true,
-  },
-  { code: "P2", title: "Talent & Compensation", desc: "Coming soon.", href: "#", enabled: false },
-  { code: "P3", title: "Client Behaviour", desc: "Coming soon.", href: "#", enabled: false },
-  { code: "P4", title: "Regulation & Compliance", desc: "Coming soon.", href: "#", enabled: false },
-] as const;
-
-type P1SubThemeKey = (typeof P1_SUBTHEMES)[number]["key"];
-type SubThemeMeta = { count: number; lastUpdated?: string; top: InsightArticle | null };
-
-/* ----------------------- recommended-for-you config ----------------------- */
-
 type RoleKey = "rm" | "hm";
 const ROLE_STORAGE_KEY = "insights_role";
 
@@ -108,7 +90,7 @@ const RECOMMENDED_BY_ROLE: Record<RoleKey, readonly string[]> = {
     "ubs-switzerlands-banking-giant-transformation",
     "changing-face-swiss-private-banking",
     "swiss-private-banking-shake-up-mega-mergers",
-    "swiss-european-banks-tighten-grip-cis-clients", // ✅ FIXED
+    "swiss-european-banks-tighten-grip-cis-clients",
   ],
 } as const;
 
@@ -122,24 +104,23 @@ export default function InsightsPage() {
 
   const featured = useMemo(() => sorted.filter((a) => a.featured).slice(0, 6), [sorted]);
 
-  const popular = useMemo(
-    () =>
-      sorted
-        .filter((a) => !a.featured && typeof a.engagementScore === "number")
-        .sort((a, b) => (b.engagementScore ?? 0) - (a.engagementScore ?? 0))
-        .slice(0, 3),
-    [sorted]
-  );
-
   const [role, setRole] = useState<RoleKey>("rm");
 
   useEffect(() => {
-    const saved = localStorage.getItem(ROLE_STORAGE_KEY) as RoleKey | null;
-    if (saved === "rm" || saved === "hm") setRole(saved);
+    try {
+      const saved = window.localStorage.getItem(ROLE_STORAGE_KEY) as RoleKey | null;
+      if (saved === "rm" || saved === "hm") setRole(saved);
+    } catch {
+      /* noop */
+    }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(ROLE_STORAGE_KEY, role);
+    try {
+      window.localStorage.setItem(ROLE_STORAGE_KEY, role);
+    } catch {
+      /* noop */
+    }
   }, [role]);
 
   const featuredSlugs = useMemo(() => new Set(featured.map((a) => a.slug)), [featured]);
@@ -166,11 +147,30 @@ export default function InsightsPage() {
     return picked;
   }, [role, sorted, featuredSlugs]);
 
-  const roleLabel = role === "rm" ? "Relationship Managers" : "Hiring Managers";
-
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-14">
-      {/* … rest of your JSX unchanged … */}
+      {/* Example of SAFE markets rendering */}
+      {recommended.map((a) => (
+        <Link
+          key={a.slug}
+          href={`/en/insights/${a.slug}`}
+          className="block rounded-xl border border-white/10 bg-white/5 p-5"
+        >
+          <div className="text-xs text-white/60">{formatDate(a.date)}</div>
+          <h3 className="mt-2 text-base font-semibold text-white">{a.title}</h3>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {(a.markets ?? []).map((m) => (
+              <span
+                key={m}
+                className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/75"
+              >
+                {marketLabel(m)}
+              </span>
+            ))}
+          </div>
+        </Link>
+      ))}
     </main>
   );
 }
