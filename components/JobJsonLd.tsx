@@ -11,18 +11,89 @@ type Job = {
   BaseSalaryMin?: number;
   BaseSalaryMax?: number;
   Currency?: string; // e.g. CHF
-  Url: string;
+  Url: string; // absolute preferred; relative allowed
+  Industry?: string;
+  DirectApply?: boolean;
+  ValidThrough?: string; // ISO
+  JobLocationType?: "ONSITE" | "TELECOMMUTE" | "HYBRID";
+};
+
+const SITE_URL = "https://www.execpartners.ch";
+
+function toAbsoluteUrl(url: string) {
+  const u = (url || "").trim();
+  if (!u) return SITE_URL;
+  if (u.startsWith("http://") || u.startsWith("https://")) return u;
+  if (u.startsWith("/")) return `${SITE_URL}${u}`;
+  return `${SITE_URL}/${u}`;
+}
+
+function parseLocation(loc: string) {
+  const raw = (loc || "").trim();
+  if (!raw) return { city: undefined as string | undefined, country: undefined as string | undefined };
+
+  // typical: "Geneva, CH"
+  const parts = raw.split(",").map((s) => s.trim()).filter(Boolean);
+  const city = parts[0] || undefined;
+
+  // country often 2-letter in 2nd part
+  const countryCandidate = parts[1] || "";
+  const country = countryCandidate ? countryCandidate.slice(0, 2).toUpperCase() : undefined;
+
+  return { city, country };
+}
+
+type JobPostingJsonLd = {
+  "@context": "https://schema.org";
+  "@type": "JobPosting";
+  title: string;
+  description: string;
+  hiringOrganization: {
+    "@type": "Organization";
+    name: string;
+    sameAs?: string;
+  };
+  datePosted: string;
+  employmentType: string;
+  identifier: {
+    "@type": "PropertyValue";
+    name: string;
+    value: string;
+  };
+  url: string;
+  validThrough: string;
+  directApply?: boolean;
+  industry?: string;
+  jobLocationType?: "ONSITE" | "TELECOMMUTE" | "HYBRID";
+  jobLocation?: {
+    "@type": "Place";
+    address: {
+      "@type": "PostalAddress";
+      addressLocality?: string;
+      addressCountry?: string;
+    };
+  };
+  baseSalary?: {
+    "@type": "MonetaryAmount";
+    currency: string;
+    value: {
+      "@type": "QuantitativeValue";
+      minValue?: number;
+      maxValue?: number;
+      unitText: "YEAR";
+    };
+  };
+  occupationalCategory?: string;
+  employmentUnit?: string;
 };
 
 export default function JobJsonLd({ job }: { job: Job }) {
-  // derive pieces
-  const [cityRaw = "", countryRaw = ""] = (job.Location || "").split(",").map(s => s.trim());
-  const city = cityRaw || undefined;
-  const country = (countryRaw || "").slice(0, 2) || undefined;
+  const { city, country } = parseLocation(job.Location);
 
-  const validThrough = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString();
+  const validThrough =
+    job.ValidThrough || new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString();
 
-  const data: any = {
+  const data: JobPostingJsonLd = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
     title: job.Title,
@@ -30,21 +101,22 @@ export default function JobJsonLd({ job }: { job: Job }) {
     hiringOrganization: {
       "@type": "Organization",
       name: job.HiringOrganization,
-      sameAs: "https://execpartners.ch",
+      sameAs: SITE_URL,
     },
     datePosted: job.DatePosted,
-    employmentType: job.EmploymentType || "FULL_TIME",
+    employmentType: (job.EmploymentType || "FULL_TIME").trim() || "FULL_TIME",
     identifier: {
       "@type": "PropertyValue",
       name: job.HiringOrganization,
       value: job.ID,
     },
-    url: job.Url,
+    url: toAbsoluteUrl(job.Url),
     validThrough,
-    directApply: true,
-    industry: "Private Banking & Wealth Management",
+    directApply: job.DirectApply ?? true,
+    industry: job.Industry || "Private Banking & Wealth Management",
   };
 
+  // Location
   if (city || country) {
     data.jobLocation = {
       "@type": "Place",
@@ -54,17 +126,21 @@ export default function JobJsonLd({ job }: { job: Job }) {
         addressCountry: country,
       },
     };
-    data.jobLocationType = "ONSITE";
+    data.jobLocationType = job.JobLocationType || "ONSITE";
   }
 
-  if (job.BaseSalaryMin || job.BaseSalaryMax) {
+  // Salary (supports min-only or max-only)
+  const hasMin = typeof job.BaseSalaryMin === "number" && Number.isFinite(job.BaseSalaryMin);
+  const hasMax = typeof job.BaseSalaryMax === "number" && Number.isFinite(job.BaseSalaryMax);
+
+  if (hasMin || hasMax) {
     data.baseSalary = {
       "@type": "MonetaryAmount",
-      currency: job.Currency || "CHF",
+      currency: (job.Currency || "CHF").trim() || "CHF",
       value: {
         "@type": "QuantitativeValue",
-        minValue: job.BaseSalaryMin,
-        maxValue: job.BaseSalaryMax,
+        ...(hasMin ? { minValue: job.BaseSalaryMin } : {}),
+        ...(hasMax ? { maxValue: job.BaseSalaryMax } : {}),
         unitText: "YEAR",
       },
     };
