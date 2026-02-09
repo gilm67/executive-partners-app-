@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { INSIGHTS, type InsightArticle } from "./articles";
 import { marketLabel } from "@/lib/markets/marketLabel";
@@ -22,6 +22,14 @@ function formatDate(iso: string) {
 function safeDateMs(iso?: string) {
   const t = Date.parse((iso || "").trim());
   return Number.isNaN(t) ? 0 : t;
+}
+
+function isWithinDays(iso: string, days: number) {
+  const ms = safeDateMs(iso);
+  if (!ms) return false;
+  const now = Date.now();
+  const windowMs = days * 24 * 60 * 60 * 1000;
+  return now - ms <= windowMs;
 }
 
 /* -------------------------------- config -------------------------------- */
@@ -57,8 +65,26 @@ type RoleKey = "rm" | "hm";
 const ROLE_STORAGE_KEY = "insights_role";
 
 /**
- * (Optional next step later: self-healing / auto-derivation)
- * For now: curated slugs.
+ * 👇 Update these RM links if your routes differ.
+ * - Portability calculator / score page
+ * - Business plan simulator page
+ */
+const ROLE_CTA: Record<
+  RoleKey,
+  { primary: { label: string; href: string }; secondary?: { label: string; href: string } }
+> = {
+  rm: {
+    primary: { label: "Assess your portability →", href: "/en/tools/portability" },
+    secondary: { label: "Run a Business Plan →", href: "/en/tools/business-plan-simulator" },
+  },
+  hm: {
+    primary: { label: "Speak confidentially →", href: "/en/contact" },
+  },
+};
+
+/**
+ * Curated slugs for first version.
+ * Self-healing will permanently drop any slug that misses once.
  */
 const RECOMMENDED_BY_ROLE: Record<RoleKey, readonly string[]> = {
   rm: [
@@ -77,7 +103,33 @@ const RECOMMENDED_BY_ROLE: Record<RoleKey, readonly string[]> = {
     "swiss-private-banking-shake-up-mega-mergers",
     "swiss-european-banks-tighten-grip-cis-clients",
   ],
-} as const;
+};
+
+/* -------------------- self-healing helpers (TOP of file) -------------------- */
+
+function staleKey(role: RoleKey) {
+  return `insights_reco_stale_${role}`;
+}
+
+function readStale(role: RoleKey): Set<string> {
+  try {
+    const raw = window.localStorage.getItem(staleKey(role));
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    if (!Array.isArray(arr)) return new Set();
+    return new Set(arr.filter((x) => typeof x === "string"));
+  } catch {
+    return new Set();
+  }
+}
+
+function writeStale(role: RoleKey, stale: Set<string>) {
+  try {
+    window.localStorage.setItem(staleKey(role), JSON.stringify(Array.from(stale)));
+  } catch {
+    /* noop */
+  }
+}
 
 /* -------------------------------- page -------------------------------- */
 
@@ -89,58 +141,76 @@ export default function InsightsPage() {
 
   const featured = useMemo(() => sorted.filter((a) => a.featured).slice(0, 6), [sorted]);
 
+  // “Top Insight This Week” (last 7 days, highest engagementScore, tie-break by recency)
+  const topThisWeek = useMemo(() => {
+    const w = sorted.filter((a) => isWithinDays(a.date, 7));
+    if (!w.length) return null;
+
+    const withScore = w.filter((a) => typeof a.engagementScore === "number");
+    const pool = withScore.length ? withScore : w;
+
+    return pool
+      .slice()
+      .sort(
+        (a, b) =>
+          (b.engagementScore ?? 0) - (a.engagementScore ?? 0) ||
+          safeDateMs(b.date) - safeDateMs(a.date)
+      )[0];
+  }, [sorted]);
+
   /* ---------------- Recommended logic ---------------- */
 
   const [role, setRole] = useState<RoleKey>("rm");
-
-  // Auto-scroll into view refs (premium chip behaviour)
-  const roleToggleRef = useRef<HTMLDivElement | null>(null);
-  const rmBtnRef = useRef<HTMLButtonElement | null>(null);
-  const hmBtnRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem(ROLE_STORAGE_KEY) as RoleKey | null;
       if (saved === "rm" || saved === "hm") setRole(saved);
-    } catch {}
+    } catch {
+      /* noop */
+    }
   }, []);
 
   useEffect(() => {
     try {
       localStorage.setItem(ROLE_STORAGE_KEY, role);
-    } catch {}
-  }, [role]);
-
-  // ✅ Auto-center active chip when role changes (mobile-friendly)
-  useEffect(() => {
-    const container = roleToggleRef.current;
-    const active = role === "rm" ? rmBtnRef.current : hmBtnRef.current;
-    if (!container || !active) return;
-
-    // Only when it can scroll
-    if (container.scrollWidth <= container.clientWidth) return;
-
-    const cRect = container.getBoundingClientRect();
-    const aRect = active.getBoundingClientRect();
-
-    const current = container.scrollLeft;
-    const delta = aRect.left - cRect.left - (cRect.width / 2 - aRect.width / 2);
-
-    container.scrollTo({ left: current + delta, behavior: "smooth" });
+    } catch {
+      /* noop */
+    }
   }, [role]);
 
   const featuredSlugs = useMemo(() => new Set(featured.map((a) => a.slug)), [featured]);
 
   const recommended = useMemo(() => {
     const picked: InsightArticle[] = [];
+    const wanted = RECOMMENDED_BY_ROLE[role];
 
-    for (const slug of RECOMMENDED_BY_ROLE[role]) {
+    // Self-healing stale set (persisted)
+    const stale = typeof window !== "undefined" ? readStale(role) : new Set<string>();
+    let staleChanged = false;
+
+    // Try curated list first, but auto-drop stale/missing
+    for (const slug of wanted) {
+      if (stale.has(slug)) continue;
+
       const a = sorted.find((x) => x.slug === slug);
-      if (!a || featuredSlugs.has(a.slug)) continue;
+      if (!a) {
+        stale.add(slug);
+        staleChanged = true;
+        continue;
+      }
+
+      if (featuredSlugs.has(a.slug)) continue; // avoid duplicates with Featured/Latest
       picked.push(a);
       if (picked.length === 3) break;
     }
 
+    // Persist stale immediately after 1 miss
+    if (staleChanged && typeof window !== "undefined") {
+      writeStale(role, stale);
+    }
+
+    // Fallback to latest non-featured if we didn't get 3
     if (picked.length < 3) {
       for (const a of sorted) {
         if (featuredSlugs.has(a.slug)) continue;
@@ -157,24 +227,25 @@ export default function InsightsPage() {
   const roleKicker =
     role === "rm"
       ? "Career moves, portability, and performance-led roles."
-      : "Strategy, restructuring signals, and talent implications.";
+      : "Strategy signals, restructuring risk, and talent implications.";
+
+  const roleCta = ROLE_CTA[role];
+
+  /* -------------------------------- render -------------------------------- */
 
   return (
     <main className="relative overflow-hidden">
-      {/* Background (premium / less dull) */}
+      {/* Premium background */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        {/* base */}
         <div className="absolute inset-0 bg-[#060A12]" />
-        {/* soft spotlights */}
         <div className="absolute -top-40 left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-white/10 blur-3xl opacity-30" />
         <div className="absolute top-40 left-[-200px] h-[380px] w-[380px] rounded-full bg-[#D4AF37]/10 blur-3xl opacity-35" />
         <div className="absolute bottom-[-220px] right-[-200px] h-[520px] w-[520px] rounded-full bg-white/10 blur-3xl opacity-25" />
-        {/* vignette */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/40" />
       </div>
 
       <div className="mx-auto w-full max-w-6xl px-4 py-14">
-        {/* HERO (stronger hierarchy) */}
+        {/* HERO */}
         <header className="mb-10">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-white/70">
             Private Wealth Pulse
@@ -187,8 +258,8 @@ export default function InsightsPage() {
           </h1>
 
           <p className="mt-3 max-w-2xl text-white/70">
-            Private banking analysis on strategy, talent, and market power — built for Switzerland and major
-            booking centres.
+            Private banking analysis on strategy, talent, and market power — built for Switzerland and
+            major booking centres.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
@@ -207,7 +278,7 @@ export default function InsightsPage() {
           </div>
         </header>
 
-        {/* RECOMMENDED (hero-module feel) */}
+        {/* RECOMMENDED */}
         <section className="mb-14">
           <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 shadow-[0_20px_80px_rgba(0,0,0,0.35)] backdrop-blur">
             <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
@@ -219,18 +290,12 @@ export default function InsightsPage() {
                 <p className="mt-1 text-sm text-white/60">{roleKicker}</p>
               </div>
 
-              {/* role toggle (scrollable + auto-center) */}
-              <div
-                ref={roleToggleRef}
-                className="inline-flex max-w-full items-center gap-1 overflow-x-auto rounded-2xl border border-white/15 bg-black/20 p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              >
+              <div className="inline-flex rounded-2xl border border-white/15 bg-black/20 p-1">
                 <button
-                  ref={rmBtnRef}
                   type="button"
-                  aria-pressed={role === "rm"}
                   onClick={() => setRole("rm")}
                   className={[
-                    "shrink-0 rounded-xl px-4 py-2 text-sm font-semibold transition",
+                    "rounded-xl px-4 py-2 text-sm font-semibold transition",
                     role === "rm"
                       ? "bg-white/10 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.10)]"
                       : "text-white/60 hover:text-white hover:bg-white/5",
@@ -239,12 +304,10 @@ export default function InsightsPage() {
                   I’m an RM
                 </button>
                 <button
-                  ref={hmBtnRef}
                   type="button"
-                  aria-pressed={role === "hm"}
                   onClick={() => setRole("hm")}
                   className={[
-                    "shrink-0 rounded-xl px-4 py-2 text-sm font-semibold transition",
+                    "rounded-xl px-4 py-2 text-sm font-semibold transition",
                     role === "hm"
                       ? "bg-white/10 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.10)]"
                       : "text-white/60 hover:text-white hover:bg-white/5",
@@ -256,55 +319,78 @@ export default function InsightsPage() {
             </div>
 
             <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {recommended.map((a) => (
-                <Link
-                  key={a.slug}
-                  href={`/en/insights/${a.slug}`}
-                  className="group rounded-2xl border border-white/10 bg-black/20 p-5 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-black/30"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="text-xs text-white/55">{formatDate(a.date)}</div>
-                    <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/60">
-                      Recommended
-                    </span>
-                  </div>
+              {recommended.map((a) => {
+                const isTopWeek = topThisWeek?.slug === a.slug;
+                return (
+                  <Link
+                    key={a.slug}
+                    href={`/en/insights/${a.slug}`}
+                    className="group rounded-2xl border border-white/10 bg-black/20 p-5 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-black/30"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="text-xs text-white/55">{formatDate(a.date)}</div>
 
-                  <h3 className="mt-3 text-base font-semibold text-white leading-snug">
-                    {a.title}
-                  </h3>
+                      <div className="flex items-center gap-2">
+                        {isTopWeek ? (
+                          <span className="rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-2 py-0.5 text-[10px] font-semibold text-[#D4AF37]">
+                            Top this week
+                          </span>
+                        ) : null}
+                        <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/60">
+                          Recommended
+                        </span>
+                      </div>
+                    </div>
 
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {(a.markets ?? []).slice(0, 3).map((m) => (
-                      <span
-                        key={m}
-                        className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/75"
-                        title={marketLabel(m)}
-                      >
-                        {marketLabel(m)}
-                      </span>
-                    ))}
-                  </div>
+                    <h3 className="mt-3 text-base font-semibold text-white leading-snug">
+                      {a.title}
+                    </h3>
 
-                  <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
-                    Read <span className="transition group-hover:translate-x-0.5">→</span>
-                  </div>
-                </Link>
-              ))}
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {(a.markets ?? []).slice(0, 3).map((m) => (
+                        <span
+                          key={m}
+                          className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/75"
+                          title={marketLabel(m)}
+                        >
+                          {marketLabel(m)}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
+                      Read <span className="transition group-hover:translate-x-0.5">→</span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-white/10 pt-5">
+            {/* Role-aware CTA row */}
+            <div className="mt-6 flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap items-center gap-4">
+                <Link
+                  href={roleCta.primary.href}
+                  className="inline-flex items-center rounded-xl bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
+                >
+                  {roleCta.primary.label}
+                </Link>
+
+                {roleCta.secondary ? (
+                  <Link
+                    href={roleCta.secondary.href}
+                    className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
+                  >
+                    {roleCta.secondary.label}
+                  </Link>
+                ) : null}
+              </div>
+
               <Link
                 href="/en/insights/archive"
                 className="text-sm font-semibold text-white/70 hover:text-white underline underline-offset-4"
               >
                 Browse all insights →
-              </Link>
-              <span className="text-white/20">•</span>
-              <Link
-                href="/en/contact"
-                className="text-sm font-semibold text-white/70 hover:text-white underline underline-offset-4"
-              >
-                Speak confidentially →
               </Link>
             </div>
           </div>
@@ -318,7 +404,9 @@ export default function InsightsPage() {
                 Latest
               </div>
               <h2 className="mt-2 text-xl font-semibold text-white">Latest intelligence</h2>
-              <p className="mt-1 text-sm text-white/60">The freshest reads — updated as you publish.</p>
+              <p className="mt-1 text-sm text-white/60">
+                The freshest reads — updated as you publish.
+              </p>
             </div>
 
             <Link href="/en/insights/archive" className="text-sm text-white/70 hover:text-white">
@@ -327,33 +415,45 @@ export default function InsightsPage() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
-            {featured.map((a) => (
-              <Link
-                key={a.slug}
-                href={`/en/insights/${a.slug}`}
-                className="group rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
-              >
-                <div className="text-xs text-white/55">{formatDate(a.date)}</div>
-                <h3 className="mt-3 text-lg font-semibold text-white leading-snug">{a.title}</h3>
-                <p className="mt-3 text-sm text-white/70 line-clamp-3">{a.summary}</p>
+            {featured.map((a) => {
+              const isTopWeek = topThisWeek?.slug === a.slug;
+              return (
+                <Link
+                  key={a.slug}
+                  href={`/en/insights/${a.slug}`}
+                  className="group rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-xs text-white/55">{formatDate(a.date)}</div>
 
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {(a.markets ?? []).slice(0, 4).map((m) => (
-                    <span
-                      key={m}
-                      className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/75"
-                      title={marketLabel(m)}
-                    >
-                      {marketLabel(m)}
-                    </span>
-                  ))}
-                </div>
+                    {isTopWeek ? (
+                      <span className="rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-2 py-0.5 text-[10px] font-semibold text-[#D4AF37]">
+                        Top this week
+                      </span>
+                    ) : null}
+                  </div>
 
-                <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
-                  Read <span className="transition group-hover:translate-x-0.5">→</span>
-                </div>
-              </Link>
-            ))}
+                  <h3 className="mt-3 text-lg font-semibold text-white leading-snug">{a.title}</h3>
+                  <p className="mt-3 text-sm text-white/70 line-clamp-3">{a.summary}</p>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {(a.markets ?? []).slice(0, 4).map((m) => (
+                      <span
+                        key={m}
+                        className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/75"
+                        title={marketLabel(m)}
+                      >
+                        {marketLabel(m)}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
+                    Read <span className="transition group-hover:translate-x-0.5">→</span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
