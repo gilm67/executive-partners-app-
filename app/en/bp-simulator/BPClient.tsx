@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import React, { useEffect } from "react";
+import Link from "next/link";
 import { useBP } from "@/components/bp/store";
 
 /* ---------- Types (lightweight, extend anytime) ---------- */
@@ -99,7 +100,7 @@ export default function BPClient({ showTips = true, prefill = null }: BPClientPr
     <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* ✅ Tool header (NOT marketing) */}
       <div className="rounded-2xl border border-white/10 bg-black/30 p-4 ring-1 ring-white/10">
-        <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs text-white/70 ring-1 ring-white/10">
               Executive Partners · Private Tool
@@ -114,8 +115,32 @@ export default function BPClient({ showTips = true, prefill = null }: BPClientPr
             </p>
           </div>
 
-          {/* ✅ Removed duplicated "Prefill loaded / No prefill" pill:
-              keep only the top-right system indicator in BpSimulatorClient */}
+          {/* ✅ “Share output” anchor (contextual, not footer-ad) */}
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href="#bp-calibration"
+              className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
+            >
+              Share output →
+            </a>
+
+            {/* Use Calendly here (more direct conversion than /en/contact) */}
+            <a
+              href="https://calendly.com/execpartners/15-minute-career-consultation"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center rounded-xl bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
+            >
+              Book confidential call →
+            </a>
+
+            <Link
+              href="/en/contact"
+              className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
+            >
+              Send your output →
+            </Link>
+          </div>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 // ✅ Real simulator UI (Sections 1–5)
 import BPClient from "./BPClient";
@@ -121,6 +122,75 @@ export default function BpSimulatorClient() {
 
         {/* ✅ REAL SIMULATOR */}
         <BPClient prefill={prefill} showTips={showTips} />
+
+        {/* ✅ Confidential calibration (anchor target + conversion CTA) */}
+        <section id="bp-calibration" className="mt-10 scroll-mt-28">
+          <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
+                  Confidential calibration
+                </div>
+                <h2 className="mt-2 text-lg font-semibold text-white">
+                  Share your BP output for a confidential calibration call.
+                </h2>
+                <p className="mt-1 text-sm text-white/70">
+                  We sanity-check portability realism, ROA, revenue mix and approval readiness — before you speak to a bank.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href="https://calendly.com/execpartners/15-minute-career-consultation"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center rounded-xl bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
+                >
+                  Book 15-min call →
+                </a>
+
+                <Link
+                  href="/en/contact"
+                  className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
+                >
+                  Send your output →
+                </Link>
+
+                <Link
+                  href="/portability"
+                  className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
+                >
+                  Portability tool →
+                </Link>
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <div className="text-sm font-semibold text-white">Portability realism</div>
+                <div className="mt-1 text-sm text-white/60">
+                  What truly moves in 90 days vs 12 months.
+                </div>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <div className="text-sm font-semibold text-white">Committee readiness</div>
+                <div className="mt-1 text-sm text-white/60">
+                  Fix the gaps that get plans rejected.
+                </div>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <div className="text-sm font-semibold text-white">Market benchmarks</div>
+                <div className="mt-1 text-sm text-white/60">
+                  Geneva / Zurich / Dubai / London patterns.
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 text-xs text-white/60">
+              Tip: include portable %, NNM target, ROA, booking centre (CH/UK/UAE/Asia), and current comp structure.
+            </div>
+          </div>
+        </section>
       </div>
     </main>
   );
