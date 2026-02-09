@@ -8,11 +8,14 @@ export const metadata: Metadata = {
   description:
     "Lead UHNW relationships with a Swiss onshore focus. Portability required; strong RM track record.",
   alternates: {
-    canonical: "https://execpartners.ch/jobs/sample",
+    canonical: "https://www.execpartners.ch/jobs/sample",
   },
 };
 
 export default function SampleJobPage() {
+  // ✅ Use your canonical domain (no localhost in prod SEO)
+  const SITE_URL = "https://www.execpartners.ch";
+
   // Dummy job data for the JSON-LD + UI
   const job = {
     ID: "SAMPLE-123",
@@ -28,7 +31,7 @@ export default function SampleJobPage() {
     BaseSalaryMin: 180000,
     BaseSalaryMax: 240000,
     Currency: "CHF",
-    Url: "http://localhost:3000/jobs/sample", // change to prod URL on deploy
+    Url: `${SITE_URL}/jobs/sample`, // ✅ prod URL
     Industry: "Private Banking & Wealth Management",
     JobLocationType: "ONSITE" as const,
     DirectApply: true,
@@ -41,11 +44,11 @@ export default function SampleJobPage() {
         {/* Breadcrumbs JSON-LD */}
         <BreadcrumbJsonLd
           items={[
-            { name: "Home", item: "http://localhost:3000/" },
-            { name: "Jobs", item: "http://localhost:3000/jobs" },
+            { name: "Home", item: `${SITE_URL}/` },
+            { name: "Jobs", item: `${SITE_URL}/jobs` },
             {
               name: "Private Banker — UHNW (Swiss Onshore)",
-              item: "http://localhost:3000/jobs/sample",
+              item: `${SITE_URL}/jobs/sample`,
             },
           ]}
         />
