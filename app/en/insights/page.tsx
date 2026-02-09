@@ -65,17 +65,17 @@ type RoleKey = "rm" | "hm";
 const ROLE_STORAGE_KEY = "insights_role";
 
 /**
- * 👇 Update these RM links if your routes differ.
- * - Portability calculator / score page
- * - Business plan simulator page
+ * ✅ Your real routes:
+ * https://www.execpartners.ch/en/bp-simulator
+ * https://www.execpartners.ch/portability
  */
 const ROLE_CTA: Record<
   RoleKey,
   { primary: { label: string; href: string }; secondary?: { label: string; href: string } }
 > = {
   rm: {
-    primary: { label: "Assess your portability →", href: "/en/tools/portability" },
-    secondary: { label: "Run a Business Plan →", href: "/en/tools/business-plan-simulator" },
+    primary: { label: "Assess your portability →", href: "/portability" },
+    secondary: { label: "Run a Business Plan →", href: "/en/bp-simulator" },
   },
   hm: {
     primary: { label: "Speak confidentially →", href: "/en/contact" },
@@ -84,7 +84,7 @@ const ROLE_CTA: Record<
 
 /**
  * Curated slugs for first version.
- * Self-healing will permanently drop any slug that misses once.
+ * ✅ Self-healing will permanently drop any slug that misses once.
  */
 const RECOMMENDED_BY_ROLE: Record<RoleKey, readonly string[]> = {
   rm: [
@@ -105,7 +105,7 @@ const RECOMMENDED_BY_ROLE: Record<RoleKey, readonly string[]> = {
   ],
 };
 
-/* -------------------- self-healing helpers (TOP of file) -------------------- */
+/* -------------------- self-healing helpers -------------------- */
 
 function staleKey(role: RoleKey) {
   return `insights_reco_stale_${role}`;
@@ -164,7 +164,7 @@ export default function InsightsPage() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(ROLE_STORAGE_KEY) as RoleKey | null;
+      const saved = window.localStorage.getItem(ROLE_STORAGE_KEY) as RoleKey | null;
       if (saved === "rm" || saved === "hm") setRole(saved);
     } catch {
       /* noop */
@@ -173,7 +173,7 @@ export default function InsightsPage() {
 
   useEffect(() => {
     try {
-      localStorage.setItem(ROLE_STORAGE_KEY, role);
+      window.localStorage.setItem(ROLE_STORAGE_KEY, role);
     } catch {
       /* noop */
     }
@@ -185,11 +185,10 @@ export default function InsightsPage() {
     const picked: InsightArticle[] = [];
     const wanted = RECOMMENDED_BY_ROLE[role];
 
-    // Self-healing stale set (persisted)
     const stale = typeof window !== "undefined" ? readStale(role) : new Set<string>();
     let staleChanged = false;
 
-    // Try curated list first, but auto-drop stale/missing
+    // curated first (auto-drop stale/missing)
     for (const slug of wanted) {
       if (stale.has(slug)) continue;
 
@@ -200,17 +199,16 @@ export default function InsightsPage() {
         continue;
       }
 
-      if (featuredSlugs.has(a.slug)) continue; // avoid duplicates with Featured/Latest
+      if (featuredSlugs.has(a.slug)) continue;
       picked.push(a);
       if (picked.length === 3) break;
     }
 
-    // Persist stale immediately after 1 miss
     if (staleChanged && typeof window !== "undefined") {
       writeStale(role, stale);
     }
 
-    // Fallback to latest non-featured if we didn't get 3
+    // fallback
     if (picked.length < 3) {
       for (const a of sorted) {
         if (featuredSlugs.has(a.slug)) continue;
