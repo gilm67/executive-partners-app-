@@ -24,25 +24,6 @@ function safeDateMs(iso?: string) {
   return Number.isNaN(t) ? 0 : t;
 }
 
-function pickTopArticle(items: readonly InsightArticle[]) {
-  if (!items.length) return null;
-
-  const arr = [...items];
-  const withScore = arr.filter((a) => typeof a.engagementScore === "number");
-
-  if (withScore.length) {
-    return withScore
-      .slice()
-      .sort(
-        (a, b) =>
-          (b.engagementScore ?? 0) - (a.engagementScore ?? 0) ||
-          safeDateMs(b.date) - safeDateMs(a.date)
-      )[0];
-  }
-
-  return arr.slice().sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))[0];
-}
-
 /* -------------------------------- config -------------------------------- */
 
 const P1_SUBTHEMES = [
@@ -75,6 +56,26 @@ const P1_SUBTHEMES = [
 type RoleKey = "rm" | "hm";
 const ROLE_STORAGE_KEY = "insights_role";
 
+/* ----------------------- self-healing recommended ----------------------- */
+
+const DEAD_SLUGS_KEY = "insights_dead_slugs";
+
+function getDeadSlugs(): Set<string> {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(DEAD_SLUGS_KEY) || "[]"));
+  } catch {
+    return new Set();
+  }
+}
+
+function markDeadSlug(slug: string) {
+  try {
+    const dead = getDeadSlugs();
+    dead.add(slug);
+    localStorage.setItem(DEAD_SLUGS_KEY, JSON.stringify([...dead]));
+  } catch {}
+}
+
 const RECOMMENDED_BY_ROLE: Record<RoleKey, readonly string[]> = {
   rm: [
     "investment-advisor-replacing-rm",
@@ -92,7 +93,7 @@ const RECOMMENDED_BY_ROLE: Record<RoleKey, readonly string[]> = {
     "swiss-private-banking-shake-up-mega-mergers",
     "swiss-european-banks-tighten-grip-cis-clients",
   ],
-} as const;
+};
 
 /* -------------------------------- page -------------------------------- */
 
@@ -102,39 +103,54 @@ export default function InsightsPage() {
     []
   );
 
-  const featured = useMemo(() => sorted.filter((a) => a.featured).slice(0, 6), [sorted]);
+  const featured = useMemo(
+    () => sorted.filter((a) => a.featured).slice(0, 6),
+    [sorted]
+  );
+
+  /* ---------------- Recommended logic ---------------- */
 
   const [role, setRole] = useState<RoleKey>("rm");
 
   useEffect(() => {
     try {
-      const saved = window.localStorage.getItem(ROLE_STORAGE_KEY) as RoleKey | null;
+      const saved = localStorage.getItem(ROLE_STORAGE_KEY) as RoleKey | null;
       if (saved === "rm" || saved === "hm") setRole(saved);
-    } catch {
-      /* noop */
-    }
+    } catch {}
   }, []);
 
   useEffect(() => {
     try {
-      window.localStorage.setItem(ROLE_STORAGE_KEY, role);
-    } catch {
-      /* noop */
-    }
+      localStorage.setItem(ROLE_STORAGE_KEY, role);
+    } catch {}
   }, [role]);
 
-  const featuredSlugs = useMemo(() => new Set(featured.map((a) => a.slug)), [featured]);
+  const featuredSlugs = useMemo(
+    () => new Set(featured.map((a) => a.slug)),
+    [featured]
+  );
 
   const recommended = useMemo(() => {
     const picked: InsightArticle[] = [];
+    const dead = getDeadSlugs();
 
     for (const slug of RECOMMENDED_BY_ROLE[role]) {
+      if (dead.has(slug)) continue;
+
       const a = sorted.find((x) => x.slug === slug);
-      if (!a || featuredSlugs.has(a.slug)) continue;
+
+      if (!a) {
+        markDeadSlug(slug); // 🔥 self-heal permanently
+        continue;
+      }
+
+      if (featuredSlugs.has(a.slug)) continue;
+
       picked.push(a);
       if (picked.length === 3) break;
     }
 
+    // Fallback if list shrinks
     if (picked.length < 3) {
       for (const a of sorted) {
         if (featuredSlugs.has(a.slug)) continue;
@@ -147,30 +163,123 @@ export default function InsightsPage() {
     return picked;
   }, [role, sorted, featuredSlugs]);
 
+  /* -------------------------------- render -------------------------------- */
+
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-14">
-      {/* Example of SAFE markets rendering */}
-      {recommended.map((a) => (
-        <Link
-          key={a.slug}
-          href={`/en/insights/${a.slug}`}
-          className="block rounded-xl border border-white/10 bg-white/5 p-5"
-        >
-          <div className="text-xs text-white/60">{formatDate(a.date)}</div>
-          <h3 className="mt-2 text-base font-semibold text-white">{a.title}</h3>
+      {/* HERO */}
+      <header className="mb-12">
+        <h1 className="text-3xl font-semibold text-white">Insights</h1>
+        <p className="mt-2 max-w-2xl text-white/70">
+          Private banking intelligence on strategy, talent, and market power.
+        </p>
+      </header>
 
-          <div className="mt-3 flex flex-wrap gap-2">
-            {(a.markets ?? []).map((m) => (
-              <span
-                key={m}
-                className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/75"
+      {/* RECOMMENDED */}
+      <section className="mb-14">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+          <div className="mb-6 flex items-end justify-between">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-white/60">
+                Recommended for you
+              </p>
+              <h2 className="mt-2 text-lg font-semibold text-white">
+                {role === "rm" ? "Relationship Managers" : "Hiring Managers"}
+              </h2>
+            </div>
+
+            <div className="inline-flex rounded-xl border border-white/15 bg-white/5 p-1">
+              <button
+                onClick={() => setRole("rm")}
+                className={`px-3 py-1.5 text-sm font-semibold rounded-lg ${
+                  role === "rm" ? "bg-white/10 text-white" : "text-white/60"
+                }`}
               >
-                {marketLabel(m)}
-              </span>
+                I’m an RM
+              </button>
+              <button
+                onClick={() => setRole("hm")}
+                className={`px-3 py-1.5 text-sm font-semibold rounded-lg ${
+                  role === "hm" ? "bg-white/10 text-white" : "text-white/60"
+                }`}
+              >
+                I’m Hiring
+              </button>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {recommended.map((a) => (
+              <Link
+                key={a.slug}
+                href={`/en/insights/${a.slug}`}
+                className="rounded-xl border border-white/10 bg-white/5 p-5 hover:bg-white/10"
+              >
+                <div className="text-xs text-white/60">{formatDate(a.date)}</div>
+                <h3 className="mt-2 text-base font-semibold text-white">{a.title}</h3>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {(a.markets ?? []).map((m) => (
+                    <span
+                      key={m}
+                      className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/75"
+                    >
+                      {marketLabel(m)}
+                    </span>
+                  ))}
+                </div>
+              </Link>
             ))}
           </div>
-        </Link>
-      ))}
+        </div>
+      </section>
+
+      {/* LATEST */}
+      <section className="mb-14">
+        <h2 className="mb-6 text-lg font-semibold text-white">Latest intelligence</h2>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {featured.map((a) => (
+            <Link
+              key={a.slug}
+              href={`/en/insights/${a.slug}`}
+              className="rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10"
+            >
+              <div className="text-xs text-white/60">{formatDate(a.date)}</div>
+              <h3 className="mt-2 text-lg font-semibold text-white">{a.title}</h3>
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(a.markets ?? []).map((m) => (
+                  <span
+                    key={m}
+                    className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/75"
+                  >
+                    {marketLabel(m)}
+                  </span>
+                ))}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* SUB-THEMES */}
+      <section className="mt-16">
+        <h2 className="mb-6 text-lg font-semibold text-white">Browse by sub-theme</h2>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {P1_SUBTHEMES.map((s) => (
+            <Link
+              key={s.key}
+              href={s.href}
+              className="rounded-xl border border-white/10 bg-white/5 p-5 hover:bg-white/10"
+            >
+              <h3 className="text-sm font-semibold text-white">{s.title}</h3>
+              <p className="mt-2 text-xs text-white/60">{s.desc}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
