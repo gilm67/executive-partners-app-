@@ -131,130 +131,35 @@ export default function InsightsPage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-14">
+      {/* HERO */}
       <div className="mb-10">
         <h1 className="text-3xl font-semibold text-white">Insights</h1>
         <p className="mt-2 max-w-2xl text-white/70">
           Market intelligence and hiring signals across private banking and wealth management.
         </p>
 
-        {/* ✅ Browse by Sub-Theme (Pillar I) */}
-        <div className="mt-8">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
-                Browse by Sub-Theme (Pillar I)
-              </p>
-              <h2 className="mt-2 text-lg font-semibold text-white">Choose your angle</h2>
-              <p className="mt-1 text-sm text-white/60">
-                Four strategic chapters. Built for binge-reading.
-              </p>
-            </div>
-
-            <Link
-              href="/en/insights/pillar/p1"
-              className="text-sm text-white/70 hover:text-white underline underline-offset-4"
-            >
-              Open Pillar I →
-            </Link>
-          </div>
-
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {P1_SUBTHEMES.map((s) => {
-              const meta = p1SubThemeMeta[s.key] ?? { count: 0, lastUpdated: undefined, top: null };
-              const top = meta.top;
-
-              return (
-                <Link
-                  key={s.href}
-                  href={s.href}
-                  className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="text-sm font-semibold text-white">{s.title}</div>
-                    <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
-                      {meta.count} {meta.count === 1 ? "insight" : "insights"}
-                    </span>
-                  </div>
-
-                  <div className="mt-2 text-xs text-white/60">{s.desc}</div>
-
-                  <div className="mt-3 text-xs text-white/60">
-                    Last updated:{" "}
-                    <span className="text-white/70">
-                      {meta.lastUpdated ? formatDate(meta.lastUpdated) : "—"}
-                    </span>
-                  </div>
-
-                  {top ? (
-                    <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3">
-                      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/50">
-                        Top article
-                      </div>
-                      <div className="mt-1 line-clamp-2 text-sm font-semibold text-white">
-                        {top.title}
-                      </div>
-                      <div className="mt-1 line-clamp-2 text-xs text-white/60">
-                        {top.summary}
-                      </div>
-                      {typeof top.engagementScore === "number" ? (
-                        <div className="mt-2 text-[11px] text-white/50">
-                          Score: <span className="text-white/70">{top.engagementScore}</span>
-                        </div>
-                      ) : null}
-                    </div>
-                  ) : (
-                    <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3">
-                      <div className="text-sm text-white/60">No articles yet. Coming soon.</div>
-                    </div>
-                  )}
-
-                  <div className="mt-4 inline-flex items-center text-xs font-semibold text-[#D4AF37]">
-                    Explore →
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ✅ Browse by Pillar */}
-        <div className="mt-10">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
-            Browse by Pillar
-          </p>
-
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {PILLARS.map((p) =>
-              p.enabled ? (
-                <Link
-                  key={p.code}
-                  href={p.href}
-                  className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
-                >
-                  <div className="text-sm font-semibold text-white">{p.title}</div>
-                  <div className="mt-2 text-xs text-white/60">{p.desc}</div>
-                  <div className="mt-4 inline-flex items-center text-xs font-semibold text-[#D4AF37]">
-                    Open →
-                  </div>
-                </Link>
-              ) : (
-                <div key={p.code} className="rounded-2xl border border-white/10 bg-white/5 p-5 opacity-60">
-                  <div className="text-sm font-semibold text-white">{p.title}</div>
-                  <div className="mt-2 text-xs text-white/60">{p.desc}</div>
-                  <div className="mt-4 inline-flex items-center text-xs font-semibold text-white/60">
-                    Coming soon
-                  </div>
-                </div>
-              )
-            )}
-          </div>
+        {/* ✅ Single primary action */}
+        <div className="mt-6">
+          <a
+            href="#latest"
+            className="inline-flex rounded-xl border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/15"
+          >
+            Start with the latest →
+          </a>
         </div>
       </div>
 
-      {/* Featured */}
-      <div className="mb-10 flex items-end justify-between gap-4">
-        <h2 className="text-lg font-semibold text-white">Featured</h2>
-        <Link href="/en/insights/archive" className="text-sm font-semibold text-white/75 hover:text-white">
+      {/* ✅ PRIMARY: Featured / Latest */}
+      <div id="latest" className="mb-10 flex items-end justify-between gap-4 scroll-mt-28">
+        <div>
+          <h2 className="text-lg font-semibold text-white">Latest intelligence</h2>
+          <p className="mt-1 text-sm text-white/60">Your best starting point.</p>
+        </div>
+
+        <Link
+          href="/en/insights/archive"
+          className="text-sm font-semibold text-white/75 hover:text-white"
+        >
           Browse archive →
         </Link>
       </div>
@@ -289,12 +194,92 @@ export default function InsightsPage() {
         ))}
       </div>
 
-      {/* Popular */}
+      {/* ✅ SECONDARY: Sub-themes */}
+      <section className="mt-14">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
+              Browse by Sub-Theme
+            </p>
+            <h2 className="mt-2 text-lg font-semibold text-white">Choose your angle</h2>
+            <p className="mt-1 text-sm text-white/60">
+              Four strategic chapters for deeper reading (Pillar I).
+            </p>
+          </div>
+
+          <Link
+            href="/en/insights/pillar/p1"
+            className="text-sm text-white/70 hover:text-white underline underline-offset-4"
+          >
+            Open Pillar I →
+          </Link>
+        </div>
+
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {P1_SUBTHEMES.map((s) => {
+            const meta = p1SubThemeMeta[s.key] ?? { count: 0, lastUpdated: undefined, top: null };
+            const top = meta.top;
+
+            return (
+              <Link
+                key={s.href}
+                href={s.href}
+                className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="text-sm font-semibold text-white">{s.title}</div>
+                  <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
+                    {meta.count} {meta.count === 1 ? "insight" : "insights"}
+                  </span>
+                </div>
+
+                <div className="mt-2 text-xs text-white/60">{s.desc}</div>
+
+                <div className="mt-3 text-xs text-white/60">
+                  Last updated:{" "}
+                  <span className="text-white/70">
+                    {meta.lastUpdated ? formatDate(meta.lastUpdated) : "—"}
+                  </span>
+                </div>
+
+                {top ? (
+                  <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3">
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/50">
+                      Top article
+                    </div>
+                    <div className="mt-1 line-clamp-2 text-sm font-semibold text-white">
+                      {top.title}
+                    </div>
+                    <div className="mt-1 line-clamp-2 text-xs text-white/60">{top.summary}</div>
+                    {typeof top.engagementScore === "number" ? (
+                      <div className="mt-2 text-[11px] text-white/50">
+                        Score: <span className="text-white/70">{top.engagementScore}</span>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : (
+                  <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3">
+                    <div className="text-sm text-white/60">No articles yet. Coming soon.</div>
+                  </div>
+                )}
+
+                <div className="mt-4 inline-flex items-center text-xs font-semibold text-[#D4AF37]">
+                  Explore →
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ✅ OPTIONAL: Popular */}
       {popular.length > 0 && (
-        <>
-          <div className="mt-14 mb-6">
+        <section className="mt-14">
+          <div className="mb-6">
             <h2 className="text-lg font-semibold text-white">Popular on LinkedIn</h2>
-            <p className="mt-1 text-sm text-white/60">Based on engagement score (manual ranking for now).</p>
+            <p className="mt-1 text-sm text-white/60">
+              Based on engagement score (manual ranking for now).
+            </p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -320,8 +305,44 @@ export default function InsightsPage() {
               </a>
             ))}
           </div>
-        </>
+        </section>
       )}
+
+      {/* ✅ OPTIONAL: Pillars (move to bottom to reduce cognitive load) */}
+      <section className="mt-14">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
+          Browse by Pillar
+        </p>
+
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {PILLARS.map((p) =>
+            p.enabled ? (
+              <Link
+                key={p.code}
+                href={p.href}
+                className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10"
+              >
+                <div className="text-sm font-semibold text-white">{p.title}</div>
+                <div className="mt-2 text-xs text-white/60">{p.desc}</div>
+                <div className="mt-4 inline-flex items-center text-xs font-semibold text-[#D4AF37]">
+                  Open →
+                </div>
+              </Link>
+            ) : (
+              <div
+                key={p.code}
+                className="rounded-2xl border border-white/10 bg-white/5 p-5 opacity-60"
+              >
+                <div className="text-sm font-semibold text-white">{p.title}</div>
+                <div className="mt-2 text-xs text-white/60">{p.desc}</div>
+                <div className="mt-4 inline-flex items-center text-xs font-semibold text-white/60">
+                  Coming soon
+                </div>
+              </div>
+            )
+          )}
+        </div>
+      </section>
     </main>
   );
 }
