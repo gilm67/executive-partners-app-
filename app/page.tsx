@@ -1,3 +1,4 @@
+// app/page.tsx
 import Link from "next/link";
 import Image from "next/image";
 import HomeClient from "./(marketing)/HomeClient";
@@ -39,13 +40,14 @@ export default function HomePage() {
       <main className="relative min-h-screen body-grain text-white">
         <section className="relative overflow-hidden">
           {/* ✅ Controlled hero height (prevents “too tall” feeling) */}
-          <div className="relative h-[68vh] min-h-[560px] max-h-[820px] md:h-[72vh] w-full">
+          <div className="relative h-[68vh] min-h-[560px] max-h-[820px] w-full md:h-[72vh]">
             <Image
               src={HERO}
               alt="Executive Partners – global private banking hubs skyline at dusk"
               fill
               priority
-              sizes="100vw"
+              fetchPriority="high"
+              sizes="(max-width: 768px) 100vw, 1200px"
               className="object-cover object-center"
             />
 
@@ -75,7 +77,8 @@ export default function HomePage() {
                     width={320}
                     height={110}
                     priority
-                    className="h-auto w-[210px] sm:w-[260px] md:w-[320px] drop-shadow-[0_0_18px_rgba(255,255,255,0.28)]"
+                    sizes="320px"
+                    className="h-auto w-[210px] drop-shadow-[0_0_18px_rgba(255,255,255,0.28)] sm:w-[260px] md:w-[320px]"
                   />
                 </div>
 
@@ -105,7 +108,7 @@ export default function HomePage() {
           </div>
 
           {/* FREE TOOLS SECTION - Now first and prominent */}
-          <div className="relative mx-auto -mt-20 max-w-6xl px-4 pb-8">
+          <div className="relative mx-auto -mt-14 max-w-6xl px-4 pb-8 sm:-mt-20">
             <div className="mb-6 text-center">
               <h2 className="font-[var(--font-playfair)] text-3xl font-semibold text-white md:text-4xl">
                 Free Tools for Private Bankers
@@ -264,7 +267,7 @@ function ActionCard({
       <div className="relative flex items-start gap-4">
         <div
           className={[
-            "h-11 w-11 rounded-xl grid place-items-center",
+            "grid h-11 w-11 place-items-center rounded-xl",
             iconWrap,
           ].join(" ")}
         >
