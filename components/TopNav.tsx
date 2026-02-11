@@ -124,8 +124,9 @@ export default function TopNav() {
         : "text-slate-200 hover:text-white hover:bg-white/5",
     ].join(" ");
 
+  // ✅ IMPORTANT: open inward & above other elements
   const ddPanel =
-    "absolute left-0 mt-2 w-72 rounded-2xl border border-white/10 bg-[#050814]/95 backdrop-blur p-2 shadow-xl";
+    "absolute right-0 mt-2 w-72 rounded-2xl border border-white/10 bg-[#050814]/95 backdrop-blur p-2 shadow-xl z-50";
 
   const ddItemClasses = (active: boolean) =>
     [
@@ -151,7 +152,8 @@ export default function TopNav() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-2">
-            <div className="flex items-center gap-2 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+            {/* ✅ Left: scrolling links only (no dropdowns inside overflow container) */}
+            <div className="flex items-center gap-2 max-w-[62vw] overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch] pr-1">
               {TOP_BASE.map((item) =>
                 item.external ? (
                   <a
@@ -174,7 +176,10 @@ export default function TopNav() {
                   </Link>
                 )
               )}
+            </div>
 
+            {/* ✅ Right: dropdowns + CTA (no overflow clipping) */}
+            <div className="relative flex items-center gap-2">
               {/* Tools dropdown */}
               <div
                 className="relative"
@@ -240,15 +245,15 @@ export default function TopNav() {
                   </div>
                 )}
               </div>
-            </div>
 
-            {/* Contact CTA */}
-            <Link
-              href={CONTACT_BASE.href}
-              className="ml-2 rounded-full bg-[#F5D778] px-4 py-2 text-sm font-semibold text-[#050814] hover:opacity-90 transition"
-            >
-              Contact
-            </Link>
+              {/* Contact CTA */}
+              <Link
+                href={CONTACT_BASE.href}
+                className="ml-2 rounded-full bg-[#F5D778] px-4 py-2 text-sm font-semibold text-[#050814] hover:opacity-90 transition"
+              >
+                Contact
+              </Link>
+            </div>
           </div>
 
           {/* Mobile burger */}
@@ -275,17 +280,30 @@ export default function TopNav() {
               const active = isActive(item.href.replace(base, "") || item.href);
               const cls = [
                 "block rounded-md px-3 py-2 text-sm transition-colors",
-                active ? "bg-white/10 text-[#F5D778]" : "text-slate-200 hover:text-white hover:bg-white/5",
+                active
+                  ? "bg-white/10 text-[#F5D778]"
+                  : "text-slate-200 hover:text-white hover:bg-white/5",
               ].join(" ");
 
               return (
                 <li key={item.href}>
                   {item.external ? (
-                    <a href={item.href} target="_blank" rel="noopener noreferrer" className={cls} onClick={() => setOpen(false)}>
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cls}
+                      onClick={() => setOpen(false)}
+                    >
                       {item.label}
                     </a>
                   ) : (
-                    <Link href={item.href} className={cls} onClick={() => setOpen(false)} aria-current={active ? "page" : undefined}>
+                    <Link
+                      href={item.href}
+                      className={cls}
+                      onClick={() => setOpen(false)}
+                      aria-current={active ? "page" : undefined}
+                    >
                       {item.label}
                     </Link>
                   )}
@@ -301,12 +319,19 @@ export default function TopNav() {
               const active = isActive(item.href.replace(base, "") || item.href);
               const cls = [
                 "block rounded-md px-3 py-2 text-sm transition-colors",
-                active ? "bg-white/10 text-[#F5D778]" : "text-slate-200 hover:text-white hover:bg-white/5",
+                active
+                  ? "bg-white/10 text-[#F5D778]"
+                  : "text-slate-200 hover:text-white hover:bg-white/5",
               ].join(" ");
 
               return (
                 <li key={item.href}>
-                  <Link href={item.href} className={cls} onClick={() => setOpen(false)} aria-current={active ? "page" : undefined}>
+                  <Link
+                    href={item.href}
+                    className={cls}
+                    onClick={() => setOpen(false)}
+                    aria-current={active ? "page" : undefined}
+                  >
                     {item.label}
                   </Link>
                 </li>
@@ -321,12 +346,19 @@ export default function TopNav() {
               const active = isActive(item.href.replace(base, "") || item.href);
               const cls = [
                 "block rounded-md px-3 py-2 text-sm transition-colors",
-                active ? "bg-white/10 text-[#F5D778]" : "text-slate-200 hover:text-white hover:bg-white/5",
+                active
+                  ? "bg-white/10 text-[#F5D778]"
+                  : "text-slate-200 hover:text-white hover:bg-white/5",
               ].join(" ");
 
               return (
                 <li key={item.href}>
-                  <Link href={item.href} className={cls} onClick={() => setOpen(false)} aria-current={active ? "page" : undefined}>
+                  <Link
+                    href={item.href}
+                    className={cls}
+                    onClick={() => setOpen(false)}
+                    aria-current={active ? "page" : undefined}
+                  >
                     {item.label}
                   </Link>
                 </li>
