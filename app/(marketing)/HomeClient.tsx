@@ -323,7 +323,6 @@ export default function HomeClient() {
                 ))}
               </div>
 
-              {/* scoped only — Vercel safe */}
               <style jsx>{`
                 @keyframes marquee {
                   0% {
@@ -341,8 +340,8 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* FAQ (UPGRADED) */}
-      <CandidateFAQ compact limit={8} />
+      {/* FAQ (UPGRADED) — EXACTLY 6 QUESTIONS */}
+      <CandidateFAQ compact limit={6} />
 
       {/* MARKETS */}
       <section className="py-16 border-t border-white/10 bg-black/25">
