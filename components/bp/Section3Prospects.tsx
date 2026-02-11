@@ -1,28 +1,29 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
-import { useBP, Prospect } from './store';
+import { useMemo, useRef, type ReactNode } from 'react';
+import { useBP, type Prospect } from '@/components/bp/store';
 
 export default function Section3Prospects() {
-  const {
-    i,
-    set,
-    addProspect,
-    startEditProspect,
-    updateProspect,
-    deleteProspect,
-    cancelEditProspect,
-    importProspects,
-    resetProspectForm,
-  } = useBP();
+  // ✅ selectors (consistent pattern + avoids extra rerenders)
+  const i = useBP((s: any) => s.i);
+  const set = useBP((s: any) => s.set);
+
+  const addProspect = useBP((s: any) => s.addProspect);
+  const startEditProspect = useBP((s: any) => s.startEditProspect);
+  const updateProspect = useBP((s: any) => s.updateProspect);
+  const deleteProspect = useBP((s: any) => s.deleteProspect);
+  const cancelEditProspect = useBP((s: any) => s.cancelEditProspect);
+  const importProspects = useBP((s: any) => s.importProspects);
+  const resetProspectForm = useBP((s: any) => s.resetProspectForm);
 
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   // Data for display with a TOTAL row at the end
   const { rowsForDisplay, totals } = useMemo(() => {
-    const best = sum(i.prospects.map(p => p.best_nnm_m));
-    const worst = sum(i.prospects.map(p => p.worst_nnm_m));
-    const wealth = sum(i.prospects.map(p => p.wealth_m));
+    const best = sum((i.prospects || []).map((p: any) => Number(p?.best_nnm_m) || 0));
+    const worst = sum((i.prospects || []).map((p: any) => Number(p?.worst_nnm_m) || 0));
+    const wealth = sum((i.prospects || []).map((p: any) => Number(p?.wealth_m) || 0));
+
     const totalRow = {
       name: 'TOTAL',
       source: '' as Prospect['source'] | '',
@@ -31,9 +32,10 @@ export default function Section3Prospects() {
       worst_nnm_m: worst,
       _isTotal: true,
     };
+
     return {
       totals: totalRow,
-      rowsForDisplay: [...i.prospects, totalRow as any],
+      rowsForDisplay: [...(i.prospects || []), totalRow as any],
     };
   }, [i.prospects]);
 
@@ -50,7 +52,8 @@ export default function Section3Prospects() {
         <summary className="cursor-pointer text-white/90 font-medium">📥 Import from CSV</summary>
         <div className="mt-3 text-sm text-white/80 space-y-2">
           <p>
-            Expected headers (case-sensitive): <code>Name, Source, Wealth (M), Best NNM (M), Worst NNM (M)</code>
+            Expected headers (case-sensitive):{' '}
+            <code>Name, Source, Wealth (M), Best NNM (M), Worst NNM (M)</code>
           </p>
           <input
             ref={fileRef}
@@ -72,34 +75,31 @@ export default function Section3Prospects() {
             onChange={(e) => set({ p_name: e.target.value })}
           />
         </Field>
+
         <Field label="Source">
           <select
             className="w-full bg-transparent outline-none"
             value={i.p_source}
             onChange={(e) => set({ p_source: toSource(e.target.value) })}
           >
-            {['Self Acquired','Inherited','Finder'].map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
+            {['Self Acquired', 'Inherited', 'Finder'].map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
             ))}
           </select>
         </Field>
+
         <Field label="Wealth (M)">
-          <Num
-            value={i.p_wealth_m}
-            onChange={(v) => set({ p_wealth_m: v })}
-          />
+          <Num value={i.p_wealth_m} onChange={(v) => set({ p_wealth_m: v })} />
         </Field>
+
         <Field label="Best NNM (M)">
-          <Num
-            value={i.p_best_nnm_m}
-            onChange={(v) => set({ p_best_nnm_m: v })}
-          />
+          <Num value={i.p_best_nnm_m} onChange={(v) => set({ p_best_nnm_m: v })} />
         </Field>
+
         <Field label="Worst NNM (M)">
-          <Num
-            value={i.p_worst_nnm_m}
-            onChange={(v) => set({ p_worst_nnm_m: v })}
-          />
+          <Num value={i.p_worst_nnm_m} onChange={(v) => set({ p_worst_nnm_m: v })} />
         </Field>
       </div>
 
@@ -129,13 +129,10 @@ export default function Section3Prospects() {
             </tr>
           </thead>
           <tbody>
-            {rowsForDisplay.map((row: any, idx) => {
+            {rowsForDisplay.map((row: any, idx: number) => {
               const isTotal = !!row._isTotal;
               return (
-                <tr
-                  key={idx}
-                  className={isTotal ? 'bg-emerald-500/10 font-semibold' : 'odd:bg-white/5'}
-                >
+                <tr key={idx} className={isTotal ? 'bg-emerald-500/10 font-semibold' : 'odd:bg-white/5'}>
                   <Td>{row.name}</Td>
                   <Td>{row.source || ''}</Td>
                   <Td className="text-right">{fmt(row.wealth_m)}</Td>
@@ -158,7 +155,7 @@ export default function Section3Prospects() {
 
       {/* Quick delta info like Streamlit note */}
       <p className="text-sm text-white/60">
-        Δ Best NNM vs NNM Y1: {' '}
+        Δ Best NNM vs NNM Y1:{' '}
         <span className={deltaClass(totals.best_nnm_m - (Number(i.nnm_y1_m) || 0))}>
           {(totals.best_nnm_m - (Number(i.nnm_y1_m) || 0)).toFixed(1)} M
         </span>
@@ -169,13 +166,11 @@ export default function Section3Prospects() {
 
 /* ——— helpers / little primitives ——— */
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="text-sm text-white/80 space-y-1 block">
       <div className="font-medium text-white">{label}</div>
-      <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-        {children}
-      </div>
+      <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">{children}</div>
     </label>
   );
 }
@@ -217,7 +212,7 @@ function Btn({
   );
 }
 
-function Mini({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+function Mini({ onClick, children }: { onClick: () => void; children: ReactNode }) {
   return (
     <button
       type="button"
@@ -229,10 +224,10 @@ function Mini({ onClick, children }: { onClick: () => void; children: React.Reac
   );
 }
 
-function Th({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+function Th({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <th className={`px-3 py-2 text-left ${className}`}>{children}</th>;
 }
-function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+function Td({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <td className={`px-3 py-2 ${className}`}>{children}</td>;
 }
 
@@ -254,10 +249,7 @@ function toSource(v: string) {
 }
 
 /** CSV → Prospect[] */
-async function handleCSV(
-  e: React.ChangeEvent<HTMLInputElement>,
-  importProspects: (rows: Prospect[]) => void
-) {
+async function handleCSV(e: React.ChangeEvent<HTMLInputElement>, importProspects: (rows: Prospect[]) => void) {
   const f = e.target.files?.[0];
   if (!f) return;
   const txt = await f.text();
@@ -278,14 +270,14 @@ function parseCSV(text: string): Prospect[] {
     best: header.indexOf('Best NNM (M)'),
     worst: header.indexOf('Worst NNM (M)'),
   };
-  if (Object.values(idx).some(i => i < 0)) return [];
+  if (Object.values(idx).some((i) => i < 0)) return [];
 
   const out: Prospect[] = [];
   for (let r = 1; r < lines.length; r++) {
     const cols = splitCSVLine(lines[r]);
     const src = (cols[idx.source] || '').trim();
     const candidate: Prospect['source'] =
-      (['Self Acquired','Inherited','Finder'].includes(src) ? src : 'Self Acquired') as any;
+      (['Self Acquired', 'Inherited', 'Finder'].includes(src) ? src : 'Self Acquired') as any;
 
     out.push({
       name: (cols[idx.name] || '').trim(),
@@ -325,5 +317,5 @@ function splitCSVLine(line: string): string[] {
     }
   }
   out.push(cur);
-  return out.map(s => s.trim());
+  return out.map((s) => s.trim());
 }

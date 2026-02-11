@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import { useBP } from "@/components/bp/store";
 
@@ -30,6 +30,12 @@ export type BPProfilePrefill = {
 export type BPClientProps = {
   showTips?: boolean;
   prefill?: BPProfilePrefill | null;
+
+  /** ✅ NEW: lets parent (BpSimulatorClient) show sticky CTA only after results exist */
+  onResultReady?: () => void;
+
+  /** ✅ NEW: lets BPClient itself request calibration + scroll */
+  onRequestCalibration?: () => void;
 };
 
 export type BPSectionProps = {
@@ -84,7 +90,12 @@ function RenderSection({
   return <Component {...sectionProps} />;
 }
 
-export default function BPClient({ showTips = true, prefill = null }: BPClientProps) {
+export default function BPClient({
+  showTips = true,
+  prefill = null,
+  onResultReady,
+  onRequestCalibration,
+}: BPClientProps) {
   const sectionProps: BPSectionProps = { showTips, prefill };
 
   // ✅ Apply prefill only once per page lifetime (store enforces "once" + "do not overwrite")
@@ -95,6 +106,43 @@ export default function BPClient({ showTips = true, prefill = null }: BPClientPr
     // IMPORTANT: pass RAW prefill payload; store handles flexible mapping + safety rules
     applyPrefillOnce(prefill);
   }, [prefill, applyPrefillOnce]);
+
+  /**
+   * ✅ Detect "results ready" from store so we can trigger parent sticky CTA.
+   * Replace the selector with the exact key you use for computed output if needed.
+   */
+  const resultsSignal = useBP((s: any) => {
+    // 🔧 If you know the key, prefer something explicit like:
+    // return s.summary?.ok || s.report?.id || s.outputReady;
+
+    return (
+      s.summary ||
+      s.results ||
+      s.output ||
+      s.report ||
+      s.pdfUrl ||
+      s.exportUrl ||
+      s.aiEvaluation ||
+      null
+    );
+  });
+
+  // fire only once
+  const firedRef = useRef(false);
+  useEffect(() => {
+    if (firedRef.current) return;
+    if (!resultsSignal) return;
+    firedRef.current = true;
+    onResultReady?.();
+  }, [resultsSignal, onResultReady]);
+
+  const handleShareOutput = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    onRequestCalibration?.(); // parent may also scroll + show sticky
+    // fallback scroll if parent doesn't handle it
+    const el = document.getElementById("bp-calibration");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -115,16 +163,16 @@ export default function BPClient({ showTips = true, prefill = null }: BPClientPr
             </p>
           </div>
 
-          {/* ✅ “Share output” anchor (contextual, not footer-ad) */}
+          {/* ✅ Clear conversion path */}
           <div className="flex flex-wrap items-center gap-3">
             <a
               href="#bp-calibration"
+              onClick={handleShareOutput}
               className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
             >
               Share output →
             </a>
 
-            {/* Use Calendly here (more direct conversion than /en/contact) */}
             <a
               href="https://calendly.com/execpartners/15-minute-career-consultation"
               target="_blank"
@@ -134,8 +182,9 @@ export default function BPClient({ showTips = true, prefill = null }: BPClientPr
               Book confidential call →
             </a>
 
+            {/* ✅ Fix: use /contact (avoid locale mismatch / missing route issues) */}
             <Link
-              href="/en/contact"
+              href="/contact"
               className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
             >
               Send your output →

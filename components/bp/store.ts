@@ -1,13 +1,16 @@
-'use client';
-import { create } from 'zustand';
+"use client";
+import { create } from "zustand";
 
 export type Prospect = {
   name: string;
-  source: 'Self Acquired' | 'Inherited' | 'Finder';
+  source: "Self Acquired" | "Inherited" | "Finder";
   wealth_m: number; // M CHF
   best_nnm_m: number; // M CHF
   worst_nnm_m: number; // M CHF
 };
+
+export type Readiness = "red" | "amber" | "green";
+export type ExportStatus = "idle" | "generating" | "ready" | "error";
 
 export type Inputs = {
   // Section 1
@@ -42,7 +45,7 @@ export type Inputs = {
   prospects: Prospect[];
   // draft fields
   p_name: string;
-  p_source: Prospect['source'];
+  p_source: Prospect["source"];
   p_wealth_m: number;
   p_best_nnm_m: number;
   p_worst_nnm_m: number;
@@ -51,9 +54,11 @@ export type Inputs = {
   // Section 5 outputs (persisted)
   score?: number;
   ai_notes?: string;
-};
 
-export type Readiness = 'red' | 'amber' | 'green';
+  // ✅ Export bridge (Section 5 -> Calibration CTA)
+  exportStatus?: ExportStatus;
+  exportFileName?: string | null;
+};
 
 type BPState = {
   i: Inputs;
@@ -63,6 +68,10 @@ type BPState = {
   prefillApplied: boolean;
   applyPrefillOnce: (payload: any) => void;
   resetPrefillApplied: () => void;
+
+  // ✅ Export bridge helpers
+  setExportStatus: (status: ExportStatus, fileName?: string | null) => void;
+  resetExportStatus: () => void;
 
   // Convenience
   getReadiness: () => { readiness: Readiness; label: string };
@@ -83,9 +92,9 @@ export function n(v: unknown): number {
 }
 
 function cleanStr(v: unknown, max = 250) {
-  const s = typeof v === 'string' ? v.trim() : '';
-  if (!s) return '';
-  return s.replace(/\s+/g, ' ').slice(0, max);
+  const s = typeof v === "string" ? v.trim() : "";
+  if (!s) return "";
+  return s.replace(/\s+/g, " ").slice(0, max);
 }
 
 function cleanLower(v: unknown, max = 250) {
@@ -98,17 +107,17 @@ function cleanLower(v: unknown, max = 250) {
  */
 function pick(obj: any, paths: string[]): any {
   for (const p of paths) {
-    const parts = p.split('.');
+    const parts = p.split(".");
     let cur = obj;
     let ok = true;
     for (const k of parts) {
-      if (!cur || typeof cur !== 'object' || !(k in cur)) {
+      if (!cur || typeof cur !== "object" || !(k in cur)) {
         ok = false;
         break;
       }
       cur = cur[k];
     }
-    if (ok && cur !== undefined && cur !== null && cur !== '') return cur;
+    if (ok && cur !== undefined && cur !== null && cur !== "") return cur;
   }
   return undefined;
 }
@@ -180,15 +189,15 @@ export function computePortability(i: Partial<Inputs>): number {
 /** ✅ Traffic-light readiness based on score */
 export function readinessFromScore(score: unknown): { readiness: Readiness; label: string } {
   const s = n(score);
-  if (s >= 75) return { readiness: 'green', label: '🟢 Bank-ready' };
-  if (s >= 55) return { readiness: 'amber', label: '🟠 Needs work' };
-  return { readiness: 'red', label: '🔴 Not ready' };
+  if (s >= 75) return { readiness: "green", label: "🟢 Bank-ready" };
+  if (s >= 55) return { readiness: "amber", label: "🟠 Needs work" };
+  return { readiness: "red", label: "🔴 Not ready" };
 }
 
 /* ---------- Zustand store ---------- */
 const defaultProspectDraft = {
-  p_name: '',
-  p_source: 'Self Acquired' as const,
+  p_name: "",
+  p_source: "Self Acquired" as const,
   p_wealth_m: 0,
   p_best_nnm_m: 0,
   p_worst_nnm_m: 0,
@@ -198,15 +207,15 @@ const defaultProspectDraft = {
 export const useBP = create<BPState>((set, get) => ({
   i: {
     // Section 1 defaults
-    candidate_name: '',
-    candidate_email: '',
+    candidate_name: "",
+    candidate_email: "",
     years_experience: 0,
     inherited_book_pct: 0,
-    current_role: 'Relationship Manager',
-    candidate_location: '— Select —',
-    current_employer: '',
-    current_market: 'CH Onshore',
-    currency: 'CHF',
+    current_role: "Relationship Manager",
+    candidate_location: "— Select —",
+    current_employer: "",
+    current_market: "CH Onshore",
+    currency: "CHF",
     base_salary: 0,
     last_bonus: 0,
     current_number_clients: 0,
@@ -226,7 +235,11 @@ export const useBP = create<BPState>((set, get) => ({
 
     // Section 5 outputs
     score: 0,
-    ai_notes: '',
+    ai_notes: "",
+
+    // ✅ Export bridge defaults
+    exportStatus: "idle",
+    exportFileName: null,
   },
 
   set: (patch) => set((s) => ({ i: { ...s.i, ...patch } })),
@@ -234,82 +247,84 @@ export const useBP = create<BPState>((set, get) => ({
   /* ---------------- Prefill ---------------- */
   prefillApplied: false,
 
-  /**
-   * ✅ Applies prefill exactly once per page load.
-   * - Never overwrites user-entered values (only fills empty/zero/default placeholder fields).
-   * - Flexible mapping: accepts many payload shapes from /api/private/tool-profile.
-   */
   applyPrefillOnce: (payload: any) => {
     const st = get();
     if (st.prefillApplied) return;
 
     const i = st.i;
 
-    // Extract likely values from many shapes
     const emailRaw =
-      pick(payload, ['email', 'user.email', 'profile.email', 'profile.portability.email', 'profile.bp.email']) ??
-      '';
+      pick(payload, ["email", "user.email", "profile.email", "profile.portability.email", "profile.bp.email"]) ?? "";
+
     const fullNameRaw =
       pick(payload, [
-        'fullName',
-        'name',
-        'profile.fullName',
-        'profile.name',
-        'profile.portability.fullName',
-        'profile.portability.full_name',
-        'profile.portability.candidate_name',
-      ]) ?? '';
+        "fullName",
+        "name",
+        "profile.fullName",
+        "profile.name",
+        "profile.portability.fullName",
+        "profile.portability.full_name",
+        "profile.portability.candidate_name",
+      ]) ?? "";
+
     const locationRaw =
-      pick(payload, ['location', 'profile.location', 'profile.portability.location', 'profile.portability.candidate_location']) ??
-      '';
+      pick(payload, ["location", "profile.location", "profile.portability.location", "profile.portability.candidate_location"]) ??
+      "";
+
     const marketRaw =
-      pick(payload, ['market', 'current_market', 'profile.market', 'profile.portability.market', 'profile.portability.current_market']) ??
-      '';
+      pick(payload, [
+        "market",
+        "current_market",
+        "profile.market",
+        "profile.portability.market",
+        "profile.portability.current_market",
+      ]) ?? "";
+
     const bankRaw =
       pick(payload, [
-        'bank',
-        'employer',
-        'current_employer',
-        'profile.bank',
-        'profile.portability.bank',
-        'profile.portability.current_employer',
-      ]) ?? '';
+        "bank",
+        "employer",
+        "current_employer",
+        "profile.bank",
+        "profile.portability.bank",
+        "profile.portability.current_employer",
+      ]) ?? "";
+
     const roleRaw =
       pick(payload, [
-        'roleTitle',
-        'role',
-        'current_role',
-        'profile.roleTitle',
-        'profile.portability.roleTitle',
-        'profile.portability.current_role',
-      ]) ?? '';
-    const currencyRaw =
-      pick(payload, ['currency', 'profile.currency', 'profile.portability.currency']) ?? '';
+        "roleTitle",
+        "role",
+        "current_role",
+        "profile.roleTitle",
+        "profile.portability.roleTitle",
+        "profile.portability.current_role",
+      ]) ?? "";
 
-    // Portability numeric hints
+    const currencyRaw = pick(payload, ["currency", "profile.currency", "profile.portability.currency"]) ?? "";
+
     const aumMaybe =
       pick(payload, [
-        'portabilityAum',
-        'profile.portability.aum',
-        'profile.portability.aum_m',
-        'profile.portability.current_assets',
-        'profile.portability.current_assets_m',
+        "portabilityAum",
+        "profile.portability.aum",
+        "profile.portability.aum_m",
+        "profile.portability.current_assets",
+        "profile.portability.current_assets_m",
       ]) ?? 0;
 
     const nnmY1Maybe =
-      pick(payload, ['portabilityNnmY1', 'profile.portability.nnm_y1_m', 'profile.portability.nnmY1', 'profile.portability.nnm_y1']) ??
+      pick(payload, ["portabilityNnmY1", "profile.portability.nnm_y1_m", "profile.portability.nnmY1", "profile.portability.nnm_y1"]) ??
       0;
 
     const nnmY2Maybe =
-      pick(payload, ['portabilityNnmY2', 'profile.portability.nnm_y2_m', 'profile.portability.nnmY2', 'profile.portability.nnm_y2']) ??
+      pick(payload, ["portabilityNnmY2", "profile.portability.nnm_y2_m", "profile.portability.nnmY2", "profile.portability.nnm_y2"]) ??
       0;
 
     const nnmY3Maybe =
-      pick(payload, ['portabilityNnmY3', 'profile.portability.nnm_y3_m', 'profile.portability.nnmY3', 'profile.portability.nnm_y3']) ??
+      pick(payload, ["portabilityNnmY3", "profile.portability.nnm_y3_m", "profile.portability.nnmY3", "profile.portability.nnm_y3"]) ??
       0;
 
     const roaBpsMaybe =
-      pick(payload, ['portabilityRoaBps', 'profile.portability.roa_bps', 'profile.portability.roaBps']) ?? 0;
+      pick(payload, ["portabilityRoaBps", "profile.portability.roa_bps", "profile.portability.roaBps"]) ?? 0;
 
     const email = cleanLower(emailRaw, 180);
     const fullName = cleanStr(fullNameRaw, 180);
@@ -319,39 +334,33 @@ export const useBP = create<BPState>((set, get) => ({
     const role = cleanStr(roleRaw, 180);
     const currency = cleanStr(currencyRaw, 10);
 
-    // Only patch empty-ish fields
     const patch: Partial<Inputs> = {};
 
     if (!i.candidate_email && email && looksLikeEmail(email)) patch.candidate_email = email;
     if (!i.candidate_name && fullName) patch.candidate_name = fullName;
 
-    if ((i.candidate_location === '' || i.candidate_location === '— Select —') && location) {
+    if ((i.candidate_location === "" || i.candidate_location === "— Select —") && location) {
       patch.candidate_location = location;
     }
 
-    if ((!i.current_market || i.current_market === '— Select —') && market) patch.current_market = market;
+    if ((!i.current_market || i.current_market === "— Select —") && market) patch.current_market = market;
     if (!i.current_employer && bank) patch.current_employer = bank;
 
-    // Don't overwrite default role unless user hasn't touched it and we have a good value
-    if ((i.current_role === '' || i.current_role === 'Relationship Manager') && role) patch.current_role = role;
+    if ((i.current_role === "" || i.current_role === "Relationship Manager") && role) patch.current_role = role;
 
-    if ((i.currency === '' || i.currency === 'CHF') && currency) patch.currency = currency;
+    if ((i.currency === "" || i.currency === "CHF") && currency) patch.currency = currency;
 
-    // Cross-tool numeric: only fill if current is 0
     if (n(i.current_assets_m) === 0) patch.current_assets_m = toMillions(aumMaybe);
 
     if (n(i.nnm_y1_m) === 0) patch.nnm_y1_m = toMillions(nnmY1Maybe);
     if (n(i.nnm_y2_m) === 0) patch.nnm_y2_m = toMillions(nnmY2Maybe);
     if (n(i.nnm_y3_m) === 0) patch.nnm_y3_m = toMillions(nnmY3Maybe);
 
-    // If ROA bps exists, map to % (bps -> percent)
-    // e.g. 80 bps => 0.80 (%)
     const roaPct = n(roaBpsMaybe) ? Math.round((n(roaBpsMaybe) / 100) * 100) / 100 : 0;
     if (!n(i.roa_y1) && roaPct) patch.roa_y1 = roaPct;
     if (!n(i.roa_y2) && roaPct) patch.roa_y2 = roaPct;
     if (!n(i.roa_y3) && roaPct) patch.roa_y3 = roaPct;
 
-    // Apply patch (if any), then mark as applied no matter what (prevents loops)
     set((s) => ({
       prefillApplied: true,
       i: Object.keys(patch).length ? { ...s.i, ...patch } : s.i,
@@ -359,6 +368,25 @@ export const useBP = create<BPState>((set, get) => ({
   },
 
   resetPrefillApplied: () => set(() => ({ prefillApplied: false })),
+
+  /* ---------------- Export bridge ---------------- */
+  setExportStatus: (status, fileName = null) =>
+    set((s) => ({
+      i: {
+        ...s.i,
+        exportStatus: status,
+        exportFileName: fileName,
+      },
+    })),
+
+  resetExportStatus: () =>
+    set((s) => ({
+      i: {
+        ...s.i,
+        exportStatus: "idle",
+        exportFileName: null,
+      },
+    })),
 
   getReadiness: () => readinessFromScore(get().i.score),
 
@@ -368,7 +396,7 @@ export const useBP = create<BPState>((set, get) => ({
   addProspect: () => {
     const { p_name, p_source, p_wealth_m, p_best_nnm_m, p_worst_nnm_m, prospects } = get().i;
     const newRow: Prospect = {
-      name: (p_name || '').trim(),
+      name: (p_name || "").trim(),
       source: p_source,
       wealth_m: n(p_wealth_m),
       best_nnm_m: n(p_best_nnm_m),
@@ -399,7 +427,7 @@ export const useBP = create<BPState>((set, get) => ({
     const { edit_index, prospects, p_name, p_source, p_wealth_m, p_best_nnm_m, p_worst_nnm_m } = get().i;
     if (edit_index < 0 || edit_index >= prospects.length) return;
     const updated: Prospect = {
-      name: (p_name || '').trim(),
+      name: (p_name || "").trim(),
       source: p_source,
       wealth_m: n(p_wealth_m),
       best_nnm_m: n(p_best_nnm_m),
@@ -425,5 +453,11 @@ export const useBP = create<BPState>((set, get) => ({
 
   cancelEditProspect: () => set((s) => ({ i: { ...s.i, ...defaultProspectDraft } })),
 
-  importProspects: (rows: Prospect[]) => set((s) => ({ i: { ...s.i, prospects: [...s.i.prospects, ...rows] } })),
+  importProspects: (rows: Prospect[]) =>
+    set((s) => ({
+      i: {
+        ...s.i,
+        prospects: [...s.i.prospects, ...rows],
+      },
+    })),
 }));

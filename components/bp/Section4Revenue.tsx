@@ -1,12 +1,14 @@
 'use client';
 
-import { useMemo } from 'react';
-import { useBP } from './store';
+import { useMemo, type ReactNode } from 'react';
+import { useBP } from '@/components/bp/store';
 
 const fmt0 = new Intl.NumberFormat('en-CH', { maximumFractionDigits: 0 });
 
 export default function Section4Revenue() {
-  const { i, set } = useBP();
+  // ✅ selectors (consistent with Section5Analysis)
+  const i = useBP((s: any) => s.i);
+  const set = useBP((s: any) => s.set);
 
   const m = useMemo(() => {
     const nnm1 = toNum(i.nnm_y1_m) * 1_000_000;
@@ -32,13 +34,27 @@ export default function Section4Revenue() {
     const totalCosts = fixed * 3;
     const nmTotal = nm1 + nm2 + nm3;
 
-    const maxBar = Math.max(rev1, rev2, rev3, Math.abs(nm1), Math.abs(nm2), Math.abs(nm3), 1);
+    const maxBar = Math.max(
+      rev1,
+      rev2,
+      rev3,
+      Math.abs(nm1),
+      Math.abs(nm2),
+      Math.abs(nm3),
+      1
+    );
 
     return { rev1, rev2, rev3, fixed, nm1, nm2, nm3, grossTotal, totalCosts, nmTotal, maxBar };
   }, [
-    i.nnm_y1_m, i.nnm_y2_m, i.nnm_y3_m,
-    (i as any).roa_y1_pct, (i as any).roa_y2_pct, (i as any).roa_y3_pct,
-    (i as any).roa_y1, (i as any).roa_y2, (i as any).roa_y3,
+    i.nnm_y1_m,
+    i.nnm_y2_m,
+    i.nnm_y3_m,
+    (i as any).roa_y1_pct,
+    (i as any).roa_y2_pct,
+    (i as any).roa_y3_pct,
+    (i as any).roa_y1,
+    (i as any).roa_y2,
+    (i as any).roa_y3,
     i.base_salary,
   ]);
 
@@ -163,7 +179,7 @@ function Metric({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="text-sm text-white/80 space-y-1 block">
       <div className="font-medium text-white">{label}</div>
@@ -185,10 +201,10 @@ function Num({ value, onChange }: { value: number | string; onChange: (v: number
   );
 }
 
-function Th({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+function Th({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <th className={`px-3 py-2 text-left ${className}`}>{children}</th>;
 }
-function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+function Td({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <td className={`px-3 py-2 ${className}`}>{children}</td>;
 }
 

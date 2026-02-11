@@ -1,13 +1,25 @@
 'use client';
 
-import { useBP } from './store';
+import { useMemo } from 'react';
+import { usePathname } from 'next/navigation';
+import { useBP } from '@/components/bp/store';
 
 export default function Section6Save() {
-  const { i } = useBP();
+  // ✅ selectors (same pattern + same store instance)
+  const i = useBP((s: any) => s.i);
+
+  const pathname = usePathname();
+  const base = useMemo(() => (pathname?.startsWith('/en') ? '/en' : ''), [pathname]);
+
+  const href =
+    `${base}/contact?subject=${encodeURIComponent('BP Simulator – Request a Call')}` +
+    `&name=${encodeURIComponent(i.candidate_name || '')}` +
+    `&email=${encodeURIComponent(i.candidate_email || '')}`;
 
   return (
     <section className="space-y-4">
-      <h2 className="text-lg font-semibold">6️⃣ Summary & Next Step</h2>
+      <h2 className="text-lg font-semibold">6️⃣ Summary &amp; Next Step</h2>
+
       <p className="text-sm text-white/70">
         Your business plan has been saved and the full professional PDF can be downloaded from the Analysis section.
         If you would like us to contact you, click the button below.
@@ -15,7 +27,7 @@ export default function Section6Save() {
 
       <div className="flex flex-wrap gap-3">
         <a
-          href={`/en/contact?subject=${encodeURIComponent('BP Simulator – Request a Call')}&name=${encodeURIComponent(i.candidate_name || '')}&email=${encodeURIComponent(i.candidate_email || '')}`}
+          href={href}
           className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-white px-4 py-2 text-sm font-semibold"
         >
           Request a Call

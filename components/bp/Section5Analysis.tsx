@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { useBP } from './store';
+import { useBP } from '@/components/bp/store'; // ✅ FIX: consistent store import
 import EmailGateModal from '@/components/EmailGateModal';
 
 function Bar({ value }: { value: number }) {
@@ -11,7 +11,9 @@ function Bar({ value }: { value: number }) {
   return (
     <div className="h-2.5 w-full rounded-full bg-white/10 overflow-hidden">
       <div
-        className={`h-full ${pct >= 70 ? 'bg-emerald-400' : pct >= 40 ? 'bg-amber-400' : 'bg-rose-400'}`}
+        className={`h-full ${
+          pct >= 70 ? 'bg-emerald-400' : pct >= 40 ? 'bg-amber-400' : 'bg-rose-400'
+        }`}
         style={{ width: `${pct}%` }}
       />
     </div>
@@ -24,7 +26,11 @@ function n(v: unknown) {
 }
 
 export default function Section5Analysis() {
-  const { i, set } = useBP();
+  // ✅ Use selectors to avoid rerenders + ensure types align
+  const i = useBP((s: any) => s.i);
+  const set = useBP((s: any) => s.set);
+  const setExportStatus = useBP((s: any) => s.setExportStatus); // ✅ from store.ts
+
   const pathname = usePathname();
   const base = useMemo(() => (pathname?.startsWith('/en') ? '/en' : ''), [pathname]);
 
@@ -44,7 +50,7 @@ export default function Section5Analysis() {
   const avgROA = (roa1 + roa2 + roa3) / 3;
   const totalNNM3Y = nnm1 + nnm2 + nnm3;
 
-  const bestProspectsSum = (i.prospects || []).reduce((s, p) => s + n(p.best_nnm_m), 0);
+  const bestProspectsSum = (i.prospects || []).reduce((s: number, p: any) => s + n(p.best_nnm_m), 0);
 
   // -------- Score (traffic light) with your ROA thresholds --------
   let score = 0;
@@ -52,43 +58,77 @@ export default function Section5Analysis() {
   const reasons_neg: string[] = [];
   const flags: string[] = [];
 
-  if (i.years_experience >= 7) { score += 2; reasons_pos.push('Experience ≥7 years in market'); }
-  else if (i.years_experience >= 6) { score += 1; reasons_pos.push('Experience 6 years'); }
-  else { reasons_neg.push('Experience <6 years'); }
+  if (i.years_experience >= 7) {
+    score += 2;
+    reasons_pos.push('Experience ≥7 years in market');
+  } else if (i.years_experience >= 6) {
+    score += 1;
+    reasons_pos.push('Experience 6 years');
+  } else {
+    reasons_neg.push('Experience <6 years');
+  }
 
   const aum_min = i.current_market === 'CH Onshore' ? 250 : 200;
-  if (n(i.current_assets_m) >= aum_min) { score += 2; reasons_pos.push(`AUM ≥ ${aum_min}M`); }
-  else { reasons_neg.push(`AUM shortfall: ${(aum_min - n(i.current_assets_m)).toFixed(0)}M`); }
+  if (n(i.current_assets_m) >= aum_min) {
+    score += 2;
+    reasons_pos.push(`AUM ≥ ${aum_min}M`);
+  } else {
+    reasons_neg.push(`AUM shortfall: ${(aum_min - n(i.current_assets_m)).toFixed(0)}M`);
+  }
 
-  if (n(i.base_salary) > 200_000 && n(i.last_bonus) > 100_000) { score += 2; reasons_pos.push('Comp suggests hunter profile'); }
-  else if (n(i.base_salary) <= 150_000 && n(i.last_bonus) <= 50_000) { score -= 1; reasons_neg.push('Comp suggests inherited/less portable profile'); }
-  else { flags.push('Comp neutral – clarify book origin'); }
+  if (n(i.base_salary) > 200_000 && n(i.last_bonus) > 100_000) {
+    score += 2;
+    reasons_pos.push('Comp suggests hunter profile');
+  } else if (n(i.base_salary) <= 150_000 && n(i.last_bonus) <= 50_000) {
+    score -= 1;
+    reasons_neg.push('Comp suggests inherited/less portable profile');
+  } else {
+    flags.push('Comp neutral – clarify book origin');
+  }
 
   // ROA thresholds: <0.6 low, 0.6–0.8 average, >0.9 good
-  if (avgROA > 0.9) { score += 2; reasons_pos.push(`Avg ROA ${avgROA.toFixed(2)}% (good)`); }
-  else if (avgROA >= 0.6 && avgROA <= 0.8) { score += 1; reasons_pos.push(`Avg ROA ${avgROA.toFixed(2)}% (average)`); }
-  else if (avgROA < 0.6) { reasons_neg.push(`Avg ROA ${avgROA.toFixed(2)}% (low)`); }
-  else { flags.push(`Avg ROA ${avgROA.toFixed(2)}% (unclassified)`); }
+  if (avgROA > 0.9) {
+    score += 2;
+    reasons_pos.push(`Avg ROA ${avgROA.toFixed(2)}% (good)`);
+  } else if (avgROA >= 0.6 && avgROA <= 0.8) {
+    score += 1;
+    reasons_pos.push(`Avg ROA ${avgROA.toFixed(2)}% (average)`);
+  } else if (avgROA < 0.6) {
+    reasons_neg.push(`Avg ROA ${avgROA.toFixed(2)}% (low)`);
+  } else {
+    flags.push(`Avg ROA ${avgROA.toFixed(2)}% (unclassified)`);
+  }
 
-  if (n(i.current_number_clients) === 0) { flags.push('Clients not provided'); }
-  else if (n(i.current_number_clients) > 80) { reasons_neg.push(`High client count (${i.current_number_clients}) – likely lower segment`); }
-  else { score += 1; reasons_pos.push('Client load appropriate (≤80)'); }
+  if (n(i.current_number_clients) === 0) {
+    flags.push('Clients not provided');
+  } else if (n(i.current_number_clients) > 80) {
+    reasons_neg.push(`High client count (${i.current_number_clients}) – likely lower segment`);
+  } else {
+    score += 1;
+    reasons_pos.push('Client load appropriate (≤80)');
+  }
 
   const tolerancePct = 10;
   if (nnm1 === 0 && bestProspectsSum === 0) {
     flags.push('Prospects & NNM Y1 both zero');
   } else if (Math.abs(bestProspectsSum - nnm1) <= (tolerancePct / 100) * Math.max(nnm1, 1e-9)) {
-    score += 1; reasons_pos.push(`Prospects Best NNM ${bestProspectsSum.toFixed(1)}M ≈ NNM Y1 ${nnm1.toFixed(1)}M`);
+    score += 1;
+    reasons_pos.push(`Prospects Best NNM ${bestProspectsSum.toFixed(1)}M ≈ NNM Y1 ${nnm1.toFixed(1)}M`);
   } else {
-    reasons_neg.push(`Prospects ${bestProspectsSum.toFixed(1)}M vs NNM Y1 ${nnm1.toFixed(1)}M (> ${tolerancePct}% dev)`);
+    reasons_neg.push(
+      `Prospects ${bestProspectsSum.toFixed(1)}M vs NNM Y1 ${nnm1.toFixed(1)}M (> ${tolerancePct}% dev)`
+    );
   }
 
-  if (totalNNM3Y >= 100) { score += 2; reasons_pos.push(`3Y NNM ${totalNNM3Y.toFixed(1)}M meets target`); }
-  else { reasons_neg.push(`3Y NNM ${totalNNM3Y.toFixed(1)}M below target`); }
+  if (totalNNM3Y >= 100) {
+    score += 2;
+    reasons_pos.push(`3Y NNM ${totalNNM3Y.toFixed(1)}M meets target`);
+  } else {
+    reasons_neg.push(`3Y NNM ${totalNNM3Y.toFixed(1)}M below target`);
+  }
 
-  const verdict = score >= 7 ? '🟢 Strong Candidate'
-                : score >= 4 ? '🟡 Medium Potential'
-                : '🔴 Weak Candidate';
+  const verdict =
+    score >= 7 ? '🟢 Strong Candidate' : score >= 4 ? '🟡 Medium Potential' : '🔴 Weak Candidate';
 
   // -------- Portability score (compute ONCE) --------
   const portabilityScore = (() => {
@@ -108,7 +148,7 @@ export default function Section5Analysis() {
     else if (avgROA < 0.6) p -= 5;
 
     if (nnm1 > 0) {
-      const best = (i.prospects || []).reduce((s, r) => s + n(r.best_nnm_m), 0);
+      const best = (i.prospects || []).reduce((s: number, r: any) => s + n(r.best_nnm_m), 0);
       if (best >= nnm1) p += 10;
     }
 
@@ -131,7 +171,9 @@ export default function Section5Analysis() {
   const rev3 = nnm3 * (roa3 / 100) * 1_000_000;
   const gross_total = rev1 + rev2 + rev3;
   const fixed_cost = baseSalary * 1.25;
-  const nm1 = rev1 - fixed_cost, nm2 = rev2 - fixed_cost, nm3 = rev3 - fixed_cost;
+  const nm1 = rev1 - fixed_cost;
+  const nm2 = rev2 - fixed_cost;
+  const nm3 = rev3 - fixed_cost;
   const nm_total = nm1 + nm2 + nm3;
   const profit_margin_pct = gross_total > 0 ? ((gross_total - fixed_cost * 3) / gross_total) * 100 : 0;
 
@@ -148,11 +190,20 @@ export default function Section5Analysis() {
     set({ score, ai_notes: aiNotes });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    i.years_experience, i.current_market, i.current_assets_m, i.base_salary, i.last_bonus,
-    i.current_number_clients, i.inherited_book_pct,
-    i.nnm_y1_m, i.nnm_y2_m, i.nnm_y3_m,
-    (i as any).roa_y1, (i as any).roa_y2, (i as any).roa_y3,
-    i.prospects
+    i.years_experience,
+    i.current_market,
+    i.current_assets_m,
+    i.base_salary,
+    i.last_bonus,
+    i.current_number_clients,
+    i.inherited_book_pct,
+    i.nnm_y1_m,
+    i.nnm_y2_m,
+    i.nnm_y3_m,
+    (i as any).roa_y1,
+    (i as any).roa_y2,
+    (i as any).roa_y3,
+    i.prospects,
   ]);
 
   // ---------- Email gate handler ----------
@@ -164,31 +215,23 @@ export default function Section5Analysis() {
       verdict,
     };
 
-    try {
-      const response = await fetch("/api/tool-leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          tool_name: "bp_simulator",
-          score,
-          input_data: inputData,
-        }),
-      });
+    const response = await fetch('/api/tool-leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        tool_name: 'bp_simulator',
+        score,
+        input_data: inputData,
+      }),
+    });
 
-      if (!response.ok) {
-        throw new Error("Failed to submit");
-      }
+    if (!response.ok) throw new Error('Failed to submit');
 
-      setUserEmail(email);
-      setShowEmailGate(false);
-      
-      // Now trigger the actual save/PDF
-      setTimeout(() => performSaveAndPDF(), 100);
-    } catch (error) {
-      console.error("Error submitting email:", error);
-      throw error;
-    }
+    setUserEmail(email);
+    setShowEmailGate(false);
+
+    setTimeout(() => performSaveAndPDF(), 100);
   };
 
   // ---------- Save + PDF (actual logic) ----------
@@ -197,28 +240,32 @@ export default function Section5Analysis() {
       setSaving(true);
       setSaved(null);
 
+      // ✅ Export status for CTA + next screen
+      setExportStatus?.('generating', null);
+
       // 1) Save to Google Sheet via API
       const payload = {
         ...i,
         score,
         ai_notes: aiNotes,
       };
+
       const res = await fetch('/api/save-bp', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(payload),
       });
+
       const json = await res.json().catch(() => ({}));
       if (!res.ok || json?.ok !== true) throw new Error(json?.message || `Save failed (${res.status})`);
       setSaved('ok');
 
       // 2) Generate PDF snapshot
-      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
-        import('html2canvas'),
-        import('jspdf'),
-      ]);
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import('html2canvas'), import('jspdf')]);
 
-      const node = pdfRef.current!;
+      const node = pdfRef.current;
+      if (!node) throw new Error('PDF node not found');
+
       const canvas = await html2canvas(node, { scale: 2, backgroundColor: '#0B0E13' });
       const imgData = canvas.toDataURL('image/png');
 
@@ -254,11 +301,18 @@ export default function Section5Analysis() {
       const imgH = (canvas.height / canvas.width) * imgW;
       pdf.addImage(imgData, 'PNG', 30, 60, imgW, imgH, undefined, 'FAST');
 
-      const fname = `EP_BP_Analysis_${(i.candidate_name || 'Candidate').replace(/\s+/g,'_')}.pdf`;
+      const fname = `EP_BP_Analysis_${(i.candidate_name || 'Candidate').replace(/\s+/g, '_')}.pdf`;
       pdf.save(fname);
+
+      // ✅ Export ready (lets the tool page show “PDF ready — share it”)
+      setExportStatus?.('ready', fname);
     } catch (e) {
       console.error(e);
       setSaved('err');
+
+      // ✅ Export error status
+      setExportStatus?.('error', null);
+
       alert('Sorry, we could not save or export the PDF. Please try again.');
     } finally {
       setSaving(false);
@@ -274,9 +328,10 @@ export default function Section5Analysis() {
     performSaveAndPDF();
   }
 
-  const contactHref = `${base}/contact?subject=${encodeURIComponent('BP Simulator – Request a Call')}`
-    + `&name=${encodeURIComponent(i.candidate_name || '')}`
-    + `&email=${encodeURIComponent(i.candidate_email || '')}`;
+  const contactHref =
+    `${base}/contact?subject=${encodeURIComponent('BP Simulator – Request a Call')}` +
+    `&name=${encodeURIComponent(i.candidate_name || '')}` +
+    `&email=${encodeURIComponent(i.candidate_email || '')}`;
 
   return (
     <section className="space-y-6">
@@ -289,6 +344,7 @@ export default function Section5Analysis() {
           <div className="text-white font-semibold">
             Traffic Light: {verdict} <span className="text-white/60">(score {score}/10)</span>
           </div>
+
           <div className="mt-3 grid gap-4 md:grid-cols-3 text-sm">
             <div>
               <div className="font-medium text-white">Positives</div>
@@ -298,6 +354,7 @@ export default function Section5Analysis() {
                 ))}
               </ul>
             </div>
+
             <div>
               <div className="font-medium text-white">Risks / Gaps</div>
               <ul className="mt-1 list-disc ml-4 space-y-1 text-white/80">
@@ -306,6 +363,7 @@ export default function Section5Analysis() {
                 ))}
               </ul>
             </div>
+
             <div>
               <div className="font-medium text-white">Flags / To Clarify</div>
               <ul className="mt-1 list-disc ml-4 space-y-1 text-white/80">
@@ -321,8 +379,8 @@ export default function Section5Analysis() {
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4 space-y-2">
           <div className="font-semibold text-white">📊 Narrative Assessment</div>
           <p className="text-sm text-white/80">
-            Candidate shows AUM of <b>{Math.round(n(i.current_assets_m))}M</b> in <b>{i.current_market}</b>,
-            average ROA <b>{avgROA.toFixed(2)}%</b>, and projected 3Y NNM <b>{totalNNM3Y.toFixed(1)}M</b>.
+            Candidate shows AUM of <b>{Math.round(n(i.current_assets_m))}M</b> in <b>{i.current_market}</b>, average ROA{' '}
+            <b>{avgROA.toFixed(2)}%</b>, and projected 3Y NNM <b>{totalNNM3Y.toFixed(1)}M</b>.
           </p>
         </div>
 
@@ -332,10 +390,14 @@ export default function Section5Analysis() {
             <div className="font-semibold text-white">🔑 Portability Readiness</div>
             <div className="text-white/80 text-sm">{portabilityScore}/100</div>
           </div>
+
           <Bar value={portabilityScore} />
+
           <p className="text-sm text-white/80">{portabilityText}</p>
+
           <div className="text-xs text-white/50">
-            Signal drivers: inherited book {n(i.inherited_book_pct)}% · clients {n(i.current_number_clients)} · AUM {Math.round(n(i.current_assets_m))}M · avg ROA {avgROA.toFixed(2)}% · prospects vs NNM Y1
+            Signal drivers: inherited book {n(i.inherited_book_pct)}% · clients {n(i.current_number_clients)} · AUM{' '}
+            {Math.round(n(i.current_assets_m))}M · avg ROA {avgROA.toFixed(2)}% · prospects vs NNM Y1
           </div>
         </div>
       </div>
@@ -344,9 +406,10 @@ export default function Section5Analysis() {
       <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-4">
         <div className="text-white font-semibold">Finish your Portability Diagnostic</div>
         <p className="text-sm text-white/80 mt-1">
-          For a sharper recommendation, please complete the dedicated Portability questions (client origin
-          mix, relationship tenure, product dependencies, domicile & onboarding constraints).
+          For a sharper recommendation, please complete the dedicated Portability questions (client origin mix, relationship tenure,
+          product dependencies, domicile & onboarding constraints).
         </p>
+
         <div className="mt-3">
           <Link
             href={`${base}/portability`}
@@ -380,8 +443,8 @@ export default function Section5Analysis() {
 
       {/* Recruiter note */}
       <div className="text-xs text-white/45 italic">
-        Recruiter note: Use portability ≥70 and 3Y NNM ≥100M as a strong signal for senior mandates; 40–70 needs
-        onboarding/product fit review; &lt;40 only for niche coverage or team-play scenarios.
+        Recruiter note: Use portability ≥70 and 3Y NNM ≥100M as a strong signal for senior mandates; 40–70 needs onboarding/product fit
+        review; &lt;40 only for niche coverage or team-play scenarios.
       </div>
 
       <EmailGateModal

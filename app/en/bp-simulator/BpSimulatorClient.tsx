@@ -1,10 +1,16 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 // ✅ Real simulator UI (Sections 1–5)
 import BPClient from "./BPClient";
+
+// ✅ IMPORTANT: use the SAME store as Section5Analysis
+// If Section5Analysis imports from "./store", then change this import to "./store" too.
+// Otherwise exportStatus will never update here.
+import { useBP } from "@/components/bp/store";
 
 // Keep this loose so you can map whatever your API returns
 type ToolPrefill = Record<string, any> | null;
@@ -19,6 +25,8 @@ function isObject(v: unknown): v is Record<string, any> {
 
 export default function BpSimulatorClient() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const base = useMemo(() => (pathname?.startsWith("/en") ? "/en" : ""), [pathname]);
 
   /**
    * ✅ FINAL RULE:
@@ -31,6 +39,18 @@ export default function BpSimulatorClient() {
   // ✅ Cross-tool prefill payload (Portability -> BP)
   const [prefill, setPrefill] = useState<ToolPrefill>(null);
   const [, setPrefillStatus] = useState<PrefillStatus>("idle"); // keep internal, no UI output
+
+  // ✅ Export bridge from store (Section 5 -> sticky CTA)
+  const exportStatus = useBP((s: any) => s.exportStatus) as
+    | "idle"
+    | "generating"
+    | "ready"
+    | "error";
+  const exportFileName = useBP((s: any) => s.exportFileName) as string | null;
+  const resetExportStatus = useBP((s: any) => s.resetExportStatus) as () => void;
+
+  // ✅ Show sticky CTA only when PDF is ready
+  const resultsReady = exportStatus === "ready";
 
   useEffect(() => {
     const controller = new AbortController();
@@ -58,7 +78,6 @@ export default function BpSimulatorClient() {
         // Avoid exceptions if the endpoint returns non-JSON (edge cases).
         const ct = res.headers.get("content-type") || "";
         const isJson = ct.includes("application/json");
-
         const json = isJson ? await res.json().catch(() => null) : null;
 
         if (!alive) return;
@@ -94,8 +113,67 @@ export default function BpSimulatorClient() {
     };
   }, []);
 
+  const scrollToCalibration = useCallback(() => {
+    const el = document.getElementById("bp-calibration");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  // ✅ Sticky CTA component (only after export is READY)
+  const StickyCTA = useMemo(() => {
+    if (!resultsReady) return null;
+
+    return (
+      <div className="fixed bottom-4 left-0 right-0 z-50 px-4">
+        <div className="mx-auto max-w-4xl rounded-2xl border border-white/10 bg-[#050814]/85 backdrop-blur shadow-[0_20px_80px_rgba(0,0,0,.55)]">
+          <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
+                Confidential calibration
+              </div>
+              <div className="mt-1 text-sm font-semibold text-white">
+                PDF ready{exportFileName ? ` — ${exportFileName}` : ""}. Want a senior sanity-check?
+              </div>
+              <div className="mt-0.5 text-xs text-white/60">
+                Portability realism • ROA • revenue mix • approval readiness
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <a
+                href="https://calendly.com/execpartners/15-minute-career-consultation"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center rounded-xl bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
+              >
+                Book 15-min call →
+              </a>
+
+              <Link
+                href={`${base}/contact`}
+                className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
+              >
+                Send output →
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => resetExportStatus?.()}
+                className="inline-flex items-center rounded-xl border border-white/15 bg-white/0 px-4 py-2 text-sm font-semibold text-white/60 hover:bg-white/5 hover:text-white/80"
+                aria-label="Hide"
+              >
+                Hide
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }, [resultsReady, exportFileName, resetExportStatus, base]);
+
   return (
     <main ref={containerRef} className="relative text-white">
+      {StickyCTA}
+
       {/* Subtle background glow (lighter than the marketing version) */}
       <div
         aria-hidden
@@ -135,7 +213,8 @@ export default function BpSimulatorClient() {
                   Share your BP output for a confidential calibration call.
                 </h2>
                 <p className="mt-1 text-sm text-white/70">
-                  We sanity-check portability realism, ROA, revenue mix and approval readiness — before you speak to a bank.
+                  We sanity-check portability realism, ROA, revenue mix and approval readiness — before you speak to a
+                  bank.
                 </p>
               </div>
 
@@ -150,14 +229,14 @@ export default function BpSimulatorClient() {
                 </a>
 
                 <Link
-                  href="/en/contact"
+                  href={`${base}/contact`}
                   className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
                 >
                   Send your output →
                 </Link>
 
                 <Link
-                  href="/portability"
+                  href={`${base}/portability`}
                   className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
                 >
                   Portability tool →
@@ -172,12 +251,14 @@ export default function BpSimulatorClient() {
                   What truly moves in 90 days vs 12 months.
                 </div>
               </div>
+
               <div className="rounded-xl border border-white/10 bg-black/20 p-4">
                 <div className="text-sm font-semibold text-white">Committee readiness</div>
                 <div className="mt-1 text-sm text-white/60">
                   Fix the gaps that get plans rejected.
                 </div>
               </div>
+
               <div className="rounded-xl border border-white/10 bg-black/20 p-4">
                 <div className="text-sm font-semibold text-white">Market benchmarks</div>
                 <div className="mt-1 text-sm text-white/60">
@@ -191,6 +272,19 @@ export default function BpSimulatorClient() {
             </div>
           </div>
         </section>
+
+        {/* Optional: small helper link to scroll when ready */}
+        {exportStatus === "ready" && (
+          <div className="mt-6 text-center">
+            <button
+              type="button"
+              onClick={scrollToCalibration}
+              className="text-sm text-white/70 underline decoration-white/20 hover:text-white"
+            >
+              Jump to calibration section ↓
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );
