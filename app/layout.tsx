@@ -25,26 +25,27 @@ const playfair = Playfair_Display({
 
 /**
  * 🔐 CANONICAL DOMAIN (ABSOLUTE TRUTH FOR SEO)
- * Never changes. Never points to Vercel.
  */
 const CANONICAL_DOMAIN = "https://www.execpartners.ch";
 
 /**
- * 🌍 RUNTIME SITE URL (for OG images, previews, JSON-LD)
- * Can be Vercel in non-prod environments.
+ * 🌍 RUNTIME SITE URL (for JSON-LD / previews in non-prod)
+ * (Do NOT use this for metadataBase or OG images.)
  */
-const SITE =
+const RUNTIME_SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : CANONICAL_DOMAIN);
-
-const OG_IMAGE = `${SITE}/og.webp`;
 
 const DEFAULT_TITLE = "Executive Search & Private Banking Recruitment | Geneva";
 const DEFAULT_DESCRIPTION =
   "Executive search boutique in Geneva specialised in Private Banking & Wealth Management recruitment for senior RMs, Team Heads and leaders across global wealth hubs.";
 
+// ✅ Use RELATIVE OG path + metadataBase (Next will output absolute URLs)
+const OG_IMAGE_PATH = "/og.webp";
+
 // ----------------- GLOBAL METADATA (SEO) -----------------
 export const metadata: Metadata = {
+  // ✅ This is what Next uses to make og:image/twitter:image absolute
   metadataBase: new URL(CANONICAL_DOMAIN),
 
   alternates: {
@@ -60,14 +61,15 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: "website",
-    url: CANONICAL_DOMAIN,
+    url: "/",
     title: DEFAULT_TITLE,
     description:
       "Executive search for Private Banking & Wealth Management: senior Relationship Managers, Team Heads and leadership roles across Switzerland, the UK, US, Dubai, Singapore and Hong Kong.",
     siteName: "Executive Partners",
+    locale: "en_GB",
     images: [
       {
-        url: OG_IMAGE,
+        url: OG_IMAGE_PATH,
         width: 1200,
         height: 630,
         alt: "Executive Partners – Private Banking & Wealth Management Executive Search",
@@ -80,8 +82,10 @@ export const metadata: Metadata = {
     title: DEFAULT_TITLE,
     description:
       "Executive search boutique for Private Banking & Wealth Management. We advise and place senior RMs, Team Heads and leaders across the main global wealth hubs.",
-    images: [OG_IMAGE],
+    images: [OG_IMAGE_PATH],
   },
+
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
@@ -166,7 +170,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {children}
         </main>
 
-        {/* Site-wide luxury footer */}
         <Footer />
 
         <Analytics />
