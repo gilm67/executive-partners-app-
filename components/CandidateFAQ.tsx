@@ -23,6 +23,19 @@ type FaqSection = {
   questions: FaqItem[];
 };
 
+type FlatFaqItem = {
+  section: string;
+  icon: React.ElementType;
+  q: string;
+  a: string;
+};
+
+type Group = {
+  section: string;
+  icon: React.ElementType;
+  items: FlatFaqItem[];
+};
+
 export default function CandidateFAQ({
   compact = false,
   limit = 6,
@@ -152,7 +165,7 @@ export default function CandidateFAQ({
   );
 
   // Flatten for search + compact mode
-  const allItems = useMemo(() => {
+  const allItems: FlatFaqItem[] = useMemo(() => {
     return faqSections.flatMap((section) =>
       section.questions.map((item) => ({
         section: section.title,
@@ -163,9 +176,12 @@ export default function CandidateFAQ({
     );
   }, [faqSections]);
 
-  const sectionTitles = useMemo(() => ["All", ...faqSections.map((s) => s.title)], [faqSections]);
+  const sectionTitles = useMemo(
+    () => ["All", ...faqSections.map((s) => s.title)],
+    [faqSections]
+  );
 
-  const filtered = useMemo(() => {
+  const filtered: FlatFaqItem[] = useMemo(() => {
     const q = query.trim().toLowerCase();
     return allItems.filter((item) => {
       const inSection = activeSection === "All" || item.section === activeSection;
@@ -175,7 +191,7 @@ export default function CandidateFAQ({
     });
   }, [allItems, activeSection, query]);
 
-  const displayed = useMemo(() => {
+  const displayed: FlatFaqItem[] = useMemo(() => {
     if (compact) return filtered.slice(0, limit);
     return filtered;
   }, [filtered, compact, limit]);
@@ -185,6 +201,26 @@ export default function CandidateFAQ({
     if (!query && activeSection === "All") return `${allItems.length} questions`;
     return `${filtered.length} result${filtered.length === 1 ? "" : "s"}`;
   }, [compact, query, activeSection, allItems.length, filtered.length]);
+
+  // ✅ FIX: always build typed groups; never return non-React values in JSX
+  const groups: Group[] = useMemo(() => {
+    if (compact) {
+      return [
+        {
+          section: "Top questions",
+          icon: HelpCircle,
+          items: displayed,
+        },
+      ];
+    }
+
+    return faqSections
+      .map((section) => {
+        const items = displayed.filter((i) => i.section === section.title);
+        return { section: section.title, icon: section.icon, items };
+      })
+      .filter((g) => g.items.length > 0);
+  }, [compact, displayed, faqSections]);
 
   return (
     <section className="py-16 border-t border-white/10 bg-black/25">
@@ -264,83 +300,78 @@ export default function CandidateFAQ({
               No results found. Try a different keyword.
             </div>
           ) : (
-            // Group results by section title for a premium, structured feel
-            (compact ? [{ section: "Top questions", items: displayed }] : null) ||
-            faqSections
-              .map((section) => {
-                const items = displayed.filter((i) => i.section === section.title);
-                return { section: section.title, icon: section.icon, items };
-              })
-              .filter((g) => g.items.length > 0)
-              .map((group, sIdx) => {
-                const Icon = (group as any).icon || HelpCircle;
+            groups.map((group) => {
+              const Icon = group.icon || HelpCircle;
 
-                return (
-                  <div
-                    key={group.section}
-                    className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur shadow-[0_18px_55px_rgba(0,0,0,.55)] overflow-hidden"
-                  >
-                    <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10 bg-gradient-to-r from-white/[0.06] to-transparent">
-                      <div className="h-10 w-10 rounded-xl bg-[#C9A14A]/15 ring-1 ring-[#C9A14A]/35 flex items-center justify-center">
-                        <Icon className="h-5 w-5 text-[#F5D778]" />
-                      </div>
-                      <h3 className="text-lg md:text-xl font-semibold text-white">
-                        {group.section}
-                      </h3>
+              return (
+                <div
+                  key={group.section}
+                  className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur shadow-[0_18px_55px_rgba(0,0,0,.55)] overflow-hidden"
+                >
+                  <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10 bg-gradient-to-r from-white/[0.06] to-transparent">
+                    <div className="h-10 w-10 rounded-xl bg-[#C9A14A]/15 ring-1 ring-[#C9A14A]/35 flex items-center justify-center">
+                      <Icon className="h-5 w-5 text-[#F5D778]" />
                     </div>
-
-                    <div className="divide-y divide-white/10">
-                      {(group as any).items.map((item: any, qIdx: number) => {
-                        const key = `${group.section}-${qIdx}-${item.q.slice(0, 12)}`;
-                        const isOpen = open === key;
-
-                        return (
-                          <div key={key}>
-                            <button
-                              onClick={() => toggle(key)}
-                              className="w-full text-left px-6 py-5 hover:bg-white/[0.04] transition focus:outline-none"
-                            >
-                              <div className="flex items-start justify-between gap-6">
-                                <div className="flex items-start gap-3">
-                                  <span className="mt-0.5 h-6 w-6 rounded-full bg-white/5 ring-1 ring-white/10 flex items-center justify-center">
-                                    <CheckCircle className="h-4 w-4 text-emerald-300" />
-                                  </span>
-                                  <h4 className="text-sm md:text-base font-semibold text-white/90">
-                                    {item.q}
-                                  </h4>
-                                </div>
-
-                                {isOpen ? (
-                                  <ChevronUp className="h-5 w-5 text-white/70 shrink-0 mt-0.5" />
-                                ) : (
-                                  <ChevronDown className="h-5 w-5 text-white/50 shrink-0 mt-0.5" />
-                                )}
-                              </div>
-                            </button>
-
-                            {isOpen && (
-                              <div className="px-6 pb-6">
-                                <div className="pl-9 pr-1 border-l border-[#D4AF37]/35">
-                                  <p className="text-sm md:text-[0.95rem] leading-relaxed text-white/75 whitespace-pre-line">
-                                    {item.a}
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
+                    <h3 className="text-lg md:text-xl font-semibold text-white">
+                      {group.section}
+                    </h3>
                   </div>
-                );
-              })
+
+                  <div className="divide-y divide-white/10">
+                    {group.items.map((item, qIdx) => {
+                      const key = `${group.section}-${qIdx}-${item.q.slice(0, 12)}`;
+                      const isOpen = open === key;
+
+                      return (
+                        <div key={key}>
+                          <button
+                            onClick={() => toggle(key)}
+                            className="w-full text-left px-6 py-5 hover:bg-white/[0.04] transition focus:outline-none"
+                          >
+                            <div className="flex items-start justify-between gap-6">
+                              <div className="flex items-start gap-3">
+                                <span className="mt-0.5 h-6 w-6 rounded-full bg-white/5 ring-1 ring-white/10 flex items-center justify-center">
+                                  <CheckCircle className="h-4 w-4 text-emerald-300" />
+                                </span>
+                                <h4 className="text-sm md:text-base font-semibold text-white/90">
+                                  {item.q}
+                                </h4>
+                              </div>
+
+                              {isOpen ? (
+                                <ChevronUp className="h-5 w-5 text-white/70 shrink-0 mt-0.5" />
+                              ) : (
+                                <ChevronDown className="h-5 w-5 text-white/50 shrink-0 mt-0.5" />
+                              )}
+                            </div>
+                          </button>
+
+                          {isOpen && (
+                            <div className="px-6 pb-6">
+                              <div className="pl-9 pr-1 border-l border-[#D4AF37]/35">
+                                <p className="text-sm md:text-[0.95rem] leading-relaxed text-white/75 whitespace-pre-line">
+                                  {item.a}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
 
         {/* Compact footer link */}
         {compact && (
           <div className="mt-6 text-center">
-            <Link href="/candidates" className="inline-flex items-center gap-2 text-sm text-[#F5D778] hover:underline">
+            <Link
+              href="/candidates"
+              className="inline-flex items-center gap-2 text-sm text-[#F5D778] hover:underline"
+            >
               View all FAQs <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
