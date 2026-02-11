@@ -6,50 +6,21 @@ import { useEffect, useMemo, useState } from "react";
 
 type NavItem = { href: string; label: string; external?: boolean };
 
-// ✅ Define routes *without* locale, then we prefix with base (/en or "")
-const NAV_RAW: NavItem[] = [
-  { href: "/markets", label: "Markets" },
-  { href: "/jobs", label: "Jobs" },
-  { href: "/candidates", label: "Candidates" },
-  { href: "/hiring-managers", label: "Hiring Managers" },
-
-  // ✅ Always point to TOOL routes
-  { href: "/bp-simulator", label: "BP Simulator" },
-  { href: "/portability", label: "Portability" },
-
-  { href: "/insights", label: "Insights" },
-  {
-    href: "/insights/private-banking-career-intelligence",
-    label: "Career Intelligence 2026",
-  },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-];
-
 function withBase(base: string, href: string) {
   if (!href.startsWith("/")) return href;
   if (!base) return href;
-  // avoid double-prefix
-  if (href.startsWith("/en/")) return href;
+  if (href.startsWith("/en/")) return href; // avoid double-prefix
   return `${base}${href}`;
 }
 
 export default function TopNav() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // mobile panel
   const [scrolled, setScrolled] = useState(false);
+  const [dd, setDd] = useState<null | "Tools" | "Insights">(null); // desktop dropdown
 
   // ✅ locale-aware base
   const base = useMemo(() => (pathname?.startsWith("/en") ? "/en" : ""), [pathname]);
-
-  // ✅ Apply base to internal routes (external untouched)
-  const NAV = useMemo(
-    () =>
-      NAV_RAW.map((item) =>
-        item.external ? item : { ...item, href: withBase(base, item.href) }
-      ),
-    [base]
-  );
 
   // ✅ Normalize pathname for active matching (strip /en)
   const normalizedPath = useMemo(() => {
@@ -57,25 +28,71 @@ export default function TopNav() {
     return pathname.startsWith("/en/") ? pathname.slice(3) : pathname; // "/en/xyz" -> "/xyz"
   }, [pathname]);
 
+  // ✅ Active check uses normalizedPath and *unprefixed* route
+  const isActive = (href: string) =>
+    normalizedPath === href || normalizedPath.startsWith(href + "/");
+
+  // ----- Nav structure (unprefixed routes)
+  const TOP: NavItem[] = [
+    { href: "/markets", label: "Markets" },
+    { href: "/jobs", label: "Jobs" },
+    { href: "/candidates", label: "Candidates" },
+    { href: "/hiring-managers", label: "Hiring Managers" },
+    { href: "/about", label: "About" },
+  ];
+
+  const TOOLS: NavItem[] = [
+    { href: "/bp-simulator", label: "Business Plan Simulator" },
+    { href: "/portability", label: "Portability Score" },
+  ];
+
+  const INSIGHTS: NavItem[] = [
+    { href: "/insights", label: "Insights" },
+    { href: "/insights/private-banking-career-intelligence", label: "Career Intelligence 2026" },
+  ];
+
+  const CONTACT: NavItem = { href: "/contact", label: "Contact" };
+
+  // Apply base to internal routes
+  const TOP_BASE = useMemo(
+    () => TOP.map((i) => (i.external ? i : { ...i, href: withBase(base, i.href) })),
+    [base]
+  );
+  const TOOLS_BASE = useMemo(
+    () => TOOLS.map((i) => (i.external ? i : { ...i, href: withBase(base, i.href) })),
+    [base]
+  );
+  const INSIGHTS_BASE = useMemo(
+    () => INSIGHTS.map((i) => (i.external ? i : { ...i, href: withBase(base, i.href) })),
+    [base]
+  );
+  const CONTACT_BASE = useMemo(
+    () => (CONTACT.external ? CONTACT : { ...CONTACT, href: withBase(base, CONTACT.href) }),
+    [base]
+  );
+
   // Body scroll lock when mobile menu is open
   useEffect(() => {
     document.body.classList.toggle("ep-lock-scroll", open);
     return () => document.body.classList.remove("ep-lock-scroll");
   }, [open]);
 
-  // Close on route change
+  // Close menus on route change
   useEffect(() => {
     setOpen(false);
+    setDd(null);
     document.body.classList.remove("ep-lock-scroll");
   }, [pathname]);
 
-  // Header style on scroll + ESC to close menu
+  // Header style on scroll + ESC to close
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        setDd(null);
+      }
     };
-
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("keydown", onKey);
@@ -91,10 +108,6 @@ export default function TopNav() {
       ? "border-b border-white/10 bg-[#050814]/80 backdrop-blur supports-[backdrop-filter]:bg-[#050814]/65"
       : "bg-transparent");
 
-  // ✅ Active check uses normalizedPath and unprefixed route
-  const isActive = (href: string) =>
-    normalizedPath === href || normalizedPath.startsWith(href + "/");
-
   const linkClasses = (active: boolean) =>
     [
       "relative rounded-full px-3 py-1.5 text-sm whitespace-nowrap transition-colors",
@@ -102,6 +115,26 @@ export default function TopNav() {
         ? "text-[#F5D778] bg-white/5"
         : "text-slate-200 hover:text-white hover:bg-white/5",
     ].join(" ");
+
+  const ddButtonClasses = (active: boolean, isOpen: boolean) =>
+    [
+      "relative rounded-full px-3 py-1.5 text-sm whitespace-nowrap transition-colors flex items-center gap-1",
+      active || isOpen
+        ? "text-[#F5D778] bg-white/5"
+        : "text-slate-200 hover:text-white hover:bg-white/5",
+    ].join(" ");
+
+  const ddPanel =
+    "absolute left-0 mt-2 w-72 rounded-2xl border border-white/10 bg-[#050814]/95 backdrop-blur p-2 shadow-xl";
+
+  const ddItemClasses = (active: boolean) =>
+    [
+      "block rounded-xl px-3 py-2 text-sm transition-colors",
+      active ? "bg-white/10 text-[#F5D778]" : "text-slate-200 hover:text-white hover:bg-white/5",
+    ].join(" ");
+
+  const toolsActive = TOOLS.some((i) => isActive(i.href));
+  const insightsActive = INSIGHTS.some((i) => isActive(i.href));
 
   return (
     <header className={bar}>
@@ -119,7 +152,7 @@ export default function TopNav() {
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-2">
             <div className="flex items-center gap-2 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
-              {NAV.map((item) =>
+              {TOP_BASE.map((item) =>
                 item.external ? (
                   <a
                     key={item.href}
@@ -135,14 +168,87 @@ export default function TopNav() {
                     key={item.href}
                     href={item.href}
                     className={linkClasses(isActive(item.href))}
-                    onClick={() => setOpen(false)}
                     aria-current={isActive(item.href) ? "page" : undefined}
                   >
                     {item.label}
                   </Link>
                 )
               )}
+
+              {/* Tools dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setDd("Tools")}
+                onMouseLeave={() => setDd(null)}
+              >
+                <button
+                  type="button"
+                  className={ddButtonClasses(toolsActive, dd === "Tools")}
+                  aria-haspopup="menu"
+                  aria-expanded={dd === "Tools"}
+                  onClick={() => setDd(dd === "Tools" ? null : "Tools")}
+                >
+                  Tools <span className="text-xs opacity-80">▾</span>
+                </button>
+
+                {dd === "Tools" && (
+                  <div role="menu" className={ddPanel}>
+                    {TOOLS_BASE.map((i) => (
+                      <Link
+                        key={i.href}
+                        href={i.href}
+                        role="menuitem"
+                        className={ddItemClasses(isActive(i.href))}
+                        onClick={() => setDd(null)}
+                      >
+                        {i.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Insights dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setDd("Insights")}
+                onMouseLeave={() => setDd(null)}
+              >
+                <button
+                  type="button"
+                  className={ddButtonClasses(insightsActive, dd === "Insights")}
+                  aria-haspopup="menu"
+                  aria-expanded={dd === "Insights"}
+                  onClick={() => setDd(dd === "Insights" ? null : "Insights")}
+                >
+                  Insights <span className="text-xs opacity-80">▾</span>
+                </button>
+
+                {dd === "Insights" && (
+                  <div role="menu" className={ddPanel}>
+                    {INSIGHTS_BASE.map((i) => (
+                      <Link
+                        key={i.href}
+                        href={i.href}
+                        role="menuitem"
+                        className={ddItemClasses(isActive(i.href))}
+                        onClick={() => setDd(null)}
+                      >
+                        {i.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
+
+            {/* Contact CTA */}
+            <Link
+              href={CONTACT_BASE.href}
+              className="ml-2 rounded-full bg-[#F5D778] px-4 py-2 text-sm font-semibold text-[#050814] hover:opacity-90 transition"
+            >
+              Contact
+            </Link>
           </div>
 
           {/* Mobile burger */}
@@ -165,40 +271,78 @@ export default function TopNav() {
           }
         >
           <ul className="grid gap-1">
-            {NAV.map((item) => {
-              const active = isActive(item.href);
+            {TOP_BASE.map((item) => {
+              const active = isActive(item.href.replace(base, "") || item.href);
               const cls = [
                 "block rounded-md px-3 py-2 text-sm transition-colors",
-                active
-                  ? "bg-white/10 text-[#F5D778]"
-                  : "text-slate-200 hover:text-white hover:bg-white/5",
+                active ? "bg-white/10 text-[#F5D778]" : "text-slate-200 hover:text-white hover:bg-white/5",
               ].join(" ");
 
               return (
                 <li key={item.href}>
                   {item.external ? (
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={cls}
-                      onClick={() => setOpen(false)}
-                    >
+                    <a href={item.href} target="_blank" rel="noopener noreferrer" className={cls} onClick={() => setOpen(false)}>
                       {item.label}
                     </a>
                   ) : (
-                    <Link
-                      href={item.href}
-                      className={cls}
-                      onClick={() => setOpen(false)}
-                      aria-current={active ? "page" : undefined}
-                    >
+                    <Link href={item.href} className={cls} onClick={() => setOpen(false)} aria-current={active ? "page" : undefined}>
                       {item.label}
                     </Link>
                   )}
                 </li>
               );
             })}
+
+            {/* Mobile section: Tools */}
+            <li className="mt-2 px-3 pt-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">
+              Tools
+            </li>
+            {TOOLS_BASE.map((item) => {
+              const active = isActive(item.href.replace(base, "") || item.href);
+              const cls = [
+                "block rounded-md px-3 py-2 text-sm transition-colors",
+                active ? "bg-white/10 text-[#F5D778]" : "text-slate-200 hover:text-white hover:bg-white/5",
+              ].join(" ");
+
+              return (
+                <li key={item.href}>
+                  <Link href={item.href} className={cls} onClick={() => setOpen(false)} aria-current={active ? "page" : undefined}>
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+
+            {/* Mobile section: Insights */}
+            <li className="mt-2 px-3 pt-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">
+              Insights
+            </li>
+            {INSIGHTS_BASE.map((item) => {
+              const active = isActive(item.href.replace(base, "") || item.href);
+              const cls = [
+                "block rounded-md px-3 py-2 text-sm transition-colors",
+                active ? "bg-white/10 text-[#F5D778]" : "text-slate-200 hover:text-white hover:bg-white/5",
+              ].join(" ");
+
+              return (
+                <li key={item.href}>
+                  <Link href={item.href} className={cls} onClick={() => setOpen(false)} aria-current={active ? "page" : undefined}>
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+
+            {/* Mobile Contact CTA */}
+            <li className="mt-2">
+              <Link
+                href={CONTACT_BASE.href}
+                className="block rounded-xl bg-[#F5D778] px-4 py-3 text-sm font-semibold text-[#050814] text-center hover:opacity-90 transition"
+                onClick={() => setOpen(false)}
+              >
+                Contact
+              </Link>
+            </li>
           </ul>
         </div>
       </nav>
