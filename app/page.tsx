@@ -8,10 +8,10 @@ import { ArrowRight, Sparkles, Calculator } from "lucide-react";
 import { OrganizationSchema } from "@/components/StructuredData";
 
 /**
- * ✅ Correct premium hero image
- * You already have this file in /public.
+ * ✅ Use the new WebP hero (you generated: public/hero-skyline-hq.webp)
+ * Keep the JPG as fallback/backup if needed.
  */
-const HERO = "/hero-skyline-hq.jpg";
+const HERO = "/hero-skyline-hq.webp";
 
 export const metadata: Metadata = {
   title: "Executive Partners | Private Banking Executive Search | Geneva",
