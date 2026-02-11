@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type NavItem = { href: string; label: string; external?: boolean };
 
@@ -18,6 +18,17 @@ export default function TopNav() {
   const [open, setOpen] = useState(false); // mobile panel
   const [scrolled, setScrolled] = useState(false);
   const [dd, setDd] = useState<null | "Tools" | "Insights">(null); // desktop dropdown
+
+  // ✅ Prevent dropdown from closing instantly when moving cursor button -> panel
+  const closeTimer = useRef<number | null>(null);
+  const openDd = (which: "Tools" | "Insights") => {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    setDd(which);
+  };
+  const scheduleCloseDd = () => {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => setDd(null), 180);
+  };
 
   // ✅ locale-aware base
   const base = useMemo(() => (pathname?.startsWith("/en") ? "/en" : ""), [pathname]);
@@ -48,7 +59,10 @@ export default function TopNav() {
 
   const INSIGHTS: NavItem[] = [
     { href: "/insights", label: "Insights" },
-    { href: "/insights/private-banking-career-intelligence", label: "Career Intelligence 2026" },
+    {
+      href: "/insights/private-banking-career-intelligence",
+      label: "Career Intelligence 2026",
+    },
   ];
 
   const CONTACT: NavItem = { href: "/contact", label: "Contact" };
@@ -102,6 +116,13 @@ export default function TopNav() {
     };
   }, []);
 
+  // Cleanup timer
+  useEffect(() => {
+    return () => {
+      if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    };
+  }, []);
+
   const bar =
     "fixed inset-x-0 top-0 z-40 transition-colors " +
     (scrolled
@@ -131,7 +152,9 @@ export default function TopNav() {
   const ddItemClasses = (active: boolean) =>
     [
       "block rounded-xl px-3 py-2 text-sm transition-colors",
-      active ? "bg-white/10 text-[#F5D778]" : "text-slate-200 hover:text-white hover:bg-white/5",
+      active
+        ? "bg-white/10 text-[#F5D778]"
+        : "text-slate-200 hover:text-white hover:bg-white/5",
     ].join(" ");
 
   const toolsActive = TOOLS.some((i) => isActive(i.href));
@@ -183,8 +206,8 @@ export default function TopNav() {
               {/* Tools dropdown */}
               <div
                 className="relative"
-                onMouseEnter={() => setDd("Tools")}
-                onMouseLeave={() => setDd(null)}
+                onMouseEnter={() => openDd("Tools")}
+                onMouseLeave={scheduleCloseDd}
               >
                 <button
                   type="button"
@@ -197,7 +220,12 @@ export default function TopNav() {
                 </button>
 
                 {dd === "Tools" && (
-                  <div role="menu" className={ddPanel}>
+                  <div
+                    role="menu"
+                    className={ddPanel}
+                    onMouseEnter={() => openDd("Tools")}
+                    onMouseLeave={scheduleCloseDd}
+                  >
                     {TOOLS_BASE.map((i) => (
                       <Link
                         key={i.href}
@@ -216,8 +244,8 @@ export default function TopNav() {
               {/* Insights dropdown */}
               <div
                 className="relative"
-                onMouseEnter={() => setDd("Insights")}
-                onMouseLeave={() => setDd(null)}
+                onMouseEnter={() => openDd("Insights")}
+                onMouseLeave={scheduleCloseDd}
               >
                 <button
                   type="button"
@@ -230,7 +258,12 @@ export default function TopNav() {
                 </button>
 
                 {dd === "Insights" && (
-                  <div role="menu" className={ddPanel}>
+                  <div
+                    role="menu"
+                    className={ddPanel}
+                    onMouseEnter={() => openDd("Insights")}
+                    onMouseLeave={scheduleCloseDd}
+                  >
                     {INSIGHTS_BASE.map((i) => (
                       <Link
                         key={i.href}
