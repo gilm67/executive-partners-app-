@@ -12,19 +12,15 @@ import {
   X,
   Quote,
   ShieldCheck,
-  HelpCircle,
-  ChevronDown,
 } from "lucide-react";
 
-type FaqItem = { q: string; a: string };
+// ✅ NEW: use your premium FAQ component (compact mode on homepage)
+import CandidateFAQ from "@/components/CandidateFAQ";
 
 export default function HomeClient() {
   const [showEmailPopup, setShowEmailPopup] = useState(false);
   const [email, setEmail] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
-
-  const [openFaqKey, setOpenFaqKey] = useState<string | null>(null);
-  const [showAllFaq, setShowAllFaq] = useState(false);
 
   const canSubmit = useMemo(() => email.trim().includes("@"), [email]);
 
@@ -84,86 +80,6 @@ export default function HomeClient() {
 
   // Duplicate for smooth marquee loop
   const marqueeItems = [...testimonials, ...testimonials, ...testimonials];
-
-  /**
-   * ✅ Candidate FAQ — 18 questions
-   */
-  const faq: FaqItem[] = [
-    {
-      q: "Do I pay any fees for your services?",
-      a: "No. Our fees are paid entirely by hiring banks. You never pay anything to work with Executive Partners. This is standard in executive recruitment across the banking sector — employers value top talent and invest accordingly.",
-    },
-    {
-      q: "How confidential is this process?",
-      a: "Completely confidential. We never contact your current employer or disclose your interest in moving to anyone without your explicit permission. Most conversations happen outside office hours and we use personal email addresses, not work emails.",
-    },
-    {
-      q: "I'm not actively looking but want to understand my options. Can I still talk to you?",
-      a: "Absolutely. Many of our best placements come from passive candidates. There is no obligation or risk in exploring your options discreetly.",
-    },
-    {
-      q: "How long does a typical placement take?",
-      a: "From first conversation to signed offer, the process typically takes 8–16 weeks, depending on bank approvals, compliance, your notice period, and portfolio complexity.",
-    },
-    {
-      q: "Do you have roles in specific cities?",
-      a: "Yes. We work across Europe (Geneva, Zurich, London, Frankfurt, Paris, Madrid, Milan), the Middle East (Dubai, Abu Dhabi), Asia-Pacific (Singapore, Hong Kong), and the Americas (New York, Miami).",
-    },
-    {
-      q: "What if my AUM isn't fully portable?",
-      a: "Most RMs transfer between 30% and 80% of their book. Portability depends on client composition, jurisdiction, relationship depth, and constraints. Banks structure offers accordingly.",
-    },
-    {
-      q: "How do you verify my AUM claims?",
-      a: "Verification is done by the hiring bank during due diligence. We help you prepare anonymized client lists, revenue logic, concentration analysis, and disclosures early to avoid surprises.",
-    },
-    {
-      q: "What if some of my clients have compliance issues?",
-      a: "Transparency is essential. Issues don’t automatically disqualify a profile, but undisclosed issues can derail a process late. We help you frame risks honestly and early.",
-    },
-    {
-      q: "How does your candidate vetting process work?",
-      a: "We assess your book, portability, regulatory profile, career goals, and cultural fit. If there is a genuine match, we manage the introduction and the full process discreetly.",
-    },
-    {
-      q: "What is your role in the hiring process?",
-      a: "We advise end-to-end: positioning, introductions, compensation and contract guidance, interview preparation, due diligence support, closing, and onboarding.",
-    },
-    {
-      q: "What if I want to stay confidential while exploring?",
-      a: "That’s the standard. No work emails, no employer contact, no disclosure without your permission. We manage introductions discreetly and permission-based.",
-    },
-    {
-      q: "What kind of compensation should I expect?",
-      a: "It depends on geography, bank, seniority, and revenue. Switzerland, the UK, and the Middle East often price higher than continental Europe. We benchmark and advise realistically.",
-    },
-    {
-      q: "Are there roles for different experience levels?",
-      a: "Yes. We work with experienced RMs, rising talent, and cross-border moves. We’re transparent about what is realistic for each profile.",
-    },
-    {
-      q: "What happens after I sign an offer?",
-      a: "We stay involved through approvals, notice period planning, client transition strategy, and your first 90 days — execution is what drives long-term success.",
-    },
-    {
-      q: "What if the placement doesn't work out?",
-      a: "Rare, but if it happens, we help analyze the situation and support your next step. Retention matters more than short-term placements in private banking.",
-    },
-    {
-      q: "How do I get started?",
-      a: "Send your LinkedIn profile or a short CV. We schedule a confidential call to assess fit, current mandates, and advise honestly on next steps.",
-    },
-    {
-      q: "How long before you contact me with opportunities?",
-      a: "If there’s a strong match, typically within 2–4 weeks. Otherwise we maintain the relationship and re-engage when market demand aligns.",
-    },
-    {
-      q: "Is there any cost to work with you?",
-      a: "No. Hiring banks pay all fees. Your only investment is time for confidential discussions and interviews.",
-    },
-  ];
-
-  const visibleFaq = showAllFaq ? faq : faq.slice(0, 8);
 
   // ✅ Reusable Value Card
   const ValueCard = ({
@@ -425,80 +341,8 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* FAQ (RESTORED) */}
-      <section className="py-16">
-        <div className="mx-auto max-w-5xl px-4">
-          <div className="text-center mb-10">
-            <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/85 backdrop-blur">
-              <HelpCircle className="h-4 w-4 text-[#F5D778]" />
-              Candidate FAQ
-            </div>
-            <h2 className="mt-4 text-3xl font-semibold tracking-tight">
-              Frequently asked questions
-            </h2>
-            <p className="mt-3 text-white/75 max-w-2xl mx-auto">
-              The answers below reflect our real process: discreet, permission-based,
-              and senior-focused.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            {visibleFaq.map((item) => {
-              const isOpen = openFaqKey === item.q;
-
-              return (
-                <div
-                  key={item.q}
-                  className="rounded-xl border border-white/10 bg-white/[0.05] backdrop-blur"
-                >
-                  <button
-                    onClick={() => setOpenFaqKey(isOpen ? null : item.q)}
-                    className="w-full flex justify-between items-center gap-4 px-5 py-4 text-left"
-                    aria-expanded={isOpen}
-                  >
-                    <span className="font-semibold text-white/95">{item.q}</span>
-                    <ChevronDown
-                      className={`h-4 w-4 shrink-0 text-white/70 transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-
-                  {isOpen && (
-                    <div className="px-5 pb-4 text-sm text-white/80 leading-relaxed">
-                      {item.a}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <button
-              onClick={() => {
-                setShowAllFaq((v) => !v);
-                setOpenFaqKey(null);
-              }}
-              className="inline-flex items-center justify-center rounded-full bg-white/5 px-6 py-3 text-sm font-semibold text-white ring-1 ring-white/12 hover:bg-white/10 transition"
-            >
-              {showAllFaq ? "Show fewer questions" : "Show all 18 questions"}
-              <ChevronDown
-                className={`ml-2 h-4 w-4 transition-transform ${
-                  showAllFaq ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F5D778] px-6 py-3 text-sm font-semibold text-black shadow-lg shadow-black/40 hover:brightness-110 transition"
-            >
-              Ask a confidential question <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* FAQ (UPGRADED) */}
+      <CandidateFAQ compact limit={8} />
 
       {/* MARKETS */}
       <section className="py-16 border-t border-white/10 bg-black/25">
