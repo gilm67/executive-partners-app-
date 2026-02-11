@@ -9,24 +9,48 @@ import { OrganizationSchema } from "@/components/StructuredData";
 
 /**
  * ✅ Use the new WebP hero (you generated: public/hero-skyline-hq.webp)
- * Keep the JPG as fallback/backup if needed.
  */
 const HERO = "/hero-skyline-hq.webp";
+
+/**
+ * ✅ IMPORTANT:
+ * Page-level metadata OVERRIDES layout metadata.
+ * If you set openGraph/twitter here, include images, otherwise you'll lose og:image/twitter:image.
+ * Use relative URL so metadataBase (canonical domain) resolves it correctly.
+ */
+const OG_IMAGE = "/og.webp";
 
 export const metadata: Metadata = {
   title: "Executive Partners | Private Banking Executive Search | Geneva",
   description:
     "Leading executive search firm specializing in senior private banking roles across Geneva, Zurich, London, Dubai, Singapore. 200+ placements, 98% retention rate.",
+
   openGraph: {
     title: "Executive Partners | Private Banking Executive Search",
     description:
       "Global executive search for senior private banking professionals. Geneva-based, globally connected.",
+    type: "website",
+    url: "/",
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "Executive Partners – Private Banking & Wealth Management Executive Search",
+      },
+    ],
   },
+
   twitter: {
     card: "summary_large_image",
     title: "Executive Partners | Private Banking Executive Search",
     description:
       "Leading executive search for senior private banking roles worldwide.",
+    images: [OG_IMAGE],
+  },
+
+  alternates: {
+    canonical: "/",
   },
 };
 
