@@ -12,6 +12,8 @@ import {
   DollarSign,
   TrendingUp,
   ArrowRight,
+  Search,
+  X,
 } from "lucide-react";
 
 type FaqItem = { q: string; a: string };
@@ -21,12 +23,20 @@ type FaqSection = {
   questions: FaqItem[];
 };
 
-export default function CandidateFAQ() {
+export default function CandidateFAQ({
+  compact = false,
+  limit = 6,
+}: {
+  compact?: boolean;
+  limit?: number;
+}) {
   const [open, setOpen] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string>("All");
+  const [query, setQuery] = useState("");
 
   const toggle = (key: string) => setOpen((prev) => (prev === key ? null : key));
 
-  // ✅ Content taken from your uploaded file (kept verbatim, just restyled)
+  // ✅ Content kept verbatim, improved UX: search + filters + compact mode
   const faqSections: FaqSection[] = useMemo(
     () => [
       {
@@ -141,6 +151,41 @@ export default function CandidateFAQ() {
     []
   );
 
+  // Flatten for search + compact mode
+  const allItems = useMemo(() => {
+    return faqSections.flatMap((section) =>
+      section.questions.map((item) => ({
+        section: section.title,
+        icon: section.icon,
+        q: item.q,
+        a: item.a,
+      }))
+    );
+  }, [faqSections]);
+
+  const sectionTitles = useMemo(() => ["All", ...faqSections.map((s) => s.title)], [faqSections]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return allItems.filter((item) => {
+      const inSection = activeSection === "All" || item.section === activeSection;
+      const inQuery =
+        !q || item.q.toLowerCase().includes(q) || item.a.toLowerCase().includes(q);
+      return inSection && inQuery;
+    });
+  }, [allItems, activeSection, query]);
+
+  const displayed = useMemo(() => {
+    if (compact) return filtered.slice(0, limit);
+    return filtered;
+  }, [filtered, compact, limit]);
+
+  const resultsLabel = useMemo(() => {
+    if (compact) return null;
+    if (!query && activeSection === "All") return `${allItems.length} questions`;
+    return `${filtered.length} result${filtered.length === 1 ? "" : "s"}`;
+  }, [compact, query, activeSection, allItems.length, filtered.length]);
+
   return (
     <section className="py-16 border-t border-white/10 bg-black/25">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -158,98 +203,175 @@ export default function CandidateFAQ() {
             Clear answers on confidentiality, portability, timing, and compensation—so you can
             evaluate options without noise.
           </p>
+
+          {/* Stunning improvement: Search + Filter (auto-hidden in compact) */}
+          {!compact && (
+            <div className="mt-6 mx-auto max-w-4xl">
+              {/* Search */}
+              <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 backdrop-blur shadow-[0_18px_55px_rgba(0,0,0,.55)]">
+                <Search className="h-4 w-4 text-white/60" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search FAQ (e.g., portability, confidentiality, timeline, compensation...)"
+                  className="w-full bg-transparent text-sm text-white placeholder:text-white/40 outline-none"
+                />
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    className="rounded-full p-1 hover:bg-white/5"
+                    aria-label="Clear search"
+                  >
+                    <X className="h-4 w-4 text-white/60" />
+                  </button>
+                )}
+              </div>
+
+              {/* Filter pills */}
+              <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+                {sectionTitles.map((t) => {
+                  const active = activeSection === t;
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => {
+                        setActiveSection(t);
+                        setOpen(null);
+                      }}
+                      className={[
+                        "rounded-full px-4 py-2 text-xs font-semibold transition-colors",
+                        active
+                          ? "bg-[#F5D778] text-black"
+                          : "bg-white/5 text-white/75 ring-1 ring-white/10 hover:bg-white/10",
+                      ].join(" ")}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
+                <span className="ml-1 text-xs text-white/50">{resultsLabel}</span>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Sections */}
+        {/* Results */}
         <div className="grid gap-6">
-          {faqSections.map((section, sIdx) => {
-            const Icon = section.icon;
+          {displayed.length === 0 ? (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-8 text-center text-white/70">
+              No results found. Try a different keyword.
+            </div>
+          ) : (
+            // Group results by section title for a premium, structured feel
+            (compact ? [{ section: "Top questions", items: displayed }] : null) ||
+            faqSections
+              .map((section) => {
+                const items = displayed.filter((i) => i.section === section.title);
+                return { section: section.title, icon: section.icon, items };
+              })
+              .filter((g) => g.items.length > 0)
+              .map((group, sIdx) => {
+                const Icon = (group as any).icon || HelpCircle;
 
-            return (
-              <div
-                key={section.title}
-                className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur shadow-[0_18px_55px_rgba(0,0,0,.55)] overflow-hidden"
-              >
-                <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10 bg-gradient-to-r from-white/[0.06] to-transparent">
-                  <div className="h-10 w-10 rounded-xl bg-[#C9A14A]/15 ring-1 ring-[#C9A14A]/35 flex items-center justify-center">
-                    <Icon className="h-5 w-5 text-[#F5D778]" />
-                  </div>
-                  <h3 className="text-lg md:text-xl font-semibold text-white">
-                    {section.title}
-                  </h3>
-                </div>
+                return (
+                  <div
+                    key={group.section}
+                    className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur shadow-[0_18px_55px_rgba(0,0,0,.55)] overflow-hidden"
+                  >
+                    <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10 bg-gradient-to-r from-white/[0.06] to-transparent">
+                      <div className="h-10 w-10 rounded-xl bg-[#C9A14A]/15 ring-1 ring-[#C9A14A]/35 flex items-center justify-center">
+                        <Icon className="h-5 w-5 text-[#F5D778]" />
+                      </div>
+                      <h3 className="text-lg md:text-xl font-semibold text-white">
+                        {group.section}
+                      </h3>
+                    </div>
 
-                <div className="divide-y divide-white/10">
-                  {section.questions.map((item, qIdx) => {
-                    const key = `${sIdx}-${qIdx}`;
-                    const isOpen = open === key;
+                    <div className="divide-y divide-white/10">
+                      {(group as any).items.map((item: any, qIdx: number) => {
+                        const key = `${group.section}-${qIdx}-${item.q.slice(0, 12)}`;
+                        const isOpen = open === key;
 
-                    return (
-                      <div key={key}>
-                        <button
-                          onClick={() => toggle(key)}
-                          className="w-full text-left px-6 py-5 hover:bg-white/[0.04] transition focus:outline-none"
-                        >
-                          <div className="flex items-start justify-between gap-6">
-                            <div className="flex items-start gap-3">
-                              <span className="mt-0.5 h-6 w-6 rounded-full bg-white/5 ring-1 ring-white/10 flex items-center justify-center">
-                                <CheckCircle className="h-4 w-4 text-emerald-300" />
-                              </span>
-                              <h4 className="text-sm md:text-base font-semibold text-white/90">
-                                {item.q}
-                              </h4>
-                            </div>
+                        return (
+                          <div key={key}>
+                            <button
+                              onClick={() => toggle(key)}
+                              className="w-full text-left px-6 py-5 hover:bg-white/[0.04] transition focus:outline-none"
+                            >
+                              <div className="flex items-start justify-between gap-6">
+                                <div className="flex items-start gap-3">
+                                  <span className="mt-0.5 h-6 w-6 rounded-full bg-white/5 ring-1 ring-white/10 flex items-center justify-center">
+                                    <CheckCircle className="h-4 w-4 text-emerald-300" />
+                                  </span>
+                                  <h4 className="text-sm md:text-base font-semibold text-white/90">
+                                    {item.q}
+                                  </h4>
+                                </div>
 
-                            {isOpen ? (
-                              <ChevronUp className="h-5 w-5 text-white/70 shrink-0 mt-0.5" />
-                            ) : (
-                              <ChevronDown className="h-5 w-5 text-white/50 shrink-0 mt-0.5" />
+                                {isOpen ? (
+                                  <ChevronUp className="h-5 w-5 text-white/70 shrink-0 mt-0.5" />
+                                ) : (
+                                  <ChevronDown className="h-5 w-5 text-white/50 shrink-0 mt-0.5" />
+                                )}
+                              </div>
+                            </button>
+
+                            {isOpen && (
+                              <div className="px-6 pb-6">
+                                <div className="pl-9 pr-1 border-l border-[#D4AF37]/35">
+                                  <p className="text-sm md:text-[0.95rem] leading-relaxed text-white/75 whitespace-pre-line">
+                                    {item.a}
+                                  </p>
+                                </div>
+                              </div>
                             )}
                           </div>
-                        </button>
-
-                        {isOpen && (
-                          <div className="px-6 pb-6">
-                            <div className="pl-9 pr-1 border-l border-[#D4AF37]/35">
-                              <p className="text-sm md:text-[0.95rem] leading-relaxed text-white/75 whitespace-pre-line">
-                                {item.a}
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })
+          )}
         </div>
 
-        {/* CTA */}
-        <div className="mt-10 rounded-3xl border border-white/10 bg-gradient-to-r from-white/[0.06] to-white/[0.02] p-8 text-center backdrop-blur shadow-[0_22px_70px_rgba(0,0,0,.55)]">
-          <h3 className="text-2xl md:text-3xl font-semibold text-white">
-            Still have questions?
-          </h3>
-          <p className="mt-3 text-white/70">
-            Book a confidential call, or reach out by email. No pressure—just clarity.
-          </p>
-
-          <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
-            <a
-              href="mailto:recruiter@execpartners.ch"
-              className="inline-flex items-center justify-center rounded-full bg-white/5 px-7 py-3 text-sm font-semibold text-white ring-1 ring-white/15 hover:bg-white/10"
-            >
-              Email us <ArrowRight className="ml-2 h-4 w-4" />
-            </a>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F5D778] px-7 py-3 text-sm font-semibold text-black shadow-lg shadow-black/40 hover:brightness-110"
-            >
-              Schedule a call <ArrowRight className="ml-2 h-4 w-4" />
+        {/* Compact footer link */}
+        {compact && (
+          <div className="mt-6 text-center">
+            <Link href="/candidates" className="inline-flex items-center gap-2 text-sm text-[#F5D778] hover:underline">
+              View all FAQs <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-        </div>
+        )}
+
+        {/* CTA (keep on full version only) */}
+        {!compact && (
+          <div className="mt-10 rounded-3xl border border-white/10 bg-gradient-to-r from-white/[0.06] to-white/[0.02] p-8 text-center backdrop-blur shadow-[0_22px_70px_rgba(0,0,0,.55)]">
+            <h3 className="text-2xl md:text-3xl font-semibold text-white">
+              Still have questions?
+            </h3>
+            <p className="mt-3 text-white/70">
+              Book a confidential call, or reach out by email. No pressure—just clarity.
+            </p>
+
+            <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+              <a
+                href="mailto:recruiter@execpartners.ch"
+                className="inline-flex items-center justify-center rounded-full bg-white/5 px-7 py-3 text-sm font-semibold text-white ring-1 ring-white/15 hover:bg-white/10"
+              >
+                Email us <ArrowRight className="ml-2 h-4 w-4" />
+              </a>
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F5D778] px-7 py-3 text-sm font-semibold text-black shadow-lg shadow-black/40 hover:brightness-110"
+              >
+                Schedule a call <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
