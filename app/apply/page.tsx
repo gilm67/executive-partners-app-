@@ -45,15 +45,29 @@ export const metadata: Metadata = {
 };
 
 /* ---------------- page ---------------- */
-export default function ApplyPage({
+// ✅ Next.js 15: searchParams can be async -> MUST await before reading keys
+type SearchParams = Record<string, string | string[] | undefined>;
+
+async function resolveSearchParams(
+  searchParams?: Promise<SearchParams> | SearchParams
+): Promise<SearchParams> {
+  if (!searchParams) return {};
+  return typeof (searchParams as any)?.then === "function"
+    ? await (searchParams as Promise<SearchParams>)
+    : (searchParams as SearchParams);
+}
+
+export default async function ApplyPage({
   searchParams,
 }: {
-  searchParams?: Record<string, string | string[]>;
+  searchParams?: Promise<SearchParams> | SearchParams;
 }) {
-  const sp = searchParams ?? {};
+  const sp = await resolveSearchParams(searchParams);
+
   const get = (k: string): string => {
     const v = sp[k];
-    return Array.isArray(v) ? v[0] ?? "" : (v as string) ?? "";
+    if (Array.isArray(v)) return v[0] ?? "";
+    return typeof v === "string" ? v : "";
   };
 
   const prefillRole = get("job") || get("role");
@@ -136,11 +150,11 @@ export default function ApplyPage({
         </p>
         <h1 className="mt-3">Apply Confidentially</h1>
         <p className="mt-3 text-sm text-neutral-300 md:text-[0.95rem]">
-          For experienced Relationship Managers, Team Heads and Market Leaders
-          in private banking and wealth management. Geneva-based, with mandates
-          across Switzerland (Geneva &amp; Zurich), London, Dubai, Singapore,
-          Hong Kong and select US locations. We review every submission and only
-          move forward with your consent.
+          For experienced Relationship Managers, Team Heads and Market Leaders in
+          private banking and wealth management. Geneva-based, with mandates across
+          Switzerland (Geneva &amp; Zurich), London, Dubai, Singapore, Hong Kong and
+          select US locations. We review every submission and only move forward with
+          your consent.
         </p>
       </header>
 
