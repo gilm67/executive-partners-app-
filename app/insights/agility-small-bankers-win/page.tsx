@@ -30,13 +30,13 @@ export const metadata: Metadata = {
     title: "Agility over size: why small Swiss private bankers win",
     description:
       "How lean Swiss private banking teams out-execute bigger platforms — speed, accountability, and true client alignment.",
-    images: [{ url: `${SITE}/og.png` }],
+    images: [{ url: `${SITE}/og.webp` }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Agility over size: why small Swiss private bankers win",
     description: "Agility beats scale in Swiss private banking. Here’s why.",
-    images: [`${SITE}/og.png`],
+    images: [`${SITE}/og.webp`],
   },
   robots: { index: true, follow: true },
 };
@@ -63,7 +63,7 @@ export default function Page() {
       logo: { "@type": "ImageObject", url: `${SITE}/logo.png` },
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": URL },
-    image: [`${SITE}/og.png`],
+    image: [`${SITE}/og.webp`],
     url: URL,
     articleSection: "Insights",
     wordCount: 450, // rough estimate; optional

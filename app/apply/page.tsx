@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     title: "Apply Confidentially — Executive Partners",
     description:
       "Confidential submission for Private Banking & Wealth Management roles across Switzerland, the UK, the US, Dubai, Singapore and Hong Kong.",
-    images: [{ url: "/og.png" }],
+    images: [{ url: "/og.webp" }],
     siteName: "Executive Partners",
   },
   twitter: {
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     title: "Apply Confidentially — Executive Partners",
     description:
       "Private Banking & Wealth Management executive search — submit your profile discreetly.",
-    images: ["/og.png"],
+    images: ["/og.webp"],
   },
   robots: { index: true, follow: true },
 };

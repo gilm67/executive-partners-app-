@@ -37,7 +37,7 @@ const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : CANONICAL_DOMAIN);
 
-const OG_IMAGE = `${SITE}/og.png`;
+const OG_IMAGE = `${SITE}/og.webp`;
 
 const DEFAULT_TITLE = "Executive Search & Private Banking Recruitment | Geneva";
 const DEFAULT_DESCRIPTION =

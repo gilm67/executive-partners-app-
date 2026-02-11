@@ -389,7 +389,7 @@ export async function generateMetadata({
       description,
       url: canonical,
       type: "article",
-      images: [{ url: `${base}/og.png` }],
+      images: [{ url: `${base}/og.webp` }],
     },
     robots: isFallback
       ? { index: false, follow: true }

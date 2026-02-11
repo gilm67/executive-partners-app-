@@ -29,7 +29,7 @@ export const metadata: Metadata = {
       "Discreet executive search for HNW/UHNW Private Banking talent. Geneva- and Zurich-led with mandates across London, Dubai, Singapore, Hong Kong, New York and Miami.",
     url: `${SITE}/candidates`,
     siteName: "Executive Partners",
-    images: [{ url: "/og.png" }],
+    images: [{ url: "/og.webp" }],
     type: "website",
   },
   twitter: {

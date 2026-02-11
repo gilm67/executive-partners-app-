@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     title: "Private Banking Jobs in Switzerland | Executive Partners",
     description:
       "Live Swiss mandates across Geneva, Zurich & Romandie. Discreet search for HNW/UHNW Relationship Managers and leaders.",
-    images: [{ url: `${SITE}/og.png` }],
+    images: [{ url: `${SITE}/og.webp` }],
     siteName: "Executive Partners",
   },
   robots: { index: true, follow: true },

@@ -110,13 +110,13 @@ export function generateMetadata({ params }: Props): Metadata {
       siteName: "Executive Partners",
       title,
       description,
-      images: [{ url: `${SITE}/og.png` }],
+      images: [{ url: `${SITE}/og.webp` }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [`${SITE}/og.png`],
+      images: [`${SITE}/og.webp`],
     },
     robots: { index: true, follow: true },
   };

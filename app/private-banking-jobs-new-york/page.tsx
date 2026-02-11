@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     title: "Private Banking Jobs in New York | Executive Partners",
     description:
       "Live New York/US mandates. Discreet search for HNW/UHNW Relationship Managers and senior leaders with US onshore and international coverage.",
-    images: [{ url: "/og.png" }],
+    images: [{ url: "/og.webp" }],
     siteName: "Executive Partners",
   },
   robots: { index: true, follow: true },

@@ -29,14 +29,14 @@ export const metadata: Metadata = {
     siteName: "Executive Partners",
     description:
       "Confidential private banking & wealth management recruitment. Geneva-based, globally connected.",
-    images: [{ url: "/og.png" }],
+    images: [{ url: "/og.webp" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Contact Executive Partners",
     description:
       "Private Banking & Wealth Management executive search — Geneva HQ, international reach.",
-    images: ["/og.png"],
+    images: ["/og.webp"],
   },
   robots: { index: true, follow: true },
 };
@@ -48,7 +48,7 @@ export default function ContactPage() {
     "@type": ["Organization", "LocalBusiness"],
     name: "Executive Partners",
     url: SITE,
-    image: `${SITE}/og.png`,
+    image: `${SITE}/og.webp`,
     logo: `${SITE}/icon.png`,
     address: {
       "@type": "PostalAddress",

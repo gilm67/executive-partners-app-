@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     title: "Private Banking Jobs in Singapore | Executive Partners",
     description:
       "Live Singapore/APAC mandates. Discreet search for HNW/UHNW Relationship Managers and senior leaders with onshore and cross-border coverage.",
-    images: [{ url: "/og.png" }],
+    images: [{ url: "/og.webp" }],
     siteName: "Executive Partners",
   },
   robots: { index: true, follow: true },

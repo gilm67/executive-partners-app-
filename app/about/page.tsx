@@ -33,7 +33,7 @@ export const metadata: Metadata = {
       "About Executive Partners | Connecting Top Talent with Private Banking Excellence – In Switzerland & Beyond",
     description:
       "Boutique executive search for Private Banking & Wealth Management. Trusted by banks, EAMs and family offices across Switzerland and global hubs.",
-    images: [{ url: "/og.png" }],
+    images: [{ url: "/og.webp" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
       "About Executive Partners | Private Banking & Wealth Management Search",
     description:
       "Geneva-based boutique executive search for Private Banking & Wealth Management with international reach.",
-    images: ["/og.png"],
+    images: ["/og.webp"],
   },
   robots: { index: true, follow: true },
 };
@@ -86,7 +86,7 @@ export default function AboutPage() {
       "Boutique executive search for Private Banking & Wealth Management, headquartered in Geneva with global reach.",
     primaryImageOfPage: {
       "@type": "ImageObject",
-      url: `${SITE}/og.png`,
+      url: `${SITE}/og.webp`,
     },
     breadcrumb: breadcrumbJsonLd,
     mainEntityOfPage: PAGE_URL,

@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     title: "Private Banking Jobs in Zurich | Executive Partners",
     description:
       "Live Zurich/Swiss mandates. Discreet search for HNW/UHNW Relationship Managers and senior leaders with CH onshore and international coverage.",
-    images: [{ url: "/og.png" }],
+    images: [{ url: "/og.webp" }],
     siteName: "Executive Partners",
   },
   robots: { index: true, follow: true },

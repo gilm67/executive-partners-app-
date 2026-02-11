@@ -35,7 +35,7 @@ const orgJsonLd = {
   "@type": ["ProfessionalService", "LocalBusiness"],
   name: "Executive Partners – Private Banking Recruiter in Geneva",
   url: PAGE_URL,
-  image: `${SITE}/og.png`,
+  image: `${SITE}/og.webp`,
   logo: `${SITE}/icon.png`,
   address: {
     "@type": "PostalAddress",

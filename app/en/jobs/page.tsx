@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     description:
       "Confidential Private Banking opportunities in Geneva, Zurich and global hubs. Submit your CV or speak with our search team.",
     url: `${SITE}/en/jobs`,
-    images: [{ url: "/og.png" }],
+    images: [{ url: "/og.webp" }],
   },
   twitter: {
     card: "summary_large_image",

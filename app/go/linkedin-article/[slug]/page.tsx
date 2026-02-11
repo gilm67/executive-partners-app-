@@ -50,13 +50,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       url: canonical,
       title,
       description,
-      images: [{ url: "/og.png" }],
+      images: [{ url: "/og.webp" }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["/og.png"],
+      images: ["/og.webp"],
     },
     alternates: { canonical },
   };

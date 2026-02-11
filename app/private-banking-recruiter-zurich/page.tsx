@@ -45,7 +45,7 @@ export default function PrivateBankingRecruiterZurichPage() {
     "@type": ["ProfessionalService", "LocalBusiness"],
     name: "Executive Partners – Private Banking Recruiter in Zurich",
     url: PAGE_URL,
-    image: `${SITE}/og.png`,
+    image: `${SITE}/og.webp`,
     logo: `${SITE}/icon.png`,
     address: {
       "@type": "PostalAddress",

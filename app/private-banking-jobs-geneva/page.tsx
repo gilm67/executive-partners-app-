@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     title: "Private Banking Jobs in Geneva | Executive Partners",
     description:
       "Live Geneva & Romandie mandates. Discreet search for HNW/UHNW Relationship Managers and senior leaders in Switzerland.",
-    images: [{ url: "/og.png" }],
+    images: [{ url: "/og.webp" }],
     siteName: "Executive Partners",
   },
   robots: { index: true, follow: true },

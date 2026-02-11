@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "Portability Score Calculator | Executive Partners",
     description: "Assess your book's portability potential across markets in 5 minutes.",
     url: `${SITE}/portability`,
-    images: [{ url: "/og.png" }],
+    images: [{ url: "/og.webp" }],
   },
 };
 

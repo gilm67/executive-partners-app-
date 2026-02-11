@@ -106,7 +106,7 @@ export async function generateMetadata({
       title,
       description,
       siteName: "Executive Partners",
-      images: [{ url: "/og.png" }],
+      images: [{ url: "/og.webp" }],
     },
     robots: { index: true, follow: true },
   };

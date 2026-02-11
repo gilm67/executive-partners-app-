@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     title: "Private Banking Jobs in London | Executive Partners",
     description:
       "Live London/UK mandates. Discreet search for HNW/UHNW Relationship Managers and senior leaders with UK onshore and international cross-border coverage.",
-    images: [{ url: "/og.png" }],
+    images: [{ url: "/og.webp" }],
     siteName: "Executive Partners",
   },
   robots: { index: true, follow: true },
