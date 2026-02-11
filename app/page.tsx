@@ -6,6 +6,10 @@ import type { Metadata } from "next";
 import { ArrowRight, Sparkles, Calculator } from "lucide-react";
 import { OrganizationSchema } from "@/components/StructuredData";
 
+/**
+ * ✅ Correct premium hero image
+ * You already have this file in /public.
+ */
 const HERO = "/hero-skyline-hq.jpg";
 
 export const metadata: Metadata = {
@@ -34,41 +38,70 @@ export default function HomePage() {
       <OrganizationSchema />
       <main className="relative min-h-screen body-grain text-white">
         <section className="relative overflow-hidden">
-          <div className="relative h-[72vh] min-h-[560px] w-full">
+          {/* ✅ Controlled hero height (prevents “too tall” feeling) */}
+          <div className="relative h-[68vh] min-h-[560px] max-h-[820px] md:h-[72vh] w-full">
             <Image
               src={HERO}
               alt="Executive Partners – global private banking hubs skyline at dusk"
               fill
               priority
               sizes="100vw"
-              className="object-cover"
+              className="object-cover object-center"
+            />
+
+            {/* ✅ Premium overlay stack (stronger, consistent contrast) */}
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-[radial-gradient(1200px_420px_at_18%_-10%,rgba(0,0,0,.55),transparent_60%),linear-gradient(to_bottom,rgba(0,0,0,.72),rgba(0,0,0,.25)_42%,rgba(0,0,0,.78))]"
+            />
+            <div aria-hidden className="absolute inset-0 bg-black/25" />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 [box-shadow:inset_0_-160px_220px_-90px_rgba(0,0,0,0.75)]"
             />
             <div
               aria-hidden
-              className="absolute inset-0 bg-[radial-gradient(1200px_420px_at_18%_-10%,rgba(0,0,0,.45),transparent_60%),linear-gradient(to_bottom,rgba(0,0,0,.55),rgba(0,0,0,.22)_40%,rgba(0,0,0,.6))]"
+              className="pointer-events-none absolute inset-0 [box-shadow:inset_0_120px_180px_-120px_rgba(0,0,0,0.70)]"
             />
 
             <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4">
-              <div className="max-w-3xl rounded-xl bg-black/45 px-6 py-5 text-center backdrop-blur-sm">
-                <h1 className="font-[var(--font-playfair)] text-5xl font-semibold tracking-tight text-white md:text-6xl">
+              {/* ✅ Slightly smaller, tighter hero card */}
+              <div className="max-w-3xl rounded-2xl bg-black/45 px-6 py-6 text-center backdrop-blur-sm ring-1 ring-white/10">
+                {/* Optional: add logo above H1 for stronger brand signal */}
+                <div className="flex justify-center">
+                  <Image
+                    src="/transparent-ep-logo.png"
+                    alt="Executive Partners – Private Banking & Wealth Management Executive Search"
+                    width={320}
+                    height={110}
+                    priority
+                    className="h-auto w-[210px] sm:w-[260px] md:w-[320px] drop-shadow-[0_0_18px_rgba(255,255,255,0.28)]"
+                  />
+                </div>
+
+                <h1 className="mt-4 font-[var(--font-playfair)] text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl">
                   International &amp; Swiss{" "}
                   <span className="gold">Private Banking</span>
                 </h1>
+
                 <p className="mt-4 text-white/90">
                   Executive Search &amp; Talent Advisory for HNW/UHNW banking.
                   Geneva-based, globally connected.
                 </p>
-              </div>
 
-              <div className="mt-8">
-                <Link
-                  href="/apply"
-                  className="btn-primary btn-xl rounded-full px-8 shadow-lg"
-                >
-                  Apply Confidentially
-                </Link>
+                <div className="mt-7">
+                  <Link
+                    href="/apply"
+                    className="btn-primary btn-xl rounded-full px-8 shadow-lg"
+                  >
+                    Apply Confidentially
+                  </Link>
+                </div>
               </div>
             </div>
+
+            {/* subtle frame */}
+            <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/5" />
           </div>
 
           {/* FREE TOOLS SECTION - Now first and prominent */}
@@ -207,7 +240,8 @@ function ActionCard({
       ? "bg-[#D4AF37]/16 ring-1 ring-[#F5D778]/28 text-[#F5D778]"
       : "bg-[#9ECBFF]/16 ring-1 ring-[#CFE6FF]/26 text-[#CFE6FF]";
 
-  const ctaText = variant === "gold" ? "Calculate Your Score →" : "Run Simulation →";
+  const ctaText =
+    variant === "gold" ? "Calculate Your Score →" : "Run Simulation →";
 
   return (
     <Link
