@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+ import type { Metadata } from "next";
 import ContactForm from "./ContactForm";
 import RevealEmail from "@/components/RevealEmail";
 
@@ -29,7 +29,15 @@ export const metadata: Metadata = {
     siteName: "Executive Partners",
     description:
       "Confidential private banking & wealth management recruitment. Geneva-based, globally connected.",
-    images: [{ url: "/og.webp" }],
+    // ✅ Use `images` (not `image`) and include dimensions for best scraper compatibility
+    images: [
+      {
+        url: "/og.webp",
+        width: 1200,
+        height: 630,
+        alt: "Executive Partners",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
