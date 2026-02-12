@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   ChevronDown,
   ChevronUp,
@@ -39,13 +40,25 @@ type Group = {
 export default function CandidateFAQ({
   compact = false,
   limit = 6,
+  anchorId = "faqs",
 }: {
   compact?: boolean;
   limit?: number;
+  anchorId?: string;
 }) {
   const [open, setOpen] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>("All");
   const [query, setQuery] = useState("");
+
+  const pathname = usePathname();
+
+  // Locale-safe base (supports /en, /fr, /de). If no locale, base = ""
+  const base = useMemo(() => {
+    if (!pathname) return "";
+    const seg = pathname.split("/").filter(Boolean)[0];
+    const locales = new Set(["en", "fr", "de"]);
+    return seg && locales.has(seg) ? `/${seg}` : "";
+  }, [pathname]);
 
   const toggle = (key: string) => setOpen((prev) => (prev === key ? null : key));
 
@@ -223,7 +236,10 @@ export default function CandidateFAQ({
   }, [compact, displayed, faqSections]);
 
   return (
-    <section className="py-16 border-t border-white/10 bg-black/25">
+    <section
+      id={anchorId}
+      className="py-16 border-t border-white/10 bg-black/25 scroll-mt-28"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-10 text-center">
@@ -369,7 +385,7 @@ export default function CandidateFAQ({
         {compact && (
           <div className="mt-6 text-center">
             <Link
-              href="/candidates"
+              href={`${base}/candidates#${anchorId}`}
               className="inline-flex items-center gap-2 text-sm text-[#F5D778] hover:underline"
             >
               View all FAQs <ArrowRight className="h-4 w-4" />
