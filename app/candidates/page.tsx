@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SecondaryButton from "@/components/ui/SecondaryButton";
+import CandidateFAQ from "@/components/CandidateFAQ";
 import { BreadcrumbSchema, ServiceSchema } from "@/components/StructuredData";
 
 export const revalidate = 60;
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
 };
 
 export default function CandidatesPage() {
-  // JSON-LD: FAQ (rich results)
+  // JSON-LD: FAQ (rich results) — keep top 3 questions aligned with on-page teaser
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -113,13 +114,13 @@ export default function CandidatesPage() {
   return (
     <>
       {/* Breadcrumb Schema (using component) */}
-      <BreadcrumbSchema 
+      <BreadcrumbSchema
         items={[
           { name: "Home", url: SITE },
-          { name: "For Private Bankers", url: `${SITE}/candidates` }
+          { name: "For Private Bankers", url: `${SITE}/candidates` },
         ]}
       />
-      
+
       {/* Service Schema (using component) */}
       <ServiceSchema
         name="Private Banking Career Guidance"
@@ -230,9 +231,20 @@ export default function CandidatesPage() {
             </div>
           </div>
 
-          {/* Small FAQ section matching JSON-LD */}
+          {/* Top questions teaser + link to full FAQ */}
           <section className="mx-auto mt-10 max-w-5xl rounded-2xl border border-white/10 bg-white/[0.04] p-6">
-            <h2 className="text-xl font-bold">FAQs</h2>
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-xl font-bold">Top questions</h2>
+
+              {/* ✅ This is the link you were clicking */}
+              <Link
+                href="/candidates#faqs"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-brandGoldPale hover:underline"
+              >
+                View all FAQs →
+              </Link>
+            </div>
+
             <div className="mt-4 space-y-4 text-sm text-neutral-300">
               <div>
                 <div className="font-semibold text-white">
@@ -264,6 +276,9 @@ export default function CandidatesPage() {
             </div>
           </section>
         </section>
+
+        {/* ✅ FULL FAQ SECTION (anchor target for /candidates#faqs) */}
+        <CandidateFAQ compact={false} anchorId="faqs" />
       </main>
     </>
   );
