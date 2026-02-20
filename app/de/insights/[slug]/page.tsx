@@ -74,8 +74,14 @@ function stripFrontmatter(source: string): string {
 }
 
 /**
- * Replace long dashes with commas, but NEVER touch markdown HR or table separator lines.
- * Also keep code fences intact.
+ * Replace long dashes with commas ONLY when they are used like punctuation
+ * i.e. surrounded by spaces: " — " or " – ".
+ *
+ * NEVER touch:
+ * - markdown HR lines (---)
+ * - markdown table separator lines (|---|---|)
+ * - code fences content
+ * - numeric ranges like 200–350, 6–12, 1–2, etc.
  */
 function dashToCommaSafe(markdown: string): string {
   const lines = markdown.split("\n");
@@ -84,6 +90,7 @@ function dashToCommaSafe(markdown: string): string {
   const out = lines.map((line) => {
     const trimmed = line.trim();
 
+    // toggle fenced code blocks
     if (/^```/.test(trimmed)) {
       inCode = !inCode;
       return line;
@@ -96,7 +103,8 @@ function dashToCommaSafe(markdown: string): string {
     // table separator: |---|---|
     if (/^\|?(\s*:?-{3,}:?\s*\|)+\s*$/.test(trimmed)) return line;
 
-    return line.replace(/[—–]/g, ",");
+    // ✅ only replace when dash is surrounded by spaces (punctuation usage)
+    return line.replace(/(\s)[—–](\s)/g, "$1, $2");
   });
 
   return out
