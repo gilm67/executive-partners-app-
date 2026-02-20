@@ -74,8 +74,8 @@ function stripFrontmatter(source: string): string {
 }
 
 /**
- * Replace long dashes with commas ONLY when they are used like punctuation
- * i.e. surrounded by spaces: " — " or " – ".
+ * Replace long dashes with commas ONLY when used like punctuation:
+ * surrounded by spaces: " — " or " – ".
  *
  * NEVER touch:
  * - markdown HR lines (---)
@@ -141,10 +141,10 @@ function wrapTables(html: string): string {
     .replace(/<\/table>/g, `</table></div></div>`);
 }
 
+// ✅ Vercel/TS fix: remove unsupported headerIds from MarkedOptions
 marked.setOptions({
   gfm: true,
   breaks: false,
-  headerIds: true,
   mangle: false,
 });
 
