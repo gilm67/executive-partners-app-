@@ -107,21 +107,30 @@ function dashToCommaSafe(markdown: string): string {
 }
 
 /**
- * Premium table wrapper (stable)
- * We only wrap <table>..</table> and let Tailwind prose handle the rest.
+ * Luxe table wrapper (stable)
+ * We wrap <table>..</table> and inject a colgroup to prevent overlap reliably.
  */
 function wrapTables(html: string): string {
   if (!html.includes("<table")) return html;
 
-  // Wrap every table with a luxe card + gold hairline
+  const COLGROUP = `
+    <colgroup>
+      <col style="width:42%" />
+      <col style="width:20%" />
+      <col style="width:38%" />
+    </colgroup>
+  `.trim();
+
   return html
     .replace(
       /<table>/g,
       `<div class="my-10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] shadow-[0_20px_60px_-40px_rgba(0,0,0,0.7)]">
   <div class="h-[2px] w-full bg-gradient-to-r from-[#D4AF37]/80 via-[#F5D778]/40 to-transparent"></div>
-  <table class="w-full table-fixed border-collapse text-[13px] leading-5">`
+  <div class="px-1 pb-1 pt-0.5">
+    <table class="w-full table-fixed border-collapse text-[13px] leading-5">
+      ${COLGROUP}`
     )
-    .replace(/<\/table>/g, `</table></div>`);
+    .replace(/<\/table>/g, `</table></div></div>`);
 }
 
 marked.setOptions({
@@ -229,43 +238,48 @@ export default async function DeArticlePage({ params }: Props) {
 
       {htmlContent ? (
         <article
-          className="prose prose-invert prose-lg mt-8 max-w-none
+          className="prose prose-invert prose-lg mt-10 max-w-none
+
 prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-white
-prose-h2:mt-12 prose-h2:mb-4 prose-h3:mt-10 prose-h3:mb-4
-prose-p:text-white/85 prose-p:leading-[1.85] prose-p:my-4
+prose-h1:leading-[1.15]
+prose-h2:mt-14 prose-h2:mb-5 prose-h2:text-[1.75rem] prose-h2:leading-[1.25]
+prose-h3:mt-12 prose-h3:mb-4 prose-h3:text-[1.35rem] prose-h3:leading-[1.35]
+
+prose-p:text-white/85 prose-p:leading-[1.9] prose-p:my-5
+prose-li:text-white/85 prose-li:leading-[1.85] prose-li:my-2
+
 prose-strong:text-white
-prose-a:text-[#D4AF37] hover:prose-a:text-[#F5D778]
-prose-hr:my-12 prose-hr:border-white/10
-prose-blockquote:my-8 prose-blockquote:rounded-2xl
+prose-a:text-[#D4AF37] hover:prose-a:text-[#F5D778] prose-a:no-underline hover:prose-a:underline
+
+prose-hr:my-14 prose-hr:border-white/10
+
+prose-blockquote:my-10 prose-blockquote:rounded-2xl
 prose-blockquote:border prose-blockquote:border-white/12
 prose-blockquote:border-l-4 prose-blockquote:border-l-[#D4AF37]
-prose-blockquote:bg-white/5
-prose-blockquote:px-6 prose-blockquote:py-5
+prose-blockquote:bg-white/[0.045]
+prose-blockquote:px-7 prose-blockquote:py-6
 prose-blockquote:font-medium
 prose-blockquote:text-white/85
+
 prose-small:text-white/60
 
-/* TABLE typography + spacing (ultra stable) */
+/* TABLE typography + spacing (stable + luxe) */
 prose-table:w-full prose-table:table-fixed prose-table:border-collapse
 prose-thead:bg-white/[0.055]
-prose-th:px-5 prose-th:py-3 prose-th:text-left prose-th:font-semibold prose-th:tracking-tight prose-th:text-white/90
+prose-th:px-6 prose-th:py-4 prose-th:text-left prose-th:font-semibold prose-th:tracking-tight prose-th:text-white/90
 prose-th:border-b prose-th:border-white/10
-prose-td:px-5 prose-td:py-3 prose-td:align-top prose-td:text-white/80 prose-td:break-words prose-td:leading-5
+prose-td:px-6 prose-td:py-4 prose-td:align-top prose-td:text-white/80 prose-td:break-words prose-td:leading-[1.65]
 prose-tbody:divide-y prose-tbody:divide-white/5
 prose-tr:transition-colors hover:prose-tr:bg-white/[0.045]
 
-/* column widths + alignments */
-prose-table:[&>colgroup>col:nth-child(1)]:w-[42%]
-prose-table:[&>colgroup>col:nth-child(2)]:w-[20%]
-prose-table:[&>colgroup>col:nth-child(3)]:w-[38%]
-
-/* Wert column: right align, allow wrap to avoid overlap */
-prose-td:[&:nth-child(2)]:text-right prose-td:[&:nth-child(2)]:text-white/90 prose-td:[&:nth-child(2)]:tabular-nums prose-td:[&:nth-child(2)]:whitespace-normal
+/* Wert column: right align, allow wrap */
 prose-th:[&:nth-child(2)]:text-right
+prose-td:[&:nth-child(2)]:text-right prose-td:[&:nth-child(2)]:text-white/90
+prose-td:[&:nth-child(2)]:tabular-nums prose-td:[&:nth-child(2)]:whitespace-normal
 
-/* Quelle column: soft separator + breathing room */
-prose-td:[&:nth-child(3)]:pl-7 prose-td:[&:nth-child(3)]:border-l prose-td:[&:nth-child(3)]:border-white/10
-prose-th:[&:nth-child(3)]:pl-7 prose-th:[&:nth-child(3)]:border-l prose-th:[&:nth-child(3)]:border-white/10"
+/* Quelle column: separator + breathing room */
+prose-th:[&:nth-child(3)]:pl-8 prose-th:[&:nth-child(3)]:border-l prose-th:[&:nth-child(3)]:border-white/10
+prose-td:[&:nth-child(3)]:pl-8 prose-td:[&:nth-child(3)]:border-l prose-td:[&:nth-child(3)]:border-white/10"
           dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
       ) : (
