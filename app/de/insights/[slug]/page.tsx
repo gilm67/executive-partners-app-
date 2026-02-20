@@ -9,9 +9,6 @@ import { marked } from "marked";
 type Props = { params: Promise<{ slug: string }> };
 
 const SITE = "https://www.execpartners.ch";
-
-// Optional: if you have a DE home page, set it here.
-// Otherwise, keep "/" (or "/en") depending on your routing.
 const HOME_DE = "/"; // or "/de" if you have it
 
 function formatDate(value: string) {
@@ -42,7 +39,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: article.summary,
     alternates: {
       canonical: url,
-      // NOTE: If you later add 1:1 EN equivalents, replace the EN link with the EN article URL.
       languages: {
         "de-CH": url,
         en: `${SITE}/en/insights`,
@@ -77,10 +73,136 @@ function stripFrontmatter(source: string): string {
   return source;
 }
 
-// Configure marked once (safe defaults + GFM).
+/**
+ * Replace long dashes with commas, but NEVER touch markdown horizontal rules.
+ * Also keep code fences as-is to avoid any weird parsing side-effects.
+ */
+function dashToCommaSafe(markdown: string): string {
+  const lines = markdown.split("\n");
+  let inCode = false;
+
+  const out = lines.map((line) => {
+    const trimmed = line.trim();
+
+    // toggle fenced code blocks
+    if (/^```/.test(trimmed)) {
+      inCode = !inCode;
+      return line;
+    }
+
+    if (inCode) return line;
+
+    // keep markdown horizontal rules intact (---, ----, etc.)
+    if (/^-{3,}$/.test(trimmed)) return line;
+
+    // keep table separator lines (|---|---|) intact
+    if (/^\|?(\s*:?-{3,}:?\s*\|)+\s*$/.test(trimmed)) return line;
+
+    // only replace long dashes in real text
+    return line.replace(/[—–]/g, ",");
+  });
+
+  // light cleanup that won't break markdown semantics
+  return out
+    .join("\n")
+    .replace(/\s+,/g, ",")
+    .replace(/,\s*,/g, ",")
+    .replace(/[ \t]{2,}/g, " ");
+}
+
+/**
+ * Post-process tables produced by marked so they look premium.
+ * Robust across marked versions: style by transforming HTML.
+ */
+function styleTables(html: string): string {
+  if (!html.includes("<table")) return html;
+
+  // Wrap table and enforce column widths (KPI / Value / Source)
+  html = html.replace(
+    /<table>/g,
+    `<div class="my-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] shadow-[0_0_0_1px_rgba(255,255,255,0.02)]">
+<table class="w-full table-fixed border-collapse text-[13px] leading-5">
+<colgroup>
+  <col class="w-[44%]" />
+  <col class="w-[18%]" />
+  <col class="w-[38%]" />
+</colgroup>`
+  );
+  html = html.replace(/<\/table>/g, `</table></div>`);
+
+  // Head/body styling
+  html = html.replace(/<thead>/g, `<thead class="bg-white/[0.06]">`);
+  html = html.replace(/<tbody>/g, `<tbody class="divide-y divide-white/5">`);
+
+  // Row styling: zebra + hover
+  html = html.replace(
+    /<tr>/g,
+    `<tr class="transition-colors hover:bg-white/[0.04] odd:bg-white/[0.012]">`
+  );
+
+  // Header cells
+  html = html.replace(
+    /<th>/g,
+    `<th class="px-4 py-3 text-left font-semibold tracking-tight text-white/90 border-b border-white/10">`
+  );
+
+  // Body cells base (we will refine per column below)
+  html = html.replace(/<td>/g, `<td class="px-4 py-3 align-top text-white/80">`);
+
+  // Column-specific alignment (2nd col right aligned)
+  html = html.replace(
+    /<tr class="transition-colors hover:bg-white\/$begin:math:display$0\\\.04$end:math:display$ odd:bg-white\/$begin:math:display$0\\\.012$end:math:display$">([\s\S]*?)<\/tr>/g,
+    (_row, inner) => {
+      let tdIndex = 0;
+      const updated = inner.replace(
+        /<td class="px-4 py-3 align-top text-white\/80">/g,
+        () => {
+          const idx = tdIndex;
+          tdIndex += 1;
+
+          if (idx === 1) {
+            return `<td class="px-4 py-3 align-top text-white/90 text-right tabular-nums whitespace-nowrap">`;
+          }
+          if (idx === 2) {
+            return `<td class="px-4 py-3 align-top text-white/80 break-words">`;
+          }
+          return `<td class="px-4 py-3 align-top text-white/85 break-words">`;
+        }
+      );
+
+      return `<tr class="transition-colors hover:bg-white/[0.04] odd:bg-white/[0.012]">${updated}</tr>`;
+    }
+  );
+
+  // Header alignment: make 2nd header right aligned
+  html = html.replace(
+    /<thead class="bg-white\/$begin:math:display$0\\\.06$end:math:display$">([\s\S]*?)<\/thead>/g,
+    (_m, headInner) => {
+      let thIndex = 0;
+      const updated = headInner.replace(
+        /<th class="px-4 py-3 text-left font-semibold tracking-tight text-white\/90 border-b border-white\/10">/g,
+        () => {
+          const idx = thIndex;
+          thIndex += 1;
+          if (idx === 1) {
+            return `<th class="px-4 py-3 text-right font-semibold tracking-tight text-white/90 border-b border-white/10">`;
+          }
+          return `<th class="px-4 py-3 text-left font-semibold tracking-tight text-white/90 border-b border-white/10">`;
+        }
+      );
+      return `<thead class="bg-white/[0.06]">${updated}</thead>`;
+    }
+  );
+
+  return html;
+}
+
+// Configure marked once (safe defaults + GFM) – keep it deterministic.
 marked.setOptions({
   gfm: true,
   breaks: false,
+  headerIds: true,
+  mangle: false,
 });
 
 export default async function DeArticlePage({ params }: Props) {
@@ -89,13 +211,7 @@ export default async function DeArticlePage({ params }: Props) {
   const article = INSIGHTS_DE.find((a) => a.slug === slug);
   if (!article) return notFound();
 
-  const mdxPath = path.join(
-    process.cwd(),
-    "content",
-    "insights",
-    "de",
-    `${slug}.mdx`
-  );
+  const mdxPath = path.join(process.cwd(), "content", "insights", "de", `${slug}.mdx`);
 
   let htmlContent: string | null = null;
 
@@ -103,8 +219,10 @@ export default async function DeArticlePage({ params }: Props) {
     const raw = fs.readFileSync(mdxPath, "utf-8");
     const markdown = stripFrontmatter(raw);
 
-    // marked.parse is synchronous and stable here.
-    htmlContent = marked.parse(markdown) as string;
+    const cleaned = dashToCommaSafe(markdown);
+
+    const html = marked.parse(cleaned) as string;
+    htmlContent = styleTables(html);
   }
 
   const pageUrl = `${SITE}/de/insights/${article.slug}`;
@@ -121,13 +239,7 @@ export default async function DeArticlePage({ params }: Props) {
     url: pageUrl,
     image: [`${SITE}/og.webp`],
     author: { "@type": "Person", name: "Gil M. Chalem" },
-    publisher: {
-      "@type": "Organization",
-      name: "Executive Partners",
-      url: SITE,
-      // Optional: add a logo if you have one publicly accessible
-      // logo: { "@type": "ImageObject", url: `${SITE}/logo.png` },
-    },
+    publisher: { "@type": "Organization", name: "Executive Partners", url: SITE },
     keywords: Array.isArray(article.keywords) ? article.keywords.join(", ") : "",
   };
 
@@ -164,10 +276,7 @@ export default async function DeArticlePage({ params }: Props) {
         <span className="text-white/80 line-clamp-1">{article.title}</span>
       </nav>
 
-      <Link
-        href="/de/insights"
-        className="mt-4 inline-block text-sm text-white/60 hover:text-white"
-      >
+      <Link href="/de/insights" className="mt-4 inline-block text-sm text-white/60 hover:text-white">
         ← Zurück zu Insights
       </Link>
 
@@ -197,15 +306,11 @@ export default async function DeArticlePage({ params }: Props) {
       {htmlContent ? (
         <article
           className="prose prose-invert prose-lg mt-8 max-w-none
-prose-headings:font-semibold prose-headings:tracking-tight
-prose-headings:text-white
+prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-white
 prose-p:text-white/85 prose-p:leading-relaxed prose-p:my-4
-
 prose-strong:text-white
 prose-a:text-[#D4AF37] hover:prose-a:text-[#F5D778]
-
 prose-hr:my-10 prose-hr:border-white/10
-
 prose-blockquote:my-6 prose-blockquote:rounded-2xl
 prose-blockquote:border prose-blockquote:border-white/12
 prose-blockquote:border-l-4 prose-blockquote:border-l-[#D4AF37]
@@ -213,12 +318,7 @@ prose-blockquote:bg-white/5
 prose-blockquote:px-5 prose-blockquote:py-4
 prose-blockquote:font-medium
 prose-blockquote:text-white/85
-
-prose-small:text-white/60
-
-prose-table:w-full
-prose-th:text-white/90 prose-td:text-white/80
-prose-td:align-top"
+prose-small:text-white/60"
           dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
       ) : (
