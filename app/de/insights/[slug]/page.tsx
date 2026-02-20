@@ -6,7 +6,7 @@ import fs from "fs";
 import path from "path";
 import { marked } from "marked";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = { params: { slug: string } };
 
 const SITE = "https://www.execpartners.ch";
 const HOME_DE = "/"; // or "/de" if you have it
@@ -28,7 +28,7 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const slug = params.slug;
   const article = INSIGHTS_DE.find((a) => a.slug === slug);
   if (!article) return {};
 
@@ -75,7 +75,7 @@ function stripFrontmatter(source: string): string {
 
 /**
  * Replace long dashes with commas, but NEVER touch markdown horizontal rules.
- * Also keep code fences as-is to avoid any weird parsing side-effects.
+ * Also keep code fences & table separators as-is.
  */
 function dashToCommaSafe(markdown: string): string {
   const lines = markdown.split("\n");
@@ -89,7 +89,6 @@ function dashToCommaSafe(markdown: string): string {
       inCode = !inCode;
       return line;
     }
-
     if (inCode) return line;
 
     // keep markdown horizontal rules intact (---, ----, etc.)
@@ -98,11 +97,10 @@ function dashToCommaSafe(markdown: string): string {
     // keep table separator lines (|---|---|) intact
     if (/^\|?(\s*:?-{3,}:?\s*\|)+\s*$/.test(trimmed)) return line;
 
-    // only replace long dashes in real text
+    // replace long dashes in real text
     return line.replace(/[—–]/g, ",");
   });
 
-  // light cleanup that won't break markdown semantics
   return out
     .join("\n")
     .replace(/\s+,/g, ",")
@@ -117,7 +115,7 @@ function dashToCommaSafe(markdown: string): string {
 function styleTables(html: string): string {
   if (!html.includes("<table")) return html;
 
-  // Wrap table and enforce column widths (KPI / Value / Source)
+  // Wrap tables
   html = html.replace(
     /<table>/g,
     `<div class="my-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] shadow-[0_0_0_1px_rgba(255,255,255,0.02)]">
@@ -134,7 +132,7 @@ function styleTables(html: string): string {
   html = html.replace(/<thead>/g, `<thead class="bg-white/[0.06]">`);
   html = html.replace(/<tbody>/g, `<tbody class="divide-y divide-white/5">`);
 
-  // Row styling: zebra + hover
+  // Rows (zebra + hover)
   html = html.replace(
     /<tr>/g,
     `<tr class="transition-colors hover:bg-white/[0.04] odd:bg-white/[0.012]">`
@@ -146,35 +144,13 @@ function styleTables(html: string): string {
     `<th class="px-4 py-3 text-left font-semibold tracking-tight text-white/90 border-b border-white/10">`
   );
 
-  // Body cells base (we will refine per column below)
-  html = html.replace(/<td>/g, `<td class="px-4 py-3 align-top text-white/80">`);
-
-  // Column-specific alignment (2nd col right aligned)
+  // Body cells base
   html = html.replace(
-    /<tr class="transition-colors hover:bg-white\/$begin:math:display$0\\\.04$end:math:display$ odd:bg-white\/$begin:math:display$0\\\.012$end:math:display$">([\s\S]*?)<\/tr>/g,
-    (_row, inner) => {
-      let tdIndex = 0;
-      const updated = inner.replace(
-        /<td class="px-4 py-3 align-top text-white\/80">/g,
-        () => {
-          const idx = tdIndex;
-          tdIndex += 1;
-
-          if (idx === 1) {
-            return `<td class="px-4 py-3 align-top text-white/90 text-right tabular-nums whitespace-nowrap">`;
-          }
-          if (idx === 2) {
-            return `<td class="px-4 py-3 align-top text-white/80 break-words">`;
-          }
-          return `<td class="px-4 py-3 align-top text-white/85 break-words">`;
-        }
-      );
-
-      return `<tr class="transition-colors hover:bg-white/[0.04] odd:bg-white/[0.012]">${updated}</tr>`;
-    }
+    /<td>/g,
+    `<td class="px-4 py-3 align-top text-white/80 break-words">`
   );
 
-  // Header alignment: make 2nd header right aligned
+  // Make the 2nd header right aligned (Wert)
   html = html.replace(
     /<thead class="bg-white\/$begin:math:display$0\\\.06$end:math:display$">([\s\S]*?)<\/thead>/g,
     (_m, headInner) => {
@@ -182,8 +158,7 @@ function styleTables(html: string): string {
       const updated = headInner.replace(
         /<th class="px-4 py-3 text-left font-semibold tracking-tight text-white\/90 border-b border-white\/10">/g,
         () => {
-          const idx = thIndex;
-          thIndex += 1;
+          const idx = thIndex++;
           if (idx === 1) {
             return `<th class="px-4 py-3 text-right font-semibold tracking-tight text-white/90 border-b border-white/10">`;
           }
@@ -194,10 +169,31 @@ function styleTables(html: string): string {
     }
   );
 
+  // Make 2nd column right aligned for each body row
+  // We re-process each row and count td occurrences safely.
+  html = html.replace(
+    /<tr class="transition-colors hover:bg-white\/$begin:math:display$0\\\.04$end:math:display$ odd:bg-white\/$begin:math:display$0\\\.012$end:math:display$">([\s\S]*?)<\/tr>/g,
+    (_row, inner) => {
+      let tdIndex = 0;
+      const updated = inner.replace(/<td class="px-4 py-3 align-top text-white\/80 break-words">/g, () => {
+        const idx = tdIndex++;
+        if (idx === 1) {
+          return `<td class="px-4 py-3 align-top text-white/90 text-right tabular-nums whitespace-nowrap">`;
+        }
+        if (idx === 2) {
+          return `<td class="px-4 py-3 align-top text-white/80 break-words">`;
+        }
+        return `<td class="px-4 py-3 align-top text-white/85 break-words">`;
+      });
+
+      return `<tr class="transition-colors hover:bg-white/[0.04] odd:bg-white/[0.012]">${updated}</tr>`;
+    }
+  );
+
   return html;
 }
 
-// Configure marked once (safe defaults + GFM) – keep it deterministic.
+// Configure marked once (deterministic + GFM).
 marked.setOptions({
   gfm: true,
   breaks: false,
@@ -206,7 +202,7 @@ marked.setOptions({
 });
 
 export default async function DeArticlePage({ params }: Props) {
-  const { slug } = await params;
+  const slug = params.slug;
 
   const article = INSIGHTS_DE.find((a) => a.slug === slug);
   if (!article) return notFound();
@@ -220,8 +216,8 @@ export default async function DeArticlePage({ params }: Props) {
     const markdown = stripFrontmatter(raw);
 
     const cleaned = dashToCommaSafe(markdown);
-
     const html = marked.parse(cleaned) as string;
+
     htmlContent = styleTables(html);
   }
 
@@ -349,8 +345,7 @@ prose-small:text-white/60"
       </aside>
 
       <footer className="mt-8 text-xs italic text-white/50">
-        Dieser Artikel basiert auf öffentlich zugänglichen Quellen (KPMG, FINMA, Reuters, UBS-Geschäftsberichte) sowie auf Marktbeobachtungen aus der
-        Mandatsarbeit von Executive Partners.
+        Dieser Artikel basiert auf öffentlich zugänglichen Quellen (KPMG, FINMA, Reuters, UBS-Geschäftsberichte) sowie auf Marktbeobachtungen aus der Mandatsarbeit von Executive Partners.
       </footer>
     </main>
   );
