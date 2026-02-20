@@ -141,11 +141,14 @@ function wrapTables(html: string): string {
     .replace(/<\/table>/g, `</table></div></div>`);
 }
 
-// ✅ Vercel/TS fix: remove unsupported headerIds from MarkedOptions
+/**
+ * ✅ Vercel/TS fix:
+ * Your current marked typings on Vercel don't include options like `mangle` or `headerIds`.
+ * Keep only stable options.
+ */
 marked.setOptions({
   gfm: true,
   breaks: false,
-  mangle: false,
 });
 
 export default async function DeArticlePage({ params }: Props) {
