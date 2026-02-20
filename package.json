@@ -49,6 +49,7 @@
     "lucide-react": "^0.539.0",
     "luxon": "^3.7.1",
     "mammoth": "^1.10.0",
+    "marked": "^17.0.3",
     "next": "15.5.7",
     "next-intl": "^4.3.9",
     "next-mdx-remote": "^5.0.0",
