@@ -74,8 +74,8 @@ function stripFrontmatter(source: string): string {
 }
 
 /**
- * Replace long dashes with commas, but NEVER touch markdown horizontal rules.
- * Also keep code fences & table separators as-is.
+ * Replace long dashes with commas, but NEVER touch markdown HR or table separator lines.
+ * Also keep code fences intact.
  */
 function dashToCommaSafe(markdown: string): string {
   const lines = markdown.split("\n");
@@ -90,7 +90,10 @@ function dashToCommaSafe(markdown: string): string {
     }
     if (inCode) return line;
 
+    // horizontal rule: --- / ---- / etc.
     if (/^-{3,}$/.test(trimmed)) return line;
+
+    // table separator: |---|---|
     if (/^\|?(\s*:?-{3,}:?\s*\|)+\s*$/.test(trimmed)) return line;
 
     return line.replace(/[—–]/g, ",");
@@ -104,93 +107,21 @@ function dashToCommaSafe(markdown: string): string {
 }
 
 /**
- * Premium tables via HTML transform (stable across marked versions)
+ * Premium table wrapper (stable)
+ * We only wrap <table>..</table> and let Tailwind prose handle the rest.
  */
-function styleTables(html: string): string {
+function wrapTables(html: string): string {
   if (!html.includes("<table")) return html;
 
-  // Wrap tables + gold hairline
-  html = html.replace(
-    /<table>/g,
-    `<div class="my-10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] shadow-[0_20px_60px_-40px_rgba(0,0,0,0.7)]">
+  // Wrap every table with a luxe card + gold hairline
+  return html
+    .replace(
+      /<table>/g,
+      `<div class="my-10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] shadow-[0_20px_60px_-40px_rgba(0,0,0,0.7)]">
   <div class="h-[2px] w-full bg-gradient-to-r from-[#D4AF37]/80 via-[#F5D778]/40 to-transparent"></div>
-  <table class="w-full table-fixed border-collapse text-[13px] leading-5">
-    <colgroup>
-      <col class="w-[42%]" />
-      <col class="w-[20%]" />
-      <col class="w-[38%]" />
-    </colgroup>`
-  );
-  html = html.replace(/<\/table>/g, `</table></div>`);
-
-  html = html.replace(/<thead>/g, `<thead class="bg-white/[0.055]">`);
-  html = html.replace(/<tbody>/g, `<tbody class="divide-y divide-white/5">`);
-
-  html = html.replace(
-    /<tr>/g,
-    `<tr class="transition-colors hover:bg-white/[0.045] odd:bg-white/[0.012]">`
-  );
-
-  // Base TH
-  html = html.replace(
-    /<th>/g,
-    `<th class="px-5 py-3 text-left font-semibold tracking-tight text-white/90 border-b border-white/10">`
-  );
-
-  // Base TD
-  html = html.replace(
-    /<td>/g,
-    `<td class="px-5 py-3 align-top text-white/80 break-words leading-5">`
-  );
-
-  // Header: right align Wert + add separator before Quelle
-  html = html.replace(
-    /<thead class="bg-white\/$begin:math:display$0\\\.055$end:math:display$">([\s\S]*?)<\/thead>/g,
-    (_m, headInner) => {
-      let thIndex = 0;
-      const updated = headInner.replace(
-        /<th class="px-5 py-3 text-left font-semibold tracking-tight text-white\/90 border-b border-white\/10">/g,
-        () => {
-          const idx = thIndex++;
-          if (idx === 1) {
-            return `<th class="px-5 py-3 text-right font-semibold tracking-tight text-white/90 border-b border-white/10">`;
-          }
-          if (idx === 2) {
-            return `<th class="px-5 py-3 text-left font-semibold tracking-tight text-white/90 border-b border-white/10 border-l border-white/10">`;
-          }
-          return `<th class="px-5 py-3 text-left font-semibold tracking-tight text-white/90 border-b border-white/10">`;
-        }
-      );
-      return `<thead class="bg-white/[0.055]">${updated}</thead>`;
-    }
-  );
-
-  // Body: column-specific styling (NO nowrap -> fixes overlap)
-  html = html.replace(
-    /<tr class="transition-colors hover:bg-white\/$begin:math:display$0\\\.045$end:math:display$ odd:bg-white\/$begin:math:display$0\\\.012$end:math:display$">([\s\S]*?)<\/tr>/g,
-    (_row, inner) => {
-      let tdIndex = 0;
-      const updated = inner.replace(
-        /<td class="px-5 py-3 align-top text-white\/80 break-words leading-5">/g,
-        () => {
-          const idx = tdIndex++;
-          if (idx === 1) {
-            // Wert: right aligned, can wrap, extra right padding to breathe
-            return `<td class="px-5 py-3 pr-7 align-top text-white/90 text-right tabular-nums break-words leading-5 whitespace-normal">`;
-          }
-          if (idx === 2) {
-            // Quelle: subtle column separator + more left padding
-            return `<td class="px-5 py-3 pl-7 align-top text-white/80 break-words leading-5 border-l border-white/10">`;
-          }
-          return `<td class="px-5 py-3 align-top text-white/85 break-words leading-5">`;
-        }
-      );
-
-      return `<tr class="transition-colors hover:bg-white/[0.045] odd:bg-white/[0.012]">${updated}</tr>`;
-    }
-  );
-
-  return html;
+  <table class="w-full table-fixed border-collapse text-[13px] leading-5">`
+    )
+    .replace(/<\/table>/g, `</table></div>`);
 }
 
 marked.setOptions({
@@ -215,7 +146,7 @@ export default async function DeArticlePage({ params }: Props) {
     const cleaned = dashToCommaSafe(markdown);
 
     const html = marked.parse(cleaned) as string;
-    htmlContent = styleTables(html);
+    htmlContent = wrapTables(html);
   }
 
   const pageUrl = `${SITE}/de/insights/${article.slug}`;
@@ -300,8 +231,7 @@ export default async function DeArticlePage({ params }: Props) {
         <article
           className="prose prose-invert prose-lg mt-8 max-w-none
 prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-white
-prose-h2:mt-12 prose-h2:mb-4
-prose-h3:mt-10 prose-h3:mb-4
+prose-h2:mt-12 prose-h2:mb-4 prose-h3:mt-10 prose-h3:mb-4
 prose-p:text-white/85 prose-p:leading-[1.85] prose-p:my-4
 prose-strong:text-white
 prose-a:text-[#D4AF37] hover:prose-a:text-[#F5D778]
@@ -313,7 +243,29 @@ prose-blockquote:bg-white/5
 prose-blockquote:px-6 prose-blockquote:py-5
 prose-blockquote:font-medium
 prose-blockquote:text-white/85
-prose-small:text-white/60"
+prose-small:text-white/60
+
+/* TABLE typography + spacing (ultra stable) */
+prose-table:w-full prose-table:table-fixed prose-table:border-collapse
+prose-thead:bg-white/[0.055]
+prose-th:px-5 prose-th:py-3 prose-th:text-left prose-th:font-semibold prose-th:tracking-tight prose-th:text-white/90
+prose-th:border-b prose-th:border-white/10
+prose-td:px-5 prose-td:py-3 prose-td:align-top prose-td:text-white/80 prose-td:break-words prose-td:leading-5
+prose-tbody:divide-y prose-tbody:divide-white/5
+prose-tr:transition-colors hover:prose-tr:bg-white/[0.045]
+
+/* column widths + alignments */
+prose-table:[&>colgroup>col:nth-child(1)]:w-[42%]
+prose-table:[&>colgroup>col:nth-child(2)]:w-[20%]
+prose-table:[&>colgroup>col:nth-child(3)]:w-[38%]
+
+/* Wert column: right align, allow wrap to avoid overlap */
+prose-td:[&:nth-child(2)]:text-right prose-td:[&:nth-child(2)]:text-white/90 prose-td:[&:nth-child(2)]:tabular-nums prose-td:[&:nth-child(2)]:whitespace-normal
+prose-th:[&:nth-child(2)]:text-right
+
+/* Quelle column: soft separator + breathing room */
+prose-td:[&:nth-child(3)]:pl-7 prose-td:[&:nth-child(3)]:border-l prose-td:[&:nth-child(3)]:border-white/10
+prose-th:[&:nth-child(3)]:pl-7 prose-th:[&:nth-child(3)]:border-l prose-th:[&:nth-child(3)]:border-white/10"
           dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
       ) : (
@@ -344,7 +296,8 @@ prose-small:text-white/60"
       </aside>
 
       <footer className="mt-8 text-xs italic text-white/50">
-        Dieser Artikel basiert auf öffentlich zugänglichen Quellen (KPMG, FINMA, Reuters, UBS-Geschäftsberichte) sowie auf Marktbeobachtungen aus der Mandatsarbeit von Executive Partners.
+        Dieser Artikel basiert auf öffentlich zugänglichen Quellen (KPMG, FINMA, Reuters, UBS-Geschäftsberichte) sowie auf Marktbeobachtungen aus der
+        Mandatsarbeit von Executive Partners.
       </footer>
     </main>
   );
