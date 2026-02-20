@@ -9,7 +9,7 @@ import { marked } from "marked";
 type Props = { params: { slug: string } };
 
 const SITE = "https://www.execpartners.ch";
-const HOME_DE = "/"; // or "/de" if you have it
+const HOME_DE = "/";
 
 function formatDate(value: string) {
   try {
@@ -84,20 +84,15 @@ function dashToCommaSafe(markdown: string): string {
   const out = lines.map((line) => {
     const trimmed = line.trim();
 
-    // toggle fenced code blocks
     if (/^```/.test(trimmed)) {
       inCode = !inCode;
       return line;
     }
     if (inCode) return line;
 
-    // keep markdown horizontal rules intact (---, ----, etc.)
     if (/^-{3,}$/.test(trimmed)) return line;
-
-    // keep table separator lines (|---|---|) intact
     if (/^\|?(\s*:?-{3,}:?\s*\|)+\s*$/.test(trimmed)) return line;
 
-    // replace long dashes in real text
     return line.replace(/[—–]/g, ",");
   });
 
@@ -109,91 +104,95 @@ function dashToCommaSafe(markdown: string): string {
 }
 
 /**
- * Post-process tables produced by marked so they look premium.
- * Robust across marked versions: style by transforming HTML.
+ * Premium tables via HTML transform (stable across marked versions)
  */
 function styleTables(html: string): string {
   if (!html.includes("<table")) return html;
 
-  // Wrap tables
+  // Wrap tables + gold hairline
   html = html.replace(
     /<table>/g,
-    `<div class="my-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] shadow-[0_0_0_1px_rgba(255,255,255,0.02)]">
-<table class="w-full table-fixed border-collapse text-[13px] leading-5">
-<colgroup>
-  <col class="w-[44%]" />
-  <col class="w-[18%]" />
-  <col class="w-[38%]" />
-</colgroup>`
+    `<div class="my-10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] shadow-[0_20px_60px_-40px_rgba(0,0,0,0.7)]">
+  <div class="h-[2px] w-full bg-gradient-to-r from-[#D4AF37]/80 via-[#F5D778]/40 to-transparent"></div>
+  <table class="w-full table-fixed border-collapse text-[13px] leading-5">
+    <colgroup>
+      <col class="w-[42%]" />
+      <col class="w-[20%]" />
+      <col class="w-[38%]" />
+    </colgroup>`
   );
   html = html.replace(/<\/table>/g, `</table></div>`);
 
-  // Head/body styling
-  html = html.replace(/<thead>/g, `<thead class="bg-white/[0.06]">`);
+  html = html.replace(/<thead>/g, `<thead class="bg-white/[0.055]">`);
   html = html.replace(/<tbody>/g, `<tbody class="divide-y divide-white/5">`);
 
-  // Rows (zebra + hover)
   html = html.replace(
     /<tr>/g,
-    `<tr class="transition-colors hover:bg-white/[0.04] odd:bg-white/[0.012]">`
+    `<tr class="transition-colors hover:bg-white/[0.045] odd:bg-white/[0.012]">`
   );
 
-  // Header cells
+  // Base TH
   html = html.replace(
     /<th>/g,
-    `<th class="px-4 py-3 text-left font-semibold tracking-tight text-white/90 border-b border-white/10">`
+    `<th class="px-5 py-3 text-left font-semibold tracking-tight text-white/90 border-b border-white/10">`
   );
 
-  // Body cells base
+  // Base TD
   html = html.replace(
     /<td>/g,
-    `<td class="px-4 py-3 align-top text-white/80 break-words">`
+    `<td class="px-5 py-3 align-top text-white/80 break-words leading-5">`
   );
 
-  // Make the 2nd header right aligned (Wert)
+  // Header: right align Wert + add separator before Quelle
   html = html.replace(
-    /<thead class="bg-white\/$begin:math:display$0\\\.06$end:math:display$">([\s\S]*?)<\/thead>/g,
+    /<thead class="bg-white\/$begin:math:display$0\\\.055$end:math:display$">([\s\S]*?)<\/thead>/g,
     (_m, headInner) => {
       let thIndex = 0;
       const updated = headInner.replace(
-        /<th class="px-4 py-3 text-left font-semibold tracking-tight text-white\/90 border-b border-white\/10">/g,
+        /<th class="px-5 py-3 text-left font-semibold tracking-tight text-white\/90 border-b border-white\/10">/g,
         () => {
           const idx = thIndex++;
           if (idx === 1) {
-            return `<th class="px-4 py-3 text-right font-semibold tracking-tight text-white/90 border-b border-white/10">`;
+            return `<th class="px-5 py-3 text-right font-semibold tracking-tight text-white/90 border-b border-white/10">`;
           }
-          return `<th class="px-4 py-3 text-left font-semibold tracking-tight text-white/90 border-b border-white/10">`;
+          if (idx === 2) {
+            return `<th class="px-5 py-3 text-left font-semibold tracking-tight text-white/90 border-b border-white/10 border-l border-white/10">`;
+          }
+          return `<th class="px-5 py-3 text-left font-semibold tracking-tight text-white/90 border-b border-white/10">`;
         }
       );
-      return `<thead class="bg-white/[0.06]">${updated}</thead>`;
+      return `<thead class="bg-white/[0.055]">${updated}</thead>`;
     }
   );
 
-  // Make 2nd column right aligned for each body row
-  // We re-process each row and count td occurrences safely.
+  // Body: column-specific styling (NO nowrap -> fixes overlap)
   html = html.replace(
-    /<tr class="transition-colors hover:bg-white\/$begin:math:display$0\\\.04$end:math:display$ odd:bg-white\/$begin:math:display$0\\\.012$end:math:display$">([\s\S]*?)<\/tr>/g,
+    /<tr class="transition-colors hover:bg-white\/$begin:math:display$0\\\.045$end:math:display$ odd:bg-white\/$begin:math:display$0\\\.012$end:math:display$">([\s\S]*?)<\/tr>/g,
     (_row, inner) => {
       let tdIndex = 0;
-      const updated = inner.replace(/<td class="px-4 py-3 align-top text-white\/80 break-words">/g, () => {
-        const idx = tdIndex++;
-        if (idx === 1) {
-          return `<td class="px-4 py-3 align-top text-white/90 text-right tabular-nums whitespace-nowrap">`;
+      const updated = inner.replace(
+        /<td class="px-5 py-3 align-top text-white\/80 break-words leading-5">/g,
+        () => {
+          const idx = tdIndex++;
+          if (idx === 1) {
+            // Wert: right aligned, can wrap, extra right padding to breathe
+            return `<td class="px-5 py-3 pr-7 align-top text-white/90 text-right tabular-nums break-words leading-5 whitespace-normal">`;
+          }
+          if (idx === 2) {
+            // Quelle: subtle column separator + more left padding
+            return `<td class="px-5 py-3 pl-7 align-top text-white/80 break-words leading-5 border-l border-white/10">`;
+          }
+          return `<td class="px-5 py-3 align-top text-white/85 break-words leading-5">`;
         }
-        if (idx === 2) {
-          return `<td class="px-4 py-3 align-top text-white/80 break-words">`;
-        }
-        return `<td class="px-4 py-3 align-top text-white/85 break-words">`;
-      });
+      );
 
-      return `<tr class="transition-colors hover:bg-white/[0.04] odd:bg-white/[0.012]">${updated}</tr>`;
+      return `<tr class="transition-colors hover:bg-white/[0.045] odd:bg-white/[0.012]">${updated}</tr>`;
     }
   );
 
   return html;
 }
 
-// Configure marked once (deterministic + GFM).
 marked.setOptions({
   gfm: true,
   breaks: false,
@@ -208,16 +207,14 @@ export default async function DeArticlePage({ params }: Props) {
   if (!article) return notFound();
 
   const mdxPath = path.join(process.cwd(), "content", "insights", "de", `${slug}.mdx`);
-
   let htmlContent: string | null = null;
 
   if (fs.existsSync(mdxPath)) {
     const raw = fs.readFileSync(mdxPath, "utf-8");
     const markdown = stripFrontmatter(raw);
-
     const cleaned = dashToCommaSafe(markdown);
-    const html = marked.parse(cleaned) as string;
 
+    const html = marked.parse(cleaned) as string;
     htmlContent = styleTables(html);
   }
 
@@ -303,15 +300,17 @@ export default async function DeArticlePage({ params }: Props) {
         <article
           className="prose prose-invert prose-lg mt-8 max-w-none
 prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-white
-prose-p:text-white/85 prose-p:leading-relaxed prose-p:my-4
+prose-h2:mt-12 prose-h2:mb-4
+prose-h3:mt-10 prose-h3:mb-4
+prose-p:text-white/85 prose-p:leading-[1.85] prose-p:my-4
 prose-strong:text-white
 prose-a:text-[#D4AF37] hover:prose-a:text-[#F5D778]
-prose-hr:my-10 prose-hr:border-white/10
-prose-blockquote:my-6 prose-blockquote:rounded-2xl
+prose-hr:my-12 prose-hr:border-white/10
+prose-blockquote:my-8 prose-blockquote:rounded-2xl
 prose-blockquote:border prose-blockquote:border-white/12
 prose-blockquote:border-l-4 prose-blockquote:border-l-[#D4AF37]
 prose-blockquote:bg-white/5
-prose-blockquote:px-5 prose-blockquote:py-4
+prose-blockquote:px-6 prose-blockquote:py-5
 prose-blockquote:font-medium
 prose-blockquote:text-white/85
 prose-small:text-white/60"
