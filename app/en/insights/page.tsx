@@ -34,6 +34,24 @@ function isWithinDays(iso: string, days: number) {
 
 /* -------------------------------- config -------------------------------- */
 
+const LINKEDIN_LATEST = [
+  {
+    title: "The Alternative Investment Tipping Point: Private Wealth is Going Mainstream",
+    date: "2026-02-24",
+    url: "https://www.linkedin.com/pulse/alternative-investment-tipping-point-private-wealth-going-m-chalem--rzfye/?trackingId=Cn23Thz6cEnZ1mzkg0HM3g%3D%3D",
+  },
+  {
+    title: "Zürich 2026: Warum der Talentmarkt im Private Banking gerade umkippt",
+    date: "2026-02-20",
+    url: "https://www.linkedin.com/pulse/z%C3%BCrich-2026-warum-der-talentmarkt-im-private-banking-gil-m-chalem--wcx4e/?trackingId=zwftUxx4DeFLEYgPWWqGMw%3D%3D",
+  },
+  {
+    title: "UBS at the Crossroads: Succession, Integration, and the Fight for Its Future",
+    date: "2026-02-17",
+    url: "https://www.linkedin.com/pulse/ubs-crossroads-succession-integration-fight-its-gil-m-chalem--blsve/?trackingId=SpCaUGq9k%2B8kizryc2eVxw%3D%3D",
+  },
+] as const;
+
 const P1_SUBTHEMES = [
   {
     key: "Positioning",
@@ -412,6 +430,39 @@ export default function InsightsPage() {
             </Link>
           </div>
 
+          {/* NEW: LinkedIn latest (external) */}
+          <div className="mb-6 grid gap-4 md:grid-cols-3">
+            {LINKEDIN_LATEST.slice()
+              .sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))
+              .map((a) => (
+                <a
+                  key={a.url}
+                  href={a.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group rounded-3xl border border-[#D4AF37]/20 bg-gradient-to-b from-[#D4AF37]/10 to-white/5 p-6 transition hover:-translate-y-0.5 hover:border-[#D4AF37]/35 hover:bg-white/10"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-xs text-white/55">{formatDate(a.date)}</div>
+                    <span className="rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-2 py-0.5 text-[10px] font-semibold text-[#D4AF37]">
+                      LinkedIn · External
+                    </span>
+                  </div>
+
+                  <h3 className="mt-3 text-lg font-semibold text-white leading-snug">{a.title}</h3>
+
+                  <p className="mt-3 text-sm text-white/70 line-clamp-3">
+                    Read the full article on LinkedIn.
+                  </p>
+
+                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
+                    Read on LinkedIn <span className="transition group-hover:translate-x-0.5">→</span>
+                  </div>
+                </a>
+              ))}
+          </div>
+
+          {/* Existing featured cards */}
           <div className="grid gap-6 md:grid-cols-3">
             {featured.map((a) => {
               const isTopWeek = topThisWeek?.slug === a.slug;
