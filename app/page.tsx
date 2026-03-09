@@ -63,7 +63,7 @@ export default function HomePage() {
       <OrganizationSchema />
       <main className="relative min-h-screen body-grain text-white">
         <section className="relative overflow-hidden">
-          {/* ✅ Controlled hero height (prevents “too tall” feeling) */}
+          {/* ✅ Controlled hero height (prevents "too tall" feeling) */}
           <div className="relative h-[68vh] min-h-[560px] max-h-[820px] w-full md:h-[72vh]">
             <Image
               src={HERO}
@@ -107,13 +107,13 @@ export default function HomePage() {
                 </div>
 
                 <h1 className="mt-4 font-[var(--font-playfair)] text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl">
-                  International &amp; Swiss{" "}
-                  <span className="gold">Private Banking</span>
+                  Your next move in{" "}
+                  <span className="gold">private banking</span>{" "}
+                  starts here.
                 </h1>
 
                 <p className="mt-4 text-white/90">
-                  Executive Search &amp; Talent Advisory for HNW/UHNW banking.
-                  Geneva-based, globally connected.
+                  Where the right talent meets the right platform.
                 </p>
 
                 <div className="mt-7">
