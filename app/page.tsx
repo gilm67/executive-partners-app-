@@ -7,17 +7,7 @@ import type { Metadata } from "next";
 import { ArrowRight, Sparkles, Calculator } from "lucide-react";
 import { OrganizationSchema } from "@/components/StructuredData";
 
-/**
- * ✅ Use the new WebP hero (you generated: public/hero-skyline-hq.webp)
- */
 const HERO = "/hero-skyline-hq.webp";
-
-/**
- * ✅ IMPORTANT:
- * Page-level metadata OVERRIDES layout metadata.
- * If you set openGraph/twitter here, include images, otherwise you'll lose og:image/twitter:image.
- * Use relative URL so metadataBase (canonical domain) resolves it correctly.
- */
 const OG_IMAGE = "/og.webp";
 
 export const metadata: Metadata = {
@@ -63,7 +53,7 @@ export default function HomePage() {
       <OrganizationSchema />
       <main className="relative min-h-screen body-grain text-white">
         <section className="relative overflow-hidden">
-          {/* ✅ Controlled hero height (prevents "too tall" feeling) */}
+          {/* Hero */}
           <div className="relative h-[68vh] min-h-[560px] max-h-[820px] w-full md:h-[72vh]">
             <Image
               src={HERO}
@@ -75,7 +65,6 @@ export default function HomePage() {
               className="object-cover object-center"
             />
 
-            {/* ✅ Premium overlay stack (stronger, consistent contrast) */}
             <div
               aria-hidden
               className="absolute inset-0 bg-[radial-gradient(1200px_420px_at_18%_-10%,rgba(0,0,0,.55),transparent_60%),linear-gradient(to_bottom,rgba(0,0,0,.72),rgba(0,0,0,.25)_42%,rgba(0,0,0,.78))]"
@@ -91,9 +80,7 @@ export default function HomePage() {
             />
 
             <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4">
-              {/* ✅ Slightly smaller, tighter hero card */}
               <div className="max-w-3xl rounded-2xl bg-black/45 px-6 py-6 text-center backdrop-blur-sm ring-1 ring-white/10">
-                {/* Optional: add logo above H1 for stronger brand signal */}
                 <div className="flex justify-center">
                   <Image
                     src="/transparent-ep-logo.png"
@@ -127,11 +114,10 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* subtle frame */}
             <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/5" />
           </div>
 
-          {/* FREE TOOLS SECTION - Now first and prominent */}
+          {/* FREE TOOLS SECTION */}
           <div className="relative mx-auto -mt-14 max-w-6xl px-4 pb-8 sm:-mt-20">
             <div className="mb-6 text-center">
               <h2 className="font-[var(--font-playfair)] text-3xl font-semibold text-white md:text-4xl">
@@ -143,58 +129,11 @@ export default function HomePage() {
             </div>
             <GatewayPanel />
           </div>
-
-          {/* KPI CARDS - Now below tools */}
-          <div className="relative mx-auto max-w-6xl px-4 pb-10">
-            <div className="rounded-2xl bg-white text-[#0B0E13] shadow-xl">
-              <div className="grid gap-4 p-6 md:grid-cols-3">
-                <KpiCard
-                  title="Placements"
-                  value="200+"
-                  note="Senior RMs & Private Bankers placed worldwide"
-                />
-                <KpiCard
-                  title="12-month Retention"
-                  value="98%"
-                  note="Candidates still in seat after 12 months"
-                />
-                <KpiCard
-                  title="Global Hubs"
-                  value="12+"
-                  note="Geneva, Zurich, London, Dubai, Singapore, Hong Kong, New York, Miami, Paris, Milan, Madrid, Lisbon"
-                />
-              </div>
-            </div>
-          </div>
         </section>
 
         <HomeClient />
       </main>
     </>
-  );
-}
-
-function KpiCard({
-  title,
-  value,
-  note,
-}: {
-  title: string;
-  value: string;
-  note?: string;
-}) {
-  return (
-    <div className="rounded-xl border border-black/10 bg-white/90 p-5 shadow-sm">
-      <div className="text-sm font-semibold text-black/70">{title}</div>
-      <div className="mt-2 text-4xl font-extrabold tracking-tight text-black">
-        {value}
-      </div>
-      {note ? (
-        <div className="mt-2 text-[13px] leading-snug text-black/70">
-          {note}
-        </div>
-      ) : null}
-    </div>
   );
 }
 
