@@ -325,14 +325,12 @@ export default function HomeClient() {
       <CandidateFAQ compact limit={6} />
 
       {/* ═══════════════════════════════════════════
-          GLOBAL HUBS — redesigned with geographic
-          identity, ambient glows & primary hubs
+          GLOBAL HUBS — clean unified editorial grid
       ═══════════════════════════════════════════ */}
       <section className="py-20 border-t border-white/8">
         <div className="mx-auto max-w-7xl px-4">
 
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
               <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">
                 Markets
@@ -340,89 +338,50 @@ export default function HomeClient() {
               <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight">
                 Global Private Banking Hubs
               </h2>
-              <p className="mt-3 text-white/55 text-sm sm:text-base">
+              <p className="mt-2 text-white/50 text-sm sm:text-base">
                 Explore opportunities in key booking centres
               </p>
             </div>
-            <div className="hidden sm:flex items-center gap-2 text-white/20 text-xs tracking-widest uppercase">
-              <Globe className="h-4 w-4" />
+            <div className="hidden sm:flex items-center gap-2 text-white/25 text-[11px] tracking-widest uppercase">
+              <Globe className="h-3.5 w-3.5" />
               <span>12 financial centres</span>
             </div>
           </div>
 
-          {/* Primary hubs — larger cards in 2x2 grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-            {CITIES.filter((c) => c.primary).map((city, idx) => (
+          {/* Unified grid — gap-px creates a ruled newspaper feel */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-px bg-white/6 rounded-2xl overflow-hidden border border-white/8">
+            {CITIES.map((city, idx) => (
               <Link
                 key={city.name}
                 href={`/en/markets/${citySlug(city.name)}`}
                 prefetch={false}
                 aria-label={`Market ${city.name}`}
-                className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.04] px-5 py-6 hover:border-white/20 transition-all duration-300"
-                style={{
-                  boxShadow: `inset 0 0 40px 0 ${city.glow.replace("rgba", "rgba").replace(",.1", ",.06").replace(",.2", ",.08")}`,
-                }}
+                className="group relative bg-[#06090F] px-5 py-5 sm:px-6 sm:py-6 hover:bg-white/[0.05] transition-all duration-300 overflow-hidden"
               >
-                {/* Ambient glow on hover */}
+                {/* Per-city ambient glow on hover */}
                 <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                   style={{
-                    background: `radial-gradient(280px 180px at 30% 60%, ${city.glow}, transparent 70%)`,
+                    background: `radial-gradient(220px 160px at 10% 80%, ${city.glow}, transparent 70%)`,
                   }}
                 />
-                {/* Gold left border */}
-                <div className="absolute left-0 top-4 bottom-4 w-[2px] bg-gradient-to-b from-transparent via-[#D4AF37]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                {/* Index */}
-                <span className="absolute top-3 right-4 text-[10px] font-mono text-white/15 group-hover:text-[#D4AF37]/50 transition-colors duration-300">
-                  {String(idx + 1).padStart(2, "0")}
-                </span>
+                {/* Gold bottom rule on hover */}
+                <div className="absolute bottom-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                <div className="relative">
-                  <div className="text-base sm:text-lg font-semibold text-white group-hover:text-white transition-colors">
+                <div className="relative flex flex-col">
+                  <span className="text-[10px] font-mono text-white/15 group-hover:text-[#D4AF37]/40 transition-colors duration-300 mb-3 block">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <div className="text-sm sm:text-base font-semibold text-white/85 group-hover:text-white transition-colors leading-tight">
                     {city.name}
                   </div>
-                  <div className="mt-1 text-[11px] text-white/35 group-hover:text-white/55 transition-colors tracking-wide">
+                  <div className="mt-1 text-[11px] text-white/30 group-hover:text-white/50 transition-colors tracking-wide">
                     {city.region}
                   </div>
-                  <div className="mt-4 flex items-center gap-1 text-[11px] font-medium text-white/30 group-hover:text-[#D4AF37]/70 transition-colors duration-300">
-                    <span>View market</span>
-                    <ArrowRight className="h-3 w-3 translate-x-0 group-hover:translate-x-0.5 transition-transform duration-200" />
+                  <div className="mt-4 flex items-center gap-1 text-[11px] text-white/20 group-hover:text-[#D4AF37]/70 transition-all duration-300">
+                    <span className="font-medium">View market</span>
+                    <ArrowRight className="h-3 w-3 -translate-x-0.5 group-hover:translate-x-0.5 transition-transform duration-300" />
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          {/* Secondary hubs — compact 4-col grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {CITIES.filter((c) => !c.primary).map((city, idx) => (
-              <Link
-                key={city.name}
-                href={`/en/markets/${citySlug(city.name)}`}
-                prefetch={false}
-                aria-label={`Market ${city.name}`}
-                className="group relative overflow-hidden rounded-xl border border-white/7 bg-white/[0.025] px-4 py-4 hover:border-white/14 hover:bg-white/[0.05] transition-all duration-300"
-              >
-                {/* Subtle ambient glow on hover */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"
-                  style={{
-                    background: `radial-gradient(200px 140px at 20% 70%, ${city.glow}, transparent 70%)`,
-                  }}
-                />
-                {/* Index */}
-                <span className="absolute top-2.5 right-3 text-[10px] font-mono text-white/10 group-hover:text-white/25 transition-colors">
-                  {String(idx + 5).padStart(2, "0")}
-                </span>
-
-                <div className="relative">
-                  <div className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors">
-                    {city.name}
-                  </div>
-                  <div className="mt-0.5 text-[10px] text-white/25 group-hover:text-white/45 transition-colors tracking-wide">
-                    {city.region}
-                  </div>
-                  <ArrowRight className="mt-3 h-3 w-3 text-white/20 group-hover:text-[#D4AF37]/60 group-hover:translate-x-0.5 transition-all duration-200" />
                 </div>
               </Link>
             ))}
