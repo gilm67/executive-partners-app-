@@ -16,6 +16,22 @@ import {
 
 import CandidateFAQ from "@/components/CandidateFAQ";
 
+// City data with region, country code and ambient glow color
+const CITIES = [
+  { name: "Geneva",    region: "Switzerland",  glow: "rgba(201,161,74,.18)",  primary: true  },
+  { name: "Zurich",    region: "Switzerland",  glow: "rgba(201,161,74,.15)",  primary: true  },
+  { name: "London",    region: "United Kingdom", glow: "rgba(158,203,255,.15)", primary: true },
+  { name: "Dubai",     region: "UAE",          glow: "rgba(255,180,60,.18)",  primary: true  },
+  { name: "Singapore", region: "Southeast Asia", glow: "rgba(100,220,180,.14)", primary: false },
+  { name: "Hong Kong", region: "Asia Pacific", glow: "rgba(255,140,100,.14)", primary: false },
+  { name: "New York",  region: "United States", glow: "rgba(158,203,255,.13)", primary: false },
+  { name: "Miami",     region: "United States", glow: "rgba(158,203,255,.12)", primary: false },
+  { name: "Paris",     region: "France",       glow: "rgba(201,161,74,.13)",  primary: false },
+  { name: "Milan",     region: "Italy",        glow: "rgba(201,161,74,.12)",  primary: false },
+  { name: "Madrid",    region: "Spain",        glow: "rgba(255,160,80,.12)",  primary: false },
+  { name: "Lisbon",    region: "Portugal",     glow: "rgba(255,160,80,.11)",  primary: false },
+];
+
 export default function HomeClient() {
   const [showEmailPopup, setShowEmailPopup] = useState(false);
   const [email, setEmail] = useState("");
@@ -33,12 +49,6 @@ export default function HomeClient() {
       setEmail("");
     }, 1500);
   };
-
-  const cities = [
-    "Geneva", "Zurich", "London", "Dubai",
-    "Singapore", "Hong Kong", "New York", "Miami",
-    "Paris", "Milan", "Madrid", "Lisbon",
-  ];
 
   const citySlug = (city: string) =>
     city.toLowerCase().trim()
@@ -74,7 +84,6 @@ export default function HomeClient() {
     radial: string; buttonVariant?: "gold" | "white";
   }) => (
     <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur shadow-[0_24px_64px_rgba(0,0,0,.55)] transition-all duration-500 hover:border-white/20 hover:shadow-[0_32px_80px_rgba(0,0,0,.65)]">
-      {/* Background image */}
       <div className="pointer-events-none absolute inset-0">
         <Image
           src={imageSrc}
@@ -88,11 +97,9 @@ export default function HomeClient() {
         <div className={`absolute inset-0 ${radial}`} />
       </div>
 
-      {/* Gold top accent line */}
       <div className={`absolute top-0 left-0 right-0 h-[1px] ${accent === "gold" ? "bg-gradient-to-r from-transparent via-[#D4AF37]/60 to-transparent" : "bg-gradient-to-r from-transparent via-[#9ECBFF]/50 to-transparent"}`} />
 
       <div className="relative p-7 sm:p-9">
-        {/* Icon + title */}
         <div className="flex items-center gap-4">
           <div className={`h-11 w-11 rounded-xl flex items-center justify-center ring-1 ${accent === "gold" ? "bg-[#C9A14A]/15 ring-[#C9A14A]/40" : "bg-[#9ECBFF]/12 ring-[#9ECBFF]/30"}`}>
             {icon}
@@ -100,7 +107,6 @@ export default function HomeClient() {
           <h3 className="text-xl font-semibold tracking-tight text-white">{title}</h3>
         </div>
 
-        {/* Divider */}
         <div className="mt-6 mb-5 h-px bg-white/8" />
 
         <ul className="space-y-3">
@@ -142,9 +148,7 @@ export default function HomeClient() {
         }}
       />
 
-      {/* ═══════════════════════════════════════════
-          KPI STRIP — replaces the plain white cards
-      ═══════════════════════════════════════════ */}
+      {/* KPI STRIP */}
       <section className="border-b border-white/8">
         <div className="mx-auto max-w-7xl px-4">
           <div className="grid grid-cols-3 divide-x divide-white/8">
@@ -169,13 +173,9 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          VALUE SECTION
-      ═══════════════════════════════════════════ */}
+      {/* VALUE SECTION */}
       <section className="py-20 sm:py-24">
         <div className="mx-auto max-w-7xl px-4">
-
-          {/* Section header */}
           <div className="mb-14 max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/4 px-4 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/60 backdrop-blur mb-5">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
@@ -259,12 +259,9 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          TESTIMONIALS
-      ═══════════════════════════════════════════ */}
+      {/* TESTIMONIALS */}
       <section className="py-20 border-t border-white/8">
         <div className="mx-auto max-w-7xl px-4">
-
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
             <div>
               <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">
@@ -286,7 +283,6 @@ export default function HomeClient() {
             </Link>
           </div>
 
-          {/* Marquee */}
           <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02]">
             <div className="pointer-events-none absolute left-0 top-0 h-full w-24 z-10 bg-gradient-to-r from-[#06090F] to-transparent" />
             <div className="pointer-events-none absolute right-0 top-0 h-full w-24 z-10 bg-gradient-to-l from-[#06090F] to-transparent" />
@@ -325,17 +321,17 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          FAQ
-      ═══════════════════════════════════════════ */}
+      {/* FAQ */}
       <CandidateFAQ compact limit={6} />
 
       {/* ═══════════════════════════════════════════
-          GLOBAL HUBS — editorial map-feel grid
+          GLOBAL HUBS — redesigned with geographic
+          identity, ambient glows & primary hubs
       ═══════════════════════════════════════════ */}
       <section className="py-20 border-t border-white/8">
         <div className="mx-auto max-w-7xl px-4">
 
+          {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
             <div>
               <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">
@@ -348,31 +344,85 @@ export default function HomeClient() {
                 Explore opportunities in key booking centres
               </p>
             </div>
-            <Globe className="h-10 w-10 text-white/15 hidden sm:block" />
+            <div className="hidden sm:flex items-center gap-2 text-white/20 text-xs tracking-widest uppercase">
+              <Globe className="h-4 w-4" />
+              <span>12 financial centres</span>
+            </div>
           </div>
 
-          {/* City grid — editorial style with number index */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {cities.map((city, idx) => (
+          {/* Primary hubs — larger cards in 2x2 grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+            {CITIES.filter((c) => c.primary).map((city, idx) => (
               <Link
-                key={city}
-                href={`/en/markets/${citySlug(city)}`}
+                key={city.name}
+                href={`/en/markets/${citySlug(city.name)}`}
                 prefetch={false}
-                aria-label={`Market ${city}`}
-                className="group relative overflow-hidden rounded-xl border border-white/8 bg-white/[0.03] px-5 py-4 hover:bg-white/[0.07] hover:border-white/16 transition-all duration-300"
+                aria-label={`Market ${city.name}`}
+                className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.04] px-5 py-6 hover:border-white/20 transition-all duration-300"
+                style={{
+                  boxShadow: `inset 0 0 40px 0 ${city.glow.replace("rgba", "rgba").replace(",.1", ",.06").replace(",.2", ",.08")}`,
+                }}
               >
-                {/* Index number */}
-                <span className="absolute top-3 right-4 text-[10px] font-mono text-white/15 group-hover:text-[#D4AF37]/40 transition-colors">
+                {/* Ambient glow on hover */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"
+                  style={{
+                    background: `radial-gradient(280px 180px at 30% 60%, ${city.glow}, transparent 70%)`,
+                  }}
+                />
+                {/* Gold left border */}
+                <div className="absolute left-0 top-4 bottom-4 w-[2px] bg-gradient-to-b from-transparent via-[#D4AF37]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                {/* Index */}
+                <span className="absolute top-3 right-4 text-[10px] font-mono text-white/15 group-hover:text-[#D4AF37]/50 transition-colors duration-300">
                   {String(idx + 1).padStart(2, "0")}
                 </span>
-                {/* Gold left accent on hover */}
-                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-[#D4AF37]/0 group-hover:bg-[#D4AF37]/60 transition-all duration-300 rounded-l-xl" />
-                <span className="text-sm sm:text-base font-semibold text-white/85 group-hover:text-white transition-colors">
-                  {city}
+
+                <div className="relative">
+                  <div className="text-base sm:text-lg font-semibold text-white group-hover:text-white transition-colors">
+                    {city.name}
+                  </div>
+                  <div className="mt-1 text-[11px] text-white/35 group-hover:text-white/55 transition-colors tracking-wide">
+                    {city.region}
+                  </div>
+                  <div className="mt-4 flex items-center gap-1 text-[11px] font-medium text-white/30 group-hover:text-[#D4AF37]/70 transition-colors duration-300">
+                    <span>View market</span>
+                    <ArrowRight className="h-3 w-3 translate-x-0 group-hover:translate-x-0.5 transition-transform duration-200" />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Secondary hubs — compact 4-col grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {CITIES.filter((c) => !c.primary).map((city, idx) => (
+              <Link
+                key={city.name}
+                href={`/en/markets/${citySlug(city.name)}`}
+                prefetch={false}
+                aria-label={`Market ${city.name}`}
+                className="group relative overflow-hidden rounded-xl border border-white/7 bg-white/[0.025] px-4 py-4 hover:border-white/14 hover:bg-white/[0.05] transition-all duration-300"
+              >
+                {/* Subtle ambient glow on hover */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"
+                  style={{
+                    background: `radial-gradient(200px 140px at 20% 70%, ${city.glow}, transparent 70%)`,
+                  }}
+                />
+                {/* Index */}
+                <span className="absolute top-2.5 right-3 text-[10px] font-mono text-white/10 group-hover:text-white/25 transition-colors">
+                  {String(idx + 5).padStart(2, "0")}
                 </span>
-                <div className="mt-1 flex items-center gap-1 text-[11px] text-white/30 group-hover:text-white/50 transition-colors">
-                  <span>View market</span>
-                  <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
+
+                <div className="relative">
+                  <div className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors">
+                    {city.name}
+                  </div>
+                  <div className="mt-0.5 text-[10px] text-white/25 group-hover:text-white/45 transition-colors tracking-wide">
+                    {city.region}
+                  </div>
+                  <ArrowRight className="mt-3 h-3 w-3 text-white/20 group-hover:text-[#D4AF37]/60 group-hover:translate-x-0.5 transition-all duration-200" />
                 </div>
               </Link>
             ))}
@@ -380,11 +430,8 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          CTA — editorial full-bleed treatment
-      ═══════════════════════════════════════════ */}
+      {/* CTA */}
       <section className="relative overflow-hidden border-t border-white/8">
-        {/* Atmospheric background */}
         <div
           aria-hidden
           className="absolute inset-0 -z-10"
@@ -393,7 +440,6 @@ export default function HomeClient() {
               "radial-gradient(1000px 600px at 50% 100%, rgba(201,161,74,.14), transparent 60%), radial-gradient(800px 400px at 20% 50%, rgba(158,203,255,.08), transparent 55%)",
           }}
         />
-        {/* Top gold rule */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-transparent" />
 
         <div className="mx-auto max-w-4xl px-4 py-24 sm:py-28 text-center">
@@ -426,7 +472,6 @@ export default function HomeClient() {
             </button>
           </div>
 
-          {/* Trust signal */}
           <p className="mt-8 text-[11px] text-white/30 tracking-wide">
             Used by 500+ private bankers · 100% confidential · No obligation
           </p>
@@ -437,7 +482,6 @@ export default function HomeClient() {
       {showEmailPopup && (
         <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-[#08090F] p-8 rounded-2xl w-full max-w-md relative border border-white/10 shadow-[0_40px_100px_rgba(0,0,0,.80)]">
-            {/* Gold top accent */}
             <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-transparent" />
 
             <button
