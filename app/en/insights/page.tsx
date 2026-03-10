@@ -36,6 +36,21 @@ function isWithinDays(iso: string, days: number) {
 
 const LINKEDIN_LATEST = [
   {
+    title: "The UBS Integration Is Exposing a Career Problem Most Senior Bankers Don't Know They Have",
+    date: "2026-03-10",
+    url: "https://www.linkedin.com/pulse/ubs-integration-exposing-career-problem-most-senior-dont-m-chalem--e8iac/?trackingId=FfzRcDilXT6LYRqKlBpOhg%3D%3D",
+  },
+  {
+    title: "Dubai's Illusion Is Gone. Where Does That Leave You?",
+    date: "2026-03-09",
+    url: "https://www.linkedin.com/pulse/dubais-illusion-gone-where-does-leave-you-gil-m-chalem--mrdye/?trackingId=8pwqePN%2BcITpuF2r17JosQ%3D%3D",
+  },
+  {
+    title: "Storm Warning: Tariffs, Zero Rates, and Crypto Are Rewriting the Rules for Private Bankers",
+    date: "2026-03-03",
+    url: "https://www.linkedin.com/pulse/storm-warning-tariffs-zero-rates-crypto-rewriting-rules-m-chalem--uzzfe/?trackingId=USW1FEChQGjD8J87jSLdKw%3D%3D",
+  },
+  {
     title: "The Alternative Investment Tipping Point: Private Wealth is Going Mainstream",
     date: "2026-02-24",
     url: "https://www.linkedin.com/pulse/alternative-investment-tipping-point-private-wealth-going-m-chalem--rzfye/?trackingId=Cn23Thz6cEnZ1mzkg0HM3g%3D%3D",
@@ -159,7 +174,7 @@ export default function InsightsPage() {
 
   const featured = useMemo(() => sorted.filter((a) => a.featured).slice(0, 6), [sorted]);
 
-  // “Top Insight This Week” (last 7 days, highest engagementScore, tie-break by recency)
+  // "Top Insight This Week" (last 7 days, highest engagementScore, tie-break by recency)
   const topThisWeek = useMemo(() => {
     const w = sorted.filter((a) => isWithinDays(a.date, 7));
     if (!w.length) return null;
@@ -317,7 +332,7 @@ export default function InsightsPage() {
                       : "text-white/60 hover:text-white hover:bg-white/5",
                   ].join(" ")}
                 >
-                  I’m an RM
+                  I'm an RM
                 </button>
                 <button
                   type="button"
@@ -329,7 +344,7 @@ export default function InsightsPage() {
                       : "text-white/60 hover:text-white hover:bg-white/5",
                   ].join(" ")}
                 >
-                  I’m Hiring
+                  I'm Hiring
                 </button>
               </div>
             </div>
