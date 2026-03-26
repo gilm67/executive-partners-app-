@@ -36,6 +36,21 @@ function isWithinDays(iso: string, days: number) {
 
 const LINKEDIN_LATEST = [
   {
+    title: "When the Safe Haven Isn't Safe Anymore",
+    date: "2026-03-24",
+    url: "https://www.linkedin.com/pulse/when-safe-haven-isnt-anymore-gil-m-chalem--hiuqe/?trackingId=YrwTvQV2N9CE1%2BnPjlmOiw%3D%3D",
+  },
+  {
+    title: "Julius Baer Cut Jobs Even After a Strong 2024. Every Private Banker Should Pay Attention.",
+    date: "2026-03-23",
+    url: "https://www.linkedin.com/pulse/julius-baer-cut-jobs-even-after-strong-2024-every-pay-gil-m-chalem--nb7be/?trackingId=Mgdv5MD93s%2Fo05fJA%2F23zg%3D%3D",
+  },
+  {
+    title: "Why More Senior RMs Are Asking Me About Going Independent. And What I Tell Them",
+    date: "2026-03-17",
+    url: "https://www.linkedin.com/pulse/why-more-senior-rms-asking-me-going-independent-what-i-gil-m-chalem--kglqe/?trackingId=zk7njMxrFRRRHoYvOZaBUQ%3D%3D",
+  },
+  {
     title: "The UBS Integration Is Exposing a Career Problem Most Senior Bankers Don't Know They Have",
     date: "2026-03-10",
     url: "https://www.linkedin.com/pulse/ubs-integration-exposing-career-problem-most-senior-dont-m-chalem--e8iac/?trackingId=FfzRcDilXT6LYRqKlBpOhg%3D%3D",
