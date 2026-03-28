@@ -331,15 +331,37 @@ function MandateCard({ mandate, onScreen, onView }) {
 }
 
 export default function MandatesClient() {
-  const [selected, setSelected] = useState(null);
   const [screening, setScreening] = useState(null);
   const [filter, setFilter] = useState("All");
+  const [selectedId, setSelectedId] = useState(null);
   const topRef = useRef(null);
+
+  // Sync with URL on mount and browser navigation
+  useEffect(() => {
+    const sync = () => {
+      const params = new URLSearchParams(window.location.search);
+      setSelectedId(params.get("id"));
+    };
+    sync();
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
+  }, []);
+
+  const selected = selectedId ? MANDATES.find(m => m.id === selectedId) || null : null;
 
   const visible = filter === "All" ? MANDATES : MANDATES.filter(m => m.location.toLowerCase().includes(filter.toLowerCase().split(" ")[0]));
 
-  const openFull = (mandate) => { setSelected(mandate); setTimeout(() => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); };
-  const goBack = () => { setSelected(null); setTimeout(() => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); };
+  const openFull = (mandate) => {
+    const url = "/en/jobs?id=" + mandate.id;
+    window.history.pushState({}, "", url);
+    setSelectedId(mandate.id);
+    setTimeout(() => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  };
+  const goBack = () => {
+    window.history.pushState({}, "", "/en/jobs");
+    setSelectedId(null);
+    setTimeout(() => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  };
 
   return (
     <main className="relative min-h-screen bg-[#0B0E13] text-white" ref={topRef}>
