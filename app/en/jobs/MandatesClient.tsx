@@ -130,8 +130,6 @@ const MANDATES = [
       { q: "Are you currently based in Singapore or prepared to relocate there?", options: [{ label: "Yes, based in Singapore", pass: true }, { label: "Open to relocating", pass: true }, { label: "No — not open to Singapore", pass: false }] },
     ],
   },
-];
-
   { id: "rm-south-africa-geneva", tag: "Africa · South Africa", title: "Senior Relationship Manager", subtitle: "South African Market", location: "Geneva", flag: "🇿🇦", aum: "CHF 250M+", aum_note: "3-year average portable book", comp_base: "CHF 170K – 270K", comp_note: "base · bonus · NPC buyout available", urgent: false,
     profile_lines: ["Personal ownership of South African HNW and UHNW client relationships — not institutionally held", "Minimum CHF 250M portable book measured over 3-year average", "Deep knowledge of South African offshore wealth, exchange control regulations and cross-border compliance"],
     brief: `A Geneva-based mandate for a senior private banker with a genuinely owned South African client base. The hiring bank has an established African desk and is looking to strengthen its South African coverage with a relationship manager who holds personal UHNW and HNW relationships — families, entrepreneurs and business owners who have accumulated wealth offshore and require sophisticated wealth management solutions from a serious Swiss platform.\n\nThe right candidate has spent the majority of their private banking career managing South African clients, understands the nuances of South African exchange control regulations and the SARB framework, knows how to structure compliant cross-border wealth arrangements, and holds relationships that are genuinely portable — built on personal trust rather than institutional loyalty.\n\nSouth Africa is a market where relationship depth matters considerably more than institutional brand. The bank offers a strong platform, competitive NPC contribution and a realistic transition window for the right profile.`,
@@ -156,6 +154,8 @@ const MANDATES = [
       { q: "Are you currently based in London or prepared to relocate there?", options: [{ label: "Yes, already in London", pass: true }, { label: "Open to relocating to London", pass: true }, { label: "Not open to relocation", pass: false }] },
     ],
   },
+
+];
 
 const HUBS = ["All", "Geneva", "Zurich", "Lugano", "London", "Milan", "Hong Kong", "Singapore"];
 
