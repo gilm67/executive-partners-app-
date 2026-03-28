@@ -25,7 +25,7 @@ type Mandate = {
 import { useState, useRef, useEffect } from "react";
 
 // Each screening question has typed options: { label, pass: true|false|"warn" }
-const LOGO_SRC = "/ep-logo.png";
+const LOGO_SRC = "/transparent-ep-logo.png";
 
 const MANDATES: Mandate[] = [
   {
