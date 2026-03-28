@@ -651,7 +651,7 @@ function ScreeningModal({ mandate, onClose, onPass }: { mandate: Mandate; onClos
   const allAnswered = mandate.screening.every((_, i) => answers[i] !== undefined);
 
   const submit = () => {
-    const f = []; const w = [];
+    const f: { q: string; chosen: string }[] = []; const w: { q: string; chosen: string }[] = [];
     mandate.screening.forEach((s, i) => {
       const chosen = answers[i];
       if (chosen === undefined) return;
