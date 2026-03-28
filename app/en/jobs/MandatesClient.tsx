@@ -1,5 +1,26 @@
 "use client";
 
+type ScreeningOption = { label: string; pass: boolean | "warn" };
+type ScreeningQuestion = { q: string; options: ScreeningOption[] };
+type Mandate = {
+  id: string;
+  tag: string;
+  title: string;
+  subtitle: string;
+  location: string;
+  flag: string;
+  aum: string;
+  aum_note: string;
+  comp_base: string;
+  comp_note: string;
+  urgent: boolean;
+  ubp_ref?: string;
+  profile_lines: string[];
+  brief: string;
+  process: string;
+  screening: ScreeningQuestion[];
+};
+
 import { useState, useRef, useEffect } from "react";
 
 // Each screening question has typed options: { label, pass: true|false|"warn" }
@@ -621,11 +642,11 @@ const bg = "#07111f";
 const font = "'Palatino Linotype','Book Antiqua',Palatino,Georgia,serif";
 
 // ── Screening Modal ────────────────────────────────────────────────────────────
-function ScreeningModal({ mandate, onClose, onPass }) {
-  const [answers, setAnswers] = useState({});
+function ScreeningModal({ mandate, onClose, onPass }: { mandate: Mandate; onClose: () => void; onPass: () => void }) {
+  const [answers, setAnswers] = useState<Record<number, ScreeningOption>>({});
   const [submitted, setSubmitted] = useState(false);
-  const [fails, setFails]   = useState([]);
-  const [warns, setWarns]   = useState([]);
+  const [fails, setFails]   = useState<{ q: string; chosen: string }[]>([]);
+  const [warns, setWarns]   = useState<{ q: string; chosen: string }[]>([]);
 
   const allAnswered = mandate.screening.every((_, i) => answers[i] !== undefined);
 
@@ -758,7 +779,7 @@ function InterestForm() {
 }
 
 // ── Mandate Detail ─────────────────────────────────────────────────────────────
-function MandatePage({ mandate, onBack, onApply }) {
+function MandatePage({ mandate, onBack, onApply }: { mandate: Mandate; onBack: () => void; onApply: (m: Mandate) => void }) {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return (
     <div style={{ animation: "fadeIn 0.35s both" }}>
@@ -838,7 +859,7 @@ function MandatePage({ mandate, onBack, onApply }) {
 }
 
 // ── Card ───────────────────────────────────────────────────────────────────────
-function MandateCard({ mandate, idx, onScreen, onView }) {
+function MandateCard({ mandate, idx, onScreen, onView }: { mandate: Mandate; idx: number; onScreen: (m: Mandate) => void; onView: (m: Mandate) => void }) {
   return (
     <div style={{ padding: "20px 22px", borderRadius: 12, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", transition: "all 0.2s", animation: `fadeUp 0.35s ${idx * 0.045}s both`, position: "relative", overflow: "hidden" }}
       onMouseEnter={e => { e.currentTarget.style.background = "rgba(201,161,74,0.05)"; e.currentTarget.style.borderColor = "rgba(201,161,74,0.22)"; e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.25)"; }}
@@ -874,8 +895,8 @@ function MandateCard({ mandate, idx, onScreen, onView }) {
 
 // ── Main ───────────────────────────────────────────────────────────────────────
 export default function EPMandates() {
-  const [selected, setSelected] = useState(null);
-  const [screening, setScreening] = useState(null);
+  const [selected, setSelected] = useState<Mandate | null>(null);
+  const [screening, setScreening] = useState<Mandate | null>(null);
   const [filter, setFilter] = useState("All");
   const topRef = useRef(null);
 
