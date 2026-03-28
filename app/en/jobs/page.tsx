@@ -1,41 +1,24 @@
 /* app/en/jobs/page.tsx */
-import Link from "next/link";
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import {
-  Search,
-  MapPin,
-  Briefcase,
-  Shield,
-  CalendarDays,
-  ChevronRight,
-  Filter,
-  Star,
-} from "lucide-react";
-
-import PrimaryButton from "@/components/ui/PrimaryButton";
-import SecondaryButton from "@/components/ui/SecondaryButton";
 import { BreadcrumbSchema } from "@/components/StructuredData";
+import MandatesClient from "./MandatesClient";
 
-/* 🔗 Central job data (single source of truth) */
-import { jobsList as CANONICAL_DATA } from "@/data/jobs";
-
-/* ---------------- site base ---------------- */
+/* ── site base ── */
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
   (process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
     : "https://www.execpartners.ch");
 
-/* ---------------- meta (SEO) ---------------- */
+/* ── SEO metadata ── */
 export const metadata: Metadata = {
-  title: "Private Banking Jobs in Switzerland | Executive Partners",
+  title: "Private Banking Jobs | Executive Partners Geneva",
   description:
-    "Explore confidential Private Banking jobs across Geneva & Zurich, plus Dubai, Singapore, London and New York. Discreet executive search for HNW/UHNW markets.",
+    "Active private banking mandates across Geneva, Zurich, Milan, Dubai, Singapore and Hong Kong. Senior Relationship Managers, Investment Advisors and Assistant RMs. Confidential executive search.",
   openGraph: {
-    title: "Private Banking Jobs in Switzerland | Executive Partners",
+    title: "Private Banking Jobs | Executive Partners",
     description:
-      "Confidential Private Banking opportunities in Geneva, Zurich and global hubs. Submit your CV or speak with our search team.",
+      "10 active mandates across LATAM, Swiss Onshore, CIS/CEE, Italian, Greek/Cypriot and Asian markets. Confidential. Comp-visible. Apply in 90 seconds.",
     url: `${SITE}/en/jobs`,
     images: [{ url: "/og.webp" }],
   },
@@ -43,668 +26,76 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Private Banking Jobs | Executive Partners",
     description:
-      "Exclusive private banking opportunities across Geneva, Zurich, Dubai, Singapore, London, New York.",
+      "Active mandates across Geneva, Zurich, Milan, Dubai, Singapore and Hong Kong. Confidential executive search.",
   },
   alternates: { canonical: `${SITE}/en/jobs` },
   robots: { index: true, follow: true },
 };
 
-/* ---------------- types ---------------- */
-type Job = {
-  id?: string;
-  title: string;
-  location: string;
-  market?: string;
-  seniority?: string;
-  summary?: string;
-  slug: string;
-  confidential?: boolean;
-  active?: boolean;
-  createdAt?: string; // ISO
+/* ── Static mandate data for JSON-LD (mirrors MandatesClient) ── */
+const MANDATE_SCHEMA = [
+  { title: "Senior Relationship Manager — Brazilian Market",         location: "Zurich or Geneva, Switzerland",  slug: "rm-brazil-ch" },
+  { title: "Senior Relationship Manager — Argentine Market",        location: "Zurich or Geneva, Switzerland",  slug: "rm-argentina-ch" },
+  { title: "Senior Relationship Manager — Swiss Onshore",           location: "Geneva, Switzerland",             slug: "swiss-onshore-geneva" },
+  { title: "Senior Relationship Manager — Greek & Cypriot Market",  location: "Geneva, Switzerland",             slug: "greece-cyprus-geneva" },
+  { title: "Investment Advisor — CIS & CEE (Geneva)",               location: "Geneva, Switzerland",             slug: "ia-cis-cee-geneva" },
+  { title: "Investment Advisor — CIS & CEE (Zurich)",               location: "Zurich, Switzerland",             slug: "ia-cis-cee-zurich" },
+  { title: "Assistant Relationship Manager — Emerging Markets",     location: "Geneva, Switzerland",             slug: "arm-russian-geneva" },
+  { title: "Senior Relationship Manager — Italian Market",          location: "Milan, Italy",                    slug: "rm-italy-milan" },
+  { title: "Senior Relationship Manager — Hong Kong",               location: "Hong Kong",                       slug: "rm-hong-kong" },
+  { title: "Senior Relationship Manager — Singapore",               location: "Singapore",                       slug: "rm-singapore" },
+];
+
+const jobsJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListOrder: "https://schema.org/ItemListOrderDescending",
+  numberOfItems: MANDATE_SCHEMA.length,
+  itemListElement: MANDATE_SCHEMA.map((m, idx) => ({
+    "@type": "ListItem",
+    position: idx + 1,
+    url: `${SITE}/en/jobs#${m.slug}`,
+    item: {
+      "@type": "JobPosting",
+      title: m.title,
+      description:
+        "Confidential private banking mandate handled exclusively by Executive Partners, Geneva.",
+      industry: "Private Banking & Wealth Management",
+      employmentType: "FULL_TIME",
+      datePosted: "2026-01-08",
+      hiringOrganization: {
+        "@type": "Organization",
+        name: "Executive Partners",
+        sameAs: SITE,
+      },
+      jobLocation: {
+        "@type": "Place",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: m.location,
+        },
+      },
+    },
+  })),
 };
 
-/* ---------------- data: fallback (centralised) ---------------- */
-const CANONICAL_JOBS: Job[] = CANONICAL_DATA.map((j) => ({
-  title: j.title,
-  location: j.location,
-  market: j.market,
-  seniority: "Director / Executive Director",
-  summary: j.summary,
-  slug: j.slug,
-  confidential: true,
-  active: true,
-  createdAt: j.createdAt, // keep for sorting
-}));
-
-/* Hide retired/duplicate slugs */
-const HIDDEN_SLUGS = new Set<string>([
-  "senior-relationship-manager-ch-onshore-4",
-  "senior-relationship-manager-brazil-2",
-  "private-banker-mea-2",
-]);
-
-/* ---------------- fetching ---------------- */
-async function safeFetchJSON(url: string): Promise<any | null> {
-  try {
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) return null;
-    const text = await res.text();
-    try {
-      return JSON.parse(text);
-    } catch {
-      return null;
-    }
-  } catch {
-    return null;
-  }
-}
-
-async function getJobs(query: string, filters: Record<string, string>) {
-  const params = new URLSearchParams({ q: query, ...filters });
-
-  const absBase = process.env.NEXT_PUBLIC_SITE_URL ?? "";
-  const urls = [
-    absBase ? `${absBase}/api/jobs?${params}` : "",
-    `/api/jobs?${params}`,
-  ].filter(Boolean) as string[];
-
-  for (const u of urls) {
-    const json = await safeFetchJSON(u);
-    if (Array.isArray(json) && json.length) {
-      return json as Job[];
-    }
-  }
-
-  return CANONICAL_JOBS;
-}
-
-/* ---------------- helpers: country from location (for schema) ---------------- */
-function countryFromLocation(location: string | undefined): string | undefined {
-  if (!location) return undefined;
-  const loc = location.toLowerCase();
-
-  if (["geneva", "zurich", "lausanne", "lugano"].some((c) => loc.includes(c))) {
-    return "CH";
-  }
-  if (loc.includes("dubai")) return "AE";
-  if (loc.includes("singapore")) return "SG";
-  if (loc.includes("hong kong")) return "HK";
-  if (loc.includes("london")) return "GB";
-  if (loc.includes("new york") || loc.includes("ny")) return "US";
-  if (loc.includes("miami")) return "US";
-  if (loc.includes("paris")) return "FR";
-  if (loc.includes("madrid")) return "ES";
-  if (loc.includes("lisbon")) return "PT";
-  if (loc.includes("milan") || loc.includes("milano")) return "IT";
-
-  return undefined;
-}
-
-/* ---------------- local filtering + sorting ---------------- */
-function norm(s: string) {
-  return s.trim().toLowerCase();
-}
-
-function applyLocalFiltersAndSort(
-  list: Job[],
-  {
-    q,
-    market,
-    location,
-    seniority,
-    sort,
-  }: {
-    q: string;
-    market: string;
-    location: string;
-    seniority: string;
-    sort: string;
-  }
-) {
-  const qN = norm(q);
-  const mN = norm(market);
-  const lN = norm(location);
-  const sN = norm(seniority);
-
-  let out = list.filter((j) => j?.active !== false && !HIDDEN_SLUGS.has(j.slug));
-
-  if (qN) {
-    out = out.filter((j) => {
-      const hay = [
-        j.title ?? "",
-        j.location ?? "",
-        j.market ?? "",
-        j.seniority ?? "",
-        j.summary ?? "",
-      ]
-        .map(norm)
-        .join(" ");
-      return hay.includes(qN);
-    });
-  }
-
-  // Use "includes" instead of strict equality to tolerate slightly different labels
-  if (mN) out = out.filter((j) => norm(j.market ?? "").includes(mN));
-  if (lN) out = out.filter((j) => norm(j.location ?? "").includes(lN));
-  if (sN) out = out.filter((j) => norm(j.seniority ?? "").includes(sN));
-
-  if (sort === "oldest") {
-    out = out.sort((a, b) => {
-      const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-      return da - db;
-    });
-  } else if (sort === "title") {
-    out = out.sort((a, b) => (a.title ?? "").localeCompare(b.title ?? ""));
-  } else {
-    // newest (default)
-    out = out.sort((a, b) => {
-      const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-      return db - da;
-    });
-  }
-
-  return out;
-}
-
-/* ---------------- dropdown data: auto-populate from jobs ---------------- */
-function cleanLabel(s: string) {
-  return (s ?? "").replace(/\s+/g, " ").trim();
-}
-
-function titleCaseCity(s: string) {
-  // keep exact casing if user typed "New York" etc; this is a light normalizer
-  return cleanLabel(s);
-}
-
-function extractCityTokens(location: string): string[] {
-  // "Zurich or Geneva, Switzerland" => ["Zurich", "Geneva"]
-  // "Geneva / Zurich, Switzerland" => ["Geneva", "Zurich"]
-  // "Dubai, UAE" => ["Dubai"]
-  // "Miami, USA" => ["Miami"]
-  if (!location) return [];
-  const left = location.split(",")[0] ?? location; // take "City part" before country
-  return left
-    .split(/\/| or | and |&/i)
-    .map((x) => titleCaseCity(x))
-    .map((x) => x.replace(/\s*\(.*?\)\s*/g, "").trim())
-    .filter(Boolean);
-}
-
-function buildDropdownOptionsFromJobs(jobs: Job[]) {
-  const marketsSet = new Set<string>();
-  const locationsSet = new Set<string>();
-
-  for (const j of jobs) {
-    if (!j || j.active === false) continue;
-    if (HIDDEN_SLUGS.has(j.slug)) continue;
-
-    const m = cleanLabel(j.market ?? "");
-    if (m) marketsSet.add(m);
-
-    const loc = cleanLabel(j.location ?? "");
-    for (const city of extractCityTokens(loc)) {
-      if (city) locationsSet.add(city);
-    }
-  }
-
-  const markets = Array.from(marketsSet).sort((a, b) =>
-    a.localeCompare(b, undefined, { sensitivity: "base" })
-  );
-  const locations = Array.from(locationsSet).sort((a, b) =>
-    a.localeCompare(b, undefined, { sensitivity: "base" })
-  );
-
-  return { markets, locations };
-}
-
-/* ---------------- UI primitives ---------------- */
-function Chip({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] font-medium text-white/80">
-      {children}
-    </span>
-  );
-}
-
-function BadgeTone({ market }: { market?: string }) {
-  const mk = (market || "").toLowerCase();
-  const isMEA = mk.includes("mea");
-  const isCH = mk.includes("switzerland") || mk.includes("onshore");
-
-  const base = isMEA
-    ? "from-brandGoldDark to-brandGold"
-    : isCH
-    ? "from-brandGold to-brandGoldSoft"
-    : "from-brandGoldSoft to-brandGold";
-
-  return (
-    <div
-      className={`inline-flex select-none items-center gap-2 rounded-full bg-gradient-to-r ${base} px-2.5 py-1 text-xs font-semibold text-black shadow-sm`}
-    >
-      <Star className="h-3.5 w-3.5 opacity-90" />
-      {market ?? "International"}
-    </div>
-  );
-}
-
-function Card({ job }: { job: Job }) {
-  const href = `/en/jobs/${job.slug}`;
-
-  const created = job.createdAt ? new Date(job.createdAt) : null;
-  const createdFmt = created
-    ? created.toLocaleDateString(undefined, {
-        month: "short",
-        day: "numeric",
-      })
-    : null;
-
-  return (
-    <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)] transition hover:shadow-[0_8px_30px_rgba(0,0,0,.45)]">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[.18]"
-        style={{
-          background:
-            "radial-gradient(700px 160px at 0% 0%, rgba(201,161,74,.35), transparent 60%), radial-gradient(700px 160px at 100% 0%, rgba(245,231,192,.28), transparent 60%)",
-        }}
-      />
-      <div className="relative flex h-full flex-col">
-        <div className="flex items-center justify-between gap-3">
-          <BadgeTone market={job.market} />
-          {createdFmt && (
-            <span className="inline-flex items-center gap-1 text-xs text-white/70">
-              <CalendarDays className="h-3.5 w-3.5" /> {createdFmt}
-            </span>
-          )}
-        </div>
-
-        <h3 className="mt-3 text-xl font-bold text-white">{job.title}</h3>
-
-        <div className="mt-2 flex flex-wrap items-center gap-2 text-[13px] text-white/80">
-          {job.location && (
-            <span className="inline-flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5 opacity-90" /> {job.location}
-            </span>
-          )}
-          {job.seniority && (
-            <span className="inline-flex items-center gap-1.5">
-              <Briefcase className="h-3.5 w-3.5 opacity-90" /> {job.seniority}
-            </span>
-          )}
-          {job.confidential ? (
-            <Chip>
-              <Shield className="mr-1 h-3.5 w-3.5" />
-              Confidential
-            </Chip>
-          ) : null}
-        </div>
-
-        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-neutral-300">
-          {job.summary ??
-            "Discreet mandate with strong platform, open architecture and competitive grid."}
-        </p>
-
-        <div className="mt-auto pt-4">
-          <Link
-            href={href}
-            className="inline-flex items-center gap-2 rounded-xl border border-brandGold/40 bg-black/30 px-4 py-2 text-sm font-semibold text-brandGoldPale transition hover:bg-brandGold/15 hover:text-white"
-          >
-            View details <ChevronRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SkeletonCard() {
-  return (
-    <div className="animate-pulse rounded-2xl border border-white/10 bg-white/5 p-5">
-      <div className="h-5 w-40 rounded-full bg-white/10" />
-      <div className="mt-3 h-6 w-3/5 rounded bg-white/10" />
-      <div className="mt-2 h-4 w-2/5 rounded bg-white/10" />
-      <div className="mt-4 h-16 w-full rounded bg-white/10" />
-      <div className="mt-6 h-9 w-32 rounded-xl bg-white/10" />
-    </div>
-  );
-}
-
-function EmptyState() {
-  return (
-    <div className="col-span-full rounded-2xl border border-white/10 bg-white/5 p-10 text-center">
-      <h3 className="text-lg font-semibold text-white">
-        No roles match your filters
-      </h3>
-      <p className="mt-2 text-sm text-neutral-300">
-        Try clearing filters or checking back soon—new mandates drop regularly.
-      </p>
-      <div className="mt-4 flex justify-center">
-        <PrimaryButton href="/en/contact" className="px-4 py-2 text-sm">
-          Talk to us confidentially
-        </PrimaryButton>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------- Filter Bar (auto options) ---------------- */
-function FilterBar({
-  defaultQuery,
-  defaultFilters,
-  sort,
-  markets,
-  locations,
-}: {
-  defaultQuery?: string;
-  defaultFilters?: Record<string, string>;
-  sort?: string;
-  markets: string[];
-  locations: string[];
-}) {
-  return (
-    <form
-      method="get"
-      action="/en/jobs"
-      className="flex w-full flex-col gap-3 rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-4 md:flex-row md:items-center"
-    >
-      <div className="relative flex-1">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60" />
-        <input
-          name="q"
-          defaultValue={defaultQuery}
-          placeholder="Search by title, market, location…"
-          className="w-full rounded-xl border border-white/10 bg-transparent py-2 pl-9 pr-3 text-sm text-white placeholder:text-white/50 outline-none focus:border-brandGold/60"
-        />
-      </div>
-
-      <div className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-3">
-        <select
-          name="market"
-          defaultValue={defaultFilters?.market ?? ""}
-          className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none"
-        >
-          <option value="" className="bg-[#0B0E13]">
-            All markets
-          </option>
-          {markets.map((m) => (
-            <option key={m} value={m} className="bg-[#0B0E13]">
-              {m}
-            </option>
-          ))}
-        </select>
-
-        <select
-          name="location"
-          defaultValue={defaultFilters?.location ?? ""}
-          className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none"
-        >
-          <option value="" className="bg-[#0B0E13]">
-            All locations
-          </option>
-          {locations.map((l) => (
-            <option key={l} value={l} className="bg-[#0B0E13]">
-              {l}
-            </option>
-          ))}
-        </select>
-
-        <select
-          name="seniority"
-          defaultValue={defaultFilters?.seniority ?? ""}
-          className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none"
-        >
-          <option value="" className="bg-[#0B0E13]">
-            All seniorities
-          </option>
-          <option value="Director" className="bg-[#0B0E13]">
-            Director
-          </option>
-          <option value="Executive Director" className="bg-[#0B0E13]">
-            Executive Director
-          </option>
-          <option value="Managing Director" className="bg-[#0B0E13]">
-            Managing Director
-          </option>
-          <option value="Team Head" className="bg-[#0B0E13]">
-            Team Head
-          </option>
-        </select>
-      </div>
-
-      {/* keep sort when applying filters */}
-      <input type="hidden" name="sort" value={sort ?? "newest"} />
-
-      <button
-        type="submit"
-        className="inline-flex items-center gap-2 rounded-xl border border-brandGold/70 bg-brandGold/15 px-4 py-2 text-sm font-semibold text-brandGoldPale hover:bg-brandGold/25 hover:text-white"
-      >
-        <Filter className="h-4 w-4" /> Apply
-      </button>
-    </form>
-  );
-}
-
-/* ---------------- Page ---------------- */
-export default async function JobsPage({
-  searchParams,
-}: {
-  // ✅ FIX: in your Next build, searchParams is async → await it
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const sp = (await searchParams) ?? {};
-
-  const q = typeof sp.q === "string" ? sp.q : "";
-  const market = typeof sp.market === "string" ? sp.market : "";
-  const location = typeof sp.location === "string" ? sp.location : "";
-  const seniority = typeof sp.seniority === "string" ? sp.seniority : "";
-  const sort = typeof sp.sort === "string" ? sp.sort : "newest";
-
-  const filters: Record<string, string> = {};
-  if (market) filters.market = market;
-  if (location) filters.location = location;
-  if (seniority) filters.seniority = seniority;
-  if (sort) filters.sort = sort;
-
-  const rawJobs: Job[] = await getJobs(q, filters);
-
-  // ✅ FIX: filter + sort locally so it always works
-  const jobs = applyLocalFiltersAndSort(rawJobs, {
-    q,
-    market,
-    location,
-    seniority,
-    sort,
-  });
-
-  // ✅ Dropdowns auto-populate from your actual jobs (already filtered for active/hidden)
-  const { markets, locations } = buildDropdownOptionsFromJobs(CANONICAL_JOBS);
-
-  const base = SITE;
-
-  const jobsJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    itemListOrder: "https://schema.org/ItemListOrderDescending",
-    numberOfItems: jobs.length,
-    itemListElement: jobs.map((j, idx) => {
-      const country = countryFromLocation(j.location);
-      const jobPosting: any = {
-        "@type": "JobPosting",
-        title: j.title,
-        description:
-          j.summary ??
-          "Discreet private banking mandate handled by Executive Partners.",
-        industry: "Private Banking & Wealth Management",
-        employmentType: "FULL_TIME",
-        hiringOrganization: {
-          "@type": "Organization",
-          name: "Executive Partners (executive search boutique)",
-          sameAs: SITE,
-        },
-        jobLocation: {
-          "@type": "Place",
-          address: {
-            "@type": "PostalAddress",
-            addressLocality: j.location,
-          },
-        },
-      };
-
-      if (country) jobPosting.jobLocation.address.addressCountry = country;
-      if (j.createdAt) jobPosting.datePosted = j.createdAt;
-
-      return {
-        "@type": "ListItem",
-        position: idx + 1,
-        url: `${base}/en/jobs/${j.slug}`,
-        item: jobPosting,
-      };
-    }),
-  };
-
+/* ── Page ── */
+export default function JobsPage() {
   return (
     <>
       <BreadcrumbSchema
         items={[
-          { name: "Home", url: `${SITE}` },
+          { name: "Home", url: SITE },
           { name: "Jobs", url: `${SITE}/en/jobs` },
         ]}
       />
 
-      <main className="relative min-h-screen bg-[#0B0E13] text-white">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(1400px 500px at 10% -10%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 55%), radial-gradient(1100px 420px at 110% 0%, rgba(245,231,192,.20) 0%, rgba(245,231,192,0) 60%)",
-          }}
-        />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobsJsonLd) }}
+      />
 
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jobsJsonLd) }}
-        />
-
-        <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-14">
-          <div className="text-center">
-            <p className="mx-auto text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">
-              Private Banking · Discreet Mandates
-            </p>
-            <h1 className="mt-3 text-4xl font-extrabold tracking-tight md:text-5xl">
-              Private Banking Jobs in Switzerland
-            </h1>
-            <p className="mx-auto mt-3 max-w-3xl text-neutral-300">
-              Live mandates across <strong>Geneva</strong> and{" "}
-              <strong>Zurich</strong>, with international coverage in{" "}
-              <strong>Dubai</strong>, <strong>Singapore</strong>,{" "}
-              <strong>London</strong> &amp; <strong>New York</strong>. We publish
-              a subset of searches; confidential roles are shared directly with
-              qualified bankers.
-            </p>
-
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
-              <Link
-                href="/en/apply"
-                className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
-              >
-                Submit CV
-              </Link>
-              <Link
-                href="/en/candidates"
-                className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
-              >
-                Candidate Hub
-              </Link>
-              <Link
-                href="/en/contact"
-                className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
-              >
-                Contact a Recruiter
-              </Link>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <FilterBar
-              defaultQuery={q}
-              defaultFilters={{ market, location, seniority }}
-              sort={sort}
-              markets={markets}
-              locations={locations}
-            />
-          </div>
-
-          <div className="mt-4 flex items-center justify-between text-sm text-white/70">
-            <div>
-              {jobs.length} role{jobs.length === 1 ? "" : "s"}
-            </div>
-
-            <form method="get" action="/en/jobs" className="flex items-center gap-2">
-              {q ? <input type="hidden" name="q" value={q} /> : null}
-              {market ? <input type="hidden" name="market" value={market} /> : null}
-              {location ? <input type="hidden" name="location" value={location} /> : null}
-              {seniority ? <input type="hidden" name="seniority" value={seniority} /> : null}
-
-              <select
-                name="sort"
-                defaultValue={sort}
-                className="rounded-xl border border-white/10 bg-transparent px-3 py-2 text-sm text-white outline-none"
-              >
-                <option value="newest" className="bg-[#0B0E13]">
-                  Newest first
-                </option>
-                <option value="oldest" className="bg-[#0B0E13]">
-                  Oldest first
-                </option>
-                <option value="title" className="bg-[#0B0E13]">
-                  Title A–Z
-                </option>
-              </select>
-
-              <button
-                type="submit"
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/80 hover:bg-white/10"
-              >
-                Apply sort
-              </button>
-            </form>
-          </div>
-
-          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-            <Suspense
-              fallback={
-                <>
-                  <SkeletonCard />
-                  <SkeletonCard />
-                  <SkeletonCard />
-                  <SkeletonCard />
-                </>
-              }
-            >
-              {jobs.length === 0 ? (
-                <EmptyState />
-              ) : (
-                jobs.map((job) => <Card key={job.slug} job={job} />)
-              )}
-            </Suspense>
-          </div>
-
-          <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center">
-            <p className="text-neutral-300">
-              Don't see your exact market? We run confidential mandates
-              continuously.
-            </p>
-            <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
-              <PrimaryButton href="/en/contact">Contact us</PrimaryButton>
-              <SecondaryButton href="/en/candidates">
-                Register confidentially
-              </SecondaryButton>
-            </div>
-          </div>
-        </div>
-      </main>
+      <MandatesClient />
     </>
   );
 }
