@@ -1,5 +1,5 @@
-"use client";
 // @ts-nocheck
+"use client";
 
 type ScreeningOption = { label: string; pass: boolean | "warn" };
 type ScreeningQuestion = { q: string; options: ScreeningOption[] };
@@ -899,7 +899,7 @@ export default function EPMandates() {
   const [selected, setSelected] = useState<Mandate | null>(null);
   const [screening, setScreening] = useState<Mandate | null>(null);
   const [filter, setFilter] = useState("All");
-  const topRef = useRef(null);
+  const topRef = useRef<HTMLDivElement>(null);
 
   const hubs = ["All", "Geneva", "Zurich", "Milan", "Hong Kong", "Singapore"];
   const hubMap: Record<string, (m: Mandate) => boolean> = { Geneva: (m: Mandate) => m.location.toLowerCase().includes("geneva"), Zurich: (m: Mandate) => m.location.toLowerCase().includes("zurich"), Milan: (m: Mandate) => m.location.toLowerCase().includes("milan"), "Hong Kong": (m: Mandate) => m.location.toLowerCase().includes("hong kong"), Singapore: (m: Mandate) => m.location.toLowerCase().includes("singapore") };
