@@ -313,7 +313,7 @@ function MandatePage({ mandate, onBack, onApply }) {
         <p className="text-white/15 text-[10px] mt-4 tracking-widest">100% CONFIDENTIAL · GDPR COMPLIANT</p>
       </div>
       <div className="pt-4 border-t border-white/10 flex justify-between items-center flex-wrap gap-4">
-        <p className="text-xs text-neutral-500">Executive Partners · Geneva · <span className="text-brandGoldSoft">gil.chalem@execpartners.ch</span></p>
+        <p className="text-xs text-neutral-500">Executive Partners · Geneva</p>
         <button onClick={onBack} className="text-xs text-neutral-400 hover:text-white transition border border-white/10 rounded-lg px-3 py-1.5">← All mandates</button>
       </div>
     </div>
