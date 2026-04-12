@@ -1,7 +1,6 @@
 // app/page.tsx
 import Link from "next/link";
 import Image from "next/image";
-import HomeClient from "./(marketing)/HomeClient";
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { ArrowRight, Sparkles, Calculator } from "lucide-react";
@@ -168,7 +167,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        <HomeClient />
       </main>
     </>
   );
