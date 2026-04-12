@@ -264,7 +264,7 @@ function MandatePage({ mandate, onBack, onApply }) {
           {mandate.ubp_ref && <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-neutral-400">{mandate.ubp_ref}</span>}
         </div>
         <div className="text-4xl mb-3">{mandate.flag}</div>
-        <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2">{mandate.title}</h1>
+        <h1 className="font-[var(--font-playfair)] text-4xl font-semibold tracking-tight text-white mb-2">{mandate.title}</h1>
         <p className="text-xl text-neutral-300">{mandate.subtitle} · {mandate.location}</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -390,7 +390,7 @@ export default function MandatesClient() {
           <>
             <div className="text-center mb-10">
               <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90 mb-3">Private Banking · Discreet Mandates</p>
-              <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl mb-4">Private Banking Jobs in Switzerland</h1>
+              <h1 className="font-[var(--font-playfair)] text-4xl font-semibold tracking-tight md:text-5xl mb-4">Private Banking Jobs in Switzerland</h1>
               <p className="mx-auto max-w-2xl text-neutral-300 leading-relaxed">
                 Live mandates across <strong>Geneva</strong> and <strong>Zurich</strong>, with international coverage in <strong>Dubai</strong>, <strong>Singapore</strong>, <strong>London</strong> &amp; <strong>New York</strong>. We publish a subset of searches; confidential roles are shared directly with qualified bankers.
               </p>

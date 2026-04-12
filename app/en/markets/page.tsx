@@ -19,10 +19,10 @@ export default function MarketsIndexPage() {
       <section className="border-b border-white/10 bg-gradient-to-b from-black/80 via-[#05070B] to-[#0B0E13]">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-12 md:flex-row md:items-end md:justify-between md:py-16">
           <div className="max-w-3xl space-y-4">
-            <p className="text-xs font-medium uppercase tracking-[0.25em] text-white/50">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
               PRIVATE BANKING MARKETS
             </p>
-            <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+            <h1 className="font-[var(--font-playfair)] text-3xl font-semibold tracking-tight md:text-4xl">
               Compare private banking hubs before you move your book.
             </h1>
             <p className="text-sm text-neutral-300 md:text-base">

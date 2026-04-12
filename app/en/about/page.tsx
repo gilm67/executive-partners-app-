@@ -121,7 +121,7 @@ export default function AboutPage() {
           </div>
 
           {/* Title */}
-          <h1 className="mt-3 text-center text-4xl font-extrabold tracking-tight md:text-5xl">
+          <h1 className="mt-3 text-center font-[var(--font-playfair)] text-4xl font-semibold tracking-tight md:text-5xl">
             About Executive Partners — Connecting Top Talent with Excellence
           </h1>
 
@@ -134,7 +134,7 @@ export default function AboutPage() {
           {/* Who we are / What we do */}
           <section className="mt-10 grid gap-6 md:grid-cols-2">
             <article className="rounded-2xl border border-brandGold/20 bg-white/[0.03] p-6 shadow-[0_0_30px_rgba(0,0,0,0.35)]">
-              <h2 className="text-xl font-bold text-brandGoldSoft">Who we are</h2>
+              <h2 className="font-[var(--font-playfair)] text-xl font-semibold text-brandGoldSoft">Who we are</h2>
               <p className="mt-3 text-sm leading-relaxed text-neutral-300">
                 Executive Partners is a boutique executive search firm focused on
                 Private Banking & Wealth Management. Headquartered in Geneva with
@@ -143,7 +143,7 @@ export default function AboutPage() {
             </article>
 
             <article className="rounded-2xl border border-brandGold/20 bg-white/[0.03] p-6 shadow-[0_0_30px_rgba(0,0,0,0.35)]">
-              <h2 className="text-xl font-bold text-brandGoldSoft">What we do</h2>
+              <h2 className="font-[var(--font-playfair)] text-xl font-semibold text-brandGoldSoft">What we do</h2>
               <ul className="mt-3 grid list-disc gap-2 pl-5 text-sm text-neutral-300">
                 <li><span className="font-medium text-white">Front-office hires:</span> Directors, ED, MD, Team Heads, Market Leads</li>
                 <li><span className="font-medium text-white">Strategic mandates:</span> Desk builds, expansions, M&A integration</li>
@@ -155,7 +155,7 @@ export default function AboutPage() {
 
           {/* Why clients trust us */}
           <section className="mt-8 rounded-2xl border border-brandGold/20 bg-white/[0.05] p-6">
-            <h2 className="text-xl font-bold text-brandGoldSoft">Why clients trust us</h2>
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold text-brandGoldSoft">Why clients trust us</h2>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               {[
                 ["True sector specialists", "Former front-office/in-house specialists who understand cross-border and compliance realities."],
@@ -174,7 +174,7 @@ export default function AboutPage() {
 
           {/* Coverage */}
           <section className="mt-8 rounded-2xl border border-brandGold/20 bg-white/[0.04] p-6">
-            <h2 className="text-xl font-bold text-brandGoldSoft">Coverage</h2>
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold text-brandGoldSoft">Coverage</h2>
             <div className="mt-4 grid gap-6 md:grid-cols-3">
               {/* Switzerland */}
               <div>
@@ -224,7 +224,7 @@ export default function AboutPage() {
 
           {/* How we work */}
           <section className="mt-8 rounded-2xl border border-brandGold/20 bg-white/[0.04] p-6">
-            <h2 className="text-xl font-bold text-brandGoldSoft">How we work</h2>
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold text-brandGoldSoft">How we work</h2>
             <ol className="mt-4 grid gap-4 md:grid-cols-5">
               {[
                 ["Brief & calibration", "Clear success profile & compliance constraints."],
@@ -258,7 +258,7 @@ export default function AboutPage() {
 
           {/* CTA */}
           <section className="mt-10 rounded-2xl border border-brandGold/20 bg-white/[0.04] p-6 text-center">
-            <h3 className="text-xl font-bold text-brandGoldSoft">
+            <h3 className="font-[var(--font-playfair)] text-xl font-semibold text-brandGoldSoft">
               Ready to discuss a mandate or explore a move?
             </h3>
             <p className="mx-auto mt-2 max-w-2xl text-sm text-neutral-300">
