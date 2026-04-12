@@ -291,7 +291,7 @@ export default function InsightsPage() {
             Insights
           </div>
 
-          <h1 className="mt-5 text-4xl font-semibold text-white tracking-tight">
+          <h1 className="mt-5 font-[var(--font-playfair)] text-4xl font-semibold text-white tracking-tight">
             Intelligence that makes decisions easier.
           </h1>
 
@@ -323,7 +323,7 @@ export default function InsightsPage() {
                 <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
                   Recommended for you
                 </div>
-                <h2 className="mt-2 text-xl font-semibold text-white">{roleLabel}</h2>
+                <h2 className="mt-2 font-[var(--font-playfair)] text-xl font-semibold text-white">{roleLabel}</h2>
                 <p className="mt-1 text-sm text-white/60">{roleKicker}</p>
               </div>
 
@@ -437,7 +437,7 @@ export default function InsightsPage() {
               <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
                 Latest
               </div>
-              <h2 className="mt-2 text-xl font-semibold text-white">Latest intelligence</h2>
+              <h2 className="mt-2 font-[var(--font-playfair)] text-xl font-semibold text-white">Latest intelligence</h2>
               <p className="mt-1 text-sm text-white/60">
                 The freshest reads — updated as you publish.
               </p>
@@ -526,7 +526,7 @@ export default function InsightsPage() {
               <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
                 Pillar I
               </div>
-              <h2 className="mt-2 text-xl font-semibold text-white">Browse by sub-theme</h2>
+              <h2 className="mt-2 font-[var(--font-playfair)] text-xl font-semibold text-white">Browse by sub-theme</h2>
               <p className="mt-1 text-sm text-white/60">Four chapters. Clear entry points.</p>
             </div>
             <Link href="/en/insights/pillar/p1" className="text-sm text-white/70 hover:text-white">
