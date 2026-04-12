@@ -380,7 +380,7 @@ export default function MandatesClient() {
   };
 
   return (
-    <main className="relative min-h-screen bg-[#0B0E13] text-white" ref={topRef}>
+    <main className="relative min-h-screen text-white" ref={topRef}>
       <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(1400px 500px at 10% -10%, rgba(201,161,74,.18) 0%, rgba(201,161,74,0) 55%), radial-gradient(1100px 420px at 110% 0%, rgba(245,231,192,.15) 0%, rgba(245,231,192,0) 60%)" }} />
 
       {screening && <ScreeningModal mandate={screening} onClose={() => setScreening(null)} onPass={() => { openFull(screening); setScreening(null); }} />}

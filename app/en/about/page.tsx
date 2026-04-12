@@ -98,7 +98,7 @@ export default function AboutPage() {
         ]}
       />
 
-      <main className="relative min-h-screen bg-[#0B0E13] text-white">
+      <main className="relative min-h-screen text-white">
         {/* JSON-LD */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageJsonLd) }} />
