@@ -138,7 +138,7 @@ export default function HomeClient() {
   return (
     <div className="relative text-white">
       {/* BACKDROP */}
-      <div className="absolute inset-0 -z-10 bg-[#06090F]" />
+      <div className="absolute inset-0 -z-10" />
       <div
         aria-hidden
         className="absolute inset-0 -z-10"
@@ -284,8 +284,8 @@ export default function HomeClient() {
           </div>
 
           <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02]">
-            <div className="pointer-events-none absolute left-0 top-0 h-full w-24 z-10 bg-gradient-to-r from-[#06090F] to-transparent" />
-            <div className="pointer-events-none absolute right-0 top-0 h-full w-24 z-10 bg-gradient-to-l from-[#06090F] to-transparent" />
+            <div className="pointer-events-none absolute left-0 top-0 h-full w-24 z-10 bg-gradient-to-r from-black/80 to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 h-full w-24 z-10 bg-gradient-to-l from-black/80 to-transparent" />
 
             <div className="group py-6">
               <div className="flex w-max gap-4 pr-4 animate-[marquee_32s_linear_infinite] group-hover:[animation-play-state:paused]">
@@ -356,7 +356,7 @@ export default function HomeClient() {
                 href={`/en/markets/${citySlug(city.name)}`}
                 prefetch={false}
                 aria-label={`Market ${city.name}`}
-                className="group relative bg-[#06090F] px-5 py-5 sm:px-6 sm:py-6 hover:bg-white/[0.05] transition-all duration-300 overflow-hidden"
+                className="group relative bg-black/40 px-5 py-5 sm:px-6 sm:py-6 hover:bg-white/[0.05] transition-all duration-300 overflow-hidden"
               >
                 {/* Per-city ambient glow on hover */}
                 <div
@@ -440,7 +440,7 @@ export default function HomeClient() {
       {/* EMAIL MODAL */}
       {showEmailPopup && (
         <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#08090F] p-8 rounded-2xl w-full max-w-md relative border border-white/10 shadow-[0_40px_100px_rgba(0,0,0,.80)]">
+          <div className="bg-black/90 p-8 rounded-2xl w-full max-w-md relative border border-white/10 shadow-[0_40px_100px_rgba(0,0,0,.80)]">
             <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-transparent" />
 
             <button
