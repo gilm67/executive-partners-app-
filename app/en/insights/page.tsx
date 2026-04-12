@@ -1,579 +1,320 @@
-"use client";
-
-import { useEffect, useMemo, useState } from "react";
+// app/page.tsx
 import Link from "next/link";
-import { INSIGHTS, type InsightArticle } from "./articles";
-import { marketLabel } from "@/lib/markets/marketLabel";
-
-/* -------------------------------- helpers -------------------------------- */
-
-function formatDate(iso: string) {
-  try {
-    return new Intl.DateTimeFormat("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }).format(new Date(iso));
-  } catch {
-    return iso;
-  }
-}
-
-function safeDateMs(iso?: string) {
-  const t = Date.parse((iso || "").trim());
-  return Number.isNaN(t) ? 0 : t;
-}
-
-function isWithinDays(iso: string, days: number) {
-  const ms = safeDateMs(iso);
-  if (!ms) return false;
-  const now = Date.now();
-  const windowMs = days * 24 * 60 * 60 * 1000;
-  return now - ms <= windowMs;
-}
-
-/* -------------------------------- config -------------------------------- */
-
-const LINKEDIN_LATEST = [
-  {
-    title: "When the Safe Haven Isn't Safe Anymore",
-    date: "2026-03-24",
-    url: "https://www.linkedin.com/pulse/when-safe-haven-isnt-anymore-gil-m-chalem--hiuqe/?trackingId=YrwTvQV2N9CE1%2BnPjlmOiw%3D%3D",
-  },
-  {
-    title: "Julius Baer Cut Jobs Even After a Strong 2024. Every Private Banker Should Pay Attention.",
-    date: "2026-03-23",
-    url: "https://www.linkedin.com/pulse/julius-baer-cut-jobs-even-after-strong-2024-every-pay-gil-m-chalem--nb7be/?trackingId=Mgdv5MD93s%2Fo05fJA%2F23zg%3D%3D",
-  },
-  {
-    title: "Why More Senior RMs Are Asking Me About Going Independent. And What I Tell Them",
-    date: "2026-03-17",
-    url: "https://www.linkedin.com/pulse/why-more-senior-rms-asking-me-going-independent-what-i-gil-m-chalem--kglqe/?trackingId=zk7njMxrFRRRHoYvOZaBUQ%3D%3D",
-  },
-  {
-    title: "The UBS Integration Is Exposing a Career Problem Most Senior Bankers Don't Know They Have",
-    date: "2026-03-10",
-    url: "https://www.linkedin.com/pulse/ubs-integration-exposing-career-problem-most-senior-dont-m-chalem--e8iac/?trackingId=FfzRcDilXT6LYRqKlBpOhg%3D%3D",
-  },
-  {
-    title: "Dubai's Illusion Is Gone. Where Does That Leave You?",
-    date: "2026-03-09",
-    url: "https://www.linkedin.com/pulse/dubais-illusion-gone-where-does-leave-you-gil-m-chalem--mrdye/?trackingId=8pwqePN%2BcITpuF2r17JosQ%3D%3D",
-  },
-  {
-    title: "Storm Warning: Tariffs, Zero Rates, and Crypto Are Rewriting the Rules for Private Bankers",
-    date: "2026-03-03",
-    url: "https://www.linkedin.com/pulse/storm-warning-tariffs-zero-rates-crypto-rewriting-rules-m-chalem--uzzfe/?trackingId=USW1FEChQGjD8J87jSLdKw%3D%3D",
-  },
-  {
-    title: "The Alternative Investment Tipping Point: Private Wealth is Going Mainstream",
-    date: "2026-02-24",
-    url: "https://www.linkedin.com/pulse/alternative-investment-tipping-point-private-wealth-going-m-chalem--rzfye/?trackingId=Cn23Thz6cEnZ1mzkg0HM3g%3D%3D",
-  },
-  {
-    title: "Zürich 2026: Warum der Talentmarkt im Private Banking gerade umkippt",
-    date: "2026-02-20",
-    url: "https://www.linkedin.com/pulse/z%C3%BCrich-2026-warum-der-talentmarkt-im-private-banking-gil-m-chalem--wcx4e/?trackingId=zwftUxx4DeFLEYgPWWqGMw%3D%3D",
-  },
-  {
-    title: "UBS at the Crossroads: Succession, Integration, and the Fight for Its Future",
-    date: "2026-02-17",
-    url: "https://www.linkedin.com/pulse/ubs-crossroads-succession-integration-fight-its-gil-m-chalem--blsve/?trackingId=SpCaUGq9k%2B8kizryc2eVxw%3D%3D",
-  },
-] as const;
-
-const P1_SUBTHEMES = [
-  {
-    key: "Positioning",
-    title: "Positioning",
-    href: "/en/insights/subtheme/positioning",
-    desc: "Who is winning, who is losing — and why.",
-  },
-  {
-    key: "ScaleVsBoutique",
-    title: "Scale vs Boutique",
-    href: "/en/insights/subtheme/scale-vs-boutique",
-    desc: "Economics of scale vs boutique models.",
-  },
-  {
-    key: "ROAPlatform",
-    title: "ROA & Platform",
-    href: "/en/insights/subtheme/roa-platform",
-    desc: "ROA pressure, platforms, cost of compliance.",
-  },
-  {
-    key: "M&ARestructuring",
-    title: "M&A & Restructuring",
-    href: "/en/insights/subtheme/m-a-restructuring",
-    desc: "M&A, integrations, silent restructurings.",
-  },
-] as const;
-
-type RoleKey = "rm" | "hm";
-const ROLE_STORAGE_KEY = "insights_role";
+import Image from "next/image";
+import HomeClient from "./(marketing)/HomeClient";
+import type { ReactNode } from "react";
+import type { Metadata } from "next";
+import { ArrowRight, Sparkles, Calculator } from "lucide-react";
+import { OrganizationSchema } from "@/components/StructuredData";
 
 /**
- * ✅ Your real routes:
- * https://www.execpartners.ch/en/bp-simulator
- * https://www.execpartners.ch/portability
+ * ✅ Use the new WebP hero (you generated: public/hero-skyline-hq.webp)
  */
-const ROLE_CTA: Record<
-  RoleKey,
-  { primary: { label: string; href: string }; secondary?: { label: string; href: string } }
-> = {
-  rm: {
-    primary: { label: "Assess your portability →", href: "/portability" },
-    secondary: { label: "Run a Business Plan →", href: "/en/bp-simulator" },
+const HERO = "/hero-skyline-hq.webp";
+
+/**
+ * ✅ IMPORTANT:
+ * Page-level metadata OVERRIDES layout metadata.
+ * If you set openGraph/twitter here, include images, otherwise you'll lose og:image/twitter:image.
+ * Use relative URL so metadataBase (canonical domain) resolves it correctly.
+ */
+const OG_IMAGE = "/og.webp";
+
+export const metadata: Metadata = {
+  title: "Executive Partners | Private Banking Executive Search | Geneva",
+  description:
+    "Leading executive search firm specializing in senior private banking roles across Geneva, Zurich, London, Dubai, Singapore. 200+ placements, 98% retention rate.",
+
+  openGraph: {
+    title: "Executive Partners | Private Banking Executive Search",
+    description:
+      "Global executive search for senior private banking professionals. Geneva-based, globally connected.",
+    type: "website",
+    url: "/",
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "Executive Partners – Private Banking & Wealth Management Executive Search",
+      },
+    ],
   },
-  hm: {
-    primary: { label: "Speak confidentially →", href: "/en/contact" },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Executive Partners | Private Banking Executive Search",
+    description:
+      "Leading executive search for senior private banking roles worldwide.",
+    images: [OG_IMAGE],
+  },
+
+  alternates: {
+    canonical: "/",
   },
 };
 
-/**
- * Curated slugs for first version.
- * ✅ Self-healing will permanently drop any slug that misses once.
- */
-const RECOMMENDED_BY_ROLE: Record<RoleKey, readonly string[]> = {
-  rm: [
-    "investment-advisor-replacing-rm",
-    "how-build-billion-dollar-client-portfolio-banking",
-    "ultimate-guide-interview-preparation-recruiters",
-    "family-office-revolution",
-    "traditional-private-banks-vs-family-offices",
-    "should-private-banks-embrace-bitcoin-clients",
-  ],
-  hm: [
-    "ubs-unbeatable",
-    "ubss-silent-earthquake-10000-more-jobs-set-disappear-2027",
-    "ubs-switzerlands-banking-giant-transformation",
-    "changing-face-swiss-private-banking",
-    "swiss-private-banking-shake-up-mega-mergers",
-    "swiss-european-banks-tighten-grip-cis-clients",
-  ],
-};
+export const dynamic = "force-static";
+export const revalidate = false;
 
-/* -------------------- self-healing helpers -------------------- */
-
-function staleKey(role: RoleKey) {
-  return `insights_reco_stale_${role}`;
-}
-
-function readStale(role: RoleKey): Set<string> {
-  try {
-    const raw = window.localStorage.getItem(staleKey(role));
-    if (!raw) return new Set();
-    const arr = JSON.parse(raw);
-    if (!Array.isArray(arr)) return new Set();
-    return new Set(arr.filter((x) => typeof x === "string"));
-  } catch {
-    return new Set();
-  }
-}
-
-function writeStale(role: RoleKey, stale: Set<string>) {
-  try {
-    window.localStorage.setItem(staleKey(role), JSON.stringify(Array.from(stale)));
-  } catch {
-    /* noop */
-  }
-}
-
-/* -------------------------------- page -------------------------------- */
-
-export default function InsightsPage() {
-  const sorted = useMemo(
-    () => [...INSIGHTS].sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date)),
-    []
-  );
-
-  const featured = useMemo(() => sorted.filter((a) => a.featured).slice(0, 6), [sorted]);
-
-  // "Top Insight This Week" (last 7 days, highest engagementScore, tie-break by recency)
-  const topThisWeek = useMemo(() => {
-    const w = sorted.filter((a) => isWithinDays(a.date, 7));
-    if (!w.length) return null;
-
-    const withScore = w.filter((a) => typeof a.engagementScore === "number");
-    const pool = withScore.length ? withScore : w;
-
-    return pool
-      .slice()
-      .sort(
-        (a, b) =>
-          (b.engagementScore ?? 0) - (a.engagementScore ?? 0) ||
-          safeDateMs(b.date) - safeDateMs(a.date)
-      )[0];
-  }, [sorted]);
-
-  /* ---------------- Recommended logic ---------------- */
-
-  const [role, setRole] = useState<RoleKey>("rm");
-
-  useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(ROLE_STORAGE_KEY) as RoleKey | null;
-      if (saved === "rm" || saved === "hm") setRole(saved);
-    } catch {
-      /* noop */
-    }
-  }, []);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(ROLE_STORAGE_KEY, role);
-    } catch {
-      /* noop */
-    }
-  }, [role]);
-
-  const featuredSlugs = useMemo(() => new Set(featured.map((a) => a.slug)), [featured]);
-
-  const recommended = useMemo(() => {
-    const picked: InsightArticle[] = [];
-    const wanted = RECOMMENDED_BY_ROLE[role];
-
-    const stale = typeof window !== "undefined" ? readStale(role) : new Set<string>();
-    let staleChanged = false;
-
-    // curated first (auto-drop stale/missing)
-    for (const slug of wanted) {
-      if (stale.has(slug)) continue;
-
-      const a = sorted.find((x) => x.slug === slug);
-      if (!a) {
-        stale.add(slug);
-        staleChanged = true;
-        continue;
-      }
-
-      if (featuredSlugs.has(a.slug)) continue;
-      picked.push(a);
-      if (picked.length === 3) break;
-    }
-
-    if (staleChanged && typeof window !== "undefined") {
-      writeStale(role, stale);
-    }
-
-    // fallback
-    if (picked.length < 3) {
-      for (const a of sorted) {
-        if (featuredSlugs.has(a.slug)) continue;
-        if (picked.some((p) => p.slug === a.slug)) continue;
-        picked.push(a);
-        if (picked.length === 3) break;
-      }
-    }
-
-    return picked;
-  }, [role, sorted, featuredSlugs]);
-
-  const roleLabel = role === "rm" ? "Relationship Managers" : "Hiring Managers";
-  const roleKicker =
-    role === "rm"
-      ? "Career moves, portability, and performance-led roles."
-      : "Strategy signals, restructuring risk, and talent implications.";
-
-  const roleCta = ROLE_CTA[role];
-
-  /* -------------------------------- render -------------------------------- */
-
+export default function HomePage() {
   return (
-    <main className="relative overflow-hidden">
-      {/* Premium background */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[#060A12]" />
-        <div className="absolute -top-40 left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-white/10 blur-3xl opacity-30" />
-        <div className="absolute top-40 left-[-200px] h-[380px] w-[380px] rounded-full bg-[#D4AF37]/10 blur-3xl opacity-35" />
-        <div className="absolute bottom-[-220px] right-[-200px] h-[520px] w-[520px] rounded-full bg-white/10 blur-3xl opacity-25" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/40" />
-      </div>
+    <>
+      <OrganizationSchema />
+      <main className="relative min-h-screen body-grain text-white">
+        <section className="relative overflow-hidden">
+          {/* ✅ Controlled hero height (prevents "too tall" feeling) */}
+          <div className="relative h-[68vh] min-h-[560px] max-h-[820px] w-full md:h-[72vh]">
+            <Image
+              src={HERO}
+              alt="Executive Partners – global private banking hubs skyline at dusk"
+              fill
+              priority
+              fetchPriority="high"
+              sizes="(max-width: 768px) 100vw, 1200px"
+              className="object-cover object-center"
+            />
 
-      <div className="mx-auto w-full max-w-6xl px-4 py-14">
-        {/* HERO */}
-        <header className="mb-10">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-white/70">
-            Private Wealth Pulse
-            <span className="h-1 w-1 rounded-full bg-[#D4AF37]/80" />
-            Insights
-          </div>
+            {/* ✅ Premium overlay stack (stronger, consistent contrast) */}
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-[radial-gradient(1200px_420px_at_18%_-10%,rgba(0,0,0,.55),transparent_60%),linear-gradient(to_bottom,rgba(0,0,0,.72),rgba(0,0,0,.25)_42%,rgba(0,0,0,.78))]"
+            />
+            <div aria-hidden className="absolute inset-0 bg-black/25" />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 [box-shadow:inset_0_-160px_220px_-90px_rgba(0,0,0,0.75)]"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 [box-shadow:inset_0_120px_180px_-120px_rgba(0,0,0,0.70)]"
+            />
 
-          <h1 className="mt-5 text-4xl font-semibold text-white tracking-tight">
-            Intelligence that makes decisions easier.
-          </h1>
-
-          <p className="mt-3 max-w-2xl text-white/70">
-            Private banking analysis on strategy, talent, and market power — built for Switzerland and
-            major booking centres.
-          </p>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href="#latest"
-              className="inline-flex items-center rounded-xl bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-black hover:opacity-90"
-            >
-              Start with latest →
-            </a>
-            <Link
-              href="/en/insights/archive"
-              className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
-            >
-              Browse archive
-            </Link>
-          </div>
-        </header>
-
-        {/* RECOMMENDED */}
-        <section className="mb-14">
-          <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 shadow-[0_20px_80px_rgba(0,0,0,0.35)] backdrop-blur">
-            <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-              <div>
-                <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
-                  Recommended for you
+            <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4">
+              {/* ✅ Slightly smaller, tighter hero card */}
+              <div className="max-w-3xl rounded-2xl bg-black/45 px-6 py-6 text-center backdrop-blur-sm ring-1 ring-white/10">
+                {/* Optional: add logo above H1 for stronger brand signal */}
+                <div className="flex justify-center">
+                  <Image
+                    src="/transparent-ep-logo.png"
+                    alt="Executive Partners – Private Banking & Wealth Management Executive Search"
+                    width={320}
+                    height={110}
+                    priority
+                    sizes="320px"
+                    className="h-auto w-[210px] drop-shadow-[0_0_18px_rgba(255,255,255,0.28)] sm:w-[260px] md:w-[320px]"
+                  />
                 </div>
-                <h2 className="mt-2 text-xl font-semibold text-white">{roleLabel}</h2>
-                <p className="mt-1 text-sm text-white/60">{roleKicker}</p>
-              </div>
 
-              <div className="inline-flex rounded-2xl border border-white/15 bg-black/20 p-1">
-                <button
-                  type="button"
-                  onClick={() => setRole("rm")}
-                  className={[
-                    "rounded-xl px-4 py-2 text-sm font-semibold transition",
-                    role === "rm"
-                      ? "bg-white/10 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.10)]"
-                      : "text-white/60 hover:text-white hover:bg-white/5",
-                  ].join(" ")}
-                >
-                  I'm an RM
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRole("hm")}
-                  className={[
-                    "rounded-xl px-4 py-2 text-sm font-semibold transition",
-                    role === "hm"
-                      ? "bg-white/10 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.10)]"
-                      : "text-white/60 hover:text-white hover:bg-white/5",
-                  ].join(" ")}
-                >
-                  I'm Hiring
-                </button>
-              </div>
-            </div>
+                <h1 className="mt-4 font-[var(--font-playfair)] text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl">
+                  Your next move in{" "}
+                  <span className="gold">private banking</span>{" "}
+                  starts here.
+                </h1>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {recommended.map((a) => {
-                const isTopWeek = topThisWeek?.slug === a.slug;
-                return (
+                <p className="mt-4 text-white/90">
+                  Where the right talent meets the right platform.
+                </p>
+
+                <div className="mt-7">
                   <Link
-                    key={a.slug}
-                    href={`/en/insights/${a.slug}`}
-                    className="group rounded-2xl border border-white/10 bg-black/20 p-5 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-black/30"
+                    href="/apply"
+                    className="btn-primary btn-xl rounded-full px-8 shadow-lg"
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="text-xs text-white/55">{formatDate(a.date)}</div>
-
-                      <div className="flex items-center gap-2">
-                        {isTopWeek ? (
-                          <span className="rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-2 py-0.5 text-[10px] font-semibold text-[#D4AF37]">
-                            Top this week
-                          </span>
-                        ) : null}
-                        <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/60">
-                          Recommended
-                        </span>
-                      </div>
-                    </div>
-
-                    <h3 className="mt-3 text-base font-semibold text-white leading-snug">
-                      {a.title}
-                    </h3>
-
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {(a.markets ?? []).slice(0, 3).map((m) => (
-                        <span
-                          key={m}
-                          className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/75"
-                          title={marketLabel(m)}
-                        >
-                          {marketLabel(m)}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
-                      Read <span className="transition group-hover:translate-x-0.5">→</span>
-                    </div>
+                    Apply Confidentially
                   </Link>
-                );
-              })}
-            </div>
-
-            {/* Role-aware CTA row */}
-            <div className="mt-6 flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-wrap items-center gap-4">
-                <Link
-                  href={roleCta.primary.href}
-                  className="inline-flex items-center rounded-xl bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
-                >
-                  {roleCta.primary.label}
-                </Link>
-
-                {roleCta.secondary ? (
-                  <Link
-                    href={roleCta.secondary.href}
-                    className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
-                  >
-                    {roleCta.secondary.label}
-                  </Link>
-                ) : null}
+                </div>
               </div>
-
-              <Link
-                href="/en/insights/archive"
-                className="text-sm font-semibold text-white/70 hover:text-white underline underline-offset-4"
-              >
-                Browse all insights →
-              </Link>
             </div>
+
+            {/* subtle frame */}
+            <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/5" />
           </div>
-        </section>
 
-        {/* LATEST */}
-        <section id="latest" className="mb-14 scroll-mt-28">
-          <div className="mb-6 flex items-end justify-between">
-            <div>
-              <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
-                Latest
-              </div>
-              <h2 className="mt-2 text-xl font-semibold text-white">Latest intelligence</h2>
-              <p className="mt-1 text-sm text-white/60">
-                The freshest reads — updated as you publish.
+          {/* FREE TOOLS SECTION - Now first and prominent */}
+          <div className="relative mx-auto -mt-14 max-w-6xl px-4 pb-8 sm:-mt-20">
+            <div className="mb-6 text-center">
+              <h2 className="font-[var(--font-playfair)] text-3xl font-semibold text-white md:text-4xl">
+                Free Tools for Private Bankers
+              </h2>
+              <p className="mt-3 text-lg text-white/80">
+                Assess your portability and model your business plan in minutes
               </p>
             </div>
-
-            <Link href="/en/insights/archive" className="text-sm text-white/70 hover:text-white">
-              Browse archive →
-            </Link>
+            <GatewayPanel />
           </div>
 
-          {/* NEW: LinkedIn latest (external) */}
-          <div className="mb-6 grid gap-4 md:grid-cols-3">
-            {LINKEDIN_LATEST.slice()
-              .sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))
-              .map((a) => (
-                <a
-                  key={a.url}
-                  href={a.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group rounded-3xl border border-[#D4AF37]/20 bg-gradient-to-b from-[#D4AF37]/10 to-white/5 p-6 transition hover:-translate-y-0.5 hover:border-[#D4AF37]/35 hover:bg-white/10"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="text-xs text-white/55">{formatDate(a.date)}</div>
-                    <span className="rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-2 py-0.5 text-[10px] font-semibold text-[#D4AF37]">
-                      LinkedIn · External
-                    </span>
-                  </div>
-
-                  <h3 className="mt-3 text-lg font-semibold text-white leading-snug">{a.title}</h3>
-
-                  <p className="mt-3 text-sm text-white/70 line-clamp-3">
-                    Read the full article on LinkedIn.
-                  </p>
-
-                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
-                    Read on LinkedIn <span className="transition group-hover:translate-x-0.5">→</span>
-                  </div>
-                </a>
-              ))}
-          </div>
-
-          {/* Existing featured cards */}
-          <div className="grid gap-6 md:grid-cols-3">
-            {featured.map((a) => {
-              const isTopWeek = topThisWeek?.slug === a.slug;
-              return (
-                <Link
-                  key={a.slug}
-                  href={`/en/insights/${a.slug}`}
-                  className="group rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="text-xs text-white/55">{formatDate(a.date)}</div>
-
-                    {isTopWeek ? (
-                      <span className="rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-2 py-0.5 text-[10px] font-semibold text-[#D4AF37]">
-                        Top this week
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <h3 className="mt-3 text-lg font-semibold text-white leading-snug">{a.title}</h3>
-                  <p className="mt-3 text-sm text-white/70 line-clamp-3">{a.summary}</p>
-
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {(a.markets ?? []).slice(0, 4).map((m) => (
-                      <span
-                        key={m}
-                        className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/75"
-                        title={marketLabel(m)}
-                      >
-                        {marketLabel(m)}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
-                    Read <span className="transition group-hover:translate-x-0.5">→</span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* SUB-THEMES */}
-        <section className="mt-16">
-          <div className="mb-6 flex items-end justify-between">
-            <div>
-              <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
-                Pillar I
+          {/* KPI CARDS - Now below tools */}
+          <div className="relative mx-auto max-w-6xl px-4 pb-10">
+            <div className="rounded-2xl bg-white text-[#0B0E13] shadow-xl">
+              <div className="grid gap-4 p-6 md:grid-cols-3">
+                <KpiCard
+                  title="Placements"
+                  value="200+"
+                  note="Senior RMs & Private Bankers placed worldwide"
+                />
+                <KpiCard
+                  title="12-month Retention"
+                  value="98%"
+                  note="Candidates still in seat after 12 months"
+                />
+                <KpiCard
+                  title="Global Hubs"
+                  value="12+"
+                  note="Geneva, Zurich, London, Dubai, Singapore, Hong Kong, New York, Miami, Paris, Milan, Madrid, Lisbon"
+                />
               </div>
-              <h2 className="mt-2 text-xl font-semibold text-white">Browse by sub-theme</h2>
-              <p className="mt-1 text-sm text-white/60">Four chapters. Clear entry points.</p>
             </div>
-
-            <Link href="/en/insights/pillar/p1" className="text-sm text-white/70 hover:text-white">
-              Open Pillar I →
-            </Link>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {P1_SUBTHEMES.map((s) => (
-              <Link
-                key={s.key}
-                href={s.href}
-                className="group rounded-3xl border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-sm font-semibold text-white">{s.title}</h3>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/60">
-                    Chapter
-                  </span>
-                </div>
-                <p className="mt-2 text-sm text-white/65">{s.desc}</p>
-                <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
-                  Explore <span className="transition group-hover:translate-x-0.5">→</span>
-                </div>
-              </Link>
-            ))}
           </div>
         </section>
+
+        <HomeClient />
+      </main>
+    </>
+  );
+}
+
+function KpiCard({
+  title,
+  value,
+  note,
+}: {
+  title: string;
+  value: string;
+  note?: string;
+}) {
+  return (
+    <div className="rounded-xl border border-black/10 bg-white/90 p-5 shadow-sm">
+      <div className="text-sm font-semibold text-black/70">{title}</div>
+      <div className="mt-2 text-4xl font-extrabold tracking-tight text-black">
+        {value}
       </div>
-    </main>
+      {note ? (
+        <div className="mt-2 text-[13px] leading-snug text-black/70">
+          {note}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function GatewayPanel() {
+  return (
+    <section
+      aria-label="Primary tools"
+      className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0B0F1A]/72 p-4 backdrop-blur-xl shadow-[0_26px_90px_rgba(0,0,0,.55)]"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-3xl"
+        style={{
+          background:
+            "radial-gradient(900px 260px at 18% 0%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 60%), radial-gradient(900px 260px at 92% 25%, rgba(158,203,255,.16) 0%, rgba(158,203,255,0) 55%), linear-gradient(to bottom, rgba(255,255,255,.06), rgba(0,0,0,0))",
+        }}
+      />
+
+      <div className="relative grid gap-4 md:grid-cols-2">
+        <ActionCard
+          href="/portability"
+          icon={<Sparkles className="h-5 w-5" />}
+          eyebrow="Signature tool"
+          title="Calculate Portability Score™"
+          desc="Estimate realistic AUM transfer potential before you move."
+          variant="gold"
+        />
+
+        <ActionCard
+          href="/bp-simulator"
+          icon={<Calculator className="h-5 w-5" />}
+          eyebrow="Approval tool"
+          title="Business Plan Simulator"
+          desc="Model revenue, break-even timeline and approval readiness."
+          variant="ice"
+        />
+      </div>
+
+      <div className="relative px-2 pt-4 text-center">
+        <span className="text-xs text-white/55">
+          Used by 500+ private bankers • 100% confidential • No obligation
+        </span>
+      </div>
+    </section>
+  );
+}
+
+function ActionCard({
+  href,
+  icon,
+  eyebrow,
+  title,
+  desc,
+  variant = "gold",
+}: {
+  href: string;
+  icon: ReactNode;
+  eyebrow: string;
+  title: string;
+  desc: string;
+  variant?: "gold" | "ice";
+}) {
+  const styles =
+    variant === "gold"
+      ? "border-[#D4AF37]/28 bg-gradient-to-b from-[#D4AF37]/12 to-white/[0.03] hover:border-[#F5D778]/45"
+      : "border-[#9ECBFF]/26 bg-gradient-to-b from-[#9ECBFF]/12 to-white/[0.03] hover:border-[#CFE6FF]/45";
+
+  const iconWrap =
+    variant === "gold"
+      ? "bg-[#D4AF37]/16 ring-1 ring-[#F5D778]/28 text-[#F5D778]"
+      : "bg-[#9ECBFF]/16 ring-1 ring-[#CFE6FF]/26 text-[#CFE6FF]";
+
+  const ctaText =
+    variant === "gold" ? "Calculate Your Score →" : "Run Simulation →";
+
+  return (
+    <Link
+      href={href}
+      className={[
+        "group relative overflow-hidden rounded-2xl border p-6 backdrop-blur-md transition",
+        "shadow-[0_18px_55px_rgba(0,0,0,.45)] hover:shadow-[0_26px_78px_rgba(0,0,0,.60)]",
+        styles,
+      ].join(" ")}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100"
+        style={{
+          background:
+            "radial-gradient(650px 260px at 22% 0%, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 60%)",
+        }}
+      />
+
+      <div className="relative flex items-start gap-4">
+        <div
+          className={[
+            "grid h-11 w-11 place-items-center rounded-xl",
+            iconWrap,
+          ].join(" ")}
+        >
+          {icon}
+        </div>
+
+        <div className="min-w-0">
+          <div className="text-[11px] uppercase tracking-[0.22em] text-white/65">
+            {eyebrow}
+          </div>
+
+          <div className="mt-1 font-[var(--font-playfair)] text-2xl leading-tight text-white">
+            {title}
+          </div>
+
+          <div className="mt-2 text-sm text-white/75">{desc}</div>
+
+          <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white/90">
+            {ctaText}
+            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 }
