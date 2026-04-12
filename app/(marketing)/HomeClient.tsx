@@ -260,64 +260,97 @@ export default function HomeClient() {
       </section>
 
       {/* TESTIMONIALS */}
+      {/* ═══════════════════════════════════════════
+          GLOBAL HUBS — premium two-tier card layout
+      ═══════════════════════════════════════════ */}
       <section className="py-20 border-t border-white/8">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
+
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
               <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">
-                Client feedback
+                Markets
               </p>
               <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight">
-                Trusted by private banking<br className="hidden sm:block" /> professionals
+                Global Private Banking Hubs
               </h2>
-              <p className="mt-3 text-white/55 text-sm sm:text-base max-w-lg">
-                Discreet execution. Strong outcomes. Measurable retention.
+              <p className="mt-2 text-white/50 text-sm sm:text-base">
+                Explore mandates across 12 key booking centres
               </p>
             </div>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/4 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/8 hover:border-white/20 transition-all duration-300 whitespace-nowrap"
-            >
-              Request a confidential call
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02]">
-            <div className="pointer-events-none absolute left-0 top-0 h-full w-24 z-10 bg-gradient-to-r from-black/80 to-transparent" />
-            <div className="pointer-events-none absolute right-0 top-0 h-full w-24 z-10 bg-gradient-to-l from-black/80 to-transparent" />
-
-            <div className="group py-6">
-              <div className="flex w-max gap-4 pr-4 animate-[marquee_32s_linear_infinite] group-hover:[animation-play-state:paused]">
-                {marqueeItems.map((t, i) => (
-                  <div
-                    key={`${t.meta}-${i}`}
-                    className="w-[280px] sm:w-[340px] rounded-xl border border-white/8 bg-white/[0.04] p-6 backdrop-blur-sm"
-                  >
-                    <Quote className="h-4 w-4 text-[#D4AF37]/70" />
-                    <p className="mt-3 text-sm text-white/80 leading-relaxed italic">
-                      "{t.quote}"
-                    </p>
-                    <div className="mt-4 pt-3 border-t border-white/8">
-                      <div className="text-xs font-semibold text-white/90 tracking-wide">{t.meta}</div>
-                      <div className="text-[11px] text-emerald-400/80 mt-1">✓ {t.result}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <style jsx>{`
-                @keyframes marquee {
-                  0% { transform: translateX(0); }
-                  100% { transform: translateX(-33.333%); }
-                }
-              `}</style>
+            <div className="hidden sm:flex items-center gap-2 text-white/25 text-[11px] tracking-widest uppercase">
+              <Globe className="h-3.5 w-3.5" />
+              <span>12 financial centres</span>
             </div>
           </div>
 
-          <p className="mt-3 text-[11px] text-white/30 text-center tracking-wide">
-            Hover to pause
-          </p>
+          {/* Primary hubs — 2x2 large cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            {[
+              { idx: "01", flag: "🇨🇭", city: "Geneva",    region: "Switzerland · Booking centre",  slug: "geneva",    glow: "rgba(201,161,74,0.08)" },
+              { idx: "02", flag: "🇨🇭", city: "Zurich",    region: "Switzerland · Booking centre",  slug: "zurich",    glow: "rgba(201,161,74,0.08)" },
+              { idx: "03", flag: "🇬🇧", city: "London",    region: "United Kingdom · Booking centre", slug: "london",   glow: "rgba(158,203,255,0.07)" },
+              { idx: "04", flag: "🇦🇪", city: "Dubai",     region: "UAE · DIFC booking centre",     slug: "dubai",     glow: "rgba(255,180,60,0.07)" },
+            ].map((c) => (
+              <Link
+                key={c.city}
+                href={`/en/markets/${c.slug}`}
+                prefetch={false}
+                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition-all duration-300 hover:border-[#D4AF37]/40 hover:bg-white/[0.07]"
+              >
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{ background: `radial-gradient(300px 200px at 0% 0%, ${c.glow}, transparent)` }}
+                />
+                <p className="font-mono text-[11px] text-white/20 group-hover:text-[#D4AF37]/40 transition-colors mb-3">{c.idx}</p>
+                <span className="text-2xl mb-3 block">{c.flag}</span>
+                <div className="font-[var(--font-playfair)] text-xl font-semibold text-white">{c.city}</div>
+                <div className="text-xs text-white/40 mt-1">{c.region}</div>
+                <div className="mt-3 inline-block text-[10px] font-semibold uppercase tracking-[0.12em] px-2.5 py-1 rounded-full border border-[#D4AF37]/30 text-[#D4AF37]/80">
+                  Primary hub
+                </div>
+                <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
+                  <span className="text-xs text-white/30 font-medium group-hover:text-white/50 transition-colors">View market</span>
+                  <ArrowRight className="h-3.5 w-3.5 text-[#D4AF37]/60 -translate-x-0.5 group-hover:translate-x-0.5 transition-transform duration-200" />
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Secondary hubs — 4-column compact cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { idx: "05", flag: "🇸🇬", city: "Singapore", region: "Southeast Asia",  slug: "singapore", glow: "rgba(100,220,180,0.07)" },
+              { idx: "06", flag: "🇭🇰", city: "Hong Kong", region: "Asia Pacific",    slug: "hong-kong", glow: "rgba(255,140,100,0.07)" },
+              { idx: "07", flag: "🇺🇸", city: "New York",  region: "United States",   slug: "new-york",  glow: "rgba(158,203,255,0.07)" },
+              { idx: "08", flag: "🇺🇸", city: "Miami",     region: "United States",   slug: "miami",     glow: "rgba(158,203,255,0.06)" },
+              { idx: "09", flag: "🇫🇷", city: "Paris",     region: "France",          slug: "paris",     glow: "rgba(201,161,74,0.06)" },
+              { idx: "10", flag: "🇮🇹", city: "Milan",     region: "Italy",           slug: "milan",     glow: "rgba(201,161,74,0.06)" },
+              { idx: "11", flag: "🇪🇸", city: "Madrid",    region: "Spain",           slug: "madrid",    glow: "rgba(255,160,80,0.06)" },
+              { idx: "12", flag: "🇵🇹", city: "Lisbon",    region: "Portugal",        slug: "lisbon",    glow: "rgba(255,160,80,0.06)" },
+            ].map((c) => (
+              <Link
+                key={c.city}
+                href={`/en/markets/${c.slug}`}
+                prefetch={false}
+                className="group relative overflow-hidden rounded-xl border border-white/8 bg-white/[0.03] p-4 transition-all duration-300 hover:border-[#D4AF37]/35 hover:bg-white/[0.06]"
+              >
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{ background: `radial-gradient(200px 150px at 0% 0%, ${c.glow}, transparent)` }}
+                />
+                <p className="font-mono text-[10px] text-white/15 group-hover:text-[#D4AF37]/35 transition-colors mb-2">{c.idx}</p>
+                <span className="text-lg mb-2 block">{c.flag}</span>
+                <div className="text-sm font-semibold text-white/85 group-hover:text-white transition-colors leading-tight">{c.city}</div>
+                <div className="text-[11px] text-white/30 mt-0.5">{c.region}</div>
+                <div className="mt-3 flex items-center gap-1 text-[11px] text-white/20 group-hover:text-[#D4AF37]/60 transition-colors duration-200">
+                  <span className="font-medium">View market</span>
+                  <ArrowRight className="h-3 w-3 -translate-x-0.5 group-hover:translate-x-0.5 transition-transform duration-200" />
+                </div>
+              </Link>
+            ))}
+          </div>
+
         </div>
       </section>
 
