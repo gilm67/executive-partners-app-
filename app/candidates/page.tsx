@@ -127,7 +127,7 @@ export default function CandidatesPage() {
         description="Confidential executive search support for Senior Private Bankers, Relationship Managers and Team Heads. Benchmark compensation, assess portability and submit your CV securely across global wealth hubs including Geneva, Zurich, Dubai, Singapore, London, New York and Hong Kong."
       />
 
-      <main className="relative min-h-screen bg-[#0B0E13] text-white">
+      <main className="relative min-h-screen text-white">
         {/* Structured data - FAQ and WebPage */}
         <script
           type="application/ld+json"
