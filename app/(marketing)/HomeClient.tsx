@@ -357,70 +357,7 @@ export default function HomeClient() {
       {/* FAQ */}
       <CandidateFAQ compact limit={6} />
 
-      {/* ═══════════════════════════════════════════
-          GLOBAL HUBS — clean unified editorial grid
-      ═══════════════════════════════════════════ */}
-      <section className="py-20 border-t border-white/8">
-        <div className="mx-auto max-w-7xl px-4">
 
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">
-                Markets
-              </p>
-              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight">
-                Global Private Banking Hubs
-              </h2>
-              <p className="mt-2 text-white/50 text-sm sm:text-base">
-                Explore opportunities in key booking centres
-              </p>
-            </div>
-            <div className="hidden sm:flex items-center gap-2 text-white/25 text-[11px] tracking-widest uppercase">
-              <Globe className="h-3.5 w-3.5" />
-              <span>12 financial centres</span>
-            </div>
-          </div>
-
-          {/* Unified grid — gap-px creates a ruled newspaper feel */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-px bg-white/6 rounded-2xl overflow-hidden border border-white/8">
-            {CITIES.map((city, idx) => (
-              <Link
-                key={city.name}
-                href={`/en/markets/${citySlug(city.name)}`}
-                prefetch={false}
-                aria-label={`Market ${city.name}`}
-                className="group relative bg-black/40 px-5 py-5 sm:px-6 sm:py-6 hover:bg-white/[0.05] transition-all duration-300 overflow-hidden"
-              >
-                {/* Per-city ambient glow on hover */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{
-                    background: `radial-gradient(220px 160px at 10% 80%, ${city.glow}, transparent 70%)`,
-                  }}
-                />
-                {/* Gold bottom rule on hover */}
-                <div className="absolute bottom-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                <div className="relative flex flex-col">
-                  <span className="text-[10px] font-mono text-white/15 group-hover:text-[#D4AF37]/40 transition-colors duration-300 mb-3 block">
-                    {String(idx + 1).padStart(2, "0")}
-                  </span>
-                  <div className="text-sm sm:text-base font-semibold text-white/85 group-hover:text-white transition-colors leading-tight">
-                    {city.name}
-                  </div>
-                  <div className="mt-1 text-[11px] text-white/30 group-hover:text-white/50 transition-colors tracking-wide">
-                    {city.region}
-                  </div>
-                  <div className="mt-4 flex items-center gap-1 text-[11px] text-white/20 group-hover:text-[#D4AF37]/70 transition-all duration-300">
-                    <span className="font-medium">View market</span>
-                    <ArrowRight className="h-3 w-3 -translate-x-0.5 group-hover:translate-x-0.5 transition-transform duration-300" />
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* CTA */}
       <section className="relative overflow-hidden border-t border-white/8">
