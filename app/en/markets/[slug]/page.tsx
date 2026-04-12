@@ -73,7 +73,7 @@ export default async function MarketPage({ params }: Props) {
 
   if (!m) {
     return (
-      <main className="min-h-screen bg-[#0B0E13] text-white">
+      <main className="relative min-h-screen text-white">
         <section className="mx-auto max-w-5xl px-6 py-16">
           <h1 className="text-2xl font-semibold">Market not found</h1>
           <p className="mt-4 text-neutral-300">
@@ -89,21 +89,21 @@ export default async function MarketPage({ params }: Props) {
   }
 
   return (
-    <main className="min-h-screen bg-[#0B0E13] text-white">
+    <main className="relative min-h-screen text-white">
       {/* ================= HERO ================= */}
-      <section className="relative h-[44vh] min-h-[320px] w-full overflow-hidden">
+      <section className="relative h-[52vh] min-h-[380px] w-full overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${m.heroImage})` }}
           aria-hidden
         />
-        <div className="absolute inset-0 bg-[radial-gradient(900px_320px_at_10%_-10%,rgba(0,0,0,0.7),transparent_60%),linear-gradient(to_bottom,rgba(0,0,0,0.6),rgba(0,0,0,0.85))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(1100px_400px_at_10%_-10%,rgba(0,0,0,0.55),transparent_55%),linear-gradient(to_bottom,rgba(0,0,0,0.5),rgba(0,0,0,0.2)_40%,rgba(0,0,0,0.75))]" />
         <div className="relative z-10 mx-auto flex h-full max-w-6xl items-end px-6 pb-10">
-          <div className="max-w-3xl rounded-2xl bg-black/45 p-6 shadow-xl ring-1 ring-white/15 backdrop-blur-md md:p-8">
+          <div className="max-w-3xl rounded-2xl bg-black/40 p-6 shadow-xl ring-1 ring-white/15 backdrop-blur-md md:p-8">
             <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-white/60">
               PRIVATE BANKING · {m.city.toUpperCase()}
             </p>
-            <h1 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">
+            <h1 className="font-[var(--font-playfair)] text-3xl font-semibold tracking-tight text-white md:text-4xl">
               Move your book to{" "}
               <span className="text-white/90">{m.city}</span> with confidence.
             </h1>
@@ -115,13 +115,13 @@ export default async function MarketPage({ params }: Props) {
       </section>
 
       {/* =============== CONTENT GRID =============== */}
-      <section className="mx-auto max-w-6xl px-6 py-10 md:py-14">
+      <section className="mx-auto max-w-6xl px-6 py-10 md:py-12">
         <div className="grid grid-cols-1 gap-6 md:gap-8">
           {/* HIRING PULSE */}
           {m.hiringPulse && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+            <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
               <header className="mb-5">
-                <h2 className="text-xl font-semibold md:text-2xl">
+                <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
                   Hiring Pulse
                 </h2>
                 {m.hiringPulse.notes && (
@@ -131,7 +131,7 @@ export default async function MarketPage({ params }: Props) {
                 )}
               </header>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
+                <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
                   <div className="text-sm uppercase tracking-wide text-neutral-400">
                     Hot roles
                   </div>
@@ -146,7 +146,7 @@ export default async function MarketPage({ params }: Props) {
                     ))}
                   </ul>
                 </div>
-                <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
+                <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
                   <div className="text-sm uppercase tracking-wide text-neutral-400">
                     Hot skills
                   </div>
@@ -167,9 +167,9 @@ export default async function MarketPage({ params }: Props) {
 
           {/* AT A GLANCE */}
           {!!m.atAGlance?.length && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+            <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
               <header className="mb-5">
-                <h2 className="text-xl font-semibold md:text-2xl">
+                <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
                   At a Glance
                 </h2>
                 <p className="mt-2 text-sm text-neutral-300 md:text-base">
@@ -181,7 +181,7 @@ export default async function MarketPage({ params }: Props) {
                 {m.atAGlance.map((stat) => (
                   <div
                     key={stat.label}
-                    className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10"
+                    className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10"
                   >
                     <div className="text-xs uppercase tracking-wide text-neutral-400">
                       {stat.label}
@@ -204,9 +204,9 @@ export default async function MarketPage({ params }: Props) {
           <WhyMoveBlock slug={slug} city={m.city} />
 
           {/* COMPENSATION TABLE */}
-          <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
             <header className="mb-5">
-              <h2 className="text-xl font-semibold md:text-2xl">
+              <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
                 Compensation &amp; Bonus Benchmarks
               </h2>
               <p className="mt-2 text-sm text-neutral-300 md:text-base">
@@ -252,9 +252,9 @@ export default async function MarketPage({ params }: Props) {
           </article>
 
           {/* LICENSING & COMPLIANCE */}
-          <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
             <header className="mb-4">
-              <h2 className="text-xl font-semibold md:text-2xl">
+              <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
                 Licensing &amp; Compliance
               </h2>
               <p className="mt-2 text-sm text-neutral-300 md:text-base">
@@ -263,13 +263,13 @@ export default async function MarketPage({ params }: Props) {
               </p>
             </header>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="rounded-xl bg-black/40 p-4 ring-1 ring-white/10">
+              <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
                 <div className="text-sm uppercase tracking-wide text-neutral-400">
                   Regulator
                 </div>
                 <div className="mt-1 text-base">{m.licensing.regulator}</div>
               </div>
-              <div className="rounded-xl bg-black/40 p-4 ring-1 ring-white/10">
+              <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
                 <div className="text-sm uppercase tracking-wide text-neutral-400">
                   Must-have certifications
                 </div>
@@ -290,9 +290,9 @@ export default async function MarketPage({ params }: Props) {
           </article>
 
           {/* CLIENT BASE & SOURCING */}
-          <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
             <header className="mb-4">
-              <h2 className="text-xl font-semibold md:text-2xl">
+              <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
                 Client Base &amp; Sourcing
               </h2>
               <p className="mt-2 text-sm text-neutral-300 md:text-base">
@@ -309,9 +309,9 @@ export default async function MarketPage({ params }: Props) {
 
           {/* BANKING ECOSYSTEM – TOP PLATFORMS, BOOKING CENTRES, EAMs */}
           {m.ecosystem && (
-            <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+            <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
               <header className="mb-4">
-                <h2 className="text-xl font-semibold md:text-2xl">
+                <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
                   Banking Ecosystem in {m.city}
                 </h2>
                 <p className="mt-2 text-sm text-neutral-300 md:text-base">
@@ -321,7 +321,7 @@ export default async function MarketPage({ params }: Props) {
                 </p>
               </header>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
+                <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
                   <div className="text-sm uppercase tracking-wide text-neutral-400">
                     Booking / execution
                   </div>
@@ -331,7 +331,7 @@ export default async function MarketPage({ params }: Props) {
                     ))}
                   </ul>
                 </div>
-                <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
+                <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
                   <div className="text-sm uppercase tracking-wide text-neutral-400">
                     Key private banking platforms
                   </div>
@@ -341,7 +341,7 @@ export default async function MarketPage({ params }: Props) {
                     ))}
                   </ul>
                 </div>
-                <div className="rounded-xl bg-black/30 p-4 ring-1 ring-white/10">
+                <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
                   <div className="text-sm uppercase tracking-wide text-neutral-400">
                     EAMs &amp; family offices
                   </div>
@@ -359,9 +359,9 @@ export default async function MarketPage({ params }: Props) {
           )}
 
           {/* RELOCATION & TAX */}
-          <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+          <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
             <header className="mb-4">
-              <h2 className="text-xl font-semibold md:text-2xl">
+              <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
                 Relocation &amp; Tax
               </h2>
             </header>
@@ -469,9 +469,9 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
   switch (slug) {
     case "geneva":
       return (
-        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
-            <h2 className="text-xl font-semibold md:text-2xl">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
               Why Private Bankers Move to Geneva
             </h2>
           </header>
@@ -553,9 +553,9 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
 
     case "zurich":
       return (
-        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
-            <h2 className="text-xl font-semibold md:text-2xl">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
               Why Private Bankers Move to Zurich
             </h2>
           </header>
@@ -629,9 +629,9 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
 
     case "dubai":
       return (
-        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
-            <h2 className="text-xl font-semibold md:text-2xl">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
               Why Private Bankers Move to Dubai
             </h2>
           </header>
@@ -704,9 +704,9 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
 
     case "singapore":
       return (
-        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
-            <h2 className="text-xl font-semibold md:text-2xl">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
               Why Private Bankers Move to Singapore
             </h2>
           </header>
@@ -778,9 +778,9 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
 
     case "london":
       return (
-        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
-            <h2 className="text-xl font-semibold md:text-2xl">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
               Why Private Bankers Move to London
             </h2>
           </header>
@@ -852,9 +852,9 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
 
     case "hong-kong":
       return (
-        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
-            <h2 className="text-xl font-semibold md:text-2xl">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
               Why Private Bankers Move to Hong Kong
             </h2>
           </header>
@@ -926,9 +926,9 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
 
     case "new-york":
       return (
-        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
-            <h2 className="text-xl font-semibold md:text-2xl">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
               Why Private Bankers Move to New York
             </h2>
           </header>
@@ -999,9 +999,9 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
 
     case "miami":
       return (
-        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
-            <h2 className="text-xl font-semibold md:text-2xl">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
               Why Private Bankers Move to Miami
             </h2>
           </header>
@@ -1073,9 +1073,9 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
 
     case "paris":
       return (
-        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
-            <h2 className="text-xl font-semibold md:text-2xl">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
               Why Private Bankers Move to Paris
             </h2>
           </header>
@@ -1147,9 +1147,9 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
 
     case "madrid":
       return (
-        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
-            <h2 className="text-xl font-semibold md:text-2xl">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
               Why Private Bankers Move to Madrid
             </h2>
           </header>
@@ -1220,9 +1220,9 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
 
     case "lisbon":
       return (
-        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
-            <h2 className="text-xl font-semibold md:text-2xl">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
               Why Private Bankers Move to Lisbon
             </h2>
           </header>
@@ -1294,9 +1294,9 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
 
     default:
       return (
-        <article className="rounded-2xl border border-white/10 bg-neutral-900/40 p-6 shadow-xl md:p-8">
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
-            <h2 className="text-xl font-semibold md:text-2xl">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
               Why Private Bankers Consider {city}
             </h2>
           </header>
