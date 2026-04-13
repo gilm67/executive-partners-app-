@@ -11,12 +11,12 @@ const HERO = "/hero-skyline-hq.webp";
 const OG_IMAGE = "/og.webp";
 
 export const metadata: Metadata = {
-  title: "Executive Partners | Private Banking Executive Search | Geneva",
+  title: "Private Banking Recruiter Switzerland | Executive Partners Geneva",
   description:
     "Leading executive search firm specializing in senior private banking roles across Geneva, Zurich, London, Dubai, Singapore. 200+ placements, 98% retention rate.",
 
   openGraph: {
-    title: "Executive Partners | Private Banking Executive Search",
+    title: "Private Banking Recruiter Switzerland | Executive Partners",
     description:
       "Global executive search for senior private banking professionals. Geneva-based, globally connected.",
     type: "website",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Executive Partners | Private Banking Executive Search",
+    title: "Private Banking Recruiter Switzerland | Executive Partners",
     description:
       "Leading executive search for senior private banking roles worldwide.",
     images: [OG_IMAGE],
