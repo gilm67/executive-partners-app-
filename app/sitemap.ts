@@ -2,6 +2,7 @@
 import type { MetadataRoute } from "next";
 import { getAllJobsPublic, type PublicJob } from "@/lib/jobs-public";
 import { MARKET_SLUGS } from "@/lib/markets/data";
+import { INSIGHTS } from "@/app/en/insights/articles";
 
 /** 🔐 Canonical base — NEVER use env or Vercel here */
 const CANONICAL_BASE = "https://www.execpartners.ch";
@@ -141,11 +142,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   // --- Insights ---
-  const insightsEntries: MetadataRoute.Sitemap = INSIGHTS_POSTS.map((p) => ({
-    url: normalize(base, `/insights/${p.slug}`),
-    lastModified: p.dateISO ? new Date(p.dateISO) : now,
+  const insightsEntries: MetadataRoute.Sitemap = INSIGHTS.map((p) => ({
+    url: normalize(base, `/en/insights/${p.slug}`),
+    lastModified: p.date ? new Date(p.date) : now,
     changeFrequency: "weekly",
-    priority: p.priority ?? 0.75,
+    priority: 0.8,
   }));
 
   // --- De-duplicate ---
