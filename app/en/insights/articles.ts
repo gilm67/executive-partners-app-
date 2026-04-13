@@ -43,6 +43,7 @@ export type InsightArticle = {
   markets: readonly MarketCode[];
   summary: string;
   linkedinUrl: string;
+  body?: string;
 
   /**
    * Display logic

@@ -45,7 +45,6 @@ function cleanLinkedInUrl(url: string) {
   }
 }
 
-// --- Pillar / Sub-theme helpers (typed defensively) ---
 function isPillar(x: unknown): x is PillarCode {
   return x === "P1" || x === "P2" || x === "P3" || x === "P4";
 }
@@ -66,7 +65,6 @@ function pillarHubHref(pillar?: unknown) {
 
 function pillarLabel(pillar?: unknown) {
   if (!isPillar(pillar)) return null;
-
   if (pillar === "P1") return "Pillar I — Strategy & Power Structures";
   if (pillar === "P2") return "Pillar II";
   if (pillar === "P3") return "Pillar III";
@@ -76,7 +74,6 @@ function pillarLabel(pillar?: unknown) {
 
 function subThemeLabel(subTheme?: unknown) {
   if (!subTheme) return null;
-
   if (isP1SubTheme(subTheme)) {
     const map: Record<Pillar1SubTheme, string> = {
       Positioning: "Positioning",
@@ -86,17 +83,11 @@ function subThemeLabel(subTheme?: unknown) {
     };
     return map[subTheme];
   }
-
   return typeof subTheme === "string" ? subTheme : null;
 }
 
-/**
- * Sub-theme hub slug (URL-safe)
- * Example: ROAPlatform -> roa-platform
- */
 function subThemeSlug(subTheme?: unknown) {
   if (!isP1SubTheme(subTheme)) return null;
-
   const map: Record<Pillar1SubTheme, string> = {
     Positioning: "positioning",
     ScaleVsBoutique: "scale-vs-boutique",
@@ -112,16 +103,10 @@ function subThemeHubHref(subTheme?: unknown) {
   return `/en/insights/subtheme/${slug}`;
 }
 
-/**
- * ✅ Better SEO: pre-render article routes
- */
 export function generateStaticParams() {
   return INSIGHTS.map((a) => ({ slug: a.slug }));
 }
 
-/**
- * ✅ SEO: canonical + OpenGraph + Twitter per article
- */
 export function generateMetadata({ params }: Props): Metadata {
   const article = INSIGHTS.find((a) => a.slug === params.slug);
   if (!article) return {};
@@ -156,10 +141,8 @@ export default function InsightDetailPage({ params }: Props) {
   const article = INSIGHTS.find((a) => a.slug === params.slug);
   if (!article) return notFound();
 
-  // ✅ centralised related logic (pillar/sub-theme > markets > recency)
   const related = getRelatedInsights(article, 5);
 
-  // ✅ strict: more on same pillar + subTheme (no fallback)
   const moreOnSubThemeRaw = getInsightsBySubTheme(article, 8);
   const moreOnSubTheme = moreOnSubThemeRaw
     .slice()
@@ -173,9 +156,6 @@ export default function InsightDetailPage({ params }: Props) {
 
   const pageUrl = `${SITE}/en/insights/${article.slug}`;
 
-  /**
-   * ✅ JSON-LD Breadcrumbs
-   */
   const breadcrumbsJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -194,9 +174,6 @@ export default function InsightDetailPage({ params }: Props) {
   const pillarText = article.pillar ? pillarLabel(article.pillar) ?? article.pillar : null;
   const subThemeText = article.subTheme ? subThemeLabel(article.subTheme) ?? article.subTheme : null;
 
-  /**
-   * ✅ JSON-LD Article (strong SEO signal)
-   */
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -222,9 +199,6 @@ export default function InsightDetailPage({ params }: Props) {
     ],
   };
 
-  /**
-   * ✅ FAQ Schema (only on selected pillar articles)
-   */
   const faqJsonLd =
     article.slug === "investment-advisor-replacing-rm"
       ? {
@@ -236,8 +210,7 @@ export default function InsightDetailPage({ params }: Props) {
               name: "Is the relationship manager model still relevant in private banking?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text:
-                  "The relationship manager role remains important, but it is no longer sufficient on its own. Clients increasingly expect strong investment performance, which shifts influence toward investment advisors.",
+                text: "The relationship manager role remains important, but it is no longer sufficient on its own. Clients increasingly expect strong investment performance, which shifts influence toward investment advisors.",
               },
             },
             {
@@ -245,8 +218,7 @@ export default function InsightDetailPage({ params }: Props) {
               name: "Why are investment advisors becoming more influential than relationship managers?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text:
-                  "Investment advisors increasingly drive portfolio positioning, performance explanation and risk management—factors that directly impact client retention and satisfaction.",
+                text: "Investment advisors increasingly drive portfolio positioning, performance explanation and risk management factors that directly impact client retention and satisfaction.",
               },
             },
             {
@@ -254,8 +226,7 @@ export default function InsightDetailPage({ params }: Props) {
               name: "How does this shift impact private banks in Switzerland?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text:
-                  "Swiss private banks are evolving operating models and hiring priorities to better integrate investment advisory capabilities alongside traditional relationship management—particularly for UHNW and cross-border clients.",
+                text: "Swiss private banks are evolving operating models and hiring priorities to better integrate investment advisory capabilities alongside traditional relationship management particularly for UHNW and cross-border clients.",
               },
             },
           ],
@@ -268,7 +239,6 @@ export default function InsightDetailPage({ params }: Props) {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-14">
-      {/* ✅ JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsJsonLd) }}
@@ -284,24 +254,16 @@ export default function InsightDetailPage({ params }: Props) {
         />
       ) : null}
 
-      {/* ✅ Visible breadcrumb */}
       <nav className="text-xs text-white/60">
-        <Link href="/en" className="hover:text-white">
-          Home
-        </Link>{" "}
+        <Link href="/en" className="hover:text-white">Home</Link>{" "}
         <span className="mx-1">/</span>
-        <Link href="/en/insights" className="hover:text-white">
-          Insights
-        </Link>{" "}
+        <Link href="/en/insights" className="hover:text-white">Insights</Link>{" "}
         <span className="mx-1">/</span>
         <span className="text-white/80 line-clamp-1">{article.title}</span>
       </nav>
 
-      <Link
-        href="/en/insights"
-        className="mt-4 inline-block text-sm text-white/60 hover:text-white"
-      >
-        ← Back to Insights
+      <Link href="/en/insights" className="mt-4 inline-block text-sm text-white/60 hover:text-white">
+        Back to Insights
       </Link>
 
       <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6">
@@ -309,7 +271,6 @@ export default function InsightDetailPage({ params }: Props) {
 
         <h1 className="mt-2 text-2xl font-semibold text-white">{article.title}</h1>
 
-        {/* ✅ Pillar / Sub-theme (internal linking boost) */}
         {isPillar(pillar) ? (
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <Link
@@ -318,8 +279,6 @@ export default function InsightDetailPage({ params }: Props) {
             >
               {pillarLabel(pillar) ?? pillar}
             </Link>
-
-            {/* ✅ subTheme as link to hub (only if mapped) */}
             {subThemeHub ? (
               <Link
                 href={subThemeHub}
@@ -348,16 +307,40 @@ export default function InsightDetailPage({ params }: Props) {
 
         <p className="mt-5 text-white/80">{article.summary}</p>
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          <a
-            href={cleanLinkedInUrl(article.linkedinUrl)}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#F5D778] px-5 py-2.5 text-sm font-semibold text-[#0B0E13] hover:opacity-90"
-          >
-            Read the full article on LinkedIn →
-          </a>
+        {article.body ? (
+          <div className="mt-6 space-y-4 text-white/80 leading-relaxed text-[0.95rem]">
+            {article.body.split("\n\n").map((para, i) =>
+              para.startsWith("## ") ? (
+                <h2 key={i} className="mt-8 text-lg font-semibold text-white">
+                  {para.replace("## ", "")}
+                </h2>
+              ) : (
+                <p key={i}>{para}</p>
+              )
+            )}
+          </div>
+        ) : null}
 
+        <div className="mt-6 flex flex-wrap gap-3">
+          {!article.body ? (
+            <a
+              href={cleanLinkedInUrl(article.linkedinUrl)}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#F5D778] px-5 py-2.5 text-sm font-semibold text-[#0B0E13] hover:opacity-90"
+            >
+              Read the full article on LinkedIn
+            </a>
+          ) : (
+            <a
+              href={cleanLinkedInUrl(article.linkedinUrl)}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex rounded-xl border border-white/20 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
+            >
+              Also on LinkedIn
+            </a>
+          )}
           <Link
             href="/en/insights/archive"
             className="inline-flex rounded-xl border border-white/20 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
@@ -367,7 +350,6 @@ export default function InsightDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* ✅ RELATED INSIGHTS */}
       {related.length ? (
         <section className="mt-10">
           <div className="flex items-end justify-between gap-4">
@@ -380,35 +362,29 @@ export default function InsightDetailPage({ params }: Props) {
                 Suggested by pillar/sub-theme, then market overlap, then recency.
               </p>
             </div>
-
             <Link
               href="/en/insights/archive"
               className="text-sm text-white/70 hover:text-white underline underline-offset-4"
             >
-              Browse archive →
+              Browse archive
             </Link>
           </div>
-
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {related.map((r) => (
               <article key={r.slug} className="rounded-2xl border border-white/10 bg-white/5 p-5">
                 <div className="flex items-center justify-between gap-3">
                   <div className="text-xs text-white/60">{formatDate(r.date)}</div>
-
                   {r.pillar ? (
                     <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
-                      {r.pillar}
-                      {r.subTheme ? ` · ${subThemeLabel(r.subTheme) ?? r.subTheme}` : ""}
+                      {r.pillar}{r.subTheme ? ` · ${subThemeLabel(r.subTheme) ?? r.subTheme}` : ""}
                     </span>
                   ) : null}
                 </div>
-
                 <h3 className="mt-2 text-base font-semibold text-white leading-snug">
                   <Link href={`/en/insights/${r.slug}`} className="hover:underline">
                     {r.title}
                   </Link>
                 </h3>
-
                 <div className="mt-3 flex flex-wrap gap-2">
                   {r.markets.slice(0, 3).map((m) => (
                     <span
@@ -419,17 +395,15 @@ export default function InsightDetailPage({ params }: Props) {
                     </span>
                   ))}
                 </div>
-
                 {r.summary ? (
                   <p className="mt-3 line-clamp-2 text-sm text-white/75">{r.summary}</p>
                 ) : null}
-
                 <div className="mt-4">
                   <Link
                     href={`/en/insights/${r.slug}`}
                     className="text-sm font-semibold text-white/80 hover:text-white underline underline-offset-4"
                   >
-                    Read →
+                    Read
                   </Link>
                 </div>
               </article>
@@ -438,7 +412,6 @@ export default function InsightDetailPage({ params }: Props) {
         </section>
       ) : null}
 
-      {/* ✅ MORE ON THIS SUB-THEME (deep internal linking) */}
       {subTheme && moreOnSubTheme.length ? (
         <section className="mt-10">
           <div className="flex items-end justify-between gap-4">
@@ -447,49 +420,44 @@ export default function InsightDetailPage({ params }: Props) {
                 More on this sub-theme
               </p>
               <h2 className="mt-2 text-lg font-semibold text-white">
-                More on “{subThemeLabel(subTheme) ?? String(subTheme)}”
+                More on "{subThemeLabel(subTheme) ?? String(subTheme)}"
               </h2>
               <p className="mt-1 text-sm text-white/60">
-                Same pillar + sub-theme, ranked by engagement (then recency).
+                Same pillar and sub-theme, ranked by engagement then recency.
               </p>
             </div>
-
             {subThemeHub ? (
               <Link
                 href={subThemeHub}
                 className="text-sm text-white/70 hover:text-white underline underline-offset-4"
               >
-                Browse this sub-theme →
+                Browse this sub-theme
               </Link>
             ) : isPillar(pillar) ? (
               <Link
                 href={pillarHubHref(pillar)}
                 className="text-sm text-white/70 hover:text-white underline underline-offset-4"
               >
-                Browse Pillar →
+                Browse Pillar
               </Link>
             ) : null}
           </div>
-
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {moreOnSubTheme.map((r) => (
               <article key={r.slug} className="rounded-2xl border border-white/10 bg-white/5 p-5">
                 <div className="flex items-center justify-between gap-3">
                   <div className="text-xs text-white/60">{formatDate(r.date)}</div>
-
                   {typeof r.engagementScore === "number" ? (
                     <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
                       Score {r.engagementScore}
                     </span>
                   ) : null}
                 </div>
-
                 <h3 className="mt-2 text-base font-semibold text-white leading-snug">
                   <Link href={`/en/insights/${r.slug}`} className="hover:underline">
                     {r.title}
                   </Link>
                 </h3>
-
                 <div className="mt-3 flex flex-wrap gap-2">
                   {r.markets.slice(0, 3).map((m) => (
                     <span
@@ -500,17 +468,15 @@ export default function InsightDetailPage({ params }: Props) {
                     </span>
                   ))}
                 </div>
-
                 {r.summary ? (
                   <p className="mt-3 line-clamp-2 text-sm text-white/75">{r.summary}</p>
                 ) : null}
-
                 <div className="mt-4">
                   <Link
                     href={`/en/insights/${r.slug}`}
                     className="text-sm font-semibold text-white/80 hover:text-white underline underline-offset-4"
                   >
-                    Read →
+                    Read
                   </Link>
                 </div>
               </article>
