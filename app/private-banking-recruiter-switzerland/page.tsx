@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-/* ---------- helpers for absolute URLs ---------- */
 function siteBase() {
   const fromEnv =
     process.env.NEXT_PUBLIC_SITE_URL ||
@@ -15,7 +14,6 @@ function siteBase() {
 const SITE = siteBase();
 const PAGE_URL = `${SITE}/private-banking-recruiter-switzerland`;
 
-/* ---------- metadata ---------- */
 export const metadata: Metadata = {
   title: {
     absolute: "Private Banking Recruiter Switzerland – Executive Partners",
@@ -48,7 +46,7 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
     logo: `${SITE}/icon.png`,
     address: {
       "@type": "PostalAddress",
-      streetAddress: "118 rue du Rhône",
+      streetAddress: "118 rue du Rhone",
       addressLocality: "Geneva",
       postalCode: "1204",
       addressCountry: "CH",
@@ -80,7 +78,7 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
         name: "How do I find a private banking recruiter in Switzerland?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Executive Partners is Switzerland's specialist recruiter exclusively focused on private banking and wealth management. Based in Geneva, we cover all major Swiss banking centres — Geneva, Zurich, Lugano — and international hubs including Dubai, Singapore, London and Hong Kong.",
+          text: "Executive Partners is Switzerland's specialist recruiter exclusively focused on private banking and wealth management. Based in Geneva, we cover all major Swiss banking centres and international hubs including Dubai, Singapore, London and Hong Kong.",
         },
       },
       {
@@ -88,7 +86,7 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
         name: "What AUM level do I need to be considered for a placement?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "We work with relationship managers and investment advisors carrying between CHF 75m and CHF 2bn+ in AUM. The key variable is not the headline figure but the genuinely portable fraction, which our Portability Score™ assesses at the outset.",
+          text: "We work with relationship managers and investment advisors carrying between CHF 75m and CHF 2bn+ in AUM. The key variable is the genuinely portable fraction, which our Portability Score assesses at the outset.",
         },
       },
       {
@@ -96,7 +94,7 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
         name: "What is banker portability and why does it matter?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Portability is the fraction of a banker's AUM that can realistically be transferred to a new employer. It determines the commercial value of any move and is often lower than the headline AUM figure suggests. Executive Partners assesses portability rigorously before any bank is approached.",
+          text: "Portability is the fraction of a banker's AUM that can realistically be transferred to a new employer. Executive Partners assesses portability rigorously before any bank is approached.",
         },
       },
       {
@@ -104,7 +102,7 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
         name: "Is there a fee for candidates?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Never. Executive Partners operates exclusively on a success-fee model paid by the hiring institution. Our service to candidates — including portability assessment and interview preparation — is entirely free of charge.",
+          text: "Never. Executive Partners operates on a success-fee model paid by the hiring institution. Our service to candidates is entirely free of charge.",
         },
       },
     ],
@@ -125,7 +123,6 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      {/* Gold ambient glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -136,8 +133,6 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
       />
 
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
-
-        {/* Hero */}
         <header className="max-w-3xl">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">
             Switzerland · Private Banking · Executive Search
@@ -147,17 +142,11 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
           </h1>
           <p className="mt-4 text-sm text-neutral-300 md:text-[0.95rem] leading-relaxed">
             Executive Partners is Switzerland's specialist executive search firm
-            working{" "}
-            <span className="font-semibold text-neutral-100">
-              exclusively in private banking and wealth management
-            </span>
-            . Based in Geneva, we place senior relationship managers, investment
-            advisors and team heads across{" "}
-            <span className="font-semibold text-neutral-100">
-              Geneva, Zurich and eight international hubs
-            </span>
-            . Every placement is assessed on factual AUM portability, revenue
-            quality and long-term platform fit — before any bank is approached.
+            working exclusively in private banking and wealth management. Based
+            in Geneva, we place senior relationship managers, investment advisors
+            and team heads across Geneva, Zurich and eight international hubs.
+            Every placement is assessed on factual AUM portability, revenue
+            quality and long-term platform fit before any bank is approached.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/contact" className="btn btn-primary btn-xl">
@@ -168,178 +157,137 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-ghost"
-            &gt;
-              Download Career Intelligence 2026 (PDF)
+            >
+              Download Career Intelligence 2026
             </Link>
           </div>
         </header>
 
-        {/* Why EP */}
         <section className="mt-12 grid gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)]">
           <div className="space-y-4 text-sm text-neutral-200 md:text-[0.95rem] leading-relaxed">
             <h2 className="text-xl font-semibold text-white">
               Why Switzerland remains the world's leading private banking centre
             </h2>
             <p>
-              Switzerland books approximately{" "}
-              <span className="font-semibold">
-                25% of all global cross-border private wealth
-              </span>
-              , split between Geneva's international and emerging market focus
-              and Zurich's DACH, CEE and global UHNW franchise. Despite
-              consolidation following the UBS-Credit Suisse merger, demand for
-              senior front-office talent has not diminished — it has become more
-              selective.
+              Switzerland books approximately 25% of all global cross-border
+              private wealth, split between Geneva's international and emerging
+              market focus and Zurich's DACH, CEE and global UHNW franchise.
+              Despite consolidation following the UBS-Credit Suisse merger,
+              demand for senior front-office talent has not diminished — it has
+              become more selective.
             </p>
             <p>
-              Hiring banks in Switzerland today are focused on candidates who bring:
+              Hiring banks in Switzerland today are focused on candidates who
+              bring genuinely portable AUM, revenue quality with advisory or DPM
+              penetration above 40%, clean compliance profiles, and client
+              relationships that are personal rather than institutional.
             </p>
-            <ul className="list-disc space-y-1 pl-5 text-neutral-200">
-              <li>
-                <span className="font-semibold">Genuinely portable AUM</span> —
-                not headline figures that dissolve under a non-solicitation clause
-              </li>
-              <li>
-                Revenue quality with{" "}
-                <span className="font-semibold">
-                  advisory or DPM penetration above 40%
-                </span>{" "}
-                and documented ROA
-              </li>
-              <li>
-                Clean compliance profiles with no unresolved cross-border or
-                suitability issues
-              </li>
-              <li>
-                Client relationships that are{" "}
-                <span className="font-semibold">personal, not institutional</span>{" "}
-                — clients who follow the banker, not the brand
-              </li>
-            </ul>
             <p>
-              Our proprietary{" "}
-              <Link href="/portability" className="underline decoration-brandGold/60 underline-offset-4 hover:text-white">
-                Portability Score™
-              </Link>{" "}
-              — a six-block, 30-point framework developed across 200+ completed
-              placements — stress-tests each of these dimensions before any
-              introduction is made.
+              Our proprietary Portability Score — a six-block, 30-point
+              framework developed across 200+ completed placements — stress-tests
+              each of these dimensions before any introduction is made.
             </p>
           </div>
 
-          {/* Side card */}
           <aside className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
             <h3 className="text-base font-semibold text-white">
               How we support Swiss mandates
             </h3>
             <ul className="mt-4 space-y-2 text-sm text-neutral-200">
-              <li>• Senior RM & Investment Advisor placements, Geneva & Zurich</li>
-              <li>• AUM portability assessment before any approach</li>
-              <li>• CIS, MENA, LATAM, APAC and DACH client segment coverage</li>
-              <li>• Compensation benchmarks across all Swiss booking centres</li>
-              <li>• EAM sector mapping for independent asset managers</li>
-              <li>• Discreet approaches to targeted candidates or platforms</li>
+              <li>Senior RM and Investment Advisor placements, Geneva and Zurich</li>
+              <li>AUM portability assessment before any approach</li>
+              <li>CIS, MENA, LATAM, APAC and DACH client segment coverage</li>
+              <li>Compensation benchmarks across all Swiss booking centres</li>
+              <li>EAM sector mapping for independent asset managers</li>
+              <li>Discreet approaches to targeted candidates or platforms</li>
             </ul>
             <div className="mt-5">
-              <Link
-                href="/apply"
-                className="btn btn-secondary w-full text-sm font-medium"
-              &gt;
+              <Link href="/apply" className="btn btn-secondary w-full text-sm font-medium">
                 Senior RM in Switzerland? Submit your profile
               </Link>
             </div>
           </aside>
         </section>
 
-        {/* Compensation table */}
         <section className="mt-14 rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
           <h2 className="text-xl font-semibold text-white">
-            2025–2026 Switzerland compensation benchmarks
+            2025-2026 Switzerland compensation benchmarks
           </h2>
           <p className="mt-3 text-sm text-neutral-300 md:text-[0.95rem]">
             Indicative ranges across Geneva and Zurich private banks. Actual
-            offers depend on platform, seniority, portable AUM, revenue mix and
-            cross-border risk profile.
+            offers depend on platform, seniority, portable AUM and revenue mix.
           </p>
-
           <div className="mt-6 overflow-x-auto">
             <table className="min-w-full text-left text-sm text-neutral-100">
               <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-neutral-400">
                 <tr>
                   <th className="py-2 pr-4">Role</th>
-                  <th className="py-2 pr-4">Base salary (CHF)</th>
-                  <th className="py-2 pr-4">Bonus range</th>
-                  <th className="py-2 pr-4">Typical total</th>
+                  <th className="py-2 pr-4">Base (CHF)</th>
+                  <th className="py-2 pr-4">Bonus</th>
+                  <th className="py-2 pr-4">Total</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 <tr>
-                  <td className="py-2 pr-4">RM (5–10 years)</td>
-                  <td className="py-2 pr-4">140k – 190k</td>
-                  <td className="py-2 pr-4">25% – 70%</td>
-                  <td className="py-2 pr-4">175k – 320k</td>
+                  <td className="py-2 pr-4">RM (5-10 years)</td>
+                  <td className="py-2 pr-4">140k-190k</td>
+                  <td className="py-2 pr-4">25%-70%</td>
+                  <td className="py-2 pr-4">175k-320k</td>
                 </tr>
                 <tr>
-                  <td className="py-2 pr-4">Senior RM (10–20 years)</td>
-                  <td className="py-2 pr-4">190k – 270k</td>
-                  <td className="py-2 pr-4">50% – 140%</td>
-                  <td className="py-2 pr-4">285k – 650k</td>
+                  <td className="py-2 pr-4">Senior RM (10-20 years)</td>
+                  <td className="py-2 pr-4">190k-270k</td>
+                  <td className="py-2 pr-4">50%-140%</td>
+                  <td className="py-2 pr-4">285k-650k</td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4">Investment Advisor</td>
-                  <td className="py-2 pr-4">180k – 260k</td>
-                  <td className="py-2 pr-4">40% – 120%</td>
-                  <td className="py-2 pr-4">250k – 570k</td>
+                  <td className="py-2 pr-4">180k-260k</td>
+                  <td className="py-2 pr-4">40%-120%</td>
+                  <td className="py-2 pr-4">250k-570k</td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4">Ultra UHNW RM</td>
-                  <td className="py-2 pr-4">260k – 360k</td>
-                  <td className="py-2 pr-4">90% – 230%</td>
-                  <td className="py-2 pr-4">510k – 1.0m+</td>
+                  <td className="py-2 pr-4">260k-360k</td>
+                  <td className="py-2 pr-4">90%-230%</td>
+                  <td className="py-2 pr-4">510k-1.0m+</td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4">Team Head</td>
-                  <td className="py-2 pr-4">280k – 380k</td>
-                  <td className="py-2 pr-4">110% – 270%</td>
-                  <td className="py-2 pr-4">590k – 1.25m+</td>
+                  <td className="py-2 pr-4">280k-380k</td>
+                  <td className="py-2 pr-4">110%-270%</td>
+                  <td className="py-2 pr-4">590k-1.25m+</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <p className="mt-4 text-xs text-neutral-500">
-            Ranges indicative only, based on Switzerland market observations for
-            2025–2026. Source: Executive Partners placement data.
+            Ranges indicative only. Source: Executive Partners placement data 2025-2026.
           </p>
         </section>
 
-        {/* FAQ section */}
         <section className="mt-14">
-          <h2 className="text-xl font-semibold text-white">
-            Frequently asked questions
-          </h2>
+          <h2 className="text-xl font-semibold text-white">Frequently asked questions</h2>
           <div className="mt-6 grid gap-6 md:grid-cols-2">
             {[
               {
                 q: "How do I find a private banking recruiter in Switzerland?",
-                a: "Executive Partners is Switzerland's specialist recruiter exclusively focused on private banking and wealth management. Contact Gil M. Chalem directly at gil.chalem@execpartners.ch for a confidential discussion.",
+                a: "Executive Partners is Switzerland's specialist recruiter exclusively focused on private banking and wealth management. Contact Gil M. Chalem at gil.chalem@execpartners.ch for a confidential discussion.",
               },
               {
                 q: "What AUM level do I need to be considered?",
-                a: "We work with RMs and investment advisors carrying between CHF 75m and CHF 2bn+ in AUM. The key variable is not the headline figure but the genuinely portable fraction, assessed by our Portability Score™ at the outset.",
+                a: "We work with RMs and investment advisors carrying between CHF 75m and CHF 2bn+ in AUM. The key variable is the genuinely portable fraction, assessed by our Portability Score at the outset.",
               },
               {
                 q: "Is there a fee for candidates?",
-                a: "Never. We operate on a success-fee model paid by the hiring institution. Our service to candidates — portability assessment, mandate matching, interview preparation — is entirely free.",
+                a: "Never. We operate on a success-fee model paid by the hiring institution. Our full service to candidates is entirely free of charge.",
               },
               {
                 q: "Which banks do you work with in Switzerland?",
-                a: "We work across the full spectrum: UBS, Julius Baer, UBP, EFG, Pictet, Lombard Odier, Mirabaud and boutique private banks and EAMs. Current active mandates are listed on our Jobs page.",
+                a: "We work across the full spectrum: UBS, Julius Baer, UBP, EFG, Pictet, Lombard Odier, Mirabaud and boutique private banks and EAMs. Current mandates are on our Jobs page.",
               },
             ].map(({ q, a }) => (
-              <div
-                key={q}
-                className="rounded-2xl border border-white/10 bg-white/[0.04] p-5"
-              &gt;
+              <div key={q} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
                 <h3 className="text-sm font-semibold text-white">{q}</h3>
                 <p className="mt-2 text-sm text-neutral-300 leading-relaxed">{a}</p>
               </div>
@@ -347,62 +295,32 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
           </div>
         </section>
 
-        {/* Internal links */}
         <section className="mt-12 grid gap-6 md:grid-cols-2">
           <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
-            <h3 className="text-base font-semibold text-white">
-              Related insights for Swiss private bankers
-            </h3>
-            <p className="mt-2 text-sm text-neutral-300">
-              Market intelligence on Swiss private banking, compensation trends
-              and career strategy from Private Wealth Pulse.
-            </p>
+            <h3 className="text-base font-semibold text-white">Related insights</h3>
             <ul className="mt-4 space-y-2 text-sm text-brandGoldSoft">
-              <li>
-                <Link href="/insights" className="hover:underline">
-                  UBS's Silent Earthquake: 10,000 Jobs Set to Disappear by 2027
-                </Link>
-              </li>
-              <li>
-                <Link href="/insights" className="hover:underline">
-                  The AI Reckoning: How 5,200 Job Cuts Are Reshaping Private Banking
-                </Link>
-              </li>
-              <li>
-                <Link href="/insights" className="hover:underline">
-                  Swiss Private Banking Compensation: Geneva vs Zurich vs Dubai
-                </Link>
-              </li>
+              <li><Link href="/insights" className="hover:underline">UBS's Silent Earthquake: 10,000 Jobs Set to Disappear by 2027</Link></li>
+              <li><Link href="/insights" className="hover:underline">The AI Reckoning: How 5,200 Job Cuts Are Reshaping Private Banking</Link></li>
+              <li><Link href="/insights" className="hover:underline">Swiss Private Banking Compensation: Geneva vs Zurich vs Dubai</Link></li>
             </ul>
           </div>
-
           <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
-            <h3 className="text-base font-semibold text-white">
-              Work with Executive Partners
-            </h3>
+            <h3 className="text-base font-semibold text-white">Work with Executive Partners</h3>
             <p className="mt-2 text-sm text-neutral-300">
               Whether you are a bank with an active mandate or a senior banker
               considering your next move, the conversation starts with a direct,
               confidential call with Gil M. Chalem.
             </p>
             <div className="mt-4 flex flex-wrap gap-3">
-              <Link href="/contact" className="btn btn-primary btn-sm">
-                Discuss a Switzerland mandate
-              </Link>
-              <Link href="/apply" className="btn btn-ghost btn-sm">
-                Submit your profile
-              </Link>
+              <Link href="/contact" className="btn btn-primary btn-sm">Discuss a Switzerland mandate</Link>
+              <Link href="/apply" className="btn btn-ghost btn-sm">Submit your profile</Link>
             </div>
           </div>
         </section>
 
-        {/* Final CTA */}
         <p className="mt-10 text-center text-sm text-neutral-400">
           Prefer to start with a discreet email?{" "}
-          
-            href="mailto:gil.chalem@execpartners.ch"
-            className="underline decoration-brandGold/70 underline-offset-4 hover:text-white"
-          >
+          <a href="mailto:gil.chalem@execpartners.ch" className="underline decoration-brandGold/70 underline-offset-4 hover:text-white">
             gil.chalem@execpartners.ch
           </a>
         </p>
