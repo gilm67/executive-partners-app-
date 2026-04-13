@@ -168,7 +168,7 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-ghost"
-            >
+            &gt;
               Download Career Intelligence 2026 (PDF)
             </Link>
           </div>
@@ -244,7 +244,7 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
               <Link
                 href="/apply"
                 className="btn btn-secondary w-full text-sm font-medium"
-              >
+              &gt;
                 Senior RM in Switzerland? Submit your profile
               </Link>
             </div>
@@ -339,7 +339,7 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
               <div
                 key={q}
                 className="rounded-2xl border border-white/10 bg-white/[0.04] p-5"
-              >
+              &gt;
                 <h3 className="text-sm font-semibold text-white">{q}</h3>
                 <p className="mt-2 text-sm text-neutral-300 leading-relaxed">{a}</p>
               </div>
