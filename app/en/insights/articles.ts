@@ -1815,6 +1815,7 @@ For RMs: adapt and become hybrid or lose influence. Relationship alone no longer
 The banks adapting well: Lombard Odier, aggressively strengthening IA benches and offering compensation parity. Pictet, prioritising investment mindset over pure RM pedigree. Vontobel, with long-standing IA credibility attracting both assets and talent.
 
 In the next five years, only one thing will matter: who controls the portfolio. Because the person who controls the portfolio controls the conversation, the credibility, and ultimately, the client relationship.`,
+  },
 
   {
     slug: "family-office-revolution",
