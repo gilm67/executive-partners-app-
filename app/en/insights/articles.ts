@@ -2690,6 +2690,14 @@ The combination of focused client selection, relationship depth, and disciplined
   },
   {
     slug: "efg-bank-switzerland-pioneering-private-banking",
+    title: "EFG Bank Switzerland: Pioneering Private Banking with Entrepreneurial Agility",
+    date: "2024-07-05",
+    markets: ["CH"],
+    summary: "EFG Bank Switzerland has cemented its position as a cornerstone of global wealth management through entrepreneurial agility, strategic vision, and the distinctive Client Relationship Officer model.",
+    linkedinUrl: "https://www.linkedin.com/pulse/efg-bank-switzerland-pioneering-private-banking-gil-m-chalem--tknge",
+    featured: false,
+    engagementScore: 72,
+    keywords: ["EFG International", "Swiss private banking", "CRO model", "private banking careers Switzerland"],
     body: `EFG International occupies a distinctive position in Swiss private banking: large enough to offer genuine institutional capability, small enough to maintain the entrepreneurial culture that defines its competitive model.
 
 ## The EFG model
