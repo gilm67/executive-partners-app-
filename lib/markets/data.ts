@@ -173,7 +173,7 @@ export const MARKETS: Market[] = [
     locale: "de-CH",
     heroImage: "/markets/zurich.jpg",
     summary:
-      "The largest Swiss wealth hub, with deep balance sheet, strong product factories, and proximity to German-speaking entrepreneurs and family offices.",
+      "Zurich is Switzerland's largest private banking hub and the primary centre for DACH onshore wealth management. Executive Partners is a specialist private banking recruiter in Zurich, placing Senior RMs, Team Heads and DACH-focused bankers at leading Swiss private banks including UBS, Julius Baer, ZKB, Pictet and Vontobel. Strong balance sheet capacity, deep product factories and proximity to German-speaking entrepreneur and family-office wealth define the market. Live mandates span Swiss onshore, international UHNW and EAM roles.",
     compensation: [
       { role: "RM / Senior Advisor", baseMin: 160_000, baseMax: 210_000, bonusPct: "40–80%" },
       { role: "Senior RM / Director", baseMin: 190_000, baseMax: 260_000, bonusPct: "50–100%" },
@@ -319,7 +319,7 @@ export const MARKETS: Market[] = [
     locale: "en-AE",
     heroImage: "/markets/dubai.jpg",
     summary:
-      "Tax-advantaged MENA hub with DIFC/ADGM frameworks and expanding platforms targeting GCC, NRI, African and global expat wealth.",
+      "Dubai is the Middle East's leading private banking and wealth management hub, operating under the DIFC and ADGM regulatory frameworks. Executive Partners is a specialist private banking recruiter in Dubai, placing Senior Relationship Managers, Team Heads and GCC/NRI bankers at leading DIFC-based platforms. The market targets GCC onshore wealth, South Asian entrepreneurs, African family offices and international expats. Tax-free salary structures and fast-growing AUM make Dubai one of the most competitive hiring markets globally. Live mandates available — speak to us confidentially.",
     compensation: [
       { role: "RM / Senior Advisor", baseMin: 350_000, baseMax: 550_000, bonusPct: "30–80%" },
       {
@@ -392,7 +392,7 @@ export const MARKETS: Market[] = [
     locale: "en-SG",
     heroImage: "/markets/singapore.jpg",
     summary:
-      "Stable APAC hub with favourable tax, robust MAS governance and significant regional booking-centre activity for ASEAN and North Asia wealth.",
+      "Singapore is Asia's premier private banking and wealth management booking centre, regulated by the Monetary Authority of Singapore (MAS). Executive Partners is a specialist private banking recruiter in Singapore, placing Senior Relationship Managers, Team Heads and SEA/North Asia bankers at MAS-licensed platforms including UBS, Julius Baer, Pictet, Bank of Singapore and DBS Private Bank. Favourable tax, political stability and strong ASEAN and North Asia client flows make Singapore the fastest-growing wealth hub in the region. Live mandates available — speak to us confidentially.",
     compensation: [
       { role: "RM / Associate Director", baseMin: 180_000, baseMax: 240_000, bonusPct: "40–80%" },
       { role: "Director / Senior RM", baseMin: 220_000, baseMax: 320_000, bonusPct: "50–100%" },
