@@ -38,27 +38,27 @@ const LINKEDIN_LATEST = [
   {
     title: 'Smoke Over the DIFC',
     date: '2026-04-27',
-    url: 'PASTE_SMOKE_URL_HERE',
+    url: 'https://www.linkedin.com/in/gilmchalem/recent-activity/articles/',
   },
   {
     title: 'Bern Holds the Line',
     date: '2026-04-23',
-    url: 'PASTE_BERN_URL_HERE',
+    url: 'https://www.linkedin.com/in/gilmchalem/recent-activity/articles/',
   },
   {
     title: 'The 10 Billion Myth: Why Size Is the Wrong Lens on Swiss Private Banking Consolidation',
     date: '2026-04-21',
-    url: 'PASTE_10BN_URL_HERE',
+    url: 'https://www.linkedin.com/in/gilmchalem/recent-activity/articles/',
   },
   {
     title: "The Bank That Can't Choose a CEO",
     date: '2026-04-20',
-    url: 'PASTE_BANK_URL_HERE',
+    url: 'https://www.linkedin.com/in/gilmchalem/recent-activity/articles/',
   },
   {
     title: 'The Revenue Grid Nobody Shows You Before You Sign',
     date: '2026-04-14',
-    url: 'PASTE_REVENUE_URL_HERE',
+    url: 'https://www.linkedin.com/in/gilmchalem/recent-activity/articles/',
   },
   {
     title: "The AI Trap Nobody in Private Banking Is Talking About",
