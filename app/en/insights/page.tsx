@@ -148,10 +148,7 @@ const P1_SUBTHEMES = [
 type RoleKey = "rm" | "hm";
 const ROLE_STORAGE_KEY = "insights_role";
 
-const ROLE_CTA: Record
-  RoleKey,
-  { primary: { label: string; href: string }; secondary?: { label: string; href: string } }
-> = {
+const ROLE_CTA: Record<RoleKey, { primary: { label: string; href: string }; secondary?: { label: string; href: string } }> = {
   rm: {
     primary: { label: "Assess your portability →", href: "/portability" },
     secondary: { label: "Run a Business Plan →", href: "/en/bp-simulator" },
