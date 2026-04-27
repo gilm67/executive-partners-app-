@@ -17,21 +17,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Geneva gets a richer, fully custom SEO treatment
   if (slug === "geneva") {
     return {
-      title:
-        "Geneva Private Banking Market | Compensation, Licensing & Hiring Trends",
-      description:
-        "Comprehensive market insights for Private Bankers in Geneva: compensation benchmarks, licensing rules, hiring trends, key banks and why senior RMs move their books to Switzerland’s most established wealth hub.",
-      alternates: {
-        canonical: "/en/markets/geneva",
-      },
-      openGraph: {
-        type: "article",
-        url: "/en/markets/geneva",
-        title: "Geneva Private Banking Market | Executive Partners",
-        description:
-          "Geneva’s private banking ecosystem explained: UHNW flows, hiring trends, compensation ranges, market expectations and cross-border rules.",
-        siteName: "Executive Partners",
-      },
+      title: "Private Banking Recruiter Geneva | Senior RM & Wealth Management Search | Executive Partners",
+      description: "Geneva's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and Investment Advisors at leading Swiss and international private banks. Compensation benchmarks, licensing and live mandates.",
+      alternates: { canonical: "/en/markets/geneva" },
+      openGraph: { type: "article", url: "/en/markets/geneva", title: "Private Banking Recruiter Geneva | Executive Partners", description: "Geneva private banking recruitment: UHNW/HNW Senior RMs, Team Heads, EAM coverage. Compensation benchmarks, portability analysis and confidential mandates.", siteName: "Executive Partners" },
+      robots: { index: true, follow: true },
+    };
+  }
+
+  if (slug === "dubai") {
+    return {
+      title: "Private Banking Recruiter Dubai DIFC | Senior RM & GCC Wealth Management Search | Executive Partners",
+      description: "Dubai's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and GCC/NRI bankers in DIFC and ADGM. Compensation benchmarks, DFSA licensing and live mandates.",
+      alternates: { canonical: "/en/markets/dubai" },
+      openGraph: { type: "article", url: "/en/markets/dubai", title: "Private Banking Recruiter Dubai DIFC | Executive Partners", description: "Dubai private banking recruitment: GCC, NRI and expat wealth. Senior RM and Team Head mandates across DIFC and ADGM. Tax-free packages and portability analysis.", siteName: "Executive Partners" },
+      robots: { index: true, follow: true },
+    };
+  }
+
+  if (slug === "zurich") {
+    return {
+      title: "Private Banking Recruiter Zurich | Senior RM & DACH Wealth Management Search | Executive Partners",
+      description: "Zurich's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and DACH-focused bankers at leading Swiss private banks. Compensation benchmarks, FINMA licensing and live mandates.",
+      alternates: { canonical: "/en/markets/zurich" },
+      openGraph: { type: "article", url: "/en/markets/zurich", title: "Private Banking Recruiter Zurich | Executive Partners", description: "Zurich private banking recruitment: onshore DACH, international UHNW. Senior RM and Team Head mandates at top Swiss platforms.", siteName: "Executive Partners" },
+      robots: { index: true, follow: true },
+    };
+  }
+
+  if (slug === "singapore") {
+    return {
+      title: "Private Banking Recruiter Singapore | Senior RM & APAC Wealth Management Search | Executive Partners",
+      description: "Singapore's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and SEA/North Asia bankers at MAS-regulated platforms. Compensation benchmarks, CMFAS licensing and live mandates.",
+      alternates: { canonical: "/en/markets/singapore" },
+      openGraph: { type: "article", url: "/en/markets/singapore", title: "Private Banking Recruiter Singapore | Executive Partners", description: "Singapore private banking recruitment: ASEAN, North Asia and cross-border wealth. Senior RM and Team Head mandates at top MAS platforms.", siteName: "Executive Partners" },
       robots: { index: true, follow: true },
     };
   }
