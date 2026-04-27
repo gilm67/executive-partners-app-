@@ -5,6 +5,8 @@ import Link from "next/link";
 import { INSIGHTS, type InsightArticle } from "./articles";
 import { marketLabel } from "@/lib/markets/marketLabel";
 
+/* -------------------------------- helpers -------------------------------- */
+
 function formatDate(iso: string) {
   try {
     return new Intl.DateTimeFormat("en-GB", {
@@ -30,7 +32,36 @@ function isWithinDays(iso: string, days: number) {
   return now - ms <= windowMs;
 }
 
+/* -------------------------------- config -------------------------------- */
+
 const LINKEDIN_LATEST = [
+  {
+    title: 'Smoke Over the DIFC',
+    date: '2026-04-27',
+    url: 'https://www.linkedin.com/pulse/smoke-over-difc-gil-m-chalem',
+  },
+  {
+    title: 'Bern Holds the Line',
+    date: '2026-04-23',
+    url: 'https://www.linkedin.com/pulse/bern-holds-line-gil-m-chalem',
+  },
+  {
+    title: 'The 10 Billion Myth: Why Size Is the Wrong Lens on Swiss Private Banking Consolidation',
+    date: '2026-04-21',
+    url: 'https://www.linkedin.com/pulse/10-billion-myth-gil-m-chalem',
+  },
+  {
+    title: "The Bank That Can't Choose a CEO",
+    date: '2026-04-20',
+    url: 'https://www.linkedin.com/pulse/bank-cant-choose-ceo-gil-m-chalem',
+  },
+  {
+    title: 'The Revenue Grid Nobody Shows You Before You Sign',
+    date: '2026-04-14',
+    url: 'https://www.linkedin.com/pulse/revenue-grid-nobody-shows-you-before-sign-gil-m-chalem',
+  },
+  // ── NEW APRIL 2026 ──────────────────────────────────────────────────────
+  // TODO: replace each URL with the exact link copied from your LinkedIn profile
   {
     title: "Smoke Over the DIFC",
     date: "2026-04-27",
@@ -56,6 +87,7 @@ const LINKEDIN_LATEST = [
     date: "2026-04-14",
     url: "https://www.linkedin.com/pulse/revenue-grid-nobody-shows-you-before-sign-gil-m-chalem",
   },
+  // ── EXISTING ────────────────────────────────────────────────────────────
   {
     title: "The AI Trap Nobody in Private Banking Is Talking About",
     date: "2026-04-07",
@@ -148,7 +180,10 @@ const P1_SUBTHEMES = [
 type RoleKey = "rm" | "hm";
 const ROLE_STORAGE_KEY = "insights_role";
 
-const ROLE_CTA: Record<RoleKey, { primary: { label: string; href: string }; secondary?: { label: string; href: string } }> = {
+const ROLE_CTA: Record<
+  RoleKey,
+  { primary: { label: string; href: string }; secondary?: { label: string; href: string } }
+> = {
   rm: {
     primary: { label: "Assess your portability →", href: "/portability" },
     secondary: { label: "Run a Business Plan →", href: "/en/bp-simulator" },
@@ -177,6 +212,8 @@ const RECOMMENDED_BY_ROLE: Record<RoleKey, readonly string[]> = {
   ],
 };
 
+/* -------------------- self-healing helpers -------------------- */
+
 function staleKey(role: RoleKey) {
   return `insights_reco_stale_${role}`;
 }
@@ -200,6 +237,8 @@ function writeStale(role: RoleKey, stale: Set<string>) {
     /* noop */
   }
 }
+
+/* -------------------------------- page -------------------------------- */
 
 export default function InsightsPage() {
   const sorted = useMemo(
@@ -303,15 +342,18 @@ export default function InsightsPage() {
             <span className="h-1 w-1 rounded-full bg-[#D4AF37]/80" />
             Insights
           </div>
+
           <h1 className="mt-5 text-4xl font-semibold text-white tracking-tight">
             Intelligence that makes decisions easier.
           </h1>
+
           <p className="mt-3 max-w-2xl text-white/70">
             Private banking analysis on strategy, talent, and market power — built for Switzerland and
             major booking centres.
           </p>
+
           <div className="mt-6 flex flex-wrap gap-3">
-            
+            <a
               href="#latest"
               className="inline-flex items-center rounded-xl bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-black hover:opacity-90"
             >
@@ -336,6 +378,7 @@ export default function InsightsPage() {
                 <h2 className="mt-2 text-xl font-semibold text-white">{roleLabel}</h2>
                 <p className="mt-1 text-sm text-white/60">{roleKicker}</p>
               </div>
+
               <div className="inline-flex rounded-2xl border border-white/15 bg-black/20 p-1">
                 <button
                   type="button"
@@ -386,9 +429,11 @@ export default function InsightsPage() {
                         </span>
                       </div>
                     </div>
+
                     <h3 className="mt-3 text-base font-semibold text-white leading-snug">
                       {a.title}
                     </h3>
+
                     <div className="mt-4 flex flex-wrap gap-2">
                       {(a.markets ?? []).slice(0, 3).map((m) => (
                         <span
@@ -400,6 +445,7 @@ export default function InsightsPage() {
                         </span>
                       ))}
                     </div>
+
                     <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
                       Read <span className="transition group-hover:translate-x-0.5">→</span>
                     </div>
@@ -416,6 +462,7 @@ export default function InsightsPage() {
                 >
                   {roleCta.primary.label}
                 </Link>
+
                 {roleCta.secondary ? (
                   <Link
                     href={roleCta.secondary.href}
@@ -425,6 +472,7 @@ export default function InsightsPage() {
                   </Link>
                 ) : null}
               </div>
+
               <Link
                 href="/en/insights/archive"
                 className="text-sm font-semibold text-white/70 hover:text-white underline underline-offset-4"
@@ -455,7 +503,7 @@ export default function InsightsPage() {
             {LINKEDIN_LATEST.slice()
               .sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))
               .map((a) => (
-                
+                <a
                   key={a.url}
                   href={a.url}
                   target="_blank"
@@ -468,10 +516,13 @@ export default function InsightsPage() {
                       LinkedIn · External
                     </span>
                   </div>
+
                   <h3 className="mt-3 text-lg font-semibold text-white leading-snug">{a.title}</h3>
+
                   <p className="mt-3 text-sm text-white/70 line-clamp-3">
                     Read the full article on LinkedIn.
                   </p>
+
                   <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
                     Read on LinkedIn <span className="transition group-hover:translate-x-0.5">→</span>
                   </div>
@@ -496,8 +547,10 @@ export default function InsightsPage() {
                       </span>
                     ) : null}
                   </div>
+
                   <h3 className="mt-3 text-lg font-semibold text-white leading-snug">{a.title}</h3>
                   <p className="mt-3 text-sm text-white/70 line-clamp-3">{a.summary}</p>
+
                   <div className="mt-4 flex flex-wrap gap-2">
                     {(a.markets ?? []).slice(0, 4).map((m) => (
                       <span
@@ -509,6 +562,7 @@ export default function InsightsPage() {
                       </span>
                     ))}
                   </div>
+
                   <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
                     Read <span className="transition group-hover:translate-x-0.5">→</span>
                   </div>
@@ -531,6 +585,7 @@ export default function InsightsPage() {
               Open Pillar I →
             </Link>
           </div>
+
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {P1_SUBTHEMES.map((s) => (
               <Link
