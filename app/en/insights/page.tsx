@@ -35,6 +35,34 @@ function isWithinDays(iso: string, days: number) {
 /* -------------------------------- config -------------------------------- */
 
 const LINKEDIN_LATEST = [
+  // ── NEW APRIL 2026 ──────────────────────────────────────────────────────
+  // TODO: replace each URL with the exact link copied from your LinkedIn profile
+  {
+    title: "Smoke Over the DIFC",
+    date: "2026-04-27",
+    url: "https://www.linkedin.com/pulse/smoke-over-difc-gil-m-chalem",
+  },
+  {
+    title: "Bern Holds the Line",
+    date: "2026-04-23",
+    url: "https://www.linkedin.com/pulse/bern-holds-line-gil-m-chalem",
+  },
+  {
+    title: "The 10 Billion Myth: Why Size Is the Wrong Lens on Swiss Private Banking Consolidation",
+    date: "2026-04-21",
+    url: "https://www.linkedin.com/pulse/10-billion-myth-gil-m-chalem",
+  },
+  {
+    title: "The Bank That Can't Choose a CEO",
+    date: "2026-04-20",
+    url: "https://www.linkedin.com/pulse/bank-cant-choose-ceo-gil-m-chalem",
+  },
+  {
+    title: "The Revenue Grid Nobody Shows You Before You Sign",
+    date: "2026-04-14",
+    url: "https://www.linkedin.com/pulse/revenue-grid-nobody-shows-you-before-sign-gil-m-chalem",
+  },
+  // ── EXISTING ────────────────────────────────────────────────────────────
   {
     title: "The AI Trap Nobody in Private Banking Is Talking About",
     date: "2026-04-07",
