@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     description:
       "Bank-style business case builder to stress-test portability assumptions. Model NNM, ROA, revenues, and margins.",
   },
+  alternates: { canonical: "https://www.execpartners.ch/en/bp-simulator" },
   twitter: {
     card: "summary_large_image",
     title: "Business Plan Simulator | Executive Partners",

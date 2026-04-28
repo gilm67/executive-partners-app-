@@ -45,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/", "/en",
 
     "/jobs",
-    "/apply",
+    
     "/candidates",
     "/hiring-managers",
     "/insights",
@@ -74,7 +74,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/private-banking-jobs-zurich",
 
     "/en/jobs",
-    "/en/apply",
+    
     "/en/candidates",
     "/en/hiring-managers",
     "/en/insights",

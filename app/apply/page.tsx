@@ -25,6 +25,7 @@ export const metadata: Metadata = {
   description:
     "Submit your profile securely for Private Banking & Wealth Management roles (Relationship Managers, Team Heads, Market Leaders). Geneva-based, with mandates across Switzerland, the UK, the US, Dubai, Singapore and Hong Kong.",
   alternates: { canonical: "/apply" },
+  robots: { index: false, follow: false },
   openGraph: {
     type: "website",
     url: "/apply",
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
       "Private Banking & Wealth Management executive search — submit your profile discreetly.",
     images: ["/og.webp"],
   },
-  robots: { index: true, follow: true },
+  robots: { index: false, follow: false },
 };
 
 /* ---------------- page ---------------- */
