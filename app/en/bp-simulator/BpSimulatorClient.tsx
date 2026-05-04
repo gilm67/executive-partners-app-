@@ -95,18 +95,21 @@ export default function BpSimulatorClient() {
     setBottomCapture(p => ({ ...p, submitting: true }));
 
     // Build a summary from the store
+    const s = storeI as any;
     const summary = [
-      storeI.candidate_name ? `Candidate: ${storeI.candidate_name}` : null,
-      storeI.current_market ? `Market: ${storeI.current_market}` : null,
-      storeI.current_assets_m ? `AUM: ${storeI.current_assets_m}M` : null,
-      (storeI as any).portability_pct ? `Portability: ${(storeI as any).portability_pct}%` : null,
-      storeI.nnm_y1_m ? `NNM Y1: ${storeI.nnm_y1_m}M` : null,
-      storeI.nnm_y2_m ? `NNM Y2: ${storeI.nnm_y2_m}M` : null,
-      storeI.nnm_y3_m ? `NNM Y3: ${storeI.nnm_y3_m}M` : null,
-      storeI.score != null ? `Score: ${storeI.score}/10` : null,
-      (storeI as any).committee_score != null ? `Committee Readiness: ${(storeI as any).committee_score}/100` : null,
-      storeI.ai_notes ? `Notes: ${storeI.ai_notes}` : null,
-    ].filter(Boolean).join(" | ");
+      `CANDIDATE: ${s.candidate_name || "—"} | ${s.current_role || "—"} | ${s.candidate_location || "—"}`,
+      `EMPLOYER: ${s.current_employer || "—"} | Market: ${s.current_market || "—"} | Currency: ${s.currency || "CHF"}`,
+      `EXPERIENCE: ${s.years_experience || 0} yrs | Inherited: ${s.inherited_book_pct || 0}% | Clients: ${s.current_number_clients || 0}`,
+      `COMPENSATION: Base ${s.base_salary || 0} | Last bonus: ${s.last_bonus || 0}`,
+      `AUM: ${s.current_assets_m || 0}M | Portability: ${s.portability_pct || 60}% | Garden leave: ${s.garden_leave_months ?? 3}mo`,
+      `ROA: Y1 ${s.roa_y1 || 0}% | Y2 ${s.roa_y2 || 0}% | Y3 ${s.roa_y3 || 0}%`,
+      `NNM: Y1 ${s.nnm_y1_m || 0}M | Y2 ${s.nnm_y2_m || 0}M | Y3 ${s.nnm_y3_m || 0}M`,
+      `INSTITUTION: ${s.institution_type || "tier1_swiss"} | Sign-on: ${s.sign_on_bonus || 0}`,
+      `PROSPECTS: ${(s.prospects||[]).length} total | Best: ${(s.prospects||[]).reduce((a,p) => a+(p.best_nnm_m||0), 0).toFixed(1)}M | Worst: ${(s.prospects||[]).reduce((a,p) => a+(p.worst_nnm_m||0), 0).toFixed(1)}M`,
+      `SCORES: ${s.score || 0}/10 traffic light | ${s.committee_score || 0}/100 committee readiness`,
+      s.ai_notes ? `ANALYSIS: ${s.ai_notes}` : null,
+    ].filter(Boolean).join("
+");
 
     try {
       await fetch("/api/capture-lead", {
