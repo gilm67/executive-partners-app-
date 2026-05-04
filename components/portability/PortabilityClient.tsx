@@ -1217,6 +1217,23 @@ export default function PortabilityClient() {
           <section className="rounded-2xl border border-white/10 bg-black/40 p-5 text-sm text-gray-200">
             <h2 className="text-lg font-semibold text-white">Next steps with Executive Partners</h2>
             <p className="mt-2">If your portability profile is commercially credible, we can help you approach the right platforms and booking centres in a structured, discreet process, one that protects your reputation throughout.</p>
+ 
+            {/* Download CTA — prominent, natural position after completing the tool */}
+            <div className="mt-5 rounded-xl border border-brandGold/40 bg-brandGold/5 p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-white">Download your full PDF diagnostic</p>
+                <p className="text-xs text-gray-400 mt-0.5">Your complete score, flags, and recommendations formatted as a confidential EP report.</p>
+              </div>
+              <button
+                type="button"
+                onClick={handleDownload}
+                disabled={exporting}
+                className="shrink-0 rounded-full bg-brandGold px-6 py-2.5 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60 transition whitespace-nowrap"
+              >
+                {exporting ? "Preparing PDF..." : "Download full PDF diagnostic"}
+              </button>
+            </div>
+ 
             <div className="mt-4 flex flex-wrap gap-3">
               <PrimaryButton href="/en/contact">Share my profile & book a call</PrimaryButton>
               <SecondaryButton href="/en/jobs">View live mandates</SecondaryButton>
