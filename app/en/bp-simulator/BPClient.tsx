@@ -147,51 +147,6 @@ export default function BPClient({
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* ✅ Tool header (NOT marketing) */}
-      <div className="rounded-2xl border border-white/10 bg-black/30 p-4 ring-1 ring-white/10">
-        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs text-white/70 ring-1 ring-white/10">
-              Executive Partners · Private Tool
-            </div>
-
-            <h1 className="mt-1 text-2xl md:text-3xl font-semibold tracking-tight">
-              Business Plan Simulator
-            </h1>
-
-            <p className="mt-1 text-sm text-white/70">
-              Confidential tool — fields marked with * are mandatory.
-            </p>
-          </div>
-
-          {/* ✅ Clear conversion path */}
-          <div className="flex flex-wrap items-center gap-3">
-            <a
-              href="#bp-calibration"
-              onClick={handleShareOutput}
-              className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
-            >
-              Share output →
-            </a>
-
-            <a
-              href="https://calendly.com/execpartners/15-minute-career-consultation"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center rounded-xl bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
-            >
-              Book confidential call →
-            </a>
-
-            {/* ✅ Fix: use /contact (avoid locale mismatch / missing route issues) */}
-            <Link
-              href="/contact"
-              className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
-            >
-              Send your output →
-            </Link>
-          </div>
-        </div>
-      </div>
 
       <hr className="border-white/10" />
 
