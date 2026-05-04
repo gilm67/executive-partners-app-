@@ -128,6 +128,18 @@ const BOOKING_CENTRES = ["Geneva", "Zurich", "London", "Luxembourg", "Monaco", "
 const REG_PERMISSIONS = ["FINMA outbound (CH)", "FCA (UK)", "DFSA / FSRA (UAE)", "MAS (Singapore)", "SFC (Hong Kong)", "SEC / US offshore", "MiFID / EU passport"];
  
 /* ─────────────────────────────────────────────────────────────
+   GUIDE COMPONENT — consistent field-level guidance
+───────────────────────────────────────────────────────────── */
+ 
+function Guide({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mt-2 rounded-lg border-l-2 border-brandGold/35 bg-brandGold/5 pl-3 pr-2 py-2">
+      <p className="text-[11px] text-gray-300 leading-relaxed">{children}</p>
+    </div>
+  );
+}
+ 
+/* ─────────────────────────────────────────────────────────────
    COMPONENT
 ───────────────────────────────────────────────────────────── */
  
@@ -528,8 +540,10 @@ export default function PortabilityClient() {
               <label className="block text-xs font-semibold text-brandGoldSoft mb-1 uppercase tracking-wider">
                 Time at current institution ★ New dimension
               </label>
-              <p className="text-[11px] text-gray-400 mb-3">One of the strongest predictors hiring committees use. Affects your overall score via a direct multiplier.</p>
-              <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+              <Guide>
+                How long you have been at your current employer. This is one of the most scrutinised factors by hiring committees — banks apply an informal minimum of 2–3 years before treating a senior RM move as commercially credible. A short tenure suggests clients have not yet had time to bond with you personally rather than with the institution. It also raises questions about stability. Score this honestly — it is directly verifiable.
+              </Guide>
+              <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
                 {TENURE_OPTIONS.map(t => (
                   <button key={t.key} type="button" onClick={() => updateProfile({ tenureKey: t.key })}
                     className={`rounded-xl border px-2 py-2.5 text-xs font-medium transition text-center leading-tight ${
@@ -555,6 +569,9 @@ export default function PortabilityClient() {
                     <option key={o} className="bg-[#0B0E13]">{o}</option>
                   ))}
                 </select>
+                <Guide>
+                  Select the geographic market that describes the majority of your <strong>client base</strong> — not your personal location. A Geneva-based banker whose clients are predominantly Russian or Central European families should select CIS/CEE, not CH Onshore. This helps calibrate which booking centres and regulatory permissions are most relevant to your portability profile.
+                </Guide>
               </div>
  
               {/* Hub */}
@@ -566,6 +583,9 @@ export default function PortabilityClient() {
                     <option key={o} className="bg-[#0B0E13]">{o}</option>
                   ))}
                 </select>
+                <Guide>
+                  The city where your clients' assets are <strong>legally custodied today</strong> — where the accounts are actually booked, not where you sit. This determines which cross-border licensing requirements apply to a move and which receiving banks can legally onboard your clients on day one without an additional licensing process.
+                </Guide>
               </div>
  
               {/* ROA */}
@@ -575,7 +595,9 @@ export default function PortabilityClient() {
                   onChange={e => updateProfile({ roaBps: Number(e.target.value) || 0 })}
                   className="w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
                 />
-                <p className="mt-1 text-[11px] text-gray-400">Typical CH onshore: ~65–90 bps</p>
+                <Guide>
+                  Revenue on Assets — your total annual revenue divided by your total AUM, in basis points (1 bp = 0.01%). Example: CHF 1.5M revenue on CHF 200M AUM = 75 bps. Banks use this to project your year-1 P&L contribution. A figure below 50 bps suggests a transactional or custody-heavy book. Above 100 bps typically indicates complex products, active management, or a high-net-worth client base with significant alternatives exposure. Typical CH onshore range: 65–90 bps. Do not include one-off items.
+                </Guide>
               </div>
  
               {/* Wallet Share — NEW */}
@@ -591,27 +613,49 @@ export default function PortabilityClient() {
                     <option key={w.score} value={w.score} className="bg-[#0B0E13]">{w.label}</option>
                   ))}
                 </select>
-                <p className="mt-1 text-[11px] text-gray-400">
+                <Guide>
+                  Wallet share measures what proportion of your clients' <strong>total investable wealth</strong> you actually manage — not just what is booked with your bank. Example: a client with CHF 20M total wealth where you manage CHF 5M has a 25% wallet share. High wallet share means the client depends primarily on you as their financial relationship — making them significantly more likely to follow you to a new institution. Low wallet share means they have a primary relationship elsewhere, and you are likely secondary or tertiary. This is the dimension most frequently overlooked by bankers when estimating portability.
+                </Guide>
+                <p className="mt-2 text-[11px] text-gray-400">
                   {WALLET_OPTIONS.find(w => w.score === profile.walletShareScore)?.desc}
                 </p>
               </div>
  
               {/* Revenue sliders */}
               <div className="space-y-4 lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-5">
-                {[
-                  { key: "recurringShare" as const, label: "Recurring revenue share (%)", max: 100, val: profile.recurringShare, hint: `${profile.recurringShare}% recurring (DPM/advisory, trail)` },
-                  { key: "eddShare" as const, label: "EDD / complex tax clients (% of book)", max: 100, val: profile.eddShare, hint: `${profile.eddShare}% require enhanced due diligence` },
-                  { key: "pepsShare" as const, label: "PEPs / high-profile clients (%)", max: 50, val: profile.pepsShare, hint: `${profile.pepsShare}% PEP / sensitive clients` },
-                ].map(({ key, label, max, val, hint }) => (
-                  <div key={key}>
-                    <label className="block text-xs font-medium text-gray-300 mb-1">{label}</label>
-                    <input type="range" min={0} max={max} value={val}
-                      onChange={e => updateProfile({ [key]: Number(e.target.value) })}
-                      className="w-full accent-brandGold"
-                    />
-                    <p className="mt-1 text-[11px] text-gray-400">{hint}</p>
-                  </div>
-                ))}
+                <div>
+                  <label className="block text-xs font-medium text-gray-300 mb-1">Recurring revenue share (%)</label>
+                  <input type="range" min={0} max={100} value={profile.recurringShare}
+                    onChange={e => updateProfile({ recurringShare: Number(e.target.value) })}
+                    className="w-full accent-brandGold"
+                  />
+                  <p className="mt-1 text-[11px] text-gray-400">{profile.recurringShare}% recurring (DPM/advisory fees, trail)</p>
+                  <Guide>
+                    Recurring revenue — advisory and discretionary management fees, trail commissions, custody fees — is more portable than transactional revenue because it follows the client relationship, not a specific product or trade. Banks assign a higher P&L multiple to recurring revenue in their business plan projections. A book with 70%+ recurring revenue is significantly easier to justify to a credit committee than one driven by bespoke transactions.
+                  </Guide>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-300 mb-1">EDD / complex tax clients (% of book)</label>
+                  <input type="range" min={0} max={100} value={profile.eddShare}
+                    onChange={e => updateProfile({ eddShare: Number(e.target.value) })}
+                    className="w-full accent-brandGold"
+                  />
+                  <p className="mt-1 text-[11px] text-gray-400">{profile.eddShare}% require enhanced due diligence</p>
+                  <Guide>
+                    Enhanced Due Diligence clients require additional compliance scrutiny — typically clients from higher-risk jurisdictions, complex ownership structures (trusts, foundations, holding companies), or those with a connection to public life. A high EDD share extends the onboarding process at the receiving bank by 2–6 months per client and may result in some clients being declined. Be realistic: if a significant portion of your book requires a level of compliance complexity the receiving bank may not accommodate, your bankable AUM is lower than your headline AUM.
+                  </Guide>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-300 mb-1">PEPs / high-profile clients (%)</label>
+                  <input type="range" min={0} max={50} value={profile.pepsShare}
+                    onChange={e => updateProfile({ pepsShare: Number(e.target.value) })}
+                    className="w-full accent-brandGold"
+                  />
+                  <p className="mt-1 text-[11px] text-gray-400">{profile.pepsShare}% PEP / sensitive clients</p>
+                  <Guide>
+                    Politically Exposed Persons — current or former senior government officials, their immediate family members, and close associates. Most private banks require board-level or senior management approval to onboard PEPs, which significantly extends timelines and introduces uncertainty. Many institutions have category-specific restrictions (e.g. declining certain nationalities or government roles). A book with a high PEP concentration will face selective onboarding at best.
+                  </Guide>
+                </div>
               </div>
             </div>
           </motion.section>
@@ -636,19 +680,97 @@ export default function PortabilityClient() {
             </div>
  
             <div className="space-y-5 lg:col-span-2">
-              {CORE_DIMENSIONS.map(dim => (
-                <div key={dim.key} className="space-y-1">
-                  <div className="flex items-center justify-between gap-4">
-                    <p className="text-sm font-medium text-white">{dim.label}</p>
-                    <p className="text-sm text-gray-300 shrink-0">{coreScores[dim.key]}/5</p>
-                  </div>
-                  <input type="range" min={1} max={5} value={coreScores[dim.key]}
-                    onChange={e => setCoreScores(p => ({ ...p, [dim.key]: Number(e.target.value) }))}
-                    className="w-full accent-brandGold"
-                  />
-                  <p className="text-[11px] text-gray-400">{dim.description}</p>
+ 
+              {/* Custodian / Booking Centre */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-sm font-medium text-white">Custodian / Booking Centre Footprint</p>
+                  <p className="text-sm text-gray-300 shrink-0">{coreScores.custodian}/5</p>
                 </div>
-              ))}
+                <input type="range" min={1} max={5} value={coreScores.custodian}
+                  onChange={e => setCoreScores(p => ({ ...p, custodian: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                <Guide>
+                  Score based on how many booking centres your clients can realistically follow you to. Score 1 if all clients are booked in a single jurisdiction with no cross-border flexibility. Score 5 if clients can be onboarded across 4+ booking centres (Geneva, London, Dubai, Singapore, etc.) without significant legal or tax barriers. The more centres your clients can access, the larger the pool of receiving banks that can service them — which directly expands your options.
+                </Guide>
+              </div>
+ 
+              {/* AUM Mix */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-sm font-medium text-white">AUM Mix & Diversification</p>
+                  <p className="text-sm text-gray-300 shrink-0">{coreScores.aum}/5</p>
+                </div>
+                <input type="range" min={1} max={5} value={coreScores.aum}
+                  onChange={e => setCoreScores(p => ({ ...p, aum: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                <Guide>
+                  Score based on the breadth of mandate types in your book — not your AUM size. A balanced split across discretionary management (DPM), advisory mandates, and lending (Lombard, real estate) scores 5. A book concentrated in a single asset class, single product, or execution-only mandates scores 1–2. Diversified books demonstrate client sophistication and generate more sustainable, platform-agnostic revenue.
+                </Guide>
+              </div>
+ 
+              {/* Cross-Border Licenses */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-sm font-medium text-white">Cross-Border Licenses</p>
+                  <p className="text-sm text-gray-300 shrink-0">{coreScores.licenses}/5</p>
+                </div>
+                <input type="range" min={1} max={5} value={coreScores.licenses}
+                  onChange={e => setCoreScores(p => ({ ...p, licenses: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                <Guide>
+                  Consider the regulatory permissions you currently hold — FINMA outbound approval, FCA authorisation, DIFC/ADGM licensing, MAS authorisation, SFC licensing. These permissions allow you to service clients in their home jurisdiction without requiring the client to come to Switzerland. Score 1 if you have no cross-border permissions and all clients must be serviced under Swiss law only. Score 5 if you hold active permissions across 4+ regulatory regimes and use them regularly.
+                </Guide>
+              </div>
+ 
+              {/* Product Scope */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-sm font-medium text-white">Product Scope Breadth</p>
+                  <p className="text-sm text-gray-300 shrink-0">{coreScores.product}/5</p>
+                </div>
+                <input type="range" min={1} max={5} value={coreScores.product}
+                  onChange={e => setCoreScores(p => ({ ...p, product: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                <Guide>
+                  Score your actual breadth of product knowledge that you actively use with clients — not what is theoretically available on your current platform. Score 1 if your book is primarily cash, equities, and standard funds. Score 5 if you regularly place clients in private equity, hedge funds, structured notes, Lombard lending, real estate financing, and alternatives. Bankers who can discuss illiquid and complex instruments are more valuable to a receiving platform and tend to generate higher, more defensible revenue.
+                </Guide>
+              </div>
+ 
+              {/* Client Concentration */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-sm font-medium text-white">Client Concentration</p>
+                  <p className="text-sm text-gray-300 shrink-0">{coreScores.concentration}/5</p>
+                </div>
+                <input type="range" min={1} max={5} value={coreScores.concentration}
+                  onChange={e => setCoreScores(p => ({ ...p, concentration: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                <Guide>
+                  Score 1 if your top 3 clients represent more than 60% of your AUM — high concentration means losing one client eliminates the commercial rationale for the hire. Score 5 if no single client represents more than 8–10% of your book and your AUM is spread across 30+ independent relationships. Banks strongly prefer low-concentration books because they are more predictable, more resilient to client attrition, and easier to write a business plan around.
+                </Guide>
+              </div>
+ 
+              {/* Compliance & KYC */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-sm font-medium text-white">Compliance & KYC Reuse</p>
+                  <p className="text-sm text-gray-300 shrink-0">{coreScores.compliance}/5</p>
+                </div>
+                <input type="range" min={1} max={5} value={coreScores.compliance}
+                  onChange={e => setCoreScores(p => ({ ...p, compliance: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                <Guide>
+                  Think about your top 30 clients: do they have current passports, recent source of wealth documentation, tax residency certificates, and completed client acceptance forms? If yes — score high. If most documents are expired, incomplete, or scattered across internal systems — score low. Good KYC reusability means the receiving bank can onboard clients in weeks rather than months. Poor KYC is the single most common cause of AUM transfer delays in practice, and one of the most fixable before a move.
+                </Guide>
+              </div>
+ 
             </div>
           </motion.section>
  
@@ -687,10 +809,12 @@ export default function PortabilityClient() {
                   <label className="block text-xs font-semibold text-brandGoldSoft mb-1 uppercase tracking-wider">
                     Governing law / jurisdiction ★
                   </label>
-                  <p className="text-[11px] text-gray-400 mb-2">Your employment contract's governing law clause. The single most important legal input in this assessment.</p>
+                  <Guide>
+                    Check your employment contract — specifically the clause titled "Governing Law", "Applicable Law", or "Choice of Law." It is usually in the final pages. If you cannot locate your contract, ask HR for a copy or check your original offer letter. This single input has the largest individual impact on your legal score. Do not guess — the difference between Swiss law and English law on your overall portability score can be 15–20 percentage points.
+                  </Guide>
                   <select value={legalState.jurisdiction}
                     onChange={e => updateLegal({ jurisdiction: e.target.value as JurisdictionKey })}
-                    className="w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
+                    className="mt-2 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
                   >
                     <option value="" className="bg-[#0B0E13]">— Select your jurisdiction —</option>
                     {(Object.entries(JURISDICTION_DATA) as [Exclude<JurisdictionKey, "">, JurData][]).map(([key, data]) => (
@@ -716,8 +840,11 @@ export default function PortabilityClient() {
                 )}
  
                 <div>
-                  <label className="block text-xs font-medium text-gray-300 mb-2">Garden leave clause duration</label>
-                  <div className="grid grid-cols-3 gap-1.5">
+                  <label className="block text-xs font-medium text-gray-300 mb-1">Garden leave clause duration</label>
+                  <Guide>
+                    Garden leave means your employer keeps you on salary but prohibits you from working elsewhere, contacting clients, or joining a competitor for the specified period. It begins from the date you hand in your resignation — not from your last day in the office. During garden leave, you cannot be employed by a new institution, and client contact is typically prohibited. Select "No clause" only if your contract explicitly contains no garden leave provision — not simply because you have never thought about it.
+                  </Guide>
+                  <div className="mt-2 grid grid-cols-3 gap-1.5">
                     {GARDEN_LEAVE_OPTIONS.map(g => (
                       <button key={g.key} type="button" onClick={() => updateLegal({ gardenLeave: g.key })}
                         className={`rounded-xl border px-2 py-2 text-xs font-medium transition text-center ${
@@ -732,8 +859,11 @@ export default function PortabilityClient() {
  
                 {/* Clawback */}
                 <div>
-                  <label className="block text-xs font-medium text-gray-300 mb-2">Retention bonus / clawback</label>
-                  <div className="flex gap-2 mb-3">
+                  <label className="block text-xs font-medium text-gray-300 mb-1">Retention bonus / clawback</label>
+                  <Guide>
+                    A retention bonus with a clawback obligation means you must repay part or all of a bonus if you leave before a specified date. Example: you received CHF 200K in January 2024, repayable on a sliding scale if you resign before January 2026. Check your contract for the exact amount, the repayment schedule, and whether death, disability, or redundancy are exemptions. Most receiving banks will gross this up in their sign-on package — but only if you disclose it upfront and quantify it precisely. Select "Clawback applies" if any outstanding repayment obligation exists.
+                  </Guide>
+                  <div className="flex gap-2 mt-2 mb-3">
                     <button type="button" onClick={() => updateLegal({ hasClawback: false, clawbackPct: 0 })}
                       className={`rounded-xl border px-3 py-2 text-xs font-medium transition ${!legalState.hasClawback ? "border-brandGold bg-brandGold/20 text-brandGoldPale" : "border-white/15 bg-black/30 text-gray-300 hover:border-brandGold/40"}`}
                     >No clawback</button>
@@ -762,8 +892,10 @@ export default function PortabilityClient() {
                 <label className="block text-xs font-semibold text-brandGoldSoft mb-1 uppercase tracking-wider">
                   EAM co-management exposure ★ New
                 </label>
-                <p className="text-[11px] text-gray-400 mb-3">% of your book co-managed with an External Asset Manager. Receiving banks typically treat this AUM as partially or fully non-portable — they cannot control client onboarding decisions made by the EAM.</p>
-                <div className="space-y-2">
+                <Guide>
+                  An External Asset Manager (EAM / gérant indépendant) is a FINMA-licensed independent portfolio manager who manages client assets through a custodian bank using a power of attorney. If you have informally referred clients to an EAM, or if an EAM colleague manages a portion of your clients' portfolios, those assets sit in a legally ambiguous position when you move. The receiving bank cannot onboard EAM-managed assets without the EAM's active cooperation — which may not be forthcoming if the EAM has a custodian banking relationship with your current employer. Select your honest exposure level: if in doubt, ask yourself how much of your declared AUM is actually managed by someone else under a power of attorney.
+                </Guide>
+                <div className="mt-3 space-y-2">
                   {EAM_OPTIONS.map(opt => (
                     <button key={opt.score} type="button" onClick={() => updateLegal({ eamExposure: opt.score })}
                       className={`w-full rounded-xl border px-4 py-3 text-left text-xs transition ${
@@ -818,26 +950,115 @@ export default function PortabilityClient() {
             </div>
  
             <div className="grid gap-5 md:grid-cols-2">
-              {ADVANCED_DIMENSIONS.map(dim => {
-                const isRelDepth = dim.key === "relationshipDepth";
-                const showWarn = isRelDepth && advancedScores.relationshipDepth >= 5 && advancedScores.pastPortability <= 2;
-                return (
-                  <div key={dim.key} className="space-y-1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-white">{dim.label}</span>
-                      <span className="text-gray-300 shrink-0 ml-4">{advancedScores[dim.key]}/5</span>
-                    </div>
-                    <input type="range" min={1} max={5} value={advancedScores[dim.key]}
-                      onChange={e => setAdvancedScores(p => ({ ...p, [dim.key]: Number(e.target.value) }))}
-                      className="w-full accent-brandGold"
-                    />
-                    <p className="text-[11px] text-gray-400">{dim.description}</p>
-                    {showWarn && (
-                      <p className="text-[11px] text-amber-400/90 mt-1">⚠ Maximum relationship depth with limited past portability evidence — banks will probe this with specific examples. Ensure your score is evidenceable.</p>
-                    )}
-                  </div>
-                );
-              })}
+ 
+              {/* AUM Diversification */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white">AUM diversification (Advisory / DPM / Lending)</span>
+                  <span className="text-gray-300 shrink-0 ml-4">{advancedScores.aumDiversification}/5</span>
+                </div>
+                <input type="range" min={1} max={5} value={advancedScores.aumDiversification}
+                  onChange={e => setAdvancedScores(p => ({ ...p, aumDiversification: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                <Guide>
+                  Score based on your split across advisory mandates (client approves each trade), discretionary management (you manage without prior approval per trade), and lending (Lombard, real estate, structured credit). Score 1 if your book is 90%+ advisory/execution. Score 5 if you have a roughly balanced spread across all three. A well-diversified book generates more stable, recurring revenue and is easier to onboard at a receiving bank that has its own DPM and lending infrastructure.
+                </Guide>
+              </div>
+ 
+              {/* Alternatives / Structured */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white">Alternatives & structured product usage</span>
+                  <span className="text-gray-300 shrink-0 ml-4">{advancedScores.altsStructured}/5</span>
+                </div>
+                <input type="range" min={1} max={5} value={advancedScores.altsStructured}
+                  onChange={e => setAdvancedScores(p => ({ ...p, altsStructured: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                <Guide>
+                  Do your clients currently hold private equity funds, hedge fund allocations, structured notes, or real assets? Score 1 if your book is entirely in liquid, publicly traded instruments. Score 5 if alternatives and structured products represent 20%+ of client portfolios and you have placed these directly with clients based on your own recommendation. Banks prize RMs whose clients are already comfortable with illiquid and complex instruments — it signals higher revenue quality and reduces re-education costs.
+                </Guide>
+              </div>
+ 
+              {/* KYC Reuse */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white">KYC / documentation reusability</span>
+                  <span className="text-gray-300 shrink-0 ml-4">{advancedScores.kycReuse}/5</span>
+                </div>
+                <input type="range" min={1} max={5} value={advancedScores.kycReuse}
+                  onChange={e => setAdvancedScores(p => ({ ...p, kycReuse: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                <Guide>
+                  This dimension is underestimated but practically critical. Think through your top 30 clients one by one: do they have current passports (not expired), recent source of wealth documentation (bank statements, corporate accounts, inheritance docs), valid tax residency certificates, and up-to-date client acceptance files? Score 1 if most documents are more than 2 years old or would need to be reconstructed. Score 5 if you could assemble a complete, current KYC file for each of your top clients within 30 days. This is one of the most fixable dimensions before a move.
+                </Guide>
+              </div>
+ 
+              {/* Past Portability */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white">Past portability track record</span>
+                  <span className="text-gray-300 shrink-0 ml-4">{advancedScores.pastPortability}/5</span>
+                </div>
+                <input type="range" min={1} max={5} value={advancedScores.pastPortability}
+                  onChange={e => setAdvancedScores(p => ({ ...p, pastPortability: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                <Guide>
+                  Have you previously moved between institutions and had clients follow you? This is the strongest evidenceable signal of portability available. Score 1 if you have never changed employer with clients, or if you did but few followed. Score 5 if you have moved at least once with a meaningful portion of your book — particularly if you have done so across different institutions or jurisdictions. Banks will ask for this directly; be prepared to cite specific examples without breaching client confidentiality.
+                </Guide>
+              </div>
+ 
+              {/* Relationship Depth */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white">Relationship depth & contact frequency</span>
+                  <span className="text-gray-300 shrink-0 ml-4">{advancedScores.relationshipDepth}/5</span>
+                </div>
+                <input type="range" min={1} max={5} value={advancedScores.relationshipDepth}
+                  onChange={e => setAdvancedScores(p => ({ ...p, relationshipDepth: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                {advancedScores.relationshipDepth >= 5 && advancedScores.pastPortability <= 2 && (
+                  <p className="text-[11px] text-amber-400/90 mt-1">⚠ Maximum relationship depth with limited past portability evidence — banks will probe this with specific examples. Ensure your score is evidenceable.</p>
+                )}
+                <Guide>
+                  Ask yourself: does the client call you, or do you call them? Do you know their children's names, their lawyers, their other financial advisors? Have you met their family in a non-professional context? Do they see you as their primary financial confidant and decision partner, or as the person who executes their instructions? Score 1 if relationships are primarily transactional and the bank brand drives the relationship. Score 5 if you are genuinely irreplaceable in the client's financial life. This is the dimension most subject to self-assessment optimism — score conservatively.
+                </Guide>
+              </div>
+ 
+              {/* Team Dependency */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white">Team dependency</span>
+                  <span className="text-gray-300 shrink-0 ml-4">{advancedScores.teamDependency}/5</span>
+                </div>
+                <input type="range" min={1} max={5} value={advancedScores.teamDependency}
+                  onChange={e => setAdvancedScores(p => ({ ...p, teamDependency: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                <Guide>
+                  If your assistant and your team left tomorrow, would clients notice? Would they call your mobile or the bank's switchboard? Score 1 if your book was genuinely built by a team — clients know multiple people and the relationships are institutionally embedded. Score 5 if you are the singular point of contact for every client: they have your personal mobile, they would follow you if you moved tomorrow regardless of which institution you joined. This matters because team-built books have significantly lower individual portability.
+                </Guide>
+              </div>
+ 
+              {/* Platform Fit */}
+              <div className="space-y-1 md:col-span-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white">Fit with Tier-1 private banking platform</span>
+                  <span className="text-gray-300 shrink-0 ml-4">{advancedScores.platformFit}/5</span>
+                </div>
+                <input type="range" min={1} max={5} value={advancedScores.platformFit}
+                  onChange={e => setAdvancedScores(p => ({ ...p, platformFit: Number(e.target.value) }))}
+                  className="w-full accent-brandGold"
+                />
+                <Guide>
+                  Consider whether your clients' profiles — their complexity, their product expectations, their AUM levels, their service requirements — would be genuinely well served by a leading Swiss or international private bank. Some books fit better at an independent EAM, a boutique, or a smaller institution. Score 1 if your clients have below-threshold AUM, expect a retail-level service model, or have profiles that Tier-1 platforms typically decline. Score 5 if your clients are natural Tier-1 clients who currently bank with you out of personal loyalty and would benefit from the infrastructure of a major platform.
+                </Guide>
+              </div>
+ 
             </div>
           </motion.section>
  
@@ -854,8 +1075,10 @@ export default function PortabilityClient() {
             <div className="grid gap-6 md:grid-cols-2">
               <div>
                 <h3 className="text-sm font-semibold text-white mb-1">Booking centres your clients can follow</h3>
-                <p className="text-xs text-gray-400 mb-3">Select locations where a meaningful portion of your book could be onboarded. More coverage = higher geographic multiplier.</p>
-                <div className="flex flex-wrap gap-2">
+                <Guide>
+                  Select every location where a meaningful portion of your client book could realistically be onboarded — where clients have the legal, tax, and residency profile to hold assets. Do not select a centre simply because the bank has a branch there. Only select it if your specific clients could follow. A client who is Swiss-domiciled with exclusively Swiss-source wealth is unlikely to be bookable in Dubai. A client with UAE residency and GCC-source wealth could be booked in Geneva, Dubai, or Singapore. Your selection here directly affects the geographic multiplier applied to your advanced score.
+                </Guide>
+                <div className="mt-3 flex flex-wrap gap-2">
                   {BOOKING_CENTRES.map(bc => (
                     <button key={bc} type="button"
                       onClick={() => setBookingCentres(p => ({ ...p, [bc]: !p[bc] }))}
@@ -866,8 +1089,10 @@ export default function PortabilityClient() {
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-white mb-1">Regulatory permissions you hold today</h3>
-                <p className="text-xs text-gray-400 mb-3">Select the regimes you are effectively licensed to service. Each additional permission adds a multiplier to your advanced score.</p>
-                <div className="flex flex-wrap gap-2">
+                <Guide>
+                  Select only the regimes for which you have an active, current authorisation from your employer — not permissions you had at a previous institution. FINMA outbound allows you to contact and service clients in their home jurisdiction. FCA authorisation enables UK client servicing. DIFC/ADGM covers UAE-booked clients. MAS covers Singapore. Holding active permissions means a receiving bank does not need to sponsor a lengthy re-licensing process before you can start generating revenue. If you are unsure whether a permission is active, ask your compliance team.
+                </Guide>
+                <div className="mt-3 flex flex-wrap gap-2">
                   {REG_PERMISSIONS.map(p => (
                     <button key={p} type="button"
                       onClick={() => setPermissions(prev => ({ ...prev, [p]: !prev[p] }))}
