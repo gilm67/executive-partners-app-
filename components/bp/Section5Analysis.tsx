@@ -290,14 +290,16 @@ export default function Section5Analysis() {
       setSaving(true); setSaved(null);
       setExportStatus?.('generating', null);
 
-      const res = await fetch('/api/save-bp', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ...i, score, ai_notes: aiNotes, committee_score: committeScore }),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok || json?.ok !== true) throw new Error(json?.message || `Save failed (${res.status})`);
-      setSaved('ok');
+      // Non-blocking save — PDF always proceeds regardless
+      try {
+        const res = await fetch('/api/save-bp', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ ...i, score, ai_notes: aiNotes, committee_score: committeScore }),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (res.ok && json?.ok === true) setSaved('ok');
+      } catch { /* save failed silently */ }
 
       const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import('html2canvas'), import('jspdf')]);
       const node = pdfRef.current;
@@ -325,7 +327,7 @@ export default function Section5Analysis() {
       setExportStatus?.('ready', fname);
     } catch (e) {
       console.error(e); setSaved('err'); setExportStatus?.('error', null);
-      alert('Could not save or export. Please try again.');
+      // error logged to console only
     } finally { setSaving(false); }
   }
 
