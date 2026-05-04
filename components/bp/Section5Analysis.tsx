@@ -332,7 +332,7 @@ export default function Section5Analysis() {
   }
 
   function onSaveAndPDF() {
-    if (!userEmail) { setShowEmailGate(true); return; }
+    // Email already captured at bottom of page — proceed directly
     performSaveAndPDF();
   }
 
