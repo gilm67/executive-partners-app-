@@ -477,7 +477,7 @@ export default function Section4Revenue() {
               ))}
               <tr className="bg-rose-500/10 font-semibold">
                 <Td>3Y Total</Td>
-                <Td className="text-right"></Td>
+                <Td className="text-right">{' '}</Td>
                 <Td className="text-right text-rose-300">{fmt0.format(c.down_grossTotal)}</Td>
                 <Td className={`text-right ${c.down_nmTotal >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>{fmt0.format(c.down_nmTotal)}</Td>
               </tr>
