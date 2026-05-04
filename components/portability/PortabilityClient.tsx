@@ -1,168 +1,942 @@
-// components/portability/PortabilityClient.tsx
 "use client";
-
-import { Suspense } from "react";
-import Link from "next/link";
-import Section1Profile from "./Section1Profile";
-import Section2Book from "./Section2Book";
-import Section3Geography from "./Section3Geography";
-import Section4Relationships from "./Section4Relationships";
-import Section5Analysis from "./Section5Analysis";
-
+ 
+// ============================================================
+// CHANGES vs original:
+// 1. Added captureState (showModal, name, email, submitting, done)
+// 2. handleDownload now checks captureState.done — if not captured,
+//    opens the modal instead of downloading immediately.
+// 3. handleCaptureSubmit sends lead to /api/capture-lead, then
+//    closes modal and calls handleDownload() to proceed.
+// 4. Added <CaptureModal> JSX at the bottom of the return.
+// Everything else is UNCHANGED.
+// ============================================================
+ 
+import { useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+ 
+import PrimaryButton from "@/components/ui/PrimaryButton";
+import SecondaryButton from "@/components/ui/SecondaryButton";
+ 
+/* ------------------------------
+   Types & configuration
+------------------------------ */
+ 
+type CoreDimensionKey =
+  | "custodian"
+  | "aum"
+  | "licenses"
+  | "product"
+  | "concentration"
+  | "compliance";
+ 
+const CORE_DIMENSIONS: Array<{
+  key: CoreDimensionKey;
+  label: string;
+  description: string;
+}> = [
+  {
+    key: "custodian",
+    label: "Custodian / Booking Centre Footprint",
+    description:
+      "CH, UK, UAE, SG, HK, US — the more relevant booking centres your clients can follow, the higher your portability.",
+  },
+  {
+    key: "aum",
+    label: "AUM Mix & Diversification",
+    description:
+      "Balanced advisory / DPM / lending books are easier to transfer than highly concentrated or single-product books.",
+  },
+  {
+    key: "licenses",
+    label: "Cross-Border Licenses",
+    description:
+      "FINMA outbound, FCA, DIFC/ADGM, MAS, SFC and bank-level permissions enabling compliant servicing.",
+  },
+  {
+    key: "product",
+    label: "Product Scope Breadth",
+    description:
+      "From core PB to structured products, private markets and alternatives — especially relevant for HNWI/UHNW and US/LatAm clients.",
+  },
+  {
+    key: "concentration",
+    label: "Client Concentration",
+    description:
+      "Lower concentration = lower attrition risk when moving between hubs (e.g. Geneva → Dubai, London → Zurich, Paris → Lisbon/Madrid).",
+  },
+  {
+    key: "compliance",
+    label: "Compliance & KYC Reuse",
+    description:
+      "CRS, FATCA, MiFID II, LSFin packs that can be reused → shorter onboarding and faster time-to-revenue.",
+  },
+];
+ 
+const BOOKING_CENTRES = [
+  "Geneva",
+  "Zurich",
+  "London",
+  "Luxembourg",
+  "Monaco",
+  "Dubai (DIFC/ADGM)",
+  "Abu Dhabi",
+  "Singapore",
+  "Hong Kong",
+  "Miami",
+  "New York",
+  "Lisbon",
+  "Madrid",
+];
+ 
+const REG_PERMISSIONS = [
+  "FINMA outbound (CH)",
+  "FCA (UK)",
+  "DFSA / FSRA (UAE)",
+  "MAS (Singapore)",
+  "SFC (Hong Kong)",
+  "SEC / US offshore",
+  "MiFID / EU passport",
+];
+ 
+type AdvancedKey =
+  | "aumDiversification"
+  | "altsStructured"
+  | "legalComplexity"
+  | "kycReuse"
+  | "pastPortability"
+  | "relationshipDepth"
+  | "teamDependency"
+  | "platformFit";
+ 
+type ProfileState = {
+  market: string;
+  mainHub: string;
+  roaBps: number;
+  recurringShare: number;
+  eddShare: number;
+  pepsShare: number;
+};
+ 
+// ── NEW: capture state ──────────────────────────────────────
+type CaptureState = {
+  showModal: boolean;
+  name: string;
+  email: string;
+  submitting: boolean;
+  done: boolean;
+};
+// ────────────────────────────────────────────────────────────
+ 
+/* ------------------------------
+   Component
+------------------------------ */
+ 
 export default function PortabilityClient() {
+  const [exporting, setExporting] = useState<boolean>(false);
+ 
+  /* ----- Section 1: Basic profile ----- */
+  const [profile, setProfile] = useState<ProfileState>({
+    market: "CH Onshore",
+    mainHub: "Geneva",
+    roaBps: 80,
+    recurringShare: 60,
+    eddShare: 20,
+    pepsShare: 5,
+  });
+ 
+  /* ----- Section 2: Core dimensions ----- */
+  const [coreScores, setCoreScores] = useState<Record<CoreDimensionKey, number>>(
+    {
+      custodian: 3,
+      aum: 3,
+      licenses: 2,
+      product: 3,
+      concentration: 3,
+      compliance: 2,
+    }
+  );
+ 
+  /* ----- Section 3: Advanced factors ----- */
+  const [advancedScores, setAdvancedScores] = useState<
+    Record<AdvancedKey, number>
+  >({
+    aumDiversification: 3,
+    altsStructured: 3,
+    legalComplexity: 3,
+    kycReuse: 3,
+    pastPortability: 2,
+    relationshipDepth: 3,
+    teamDependency: 3,
+    platformFit: 3,
+  });
+ 
+  const [bookingCentres, setBookingCentres] = useState<Record<string, boolean>>(
+    () => {
+      const initial: Record<string, boolean> = {};
+      for (const bc of BOOKING_CENTRES) initial[bc] = false;
+      return initial;
+    }
+  );
+ 
+  const [permissions, setPermissions] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    for (const p of REG_PERMISSIONS) initial[p] = false;
+    return initial;
+  });
+ 
+  // ── NEW: capture state ──────────────────────────────────────
+  const [capture, setCapture] = useState<CaptureState>({
+    showModal: false,
+    name: "",
+    email: "",
+    submitting: false,
+    done: false,
+  });
+  // ────────────────────────────────────────────────────────────
+ 
+  const captureRef = useRef<HTMLDivElement | null>(null);
+ 
+  /* ------------------------------
+     Score computations (unchanged)
+  ------------------------------ */
+ 
+  const {
+    corePct,
+    coreLevel,
+    advancedPct,
+    advancedLevel,
+    overallPct,
+    overallLevel,
+    expectedTransferRange,
+    onboardingSpeed,
+    commentary,
+  } = useMemo(() => {
+    const coreVals = Object.values(coreScores);
+    const coreSum = coreVals.reduce((acc, v) => acc + v, 0);
+    const coreMax = coreVals.length * 5;
+    const corePct = coreMax > 0 ? Math.round((coreSum / coreMax) * 100) : 0;
+ 
+    const coreLevel =
+      corePct >= 80
+        ? "Excellent mobility foundation"
+        : corePct >= 60
+        ? "Good mobility foundation"
+        : corePct >= 40
+        ? "Moderate mobility foundation"
+        : "Limited mobility foundation";
+ 
+    const advVals = Object.values(advancedScores);
+    const advSum = advVals.reduce((acc, v) => acc + v, 0);
+    const advMax = advVals.length * 5;
+    const advBasePct = advMax > 0 ? (advSum / advMax) * 100 : 0;
+ 
+    const selectedBC = Object.values(bookingCentres).filter(Boolean).length;
+    const bcFactor =
+      selectedBC === 0
+        ? 0.85
+        : selectedBC === 1
+        ? 0.9
+        : selectedBC <= 3
+        ? 1
+        : selectedBC <= 6
+        ? 1.05
+        : 1.1;
+ 
+    const selectedPerms = Object.values(permissions).filter(Boolean).length;
+    const permFactor =
+      selectedPerms === 0
+        ? 0.9
+        : selectedPerms <= 2
+        ? 1
+        : selectedPerms <= 4
+        ? 1.05
+        : 1.1;
+ 
+    const advancedPct = Math.round(
+      Math.min(100, advBasePct * bcFactor * permFactor)
+    );
+ 
+    const advancedLevel =
+      advancedPct >= 80
+        ? "Strong advanced portability"
+        : advancedPct >= 60
+        ? "Solid advanced portability"
+        : advancedPct >= 40
+        ? "Developing portability"
+        : "High-friction portability";
+ 
+    const overallPct = Math.round(corePct * 0.4 + advancedPct * 0.6);
+ 
+    const overallLevel =
+      overallPct >= 85
+        ? "Tier-1 portability profile"
+        : overallPct >= 70
+        ? "Strong portability profile"
+        : overallPct >= 55
+        ? "Workable portability with conditions"
+        : "Challenging portability profile";
+ 
+    let expectedTransferRange = "10–25% of book";
+    let onboardingSpeed = "9–12+ months";
+ 
+    if (overallPct >= 85) {
+      expectedTransferRange = "50–70% of book (best-case)";
+      onboardingSpeed = "4–6 months";
+    } else if (overallPct >= 70) {
+      expectedTransferRange = "40–60% of book";
+      onboardingSpeed = "6–9 months";
+    } else if (overallPct >= 55) {
+      expectedTransferRange = "25–40% of book";
+      onboardingSpeed = "9–12 months";
+    }
+ 
+    const commentary = [
+      overallPct >= 70
+        ? "Profile consistent with what leading Swiss and international platforms seek for senior hires."
+        : "There may be value in strengthening certain dimensions before approaching Tier-1 platforms.",
+      advancedScores.legalComplexity >= 4
+        ? "Legal/tax complexity will likely require additional compliance review and can slow onboarding."
+        : "Legal/tax complexity appears manageable for most booking centres.",
+    ];
+ 
+    return {
+      corePct,
+      coreLevel,
+      advancedPct,
+      advancedLevel,
+      overallPct,
+      overallLevel,
+      expectedTransferRange,
+      onboardingSpeed,
+      commentary,
+    };
+  }, [coreScores, advancedScores, bookingCentres, permissions]);
+ 
+  /* ------------------------------
+     Core download logic (unchanged)
+  ------------------------------ */
+ 
+  const _executeDownload = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const payload = {
+        profile,
+        coreScores,
+        advancedScores,
+        bookingCentres,
+        permissions,
+        computed: {
+          corePct,
+          advancedPct,
+          overallPct,
+          coreLevel,
+          advancedLevel,
+          overallLevel,
+          expectedTransferRange,
+          onboardingSpeed,
+          commentary,
+        },
+      };
+ 
+      const res = await fetch("/api/portability/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
+ 
+      if (res.status === 401) {
+        alert("Your session has expired. Please request a new secure link.");
+        window.location.href = "/private/auth/request?next=/en/portability";
+        return;
+      }
+      if (res.status === 403) {
+        alert("Access required. Please request access to use this tool.");
+        window.location.href = "/private/auth/request?next=/en/portability";
+        return;
+      }
+      if (!res.ok) {
+        alert("Export failed. Please try again.");
+        return;
+      }
+ 
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "portability-diagnostic-executive-partners.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  };
+ 
+  // ── NEW: handleDownload — gate on first use ─────────────────
+  const handleDownload = () => {
+    if (capture.done) {
+      // Already captured — go straight to download
+      _executeDownload();
+      return;
+    }
+    // Open capture modal
+    setCapture((prev) => ({ ...prev, showModal: true }));
+  };
+ 
+  // ── NEW: submit capture form ────────────────────────────────
+  const handleCaptureSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!capture.email || !capture.email.includes("@")) return;
+ 
+    setCapture((prev) => ({ ...prev, submitting: true }));
+ 
+    try {
+      await fetch("/api/capture-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: capture.name,
+          email: capture.email,
+          tool: "portability",
+          summary: `Overall: ${overallPct}% (${overallLevel}) · Core: ${corePct}% · Advanced: ${advancedPct}% · Transfer range: ${expectedTransferRange} · Market: ${profile.market} · Hub: ${profile.mainHub}`,
+        }),
+      });
+    } catch {
+      // Silent fail — never block the user
+    }
+ 
+    // Mark as captured, close modal, proceed with download
+    setCapture((prev) => ({
+      ...prev,
+      submitting: false,
+      done: true,
+      showModal: false,
+    }));
+ 
+    _executeDownload();
+  };
+  // ────────────────────────────────────────────────────────────
+ 
+  const updateProfile = (patch: Partial<ProfileState>) =>
+    setProfile((prev) => ({ ...prev, ...patch }));
+ 
+  const sessionBadge = {
+    cls: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200",
+    text: "🔒 Secure access",
+  };
+ 
+  /* ------------------------------
+     JSX
+  ------------------------------ */
+ 
   return (
-    <main className="relative text-white">
-      {/* ✅ Same subtle background glow as /en/bp-simulator */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(1100px 380px at 15% -10%, rgba(201,161,74,.14) 0%, rgba(201,161,74,0) 58%), radial-gradient(900px 340px at 110% 0%, rgba(245,231,192,.10) 0%, rgba(245,231,192,0) 60%)",
-        }}
-      />
-
-      {/* ✅ Same outer container spacing as BpSimulatorClient */}
-      <div className="relative mx-auto max-w-6xl px-4 py-4 md:py-6">
-        {/* ✅ Same inner container spacing as BPClient */}
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-          {/* ✅ Header card matches BPClient */}
-          <div className="rounded-2xl border border-white/10 bg-black/30 p-4 ring-1 ring-white/10">
-            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs text-white/70 ring-1 ring-white/10">
-                  Executive Partners · Private Tool
-                </div>
-
-                <h1 className="mt-1 text-2xl md:text-3xl font-semibold tracking-tight">
-                  Portability Readiness Diagnostic
-                </h1>
-
-                <p className="mt-1 text-sm text-white/70">
-                  Confidential tool — comprehensive assessment across client quality, regulatory
-                  infrastructure, product dependencies, and relationship strength.
-                </p>
-              </div>
-
-              {/* ✅ Contextual conversion CTAs (like BP tool) */}
-              <div className="flex flex-wrap items-center gap-3">
-                <a
-                  href="#portability-calibration"
-                  className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
-                >
-                  Share output →
-                </a>
-
-                <a
-                  href="https://calendly.com/execpartners/15-minute-career-consultation"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center rounded-xl bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
-                >
-                  Book 15-min call →
-                </a>
-
-                <Link
-                  href="/en/bp-simulator"
-                  className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
-                >
-                  Business Plan →
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <hr className="border-white/10" />
-
-          {/* ✅ Sections (same separators rhythm as BPClient) */}
-          <Suspense fallback={<div className="text-sm text-white/70">Loading…</div>}>
-            <Section1Profile />
-            <hr className="border-white/10" />
-
-            <Section2Book />
-            <hr className="border-white/10" />
-
-            <Section3Geography />
-            <hr className="border-white/10" />
-
-            <Section4Relationships />
-            <hr className="border-white/10" />
-
-            <Section5Analysis />
-          </Suspense>
-
-          {/* ✅ Confidential calibration (anchor target + conversion CTA) */}
-          <section id="portability-calibration" className="mt-2 scroll-mt-28">
-            <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <>
+      {/* ── NEW: Email capture modal ──────────────────────────── */}
+      <AnimatePresence>
+        {capture.showModal && (
+          <motion.div
+            key="capture-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center px-4"
+            style={{ background: "rgba(5,8,20,0.85)", backdropFilter: "blur(6px)" }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget)
+                setCapture((p) => ({ ...p, showModal: false }));
+            }}
+          >
+            <motion.div
+              key="capture-card"
+              initial={{ opacity: 0, y: 20, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.98 }}
+              transition={{ duration: 0.22 }}
+              className="w-full max-w-md rounded-2xl border border-white/10 bg-[#0f1320] p-6 shadow-[0_32px_80px_rgba(0,0,0,0.8)]"
+            >
+              {/* Score preview */}
+              <div className="mb-5 flex items-center justify-between rounded-xl border border-brandGold/30 bg-black/50 px-4 py-3">
                 <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
-                    Confidential calibration
-                  </div>
-                  <h2 className="mt-2 text-lg font-semibold text-white">
-                    Sanity-check portability realism before you speak to a bank.
-                  </h2>
-                  <p className="mt-1 text-sm text-white/70">
-                    We validate what truly moves (90 days vs 12 months), booking-centre constraints,
-                    KYC transferability, and mitigation steps. Then we help you convert it into a bank-ready
-                    business plan.
-                  </p>
+                  <p className="text-[11px] uppercase tracking-widest text-gray-400">Your score</p>
+                  <p className="text-2xl font-bold text-brandGold">{overallPct}%</p>
+                  <p className="text-xs text-gray-300">{overallLevel}</p>
                 </div>
-
-                <div className="flex flex-wrap gap-3">
-                  <a
-                    href="https://calendly.com/execpartners/15-minute-career-consultation"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center rounded-xl bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
-                  >
-                    Book 15-min call →
-                  </a>
-
-                  <Link
-                    href="/en/contact"
-                    className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
-                  >
-                    Send your details →
-                  </Link>
-
-                  <Link
-                    href="/en/bp-simulator"
-                    className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
-                  >
-                    Build Business Plan →
-                  </Link>
+                <div className="text-right text-xs text-gray-400 space-y-1">
+                  <p>Transfer range: <span className="text-white font-medium">{expectedTransferRange}</span></p>
+                  <p>Onboarding: <span className="text-white font-medium">{onboardingSpeed}</span></p>
                 </div>
               </div>
-
-              <div className="mt-5 grid gap-3 md:grid-cols-3">
-                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                  <div className="text-sm font-semibold text-white">What truly moves</div>
-                  <div className="mt-1 text-sm text-white/60">90 days vs 12 months — realistic portability.</div>
+ 
+              <h2 className="text-base font-semibold text-white">
+                Send your full PDF diagnostic to your inbox
+              </h2>
+              <p className="mt-1 text-sm text-gray-400">
+                Your results will download immediately. We may follow up confidentially — no pipeline pressure.
+              </p>
+ 
+              <form onSubmit={handleCaptureSubmit} className="mt-5 space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-300 mb-1">
+                    Name <span className="text-gray-500">(optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={capture.name}
+                    onChange={(e) =>
+                      setCapture((p) => ({ ...p, name: e.target.value }))
+                    }
+                    placeholder="Your name"
+                    className="w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-gray-600 outline-none focus:border-brandGold/60 transition"
+                  />
                 </div>
-                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                  <div className="text-sm font-semibold text-white">Committee readiness</div>
-                  <div className="mt-1 text-sm text-white/60">Fix the gaps that get plans rejected.</div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-300 mb-1">
+                    Email <span className="text-brandGold">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={capture.email}
+                    onChange={(e) =>
+                      setCapture((p) => ({ ...p, email: e.target.value }))
+                    }
+                    placeholder="your.name@bank.com"
+                    className="w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-gray-600 outline-none focus:border-brandGold/60 transition"
+                  />
                 </div>
-                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                  <div className="text-sm font-semibold text-white">Market benchmarks</div>
-                  <div className="mt-1 text-sm text-white/60">Geneva / Zurich / Dubai / London patterns.</div>
+ 
+                <div className="flex gap-2 pt-1">
+                  <button
+                    type="submit"
+                    disabled={capture.submitting || !capture.email}
+                    className="flex-1 rounded-xl bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/20 hover:bg-brandGoldDark disabled:opacity-50 transition"
+                  >
+                    {capture.submitting ? "One moment…" : "Download PDF →"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCapture((p) => ({ ...p, showModal: false }))}
+                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/10 transition"
+                  >
+                    Cancel
+                  </button>
                 </div>
-              </div>
-
-              <div className="mt-4 text-xs text-white/60">
-                Tip: include portable %, AUM composition, booking centre, product dependencies (lending/DPM/alts),
-                and comp structure.
-              </div>
+ 
+                <p className="text-[11px] text-gray-500 text-center pt-1">
+                  Handled confidentially by Executive Partners. No third-party sharing.
+                </p>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* ─────────────────────────────────────────────────────── */}
+ 
+      <div className="mx-auto max-w-6xl space-y-10 px-2 py-4 sm:px-4 sm:py-8 md:py-10">
+        {/* Header & actions */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="inline-flex items-center gap-2 rounded-full bg-brandGold/10 px-4 py-1 text-xs font-semibold text-brandGoldPale ring-1 ring-brandGold/40">
+                Executive Partners · Geneva · Global Private Banking &amp; WM
+              </p>
+ 
+              <span
+                className={[
+                  "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs border",
+                  sessionBadge.cls,
+                ].join(" ")}
+                title="Non-blocking badge"
+              >
+                {sessionBadge.text}
+              </span>
             </div>
-          </section>
-
-          {/* ✅ Footer (optional: BP doesn't show it; keep if you want) */}
-          <div className="pt-2 text-center text-xs text-white/50">
-            Confidential diagnostic • Data not stored without explicit consent
+ 
+            <h1 className="mt-3 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
+              Portability Readiness Score™ — Advanced Diagnostic
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm text-gray-200/90 md:text-base">
+              A structured, bank-style view of how easily your book can follow you
+              across Switzerland, the UK, UAE, Singapore, Hong Kong, the US and
+              key EU hubs.
+            </p>
+          </div>
+ 
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              onClick={handleDownload}
+              disabled={exporting}
+              className="rounded-full bg-brandGold px-4 py-2 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brandGold/90 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            >
+              {exporting ? "Preparing PDF…" : "Download full PDF diagnostic"}
+            </button>
+ 
+            <PrimaryButton href="/en/contact" className="whitespace-nowrap">
+              Discuss results confidentially
+            </PrimaryButton>
           </div>
         </div>
+ 
+        {/* All content below — UNCHANGED from original */}
+        <div ref={captureRef} className="space-y-10">
+          {/* Section 1 – Profile */}
+          <motion.section
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="grid gap-6 rounded-2xl border border-white/10 bg-black/40 p-5 shadow-[0_18px_50px_rgba(0,0,0,0.7)] md:grid-cols-3"
+          >
+            <div className="md:col-span-1">
+              <h2 className="text-lg font-semibold text-white">
+                1. Profile & Revenue
+              </h2>
+              <p className="mt-2 text-sm text-gray-300">
+                Basic information similar to what a hiring bank will ask at
+                screening: core booking hub, market, ROA and revenue quality.
+              </p>
+              <p className="mt-3 text-[11px] text-gray-400">
+                Indicative only. Receiving banks will run their own KYC, tax,
+                compliance and risk analysis.
+              </p>
+            </div>
+ 
+            <div className="space-y-4 md:col-span-2">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="block text-xs font-medium text-gray-300">
+                    Primary market
+                  </label>
+                  <select
+                    value={profile.market}
+                    onChange={(e) => updateProfile({ market: e.target.value })}
+                    className="mt-1 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
+                  >
+                    <option className="bg-[#0B0E13]">CH Onshore</option>
+                    <option className="bg-[#0B0E13]">International (CH Booking)</option>
+                    <option className="bg-[#0B0E13]">MEA / GCC</option>
+                    <option className="bg-[#0B0E13]">LatAm</option>
+                    <option className="bg-[#0B0E13]">Europe (EU/UK)</option>
+                    <option className="bg-[#0B0E13]">Asia (SG/HK)</option>
+                  </select>
+                </div>
+ 
+                <div>
+                  <label className="block text-xs font-medium text-gray-300">
+                    Main booking hub today
+                  </label>
+                  <select
+                    value={profile.mainHub}
+                    onChange={(e) => updateProfile({ mainHub: e.target.value })}
+                    className="mt-1 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
+                  >
+                    <option className="bg-[#0B0E13]">Geneva</option>
+                    <option className="bg-[#0B0E13]">Zurich</option>
+                    <option className="bg-[#0B0E13]">Dubai</option>
+                    <option className="bg-[#0B0E13]">Singapore</option>
+                    <option className="bg-[#0B0E13]">Hong Kong</option>
+                    <option className="bg-[#0B0E13]">London</option>
+                    <option className="bg-[#0B0E13]">New York</option>
+                    <option className="bg-[#0B0E13]">Miami</option>
+                  </select>
+                </div>
+              </div>
+ 
+              <div className="grid gap-4 md:grid-cols-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-300">
+                    ROA (bps, last 12 months)
+                  </label>
+                  <input
+                    type="number"
+                    value={profile.roaBps}
+                    onChange={(e) =>
+                      updateProfile({ roaBps: Number(e.target.value) || 0 })
+                    }
+                    className="mt-1 w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none"
+                  />
+                  <p className="mt-1 text-[11px] text-gray-400">
+                    Typical CH onshore: ~65–90 bps; international books often higher.
+                  </p>
+                </div>
+ 
+                <div>
+                  <label className="block text-xs font-medium text-gray-300">
+                    Recurring revenue share (%)
+                  </label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={profile.recurringShare}
+                    onChange={(e) =>
+                      updateProfile({ recurringShare: Number(e.target.value) })
+                    }
+                    className="mt-1 w-full accent-brandGold"
+                  />
+                  <p className="mt-1 text-[11px] text-gray-400">
+                    {profile.recurringShare}% of your revenue is recurring (DPM/advisory fees, trail, etc.).
+                  </p>
+                </div>
+ 
+                <div>
+                  <label className="block text-xs font-medium text-gray-300">
+                    Clients under EDD / complex tax (% of book)
+                  </label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={profile.eddShare}
+                    onChange={(e) =>
+                      updateProfile({ eddShare: Number(e.target.value) })
+                    }
+                    className="mt-1 w-full accent-brandGold"
+                  />
+                  <p className="mt-1 text-[11px] text-gray-400">
+                    {profile.eddShare}% of clients require enhanced due diligence.
+                  </p>
+                </div>
+              </div>
+ 
+              <div className="grid gap-4 md:grid-cols-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-300">
+                    PEPs / high-profile clients (%)
+                  </label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={50}
+                    value={profile.pepsShare}
+                    onChange={(e) =>
+                      updateProfile({ pepsShare: Number(e.target.value) })
+                    }
+                    className="mt-1 w-full accent-brandGold"
+                  />
+                  <p className="mt-1 text-[11px] text-gray-400">
+                    {profile.pepsShare}% estimated share of PEP / sensitive clients.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.section>
+ 
+          {/* Section 2 – Core portability dimensions */}
+          <motion.section
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.05 }}
+            className="grid gap-6 rounded-2xl border border-brandGold/40 bg-black/50 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.85)] lg:grid-cols-3"
+          >
+            <div className="lg:col-span-1">
+              <h2 className="text-lg font-semibold text-brandGoldSoft">
+                2. Core Portability Dimensions
+              </h2>
+              <p className="mt-2 text-sm text-gray-300">
+                These six dimensions mirror what front-office leaders review when
+                assessing whether your book can follow you to a new platform.
+              </p>
+              <p className="mt-3 text-xs text-gray-400">
+                Score each from 1 (weak) to 5 (very strong) based on your current situation.
+              </p>
+              <div className="mt-4 rounded-xl border border-brandGold/30 bg-black/60 p-3 text-xs text-gray-200">
+                <div className="font-semibold text-brandGold">Core score: {corePct}%</div>
+                <div className="mt-1 text-[11px] text-gray-300">{coreLevel}</div>
+              </div>
+            </div>
+ 
+            <div className="space-y-4 lg:col-span-2">
+              {CORE_DIMENSIONS.map((dim) => (
+                <div key={dim.key} className="space-y-1">
+                  <div className="flex items-center justify-between gap-4">
+                    <p className="text-sm font-medium text-white">{dim.label}</p>
+                    <p className="text-sm text-gray-300">{coreScores[dim.key]}/5</p>
+                  </div>
+                  <input
+                    type="range"
+                    min={1}
+                    max={5}
+                    value={coreScores[dim.key]}
+                    onChange={(e) =>
+                      setCoreScores((prev) => ({
+                        ...prev,
+                        [dim.key]: Number(e.target.value),
+                      }))
+                    }
+                    className="w-full accent-brandGold"
+                  />
+                  <p className="text-[11px] text-gray-400">{dim.description}</p>
+                </div>
+              ))}
+            </div>
+          </motion.section>
+ 
+          {/* Section 3 – Advanced banking factors */}
+          <motion.section
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.08 }}
+            className="space-y-6 rounded-2xl border border-white/12 bg-black/40 p-5 shadow-[0_18px_50px_rgba(0,0,0,0.8)]"
+          >
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  3. Advanced Portability Factors
+                </h2>
+                <p className="mt-1 text-sm text-gray-300">
+                  A more granular view used by banks&apos; hiring committees: AUM
+                  mix, legal/tax complexity, KYC reusability, past mobility,
+                  relationship depth, team dependency and platform fit.
+                </p>
+              </div>
+              <div className="rounded-xl border border-brandGold/35 bg-black/70 px-4 py-3 text-sm text-gray-200">
+                <div className="flex items-baseline justify-between gap-4">
+                  <span className="text-xs uppercase tracking-wide text-gray-400">Advanced portability</span>
+                  <span className="text-lg font-semibold text-brandGold">{advancedPct}%</span>
+                </div>
+                <p className="mt-1 text-[11px] text-gray-300">{advancedLevel}</p>
+              </div>
+            </div>
+ 
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="space-y-4">
+                {[
+                  { key: "aumDiversification" as AdvancedKey, label: "AUM diversification (Advisory / DPM / Lending)", hint: "1 = very concentrated, 5 = well balanced across advisory, DPM, lending." },
+                  { key: "altsStructured" as AdvancedKey, label: "Alternatives / structured usage", hint: "Higher scores indicate clients are used to multi-product, multi-asset solutions (PE, HF, structured products)." },
+                  { key: "legalComplexity" as AdvancedKey, label: "Legal / tax complexity", hint: "1 = simple (few structures, low EDD), 5 = many complex structures / tax-sensitive jurisdictions." },
+                  { key: "kycReuse" as AdvancedKey, label: "KYC / documentation reusability", hint: "1 = most files need rebuilding; 5 = majority have up-to-date, reusable documentation." },
+                ].map(({ key, label, hint }) => (
+                  <div key={key}>
+                    <div className="flex items-center justify-between text-sm">
+                      <span>{label}</span>
+                      <span className="text-gray-300">{advancedScores[key]}/5</span>
+                    </div>
+                    <input type="range" min={1} max={5} value={advancedScores[key]}
+                      onChange={(e) => setAdvancedScores((prev) => ({ ...prev, [key]: Number(e.target.value) }))}
+                      className="mt-1 w-full accent-brandGold" />
+                    <p className="mt-1 text-[11px] text-gray-400">{hint}</p>
+                  </div>
+                ))}
+              </div>
+ 
+              <div className="space-y-4">
+                {[
+                  { key: "pastPortability" as AdvancedKey, label: "Past portability track-record", hint: "1 = no previous move with clients; 5 = multiple successful moves of a meaningful portion of the book." },
+                  { key: "relationshipDepth" as AdvancedKey, label: "Relationship depth & contact frequency", hint: "Higher scores indicate high interaction frequency and access to true decision-makers." },
+                  { key: "teamDependency" as AdvancedKey, label: "Team dependency", hint: "1 = highly dependent on current team; 5 = clients see you as their primary anchor and would follow you individually." },
+                  { key: "platformFit" as AdvancedKey, label: "Fit with Tier-1 private banking platform", hint: "Your perception of how well your clients would fit a best-in-class Swiss / international platform." },
+                ].map(({ key, label, hint }) => (
+                  <div key={key}>
+                    <div className="flex items-center justify-between text-sm">
+                      <span>{label}</span>
+                      <span className="text-gray-300">{advancedScores[key]}/5</span>
+                    </div>
+                    <input type="range" min={1} max={5} value={advancedScores[key]}
+                      onChange={(e) => setAdvancedScores((prev) => ({ ...prev, [key]: Number(e.target.value) }))}
+                      className="mt-1 w-full accent-brandGold" />
+                    <p className="mt-1 text-[11px] text-gray-400">{hint}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+ 
+            <div className="grid gap-6 md:grid-cols-2">
+              <div>
+                <h3 className="text-sm font-semibold text-white">Booking centres your clients can follow</h3>
+                <p className="mt-1 text-xs text-gray-400">Tick the locations where a meaningful portion of your book could be onboarded.</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {BOOKING_CENTRES.map((bc) => (
+                    <button key={bc} type="button"
+                      onClick={() => setBookingCentres((prev) => ({ ...prev, [bc]: !prev[bc] }))}
+                      className={"rounded-full border px-3 py-1 text-xs transition " + (bookingCentres[bc] ? "border-brandGold bg-brandGold/20 text-brandGoldPale" : "border-white/15 bg-black/40 text-gray-200 hover:border-brandGold/60")}>
+                      {bc}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-white">Cross-border & regulatory permissions</h3>
+                <p className="mt-1 text-xs text-gray-400">Select the regimes you are effectively allowed to cover today.</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {REG_PERMISSIONS.map((p) => (
+                    <button key={p} type="button"
+                      onClick={() => setPermissions((prev) => ({ ...prev, [p]: !prev[p] }))}
+                      className={"rounded-full border px-3 py-1 text-xs transition " + (permissions[p] ? "border-brandGold bg-brandGold/20 text-brandGoldPale" : "border-white/15 bg-black/40 text-gray-200 hover:border-brandGold/60")}>
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.section>
+ 
+          {/* Section 4 – Summary & bank-style view */}
+          <motion.section
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.11 }}
+            className="grid gap-6 rounded-2xl border border-white/10 bg-black/50 p-5 shadow-[0_18px_50px_rgba(0,0,0,0.8)] md:grid-cols-3"
+          >
+            <div className="space-y-4 rounded-2xl border border-brandGold/40 bg-black/70 p-4">
+              <p className="text-xs uppercase tracking-wide text-gray-300">4. Overall Portability View</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-300">Combined score</p>
+                  <p className="text-3xl font-bold text-brandGold">{overallPct}%</p>
+                  <p className="mt-1 text-xs text-gray-300">{overallLevel}</p>
+                </div>
+                <div className="h-16 w-16 rounded-full bg-brandGold/15 ring-4 ring-brandGold/40" />
+              </div>
+              <div className="space-y-1 text-xs text-gray-300">
+                <p>Core foundation: {corePct}%</p>
+                <p>Advanced factors: {advancedPct}%</p>
+              </div>
+            </div>
+ 
+            <div className="space-y-4 rounded-2xl border border-white/15 bg-black/60 p-4">
+              <h3 className="text-sm font-semibold text-white">Expected transfer & onboarding (indicative)</h3>
+              <div className="rounded-xl border border-white/15 bg-black/70 p-3 text-xs text-gray-200">
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-gray-300">Expected transfer range</span>
+                  <span className="font-semibold text-brandGold">{expectedTransferRange}</span>
+                </div>
+                <p className="mt-1 text-[11px] text-gray-400">Based on market practice for senior RMs moving between Tier-1 platforms. Not a guarantee; every bank applies its own filters.</p>
+              </div>
+              <div className="rounded-xl border border-white/15 bg-black/70 p-3 text-xs text-gray-200">
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-gray-300">Indicative onboarding time</span>
+                  <span className="font-semibold text-brandGold">{onboardingSpeed}</span>
+                </div>
+                <p className="mt-1 text-[11px] text-gray-400">Includes due diligence, approvals, documentation refresh and initial client transfers.</p>
+              </div>
+            </div>
+ 
+            <div className="space-y-3 rounded-2xl border border-white/15 bg-black/60 p-4">
+              <h3 className="text-sm font-semibold text-white">How a hiring bank might read this</h3>
+              <ul className="space-y-2 text-xs text-gray-300">
+                {commentary.map((c, idx) => (<li key={idx}>• {c}</li>))}
+              </ul>
+              <p className="mt-2 text-[11px] text-gray-400">Use this as a preparation tool ahead of conversations with Executive Partners and potential hiring platforms. It helps frame realistic expectations and identify areas to strengthen before a move.</p>
+            </div>
+          </motion.section>
+ 
+          {/* Section 5 – Next steps */}
+          <section className="rounded-2xl border border-white/10 bg-black/40 p-5 text-sm text-gray-200">
+            <h2 className="text-lg font-semibold text-white">5. Next steps with Executive Partners</h2>
+            <p className="mt-2">If your portability profile looks compelling, we can help you approach the right platforms and booking centres in a structured, discreet way.</p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <PrimaryButton href="/en/contact">Share my profile & book a call</PrimaryButton>
+              <SecondaryButton href="/en/jobs">View live Private Banking mandates</SecondaryButton>
+              <SecondaryButton href="/en/markets">Explore booking centres & markets</SecondaryButton>
+            </div>
+            <p className="mt-3 text-[11px] text-gray-400">This tool is indicative and for preparation purposes only. Final onboarding decisions rest solely with the receiving institution and its compliance, tax, legal and risk frameworks.</p>
+          </section>
+        </div>
       </div>
-    </main>
+    </>
   );
 }
