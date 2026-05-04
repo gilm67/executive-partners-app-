@@ -215,6 +215,34 @@ export default function BpSimulatorClient() {
           </label>
         </div>
 
+        
+        {/* HERO */}
+        <div style={{paddingTop:"2rem", paddingBottom:"1.5rem"}}>
+          <div style={{display:"flex", flexWrap:"wrap", gap:"0.5rem", marginBottom:"1.25rem"}}>
+            <span style={{color:"#D4AF37", border:"1px solid rgba(212,175,55,0.35)", background:"rgba(212,175,55,0.08)", borderRadius:"9999px", padding:"0.25rem 0.75rem", fontSize:"11px", fontWeight:600, textTransform:"uppercase", letterSpacing:"0.1em"}}>
+              Executive Partners · Confidential Tool
+            </span>
+            <span style={{color:"#6ee7b7", border:"1px solid rgba(110,231,183,0.2)", background:"rgba(110,231,183,0.08)", borderRadius:"9999px", padding:"0.25rem 0.75rem", fontSize:"11px"}}>
+              🔒 No data shared without consent
+            </span>
+          </div>
+          <h1 style={{color:"#ffffff", fontSize:"clamp(1.75rem,4vw,3rem)", fontWeight:700, letterSpacing:"-0.02em", margin:0}}>
+            Business Plan Simulator
+          </h1>
+          <p style={{color:"rgba(255,255,255,0.58)", fontSize:"1rem", lineHeight:"1.65", marginTop:"0.75rem", maxWidth:"640px"}}>
+            Model your AUM transfer, revenue ramp, and 3-year P&L the way a hiring committee actually reviews it.
+            Cumulative AUM model, breakeven calculator, committee readiness score, and downside scenario — built on 200+ EP placements.
+          </p>
+          <div style={{display:"flex", flexWrap:"wrap", gap:"0.5rem", marginTop:"1.25rem"}}>
+            {[["Cumulative AUM","correct revenue model"],["7 dimensions","committee readiness"],["Base + downside","dual scenario P&L"],["Breakeven","month-by-month"]].map(([v,l]) => (
+              <div key={v} style={{display:"flex", alignItems:"center", gap:"0.5rem", borderRadius:"9999px", border:"1px solid rgba(255,255,255,0.1)", background:"rgba(255,255,255,0.04)", padding:"0.375rem 1rem"}}>
+                <span style={{fontSize:"0.875rem", fontWeight:700, color:"#D4AF37"}}>{v}</span>
+                <span style={{fontSize:"0.75rem", color:"rgba(255,255,255,0.4)"}}>{l}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <BPClient prefill={prefill} showTips={showTips} />
 
         {/* ── Calibration section ── */}
