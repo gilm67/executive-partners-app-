@@ -453,26 +453,10 @@ export default function Section5Analysis() {
         </Link>
       </div>
 
-      {/* ── Actions ── */}
-      <div className="flex flex-wrap gap-3">
-        <button onClick={onSaveAndPDF} disabled={saving}
-          className="inline-flex items-center rounded-xl bg-white text-[#0B0E13] px-4 py-2 text-sm font-semibold hover:bg-white/90 disabled:opacity-60"
-        >
-          {saving ? 'Saving & Generating PDF...' : 'Save & Download Full Analysis PDF'}
-        </button>
-        <Link href={contactHref}
-          className="inline-flex items-center rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
-        >
-          Request a call with EP
-        </Link>
-        {saved === 'ok' && <span className="text-emerald-400 text-sm self-center">Saved</span>}
-        {saved === 'err' && <span className="text-rose-400 text-sm self-center">Save failed — try again</span>}
-      </div>
 
-      <div className="text-xs text-white/40 italic">
-        EP benchmark: Committee Readiness 78+ and breakeven within 18 months = strong hire signal.
-        60–77 = requires onboarding plan. Below 60 = revise assumptions before presenting to any institution.
-      </div>
+      {/* Hidden trigger — fired by bottom email capture form */}
+      <button id="bp-save-btn" onClick={onSaveAndPDF} disabled={saving}
+        className="hidden" aria-hidden="true" tabIndex={-1} />
 
       <EmailGateModal
         isOpen={showEmailGate}
