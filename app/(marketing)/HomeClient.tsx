@@ -287,21 +287,20 @@ export default function HomeClient() {
           {/* Primary hubs — 2x2 large cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
             {[
-              { idx: "01", flag: "🇨🇭", city: "Geneva",    region: "Switzerland · Booking centre",  slug: "geneva",    glow: "rgba(201,161,74,0.08)" },
-              { idx: "02", flag: "🇨🇭", city: "Zurich",    region: "Switzerland · Booking centre",  slug: "zurich",    glow: "rgba(201,161,74,0.08)" },
-              { idx: "03", flag: "🇬🇧", city: "London",    region: "United Kingdom · Booking centre", slug: "london",   glow: "rgba(158,203,255,0.07)" },
-              { idx: "04", flag: "🇦🇪", city: "Dubai",     region: "UAE · DIFC booking centre",     slug: "dubai",     glow: "rgba(255,180,60,0.07)" },
+              { idx: "01", flag: "🇨🇭", city: "Geneva",    region: "Switzerland · Booking centre",  slug: "geneva",    photo: "/markets/geneva.jpg",    glow: "rgba(201,161,74,0.08)" },
+              { idx: "02", flag: "🇨🇭", city: "Zurich",    region: "Switzerland · Booking centre",  slug: "zurich",    photo: "/markets/zurich.jpg",    glow: "rgba(201,161,74,0.08)" },
+              { idx: "03", flag: "🇬🇧", city: "London",    region: "United Kingdom · Booking centre", slug: "london",    photo: "/markets/london.jpg",   glow: "rgba(158,203,255,0.07)" },
+              { idx: "04", flag: "🇦🇪", city: "Dubai",     region: "UAE · DIFC booking centre",     slug: "dubai",     photo: "/markets/dubai.jpg",     glow: "rgba(255,180,60,0.07)" },
             ].map((c) => (
               <Link
                 key={c.city}
                 href={`/en/markets/${c.slug}`}
                 prefetch={false}
-                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition-all duration-300 hover:border-[#D4AF37]/40 hover:bg-white/[0.07]"
+                className="group relative overflow-hidden rounded-2xl border border-white/10 transition-all duration-300 hover:border-[#D4AF37]/40"
               >
-                <div
-                  className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{ background: `radial-gradient(300px 200px at 0% 0%, ${c.glow}, transparent)` }}
-                />
+                {c.photo && <Image src={c.photo} alt={c.city} fill sizes="(max-width:640px) 100vw, 50vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/45 to-black/93" />
+                <div className="relative z-10 p-6">
                 <p className="font-mono text-[11px] text-white/20 group-hover:text-[#D4AF37]/40 transition-colors mb-3">{c.idx}</p>
                 <span className="text-2xl mb-3 block">{c.flag}</span>
                 <div className="font-[var(--font-playfair)] text-xl font-semibold text-white">{c.city}</div>
@@ -313,6 +312,7 @@ export default function HomeClient() {
                   <span className="text-xs text-white/30 font-medium group-hover:text-white/50 transition-colors">View market</span>
                   <ArrowRight className="h-3.5 w-3.5 text-[#D4AF37]/60 -translate-x-0.5 group-hover:translate-x-0.5 transition-transform duration-200" />
                 </div>
+                </div>
               </Link>
             ))}
           </div>
@@ -320,25 +320,24 @@ export default function HomeClient() {
           {/* Secondary hubs — 4-column compact cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {[
-              { idx: "05", flag: "🇸🇬", city: "Singapore", region: "Southeast Asia",  slug: "singapore", glow: "rgba(100,220,180,0.07)" },
-              { idx: "06", flag: "🇭🇰", city: "Hong Kong", region: "Asia Pacific",    slug: "hong-kong", glow: "rgba(255,140,100,0.07)" },
-              { idx: "07", flag: "🇺🇸", city: "New York",  region: "United States",   slug: "new-york",  glow: "rgba(158,203,255,0.07)" },
-              { idx: "08", flag: "🇺🇸", city: "Miami",     region: "United States",   slug: "miami",     glow: "rgba(158,203,255,0.06)" },
-              { idx: "09", flag: "🇫🇷", city: "Paris",     region: "France",          slug: "paris",     glow: "rgba(201,161,74,0.06)" },
-              { idx: "10", flag: "🇮🇹", city: "Milan",     region: "Italy",           slug: "milan",     glow: "rgba(201,161,74,0.06)" },
-              { idx: "11", flag: "🇪🇸", city: "Madrid",    region: "Spain",           slug: "madrid",    glow: "rgba(255,160,80,0.06)" },
-              { idx: "12", flag: "🇵🇹", city: "Lisbon",    region: "Portugal",        slug: "lisbon",    glow: "rgba(255,160,80,0.06)" },
+              { idx: "05", flag: "🇸🇬", city: "Singapore", region: "Southeast Asia",  slug: "singapore", photo: "/markets/singapore.jpg", glow: "rgba(100,220,180,0.07)" },
+              { idx: "06", flag: "🇭🇰", city: "Hong Kong", region: "Asia Pacific",    slug: "hong-kong", photo: "/markets/hong-kong.jpg", glow: "rgba(255,140,100,0.07)" },
+              { idx: "07", flag: "🇺🇸", city: "New York",  region: "United States",   slug: "new-york",  photo: "/markets/new-york.jpg",  glow: "rgba(158,203,255,0.07)" },
+              { idx: "08", flag: "🇺🇸", city: "Miami",     region: "United States",   slug: "miami",     photo: "/markets/miami.jpg",     glow: "rgba(158,203,255,0.06)" },
+              { idx: "09", flag: "🇫🇷", city: "Paris",     region: "France",          slug: "paris",     photo: "/markets/paris.jpg",     glow: "rgba(201,161,74,0.06)" },
+              { idx: "10", flag: "🇮🇹", city: "Milan",     region: "Italy",           slug: "milan",     photo: "/markets/milan.jpg",     glow: "rgba(201,161,74,0.06)" },
+              { idx: "11", flag: "🇪🇸", city: "Madrid",    region: "Spain",           slug: "madrid",    photo: "/markets/madrid.jpg",    glow: "rgba(255,160,80,0.06)" },
+              { idx: "12", flag: "🇵🇹", city: "Lisbon",    region: "Portugal",        slug: "lisbon",    photo: "/markets/lisbon.jpg",    glow: "rgba(255,160,80,0.06)" },
             ].map((c) => (
               <Link
                 key={c.city}
                 href={`/en/markets/${c.slug}`}
                 prefetch={false}
-                className="group relative overflow-hidden rounded-xl border border-white/8 bg-white/[0.03] p-4 transition-all duration-300 hover:border-[#D4AF37]/35 hover:bg-white/[0.06]"
+                className="group relative overflow-hidden rounded-xl border border-white/8 transition-all duration-300 hover:border-[#D4AF37]/35"
               >
-                <div
-                  className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{ background: `radial-gradient(200px 150px at 0% 0%, ${c.glow}, transparent)` }}
-                />
+                {c.photo && <Image src={c.photo} alt={c.city} fill sizes="25vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/45 to-black/93" />
+                <div className="relative z-10 p-4">
                 <p className="font-mono text-[10px] text-white/15 group-hover:text-[#D4AF37]/35 transition-colors mb-2">{c.idx}</p>
                 <span className="text-lg mb-2 block">{c.flag}</span>
                 <div className="text-sm font-semibold text-white/85 group-hover:text-white transition-colors leading-tight">{c.city}</div>
@@ -346,6 +345,7 @@ export default function HomeClient() {
                 <div className="mt-3 flex items-center gap-1 text-[11px] text-white/20 group-hover:text-[#D4AF37]/60 transition-colors duration-200">
                   <span className="font-medium">View market</span>
                   <ArrowRight className="h-3 w-3 -translate-x-0.5 group-hover:translate-x-0.5 transition-transform duration-200" />
+                </div>
                 </div>
               </Link>
             ))}
