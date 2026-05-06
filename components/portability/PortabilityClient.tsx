@@ -292,7 +292,7 @@ export default function PortabilityClient() {
         detail: "Maximum relationship depth with limited past portability evidence creates an inconsistency hiring committees will probe directly. Consider whether 5/5 is supportable with specific client data. Banks will ask for examples." });
     }
  
-    if (overallPct >= 75 && flags.filter(f => f.severity === "red").length === 0) {
+    if (overallPct >= 70 && flags.filter(f => f.severity === "red").length === 0) {
       flags.push({ severity: "green", title: "Profile is commercially credible at Tier-1 level",
         detail: "No critical disqualifiers detected. With appropriate legal preparation and structured timing, this profile is presentable to leading Swiss and international private banking platforms." });
     }
@@ -469,6 +469,36 @@ export default function PortabilityClient() {
 
       hline(y); y += 14;
 
+      // ── DETAILED BREAKDOWN ──
+      sf(9, 'bold', NAVY); pdf.text('DETAILED ASSESSMENT', ML, y); y += 14;
+
+      const details = [
+        ['Wallet Share Depth', `${profile.walletShareScore || 3}/5`, `${['<20%','20-35%','35-50%','50-65%','>65%'][Math.min((profile.walletShareScore||3)-1,4)]} of client total wealth`],
+        ['Institutional Tenure', profile.tenureKey || '4-8 yrs', 'Time at current employer'],
+        ['EAM Co-management', `${(legalState as any)?.eamExposure || 1}/5`, ['<5% of book','5-10%','10-20%','20-35%','>35%'][((legalState as any)?.eamExposure||1)-1]],
+        ['Garden Leave', `${(legalState as any)?.garden_leave_months ?? 3} months`, 'Dead period before revenue starts'],
+        ['Recurring Revenue', `${profile.recurringShare || 0}%`, 'DPM/advisory fees vs transactional'],
+        ['EDD Clients', `${profile.eddShare || 0}%`, 'Enhanced due diligence required'],
+        ['PEP Exposure', `${profile.pepsShare || 0}%`, 'Politically exposed persons'],
+      ];
+
+      const dcw = (CW - 8) / 2;
+      details.forEach((row, idx) => {
+        if (idx % 2 === 0 && idx > 0) y += 0;
+        const dx = idx % 2 === 0 ? ML : ML + dcw + 8;
+        if (idx % 2 === 0) {
+          fill(ML, y, CW, 28, idx % 4 === 0 ? LIGHT : WHITE);
+        }
+        sf(7, 'bold', NAVY); pdf.text(row[0], dx + 4, y + 10);
+        sf(8, 'bold', DARK); pdf.text(row[1], dx + 4, y + 21);
+        sf(6.5, 'normal', GRAY); pdf.text(row[2], dx + 40, y + 21);
+        if (idx % 2 === 1) y += 30;
+      });
+      if (details.length % 2 === 1) y += 30;
+      y += 8;
+
+      hline(y); y += 14;
+
       // ── FLAGS ──
       if (computed.flags && computed.flags.length > 0) {
         sf(9, 'bold', NAVY); pdf.text('RISK FLAGS', ML, y); y += 14;
@@ -526,8 +556,8 @@ export default function PortabilityClient() {
  
   const handleDownload = () => {
     track('portability_download_clicked', { score: computed.overallPct });
-    if (capture.done) { _executeDownload(); return; }
-    setCapture(p => ({ ...p, showModal: true }));
+    // Always show modal — reset done so email is always captured
+    setCapture(p => ({ ...p, showModal: true, done: false }));
   };
  
   const handleCaptureSubmit = async (e: React.FormEvent) => {
