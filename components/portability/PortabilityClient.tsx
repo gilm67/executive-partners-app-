@@ -474,7 +474,7 @@ export default function PortabilityClient() {
 
       const details = [
         ['Wallet Share Depth', `${profile.walletShareScore || 3}/5`, `${['<20%','20-35%','35-50%','50-65%','>65%'][Math.min((profile.walletShareScore||3)-1,4)]} of client total wealth`],
-        ['Institutional Tenure', profile.tenureKey || '4-8 yrs', 'Time at current employer'],
+        ['Institutional Tenure', ({'<1':'< 1 year','1-2':'1-2 years','2-4':'2-4 years','4-8':'4-8 years','8-12':'8-12 years','>12':'> 12 years'} as any)[profile.tenureKey] || profile.tenureKey || '4-8 years', 'Time at current institution'],
         ['EAM Co-management', `${(legalState as any)?.eamExposure || 1}/5`, ['<5% of book','5-10%','10-20%','20-35%','>35%'][((legalState as any)?.eamExposure||1)-1]],
         ['Garden Leave', `${(legalState as any)?.garden_leave_months ?? 3} months`, 'Dead period before revenue starts'],
         ['Recurring Revenue', `${profile.recurringShare || 0}%`, 'DPM/advisory fees vs transactional'],
@@ -491,11 +491,77 @@ export default function PortabilityClient() {
         }
         sf(7, 'bold', NAVY); pdf.text(row[0], dx + 4, y + 10);
         sf(8, 'bold', DARK); pdf.text(row[1], dx + 4, y + 21);
-        sf(6.5, 'normal', GRAY); pdf.text(row[2], dx + 40, y + 21);
+        sf(6.5, 'normal', GRAY); pdf.text('  ' + row[2], dx + 44, y + 21);
         if (idx % 2 === 1) y += 30;
       });
       if (details.length % 2 === 1) y += 30;
       y += 8;
+
+      hline(y); y += 14;
+
+      // ── CORE DIMENSIONS ──
+      if (y > 650) { pdf.addPage(); y = 40; }
+      sf(9, 'bold', NAVY); pdf.text('CORE PORTABILITY DIMENSIONS', ML, y); y += 14;
+      const coreDims = [
+        ['Custodian / Booking Centre Footprint', coreScores.custodian],
+        ['AUM Mix & Diversification', coreScores.aum],
+        ['Cross-Border Licenses', coreScores.licenses],
+        ['Product Scope Breadth', coreScores.product],
+        ['Client Concentration', coreScores.concentration],
+        ['Compliance & KYC Reuse', coreScores.compliance],
+      ];
+      coreDims.forEach((dim, idx) => {
+        fill(ML, y, CW, 18, idx % 2 === 0 ? LIGHT : WHITE);
+        sf(7, 'normal', DARK); pdf.text(String(dim[0]), ML+6, y+12);
+        const sc = Number(dim[1]||0);
+        sf(7, 'bold', sc >= 4 ? GREEN : sc >= 3 ? AMBER : RED);
+        pdf.text(\`\${sc}/5\`, MR-25, y+12);
+        bar(MR-90, y+6, 60, 6, sc*20);
+        y += 18;
+      });
+      y += 8;
+
+      // ── ADVANCED FACTORS ──
+      if (y > 620) { pdf.addPage(); y = 40; }
+      sf(9, 'bold', NAVY); pdf.text('ADVANCED PORTABILITY FACTORS', ML, y); y += 14;
+      const advDims = [
+        ['AUM Diversification (Advisory/DPM/Lending)', advancedScores.aumDiversification],
+        ['Alternatives & Structured Products', advancedScores.altsStructured],
+        ['KYC / Documentation Reusability', advancedScores.kycReuse],
+        ['Past Portability Track Record', advancedScores.pastPortability],
+        ['Relationship Depth & Contact Frequency', advancedScores.relationshipDepth],
+        ['Team Dependency', advancedScores.teamDependency],
+        ['Fit with Tier-1 Private Banking Platform', advancedScores.platformFit],
+      ];
+      advDims.forEach((dim, idx) => {
+        fill(ML, y, CW, 18, idx % 2 === 0 ? LIGHT : WHITE);
+        sf(7, 'normal', DARK); pdf.text(String(dim[0]), ML+6, y+12);
+        const sc = Number(dim[1]||0);
+        sf(7, 'bold', sc >= 4 ? GREEN : sc >= 3 ? AMBER : RED);
+        pdf.text(\`\${sc}/5\`, MR-25, y+12);
+        bar(MR-90, y+6, 60, 6, sc*20);
+        y += 18;
+      });
+      y += 8;
+
+      // ── BOOKING CENTRES & PERMISSIONS ──
+      const selectedBC = Object.entries(bookingCentres).filter(([,v]) => v).map(([k]) => k);
+      const selectedPerm = Object.entries(permissions).filter(([,v]) => v).map(([k]) => k);
+      if (selectedBC.length > 0 || selectedPerm.length > 0) {
+        if (y > 680) { pdf.addPage(); y = 40; }
+        sf(9, 'bold', NAVY); pdf.text('GEOGRAPHIC COVERAGE', ML, y); y += 12;
+        if (selectedBC.length > 0) {
+          sf(7, 'bold', GRAY); pdf.text('Booking centres:', ML, y+10);
+          sf(7, 'normal', DARK); pdf.text(selectedBC.join('  ·  '), ML+80, y+10);
+          y += 16;
+        }
+        if (selectedPerm.length > 0) {
+          sf(7, 'bold', GRAY); pdf.text('Regulatory permissions:', ML, y+10);
+          sf(7, 'normal', DARK); pdf.text(selectedPerm.join('  ·  '), ML+110, y+10);
+          y += 16;
+        }
+        y += 6;
+      }
 
       hline(y); y += 14;
 
