@@ -411,7 +411,7 @@ export default function PortabilityClient() {
       sf(9, 'normal', GOLD); pdf.text('Advanced Diagnostic', ML, 76);
       const dateStr = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
       sf(8, 'normal', WHITE); pdf.text(dateStr, MR - 55, 22);
-      sf(26, 'bold', GOLD); pdf.text(\`\${computed.overallPct}%\`, MR - 72, 62);
+      sf(26, 'bold', GOLD); pdf.text(`${computed.overallPct}%`, MR - 72, 62);
       sf(7, 'normal', WHITE); pdf.text('OVERALL SCORE', MR - 76, 74);
       y = 100;
 
@@ -420,11 +420,11 @@ export default function PortabilityClient() {
       sf(7, 'bold', NAVY); pdf.text('CANDIDATE PROFILE', ML+8, y+11);
       sf(8, 'normal', DARK);
       const pItems = [
-        profile.market && \`Market: \${profile.market}\`,
-        profile.mainHub && \`Hub: \${profile.mainHub}\`,
-        profile.roaBps && \`ROA: \${profile.roaBps} bps\`,
-        profile.recurringShare != null && \`Recurring: \${profile.recurringShare}%\`,
-        (legalState as any)?.jurisdiction && \`Jurisdiction: \${(legalState as any).jurisdiction}\`,
+        profile.market && `Market: ${profile.market}`,
+        profile.mainHub && `Hub: ${profile.mainHub}`,
+        profile.roaBps && `ROA: ${profile.roaBps} bps`,
+        profile.recurringShare != null && `Recurring: ${profile.recurringShare}%`,
+        (legalState as any)?.jurisdiction && `Jurisdiction: ${(legalState as any).jurisdiction}`,
       ].filter(Boolean).join('   ·   ');
       pdf.text(pItems, ML+8, y+25);
       y += 44;
@@ -442,7 +442,7 @@ export default function PortabilityClient() {
         pdf.setDrawColor(...LIGHT); pdf.setLineWidth(0.5); pdf.rect(cx, y, cw2, 56, 'S');
         sf(7, 'bold', GRAY); pdf.text(card.label, cx+8, y+13);
         const sc: [number,number,number] = card.score >= 70 ? GREEN : card.score >= 45 ? AMBER : RED;
-        sf(20, 'bold', sc); pdf.text(\`\${card.score}%\`, cx+8, y+37);
+        sf(20, 'bold', sc); pdf.text(`${card.score}%`, cx+8, y+37);
         sf(7, 'normal', GRAY); pdf.text(String(card.level||''), cx+8, y+49);
         bar(cx+8, y+52, cw2-16, 3, card.score);
       });
@@ -453,7 +453,7 @@ export default function PortabilityClient() {
       fill(ML, y, CW, 30, vc);
       sf(9, 'bold', WHITE); pdf.text(String(computed.overallLevel||''), ML+10, y+13);
       sf(8, 'normal', WHITE);
-      pdf.text(\`Transfer range: \${computed.expectedTransferRange}   ·   Onboarding: \${computed.onboardingSpeed}\`, ML+10, y+24);
+      pdf.text(`Transfer range: ${computed.expectedTransferRange}   ·   Onboarding: ${computed.onboardingSpeed}`, ML+10, y+24);
       y += 40;
 
       // ── BENCHMARK BAR ──
@@ -476,7 +476,7 @@ export default function PortabilityClient() {
           if (y > H - 90) { pdf.addPage(); y = 40; }
           const fc: [number,number,number] = flag.severity==='red' ? RED : flag.severity==='amber' ? AMBER : GREEN;
           sf(8, 'bold', fc);
-          pdf.text(\`\${flag.severity==='red'?'●':flag.severity==='amber'?'◆':'✓'}  \${flag.title}\`, ML, y+10);
+          pdf.text(`${flag.severity==='red'?'●':flag.severity==='amber'?'◆':'✓'}  ${flag.title}`, ML, y+10);
           const lines = pdf.splitTextToSize(flag.detail, CW-14);
           sf(7.5, 'normal', DARK); pdf.text(lines, ML+12, y+20);
           y += 14 + lines.length * 10 + 4;
@@ -513,7 +513,7 @@ export default function PortabilityClient() {
         sf(7, 'normal', GOLD);
         pdf.text('Gil M. Chalem, Managing Partner  ·  Executive Partners', ML, H-12);
         sf(7, 'normal', WHITE);
-        pdf.text(\`gil.chalem@execpartners.ch  ·  execpartners.ch  ·  p\${p}/\${total}\`, MR-180, H-12);
+        pdf.text(`gil.chalem@execpartners.ch  ·  execpartners.ch  ·  p${p}/${total}`, MR-180, H-12);
       }
 
       pdf.save('portability-diagnostic-executive-partners.pdf');
