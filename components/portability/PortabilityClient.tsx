@@ -515,7 +515,7 @@ export default function PortabilityClient() {
         sf(7, 'normal', DARK); pdf.text(String(dim[0]), ML+6, y+12);
         const sc = Number(dim[1]||0);
         sf(7, 'bold', sc >= 4 ? GREEN : sc >= 3 ? AMBER : RED);
-        pdf.text(\`\${sc}/5\`, MR-25, y+12);
+        pdf.text(`${sc}/5`, MR-25, y+12);
         bar(MR-90, y+6, 60, 6, sc*20);
         y += 18;
       });
@@ -538,7 +538,7 @@ export default function PortabilityClient() {
         sf(7, 'normal', DARK); pdf.text(String(dim[0]), ML+6, y+12);
         const sc = Number(dim[1]||0);
         sf(7, 'bold', sc >= 4 ? GREEN : sc >= 3 ? AMBER : RED);
-        pdf.text(\`\${sc}/5\`, MR-25, y+12);
+        pdf.text(`${sc}/5`, MR-25, y+12);
         bar(MR-90, y+6, 60, 6, sc*20);
         y += 18;
       });
