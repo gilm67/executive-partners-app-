@@ -11,6 +11,7 @@ import { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import { track } from "@vercel/analytics";
+import { jsPDF } from "jspdf";
 import SecondaryButton from "@/components/ui/SecondaryButton";
  
 /* ─────────────────────────────────────────────────────────────
@@ -370,31 +371,151 @@ export default function PortabilityClient() {
     if (exporting) return;
     setExporting(true);
     try {
-      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
-        import('html2canvas'),
-        import('jspdf'),
-      ]);
-      const node = captureRef.current;
-      if (!node) throw new Error('Content node not found');
-      const canvas = await html2canvas(node, { scale: 2, backgroundColor: '#0B0E13', useCORS: true });
-      const imgData = canvas.toDataURL('image/png');
+      const { jsPDF } = await import('jspdf');
+      const NAVY: [number,number,number] = [27,58,107];
+      const GOLD: [number,number,number] = [212,175,55];
+      const DARK: [number,number,number] = [20,20,30];
+      const GRAY: [number,number,number] = [100,100,110];
+      const LIGHT: [number,number,number] = [245,246,248];
+      const WHITE: [number,number,number] = [255,255,255];
+      const GREEN: [number,number,number] = [34,139,80];
+      const RED: [number,number,number] = [185,50,50];
+      const AMBER: [number,number,number] = [180,120,20];
+
       const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4' });
-      const pageW = pdf.internal.pageSize.getWidth();
-      const pageH = pdf.internal.pageSize.getHeight();
-      pdf.setTextColor(30);
-      pdf.setFontSize(13);
-      pdf.text('Portability Readiness Score™ — Executive Partners', 30, 38);
-      try {
-        const anyPdf = pdf as any;
-        pdf.saveGraphicsState();
-        pdf.setGState(new anyPdf.GState({ opacity: 0.06 }));
-        pdf.setFontSize(46); pdf.setTextColor(30);
-        pdf.text('Executive Partners', pageW / 2, pageH / 2, { align: 'center', angle: 30 });
-        pdf.restoreGraphicsState();
-      } catch { /* silent */ }
-      const imgW = pageW - 60;
-      const imgH = (canvas.height / canvas.width) * imgW;
-      pdf.addImage(imgData, 'PNG', 30, 55, imgW, Math.min(imgH, pageH - 80), undefined, 'FAST');
+      const W = pdf.internal.pageSize.getWidth();
+      const H = pdf.internal.pageSize.getHeight();
+      const ML = 40; const MR = W - 40; const CW = MR - ML;
+      let y = 0;
+
+      const sf = (size: number, style: 'normal'|'bold' = 'normal', col: [number,number,number] = DARK) => {
+        pdf.setFontSize(size); pdf.setFont('helvetica', style); pdf.setTextColor(...col);
+      };
+      const fill = (x: number, yy: number, w: number, h: number, col: [number,number,number]) => {
+        pdf.setFillColor(...col); pdf.rect(x, yy, w, h, 'F');
+      };
+      const hline = (yy: number, col: [number,number,number] = GOLD) => {
+        pdf.setDrawColor(...col); pdf.setLineWidth(0.5); pdf.line(ML, yy, MR, yy);
+      };
+      const bar = (x: number, yy: number, w: number, h: number, pct: number) => {
+        fill(x, yy, w, h, LIGHT);
+        const col: [number,number,number] = pct >= 70 ? GREEN : pct >= 45 ? AMBER : RED;
+        fill(x, yy, (w * Math.min(pct,100)) / 100, h, col);
+      };
+
+      // ── HEADER ──
+      fill(0, 0, W, 88, NAVY);
+      sf(9, 'bold', GOLD); pdf.text('EXECUTIVE PARTNERS', ML, 22);
+      sf(8, 'normal', WHITE); pdf.text('Private Banking & Wealth Management Search  ·  Geneva  ·  Confidential', ML, 35);
+      sf(17, 'bold', WHITE); pdf.text('Portability Readiness Score™', ML, 62);
+      sf(9, 'normal', GOLD); pdf.text('Advanced Diagnostic', ML, 76);
+      const dateStr = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+      sf(8, 'normal', WHITE); pdf.text(dateStr, MR - 55, 22);
+      sf(26, 'bold', GOLD); pdf.text(\`\${computed.overallPct}%\`, MR - 72, 62);
+      sf(7, 'normal', WHITE); pdf.text('OVERALL SCORE', MR - 76, 74);
+      y = 100;
+
+      // ── PROFILE STRIP ──
+      fill(ML, y, CW, 34, LIGHT);
+      sf(7, 'bold', NAVY); pdf.text('CANDIDATE PROFILE', ML+8, y+11);
+      sf(8, 'normal', DARK);
+      const pItems = [
+        profile.market && \`Market: \${profile.market}\`,
+        profile.mainHub && \`Hub: \${profile.mainHub}\`,
+        profile.roaBps && \`ROA: \${profile.roaBps} bps\`,
+        profile.recurringShare != null && \`Recurring: \${profile.recurringShare}%\`,
+        (legalState as any)?.jurisdiction && \`Jurisdiction: \${(legalState as any).jurisdiction}\`,
+      ].filter(Boolean).join('   ·   ');
+      pdf.text(pItems, ML+8, y+25);
+      y += 44;
+
+      // ── SCORE CARDS ──
+      const cards = [
+        { label:'CORE FOUNDATION', score: computed.corePct, level: computed.coreLevel },
+        { label:'LEGAL & STRUCTURAL', score: computed.legalPct, level: computed.legalLevel },
+        { label:'ADVANCED FACTORS', score: computed.advancedPct, level: computed.advancedLevel },
+      ];
+      const cw2 = (CW - 12) / 3;
+      cards.forEach((card, idx) => {
+        const cx = ML + idx * (cw2 + 6);
+        fill(cx, y, cw2, 56, WHITE);
+        pdf.setDrawColor(...LIGHT); pdf.setLineWidth(0.5); pdf.rect(cx, y, cw2, 56, 'S');
+        sf(7, 'bold', GRAY); pdf.text(card.label, cx+8, y+13);
+        const sc: [number,number,number] = card.score >= 70 ? GREEN : card.score >= 45 ? AMBER : RED;
+        sf(20, 'bold', sc); pdf.text(\`\${card.score}%\`, cx+8, y+37);
+        sf(7, 'normal', GRAY); pdf.text(String(card.level||''), cx+8, y+49);
+        bar(cx+8, y+52, cw2-16, 3, card.score);
+      });
+      y += 66;
+
+      // ── VERDICT BAND ──
+      const vc: [number,number,number] = computed.overallPct >= 72 ? GREEN : computed.overallPct >= 55 ? AMBER : RED;
+      fill(ML, y, CW, 30, vc);
+      sf(9, 'bold', WHITE); pdf.text(String(computed.overallLevel||''), ML+10, y+13);
+      sf(8, 'normal', WHITE);
+      pdf.text(\`Transfer range: \${computed.expectedTransferRange}   ·   Onboarding: \${computed.onboardingSpeed}\`, ML+10, y+24);
+      y += 40;
+
+      // ── BENCHMARK BAR ──
+      sf(7, 'bold', NAVY); pdf.text('EP BENCHMARK POSITION', ML, y+9);
+      y += 13;
+      bar(ML, y, CW, 7, computed.overallPct);
+      fill(ML + CW*0.65, y, 0.8, 7, GRAY);
+      fill(ML + CW*0.80, y, 0.8, 7, GOLD);
+      sf(6.5, 'normal', GRAY);
+      pdf.text('Median 65%', ML + CW*0.65 - 15, y+16);
+      pdf.text('Top quartile 80%', ML + CW*0.80 - 18, y+16);
+      y += 28;
+
+      hline(y); y += 14;
+
+      // ── FLAGS ──
+      if (computed.flags && computed.flags.length > 0) {
+        sf(9, 'bold', NAVY); pdf.text('RISK FLAGS', ML, y); y += 14;
+        computed.flags.forEach((flag: any) => {
+          if (y > H - 90) { pdf.addPage(); y = 40; }
+          const fc: [number,number,number] = flag.severity==='red' ? RED : flag.severity==='amber' ? AMBER : GREEN;
+          sf(8, 'bold', fc);
+          pdf.text(\`\${flag.severity==='red'?'●':flag.severity==='amber'?'◆':'✓'}  \${flag.title}\`, ML, y+10);
+          const lines = pdf.splitTextToSize(flag.detail, CW-14);
+          sf(7.5, 'normal', DARK); pdf.text(lines, ML+12, y+20);
+          y += 14 + lines.length * 10 + 4;
+        });
+        y += 4;
+      }
+
+      hline(y); y += 14;
+
+      // ── RECOMMENDATIONS ──
+      if (computed.recommendations && computed.recommendations.length > 0) {
+        sf(9, 'bold', NAVY); pdf.text('SPECIFIC RECOMMENDATIONS', ML, y); y += 14;
+        computed.recommendations.forEach((rec: any) => {
+          if (y > H - 100) { pdf.addPage(); y = 40; }
+          const pc: [number,number,number] = rec.priority==='critical' ? RED : rec.priority==='important' ? AMBER : GOLD;
+          sf(7, 'bold', pc);
+          const pLabel = rec.priority.toUpperCase();
+          const pW = pdf.getTextWidth(pLabel) + 10;
+          pdf.setDrawColor(...pc); pdf.setLineWidth(0.5);
+          pdf.roundedRect(ML, y+2, pW, 11, 2, 2, 'S');
+          pdf.text(pLabel, ML+5, y+11);
+          sf(8, 'bold', DARK); pdf.text(rec.action, ML+pW+6, y+11);
+          const lines = pdf.splitTextToSize(rec.detail, CW-16);
+          sf(7.5, 'normal', GRAY); pdf.text(lines, ML+12, y+22);
+          y += 16 + lines.length*10 + 8;
+        });
+      }
+
+      // ── FOOTER all pages ──
+      const total = (pdf as any).internal.pages.length - 1;
+      for (let p = 1; p <= total; p++) {
+        pdf.setPage(p);
+        fill(0, H-26, W, 26, NAVY);
+        sf(7, 'normal', GOLD);
+        pdf.text('Gil M. Chalem, Managing Partner  ·  Executive Partners', ML, H-12);
+        sf(7, 'normal', WHITE);
+        pdf.text(\`gil.chalem@execpartners.ch  ·  execpartners.ch  ·  p\${p}/\${total}\`, MR-180, H-12);
+      }
+
       pdf.save('portability-diagnostic-executive-partners.pdf');
     } catch (e) {
       console.error('PDF generation error:', e);
