@@ -476,7 +476,7 @@ export default function PortabilityClient() {
           if (y > H - 90) { pdf.addPage(); y = 40; }
           const fc: [number,number,number] = flag.severity==='red' ? RED : flag.severity==='amber' ? AMBER : GREEN;
           sf(8, 'bold', fc);
-          pdf.text(`${flag.severity==='red'?'●':flag.severity==='amber'?'◆':'✓'}  ${flag.title}`, ML, y+10);
+          pdf.text(`${flag.severity==='red'?'[!]':flag.severity==='amber'?'[~]':'[+]'}  ${flag.title}`, ML, y+10);
           const lines = pdf.splitTextToSize(flag.detail, CW-14);
           sf(7.5, 'normal', DARK); pdf.text(lines, ML+12, y+20);
           y += 14 + lines.length * 10 + 4;
