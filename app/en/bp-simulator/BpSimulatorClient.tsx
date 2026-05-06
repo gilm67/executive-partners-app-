@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@vercel/analytics";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
