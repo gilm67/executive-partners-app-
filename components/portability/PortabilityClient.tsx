@@ -370,31 +370,37 @@ export default function PortabilityClient() {
     if (exporting) return;
     setExporting(true);
     try {
-      const payload = {
-        profile, coreScores, legalState, advancedScores, bookingCentres, permissions,
-        computed: {
-          corePct: computed.corePct, legalPct: computed.legalPct,
-          advancedPct: computed.advancedPct, overallPct: computed.overallPct,
-          overallLevel: computed.overallLevel,
-          expectedTransferRange: computed.expectedTransferRange,
-          onboardingSpeed: computed.onboardingSpeed,
-        },
-      };
-      const res = await fetch("/api/portability/export", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        credentials: "include", body: JSON.stringify(payload),
-      });
-      if (res.status === 401 || res.status === 403) {
-        window.location.href = "/private/auth/request?next=/portability"; return;
-      }
-      if (!res.ok) { alert("Export failed. Please try again."); return; }
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = "portability-diagnostic-executive-partners.pdf";
-      document.body.appendChild(a); a.click(); a.remove();
-      window.URL.revokeObjectURL(url);
-    } finally { setExporting(false); }
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+        import('html2canvas'),
+        import('jspdf'),
+      ]);
+      const node = captureRef.current;
+      if (!node) throw new Error('Content node not found');
+      const canvas = await html2canvas(node, { scale: 2, backgroundColor: '#0B0E13', useCORS: true });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4' });
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      pdf.setTextColor(30);
+      pdf.setFontSize(13);
+      pdf.text('Portability Readiness Score™ — Executive Partners', 30, 38);
+      try {
+        const anyPdf = pdf as any;
+        pdf.saveGraphicsState();
+        pdf.setGState(new anyPdf.GState({ opacity: 0.06 }));
+        pdf.setFontSize(46); pdf.setTextColor(30);
+        pdf.text('Executive Partners', pageW / 2, pageH / 2, { align: 'center', angle: 30 });
+        pdf.restoreGraphicsState();
+      } catch { /* silent */ }
+      const imgW = pageW - 60;
+      const imgH = (canvas.height / canvas.width) * imgW;
+      pdf.addImage(imgData, 'PNG', 30, 55, imgW, Math.min(imgH, pageH - 80), undefined, 'FAST');
+      pdf.save('portability-diagnostic-executive-partners.pdf');
+    } catch (e) {
+      console.error('PDF generation error:', e);
+    } finally {
+      setExporting(false);
+    }
   };
  
   const handleDownload = () => {
