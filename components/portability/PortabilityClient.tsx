@@ -499,8 +499,8 @@ export default function PortabilityClient() {
 
       hline(y); y += 14;
 
-      // ── CORE DIMENSIONS ──
-      if (y > 650) { pdf.addPage(); y = 40; }
+      // ── CORE DIMENSIONS — always new page ──
+      pdf.addPage(); y = 40;
       sf(9, 'bold', NAVY); pdf.text('CORE PORTABILITY DIMENSIONS', ML, y); y += 14;
       const coreDims = [
         ['Custodian / Booking Centre Footprint', coreScores.custodian],
@@ -545,8 +545,8 @@ export default function PortabilityClient() {
       y += 8;
 
       // ── BOOKING CENTRES & PERMISSIONS ──
-      const selectedBC = Object.entries(bookingCentres).filter(([,v]) => v).map(([k]) => k);
-      const selectedPerm = Object.entries(permissions).filter(([,v]) => v).map(([k]) => k);
+      const selectedBC = Object.entries(bookingCentres).filter(([_k, v]) => v).map(([k]) => k);
+      const selectedPerm = Object.entries(permissions).filter(([_k, v]) => v).map(([k]) => k);
       if (selectedBC.length > 0 || selectedPerm.length > 0) {
         if (y > 680) { pdf.addPage(); y = 40; }
         sf(9, 'bold', NAVY); pdf.text('GEOGRAPHIC COVERAGE', ML, y); y += 12;
@@ -602,7 +602,7 @@ export default function PortabilityClient() {
       }
 
       // ── FOOTER all pages ──
-      const total = (pdf as any).internal.pages.length - 1;
+      const total = pdf.getNumberOfPages();
       for (let p = 1; p <= total; p++) {
         pdf.setPage(p);
         fill(0, H-26, W, 26, NAVY);
