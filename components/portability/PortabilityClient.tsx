@@ -474,7 +474,7 @@ export default function PortabilityClient() {
 
       const details = [
         ['Wallet Share Depth', `${profile.walletShareScore || 3}/5`, `${['<20%','20-35%','35-50%','50-65%','>65%'][Math.min((profile.walletShareScore||3)-1,4)]} of client total wealth`],
-        ['Institutional Tenure', ({'<1':'< 1 year','1-2':'1-2 years','2-4':'2-4 years','4-8':'4-8 years','8-12':'8-12 years','>12':'> 12 years'} as any)[profile.tenureKey] || profile.tenureKey || '4-8 years', 'Time at current institution'],
+        ['Institutional Tenure', String(({'<1':'< 1 yr','1-2':'1-2 yrs','2-4':'2-4 yrs','4-8':'4-8 yrs','8-12':'8-12 yrs','>12':'> 12 yrs'} as Record<string,string>)[String(profile.tenureKey)] || profile.tenureKey || '4-8 yrs'), 'Time at current institution'],
         ['EAM Co-management', `${(legalState as any)?.eamExposure || 1}/5`, ['<5% of book','5-10%','10-20%','20-35%','>35%'][((legalState as any)?.eamExposure||1)-1]],
         ['Garden Leave', `${(legalState as any)?.garden_leave_months ?? 3} months`, 'Dead period before revenue starts'],
         ['Recurring Revenue', `${profile.recurringShare || 0}%`, 'DPM/advisory fees vs transactional'],
@@ -491,7 +491,7 @@ export default function PortabilityClient() {
         }
         sf(7, 'bold', NAVY); pdf.text(row[0], dx + 4, y + 10);
         sf(8, 'bold', DARK); pdf.text(row[1], dx + 4, y + 21);
-        sf(6.5, 'normal', GRAY); pdf.text('  ' + row[2], dx + 44, y + 21);
+        sf(6.5, 'normal', GRAY); pdf.text(row[2], dx + 4, y + 21);
         if (idx % 2 === 1) y += 30;
       });
       if (details.length % 2 === 1) y += 30;
