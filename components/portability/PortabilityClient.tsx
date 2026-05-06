@@ -479,22 +479,16 @@ export default function PortabilityClient() {
         ['Garden Leave', `${(legalState as any)?.garden_leave_months ?? 3} months`, 'Dead period before revenue starts'],
         ['Recurring Revenue', `${profile.recurringShare || 0}%`, 'DPM/advisory fees vs transactional'],
         ['EDD Clients', `${profile.eddShare || 0}%`, 'Enhanced due diligence required'],
-        ['PEP Exposure', `${profile.pepsShare || 0}%`, 'Politically exposed persons'],
+        ['PEP Exposure', `${profile.pepsShare || 0}%  `, 'Politically exposed persons'],
       ];
 
-      const dcw = (CW - 8) / 2;
       details.forEach((row, idx) => {
-        if (idx % 2 === 0 && idx > 0) y += 0;
-        const dx = idx % 2 === 0 ? ML : ML + dcw + 8;
-        if (idx % 2 === 0) {
-          fill(ML, y, CW, 28, idx % 4 === 0 ? LIGHT : WHITE);
-        }
-        sf(7, 'bold', NAVY); pdf.text(row[0], dx + 4, y + 10);
-        sf(8, 'bold', DARK); pdf.text(row[1], dx + 4, y + 21);
-        sf(6.5, 'normal', GRAY); pdf.text(row[2], dx + 4, y + 21);
-        if (idx % 2 === 1) y += 30;
+        fill(ML, y, CW, 24, idx % 2 === 0 ? LIGHT : WHITE);
+        sf(7, 'normal', GRAY); pdf.text(String(row[0]), ML+8, y+9);
+        sf(8, 'bold', DARK); pdf.text(String(row[1]).trim(), ML+8, y+20);
+        sf(7, 'normal', GRAY); pdf.text(String(row[2]), ML+60, y+20);
+        y += 24;
       });
-      if (details.length % 2 === 1) y += 30;
       y += 8;
 
       hline(y); y += 14;
@@ -511,13 +505,13 @@ export default function PortabilityClient() {
         ['Compliance & KYC Reuse', coreScores.compliance],
       ];
       coreDims.forEach((dim, idx) => {
-        fill(ML, y, CW, 18, idx % 2 === 0 ? LIGHT : WHITE);
-        sf(7, 'normal', DARK); pdf.text(String(dim[0]), ML+6, y+12);
+        fill(ML, y, CW, 22, idx % 2 === 0 ? LIGHT : WHITE);
+        sf(7.5, 'normal', DARK); pdf.text(String(dim[0]), ML+8, y+14);
         const sc = Number(dim[1]||0);
-        sf(7, 'bold', sc >= 4 ? GREEN : sc >= 3 ? AMBER : RED);
-        pdf.text(`${sc}/5`, MR-25, y+12);
-        bar(MR-90, y+6, 60, 6, sc*20);
-        y += 18;
+        const scColor: [number,number,number] = sc >= 4 ? GREEN : sc >= 3 ? AMBER : RED;
+        sf(8, 'bold', scColor); pdf.text(String(sc) + '/5', MR-30, y+14);
+        bar(MR-95, y+8, 58, 6, sc*20);
+        y += 22;
       });
       y += 8;
 
@@ -534,13 +528,13 @@ export default function PortabilityClient() {
         ['Fit with Tier-1 Private Banking Platform', advancedScores.platformFit],
       ];
       advDims.forEach((dim, idx) => {
-        fill(ML, y, CW, 18, idx % 2 === 0 ? LIGHT : WHITE);
-        sf(7, 'normal', DARK); pdf.text(String(dim[0]), ML+6, y+12);
+        fill(ML, y, CW, 22, idx % 2 === 0 ? LIGHT : WHITE);
+        sf(7.5, 'normal', DARK); pdf.text(String(dim[0]), ML+8, y+14);
         const sc = Number(dim[1]||0);
-        sf(7, 'bold', sc >= 4 ? GREEN : sc >= 3 ? AMBER : RED);
-        pdf.text(`${sc}/5`, MR-25, y+12);
-        bar(MR-90, y+6, 60, 6, sc*20);
-        y += 18;
+        const scColor: [number,number,number] = sc >= 4 ? GREEN : sc >= 3 ? AMBER : RED;
+        sf(8, 'bold', scColor); pdf.text(String(sc) + '/5', MR-30, y+14);
+        bar(MR-95, y+8, 58, 6, sc*20);
+        y += 22;
       });
       y += 8;
 
@@ -572,7 +566,7 @@ export default function PortabilityClient() {
           if (y > H - 90) { pdf.addPage(); y = 40; }
           const fc: [number,number,number] = flag.severity==='red' ? RED : flag.severity==='amber' ? AMBER : GREEN;
           sf(8, 'bold', fc);
-          pdf.text(`${flag.severity==='red'?'[!]':flag.severity==='amber'?'[~]':'[+]'}  ${flag.title}`, ML, y+10);
+          pdf.text(`${flag.severity==='red'?'CRITICAL FLAG':flag.severity==='amber'?'ADVISORY FLAG':'POSITIVE'}  ${flag.title}`, ML, y+10);
           const lines = pdf.splitTextToSize(flag.detail, CW-14);
           sf(7.5, 'normal', DARK); pdf.text(lines, ML+12, y+20);
           y += 14 + lines.length * 10 + 4;
