@@ -10,6 +10,7 @@
 import { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PrimaryButton from "@/components/ui/PrimaryButton";
+import { track } from "@vercel/analytics";
 import SecondaryButton from "@/components/ui/SecondaryButton";
  
 /* ─────────────────────────────────────────────────────────────
@@ -397,6 +398,7 @@ export default function PortabilityClient() {
   };
  
   const handleDownload = () => {
+    track('portability_download_clicked', { score: computed.overallPct });
     if (capture.done) { _executeDownload(); return; }
     setCapture(p => ({ ...p, showModal: true }));
   };
@@ -415,6 +417,7 @@ export default function PortabilityClient() {
       });
     } catch { /* silent fail */ }
     setCapture(p => ({ ...p, submitting: false, done: true, showModal: false }));
+    track('portability_email_captured', { score: computed.overallPct, market: profile.market, hub: profile.mainHub });
     _executeDownload();
   };
  

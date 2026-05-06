@@ -125,6 +125,7 @@ export default function BpSimulatorClient() {
     }
 
     setBottomCapture(p => ({ ...p, submitting: false, done: true }));
+    track("bp_email_captured", { market: String(storeI.current_market || ""), aum: Number(storeI.current_assets_m || 0), score: Number(storeI.score || 0) });
 
     // Trigger Section5's save button if it exists
     setTimeout(() => {
