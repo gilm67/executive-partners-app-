@@ -119,7 +119,7 @@ export default function HomePage() {
 
           {/* FREE TOOLS SECTION */}
           <div className="relative mx-auto -mt-14 max-w-6xl px-4 pb-8 sm:-mt-20">
-            <div className="mb-6 text-center">
+            <div className="mb-6 text-center pt-4">
               <h2 className="font-[var(--font-playfair)] text-3xl font-semibold text-white md:text-4xl">
                 Free Tools for Private Bankers
               </h2>
