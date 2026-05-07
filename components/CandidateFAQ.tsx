@@ -86,7 +86,7 @@ export default function CandidateFAQ({
             a: "From first conversation to signed offer: 8-16 weeks on average. The timeline depends on several factors: bank approval process (regulatory approvals, compliance sign-off, senior management sign-off), your notice period at your current employer, regulatory requirements in your jurisdiction, complexity of your client portfolio (due diligence on AUM portability and client concentration), and organizational structure of the hiring bank (larger banks require more approvals; boutiques may move faster). Experienced relationship manager placements often fall toward the longer end of this range due to additional due diligence on your book of business and client relationships.",
           },
           {
-            q: "Do you have roles in [specific city]?",
+            q: "Do you have roles outside Switzerland?",
             a: "We work on mandates across multiple global markets spanning Europe (Geneva, Zurich, London, Frankfurt, Paris, Madrid, Milano), the Middle East (Dubai, Abu Dhabi), Asia-Pacific (Singapore, Hong Kong), and the Americas (New York, Miami). If we don't currently have an active role matching your profile in your target location, we'll keep you in our database and reach out when relevant opportunities arise. We also offer proactive market mapping if you're targeting a specific bank or region—we can help you understand the landscape, timing, and realistic entry points.",
           },
         ],
