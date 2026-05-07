@@ -201,7 +201,7 @@ export default function InsightsPage() {
             {[...LINKEDIN_ONLY]
               .sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))
               .map((a) => (
-                
+                <a
                   key={a.url}
                   href={a.url}
                   target="_blank"
