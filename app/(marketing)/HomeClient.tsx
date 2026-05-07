@@ -222,8 +222,8 @@ export default function HomeClient() {
                   />
                 </div>
               </div>
-              <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-black/50 px-3 py-1 text-[11px] text-white/60 backdrop-blur">
-                Swipe →
+              <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-black/50 px-3 py-1 text-[11px] text-white/60 backdrop-blur md:hidden">
+                Swipe &#8594;
               </div>
               <div className="mt-3 flex justify-center gap-1.5">
                 <span className="h-1 w-8 rounded-full bg-[#D4AF37]/60" />
