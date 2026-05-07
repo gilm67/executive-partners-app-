@@ -146,6 +146,21 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
+      
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{__html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          "name": "Executive Partners",
+          "description": "Geneva-based executive search for Private Banking and Wealth Management.",
+          "url": "https://www.execpartners.ch",
+          "telephone": "",
+          "address": {"@type": "PostalAddress", "addressLocality": "Geneva", "addressCountry": "CH"},
+          "founder": {"@type": "Person", "name": "Gil M. Chalem"},
+          "areaServed": ["Geneva","Zurich","London","Dubai","Singapore","Hong Kong"]
+        })}}
+      />
       </head>
 
       <body

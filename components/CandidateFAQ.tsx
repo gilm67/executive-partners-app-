@@ -46,7 +46,7 @@ export default function CandidateFAQ({
   limit?: number;
   anchorId?: string;
 }) {
-  const [open, setOpen] = useState<string | null>(null);
+  const [open, setOpen] = useState<string | null>("0-0");
   const [activeSection, setActiveSection] = useState<string>("All");
   const [query, setQuery] = useState("");
 
