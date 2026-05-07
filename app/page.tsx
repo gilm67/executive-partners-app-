@@ -80,7 +80,7 @@ export default function HomePage() {
             />
 
             <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4">
-              <div className="max-w-3xl rounded-2xl bg-black/45 px-6 py-6 text-center backdrop-blur-sm ring-1 ring-white/10">
+              <div className="max-w-3xl text-center">
                 <div className="flex justify-center">
                   <Image
                     src="/transparent-ep-logo.png"
