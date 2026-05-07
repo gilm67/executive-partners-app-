@@ -79,7 +79,7 @@ export default function InsightsPage() {
 
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="#articles" className="inline-flex items-center rounded-xl bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-black hover:opacity-90 transition">
-              Read latest articles →
+              Read latest articles &#x2192;
             </a>
             <Link href="/en/insights/archive" className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
               Browse archive
@@ -118,7 +118,7 @@ export default function InsightsPage() {
               </p>
             </div>
             <Link href="/en/insights/archive" className="hidden sm:inline-flex text-sm font-medium text-white/60 hover:text-white transition underline underline-offset-4">
-              Full archive →
+              Full archive &#x2192;
             </Link>
           </div>
 
@@ -154,7 +154,7 @@ export default function InsightsPage() {
                   ))}
                 </div>
                 <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
-                  Read full article <span className="transition group-hover:translate-x-1">→</span>
+                  Read full article <span className="transition group-hover:translate-x-1">&#x2192;</span>
                 </div>
               </div>
             </Link>
@@ -186,7 +186,7 @@ export default function InsightsPage() {
                   ))}
                 </div>
                 <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#D4AF37]">
-                  Read <span className="transition group-hover:translate-x-0.5">→</span>
+                  Read <span className="transition group-hover:translate-x-0.5">&#x2192;</span>
                 </div>
               </Link>
             ))}
@@ -197,7 +197,7 @@ export default function InsightsPage() {
               href="/en/insights/archive"
               className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition"
             >
-              View all articles →
+              View all articles &#x2192;
             </Link>
           </div>
         </section>
@@ -220,7 +220,7 @@ export default function InsightsPage() {
                 <h3 className="text-sm font-semibold text-white">{t.title}</h3>
                 <p className="mt-2 text-xs leading-relaxed text-white/60">{t.desc}</p>
                 <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#D4AF37]">
-                  Explore <span className="transition group-hover:translate-x-0.5">→</span>
+                  Explore <span className="transition group-hover:translate-x-0.5">&#x2192;</span>
                 </div>
               </Link>
             ))}
@@ -256,7 +256,7 @@ export default function InsightsPage() {
                   </div>
                   <h3 className="mt-3 flex-1 text-sm font-semibold leading-snug text-white">{a.title}</h3>
                   <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-white/60 group-hover:text-white/80 transition">
-                    Read on LinkedIn <span className="transition group-hover:translate-x-0.5">→</span>
+                    Read on LinkedIn <span className="transition group-hover:translate-x-0.5">&#x2192;</span>
                   </div>
                 </a>
               ))}
@@ -278,7 +278,7 @@ export default function InsightsPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-semibold text-black hover:opacity-90 transition"
               >
-                Subscribe on LinkedIn →
+                Subscribe on LinkedIn &#x2192;
               </a>
               <Link
                 href="/en/contact"
