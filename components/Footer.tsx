@@ -88,7 +88,7 @@ export default function Footer() {
                   href="/contact"
                   className="hover:text-white transition"
                 >
-                  Pricing
+                  Get a quote
                 </Link>
               </li>
             </ul>
