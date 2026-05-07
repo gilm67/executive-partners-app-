@@ -5,18 +5,10 @@ import Link from "next/link";
 import { INSIGHTS, type InsightArticle } from "./articles";
 import { marketLabel } from "@/lib/markets/marketLabel";
 
-/* -------------------------------- helpers -------------------------------- */
-
 function formatDate(iso: string) {
   try {
-    return new Intl.DateTimeFormat("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }).format(new Date(iso));
-  } catch {
-    return iso;
-  }
+    return new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(iso));
+  } catch { return iso; }
 }
 
 function safeDateMs(iso?: string) {
@@ -27,205 +19,25 @@ function safeDateMs(iso?: string) {
 function isWithinDays(iso: string, days: number) {
   const ms = safeDateMs(iso);
   if (!ms) return false;
-  const now = Date.now();
-  const windowMs = days * 24 * 60 * 60 * 1000;
-  return now - ms <= windowMs;
+  return Date.now() - ms <= days * 86400000;
 }
 
-/* -------------------------------- config -------------------------------- */
-
-const LINKEDIN_LATEST = [
-  {
-    title: 'Switzerland Is Running Out of Banks',
-    date: '2026-05-05',
-    url: 'https://www.linkedin.com/pulse/switzerland-running-out-banks-gil-m-chalem--5lyse/',
-  },
-  {
-    title: 'When Wall Street Hits 7,000 and the Pump Hits $5',
-    date: '2026-05-04',
-    url: 'https://www.linkedin.com/pulse/when-wall-street-hits-7000-pump-5-gil-m-chalem--ssque/',
-  },
-  {
-    title: 'The Americans Are Already Here',
-    date: '2026-04-28',
-    url: 'https://www.linkedin.com/pulse/americans-already-here-gil-m-chalem--ts3we/',
-  },
-  {
-    title: 'Smoke Over the DIFC',
-    date: '2026-04-27',
-    url: 'https://www.linkedin.com/pulse/smoke-over-difc-gil-m-chalem--d0lbe/',
-  },
-  {
-    title: 'Bern Holds the Line',
-    date: '2026-04-23',
-    url: 'https://www.linkedin.com/pulse/bern-holds-line-gil-m-chalem--nudte/',
-  },
-  {
-    title: 'The 10 Billion Myth: Why Size Is the Wrong Lens on Swiss Private Banking Consolidation',
-    date: '2026-04-21',
-    url: 'https://www.linkedin.com/pulse/10-billion-myth-why-size-wrong-lens-swiss-private-gil-m-chalem--myq8e/',
-  },
-  {
-    title: "The Bank That Can't Choose a CEO",
-    date: '2026-04-20',
-    url: 'https://www.linkedin.com/pulse/bank-cant-choose-ceo-gil-m-chalem--g9qje/',
-  },
-  {
-    title: 'The Revenue Grid Nobody Shows You Before You Sign',
-    date: '2026-04-14',
-    url: 'https://www.linkedin.com/pulse/revenue-grid-nobody-shows-you-before-sign-gil-m-chalem--w2cwe/',
-  },
-  {
-    title: "The AI Trap Nobody in Private Banking Is Talking About",
-    date: "2026-04-07",
-    url: "https://www.linkedin.com/pulse/ai-trap-nobody-private-banking-talking-gil-m-chalem--lcvae/?trackingId=ClfS20fy4KXWf0a7y9P%2Bsw%3D%3D",
-  },
-  {
-    title: "When Goliath Moves to Bahnhofstrasse",
-    date: "2026-03-31",
-    url: "https://www.linkedin.com/pulse/when-goliath-moves-bahnhofstrasse-gil-m-chalem--urvie/?trackingId=xUlfS%2FHneUPEb0NeTx03Eg%3D%3D",
-  },
-  {
-    title: "35,000 Jobs. One Question Nobody Is Asking.",
-    date: "2026-03-30",
-    url: "https://www.linkedin.com/pulse/35000-jobs-one-question-nobody-asking-gil-m-chalem--0gdze/?trackingId=Hxfx7FzeUjql%2FVh2G8OtsA%3D%3D",
-  },
-  {
-    title: "When the Safe Haven Isn't Safe Anymore",
-    date: "2026-03-24",
-    url: "https://www.linkedin.com/pulse/when-safe-haven-isnt-anymore-gil-m-chalem--hiuqe/?trackingId=YrwTvQV2N9CE1%2BnPjlmOiw%3D%3D",
-  },
-  {
-    title: "Julius Baer Cut Jobs Even After a Strong 2024. Every Private Banker Should Pay Attention.",
-    date: "2026-03-23",
-    url: "https://www.linkedin.com/pulse/julius-baer-cut-jobs-even-after-strong-2024-every-pay-gil-m-chalem--nb7be/?trackingId=Mgdv5MD93s%2Fo05fJA%2F23zg%3D%3D",
-  },
-  {
-    title: "Why More Senior RMs Are Asking Me About Going Independent. And What I Tell Them",
-    date: "2026-03-17",
-    url: "https://www.linkedin.com/pulse/why-more-senior-rms-asking-me-going-independent-what-i-gil-m-chalem--kglqe/?trackingId=zk7njMxrFRRRHoYvOZaBUQ%3D%3D",
-  },
-  {
-    title: "The UBS Integration Is Exposing a Career Problem Most Senior Bankers Don't Know They Have",
-    date: "2026-03-10",
-    url: "https://www.linkedin.com/pulse/ubs-integration-exposing-career-problem-most-senior-dont-m-chalem--e8iac/?trackingId=FfzRcDilXT6LYRqKlBpOhg%3D%3D",
-  },
-  {
-    title: "Dubai's Illusion Is Gone. Where Does That Leave You?",
-    date: "2026-03-09",
-    url: "https://www.linkedin.com/pulse/dubais-illusion-gone-where-does-leave-you-gil-m-chalem--mrdye/?trackingId=8pwqePN%2BcITpuF2r17JosQ%3D%3D",
-  },
-  {
-    title: "Storm Warning: Tariffs, Zero Rates, and Crypto Are Rewriting the Rules for Private Bankers",
-    date: "2026-03-03",
-    url: "https://www.linkedin.com/pulse/storm-warning-tariffs-zero-rates-crypto-rewriting-rules-m-chalem--uzzfe/?trackingId=USW1FEChQGjD8J87jSLdKw%3D%3D",
-  },
-  {
-    title: "The Alternative Investment Tipping Point: Private Wealth is Going Mainstream",
-    date: "2026-02-24",
-    url: "https://www.linkedin.com/pulse/alternative-investment-tipping-point-private-wealth-going-m-chalem--rzfye/?trackingId=Cn23Thz6cEnZ1mzkg0HM3g%3D%3D",
-  },
-  {
-    title: "Zürich 2026: Warum der Talentmarkt im Private Banking gerade umkippt",
-    date: "2026-02-20",
-    url: "https://www.linkedin.com/pulse/z%C3%BCrich-2026-warum-der-talentmarkt-im-private-banking-gil-m-chalem--wcx4e/?trackingId=zwftUxx4DeFLEYgPWWqGMw%3D%3D",
-  },
-  {
-    title: "UBS at the Crossroads: Succession, Integration, and the Fight for Its Future",
-    date: "2026-02-17",
-    url: "https://www.linkedin.com/pulse/ubs-crossroads-succession-integration-fight-its-gil-m-chalem--blsve/?trackingId=SpCaUGq9k%2B8kizryc2eVxw%3D%3D",
-  },
+const LINKEDIN_ONLY = [
+  { title: "Smoke Over the DIFC", date: "2026-04-27", url: "https://www.linkedin.com/pulse/smoke-over-difc-gil-m-chalem--d0lbe/" },
+  { title: "Bern Holds the Line", date: "2026-04-23", url: "https://www.linkedin.com/pulse/bern-holds-line-gil-m-chalem--nudte/" },
+  { title: "The 10 Billion Myth: Why Size Is the Wrong Lens on Swiss Private Banking Consolidation", date: "2026-04-21", url: "https://www.linkedin.com/pulse/10-billion-myth-why-size-wrong-lens-swiss-private-gil-m-chalem--myq8e/" },
+  { title: "The Bank That Can't Choose a CEO", date: "2026-04-20", url: "https://www.linkedin.com/pulse/bank-cant-choose-ceo-gil-m-chalem--g9qje/" },
+  { title: "The Revenue Grid Nobody Shows You Before You Sign", date: "2026-04-14", url: "https://www.linkedin.com/pulse/revenue-grid-nobody-shows-you-before-sign-gil-m-chalem--w2cwe/" },
+  { title: "Dubai's Illusion Is Gone. Where Does That Leave You?", date: "2026-03-09", url: "https://www.linkedin.com/pulse/dubais-illusion-gone-where-does-leave-you-gil-m-chalem--mrdye/" },
+  { title: "Zürich 2026: Warum der Talentmarkt im Private Banking gerade umkippt", date: "2026-02-20", url: "https://www.linkedin.com/pulse/z%C3%BCrich-2026-warum-der-talentmarkt-im-private-banking-gil-m-chalem--wcx4e/" },
 ] as const;
 
-const P1_SUBTHEMES = [
-  {
-    key: "Positioning",
-    title: "Positioning",
-    href: "/en/insights/subtheme/positioning",
-    desc: "Who is winning, who is losing — and why.",
-  },
-  {
-    key: "ScaleVsBoutique",
-    title: "Scale vs Boutique",
-    href: "/en/insights/subtheme/scale-vs-boutique",
-    desc: "Economics of scale vs boutique models.",
-  },
-  {
-    key: "ROAPlatform",
-    title: "ROA & Platform",
-    href: "/en/insights/subtheme/roa-platform",
-    desc: "ROA pressure, platforms, cost of compliance.",
-  },
-  {
-    key: "M&ARestructuring",
-    title: "M&A & Restructuring",
-    href: "/en/insights/subtheme/m-a-restructuring",
-    desc: "M&A, integrations, silent restructurings.",
-  },
+const THEMES = [
+  { key: "Positioning", title: "Positioning", href: "/en/insights/subtheme/positioning", desc: "Who is winning and losing — and why." },
+  { key: "ScaleVsBoutique", title: "Scale vs Boutique", href: "/en/insights/subtheme/scale-vs-boutique", desc: "Economics of scale vs boutique models." },
+  { key: "ROAPlatform", title: "ROA & Platform", href: "/en/insights/subtheme/roa-platform", desc: "ROA pressure, platforms, cost of compliance." },
+  { key: "M&ARestructuring", title: "M&A & Restructuring", href: "/en/insights/subtheme/m-a-restructuring", desc: "M&A, integrations, silent restructurings." },
 ] as const;
-
-type RoleKey = "rm" | "hm";
-const ROLE_STORAGE_KEY = "insights_role";
-
-const ROLE_CTA: Record<
-  RoleKey,
-  { primary: { label: string; href: string }; secondary?: { label: string; href: string } }
-> = {
-  rm: {
-    primary: { label: "Assess your portability →", href: "/portability" },
-    secondary: { label: "Run a Business Plan →", href: "/en/bp-simulator" },
-  },
-  hm: {
-    primary: { label: "Speak confidentially →", href: "/en/contact" },
-  },
-};
-
-const RECOMMENDED_BY_ROLE: Record<RoleKey, readonly string[]> = {
-  rm: [
-    "investment-advisor-replacing-rm",
-    "how-build-billion-dollar-client-portfolio-banking",
-    "ultimate-guide-interview-preparation-recruiters",
-    "family-office-revolution",
-    "traditional-private-banks-vs-family-offices",
-    "should-private-banks-embrace-bitcoin-clients",
-  ],
-  hm: [
-    "ubs-unbeatable",
-    "ubss-silent-earthquake-10000-more-jobs-set-disappear-2027",
-    "ubs-switzerlands-banking-giant-transformation",
-    "changing-face-swiss-private-banking",
-    "swiss-private-banking-shake-up-mega-mergers",
-    "swiss-european-banks-tighten-grip-cis-clients",
-  ],
-};
-
-/* -------------------- self-healing helpers -------------------- */
-
-function staleKey(role: RoleKey) {
-  return `insights_reco_stale_${role}`;
-}
-
-function readStale(role: RoleKey): Set<string> {
-  try {
-    const raw = window.localStorage.getItem(staleKey(role));
-    if (!raw) return new Set();
-    const arr = JSON.parse(raw);
-    if (!Array.isArray(arr)) return new Set();
-    return new Set(arr.filter((x) => typeof x === "string"));
-  } catch {
-    return new Set();
-  }
-}
-
-function writeStale(role: RoleKey, stale: Set<string>) {
-  try {
-    window.localStorage.setItem(staleKey(role), JSON.stringify(Array.from(stale)));
-  } catch {
-    /* noop */
-  }
-}
-
-/* -------------------------------- page -------------------------------- */
 
 export default function InsightsPage() {
   const sorted = useMemo(
@@ -233,367 +45,251 @@ export default function InsightsPage() {
     []
   );
 
-  const featured = useMemo(() => sorted.filter((a) => a.featured).slice(0, 6), [sorted]);
+  // Internal articles with full body — show top 9 sorted by date
+  const internalArticles = useMemo(
+    () => sorted.filter((a) => a.body).slice(0, 9),
+    [sorted]
+  );
 
-  const topThisWeek = useMemo(() => {
-    const w = sorted.filter((a) => isWithinDays(a.date, 7));
-    if (!w.length) return null;
-    const withScore = w.filter((a) => typeof a.engagementScore === "number");
-    const pool = withScore.length ? withScore : w;
-    return pool
-      .slice()
-      .sort(
-        (a, b) =>
-          (b.engagementScore ?? 0) - (a.engagementScore ?? 0) ||
-          safeDateMs(b.date) - safeDateMs(a.date)
-      )[0];
-  }, [sorted]);
-
-  const [role, setRole] = useState<RoleKey>("rm");
-
-  useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(ROLE_STORAGE_KEY) as RoleKey | null;
-      if (saved === "rm" || saved === "hm") setRole(saved);
-    } catch {
-      /* noop */
-    }
-  }, []);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(ROLE_STORAGE_KEY, role);
-    } catch {
-      /* noop */
-    }
-  }, [role]);
-
-  const featuredSlugs = useMemo(() => new Set(featured.map((a) => a.slug)), [featured]);
-
-  const recommended = useMemo(() => {
-    const picked: InsightArticle[] = [];
-    const wanted = RECOMMENDED_BY_ROLE[role];
-    const stale = typeof window !== "undefined" ? readStale(role) : new Set<string>();
-    let staleChanged = false;
-
-    for (const slug of wanted) {
-      if (stale.has(slug)) continue;
-      const a = sorted.find((x) => x.slug === slug);
-      if (!a) {
-        stale.add(slug);
-        staleChanged = true;
-        continue;
-      }
-      if (featuredSlugs.has(a.slug)) continue;
-      picked.push(a);
-      if (picked.length === 3) break;
-    }
-
-    if (staleChanged && typeof window !== "undefined") {
-      writeStale(role, stale);
-    }
-
-    if (picked.length < 3) {
-      for (const a of sorted) {
-        if (featuredSlugs.has(a.slug)) continue;
-        if (picked.some((p) => p.slug === a.slug)) continue;
-        picked.push(a);
-        if (picked.length === 3) break;
-      }
-    }
-
-    return picked;
-  }, [role, sorted, featuredSlugs]);
-
-  const roleLabel = role === "rm" ? "Relationship Managers" : "Hiring Managers";
-  const roleKicker =
-    role === "rm"
-      ? "Career moves, portability, and performance-led roles."
-      : "Strategy signals, restructuring risk, and talent implications.";
-
-  const roleCta = ROLE_CTA[role];
+  const newestSlug = internalArticles[0]?.slug;
 
   return (
-    <main className="relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-40 left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-white/10 blur-3xl opacity-30" />
-        <div className="absolute top-40 left-[-200px] h-[380px] w-[380px] rounded-full bg-[#D4AF37]/10 blur-3xl opacity-35" />
-        <div className="absolute bottom-[-220px] right-[-200px] h-[520px] w-[520px] rounded-full bg-white/10 blur-3xl opacity-25" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/40" />
-      </div>
+    <main className="min-h-screen">
+      {/* ── HERO ───────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden border-b border-white/10 pb-16 pt-16">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute -top-32 left-1/2 h-[480px] w-[900px] -translate-x-1/2 rounded-full bg-white/8 blur-3xl opacity-25" />
+          <div className="absolute top-20 left-[-160px] h-[320px] w-[320px] rounded-full bg-[#D4AF37]/8 blur-3xl opacity-30" />
+        </div>
 
-      <div className="mx-auto w-full max-w-6xl px-4 py-14">
-        <header className="mb-10">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-white/70">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-white/60">
             Private Wealth Pulse
-            <span className="h-1 w-1 rounded-full bg-[#D4AF37]/80" />
-            Insights
+            <span className="h-1 w-1 rounded-full bg-[#D4AF37]" />
+            17,000+ subscribers
           </div>
 
-          <h1 className="mt-5 text-4xl font-semibold text-white tracking-tight">
-            Intelligence that makes decisions easier.
+          <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-white md:text-5xl">
+            Intelligence for senior<br />private banking professionals.
           </h1>
 
-          <p className="mt-3 max-w-2xl text-white/70">
-            Private banking analysis on strategy, talent, and market power — built for Switzerland and
-            major booking centres.
+          <p className="mt-4 max-w-xl text-base text-white/65 leading-relaxed">
+            Strategy, talent, and market power — written from Geneva, read across every major booking centre.
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href="#latest"
-              className="inline-flex items-center rounded-xl bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-black hover:opacity-90"
-            >
-              Start with latest →
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a href="#articles" className="inline-flex items-center rounded-xl bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-black hover:opacity-90 transition">
+              Read latest articles →
             </a>
-            <Link
-              href="/en/insights/archive"
-              className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
-            >
+            <Link href="/en/insights/archive" className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
               Browse archive
             </Link>
           </div>
-        </header>
 
-        <section className="mb-14">
-          <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 shadow-[0_20px_80px_rgba(0,0,0,0.35)] backdrop-blur">
-            <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-              <div>
-                <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
-                  Recommended for you
-                </div>
-                <h2 className="mt-2 text-xl font-semibold text-white">{roleLabel}</h2>
-                <p className="mt-1 text-sm text-white/60">{roleKicker}</p>
+          {/* Stats bar */}
+          <div className="mt-10 flex flex-wrap gap-8">
+            {[
+              { n: "200+", label: "Placements" },
+              { n: "17k+", label: "Newsletter subscribers" },
+              { n: "6", label: "Primary markets" },
+              { n: "14+", label: "In-depth articles" },
+            ].map((s) => (
+              <div key={s.label}>
+                <div className="text-2xl font-semibold text-white">{s.n}</div>
+                <div className="mt-0.5 text-xs text-white/50 uppercase tracking-wider">{s.label}</div>
               </div>
-
-              <div className="inline-flex rounded-2xl border border-white/15 bg-black/20 p-1">
-                <button
-                  type="button"
-                  onClick={() => setRole("rm")}
-                  className={[
-                    "rounded-xl px-4 py-2 text-sm font-semibold transition",
-                    role === "rm"
-                      ? "bg-white/10 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.10)]"
-                      : "text-white/60 hover:text-white hover:bg-white/5",
-                  ].join(" ")}
-                >
-                  I'm an RM
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRole("hm")}
-                  className={[
-                    "rounded-xl px-4 py-2 text-sm font-semibold transition",
-                    role === "hm"
-                      ? "bg-white/10 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.10)]"
-                      : "text-white/60 hover:text-white hover:bg-white/5",
-                  ].join(" ")}
-                >
-                  I'm Hiring
-                </button>
-              </div>
-            </div>
-
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {recommended.map((a) => {
-                const isTopWeek = topThisWeek?.slug === a.slug;
-                return (
-                  <Link
-                    key={a.slug}
-                    href={`/en/insights/${a.slug}`}
-                    className="group rounded-2xl border border-white/10 bg-black/20 p-5 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-black/30"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="text-xs text-white/55">{formatDate(a.date)}</div>
-                      <div className="flex items-center gap-2">
-                        {isTopWeek ? (
-                          <span className="rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-2 py-0.5 text-[10px] font-semibold text-[#D4AF37]">
-                            Top this week
-                          </span>
-                        ) : null}
-                        <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/60">
-                          Recommended
-                        </span>
-                      </div>
-                    </div>
-
-                    <h3 className="mt-3 text-base font-semibold text-white leading-snug">
-                      {a.title}
-                    </h3>
-
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {(a.markets ?? []).slice(0, 3).map((m) => (
-                        <span
-                          key={m}
-                          className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/75"
-                          title={marketLabel(m)}
-                        >
-                          {marketLabel(m)}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
-                      Read <span className="transition group-hover:translate-x-0.5">→</span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-
-            <div className="mt-6 flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-wrap items-center gap-4">
-                <Link
-                  href={roleCta.primary.href}
-                  className="inline-flex items-center rounded-xl bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
-                >
-                  {roleCta.primary.label}
-                </Link>
-
-                {roleCta.secondary ? (
-                  <Link
-                    href={roleCta.secondary.href}
-                    className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
-                  >
-                    {roleCta.secondary.label}
-                  </Link>
-                ) : null}
-              </div>
-
-              <Link
-                href="/en/insights/archive"
-                className="text-sm font-semibold text-white/70 hover:text-white underline underline-offset-4"
-              >
-                Browse all insights →
-              </Link>
-            </div>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section id="latest" className="mb-14 scroll-mt-28">
-          <div className="mb-6 flex items-end justify-between">
+      <div className="mx-auto max-w-6xl px-4 py-14 space-y-20">
+
+        {/* ── INTERNAL ARTICLES (readable on site) ─────────────── */}
+        <section id="articles">
+          <div className="mb-8 flex items-end justify-between">
             <div>
-              <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
-                Latest
+              <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">
+                Full articles — read on execpartners.ch
               </div>
-              <h2 className="mt-2 text-xl font-semibold text-white">Latest intelligence</h2>
-              <p className="mt-1 text-sm text-white/60">
-                The freshest reads — updated as you publish.
+              <h2 className="mt-2 text-2xl font-semibold text-white">Latest intelligence</h2>
+              <p className="mt-1.5 text-sm text-white/60">
+                In-depth analysis. No paywall. No login.
               </p>
             </div>
-            <Link href="/en/insights/archive" className="text-sm text-white/70 hover:text-white">
-              Browse archive →
+            <Link href="/en/insights/archive" className="hidden sm:inline-flex text-sm font-medium text-white/60 hover:text-white transition underline underline-offset-4">
+              Full archive →
             </Link>
           </div>
 
-          <div className="mb-6 grid gap-4 md:grid-cols-3">
-            {LINKEDIN_LATEST.slice()
-              .sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))
-              .map((a) => (
-                <a
-                  key={a.url}
-                  href={a.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group rounded-3xl border border-[#D4AF37]/20 bg-gradient-to-b from-[#D4AF37]/10 to-white/5 p-6 transition hover:-translate-y-0.5 hover:border-[#D4AF37]/35 hover:bg-white/10"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="text-xs text-white/55">{formatDate(a.date)}</div>
-                    <span className="rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-2 py-0.5 text-[10px] font-semibold text-[#D4AF37]">
-                      LinkedIn · External
+          {/* Hero article — most recent */}
+          {internalArticles[0] && (
+            <Link
+              href={`/en/insights/${internalArticles[0].slug}`}
+              className="group mb-6 flex flex-col gap-5 rounded-3xl border border-white/10 bg-white/5 p-7 transition hover:-translate-y-0.5 hover:border-[#D4AF37]/30 hover:bg-white/8 md:flex-row md:items-start"
+            >
+              <div className="flex-1">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#D4AF37]">
+                    Latest
+                  </span>
+                  <span className="text-xs text-white/50">{formatDate(internalArticles[0].date)}</span>
+                  {isWithinDays(internalArticles[0].date, 7) && (
+                    <span className="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-400">
+                      New
                     </span>
-                  </div>
+                  )}
+                </div>
+                <h3 className="mt-3 text-2xl font-semibold leading-snug text-white md:text-3xl">
+                  {internalArticles[0].title}
+                </h3>
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/65 line-clamp-3">
+                  {internalArticles[0].summary}
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {(internalArticles[0].markets ?? []).slice(0, 5).map((m) => (
+                    <span key={m} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">
+                      {marketLabel(m)}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
+                  Read full article <span className="transition group-hover:translate-x-1">→</span>
+                </div>
+              </div>
+            </Link>
+          )}
 
-                  <h3 className="mt-3 text-lg font-semibold text-white leading-snug">{a.title}</h3>
-
-                  <p className="mt-3 text-sm text-white/70 line-clamp-3">
-                    Read the full article on LinkedIn.
-                  </p>
-
-                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
-                    Read on LinkedIn <span className="transition group-hover:translate-x-0.5">→</span>
-                  </div>
-                </a>
-              ))}
+          {/* Grid of next 8 */}
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {internalArticles.slice(1).map((a) => (
+              <Link
+                key={a.slug}
+                href={`/en/insights/${a.slug}`}
+                className="group flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/8"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs text-white/50">{formatDate(a.date)}</span>
+                  {isWithinDays(a.date, 14) && (
+                    <span className="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">New</span>
+                  )}
+                </div>
+                <h3 className="mt-3 flex-1 text-base font-semibold leading-snug text-white">
+                  {a.title}
+                </h3>
+                <p className="mt-2 text-sm text-white/60 line-clamp-2">{a.summary}</p>
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {(a.markets ?? []).slice(0, 3).map((m) => (
+                    <span key={m} className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/65">
+                      {marketLabel(m)}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#D4AF37]">
+                  Read <span className="transition group-hover:translate-x-0.5">→</span>
+                </div>
+              </Link>
+            ))}
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {featured.map((a) => {
-              const isTopWeek = topThisWeek?.slug === a.slug;
-              return (
-                <Link
-                  key={a.slug}
-                  href={`/en/insights/${a.slug}`}
-                  className="group rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="text-xs text-white/55">{formatDate(a.date)}</div>
-                    {isTopWeek ? (
-                      <span className="rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-2 py-0.5 text-[10px] font-semibold text-[#D4AF37]">
-                        Top this week
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <h3 className="mt-3 text-lg font-semibold text-white leading-snug">{a.title}</h3>
-                  <p className="mt-3 text-sm text-white/70 line-clamp-3">{a.summary}</p>
-
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {(a.markets ?? []).slice(0, 4).map((m) => (
-                      <span
-                        key={m}
-                        className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/75"
-                        title={marketLabel(m)}
-                      >
-                        {marketLabel(m)}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
-                    Read <span className="transition group-hover:translate-x-0.5">→</span>
-                  </div>
-                </Link>
-              );
-            })}
+          <div className="mt-8 text-center">
+            <Link
+              href="/en/insights/archive"
+              className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition"
+            >
+              View all articles →
+            </Link>
           </div>
         </section>
 
-        <section className="mt-16">
-          <div className="mb-6 flex items-end justify-between">
-            <div>
-              <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
-                Pillar I
-              </div>
-              <h2 className="mt-2 text-xl font-semibold text-white">Browse by sub-theme</h2>
-              <p className="mt-1 text-sm text-white/60">Four chapters. Clear entry points.</p>
-            </div>
-            <Link href="/en/insights/pillar/p1" className="text-sm text-white/70 hover:text-white">
-              Open Pillar I →
-            </Link>
+        {/* ── BROWSE BY THEME ──────────────────────────────────── */}
+        <section>
+          <div className="mb-6">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">Pillar I</div>
+            <h2 className="mt-2 text-xl font-semibold text-white">Browse by theme</h2>
+            <p className="mt-1.5 text-sm text-white/60">Four analytical lenses. One industry.</p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {P1_SUBTHEMES.map((s) => (
+            {THEMES.map((t) => (
               <Link
-                key={s.key}
-                href={s.href}
-                className="group rounded-3xl border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
+                key={t.key}
+                href={t.href}
+                className="group rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-[#D4AF37]/25 hover:bg-white/8"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-sm font-semibold text-white">{s.title}</h3>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/60">
-                    Chapter
-                  </span>
-                </div>
-                <p className="mt-2 text-sm text-white/65">{s.desc}</p>
-                <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
+                <h3 className="text-sm font-semibold text-white">{t.title}</h3>
+                <p className="mt-2 text-xs leading-relaxed text-white/60">{t.desc}</p>
+                <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#D4AF37]">
                   Explore <span className="transition group-hover:translate-x-0.5">→</span>
                 </div>
               </Link>
             ))}
           </div>
         </section>
+
+        {/* ── LINKEDIN ONLY ────────────────────────────────────── */}
+        <section>
+          <div className="mb-6">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/50">Also published</div>
+            <h2 className="mt-2 text-xl font-semibold text-white">More on LinkedIn</h2>
+            <p className="mt-1.5 text-sm text-white/60">
+              Additional pieces published exclusively on LinkedIn Pulse.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[...LINKEDIN_ONLY]
+              .sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))
+              .map((a) => (
+                
+                  key={a.url}
+                  href={a.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/8"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs text-white/50">{formatDate(a.date)}</span>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/50">
+                      LinkedIn
+                    </span>
+                  </div>
+                  <h3 className="mt-3 flex-1 text-sm font-semibold leading-snug text-white">{a.title}</h3>
+                  <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-white/60 group-hover:text-white/80 transition">
+                    Read on LinkedIn <span className="transition group-hover:translate-x-0.5">→</span>
+                  </div>
+                </a>
+              ))}
+          </div>
+        </section>
+
+        {/* ── NEWSLETTER CTA ───────────────────────────────────── */}
+        <section>
+          <div className="rounded-3xl border border-[#D4AF37]/20 bg-gradient-to-br from-[#D4AF37]/10 via-white/5 to-white/5 p-10 text-center">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">Private Wealth Pulse</div>
+            <h2 className="mt-3 text-2xl font-semibold text-white">Get the analysis in your inbox.</h2>
+            <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-white/65">
+              Join 17,000+ senior private banking professionals who read Gil M. Chalem every week. No noise. No fluff. Just the signals that matter.
+            </p>
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
+              
+                href="https://www.linkedin.com/newsletters/private-wealth-pulse-7049706791347752960/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-semibold text-black hover:opacity-90 transition"
+              >
+                Subscribe on LinkedIn →
+              </a>
+              <Link
+                href="/en/contact"
+                className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition"
+              >
+                Speak with Gil
+              </Link>
+            </div>
+          </div>
+        </section>
+
       </div>
     </main>
   );
