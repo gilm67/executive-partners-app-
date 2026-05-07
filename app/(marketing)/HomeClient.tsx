@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import CandidateFAQ from "@/components/CandidateFAQ";
+import { INSIGHTS } from "@/app/en/insights/articles";
 
 // City data with region, country code and ambient glow color
 const CITIES = [
@@ -354,6 +355,24 @@ export default function HomeClient() {
         </div>
       </section>
 
+
+      {/* INSIGHTS STRIP */}
+      <section className="py-20 border-t border-white/8">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">Private Wealth Pulse</p>
+              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight">Latest Intelligence</h2>
+              <p className="mt-2 text-white/50 text-sm">Strategy and talent analysis for senior private banking professionals.</p>
+            </div>
+            <Link href="/en/insights" className="shrink-0 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
+              All articles <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <InsightsStrip />
+        </div>
+      </section>
+
       {/* FAQ */}
       <CandidateFAQ compact limit={6} />
 
@@ -459,3 +478,48 @@ export default function HomeClient() {
     </div>
   );
 }
+
+
+function InsightsStrip() {
+  const articles = [...INSIGHTS]
+    .filter((a) => a.body)
+    .sort((a, b) => {
+      const ta = Date.parse((a.date || "").trim());
+      const tb = Date.parse((b.date || "").trim());
+      return (isNaN(tb) ? 0 : tb) - (isNaN(ta) ? 0 : ta);
+    })
+    .slice(0, 3);
+
+  function fmt(iso: string) {
+    try {
+      return new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit", month: "short", year: "numeric",
+      }).format(new Date(iso));
+    } catch { return iso; }
+  }
+
+  return (
+    <div className="grid gap-5 sm:grid-cols-3">
+      {articles.map((a, i) => (
+        <Link
+          key={a.slug}
+          href={`/en/insights/${a.slug}`}
+          className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur transition hover:-translate-y-0.5 hover:border-[#D4AF37]/30"
+        >
+          {i === 0 && (
+            <span className="mb-3 w-fit rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#D4AF37]">
+              Latest
+            </span>
+          )}
+          <div className="text-xs text-white/40 mb-3">{fmt(a.date)}</div>
+          <h3 className="flex-1 font-[var(--font-playfair)] text-lg font-semibold leading-snug text-white">{a.title}</h3>
+          <p className="mt-3 text-sm text-white/60 line-clamp-2">{a.summary}</p>
+          <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37]">
+            Read full article <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
