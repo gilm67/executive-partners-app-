@@ -36,6 +36,21 @@ function isWithinDays(iso: string, days: number) {
 
 const LINKEDIN_LATEST = [
   {
+    title: 'Switzerland Is Running Out of Banks',
+    date: '2026-05-05',
+    url: 'https://www.linkedin.com/pulse/switzerland-running-out-banks-gil-m-chalem--5lyse/',
+  },
+  {
+    title: 'When Wall Street Hits 7,000 and the Pump Hits $5',
+    date: '2026-05-04',
+    url: 'https://www.linkedin.com/pulse/when-wall-street-hits-7000-pump-5-gil-m-chalem--ssque/',
+  },
+  {
+    title: 'The Americans Are Already Here',
+    date: '2026-04-28',
+    url: 'https://www.linkedin.com/pulse/americans-already-here-gil-m-chalem--ts3we/',
+  },
+  {
     title: 'Smoke Over the DIFC',
     date: '2026-04-27',
     url: 'https://www.linkedin.com/pulse/smoke-over-difc-gil-m-chalem--d0lbe/',
