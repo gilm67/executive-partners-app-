@@ -231,6 +231,7 @@ export default function InsightsPage() {
             </p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
               
+                <a
                 href="https://www.linkedin.com/newsletters/private-wealth-pulse-7049706791347752960/"
                 target="_blank"
                 rel="noopener noreferrer"
