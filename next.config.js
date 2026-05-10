@@ -39,7 +39,6 @@ const nextConfig = {
       { source: "/new-business-sim/", destination: "/en/bp-simulator", permanent: true },
       { source: "/business-plan-simulator", destination: "/en/bp-simulator", permanent: true },
       { source: "/bp-simulator", destination: "/en/bp-simulator", permanent: true },
-      { source: "/fr", destination: "/", permanent: true },
       { source: "/about us", destination: "/en/about", permanent: true },
       { source: "/about", destination: "/en/about", permanent: true },
       { source: "/candidates", destination: "/en/candidates", permanent: true },
