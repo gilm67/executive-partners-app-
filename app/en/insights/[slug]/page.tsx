@@ -484,6 +484,67 @@ export default function InsightDetailPage({ params }: Props) {
           </div>
         </section>
       ) : null}
+
+      {/* ── Active Mandates CTA ── */}
+      <section className="mt-10 rounded-2xl border border-[#C9A14A]/20 bg-[#C9A14A]/5 p-6">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#C9A14A]/80">
+          Active mandates
+        </p>
+        <h2 className="mt-2 text-lg font-semibold text-white">
+          Currently hiring in these markets
+        </h2>
+        <p className="mt-1 text-sm text-white/60">
+          Confidential. Senior-level only. Apply in 90 seconds.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          {article.markets.includes("CH") ? (
+            <>
+              <Link href="/en/jobs/senior-relationship-manager-brazil-ch" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
+                Senior RM — LATAM / Switzerland →
+              </Link>
+              <Link href="/en/jobs/senior-relationship-manager-ch-onshore-geneva" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
+                Senior RM — Swiss Onshore →
+              </Link>
+              <Link href="/en/jobs/ia-cis-cee-geneva" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
+                Investment Advisor — CIS/CEE Geneva →
+              </Link>
+            </>
+          ) : null}
+          {article.markets.includes("UAE") ? (
+            <Link href="/en/jobs/senior-relationship-manager-mea-dubai" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
+              Senior RM — MEA / Dubai →
+            </Link>
+          ) : null}
+          {article.markets.includes("ASIA") ? (
+            <>
+              <Link href="/en/jobs/rm-hong-kong" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
+                Senior RM — Hong Kong →
+              </Link>
+              <Link href="/en/jobs/rm-singapore" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
+                Senior RM — Singapore →
+              </Link>
+            </>
+          ) : null}
+          {article.markets.includes("UK") ? (
+            <Link href="/en/jobs/rm-uk-geneva" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
+              Senior RM — UK Market / Geneva →
+            </Link>
+          ) : null}
+          {article.markets.includes("IT") ? (
+            <>
+              <Link href="/en/jobs/rm-italy-ch" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
+                Senior RM — Italian Market (Switzerland) →
+              </Link>
+              <Link href="/en/jobs/rm-italy-milan" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
+                Senior RM — Italian Market (Milan) →
+              </Link>
+            </>
+          ) : null}
+          <Link href="/en/jobs" className="rounded-xl border border-[#C9A14A]/30 bg-[#C9A14A]/10 px-4 py-2 text-xs font-semibold text-[#C9A14A] hover:bg-[#C9A14A]/20 transition">
+            All active mandates →
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }
