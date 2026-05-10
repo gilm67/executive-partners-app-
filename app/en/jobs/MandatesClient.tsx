@@ -1,5 +1,6 @@
 // @ts-nocheck
 "use client";
+import { BriefDrawer } from "./BriefDrawer";
 
 import { useState, useRef, useEffect } from "react";
 
@@ -320,7 +321,7 @@ function MandatePage({ mandate, onBack, onApply }) {
   );
 }
 
-function MandateCard({ mandate, onScreen, onView }) {
+function MandateCard({ mandate, onScreen, onBrief }) {
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5 shadow-[0_1px_3px_rgba(0,0,0,.25)] transition hover:shadow-[0_8px_30px_rgba(0,0,0,.45)] hover:border-brandGold/20">
       <div className="pointer-events-none absolute inset-0 opacity-[.15]" style={{ background: "radial-gradient(700px 160px at 0% 0%, rgba(201,161,74,.35), transparent 60%)" }} />
@@ -338,7 +339,7 @@ function MandateCard({ mandate, onScreen, onView }) {
           {mandate.ubp_ref && <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-neutral-500">{mandate.ubp_ref}</span>}
         </div>
         <div className="flex gap-3">
-          <button onClick={() => onView(mandate)} className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-black/20 px-4 py-2 text-xs font-semibold text-neutral-300 hover:border-brandGold/30 hover:text-white transition">View Brief</button>
+          <button onClick={() => onBrief(mandate)} className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-black/20 px-4 py-2 text-xs font-semibold text-neutral-300 hover:border-brandGold/30 hover:text-white transition">View Brief</button>
           <a href={`/en/jobs/${mandate.id}`} className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-neutral-400 hover:text-white hover:bg-white/10 transition">Full details →</a>
           <button onClick={() => onScreen(mandate)} className="inline-flex items-center gap-1.5 rounded-xl border border-brandGold/50 bg-brandGold/15 px-4 py-2 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/25 hover:text-white transition">Apply →</button>
         </div>
@@ -349,6 +350,7 @@ function MandateCard({ mandate, onScreen, onView }) {
 
 export default function MandatesClient() {
   const [screening, setScreening] = useState(null);
+  const [brief, setBrief] = useState(null);
   const [filter, setFilter] = useState("All");
   const [selectedId, setSelectedId] = useState(null);
   const topRef = useRef(null);
@@ -384,6 +386,8 @@ export default function MandatesClient() {
     <main className="relative min-h-screen text-white" ref={topRef}>
       <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(1400px 500px at 10% -10%, rgba(201,161,74,.18) 0%, rgba(201,161,74,0) 55%), radial-gradient(1100px 420px at 110% 0%, rgba(245,231,192,.15) 0%, rgba(245,231,192,0) 60%)" }} />
 
+      {brief && <BriefDrawer mandate={brief} onClose={() => setBrief(null)} onApply={(m) => { setBrief(null); setScreening(m); }} />}
+
       {screening && <ScreeningModal mandate={screening} onClose={() => setScreening(null)} onPass={() => { openFull(screening); setScreening(null); }} />}
 
       <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-14">
@@ -410,7 +414,7 @@ export default function MandatesClient() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
-              {visible.map((m, i) => <MandateCard key={m.id} mandate={m} onScreen={setScreening} onView={openFull} />)}
+              {visible.map((m, i) => <MandateCard key={m.id} mandate={m} onScreen={setScreening} onBrief={setBrief} />)}
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center">
