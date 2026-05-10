@@ -174,7 +174,7 @@ The ideal profile has spent a meaningful part of their private banking career ma
 
 ];
 
-const HUBS = ["All", "Geneva", "Zurich", "Lugano", "London", "Milan", "Hong Kong", "Singapore"];
+const HUBS = ["All", "Geneva", "Zurich", "Lugano", "London", "Milan", "New York", "Hong Kong", "Singapore"];
 
 function ScreeningModal({ mandate, onClose, onPass }) {
   const [answers, setAnswers] = useState({});
