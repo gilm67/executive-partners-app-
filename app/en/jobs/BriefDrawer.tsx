@@ -127,7 +127,7 @@ export function BriefDrawer({ mandate, onClose, onApply }) {
               {[
                 ["200+", "Senior placements"],
                 ["98%", "Retention rate"],
-                ["1", "Point of contact"],
+                ["1", "Dedicated senior recruiter"],
                 ["24h", "Response time"],
               ].map(([stat, label], i) => (
                 <div key={i} className="flex items-center gap-2.5">

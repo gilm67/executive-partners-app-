@@ -556,7 +556,7 @@ export default async function JobDetailPage({
                   {[
                     ["200+", "Senior placements in private banking"],
                     ["98%", "Retention rate across all mandates"],
-                    ["1", "Point of contact — Gil M. Chalem personally"],
+                    ["1", "Point of contact — dedicated recruiter"],
                     ["24h", "Response time. Always."],
                   ].map(([stat, label], i) => (
                     <li key={i} className="flex items-start gap-3">
