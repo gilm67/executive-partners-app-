@@ -22,20 +22,19 @@ export const revalidate = 60;
 /* ---------------- SEO ---------------- */
 export const metadata: Metadata = {
   title: "Private Banking Headhunter Switzerland | About Executive Partners Geneva",
-    description:
+  description:
     "Executive Partners is a Geneva-based private banking headhunter and wealth management recruiter. Boutique executive search for senior Relationship Managers, Team Heads and Market Leaders. 200+ placements across Switzerland, London, Dubai, Singapore and Hong Kong.",
-teName: "Executive Partners",
+  openGraph: {
+    siteName: "Executive Partners",
     url: PAGE_URL,
-    title:
-      "About Executive Partners | Connecting Top Talent with Private Banking Excellence – In Switzerland & Beyond",
+    title: "Private Banking Headhunter Switzerland | About Executive Partners",
     description:
-      "Boutique executive search for Private Banking & Wealth Management. Trusted by banks, EAMs and family offices across Switzerland and global hubs.",
+      "Geneva-based boutique executive search for Private Banking & Wealth Management. 200+ placements, 98% retention.",
     images: [{ url: "/og.webp" }],
   },
   twitter: {
     card: "summary_large_image",
-    title:
-      "About Executive Partners | Private Banking & Wealth Management Search",
+    title: "Private Banking Headhunter Switzerland | About Executive Partners",
     description:
       "Geneva-based boutique executive search for Private Banking & Wealth Management with international reach.",
     images: ["/og.webp"],

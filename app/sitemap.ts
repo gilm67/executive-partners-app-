@@ -76,6 +76,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/en/jobs",
     
     "/en/candidates",
+    "/en/eam-recruiter-switzerland",
+    "/en/wealth-management-recruiter-switzerland",
+    "/en/private-banking-headhunter-geneva",
     "/en/hiring-managers",
     "/en/insights",
     "/en/about",
