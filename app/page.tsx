@@ -5,7 +5,7 @@ import HomeClient from "./(marketing)/HomeClient";
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { ArrowRight, Sparkles, Calculator } from "lucide-react";
-import { OrganizationSchema } from "@/components/StructuredData";
+import { OrganizationSchema, FAQSchema } from "@/components/StructuredData";
 
 const HERO = "/hero-skyline-hq.webp";
 const OG_IMAGE = "/og.webp";
@@ -51,6 +51,7 @@ export default function HomePage() {
   return (
     <>
       <OrganizationSchema />
+      <FAQSchema />
       <main className="relative min-h-screen body-grain text-white">
         <section className="relative overflow-hidden">
           {/* Hero */}

@@ -30,7 +30,7 @@ export default function Footer() {
             </p>
 
             <Link
-              href="/contact"
+              href="/en/contact"
               className="mt-6 inline-flex items-center rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/10 hover:bg-white/10 transition"
             >
               Speak with us <ArrowRight className="ml-2 h-4 w-4" />
@@ -44,17 +44,17 @@ export default function Footer() {
             </h4>
             <ul className="mt-4 space-y-3 text-sm text-white/70">
               <li>
-                <Link href="/jobs" className="hover:text-white transition">
+                <Link href="/en/jobs" className="hover:text-white transition">
                   Browse Jobs
                 </Link>
               </li>
               <li>
-                <Link href="/candidates" className="hover:text-white transition">
+                <Link href="/en/candidates" className="hover:text-white transition">
                   Career Guidance
                 </Link>
               </li>
               <li>
-                <Link href="/portability" className="hover:text-white transition">
+                <Link href="/en/portability" className="hover:text-white transition">
                   Tools
                 </Link>
               </li>
@@ -69,7 +69,7 @@ export default function Footer() {
             <ul className="mt-4 space-y-3 text-sm text-white/70">
               <li>
                 <Link
-                  href="/hiring-managers/brief"
+                  href="/en/hiring-managers/brief"
                   className="hover:text-white transition"
                 >
                   Brief a Role
@@ -77,7 +77,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/hiring-managers"
+                  href="/en/hiring-managers"
                   className="hover:text-white transition"
                 >
                   Our Process
@@ -85,7 +85,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  href="/en/contact"
                   className="hover:text-white transition"
                 >
                   Get a quote
@@ -101,17 +101,17 @@ export default function Footer() {
             </h4>
             <ul className="mt-4 space-y-3 text-sm text-white/70">
               <li>
-                <Link href="/about" className="hover:text-white transition">
+                <Link href="/en/about" className="hover:text-white transition">
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/insights" className="hover:text-white transition">
+                <Link href="/en/insights" className="hover:text-white transition">
                   Insights
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-white transition">
+                <Link href="/en/contact" className="hover:text-white transition">
                   Contact
                 </Link>
               </li>
@@ -129,7 +129,7 @@ export default function Footer() {
           </div>
 
           <div className="flex flex-wrap gap-x-6 gap-y-2">
-            <Link href="/privacy" className="hover:text-white transition">
+            <Link href="/en/privacy" className="hover:text-white transition">
               GDPR Compliant
             </Link>
             <span className="hidden md:inline">•</span>
