@@ -413,106 +413,188 @@ export default async function JobDetailPage({
   if (mandateData) {
     const base = siteBase();
     const applyHref = "/en/apply?role=" + mandateData["id"];
+    const paragraphs = mandateData.brief.split("\n\n");
+    const steps = mandateData.process.split(" \u00b7 ");
     return (
-      <main className="relative min-h-screen bg-[#0D1117] text-white">
-        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(1200px 420px at 18% -10%, rgba(201,161,74,.16) 0%, rgba(201,161,74,0) 60%)" }} />
-        <div className="relative mx-auto w-full max-w-5xl px-4 py-10 space-y-6">
+      <main className="relative min-h-screen bg-[#0B0F1A] text-white">
 
-          <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-6">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <div className="flex flex-wrap items-center gap-2 mb-2">
+        {/* Ambient background */}
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(1400px 500px at 10% -10%, rgba(201,161,74,.14) 0%, rgba(201,161,74,0) 55%), radial-gradient(1100px 420px at 110% 0%, rgba(245,231,192,.10) 0%, rgba(245,231,192,0) 60%)" }} />
+
+        <div className="relative mx-auto w-full max-w-5xl px-4 py-10 space-y-5">
+
+          {/* ── HEADER CARD ────────────────────────────── */}
+          <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-7">
+            <div className="flex flex-wrap items-start justify-between gap-5">
+              <div className="flex-1 min-w-0">
+                {/* Tags */}
+                <div className="flex flex-wrap items-center gap-2 mb-4">
                   <span className="text-2xl">{mandateData.flag}</span>
-                  <span className="inline-flex items-center rounded-full bg-gradient-to-r from-brandGoldSoft to-brandGold px-3 py-1 text-xs font-semibold text-black">{mandateData.tag}</span>
-                  <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-xs">Confidential</span>
-                  {mandateData.urgent && <span className="inline-flex items-center rounded-full border border-green-500/30 bg-green-500/10 px-2.5 py-1 text-xs font-semibold text-green-400">Actively Filling</span>}
+                  <span className="inline-flex items-center rounded-full bg-gradient-to-r from-[#C9A14A] to-[#E8C96A] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.15em] text-black">{mandateData.tag}</span>
+                  <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-medium text-white/70">Confidential</span>
+                  {mandateData.urgent && <span className="inline-flex items-center gap-1.5 rounded-full border border-green-500/30 bg-green-500/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-green-400"><span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />Actively Filling</span>}
                 </div>
-                <h1 className="font-[var(--font-playfair)] text-3xl font-semibold text-white mb-1">{mandateData.title}</h1>
-                <p className="text-lg text-neutral-300">{mandateData.subtitle} / {mandateData.location}</p>
+                {/* Title */}
+                <h1 className="font-[var(--font-playfair)] text-3xl font-semibold leading-tight text-white mb-2 md:text-4xl">{mandateData.title}</h1>
+                <p className="text-lg text-neutral-400">{mandateData.subtitle} &nbsp;&middot;&nbsp; {mandateData.location}</p>
               </div>
-              <div className="flex gap-3 w-full md:w-auto">
-                <a href={applyHref} className="flex-1 md:flex-none inline-flex items-center justify-center rounded-xl bg-brandGold px-5 py-2.5 text-sm font-bold text-black hover:bg-brandGoldSoft transition">Apply / Submit CV</a>
-                <a href="/en/contact" className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10 transition">Talk to us</a>
+              {/* CTA buttons */}
+              <div className="flex flex-col gap-2.5 w-full md:w-auto shrink-0">
+                <a href={applyHref} className="inline-flex items-center justify-center rounded-xl bg-[#C9A14A] px-6 py-3 text-sm font-bold text-black hover:opacity-90 transition shadow-[0_4px_20px_rgba(201,161,74,.3)]">Apply / Submit CV</a>
+                <a href="/en/contact" className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition">Speak with Gil M. Chalem</a>
               </div>
             </div>
           </section>
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_400px]">
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-brandGoldSoft mb-2">Indicative Compensation</p>
-                  <p className="text-2xl font-bold text-white mb-1">{mandateData.comp_base}</p>
-                  <p className="text-xs text-neutral-400 leading-relaxed">{mandateData.comp_note}</p>
-                  <p className="mt-3 text-[10px] text-neutral-500 italic">Indicative range only. Final package determined by the hiring institution.</p>
-                </section>
-                <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-5">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-400 mb-2">Portable Book</p>
-                  <p className="text-2xl font-bold text-white mb-1">{mandateData.aum}</p>
-                  <p className="text-xs text-neutral-400">{mandateData.aum_note}</p>
-                </section>
-              </div>
+          {/* ── AT A GLANCE STRIP ─────────────────────── */}
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#C9A14A]/80 mb-1.5">Base Salary</p>
+              <p className="text-lg font-bold text-white leading-tight">{mandateData.comp_base}</p>
+              <p className="text-[11px] text-neutral-500 mt-1 leading-snug">{mandateData.comp_note}</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 mb-1.5">Portable Book</p>
+              <p className="text-lg font-bold text-white leading-tight">{mandateData.aum}</p>
+              <p className="text-[11px] text-neutral-500 mt-1 leading-snug">{mandateData.aum_note}</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 mb-1.5">Location</p>
+              <p className="text-sm font-semibold text-white leading-tight">{mandateData.location}</p>
+              <p className="text-[11px] text-neutral-500 mt-1">On-site</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 mb-1.5">Seniority</p>
+              <p className="text-sm font-semibold text-white leading-tight">Director / ED</p>
+              <p className="text-[11px] text-neutral-500 mt-1">Senior mandate</p>
+            </div>
+          </div>
 
-              <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-6">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-neutral-500 mb-5">The Opportunity</p>
-                {mandateData.brief.split("\n\n").map((para: string, i: number) => (
-                  <p key={i} className="text-[15px] text-neutral-300 leading-relaxed mb-4">{para}</p>
-                ))}
+          {/* ── MAIN CONTENT GRID ─────────────────────── */}
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
+
+            {/* LEFT COLUMN */}
+            <div className="space-y-5">
+
+              {/* The Opportunity */}
+              <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-7">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="h-5 w-0.5 rounded-full bg-[#C9A14A]" />
+                  <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#C9A14A]/80">The Opportunity</p>
+                </div>
+                <div className="space-y-4">
+                  {paragraphs.map((para: string, i: number) => (
+                    <p key={i} className="text-[15px] text-neutral-300 leading-[1.85]">{para}</p>
+                  ))}
+                </div>
               </section>
 
-              <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-6">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-neutral-500 mb-5">Ideal Profile</p>
+              {/* What You Bring */}
+              <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-7">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="h-5 w-0.5 rounded-full bg-[#C9A14A]" />
+                  <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#C9A14A]/80">What You Bring</p>
+                </div>
+                <p className="text-sm text-neutral-500 mb-6 ml-4">The profile that succeeds in this mandate.</p>
                 <ul className="space-y-4">
                   {mandateData.profile_lines.map((line: string, i: number) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-brandGold opacity-70" />
-                      <span className="text-sm text-neutral-300 leading-relaxed">{line}</span>
+                    <li key={i} className="flex items-start gap-4">
+                      <span className="mt-[5px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#C9A14A]/30 bg-[#C9A14A]/10 text-[#C9A14A] text-[10px] font-bold">{i + 1}</span>
+                      <span className="text-[14px] text-neutral-200 leading-relaxed">{line}</span>
                     </li>
                   ))}
                 </ul>
               </section>
 
-              <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03))] p-6">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-neutral-500 mb-4">Process</p>
-                <div className="flex flex-wrap gap-2">
-                  {mandateData.process.split(" / ").map((step: string, i: number) => (
-                    <span key={i} className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-neutral-400">{step}</span>
+              {/* Process */}
+              <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-7">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="h-5 w-0.5 rounded-full bg-[#C9A14A]" />
+                  <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#C9A14A]/80">Selection Process</p>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {steps.map((step: string, i: number) => (
+                    <div key={i} className="flex items-center gap-2.5">
+                      {i > 0 && <span className="text-white/20 text-lg">&#8594;</span>}
+                      <span className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-neutral-400">{step}</span>
+                    </div>
                   ))}
                 </div>
+                <p className="mt-5 text-[11px] text-neutral-600 leading-relaxed">No panels. No bureaucratic rounds. Your information is never shared with the hiring institution without your explicit consent.</p>
+              </section>
+
+              {/* Compensation detail */}
+              <section className="rounded-2xl border border-[#C9A14A]/15 bg-[linear-gradient(135deg,rgba(201,161,74,.06),rgba(27,58,107,.08))] p-7">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="h-5 w-0.5 rounded-full bg-[#C9A14A]" />
+                  <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#C9A14A]/80">Indicative Compensation</p>
+                </div>
+                <p className="text-3xl font-bold text-white mb-1">{mandateData.comp_base}</p>
+                <p className="text-sm text-neutral-400 mb-4">{mandateData.comp_note}</p>
+                <p className="text-[11px] text-neutral-600 leading-relaxed italic">Indicative range only. Final package is structured by the hiring institution based on AUM, NNM track record, seniority and negotiation. NPC contribution is available for qualified candidates.</p>
               </section>
             </div>
 
-            <aside className="h-fit rounded-2xl border border-white/10 bg-white/[0.04] p-6 lg:sticky lg:top-24">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500 mb-1">Express Interest</p>
-              <p className="text-sm text-white/70 mb-5">No CV required. We respond within 24 hours.</p>
-              <div className="space-y-3">
-                <a href={applyHref} className="block w-full rounded-xl bg-brandGold py-3 text-center text-sm font-bold text-black hover:bg-brandGoldSoft transition">Apply / Submit CV</a>
-                <a href="/en/contact" className="block w-full rounded-xl border border-white/15 bg-white/5 py-3 text-center text-sm font-semibold text-neutral-300 hover:bg-white/10 hover:text-white transition">Speak with Gil M. Chalem</a>
+            {/* RIGHT COLUMN — sticky sidebar */}
+            <aside className="space-y-4 lg:sticky lg:top-24 h-fit">
+
+              {/* Express interest */}
+              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 mb-1">Express Interest</p>
+                <p className="text-sm text-white/60 mb-5 leading-relaxed">No CV required. Confidential. We respond within 24 hours.</p>
+                <div className="space-y-2.5">
+                  <a href={applyHref} className="block w-full rounded-xl bg-[#C9A14A] py-3 text-center text-sm font-bold text-black hover:opacity-90 transition shadow-[0_4px_16px_rgba(201,161,74,.25)]">Apply / Submit CV</a>
+                  <a href="/en/contact" className="block w-full rounded-xl border border-white/15 bg-white/[0.04] py-3 text-center text-sm font-semibold text-neutral-300 hover:bg-white/10 hover:text-white transition">Speak with Gil M. Chalem</a>
+                </div>
+                <p className="mt-4 text-center text-[10px] tracking-widest text-white/20">100% CONFIDENTIAL &nbsp;&middot;&nbsp; GDPR COMPLIANT</p>
               </div>
-              <div className="mt-5 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-xs font-semibold text-neutral-400 mb-2">Our process</p>
-                <ul className="space-y-1.5 text-xs text-white/50">
-                  <li className="flex items-start gap-2"><span className="text-brandGold">-</span><span>Confidential call with Executive Partners</span></li>
-                  <li className="flex items-start gap-2"><span className="text-brandGold">-</span><span>Single senior introduction, no panels</span></li>
-                  <li className="flex items-start gap-2"><span className="text-brandGold">-</span><span>Your details never shared without consent</span></li>
+
+              {/* Why EP */}
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 mb-4">Why Executive Partners</p>
+                <ul className="space-y-3">
+                  {[
+                    ["200+", "Senior placements in private banking"],
+                    ["98%", "Retention rate across all mandates"],
+                    ["1", "Point of contact — Gil M. Chalem personally"],
+                    ["24h", "Response time. Always."],
+                  ].map(([stat, label], i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="text-[#C9A14A] font-bold text-sm w-12 shrink-0">{stat}</span>
+                      <span className="text-xs text-neutral-500 leading-snug">{label}</span>
+                    </li>
+                  ))}
                 </ul>
+              </div>
+
+              {/* Confidentiality note */}
+              <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-600 mb-3">Confidentiality</p>
+                <p className="text-xs text-neutral-600 leading-relaxed">This is a confidential mandate. The hiring institution is disclosed only after your qualification call with Executive Partners. Your details are never shared without your consent.</p>
               </div>
             </aside>
           </div>
 
-          <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+          {/* ── FOOTER CTA ────────────────────────────── */}
+          <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
             <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-              <p className="text-neutral-300">We share <span className="font-semibold">confidential</span> mandates with qualified bankers.</p>
-              <div className="flex gap-3">
-                <a href="/en/jobs" className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10">All mandates</a>
-                <a href={applyHref} className="rounded-xl bg-brandGold/20 px-4 py-2 text-sm font-semibold text-brandGoldPale hover:bg-brandGold/30 hover:text-white">Submit CV</a>
+              <div>
+                <p className="font-semibold text-white mb-1">Ready to explore this mandate?</p>
+                <p className="text-sm text-neutral-500">No CV required at this stage. One call. Fully confidential.</p>
+              </div>
+              <div className="flex gap-3 shrink-0">
+                <a href="/en/jobs" className="rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10 transition">&#8592; All mandates</a>
+                <a href={applyHref} className="rounded-xl bg-[#C9A14A]/20 border border-[#C9A14A]/30 px-5 py-2.5 text-sm font-semibold text-[#C9A14A] hover:bg-[#C9A14A]/30 hover:text-white transition">Apply Now</a>
               </div>
             </div>
           </section>
+
         </div>
       </main>
     );
   }
+
+
 
 
   const { job, isFallback } = await resolveJobBySlug(slug);
