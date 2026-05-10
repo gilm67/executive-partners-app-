@@ -244,7 +244,7 @@ function ScreeningModal({ mandate, onClose, onPass }) {
               ))}
             </div>
             <p className="text-neutral-400 text-sm leading-relaxed mb-4">This mandate may not be the right fit right now. A 15-minute call with Gil M. Chalem will give you an honest picture of your options.</p>
-            <a href="/en/contact" className="block text-center rounded-xl border border-brandGold/40 bg-brandGold/10 px-4 py-3 text-sm font-semibold text-brandGoldPale hover:bg-brandGold/20 hover:text-white transition mb-3">Speak with Gil M. Chalem →</a>
+            <a href="/en/contact" className="block text-center rounded-xl border border-brandGold/40 bg-brandGold/10 px-4 py-3 text-sm font-semibold text-brandGoldPale hover:bg-brandGold/20 hover:text-white transition mb-3">Speak with a Recruiter →</a>
             <button onClick={onClose} className="w-full text-white/25 text-sm py-2 hover:text-white/50 transition">Close</button>
           </div>
         )}

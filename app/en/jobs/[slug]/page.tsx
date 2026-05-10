@@ -441,7 +441,7 @@ export default async function JobDetailPage({
               {/* CTA buttons */}
               <div className="flex flex-col gap-2.5 w-full md:w-auto shrink-0">
                 <a href={applyHref} className="inline-flex items-center justify-center rounded-xl bg-[#C9A14A] px-6 py-3 text-sm font-bold text-black hover:opacity-90 transition shadow-[0_4px_20px_rgba(201,161,74,.3)]">Apply / Submit CV</a>
-                <a href="/en/contact" className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition">Speak with Gil M. Chalem</a>
+                <a href="/en/contact" className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition">Speak with a Recruiter</a>
               </div>
             </div>
           </section>
@@ -544,7 +544,7 @@ export default async function JobDetailPage({
                 <p className="text-sm text-white/60 mb-5 leading-relaxed">No CV required. Confidential. We respond within 24 hours.</p>
                 <div className="space-y-2.5">
                   <a href={applyHref} className="block w-full rounded-xl bg-[#C9A14A] py-3 text-center text-sm font-bold text-black hover:opacity-90 transition shadow-[0_4px_16px_rgba(201,161,74,.25)]">Apply / Submit CV</a>
-                  <a href="/en/contact" className="block w-full rounded-xl border border-white/15 bg-white/[0.04] py-3 text-center text-sm font-semibold text-neutral-300 hover:bg-white/10 hover:text-white transition">Speak with Gil M. Chalem</a>
+                  <a href="/en/contact" className="block w-full rounded-xl border border-white/15 bg-white/[0.04] py-3 text-center text-sm font-semibold text-neutral-300 hover:bg-white/10 hover:text-white transition">Speak with a Recruiter</a>
                 </div>
                 <p className="mt-4 text-center text-[10px] tracking-widest text-white/20">100% CONFIDENTIAL &nbsp;&middot;&nbsp; GDPR COMPLIANT</p>
               </div>
