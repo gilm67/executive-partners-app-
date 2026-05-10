@@ -54,3 +54,10 @@ lib/pdf/
 tsconfig.tsbuildinfo
 .next
 #
+*.bak
+.mobile-fix-backup-*
+.image-fix-backup
+.tailwind-fix-backup
+apply-mobile-fixes.sh
+fix-image-sizes.py
+fix-tailwind-classes.py

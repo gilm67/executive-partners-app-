@@ -101,7 +101,7 @@ export default function MarketsIndexPage() {
 
                     {/* MINI STATS */}
                     {statsPreview.length > 0 && (
-                      <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                         {statsPreview.map((stat) => (
                           <div
                             key={stat.label}

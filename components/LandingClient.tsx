@@ -56,7 +56,7 @@ function Panel({
       {eyebrow && <div className="mb-2 text-xs font-medium text-emerald-400">{eyebrow}</div>}
       <div className="text-white text-[17px] font-semibold">{title}</div>
       <div className="mt-2 text-[13.5px] leading-6 text-white/80">{children}</div>
-      {actions && <div className="mt-5 flex gap-3">{actions}</div>}
+      {actions && <div className="mt-5 flex flex-col sm:flex-row gap-3">{actions}</div>}
     </div>
   );
 }

@@ -430,9 +430,9 @@ export default async function JobDetailPage({
                 {/* Tags */}
                 <div className="flex flex-wrap items-center gap-2 mb-4">
                   <span className="text-2xl">{mandateData.flag}</span>
-                  <span className="inline-flex items-center rounded-full bg-gradient-to-r from-[#C9A14A] to-[#E8C96A] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.15em] text-black">{mandateData.tag}</span>
-                  <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-medium text-white/70">Confidential</span>
-                  {mandateData.urgent && <span className="inline-flex items-center gap-1.5 rounded-full border border-green-500/30 bg-green-500/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-green-400"><span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />Actively Filling</span>}
+                  <span className="inline-flex items-center rounded-full flex-shrink-0 whitespace-nowrap bg-gradient-to-r from-[#C9A14A] to-[#E8C96A] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.15em] text-black">{mandateData.tag}</span>
+                  <span className="inline-flex items-center rounded-full flex-shrink-0 whitespace-nowrap border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-medium text-white/70">Confidential</span>
+                  {mandateData.urgent && <span className="inline-flex items-center gap-1.5 rounded-full flex-shrink-0 whitespace-nowrap border border-green-500/30 bg-green-500/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-green-400"><span className="h-1.5 w-1.5 rounded-full flex-shrink-0 whitespace-nowrap bg-green-400 animate-pulse" />Actively Filling</span>}
                 </div>
                 {/* Title */}
                 <h1 className="font-[var(--font-playfair)] text-3xl font-semibold leading-tight text-white mb-2 md:text-4xl">{mandateData.title}</h1>
@@ -479,7 +479,7 @@ export default async function JobDetailPage({
               {/* The Opportunity */}
               <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-7">
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="h-5 w-0.5 rounded-full bg-[#C9A14A]" />
+                  <span className="h-5 w-0.5 rounded-full flex-shrink-0 whitespace-nowrap bg-[#C9A14A]" />
                   <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#C9A14A]/80">The Opportunity</p>
                 </div>
                 <div className="space-y-4">
@@ -492,14 +492,14 @@ export default async function JobDetailPage({
               {/* What You Bring */}
               <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-7">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="h-5 w-0.5 rounded-full bg-[#C9A14A]" />
+                  <span className="h-5 w-0.5 rounded-full flex-shrink-0 whitespace-nowrap bg-[#C9A14A]" />
                   <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#C9A14A]/80">What You Bring</p>
                 </div>
                 <p className="text-sm text-neutral-500 mb-6 ml-4">The profile that succeeds in this mandate.</p>
                 <ul className="space-y-4">
                   {mandateData.profile_lines.map((line: string, i: number) => (
                     <li key={i} className="flex items-start gap-4">
-                      <span className="mt-[5px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#C9A14A]/30 bg-[#C9A14A]/10 text-[#C9A14A] text-[10px] font-bold">{i + 1}</span>
+                      <span className="mt-[5px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full flex-shrink-0 whitespace-nowrap border border-[#C9A14A]/30 bg-[#C9A14A]/10 text-[#C9A14A] text-[10px] font-bold">{i + 1}</span>
                       <span className="text-[14px] text-neutral-200 leading-relaxed">{line}</span>
                     </li>
                   ))}
@@ -509,7 +509,7 @@ export default async function JobDetailPage({
               {/* Process */}
               <section className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))] p-7">
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="h-5 w-0.5 rounded-full bg-[#C9A14A]" />
+                  <span className="h-5 w-0.5 rounded-full flex-shrink-0 whitespace-nowrap bg-[#C9A14A]" />
                   <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#C9A14A]/80">Selection Process</p>
                 </div>
                 <div className="flex flex-wrap gap-3">
@@ -526,7 +526,7 @@ export default async function JobDetailPage({
               {/* Compensation detail */}
               <section className="rounded-2xl border border-[#C9A14A]/15 bg-[linear-gradient(135deg,rgba(201,161,74,.06),rgba(27,58,107,.08))] p-7">
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="h-5 w-0.5 rounded-full bg-[#C9A14A]" />
+                  <span className="h-5 w-0.5 rounded-full flex-shrink-0 whitespace-nowrap bg-[#C9A14A]" />
                   <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#C9A14A]/80">Indicative Compensation</p>
                 </div>
                 <p className="text-3xl font-bold text-white mb-1">{mandateData.comp_base}</p>
@@ -582,7 +582,7 @@ export default async function JobDetailPage({
                 <p className="font-semibold text-white mb-1">Ready to explore this mandate?</p>
                 <p className="text-sm text-neutral-500">No CV required at this stage. One call. Fully confidential.</p>
               </div>
-              <div className="flex gap-3 shrink-0">
+              <div className="flex flex-col sm:flex-row gap-3 shrink-0">
                 <a href="/en/jobs" className="rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10 transition">&#8592; All mandates</a>
                 <a href={applyHref} className="rounded-xl bg-[#C9A14A]/20 border border-[#C9A14A]/30 px-5 py-2.5 text-sm font-semibold text-[#C9A14A] hover:bg-[#C9A14A]/30 hover:text-white transition">Apply Now</a>
               </div>
@@ -715,7 +715,7 @@ export default async function JobDetailPage({
   const BulletList = ({ items }: { items: string[] }) => (
     <ul className="space-y-2 text-sm text-white/75">
       {items.map((t, i) => (
-        <li key={`${t}-${i}`} className="flex gap-2">
+        <li key={`${t}-${i}`} className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4">
           <span className="mt-[2px] text-[#d4af37]/80">•</span>
           <span>{t}</span>
         </li>
@@ -751,12 +751,12 @@ export default async function JobDetailPage({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-col">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center rounded-full bg-gradient-to-r from-brandGoldSoft to-brandGold px-2.5 py-1 text-xs font-semibold text-black shadow-sm">
+                <span className="inline-flex items-center rounded-full flex-shrink-0 whitespace-nowrap bg-gradient-to-r from-brandGoldSoft to-brandGold px-2.5 py-1 text-xs font-semibold text-black shadow-sm">
                   {marketLabel}
                 </span>
 
                 {job.confidential ? (
-                  <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-xs font-medium">
+                  <span className="inline-flex items-center rounded-full flex-shrink-0 whitespace-nowrap border border-white/15 bg-white/10 px-2.5 py-1 text-xs font-medium">
                     Confidential
                   </span>
                 ) : null}
@@ -815,18 +815,18 @@ export default async function JobDetailPage({
               <p className="mt-3 text-sm leading-relaxed text-white/80">{summary}</p>
 
               <div className="mt-4 flex flex-wrap gap-2">
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
+                <span className="rounded-full flex-shrink-0 whitespace-nowrap border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
                   {job.location}
                 </span>
                 {job.seniority ? (
-                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
+                  <span className="rounded-full flex-shrink-0 whitespace-nowrap border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
                     {job.seniority}
                   </span>
                 ) : null}
-                <span className="rounded-full border border-[#d4af37]/25 bg-[#d4af37]/10 px-3 py-1 text-xs text-[#d4af37]">
+                <span className="rounded-full flex-shrink-0 whitespace-nowrap border border-[#d4af37]/25 bg-[#d4af37]/10 px-3 py-1 text-xs text-[#d4af37]">
                   Response within 24h
                 </span>
-                <span className="rounded-full border border-[#d4af37]/25 bg-[#d4af37]/10 px-3 py-1 text-xs text-[#d4af37]">
+                <span className="rounded-full flex-shrink-0 whitespace-nowrap border border-[#d4af37]/25 bg-[#d4af37]/10 px-3 py-1 text-xs text-[#d4af37]">
                   Strict confidentiality
                 </span>
               </div>
@@ -934,7 +934,7 @@ export default async function JobDetailPage({
               We share <span className="font-semibold">confidential</span> mandates directly
               with qualified bankers.
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/en/jobs"
                 className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"

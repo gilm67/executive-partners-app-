@@ -152,7 +152,7 @@ export default function HomeClient() {
       {/* KPI STRIP */}
       <section className="border-b border-white/8">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="grid grid-cols-3 divide-x divide-white/8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 divide-x divide-white/8 text-center">
             {[
               { value: "200+", label: "Placements", sub: "Senior RMs & Private Bankers" },
               { value: "98%", label: "12-month Retention", sub: "Candidates still in seat" },
@@ -194,7 +194,7 @@ export default function HomeClient() {
           {/* MOBILE: swipeable carousel */}
           <div className="md:hidden">
             <div className="relative">
-              <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 [-webkit-overflow-scrolling:touch] scrollbar-hide">
+              <div className="flex flex-col sm:flex-row gap-4 overflow-x-auto snap-x snap-mandatory pb-4 [-webkit-overflow-scrolling:touch] scrollbar-hide">
                 <div className="snap-center shrink-0 w-[92%]">
                   <ValueCard
                     imageSrc="/home/candidates.jpg"

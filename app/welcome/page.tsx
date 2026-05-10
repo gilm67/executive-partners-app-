@@ -22,7 +22,9 @@ export default function Welcome() {
         fill
         priority
         className="object-cover opacity-95"
-      />
+      
+  sizes="(max-width: 640px) 80vw, 400px"
+/>
       <div className="absolute inset-0 bg-black/40" />
 
       {/* Centered Button Only */}

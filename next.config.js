@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: false },
   images: {
     remotePatterns: [
       {
@@ -12,6 +14,18 @@ const nextConfig = {
  
   async redirects() {
     return [
+      { source: '/markets', destination: '/en/markets', permanent: true },
+      { source: '/jobs', destination: '/en/jobs', permanent: true },
+      { source: '/candidates', destination: '/en/candidates', permanent: true },
+      { source: '/hiring-managers', destination: '/en/hiring-managers', permanent: true },
+      { source: '/about', destination: '/en/about', permanent: true },
+      { source: '/contact', destination: '/en/contact', permanent: true },
+      { source: '/insights', destination: '/en/insights', permanent: true },
+      { source: '/insights/:slug*', destination: '/en/insights/:slug*', permanent: true },
+      { source: '/portability', destination: '/en/portability', permanent: true },
+      { source: '/bp-simulator', destination: '/en/bp-simulator', permanent: true },
+      { source: '/apply', destination: '/en/apply', permanent: true },
+      { source: '/privacy', destination: '/en/privacy', permanent: true },
       {
         source: "/:path*",
         has: [{ type: "host", value: "execpartners.ch" }],

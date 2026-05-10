@@ -342,7 +342,7 @@ export default function CandidateFAQ({
                         <div key={key}>
                           <button
                             onClick={() => toggle(key)}
-                            className="w-full text-left px-6 py-5 hover:bg-white/[0.04] transition focus:outline-none"
+                            className="w-full text-left min-h-[44px] px-6 py-5 hover:bg-white/[0.04] transition focus:outline-none"
                           >
                             <div className="flex items-start justify-between gap-6">
                               <div className="flex items-start gap-3">

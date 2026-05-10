@@ -91,9 +91,9 @@ function MandatePage({ mandate, onBack, onApply }) {
       <button onClick={onBack} className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition mb-8">← All Mandates</button>
       <div className="mb-8">
         <div className="flex flex-wrap gap-2 mb-4">
-          <span className="inline-flex items-center rounded-full border border-brandGold/30 bg-brandGold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft">{mandate.tag}</span>
-          {mandate.urgent && <span className="inline-flex items-center rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-green-400">Actively Filling</span>}
-          {mandate.ubp_ref && <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-neutral-400">{mandate.ubp_ref}</span>}
+          <span className="inline-flex items-center rounded-full flex-shrink-0 whitespace-nowrap border border-brandGold/30 bg-brandGold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft">{mandate.tag}</span>
+          {mandate.urgent && <span className="inline-flex items-center rounded-full flex-shrink-0 whitespace-nowrap border border-green-500/30 bg-green-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-green-400">Actively Filling</span>}
+          {mandate.ubp_ref && <span className="inline-flex items-center rounded-full flex-shrink-0 whitespace-nowrap border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-neutral-400">{mandate.ubp_ref}</span>}
         </div>
         <div className="text-4xl mb-3">{mandate.flag}</div>
         <h1 className="font-[var(--font-playfair)] text-4xl font-semibold tracking-tight text-white mb-2">{mandate.title}</h1>
@@ -121,7 +121,7 @@ function MandatePage({ mandate, onBack, onApply }) {
         <ul className="space-y-3">
           {mandate.profile_lines.map((line, i) => (
             <li key={i} className="flex items-start gap-3">
-              <span className="mt-2 h-1.5 w-1.5 rounded-full bg-brandGold shrink-0 opacity-70" />
+              <span className="mt-2 h-1.5 w-1.5 rounded-full flex-shrink-0 whitespace-nowrap bg-brandGold shrink-0 opacity-70" />
               <span className="text-sm text-neutral-300 leading-relaxed">{line}</span>
             </li>
           ))}
@@ -165,11 +165,11 @@ function MandateCard({ mandate, onScreen, onBrief }) {
         <h3 className="text-xl font-bold text-white mb-1">{mandate.title}</h3>
         <p className="text-sm text-neutral-400 mb-4">{mandate.subtitle} · {mandate.location}</p>
         <div className="flex flex-wrap gap-2 mb-5">
-          <span className="inline-flex items-center rounded-full border border-brandGold/30 bg-brandGold/10 px-3 py-1 text-xs font-semibold text-brandGoldPale">{mandate.comp_base} <span className="opacity-50 ml-1 text-[10px]">est.</span></span>
-          <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-neutral-400">{mandate.aum}</span>
-          {mandate.ubp_ref && <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-neutral-500">{mandate.ubp_ref}</span>}
+          <span className="inline-flex items-center rounded-full flex-shrink-0 whitespace-nowrap border border-brandGold/30 bg-brandGold/10 px-3 py-1 text-xs font-semibold text-brandGoldPale">{mandate.comp_base} <span className="opacity-50 ml-1 text-[10px]">est.</span></span>
+          <span className="inline-flex items-center rounded-full flex-shrink-0 whitespace-nowrap border border-white/10 bg-white/5 px-3 py-1 text-xs text-neutral-400">{mandate.aum}</span>
+          {mandate.ubp_ref && <span className="inline-flex items-center rounded-full flex-shrink-0 whitespace-nowrap border border-white/10 bg-white/5 px-3 py-1 text-xs text-neutral-500">{mandate.ubp_ref}</span>}
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <button onClick={() => onBrief(mandate)} className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-black/20 px-4 py-2 text-xs font-semibold text-neutral-300 hover:border-brandGold/30 hover:text-white transition">View Brief</button>
           <a href={`/en/jobs/${mandate.id}`} className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-neutral-400 hover:text-white hover:bg-white/10 transition">Full details →</a>
           <button onClick={() => onScreen(mandate)} className="inline-flex items-center gap-1.5 rounded-xl border border-brandGold/50 bg-brandGold/15 px-4 py-2 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/25 hover:text-white transition">Apply →</button>
@@ -231,9 +231,9 @@ export default function MandatesClient() {
                 Live mandates across <strong>Geneva</strong> and <strong>Zurich</strong>, with international coverage in <strong>Dubai</strong>, <strong>Singapore</strong>, <strong>London</strong> &amp; <strong>New York</strong>. We publish a subset of searches; confidential roles are shared directly with qualified bankers.
               </p>
               <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
-                <a href="/en/apply" className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white transition">Submit CV</a>
-                <a href="/en/candidates" className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white transition">Candidate Hub</a>
-                <a href="/en/contact" className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white transition">Contact a Recruiter</a>
+                <a href="/en/apply" className="rounded-full flex-shrink-0 whitespace-nowrap border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white transition">Submit CV</a>
+                <a href="/en/candidates" className="rounded-full flex-shrink-0 whitespace-nowrap border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white transition">Candidate Hub</a>
+                <a href="/en/contact" className="rounded-full flex-shrink-0 whitespace-nowrap border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white transition">Contact a Recruiter</a>
               </div>
             </div>
 

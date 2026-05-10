@@ -297,7 +297,7 @@ export default async function DubaiLandingPage() {
             <p className="text-neutral-300">
               Ready to discuss a Dubai mandate or a move?
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/apply"
                 className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF]"

@@ -542,7 +542,7 @@ export default async function MarketPage({
             <h2 className="text-lg font-semibold text-white">Hiring pulse</h2>
             <ul className="mt-4 space-y-2">
               {data.hiringPulse.map((line, i) => (
-                <li key={i} className="flex gap-3 text-white/85">
+                <li key={i} className="flex flex-col sm:flex-row gap-3 text-white/85">
                   <span className="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-md bg-emerald-500/20 text-emerald-300">
                     <IconCheck className="h-3.5 w-3.5" />
                   </span>

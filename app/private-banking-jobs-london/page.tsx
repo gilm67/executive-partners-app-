@@ -343,7 +343,7 @@ export default async function LondonLandingPage() {
         <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-neutral-300">Ready to discuss a London mandate or a move?</p>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/apply"
                 className="rounded-xl bg-[#1D4ED8] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1E40AF]"
