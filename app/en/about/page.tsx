@@ -21,14 +21,10 @@ export const revalidate = 60;
 
 /* ---------------- SEO ---------------- */
 export const metadata: Metadata = {
-  title:
-    "About Executive Partners | Connecting Top Talent with Private Banking Excellence – In Switzerland & Beyond",
-  description:
-    "Executive Partners is Switzerland's specialist recruiter for Private Banking & Wealth Management. Geneva-headquartered, delivering discreet search across Zurich, Dubai, Singapore, London & New York.",
-  alternates: { canonical: PAGE_URL },
-  openGraph: {
-    type: "website",
-    siteName: "Executive Partners",
+  title: "Private Banking Headhunter Switzerland | About Executive Partners Geneva",
+    description:
+    "Executive Partners is a Geneva-based private banking headhunter and wealth management recruiter. Boutique executive search for senior Relationship Managers, Team Heads and Market Leaders. 200+ placements across Switzerland, London, Dubai, Singapore and Hong Kong.",
+teName: "Executive Partners",
     url: PAGE_URL,
     title:
       "About Executive Partners | Connecting Top Talent with Private Banking Excellence – In Switzerland & Beyond",
