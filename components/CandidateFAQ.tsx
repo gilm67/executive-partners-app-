@@ -324,7 +324,7 @@ export default function CandidateFAQ({
                   key={group.section}
                   className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur shadow-[0_18px_55px_rgba(0,0,0,.55)] overflow-hidden"
                 >
-                  <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10 bg-gradient-to-r from-white/[0.06] to-transparent">
+                  <div className="flex items-center justify-center md:justify-start gap-3 px-6 py-5 border-b border-white/10 bg-gradient-to-r from-white/[0.06] to-transparent">
                     <div className="h-10 w-10 rounded-xl bg-[#C9A14A]/15 ring-1 ring-[#C9A14A]/35 flex items-center justify-center">
                       <Icon className="h-5 w-5 text-[#F5D778]" />
                     </div>

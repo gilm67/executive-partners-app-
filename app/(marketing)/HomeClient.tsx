@@ -178,7 +178,7 @@ export default function HomeClient() {
       <section className="py-20 sm:py-24 bg-[#0b0f1a]">
         <div className="mx-auto max-w-7xl px-4">
           <div className="mb-14 max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/4 px-4 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/60 backdrop-blur mb-5">
+            <div className="flex justify-center sm:inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/4 px-4 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/60 backdrop-blur mb-5">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
               Confidential · Senior-level · Outcome-driven
             </div>

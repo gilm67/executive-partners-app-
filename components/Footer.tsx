@@ -76,7 +76,7 @@ export default function Footer() {
               className="flex flex-col items-center text-center w-full rounded-2xl px-6 py-6 gap-4 transition-all active:scale-[0.99]"
               style={{background:"rgba(201,161,74,.06)",border:"1px solid rgba(201,161,74,.3)"}}>
               <div>
-                <div className="text-[10px] font-semibold uppercase tracking-[0.15em] mb-2" style={{color:"rgba(201,161,74,.8)"}}>Confidential · Senior-level · No obligation</div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.15em] mb-2 text-center" style={{color:"rgba(201,161,74,.8)"}}>Confidential · Senior-level · No obligation</div>
                 <div className="text-lg font-semibold text-white leading-snug">Ready to calibrate<br/>your next move?</div>
               </div>
               <div className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold w-full justify-center" style={{background:"linear-gradient(135deg, #C9A14A 0%, #E8C46A 100%)",color:"#090C14",fontWeight:"600"}}>
@@ -87,7 +87,7 @@ export default function Footer() {
 
           {/* Hub pills */}
           <div className="py-5 border-b border-white/[0.06]">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.12em] mb-3" style={{color:"rgba(201,161,74,.6)"}}>Our Hubs</div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.12em] mb-3 text-center" style={{color:"rgba(201,161,74,.6)"}}>Our Hubs</div>
             <div className="flex flex-wrap gap-2">
               {HUBS.map((h) => (
                 <span key={h.city}
