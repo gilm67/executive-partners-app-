@@ -182,7 +182,7 @@ export default function HomeClient() {
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
               Confidential · Senior-level · Outcome-driven
             </div>
-            <h2 className="font-[var(--font-playfair)] text-4xl sm:text-5xl font-semibold tracking-tight leading-[1.15]">
+            <h2 className="font-[var(--font-playfair)] text-4xl sm:text-5xl font-semibold tracking-tight leading-[1.15] text-center sm:text-left">
               Built for senior<br />
               <span className="text-[#D4AF37]">private banking</span> moves
             </h2>
@@ -272,7 +272,7 @@ export default function HomeClient() {
               <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">
                 Markets
               </p>
-              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight">
+              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight text-center sm:text-left">
                 Global Private Banking Hubs
               </h2>
               <p className="mt-2 text-white/50 text-sm sm:text-base">
@@ -362,7 +362,7 @@ export default function HomeClient() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
               <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">Private Wealth Pulse</p>
-              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight">Latest Intelligence</h2>
+              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight text-center sm:text-left">Latest Intelligence</h2>
               <p className="mt-2 text-white/50 text-sm">Strategy and talent analysis for senior private banking professionals.</p>
             </div>
             <Link href="/en/insights" className="shrink-0 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
