@@ -56,7 +56,7 @@ const CASES = [
 ];
 
 const AVAILABLE = [
-  { flag: "🇹🇷", label: "Turkish market Senior RM", detail: "UHNW profile · Geneva · Edmond de Rothschild background · Exploring discreetly" },
+  { flag: "🇹🇷", label: "Turkish market Senior RM", detail: "UHNW profile · Geneva · Swiss private bank · Exploring discreetly" },
   { flag: "🇮🇹", label: "Italian market Senior RM", detail: "CHF 200M+ · Milan / Geneva · Available Q3 2026" },
   { flag: "🇷🇺", label: "CIS/CEE Senior RM", detail: "CHF 1.5B book · Zurich · Top-rated profile · Exploring discreetly" },
   { flag: "🇧🇷", label: "LATAM Investment Advisor", detail: "USD 2.5B team construct · Geneva · CS background · Available H2 2026" },
