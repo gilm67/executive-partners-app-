@@ -194,7 +194,7 @@ export default function HomeClient() {
           {/* MOBILE: swipeable carousel */}
           <div className="md:hidden">
             <div className="relative">
-              <div className="flex flex-col sm:flex-row gap-4 overflow-x-auto snap-x snap-mandatory pb-4 [-webkit-overflow-scrolling:touch] scrollbar-hide">
+              <div className="flex flex-row gap-4 overflow-x-auto snap-x snap-mandatory pb-4 [-webkit-overflow-scrolling:touch] scrollbar-hide">
                 <div className="snap-center shrink-0 w-[92%]">
                   <ValueCard
                     imageSrc="/home/candidates.jpg"
@@ -222,9 +222,7 @@ export default function HomeClient() {
                   />
                 </div>
               </div>
-              <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-black/50 px-3 py-1 text-[11px] text-white/60 backdrop-blur md:hidden">
-                Swipe &#8594;
-              </div>
+              
               <div className="mt-3 flex justify-center gap-1.5">
                 <span className="h-1 w-8 rounded-full bg-[#D4AF37]/60" />
                 <span className="h-1 w-4 rounded-full bg-white/15" />
