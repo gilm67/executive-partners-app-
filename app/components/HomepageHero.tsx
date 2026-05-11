@@ -17,7 +17,7 @@ export default function HomepageHero() {
         {/* Background photo (premium feel) */}
         <Image
           src="/hero-skyline-hq.jpg"
-          sizes="(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 3840px"
+          sizes="(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 1920px"
           alt=""
           fill
           priority

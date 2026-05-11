@@ -106,7 +106,7 @@ export default function HomePage() {
 
                 <div className="mt-7">
                   <Link
-                    href="/apply"
+                    href="/en/apply"
                     className="btn-primary btn-xl rounded-full px-8 shadow-lg"
                   >
                     Apply Confidentially
@@ -155,7 +155,7 @@ function GatewayPanel() {
 
       <div className="relative grid gap-4 md:grid-cols-2">
         <ActionCard
-          href="/portability"
+          href="/en/portability"
           icon={<Sparkles className="h-5 w-5" />}
           eyebrow="Signature tool"
           title="Calculate Portability Score™"
@@ -164,7 +164,7 @@ function GatewayPanel() {
         />
 
         <ActionCard
-          href="/bp-simulator"
+          href="/en/bp-simulator"
           icon={<Calculator className="h-5 w-5" />}
           eyebrow="Approval tool"
           title="Business Plan Simulator"

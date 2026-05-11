@@ -334,7 +334,7 @@ export default function HomeClient() {
                 prefetch={false}
                 className="group relative overflow-hidden rounded-xl border border-white/8 transition-all duration-300 hover:border-[#D4AF37]/35"
               >
-                {c.photo && <Image src={c.photo} alt={c.city} fill sizes="25vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />}
+                {c.photo && <Image src={c.photo} alt={c.city} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 200px" className="object-cover transition-transform duration-700 group-hover:scale-105" />}
                 <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/95" />
                 <div className="relative z-10 p-4">
                 <p className="font-mono text-[10px] text-white/50 group-hover:text-[#D4AF37]/70 transition-colors mb-2">{c.idx}</p>
