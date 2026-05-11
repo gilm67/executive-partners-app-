@@ -298,17 +298,17 @@ export default function HomeClient() {
                 className="group relative overflow-hidden rounded-2xl border border-white/10 transition-all duration-300 hover:border-[#D4AF37]/40"
               >
                 {c.photo && <Image src={c.photo} alt={c.city} fill sizes="(max-width:640px) 100vw, 50vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/45 to-black/93" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/95" />
                 <div className="relative z-10 p-6">
-                <p className="font-mono text-[11px] text-white/20 group-hover:text-[#D4AF37]/40 transition-colors mb-3">{c.idx}</p>
+                <p className="font-mono text-[11px] text-white/50 group-hover:text-[#D4AF37]/70 transition-colors mb-3">{c.idx}</p>
                 <span className="text-2xl mb-3 block">{c.flag}</span>
-                <div className="font-[var(--font-playfair)] text-xl font-semibold text-white">{c.city}</div>
-                <div className="text-xs text-white/40 mt-1">{c.region}</div>
-                <div className="mt-3 inline-block text-[10px] font-semibold uppercase tracking-[0.12em] px-2.5 py-1 rounded-full border border-[#D4AF37]/30 text-[#D4AF37]/80">
+                <div className="font-[var(--font-playfair)] text-xl font-semibold text-white drop-shadow-lg">{c.city}</div>
+                <div className="text-xs text-white/70 mt-1">{c.region}</div>
+                <div className="mt-3 inline-block text-[10px] font-semibold uppercase tracking-[0.12em] px-2.5 py-1 rounded-full border border-[#D4AF37]/60 text-[#D4AF37]">
                   Primary hub
                 </div>
                 <div className="mt-4 pt-4 border-t border-white/8 flex items-center justify-between">
-                  <span className="text-xs text-white/30 font-medium group-hover:text-white/50 transition-colors">View market</span>
+                  <span className="text-xs text-white/60 font-medium group-hover:text-white transition-colors">View market</span>
                   <ArrowRight className="h-3.5 w-3.5 text-[#D4AF37]/60 -translate-x-0.5 group-hover:translate-x-0.5 transition-transform duration-200" />
                 </div>
                 </div>
@@ -335,13 +335,13 @@ export default function HomeClient() {
                 className="group relative overflow-hidden rounded-xl border border-white/8 transition-all duration-300 hover:border-[#D4AF37]/35"
               >
                 {c.photo && <Image src={c.photo} alt={c.city} fill sizes="25vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/45 to-black/93" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/95" />
                 <div className="relative z-10 p-4">
-                <p className="font-mono text-[10px] text-white/15 group-hover:text-[#D4AF37]/35 transition-colors mb-2">{c.idx}</p>
+                <p className="font-mono text-[10px] text-white/50 group-hover:text-[#D4AF37]/70 transition-colors mb-2">{c.idx}</p>
                 <span className="text-lg mb-2 block">{c.flag}</span>
-                <div className="text-sm font-semibold text-white/85 group-hover:text-white transition-colors leading-tight">{c.city}</div>
-                <div className="text-[11px] text-white/30 mt-0.5">{c.region}</div>
-                <div className="mt-3 flex items-center gap-1 text-[11px] text-white/20 group-hover:text-[#D4AF37]/60 transition-colors duration-200">
+                <div className="text-sm font-semibold text-white group-hover:text-white transition-colors leading-tight drop-shadow-md">{c.city}</div>
+                <div className="text-[11px] text-white/70 mt-0.5">{c.region}</div>
+                <div className="mt-3 flex items-center gap-1 text-[11px] text-white/60 group-hover:text-[#D4AF37] transition-colors duration-200">
                   <span className="font-medium">View market</span>
                   <ArrowRight className="h-3 w-3 -translate-x-0.5 group-hover:translate-x-0.5 transition-transform duration-200" />
                 </div>
