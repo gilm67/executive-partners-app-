@@ -152,7 +152,7 @@ export default function HomeClient() {
       {/* KPI STRIP */}
       <section className="border-b border-white/8">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 divide-x divide-white/8 text-center">
+          <div className="grid grid-cols-3 divide-x divide-white/10 bg-[#0B0F1A] text-center">
             {[
               { value: "200+", label: "Placements", sub: "Senior RMs & Private Bankers" },
               { value: "98%", label: "12-month Retention", sub: "Candidates still in seat" },
