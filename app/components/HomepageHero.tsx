@@ -17,11 +17,11 @@ export default function HomepageHero() {
         {/* Background photo (premium feel) */}
         <Image
           src="/hero-skyline-hq.jpg"
+          sizes="(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 3840px"
           alt=""
           fill
           priority
           className="object-cover object-center opacity-55"
-          sizes="100vw"
         />
 
         {/* Base gradient under photo */}
@@ -40,6 +40,7 @@ export default function HomepageHero() {
           <div className="flex justify-center">
             <Image
               src="/transparent-ep-logo.png"
+              sizes="(max-width: 640px) 80vw, 400px"
               alt="Executive Partners – Private Banking & Wealth Management Executive Search"
               width={360}
               height={120}

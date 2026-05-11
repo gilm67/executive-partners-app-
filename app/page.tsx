@@ -85,11 +85,11 @@ export default function HomePage() {
                 <div className="flex justify-center">
                   <Image
                     src="/transparent-ep-logo.png"
-                    alt="Executive Partners – Private Banking & Wealth Management Executive Search"
+                    sizes="(max-width: 640px) 80vw, 400px"
+              alt="Executive Partners – Private Banking & Wealth Management Executive Search"
                     width={320}
                     height={110}
                     priority
-                    sizes="320px"
                     className="h-auto w-[210px] drop-shadow-[0_0_18px_rgba(255,255,255,0.28)] sm:w-[260px] md:w-[320px]"
                   />
                 </div>

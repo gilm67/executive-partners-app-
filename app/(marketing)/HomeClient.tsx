@@ -90,7 +90,7 @@ export default function HomeClient() {
           src={imageSrc}
           alt=""
           fill
-          sizes="(max-width: 768px) 92vw, 50vw"
+          sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover opacity-[0.22] scale-[1.04] transition duration-700 group-hover:scale-[1.08] group-hover:opacity-[0.28]"
           priority
         />
@@ -297,7 +297,7 @@ export default function HomeClient() {
                 prefetch={false}
                 className="group relative overflow-hidden rounded-2xl border border-white/10 transition-all duration-300 hover:border-[#D4AF37]/40"
               >
-                {c.photo && <Image src={c.photo} alt={c.city} fill sizes="(max-width:640px) 100vw, 50vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />}
+                {c.photo && <Image src={c.photo} alt={c.city} fill sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />}
                 <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/95" />
                 <div className="relative z-10 p-6">
                 <p className="font-mono text-[11px] text-white/50 group-hover:text-[#D4AF37]/70 transition-colors mb-3">{c.idx}</p>
