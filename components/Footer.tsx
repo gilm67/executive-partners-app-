@@ -79,7 +79,7 @@ export default function Footer() {
                 <div className="text-[10px] font-semibold uppercase tracking-[0.15em] mb-2" style={{color:"rgba(201,161,74,.8)"}}>Confidential · Senior-level · No obligation</div>
                 <div className="text-lg font-semibold text-white leading-snug">Ready to calibrate<br/>your next move?</div>
               </div>
-              <div className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold w-full justify-center" style={{background:"linear-gradient(135deg, #C9A14A 0%, #E8C46A 50%, #C9A14A 100%)",color:"#0B0E13"}}>
+              <div className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold w-full justify-center" style={{background:"linear-gradient(135deg, #C9A14A 0%, #E8C46A 100%)",color:"#090C14",fontWeight:"600"}}>
                 Schedule a confidential call <ArrowRight className="h-4 w-4" />
               </div>
             </Link>

@@ -1042,3 +1042,11 @@ form.compact .submit-btn {
   padding: 14px 32px;
   font-size: 0.95rem;
 }
+
+/* ── Override Android/Chrome visited link color globally ── */
+a:visited {
+  color: inherit;
+}
+footer a:visited {
+  color: rgba(255, 255, 255, 0.5);
+}
