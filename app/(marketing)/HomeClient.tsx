@@ -152,7 +152,7 @@ export default function HomeClient() {
       {/* KPI STRIP */}
       <section className="border-b border-white/8">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="grid grid-cols-3 divide-x divide-white/10 bg-[#0B0F1A] text-center">
+          <div className="grid grid-cols-3 divide-x divide-white/10 text-center">
             {[
               { value: "200+", label: "Placements", sub: "Senior RMs & Private Bankers" },
               { value: "98%", label: "12-month Retention", sub: "Candidates still in seat" },
@@ -175,7 +175,7 @@ export default function HomeClient() {
       </section>
 
       {/* VALUE SECTION */}
-      <section className="py-20 sm:py-24">
+      <section className="py-20 sm:py-24 bg-[#0b0f1a]">
         <div className="mx-auto max-w-7xl px-4">
           <div className="mb-14 max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/4 px-4 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/60 backdrop-blur mb-5">
@@ -262,7 +262,7 @@ export default function HomeClient() {
       {/* ═══════════════════════════════════════════
           GLOBAL HUBS — premium two-tier card layout
       ═══════════════════════════════════════════ */}
-      <section className="py-20 border-t border-white/8">
+      <section className="py-20 border-t border-white/8 bg-[#0b0f1a]">
         <div className="mx-auto max-w-7xl px-4">
 
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
@@ -355,7 +355,7 @@ export default function HomeClient() {
 
 
       {/* INSIGHTS STRIP */}
-      <section className="py-20 border-t border-white/8">
+      <section className="py-20 border-t border-white/8 bg-[#0b0f1a]">
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
@@ -377,7 +377,7 @@ export default function HomeClient() {
 
 
       {/* CTA */}
-      <section className="relative overflow-hidden border-t border-white/8">
+      <section className="relative overflow-hidden border-t border-white/8 bg-[#0b0f1a]">
         <div
           aria-hidden
           className="absolute inset-0 -z-10"
