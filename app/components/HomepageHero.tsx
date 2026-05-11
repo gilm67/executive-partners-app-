@@ -42,8 +42,8 @@ export default function HomepageHero() {
               src="/transparent-ep-logo.png"
               sizes="(max-width: 640px) 80vw, 400px"
               alt="Executive Partners – Private Banking & Wealth Management Executive Search"
-              width={360}
-              height={120}
+              width={340}
+              height={113}
               priority
               className="h-auto w-[220px] sm:w-[280px] md:w-[340px] drop-shadow-[0_0_18px_rgba(255,255,255,0.32)]"
             />

@@ -87,8 +87,8 @@ export default function HomePage() {
                     src="/transparent-ep-logo.png"
                     sizes="(max-width: 640px) 80vw, 400px"
               alt="Executive Partners – Private Banking & Wealth Management Executive Search"
-                    width={320}
-                    height={110}
+                    width={210}
+                    height={70}
                     priority
                     className="h-auto w-[210px] drop-shadow-[0_0_18px_rgba(255,255,255,0.28)] sm:w-[260px] md:w-[320px]"
                   />
