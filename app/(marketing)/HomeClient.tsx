@@ -101,8 +101,8 @@ export default function HomeClient() {
       <div className={`absolute top-0 left-0 right-0 h-[1px] ${accent === "gold" ? "bg-gradient-to-r from-transparent via-[#D4AF37]/60 to-transparent" : "bg-gradient-to-r from-transparent via-[#9ECBFF]/50 to-transparent"}`} />
 
       <div className="relative p-7 sm:p-9">
-        <div className="flex items-center gap-4">
-          <div className={`h-11 w-11 rounded-xl flex items-center justify-center ring-1 ${accent === "gold" ? "bg-[#C9A14A]/15 ring-[#C9A14A]/40" : "bg-[#9ECBFF]/12 ring-[#9ECBFF]/30"}`}>
+        <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-4">
+          <div className={`h-11 w-11 rounded-xl flex items-center justify-center ring-1 flex-shrink-0 ${accent === "gold" ? "bg-[#C9A14A]/15 ring-[#C9A14A]/40" : "bg-[#9ECBFF]/12 ring-[#9ECBFF]/30"}`}>
             {icon}
           </div>
           <h3 className="text-xl font-semibold tracking-tight text-white">{title}</h3>
