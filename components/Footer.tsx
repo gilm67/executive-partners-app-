@@ -142,7 +142,7 @@ export default function Footer() {
           <div className="grid grid-cols-4 gap-10">
             {NAV.map((col) => (
               <div key={col.label}>
-                <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-4" style={{color:"rgba(201,161,74,.8)"}}>{col.label}</h4>
+                <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-4" style={{color:"#C9A14A"}}>{col.label}</h4>
                 <ul className="space-y-3">
                   {col.links.map((link) => (
                     <li key={link.href}>
@@ -153,7 +153,7 @@ export default function Footer() {
               </div>
             ))}
             <div>
-              <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-4" style={{color:"rgba(201,161,74,.8)"}}>Our Hubs</h4>
+              <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-4" style={{color:"#C9A14A"}}>Our Hubs</h4>
               <ul className="space-y-3">
                 {HUBS.map((h) => (
                   <li key={h.city} className="text-sm text-white/70 flex items-center gap-2"><span>{h.flag}</span>{h.city}</li>
