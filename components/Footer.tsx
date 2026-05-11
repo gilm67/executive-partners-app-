@@ -131,7 +131,7 @@ export default function Footer() {
           <div className="flex items-start justify-between mb-12 pb-12 border-b border-white/[0.06]">
             <div className="max-w-sm">
               <Image src="/transparent-ep-logo.png" alt="Executive Partners" width={180} height={60} sizes="180px" className="h-auto w-[160px] opacity-90 mb-4" />
-              <p className="text-sm text-white/55 leading-relaxed">Geneva-based executive search for Private Banking & Wealth Management. 200+ placements across 12 global hubs.</p>
+              <p className="text-sm text-white/80 leading-relaxed">Geneva-based executive search for Private Banking & Wealth Management. 200+ placements across 12 global hubs.</p>
             </div>
             <Link href="/en/contact"
               className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all hover:brightness-110"
@@ -146,7 +146,7 @@ export default function Footer() {
                 <ul className="space-y-3">
                   {col.links.map((link) => (
                     <li key={link.href}>
-                      <Link href={link.href} className="text-sm text-white/55 hover:text-white visited:text-white/55 transition-colors">{link.text}</Link>
+                      <Link href={link.href} className="text-sm text-white/75 hover:text-white visited:text-white/75 transition-colors">{link.text}</Link>
                     </li>
                   ))}
                 </ul>
@@ -156,15 +156,15 @@ export default function Footer() {
               <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-4" style={{color:"rgba(201,161,74,.8)"}}>Our Hubs</h4>
               <ul className="space-y-3">
                 {HUBS.map((h) => (
-                  <li key={h.city} className="text-sm text-white/50 flex items-center gap-2"><span>{h.flag}</span>{h.city}</li>
+                  <li key={h.city} className="text-sm text-white/70 flex items-center gap-2"><span>{h.flag}</span>{h.city}</li>
                 ))}
               </ul>
             </div>
           </div>
-          <div className="mt-12 pt-8 border-t border-white/[0.06] flex items-center justify-between text-xs text-white/30">
+          <div className="mt-12 pt-8 border-t border-white/[0.06] flex items-center justify-between text-xs text-white/50">
             <div>© {new Date().getFullYear()} Executive Partners. All rights reserved.</div>
             <div className="flex items-center gap-4">
-              <Link href="/en/privacy" className="hover:text-white/60 visited:text-white/30 transition-colors">GDPR Compliant</Link>
+              <Link href="/en/privacy" className="hover:text-white visited:text-white/50 transition-colors">GDPR Compliant</Link>
               <span className="w-px h-3 bg-white/15" />
               <span>Confidentiality Guaranteed</span>
             </div>
