@@ -402,7 +402,8 @@ export default function HomeClient() {
 
           <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              href="/contact"
+              href="https://calendly.com/execpartners/15-minute-career-consultation"
+              target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#C9A14A] to-[#F0D060] px-8 py-4 text-[#0B0E13] text-sm font-semibold tracking-wide shadow-[0_8px_40px_rgba(201,161,74,.40)] hover:shadow-[0_12px_52px_rgba(201,161,74,.55)] hover:brightness-105 transition-all duration-300"
             >
               Schedule a confidential call
