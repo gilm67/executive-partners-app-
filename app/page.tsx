@@ -228,7 +228,7 @@ function ActionCard({
         }}
       />
 
-      <div className="relative flex items-start gap-4">
+      <div className="relative flex flex-col items-center text-center gap-3">
         <div
           className={[
             "grid h-11 w-11 place-items-center rounded-xl",
@@ -238,18 +238,18 @@ function ActionCard({
           {icon}
         </div>
 
-        <div className="min-w-0">
-          <div className="text-[11px] uppercase tracking-[0.22em] text-white/65">
+        <div className="min-w-0 w-full">
+          <div className="text-[11px] uppercase tracking-[0.22em] text-white/65 text-center">
             {eyebrow}
           </div>
 
-          <div className="mt-1 font-[var(--font-playfair)] text-2xl leading-tight text-white">
+          <div className="mt-1 font-[var(--font-playfair)] text-2xl leading-tight text-white text-center">
             {title}
           </div>
 
-          <div className="mt-2 text-sm text-white/75">{desc}</div>
+          <div className="mt-2 text-sm text-white/75 text-center">{desc}</div>
 
-          <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white/90">
+          <div className="mt-5 inline-flex items-center justify-center gap-2 text-sm font-semibold text-white/90 w-full">
             {ctaText}
             <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
           </div>
