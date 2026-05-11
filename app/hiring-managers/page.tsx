@@ -91,7 +91,8 @@ export default function HiringManagersPage() {
             </p>
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
               <Link
-                href="/en/contact"
+                href="https://calendly.com/execpartners/15-minute-career-consultation"
+                target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#C9A14A] to-[#E8C46A] px-6 py-3 text-sm font-semibold text-[#090C14] hover:brightness-110 transition-all"
               >
                 Brief a mandate — same day response <ArrowRight className="h-4 w-4" />

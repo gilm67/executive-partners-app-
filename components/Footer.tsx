@@ -72,7 +72,8 @@ export default function Footer() {
 
           {/* CTA block — dark with gold border */}
           <div className="py-6 border-b border-white/[0.06]">
-            <Link href="/en/contact"
+            <Link href="https://calendly.com/execpartners/15-minute-career-consultation"
+              target="_blank" rel="noopener noreferrer"
               className="flex flex-col items-center text-center w-full rounded-2xl px-6 py-6 gap-4 transition-all active:scale-[0.99]"
               style={{background:"rgba(201,161,74,.06)",border:"1px solid rgba(201,161,74,.3)"}}>
               <div>
