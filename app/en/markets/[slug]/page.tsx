@@ -1337,7 +1337,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             To explore options, you can review relevant roles on the{" "}
             <Link
-              href="/jobs"
+              href="/en/jobs"
               className="text-[#F4D270] underline underline-offset-2"
             >
               jobs page

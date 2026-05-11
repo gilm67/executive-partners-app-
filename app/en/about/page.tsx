@@ -261,10 +261,10 @@ export default function AboutPage() {
             </p>
 
             <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <PrimaryButton href="/hiring-managers">Hire Talent</PrimaryButton>
-              <SecondaryButton href="/candidates">I'm a Candidate</SecondaryButton>
-              <SecondaryButton href="/jobs">Private Banking Jobs</SecondaryButton>
-              <SecondaryButton href="/contact">Contact Us</SecondaryButton>
+              <PrimaryButton href="/en/hiring-managers">Hire Talent</PrimaryButton>
+              <SecondaryButton href="/en/candidates">I'm a Candidate</SecondaryButton>
+              <SecondaryButton href="/en/jobs">Private Banking Jobs</SecondaryButton>
+              <SecondaryButton href="/en/contact">Contact Us</SecondaryButton>
             </div>
           </section>
 

@@ -254,13 +254,13 @@ export default function CityRecruiterPage(props: CityRecruiterPageProps) {
 
             <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
-                href="/apply"
+                href="/en/apply"
                 className="btn btn-primary btn-xl w-full sm:w-auto"
               >
                 Submit your profile
               </Link>
               <Link
-                href="/contact"
+                href="/en/contact"
                 className="btn btn-ghost w-full text-sm sm:w-auto"
               >
                 Speak with a specialist recruiter

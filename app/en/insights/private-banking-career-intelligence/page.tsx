@@ -312,13 +312,13 @@ export default function CareerIntelligencePage() {
 
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
-                href="/portability"
+                href="/en/portability"
                 className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-brandGold to-brandGoldSoft px-6 py-3 text-sm font-semibold text-black shadow-lg transition hover:brightness-110"
               >
                 Calculate Your Portability Score
               </Link>
               <Link
-                href="/contact"
+                href="/en/contact"
                 className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10"
               >
                 Schedule Confidential Call

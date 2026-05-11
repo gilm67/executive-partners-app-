@@ -166,19 +166,19 @@ export default function CandidatesPage() {
             {/* helpful internal links */}
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-sm">
               <Link
-                href="/jobs"
+                href="/en/jobs"
                 className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
               >
                 View Private Banking Jobs
               </Link>
               <Link
-                href="/apply"
+                href="/en/apply"
                 className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
               >
                 Submit CV
               </Link>
               <Link
-                href="/contact"
+                href="/en/contact"
                 className="rounded-full border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white"
               >
                 Contact a Recruiter
@@ -213,16 +213,16 @@ export default function CandidatesPage() {
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
               <h2 className="mb-4 text-lg font-bold text-white">Get started</h2>
               <div className="space-y-3">
-                <PrimaryButton href="/apply" className="w-full">
+                <PrimaryButton href="/en/apply" className="w-full">
                   Submit my profile (confidential)
                 </PrimaryButton>
 
-                <SecondaryButton href="/jobs" className="w-full">
+                <SecondaryButton href="/en/jobs" className="w-full">
                   View current opportunities
                 </SecondaryButton>
 
                 <SecondaryButton
-                  href="/bp-simulator?src=candidates_cta"
+                  href="/en/bp-simulator?src=candidates_cta"
                   className="w-full"
                 >
                   For RMs: BP Simulator / Tools
@@ -238,7 +238,7 @@ export default function CandidatesPage() {
 
               {/* ✅ This is the link you were clicking */}
               <Link
-                href="/candidates#faqs"
+                href="/en/candidates#faqs"
                 className="inline-flex items-center gap-2 text-sm font-semibold text-brandGoldPale hover:underline"
               >
                 View all FAQs →

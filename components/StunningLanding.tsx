@@ -36,19 +36,19 @@ export default function StunningLanding() {
           {/* 3 buttons */}
           <div className="mx-auto mt-6 flex w-full max-w-xl flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link
-              href="/candidates"
+              href="/en/candidates"
               className="btn-primary h-10 rounded-md bg-gradient-to-b from-[#3da2ff] to-[#1f6ddc] px-5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(52,136,255,0.35)] hover:opacity-95"
             >
               I’m a Candidate
             </Link>
             <Link
-              href="/hiring-managers"
+              href="/en/hiring-managers"
               className="btn-ghost h-10 rounded-md border border-white/20 px-5 text-sm font-semibold text-white/90 hover:bg-white/10"
             >
               I’m Hiring
             </Link>
             <Link
-              href="/jobs"
+              href="/en/jobs"
               className="btn-primary h-10 rounded-md bg-gradient-to-b from-[#3da2ff] to-[#1f6ddc] px-5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(52,136,255,0.35)] hover:opacity-95"
             >
               View Jobs
@@ -78,13 +78,13 @@ export default function StunningLanding() {
             </p>
             <div className="mt-4 flex gap-3">
               <Link
-                href="/jobs"
+                href="/en/jobs"
                 className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-white/90"
               >
                 Browse Jobs
               </Link>
               <Link
-                href="/candidates"
+                href="/en/candidates"
                 className="rounded-md border border-white/20 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
               >
                 Candidate Hub
@@ -102,13 +102,13 @@ export default function StunningLanding() {
             </p>
             <div className="mt-4 flex gap-3">
               <Link
-                href="/hiring-managers"
+                href="/en/hiring-managers"
                 className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-semibold text-black hover:bg-emerald-400"
               >
                 Hire Talent
               </Link>
               <Link
-                href="/contact"
+                href="/en/contact"
                 className="rounded-md border border-white/20 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
               >
                 Talk to Us

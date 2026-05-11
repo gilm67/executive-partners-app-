@@ -15,9 +15,9 @@ export default function ConfidentialCTA() {
               No data stored without consent.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <Link href="/contact" className="btn-ghost">Talk confidentially</Link>
-              <Link href="/portability" className="btn-primary">Portability Score™</Link>
-              <Link href="/bp-simulator" className="btn-ghost">Business Plan Simulator</Link>
+              <Link href="/en/contact" className="btn-ghost">Talk confidentially</Link>
+              <Link href="/en/portability" className="btn-primary">Portability Score™</Link>
+              <Link href="/en/bp-simulator" className="btn-ghost">Business Plan Simulator</Link>
             </div>
           </div>
 

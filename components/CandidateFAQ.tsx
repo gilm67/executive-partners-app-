@@ -411,7 +411,7 @@ export default function CandidateFAQ({
                 Email us <ArrowRight className="ml-2 h-4 w-4" />
               </a>
               <Link
-                href="/contact"
+                href="/en/contact"
                 className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F5D778] px-7 py-3 text-sm font-semibold text-black shadow-lg shadow-black/40 hover:brightness-110"
               >
                 Schedule a call <ArrowRight className="ml-2 h-4 w-4" />

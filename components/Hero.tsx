@@ -44,13 +44,13 @@ export default function Hero() {
 
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
           <Link
-            href="/jobs"
+            href="/en/jobs"
             className="rounded-2xl bg-white px-5 py-2.5 text-xs font-semibold text-black hover:bg-white/90 sm:text-sm"
           >
             EXPLORE OPPORTUNITIES
           </Link>
           <Link
-            href="/contact"
+            href="/en/contact"
             className="rounded-2xl border border-white/30 px-5 py-2.5 text-xs font-semibold text-white hover:bg-white/10 sm:text-sm"
           >
             CONNECT WITH US
