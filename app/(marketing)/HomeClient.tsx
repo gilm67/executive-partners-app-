@@ -266,14 +266,14 @@ export default function HomeClient() {
         <div className="mx-auto max-w-7xl px-4">
 
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-            <div>
+            <div className="text-center sm:text-left">
               <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">
                 Markets
               </p>
               <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight text-center sm:text-left">
                 Global Private Banking Hubs
               </h2>
-              <p className="mt-2 text-white/50 text-sm sm:text-base">
+              <p className="mt-2 text-white/50 text-sm sm:text-base text-center sm:text-left">
                 Explore mandates across 12 key booking centres
               </p>
             </div>
@@ -359,9 +359,9 @@ export default function HomeClient() {
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">Private Wealth Pulse</p>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3 text-center sm:text-left">Private Wealth Pulse</p>
               <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight text-center sm:text-left">Latest Intelligence</h2>
-              <p className="mt-2 text-white/50 text-sm">Strategy and talent analysis for senior private banking professionals.</p>
+              <p className="mt-2 text-white/50 text-sm text-center sm:text-left">Strategy and talent analysis for senior private banking professionals.</p>
             </div>
             <Link href="/en/insights" className="shrink-0 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
               All articles <ArrowRight className="h-4 w-4" />
