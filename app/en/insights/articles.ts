@@ -64,6 +64,69 @@ export type InsightArticle = {
  */
 export const INSIGHTS: readonly InsightArticle[] = [
   {
+    slug: "the-last-wave",
+    title: "The Last Wave",
+    date: "2026-05-07",
+    summary: "UBS has declared the Credit Suisse integration a success. For the private bankers still inside as H2 2026 begins, the most consequential chapter is the one starting now.",
+    pillar: "P1",
+    subtheme: "M&A & Restructuring",
+    markets: ["Switzerland", "United Kingdom", "United States"],
+    body: `In March 2026, UBS completed the migration of former Credit Suisse Swiss-booked clients onto its platforms and declared the milestone a success. The press release was clean. The numbers were solid. A net profit of three billion dollars in the first quarter alone.
+
+If you work in Swiss private banking, you were forgiven for reading all of this and feeling that the story was, finally, over.
+
+It is not over. In fact, for the people who matter most to this industry, the relationship managers, the market heads, the senior bankers sitting on books built across fifteen or twenty years, the most consequential chapter is the one beginning now.
+
+Here is the arithmetic that the press releases do not lead with. When UBS absorbed Credit Suisse in March 2023, it absorbed approximately 45,000 employees overnight. The combined headcount peaked at just under 120,000. Three years later, the bank has reduced its workforce by around 15,000 people. The internal target, never publicly confirmed but reported consistently by Bloomberg and the Financial Times, was always 35,000. That means UBS needs to remove roughly 20,000 more positions to reach the headcount the integration was always designed to achieve. Ermotti himself told reporters in February that the majority of Swiss job reductions would land in the second half of 2026. That is now.
+
+The clients have been migrated. The systems are being switched off. The people are next.
+
+To understand why this matters specifically for private banking, you need to understand what the last three years actually looked like from the inside. Not from the investor presentations, but from the desk.
+
+When UBS took over Credit Suisse in 2023, the immediate assumption in the market was that a wave of senior banker departures would follow almost immediately. Citi analysts predicted that Credit Suisse could lose roughly a fifth of its wealth management assets in the transition, with worst-case scenarios pointing toward a third. Competitors sharpened their pencils. Julius Baer, Pictet, Lombard Odier, EFG, Vontobel: every serious private bank in Geneva and Zurich anticipated an extraordinary recruiting window.
+
+What actually happened was more complicated. Some bankers moved. Some assets followed. But the wave that everyone anticipated never arrived at the scale or speed that the market expected. The reasons were structural and, in retrospect, predictable.
+
+UBS moved quickly to implement retention packages for front-office talent it wanted to keep. The uncertainty of the integration paradoxically suppressed natural attrition: bankers who might have tested the market in a normal year chose to wait for clarity on their role, their team, their client book classification. People were staying put not out of loyalty, but out of paralysis. When your institution is being reassembled around you, the rational move is often to wait and see whether you are inside or outside the new structure.
+
+The result is three years of suspended animation for thousands of private bankers in Switzerland. Three years of client conversations that began with reassurance and continued with uncertainty. Three years of competitors who wanted these bankers but could not pry them loose from a bank that had not yet decided what to do with them.
+
+That period is ending.
+
+The timing matters in a way that is specific to private banking and rarely discussed in the coverage of this integration. The UHNW client migration, the most senior, most relationship-sensitive, most portable tier of the former Credit Suisse wealth book, was the last to be completed. Reuters reported in late 2025 that UBS had delayed the transfer of some ultra-high-net-worth clients after earlier transfers of less affluent segments revealed operational issues. The delay was prudent. These are the clients where one bad conversation, one system error, one week of not knowing who to call, can cost the bank the relationship permanently.
+
+But consider the sequence from the perspective of a senior Credit Suisse private banker who survived the integration, kept their book broadly intact through the transition, and has spent three years telling clients that the platform migration will be smooth and that everything will be fine. That banker's clients have just, finally, landed on the new system. The relationship is at its most sensitive. The client is watching to see whether the reassurances were warranted.
+
+And now comes H2 2026. The job cuts. The restructuring. The moment that UBS reaches for the headcount reduction it has been deferring since 2023.
+
+What happens to the client relationship when the banker who nursed them through three years of uncertainty disappears in a restructuring wave six weeks after the platform migration? What does "better than expected retention" look like when measured not against Q1 2026 but against Q4 2026, once the cuts have landed and the banker is gone?
+
+I have been asked this question, in various forms, by senior bankers across Geneva and Zurich throughout this integration. The honest answer is that nobody knows yet. The client migration data that UBS is reporting with quiet satisfaction today is a snapshot taken before the most disruptive personnel changes have occurred. The real retention test has not started.
+
+For the market around UBS, the question now is whether what did not happen in 2023 happens instead in 2026, and on what terms.
+
+The dynamics are different. In 2023, a banker leaving UBS in the immediate aftermath of the rescue carried a story: involuntary redundancy, merger disruption, no fault attached. The market understood and the conversations were straightforward. In 2026, a banker leaving UBS three years into the integration carries a more complicated narrative. Were they pushed? Did they choose to go? What does it say about their performance over the integration period that they are only now exiting? These are the questions that a sophisticated hiring team at a competitor will ask, and they require honest answers.
+
+For candidates, the non-compete and non-solicitation landscape has also evolved since 2023. Swiss banking employment agreements have not gotten looser in three years. A banker who signed a retention package in 2023 or 2024 may now be unwinding deferred compensation structures at the same moment they are trying to negotiate a move. The mathematics of leaving are more complex than they were.
+
+And for clients, the experience of a third disruption, first the Credit Suisse crisis, then the UBS takeover, now a restructuring exit by the banker they kept faith with, is genuinely different from the disruption of 2023. Some will absorb it. Others will use it as the moment to diversify custody, restructure their banking relationships, or move to an EAM structure they have been contemplating for years. The client movement that the Swiss private banking market has been anticipating since March 2023 may finally arrive, three years delayed, and concentrated into a much shorter window.
+
+The beneficiaries are likely to be the same institutions that were watching in 2023: the mid-sized Swiss private banks with genuine UHNW capability, the EAM sector, and the international platforms that have been building out their Swiss offerings precisely in anticipation of this moment. What changes is the urgency on both sides. Bankers who spent three years waiting now have a deadline. Competitors who spent three years waiting now have a window that will not stay open indefinitely.
+
+There is a phrase that has appeared in nearly every UBS communication about the Credit Suisse integration since 2023: better than expected. Client retention: better than expected. Cost savings: on track, better than expected. It is the language of a bank that has been managing investor confidence through an extraordinarily complex and public three-year process, and that management has largely worked.
+
+What it has also done is create a gap between the official narrative and the private banking reality on the ground. In twenty years of placing senior bankers across Geneva, Zurich, London, Dubai and Singapore, I cannot recall a period in which so many excellent professionals have spent so long in professional suspension, unable to move freely, telling their clients one thing and privately thinking another.
+
+The integration is nearly complete. The systems are aligned. The client accounts have moved. UBS is reporting strong profits and will substantially finish this process by year end. All of this is true.
+
+But for the private bankers still inside the institution as H2 2026 begins, and for the clients they have been managing through three years of disruption, the last wave of this integration is the one that will actually determine what the story meant. Not for the shareholders. For the people.
+
+That part has not been written yet.
+
+Gil M. Chalem, Managing Partner, Executive Partners`,
+  },
+
+  {
     slug: "switzerland-running-out-banks",
     title: "Switzerland Is Running Out of Banks",
     date: "2026-05-05",
