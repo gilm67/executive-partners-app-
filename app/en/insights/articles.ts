@@ -70,7 +70,7 @@ export const INSIGHTS: readonly InsightArticle[] = [
     summary: "UBS has declared the Credit Suisse integration a success. For the private bankers still inside as H2 2026 begins, the most consequential chapter is the one starting now.",
     pillar: "P1",
     subtheme: "M&A & Restructuring",
-    markets: ["Switzerland", "United Kingdom", "United States"],
+    markets: ["CH", "UK", "US"],
     body: `In March 2026, UBS completed the migration of former Credit Suisse Swiss-booked clients onto its platforms and declared the milestone a success. The press release was clean. The numbers were solid. A net profit of three billion dollars in the first quarter alone.
 
 If you work in Swiss private banking, you were forgiven for reading all of this and feeling that the story was, finally, over.
