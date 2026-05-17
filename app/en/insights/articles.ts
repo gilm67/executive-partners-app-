@@ -376,7 +376,7 @@ The headlines will keep being about UBS. That is understandable. UBS is the larg
     pillar: "P1",
     subTheme: "Positioning",
     linkedinUrl: "https://www.linkedin.com/pulse/smoke-over-difc-gil-m-chalem--d0lbe/",
-    markets: ["UAE", "SG", "CH"],
+    markets: ["UAE", "ASIA", "CH"],
     body: `Eight weeks in. A ceasefire that held for less than eight hours. And 537 intercepted ballistic missiles later — here is what we actually know about Dubai's future as a private banking hub.
 
 I wrote the first version of this article on the morning of April 17th, two weeks after a plume of black smoke rose over the Dubai International Financial Centre. At the time, the question was whether a single dramatic shock would change the calculus for the wealth management industry. Eight weeks later, the question has become something harder to dismiss: not what the first shock meant, but what sustained conflict has done to the assumptions on which an entire industry built itself.
@@ -586,7 +586,7 @@ In my experience, that is not how this works.`,
     pillar: "P1",
     subTheme: "ROAPlatform",
     linkedinUrl: "https://www.linkedin.com/pulse/revenue-grid-nobody-shows-you-before-sign-gil-m-chalem--w2cwe/",
-    markets: ["CH", "UK", "SG"],
+    markets: ["CH", "UK", "ASIA"],
     body: `I want to tell you about a conversation I had recently with two senior relationship managers — both in Geneva, both at large private banking institutions, both managing books in the CHF 600 to 700 million range, both with strong client follow rates and clean compliance records. On paper, these are near-identical profiles.
 
 Their total compensation last year differed by almost CHF 200,000.
@@ -641,7 +641,7 @@ This is why I increasingly tell the senior relationship managers I work with tha
     pillar: "P1",
     subTheme: "Positioning",
     linkedinUrl: "https://www.linkedin.com/pulse/dubais-illusion-gone-where-does-leave-you-gil-m-chalem--mrdye/",
-    markets: ["UAE", "CH", "SG"],
+    markets: ["UAE", "CH", "ASIA"],
     body: `Something broke on the morning of February 28th. Not just infrastructure — the idea. Dubai's entire value proposition as a global financial hub was built on one promise: that it was a safe, neutral, prosperous island in a difficult neighbourhood. When Iranian missiles struck Dubai International Airport, the Burj Al Arab and Jebel Ali Port in the same weekend, that promise was visibly, publicly, undeniably broken.
 
 I want to be clear about what this is not. This is not a prediction that Dubai is finished, or that every private banker there should be calling a Geneva recruiter this afternoon. What it is, is a moment that forces honest thinking about risk — the kind of thinking that our industry rarely does until it is forced to.
