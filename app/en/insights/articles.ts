@@ -64,6 +64,52 @@ export type InsightArticle = {
  */
 export const INSIGHTS: readonly InsightArticle[] = [
   {
+    slug: "the-emotional-strategist",
+    title: "The Emotional Strategist",
+    date: "2026-05-07",
+    summary: "When AI handles the analysis, the relationship manager is left with the only thing that ever actually mattered. The conversation the machine cannot have.",
+    pillar: "P1",
+    subTheme: "ROAPlatform",
+    linkedinUrl: "https://www.linkedin.com/pulse/emotional-strategist-gil-m-chalem",
+    markets: ["CH", "UK", "UAE", "ASIA"],
+    body: `There is a scene playing out in private banking boardrooms across Geneva, Zurich, and Singapore right now that tells you everything you need to know about where this industry is heading. A bank's leadership team gathers to review the deployment of its new AI advisory stack. The system is impressive: it monitors live portfolios, surfaces next-best-action recommendations in real time, flags compliance anomalies before they become problems, and prepares a meeting agenda for each client interaction in about half the time a senior analyst used to spend doing the same job. The room is pleased. And then someone asks the question that nobody has a clean answer to: if the machine does all of that, what exactly is the relationship manager there to do?
+
+The answer, it turns out, is the only thing that has ever actually mattered. And it is the one thing the machine cannot do at all.
+
+The shift that is redefining private banking in 2026 is not the one the technology vendors are selling. The story they tell is one of efficiency gains, of agentic AI systems that can execute complex multi-step workflows autonomously, of advisor desktops that eliminate friction and surface insight on demand. Nearly 70 percent of banking firms now deploy agentic AI models to support their advisory functions, delivering real-time recommendations and continuously monitoring for compliance risks across client portfolios. A purpose-built AI assistant for a top-ten investment management firm, designed to review advisor profiles and meeting notes and generate personalised agendas, cut meeting preparation time by up to 50 percent, saving an estimated 20,000 hours a year across the organisation. These are not marginal improvements. They represent a genuine restructuring of how advisory work gets done.
+
+But the more interesting story, the one worth paying attention to if you are an RM trying to understand what your career looks like in five years, is what that restructuring exposes. When you remove the data aggregation, the research synthesis, the portfolio monitoring, the compliance preparation, and the administrative overhead from the relationship manager's working day, you are left with a residue. And that residue is the whole job.
+
+Oliver Wyman describes this as the rise of the Unified Client Brain: a consolidated intelligence layer that integrates a client's relationships, global assets, lifestyle preferences, and risk appetite into a single real-time picture accessible to the advisor before any conversation begins. The practical effect is that the RM walks into every client meeting already knowing the technical picture. Which means the meeting itself is no longer about the technical picture. It is about everything else. The family succession conversation that has been deferred for three years because the patriarch finds it uncomfortable. The son who has different values from his father and is being handed a portfolio structured around assets he does not believe in. The client who is considering moving a significant portion of their book to Dubai and has not yet told their banker in Geneva. These are not analytical problems. They are human ones. And they require a set of skills that no model, however capable, is currently equipped to develop.
+
+The private banking industry has spent the better part of the last decade trying to convince itself that the relationship manager role is primarily a technical one dressed up in soft skills. The logic was understandable: you could measure a portfolio's performance, you could benchmark a banker's AUM growth, you could count the number of products cross-sold. What you could not easily measure was whether a client trusted their banker with the conversations that mattered most. So the industry defaulted to measuring what it could, and it hired, trained, and promoted accordingly.
+
+The result is a cohort of senior private bankers who are genuinely excellent at managing portfolios and genuinely uncomfortable with the conversations that now constitute their entire value proposition. This is not a criticism. It is a structural problem that the industry created by treating relationship management as a sales function rather than a counselling one. And it matters now because AI is about to expose it at scale.
+
+UBS has been among the most candid about what this transition actually looks like in practice. The bank's Operating Head for Southeast Asia described the firm's approach at a wealth management forum in Singapore earlier this year: the focus is not on replacing relationship managers, but on augmenting their capabilities to the point where every interaction carries more substance. What is implicit in that framing is that augmentation only works if the underlying human capability is there to be augmented. If the RM's primary contribution was always research and data synthesis, then giving them an AI that does that faster does not augment them. It replaces them, quietly, while leaving their job title intact.
+
+This is the uncomfortable reality sitting beneath the industry's enthusiasm for its own technological transformation. The banks that are investing most heavily in AI infrastructure are simultaneously raising the bar for what it means to be a relationship manager. They are not reducing headcount in the client-facing function, at least not yet. They are changing what they need from those people. And many of the bankers currently in those seats were never hired, trained, or developed for what is now being asked of them.
+
+The profile of a client who actually needs an emotional strategist is not difficult to sketch. It is, in practice, the majority of the UHNW client base. The global ultra-high-net-worth population is projected to grow to around 587,650 people and control approximately 68 trillion dollars by 2028. Baby Boomers currently hold 44.5 percent of that wealth share. By 2040, that cohort will largely have handed the stewardship of those assets to the next generation of inheritors. That transition is not primarily a financial event. It is a human one.
+
+In Europe's high-net-worth segment alone, nearly 3.2 trillion euros will transfer from one generation to the next in the coming years. Globally, the scale of this intergenerational movement of capital runs into tens of trillions over the next two decades. Research consistently shows that inadequate succession planning is one of the principal causes of intergenerational wealth erosion, not poor investment performance, not adverse market conditions, but the failure to manage the human complexity of passing something of enormous value from one generation to the next.
+
+The conversation that needs to happen around that transfer is not about asset allocation. It is about values, about family governance, about who gets a seat at the table and who does not, about what the wealth is for. And the banker who sits across from that family and has spent their career becoming expert at portfolio construction and product knowledge is, in the most polite possible framing, underprepared.
+
+None of this is an argument that technical competence no longer matters. A relationship manager who cannot read a structured product term sheet or explain the mechanics of a Lombard facility or have an intelligent conversation about alternatives allocation is not going to survive in this business regardless of how empathetic they are. The point is sequencing. Technical credibility is the entry ticket. It gets you through the door. But it stopped being the differentiator years ago, and the clients who matter most have known this for some time.
+
+What UHNW clients in the Middle East have described to their bankers is instructive: these clients seek senior-level advice, clarity of execution, and institutional capability. But what they are actually weighing when they decide whether to deepen or end a relationship is something more elemental. They want to feel that their banker understands not just their portfolio, but their situation. That is a different thing entirely. A portfolio is a set of numbers. A situation involves a family, a history, a set of pressures and ambitions that no algorithm has been trained to hold.
+
+The banks that will win the talent war over the next five years, and the individual bankers who will build practices worth building, are those who understand this not as a soft observation about client service, but as a structural shift in what private banking is fundamentally for. The machine will handle the analysis. It will do it faster, more accurately, and with fewer errors than any human team. That is not a threat to the profession. It is a clarification of it.
+
+The relationship manager who thrives in this environment is not the one who knows the most. It is the one who listens best. Who can hold a difficult conversation without flinching. Who can sit with a client at the moment of genuine uncertainty, a death, a divorce, a business exit gone wrong, a child who is not who the parent hoped they would be, and be genuinely useful rather than merely present. That is the job now. And it turns out it always was.
+
+The firms deploying AI most aggressively are not reducing their need for exceptional relationship managers. They are raising the standard for what exceptional looks like.
+
+Gil M. Chalem, Managing Partner, Executive Partners`,
+  },
+
+  {
     slug: "the-last-wave",
     title: "The Last Wave",
     date: "2026-05-07",
