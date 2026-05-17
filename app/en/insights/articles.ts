@@ -112,7 +112,7 @@ Gil M. Chalem, Managing Partner, Executive Partners`,
   {
     slug: "the-last-wave",
     title: "The Last Wave",
-    date: "2026-05-07",
+    date: "2026-05-12",
     summary: "UBS has declared the Credit Suisse integration a success. For the private bankers still inside as H2 2026 begins, the most consequential chapter is the one starting now.",
     pillar: "P1",
     subTheme: "M&ARestructuring",
