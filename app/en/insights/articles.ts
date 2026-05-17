@@ -66,7 +66,7 @@ export const INSIGHTS: readonly InsightArticle[] = [
   {
     slug: "the-emotional-strategist",
     title: "The Emotional Strategist",
-    date: "2026-05-07",
+    date: "2026-05-18",
     summary: "When AI handles the analysis, the relationship manager is left with the only thing that ever actually mattered. The conversation the machine cannot have.",
     pillar: "P1",
     subTheme: "ROAPlatform",
