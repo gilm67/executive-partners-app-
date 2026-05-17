@@ -435,7 +435,7 @@ The smoke over the DIFC will clear. The question is whether the capital and the 
     date: "2026-04-23",
     summary: "Inside yesterday's UBS capital rules verdict, and what every senior private banker watching from the inside should already be doing about it.",
     pillar: "P1",
-    subTheme: "MARestructuring",
+    subTheme: "M&ARestructuring",
     linkedinUrl: "https://www.linkedin.com/pulse/bern-holds-line-gil-m-chalem--nudte/",
     markets: ["CH", "UK"],
     body: `Yesterday afternoon in Bern, Karin Keller-Sutter ended her press conference the way a politician ends one when she knows she has won. A journalist asked her when she planned to step down as Finance Minister. She answered that she liked to work. Then she walked off the stage.
@@ -537,7 +537,7 @@ The 10 billion myth is comforting because it is simple. The truth is more useful
     date: "2026-04-20",
     summary: "UBS has just completed its best financial year since acquiring Credit Suisse. And yet it cannot name a successor to its own CEO. Here is what the leadership paralysis means for every senior private banker watching from the inside.",
     pillar: "P1",
-    subTheme: "MARestructuring",
+    subTheme: "M&ARestructuring",
     linkedinUrl: "https://www.linkedin.com/pulse/bank-cant-choose-ceo-gil-m-chalem--g9qje/",
     markets: ["CH", "UK", "US"],
     body: `Two days ago, Colm Kelleher stood in front of shareholders at the St. Jakobshalle in Basel and said something remarkable. The Chairman of UBS, the world's largest wealth manager, told the Annual General Meeting that "key business decisions may soon become unavoidable." He described the Swiss government's proposed capital rules as a serious risk to the bank's business model. He ruled out shrinking the bank. He reaffirmed growth ambitions in Asia and the United States. And then he added, almost as an afterthought, that UBS wants to remain headquartered in Switzerland.
