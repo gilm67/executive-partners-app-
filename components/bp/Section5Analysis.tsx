@@ -461,7 +461,6 @@ export default function Section5Analysis() {
         <div className="text-base font-semibold text-white mb-1">Want us to review this privately?</div>
         <p className="text-sm text-white/65 mb-4">Book a 15-minute call with Executive Partners. We will walk through your committee readiness score, identify what to strengthen before presenting, and match your profile to active mandates.</p>
         
-          
           href="https://calendly.com/execpartners/15-minute-career-consultation"
           target="_blank"
           rel="noopener noreferrer"
