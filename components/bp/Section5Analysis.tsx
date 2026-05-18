@@ -461,13 +461,14 @@ export default function Section5Analysis() {
         <div className="text-base font-semibold text-white mb-1">Want us to review this privately?</div>
         <p className="text-sm text-white/65 mb-4">Book a 15-minute call with Executive Partners. We will walk through your committee readiness score, identify what to strengthen before presenting, and match your profile to active mandates.</p>
         
+          
           href="https://calendly.com/execpartners/15-minute-career-consultation"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all hover:brightness-110"
           style={{background:"linear-gradient(135deg, #C9A14A 0%, #E8C46A 100%)",color:"#090C14"}}
         >
-          Schedule a confidential call &#8594;
+          Schedule a confidential call
         </a>
       </div>
 
