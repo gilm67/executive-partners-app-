@@ -164,6 +164,11 @@ function MandateCard({ mandate, onScreen, onBrief }) {
         </div>
         <h3 className="text-xl font-bold text-white mb-1">{mandate.title}</h3>
         <p className="text-sm text-neutral-400 mb-4">{mandate.subtitle} · {mandate.location}</p>
+        {mandate.listedDate && (
+          <p className="text-[11px] text-neutral-500 mb-3">
+            Listed {new Date(mandate.listedDate).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+          </p>
+        )}
         <div className="flex flex-wrap gap-2 mb-5">
           <span className="inline-flex items-center rounded-full flex-shrink-0 whitespace-nowrap border border-brandGold/30 bg-brandGold/10 px-3 py-1 text-xs font-semibold text-brandGoldPale">{mandate.comp_base} <span className="opacity-50 ml-1 text-[10px]">est.</span></span>
           <span className="inline-flex items-center rounded-full flex-shrink-0 whitespace-nowrap border border-white/10 bg-white/5 px-3 py-1 text-xs text-neutral-400">{mandate.aum}</span>
