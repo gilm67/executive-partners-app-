@@ -491,85 +491,61 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
         <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
             <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
-              Why Private Bankers Move to Geneva
+              Geneva Private Banking — Market Intelligence 2026
             </h2>
           </header>
           <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-            Geneva remains one of the most established wealth hubs globally: a
-            AAA-rated country, a predictable regulatory framework and a deep
-            pool of international UHNW families who still value Switzerland for
-            stability, discretion and booking flexibility. Senior Relationship
-            Managers who move here typically want a stronger platform for
-            complex cross-border clients and a safer home for large
-            multi-jurisdictional books.
+            Geneva remains the world's largest offshore wealth management centre by AUM, hosting an estimated CHF 2.4 trillion in booked assets across approximately 85 private banking institutions as of 2025. The market has consolidated from 160 institutions in 2010, but the surviving platforms are stronger, better capitalised and more actively hiring than at any point since the Credit Suisse integration.
           </p>
           <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
-            The most attractive platforms in Geneva combine a recognised brand,
-            open-architecture investment offering, strong lending capacity and
-            the ability to coordinate with external lawyers, trustees and tax
-            advisers. For many senior RMs, that translates into better client
-            outcomes and higher probability that key households will follow
-            them.
+            The Geneva private banking market in 2026 is structurally bifurcated. Large platforms — UBP, Pictet, Lombard Odier, EFG, Julius Baer — are recruiting selectively but systematically, particularly for LATAM, Middle East, Turkish, Italian and CIS specialists. Simultaneously, Geneva's EAM sector accounts for an estimated 60 percent of custodian bank growth in certain segments, absorbing senior bankers who have exhausted their patience with institutional compensation structures.
           </p>
-          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-            <li>
-              • <strong>Deep, diverse client base:</strong> Swiss-domiciled
-              families, international entrepreneurs, LatAm, Middle East and
-              European wealth all booking assets in Switzerland.
-            </li>
-            <li>
-              • <strong>Multi-booking-centre reach:</strong> ability to combine
-              Geneva booking with Zurich, Dubai, Singapore or offshore centres
-              within one platform.
-            </li>
-            <li>
-              • <strong>Career longevity:</strong> Geneva market heads and
-              platform leaders tend to think in 5–10 year horizons, which suits
-              bankers building long-term franchises.
-            </li>
-            <li>
-              • <strong>Lifestyle &amp; family set-up:</strong> safe city,
-              international schools and proximity to the Alps make Geneva
-              attractive for families relocating from London, Paris or emerging
-              markets.
-            </li>
-          </ul>
-          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+          <div className="mt-5 grid grid-cols-2 gap-4 max-w-3xl">
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">AUM Threshold</div>
+              <div className="text-lg font-bold text-white">CHF 150M+</div>
+              <div className="text-xs text-neutral-400 mt-1">Minimum portable book for senior RM mandates. CHF 250M+ for LATAM, MEA and CIS segments.</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">Compensation Range</div>
+              <div className="text-lg font-bold text-white">CHF 180K - 350K</div>
+              <div className="text-xs text-neutral-400 mt-1">Base salary for Director/ED-level senior RMs. Variable: 50-150% of base depending on platform and formula model.</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">ROA Benchmarks</div>
+              <div className="text-lg font-bold text-white">0.65 - 0.95%</div>
+              <div className="text-xs text-neutral-400 mt-1">Books below 0.55% face committee scrutiny. Above 0.90% is strong by Geneva standards.</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">Regulatory Frame</div>
+              <div className="text-lg font-bold text-white">FINMA - FIDLEG</div>
+              <div className="text-xs text-neutral-400 mt-1">Swiss Financial Services Act in force since 2020. EAMs require FINMA-recognised supervisory organisation membership.</div>
+            </div>
+          </div>
+          <div className="mt-5 max-w-3xl">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-3">Active Client Segments in Geneva 2026</div>
+            <ul className="space-y-2 text-sm text-neutral-100">
+              <li><strong>LATAM (Brazilian, Argentine, Colombian):</strong> the largest cross-border segment. CHF 250M+ books are the entry point for competitive mandates.</li>
+              <li><strong>Middle East and GCC:</strong> growing inflows following geopolitical instability in Dubai. Geneva platforms actively building MEA capacity.</li>
+              <li><strong>CIS / CEE:</strong> resilient private family wealth. Russian-speaking investment advisors in acute shortage.</li>
+              <li><strong>Italian cross-border:</strong> significant segment for Geneva platforms with Milan or Lugano coverage.</li>
+              <li><strong>Swiss onshore:</strong> CHF 150M+ books. French mandatory. Wealth planning depth valued above pure investment advisory.</li>
+              <li><strong>Turkish and Greek/Cypriot:</strong> active hiring across multiple platforms. Language fluency is a hard requirement.</li>
+            </ul>
+          </div>
+          <p className="mt-5 max-w-3xl text-sm text-neutral-300 md:text-base">
             If you want to explore{" "}
-            <Link
-              href="/en/private-banker-jobs/geneva"
-              className="text-[#F4D270] underline underline-offset-2"
-            >
-              current Geneva private banker jobs
-            </Link>
-            , you can start with a high-level conversation rather than a formal
-            application. You can also share your profile via the{" "}
-            <Link
-              href="/en/candidates"
-              className="text-[#F4D270] underline underline-offset-2"
-            >
-              candidates hub
-            </Link>{" "}
-            or{" "}
-            <Link
-              href="/en/contact"
-              className="text-[#F4D270] underline underline-offset-2"
-            >
-              speak directly to a Geneva-based recruiter
-            </Link>
-            . Before you engage with a platform, you can also model a move using
-            our{" "}
-            <Link
-              href="/bp-simulator?src=geneva_market"
-              className="text-[#F4D270] underline underline-offset-2"
-            >
-              Business Plan Simulator
-            </Link>{" "}
-            to test revenue, ROA and portability assumptions.
+            <Link href="/en/private-banker-jobs/geneva" className="text-[#F4D270] underline underline-offset-2">current Geneva private banker jobs</Link>
+            , start with a confidential conversation. You can also share your profile via the{" "}
+            <Link href="/en/candidates" className="text-[#F4D270] underline underline-offset-2">candidates hub</Link>
+            , model a move using the{" "}
+            <Link href="/en/bp-simulator?src=geneva_market" className="text-[#F4D270] underline underline-offset-2">Business Plan Simulator</Link>
+            , or{" "}
+            <Link href="/en/portability" className="text-[#F4D270] underline underline-offset-2">assess your book portability</Link>
+            {" "}before engaging with any platform.
           </p>
         </article>
       );
-
     case "zurich":
       return (
         <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
@@ -651,76 +627,63 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
         <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
           <header className="mb-4">
             <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
-              Why Private Bankers Move to Dubai
+              Dubai Private Banking - Market Intelligence 2026
             </h2>
           </header>
           <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
-            Dubai has become the most visible private banking hub for GCC,
-            wider Middle East and select NRI clients. Senior bankers base
-            themselves here to be physically closer to decision-makers while
-            still plugging into international booking centres in Switzerland,
-            Singapore or other offshore locations.
+            Dubai remains a significant private banking hub for GCC, wider Middle East, NRI and select African wealth. But 2026 has introduced a risk variable that did not exist eighteen months ago. The Iran conflict, beginning February 2026, has changed the risk calculus for senior bankers considering a Dubai posting and for UHNW clients reassessing where their assets are booked.
           </p>
           <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
-            Serious platforms in Dubai operate under DFSA or ADGM frameworks and
-            emphasise robust KYC, source-of-wealth documentation and sustainable
-            advisory revenues. For many RMs, the appeal lies in combining
-            regional proximity with a broad product shelf and the ability to
-            allocate assets across multiple booking centres.
+            The DIFC's institutional infrastructure remains intact and DFSA-regulated platforms continue to operate. But expat confidence has been dented, hotel occupancy fell 70-80 percent at peak disruption, and capital flows towards Geneva and Singapore have accelerated. The opportunity for senior bankers with Dubai-based client relationships is real, but requires a more explicit risk conversation than before.
           </p>
-          <ul className="mt-4 max-w-3xl space-y-2 text-sm text-neutral-100 md:text-base">
-            <li>
-              • <strong>Regional proximity:</strong> easy access to GCC,
-              broader Middle East and South Asia clients.
-            </li>
-            <li>
-              • <strong>Multi-centre architecture:</strong> Dubai desks often
-              coordinate with Swiss, Asian and offshore booking locations.
-            </li>
-            <li>
-              • <strong>Tax &amp; lifestyle:</strong> attractive personal tax
-              environment and a lifestyle that works for internationally mobile
-              families.
-            </li>
-            <li>
-              • <strong>Growth dynamics:</strong> strong pipeline of
-              entrepreneur wealth, real estate and family group restructurings.
-            </li>
-          </ul>
-          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+          <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 max-w-3xl">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-amber-400 mb-2">Current Market Assessment - May 2026</div>
+            <p className="text-sm text-neutral-300">The DFSA introduced time-limited regulatory relief measures in April 2026. Dubai government approved a AED 1 billion business support package. These are stabilisation signals, not normalisation signals. Senior bankers with Dubai books should be assessing portability scenarios now.</p>
+          </div>
+          <div className="mt-5 grid grid-cols-2 gap-4 max-w-3xl">
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">AUM Threshold</div>
+              <div className="text-lg font-bold text-white">USD 200M+</div>
+              <div className="text-xs text-neutral-400 mt-1">Minimum portable book for senior RM mandates. GCC and Indian HNW books require 3-year average track record.</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">Compensation Range</div>
+              <div className="text-lg font-bold text-white">USD 200K - 400K</div>
+              <div className="text-xs text-neutral-400 mt-1">Base plus bonus for senior RMs. Risk premium on Dubai postings has widened since Q1 2026.</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">Regulatory Frame</div>
+              <div className="text-lg font-bold text-white">DFSA - ADGM</div>
+              <div className="text-xs text-neutral-400 mt-1">DIFC under DFSA. Abu Dhabi Global Market under FSRA. Both require rigorous source-of-wealth documentation.</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">Key Client Segments</div>
+              <div className="text-lg font-bold text-white">GCC - NRI - MEA</div>
+              <div className="text-xs text-neutral-400 mt-1">Gulf national families, Indian entrepreneur wealth, broader Middle East and East African HNW.</div>
+            </div>
+          </div>
+          <div className="mt-5 max-w-3xl">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-3">What We Are Advising Dubai-Based Bankers 2026</div>
+            <ul className="space-y-2 text-sm text-neutral-100">
+              <li><strong>Assess your book portability now.</strong> Where are your clients booked? What proportion would follow you to Geneva or Singapore if the situation deteriorates?</li>
+              <li><strong>Review your contract exit provisions.</strong> Garden leave, non-solicit clauses and NPC buyout terms become critical in a disrupted market.</li>
+              <li><strong>Consider a dual-hub strategy.</strong> Banks with genuine multi-hub capability are best placed to retain bankers and clients through the current uncertainty.</li>
+              <li><strong>The opportunity is still real.</strong> The client base has not evaporated. AUM that was in Dubai is reassessing. Bankers who pick up the phone now with a genuine check-in will win the mandates that emerge from this period.</li>
+            </ul>
+          </div>
+          <p className="mt-5 max-w-3xl text-sm text-neutral-300 md:text-base">
             You can review{" "}
-            <Link
-              href="/en/private-banker-jobs/dubai"
-              className="text-[#F4D270] underline underline-offset-2"
-            >
-              current Dubai private banker roles
-            </Link>{" "}
-            or{" "}
-            <Link
-              href="/en/candidates"
-              className="text-[#F4D270] underline underline-offset-2"
-            >
-              share your profile confidentially
-            </Link>{" "}
-            for upcoming mandates. For a deeper discussion,{" "}
-            <Link
-              href="/en/contact"
-              className="text-[#F4D270] underline underline-offset-2"
-            >
-              contact Executive Partners
-            </Link>{" "}
-            and use the{" "}
-            <Link
-              href="/bp-simulator?src=dubai_market"
-              className="text-[#F4D270] underline underline-offset-2"
-            >
-              Business Plan Simulator
-            </Link>{" "}
-            to stress-test portability and revenue scenarios.
+            <Link href="/en/private-banker-jobs/dubai" className="text-[#F4D270] underline underline-offset-2">current Dubai private banker roles</Link>
+            {" "}or{" "}
+            <Link href="/en/candidates" className="text-[#F4D270] underline underline-offset-2">share your profile confidentially</Link>
+            {" "}for upcoming mandates. For a deeper discussion,{" "}
+            <Link href="/en/contact" className="text-[#F4D270] underline underline-offset-2">contact Executive Partners</Link>
+            {" "}and use the{" "}
+            <Link href="/en/bp-simulator?src=dubai_market" className="text-[#F4D270] underline underline-offset-2">Business Plan Simulator</Link>
+            {" "}to stress-test portability and revenue scenarios.
           </p>
         </article>
       );
-
     case "singapore":
       return (
         <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
