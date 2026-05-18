@@ -467,7 +467,7 @@ export default function Section5Analysis() {
           className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all hover:brightness-110"
           style={{background:"linear-gradient(135deg, #C9A14A 0%, #E8C46A 100%)",color:"#090C14"}}
         >
-          Schedule a confidential call →
+          Schedule a confidential call &#8594;
         </a>
       </div>
 
