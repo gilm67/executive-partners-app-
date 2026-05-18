@@ -38,7 +38,20 @@ export default function Page() {
         name="Business Plan Simulator"
         description="Model AUM portability, revenue projections and net margin scenarios. AI-driven business plan simulator for private banking relationship managers."
       />
-      <BpSimulatorClient />
+      
+      {/* SEO — Business Plan Simulator Private Banker */}
+      <div className="mx-auto max-w-6xl px-4 pt-8 pb-2">
+        <p className="text-sm text-white/40 leading-relaxed max-w-3xl">
+          The EP Business Plan Simulator is the only tool built specifically for private bankers
+          modelling AUM transfer, NNM projections, and 3-year P&amp;L the way a hiring committee
+          actually reviews them. Uses a cumulative AUM revenue model — not NNM × ROA — with
+          institution-type cost multipliers, garden leave factors, breakeven calculation by month,
+          committee readiness scoring across seven dimensions, and an auto-generated downside scenario.
+          Used by senior Relationship Managers preparing business plans for private banks in
+          Switzerland, the United Kingdom, Dubai, and Singapore. Free and confidential.
+        </p>
+      </div>
+<BpSimulatorClient />
     </>
   );
 }

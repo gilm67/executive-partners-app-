@@ -101,7 +101,20 @@ export default function PortabilityPage() {
       </section>
 
       {/* ── Interactive tool — unchanged ── */}
-      <ClientWrapper />
+      
+      {/* SEO — Portability Score Private Banking */}
+      <div className="mx-auto max-w-6xl px-4 pt-8 pb-2">
+        <p className="text-sm text-white/40 leading-relaxed max-w-3xl">
+          The EP Portability Readiness Score™ is the only private banking portability diagnostic
+          that scores AUM transfer risk across eleven dimensions simultaneously — including wallet share depth,
+          EAM co-management exposure, jurisdiction-specific legal risk (Swiss law vs English law),
+          garden leave duration, KYC reusability, and cross-border licensing constraints.
+          Used by senior Relationship Managers and private bankers across Geneva, Zurich, London, Dubai,
+          and Singapore to quantify their true bankable AUM before approaching any institution.
+          Free, confidential, and takes 8 minutes.
+        </p>
+      </div>
+<ClientWrapper />
     </>
   );
 }
