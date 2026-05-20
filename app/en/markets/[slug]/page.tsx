@@ -119,6 +119,45 @@ export default async function MarketPage({ params }: Props) {
 
   return (
     <main className="relative min-h-screen text-white">
+
+  {/* ── FAQ Schema — Geneva, Zurich, Dubai ── */}
+  {slug === "geneva" && (
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        { "@type": "Question", name: "What does a private banking recruiter in Geneva do?", acceptedAnswer: { "@type": "Answer", text: "A private banking recruiter in Geneva specialises in placing senior Relationship Managers, Team Heads and Investment Advisors at private banks and wealth managers. Executive Partners focuses exclusively on senior-level mandates across Geneva, Zurich and global hubs." } },
+        { "@type": "Question", name: "What is the average salary for a private banker in Geneva?", acceptedAnswer: { "@type": "Answer", text: "Senior Relationship Managers in Geneva typically earn a total package of CHF 200,000–400,000+ depending on AUM, market, and seniority. Team Heads and Managing Directors can exceed CHF 500,000 in total compensation including bonus." } },
+        { "@type": "Question", name: "How do I find private banking jobs in Geneva?", acceptedAnswer: { "@type": "Answer", text: "Most senior private banking roles in Geneva are filled confidentially through specialist executive search firms. Executive Partners places Senior RMs and Team Heads across Geneva's leading private banks and international wealth managers." } },
+        { "@type": "Question", name: "What AUM is required for a senior RM role in Geneva?", acceptedAnswer: { "@type": "Answer", text: "Most senior RM mandates in Geneva require a minimum portable AUM of CHF 50–100M for mid-level roles, and CHF 150M+ for Director and Team Head positions. Use our Portability Score tool to assess your profile." } },
+      ]
+    }) }} />
+  )}
+  {slug === "zurich" && (
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        { "@type": "Question", name: "What private banking opportunities exist in Zurich?", acceptedAnswer: { "@type": "Answer", text: "Zurich is home to UBS, Julius Baer, Vontobel, ZKB and numerous boutique private banks. Senior RM roles focus on DACH onshore clients, international UHNW and cross-border mandates. Executive Partners places senior bankers across Zurich's leading platforms." } },
+        { "@type": "Question", name: "What is the average salary for a private banker in Zurich?", acceptedAnswer: { "@type": "Answer", text: "Senior Relationship Managers in Zurich earn CHF 180,000–380,000+ in total compensation. DACH-focused onshore roles typically offer strong base salaries with moderate bonuses, while international UHNW mandates offer higher variable components." } },
+        { "@type": "Question", name: "How does executive search work for private banking in Zurich?", acceptedAnswer: { "@type": "Answer", text: "Most senior private banking roles in Zurich are filled confidentially. Executive Partners specialises in placing Senior RMs, Team Heads and DACH-focused bankers at UBS, Julius Baer, ZKB and leading Swiss platforms." } },
+        { "@type": "Question", name: "What AUM is needed for a senior role in Zurich private banking?", acceptedAnswer: { "@type": "Answer", text: "Senior RM roles in Zurich typically require CHF 50–150M in portable AUM depending on the bank and market focus. DACH onshore roles may accept lower AUM thresholds than international mandates." } },
+      ]
+    }) }} />
+  )}
+  {slug === "dubai" && (
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        { "@type": "Question", name: "What private banking jobs are available in Dubai DIFC?", acceptedAnswer: { "@type": "Answer", text: "Dubai DIFC hosts over 60 licensed wealth managers and private banks. Senior RM roles focus on GCC, NRI, MENA and expat wealth. Executive Partners places Senior RMs and Team Heads across DIFC and ADGM platforms." } },
+        { "@type": "Question", name: "What is the average salary for a private banker in Dubai?", acceptedAnswer: { "@type": "Answer", text: "Senior Relationship Managers in Dubai DIFC earn USD 150,000–350,000+ tax-free in total compensation. GCC and NRI-focused roles command premium packages given the competitive market for experienced bankers with portable books." } },
+        { "@type": "Question", name: "Do I need a DFSA licence to work as a private banker in Dubai?", acceptedAnswer: { "@type": "Answer", text: "Most senior client-facing roles in DIFC require DFSA licensing or the ability to obtain it. Executive Partners advises candidates on licensing requirements as part of the confidential placement process." } },
+        { "@type": "Question", name: "How much AUM do I need to move to a private banking role in Dubai?", acceptedAnswer: { "@type": "Answer", text: "Senior RM roles in Dubai typically require USD 50–200M in portable AUM depending on market focus. GCC family office mandates often require larger books. Use our Portability Score to assess your profile for Dubai opportunities." } },
+      ]
+    }) }} />
+  )}
+
       {/* ================= HERO ================= */}
       <section className="relative h-[52vh] min-h-[380px] w-full overflow-hidden">
         <div
