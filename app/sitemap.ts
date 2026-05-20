@@ -89,6 +89,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/en/portability",
     "/en/bp-simulator",
     "/de/headhunter-genf",
+    "/en/faq",
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((p) => ({
