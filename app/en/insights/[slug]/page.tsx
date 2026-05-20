@@ -134,6 +134,11 @@ export function generateMetadata({ params }: Props): Metadata {
       images: [`${SITE}/og.webp`],
     },
     robots: { index: true, follow: true },
+    other: {
+      "article:published_time": article.date,
+      "article:author": "Gil M. Chalem",
+      "author": "Gil M. Chalem",
+    },
   };
 }
 
