@@ -16,12 +16,12 @@ const PAGE_URL = `${SITE}/private-banking-recruiter-switzerland`;
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter Switzerland – Executive Partners",
+    absolute: "Executive Search Switzerland | Private Banking Recruiter – Executive Partners",
   },
   description:
-    "Switzerland's specialist recruiter for private banking and wealth management. Senior placements across Geneva and Zurich, with mandates in Dubai, Singapore, London and Hong Kong. 200+ completed placements, 98% retention rate.",
+    "Switzerland's leading executive search firm for private banking. Senior Relationship Managers, Team Heads and UHNW bankers placed across Geneva, Zurich, Dubai, Singapore and London. 200+ placements. Confidential.",
   alternates: {
-    canonical: "/private-banking-recruiter-switzerland",
+    canonical: "https://www.execpartners.ch/private-banking-recruiter-switzerland",
   },
   openGraph: {
     type: "website",

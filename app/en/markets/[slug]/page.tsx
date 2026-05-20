@@ -25,6 +25,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  if (slug === "milan") {
+    return {
+      title: "Wealth Management Milan | Private Banking Recruiter Italy – Executive Partners",
+      description: "Specialist executive search for wealth management and private banking in Milan. Senior Relationship Managers and Team Heads serving Italian UHNW entrepreneurs and family offices. Confidential. Senior-level only.",
+      alternates: { canonical: "https://www.execpartners.ch/en/markets/milan" },
+      openGraph: { type: "article", url: "https://www.execpartners.ch/en/markets/milan", title: "Wealth Management Milan | Private Banking Recruiter – Executive Partners", description: "Milan private banking recruitment: Italian UHNW, entrepreneur wealth and cross-border solutions. Senior RM and Team Head mandates at leading Italian and Swiss platforms.", siteName: "Executive Partners" },
+      robots: { index: true, follow: true },
+    };
+  }
+
   if (slug === "dubai") {
     return {
       title: "Private Banking Recruiter Dubai DIFC | Senior RM & GCC Wealth Management Search | Executive Partners",
