@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description:
     "Executive search boutique for senior Private Banking & Wealth Management hires in London. UK onshore, Non-Dom, International and Family Office coverage.",
   alternates: {
-    canonical: "/private-banking-recruiter-london",
+    canonical: "https://www.execpartners.ch/private-banking-recruiter-london",
   },
   openGraph: {
     type: "article",

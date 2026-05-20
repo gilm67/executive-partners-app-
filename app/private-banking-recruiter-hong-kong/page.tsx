@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   description:
     "Executive search boutique for senior Private Banking & Wealth Management hires in Hong Kong. Greater China, North Asia and regional UHNW desks.",
   alternates: {
-    canonical: "/private-banking-recruiter-hong-kong",
+    canonical: "https://www.execpartners.ch/private-banking-recruiter-hong-kong",
   },
   openGraph: {
     type: "article",

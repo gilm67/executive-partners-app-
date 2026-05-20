@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     "Fact-checked 2026 benchmarks for Private Banking careers across Geneva, Zurich, London, New York, Miami, Singapore, Hong Kong, Dubai and other key hubs. Download the PDF guide prepared by Executive Partners.",
   alternates: {
-    canonical: "/insights/private-banking-career-intelligence",
+    canonical: "https://www.execpartners.ch/insights/private-banking-career-intelligence",
   },
   openGraph: {
     type: "article",

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description:
     "Executive search boutique focused on senior Private Banking & Wealth Management hires in New York and key US booking centres. Senior RMs, Desk Heads and Market Leaders with documented UHNW/HNW books.",
   alternates: {
-    canonical: "/private-banking-recruiter-new-york",
+    canonical: "https://www.execpartners.ch/private-banking-recruiter-new-york",
   },
   openGraph: {
     type: "article",

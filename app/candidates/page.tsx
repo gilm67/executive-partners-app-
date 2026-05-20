@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   description:
     "Confidential executive search support for Senior Private Bankers, Relationship Managers and Team Heads. Benchmark compensation, assess portability and submit your CV securely across global wealth hubs.",
-  alternates: { canonical: "/candidates" },
+  alternates: { canonical: "https://www.execpartners.ch/candidates" },
   openGraph: {
     title:
       "Private Banking & Wealth Management Career Moves — Candidates | Executive Partners",

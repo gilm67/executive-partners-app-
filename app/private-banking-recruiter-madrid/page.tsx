@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description:
     "Executive search boutique focused on senior Private Banking & Wealth Management hires in Madrid and Iberian markets. Senior RMs and Desk Heads serving Spanish UHNW/HNW and LatAm-linked flows.",
   alternates: {
-    canonical: "/private-banking-recruiter-madrid",
+    canonical: "https://www.execpartners.ch/private-banking-recruiter-madrid",
   },
   openGraph: {
     type: "article",

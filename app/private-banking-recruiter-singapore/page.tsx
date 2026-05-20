@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description:
     "Executive search boutique focused on senior Private Banking & Wealth Management hires in Paris and major French / EU hubs. Senior RMs, Desk Heads and Market Leaders with UHNW/HNW domestic and cross-border books.",
   alternates: {
-    canonical: "/private-banking-recruiter-paris",
+    canonical: "https://www.execpartners.ch/private-banking-recruiter-singapore",
   },
   openGraph: {
     type: "article",

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     "Private Wealth Pulse — market pulse and hiring insights across Switzerland and global wealth hubs.",
   alternates: {
-    canonical: "/en/insights",
+    canonical: "https://www.execpartners.ch/en/insights",
   },
   robots: {
     index: true,

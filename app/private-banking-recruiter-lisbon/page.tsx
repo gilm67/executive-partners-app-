@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description:
     "Executive search boutique focused on senior Private Banking & Wealth Management hires in Lisbon and the wider Portuguese market. Senior RMs serving international residents, returning expatriates and entrepreneurs.",
   alternates: {
-    canonical: "/private-banking-recruiter-lisbon",
+    canonical: "https://www.execpartners.ch/private-banking-recruiter-lisbon",
   },
   openGraph: {
     type: "article",

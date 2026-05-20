@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     "Executive search boutique focused on senior Private Banking & Wealth Management hires in Dubai and the wider GCC. Senior RMs, Team Heads and Market Leaders with portable UHNW/HNW books.",
   alternates: {
-    canonical: "/private-banking-recruiter-dubai",
+    canonical: "https://www.execpartners.ch/private-banking-recruiter-dubai",
   },
   openGraph: {
     type: "article",

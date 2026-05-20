@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description:
     "Executive search boutique focused on senior Private Banking & Wealth Management hires in Miami and key LatAm-linked booking centres. Senior Private Bankers, Desk Heads and Market Leaders with documented UHNW/HNW books.",
   alternates: {
-    canonical: "/private-banking-recruiter-miami",
+    canonical: "https://www.execpartners.ch/private-banking-recruiter-miami",
   },
   openGraph: {
     type: "article",
