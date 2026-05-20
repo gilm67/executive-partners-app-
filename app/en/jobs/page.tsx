@@ -12,9 +12,9 @@ const SITE =
 
 /* ── SEO metadata ── */
 export const metadata: Metadata = {
-  title: "Private Banking Jobs | Executive Partners Geneva",
+  title: "Private Bank Jobs Switzerland | Executive Partners Geneva",
   description:
-    "Active private banking mandates across Geneva, Zurich, Milan, Dubai, Singapore and Hong Kong. Senior Relationship Managers, Investment Advisors and Assistant RMs. Confidential executive search.",
+    "Browse active private banking jobs across Geneva, Zurich, Dubai, Singapore and Hong Kong. Senior Relationship Managers, Team Heads and Investment Advisors. Confidential. Apply in 90 seconds.",
   openGraph: {
     title: "Private Banking Jobs | Executive Partners",
     description:

@@ -18,12 +18,12 @@ const PAGE_URL = `${SITE}/private-banking-recruiter-zurich`;
 /* ---------- metadata ---------- */
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter in Zurich – Executive Partners",
+    absolute: "Private Banking Zurich | Executive Search & Recruiter – Executive Partners",
   },
   description:
-    "Executive search for senior Private Bankers, Relationship Managers and Team Heads in Zurich. Compensation benchmarks, portability assessment and confidential career guidance.",
+    "Specialist executive search for private banking in Zurich. Senior Relationship Managers, Team Heads and DACH bankers placed at UBS, Julius Baer, ZKB and leading Swiss platforms. Confidential. Senior-level only.",
   alternates: {
-    canonical: "/private-banking-recruiter-zurich",
+    canonical: "https://www.execpartners.ch/private-banking-recruiter-zurich",
   },
   openGraph: {
     type: "website",
