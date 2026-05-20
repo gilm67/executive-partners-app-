@@ -9,12 +9,12 @@ const PAGE_URL = `${SITE}/private-banking-recruiter-geneva`;
 /* ------------ metadata ------------ */
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter in Geneva – Executive Partners",
+    absolute: "Executive Search Geneva | Private Banking Recruiter – Executive Partners",
   },
   description:
-    "Executive search for senior Private Bankers, Relationship Managers and Team Heads in Geneva. Compensation benchmarks, portability assessment and confidential career guidance.",
+    "Geneva's specialist executive search firm for private banking. Senior Relationship Managers, Team Heads and UHNW bankers placed across Geneva, Zurich and global wealth hubs. Confidential. Senior-level only.",
   alternates: {
-    canonical: "/private-banking-recruiter-geneva",
+    canonical: "https://www.execpartners.ch/private-banking-recruiter-geneva",
   },
   openGraph: {
     type: "website",
