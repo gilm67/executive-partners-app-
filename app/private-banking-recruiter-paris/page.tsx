@@ -18,12 +18,12 @@ const PAGE_URL = `${SITE}/private-banking-recruiter-paris`;
 /* ---------- metadata ---------- */
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter in Paris – Executive Partners",
+    absolute: "Private Banking Paris | Executive Search & Recruiter – Executive Partners",
   },
   description:
-    "Executive search boutique focused on senior Private Banking & Wealth Management hires in Paris and major French / EU hubs. Senior RMs, Desk Heads and Market Leaders with UHNW/HNW domestic and cross-border books.",
+    "Specialist executive search for private banking in Paris. Senior Relationship Managers, Desk Heads and Team Leads with French UHNW and cross-border EU books. Confidential. Senior-level only.",
   alternates: {
-    canonical: "/private-banking-recruiter-paris",
+    canonical: "https://www.execpartners.ch/private-banking-recruiter-paris",
   },
   openGraph: {
     type: "article",
