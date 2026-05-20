@@ -45,15 +45,15 @@
     "gray-matter": "^4.0.3",
     "html2canvas": "^1.4.1",
     "js-file-download": "^0.4.12",
-    "jspdf": "^3.0.3",
+    "jspdf": "^4.2.1",
     "lucide-react": "^0.539.0",
     "luxon": "^3.7.1",
     "mammoth": "^1.10.0",
     "marked": "^17.0.3",
-    "next": "15.5.7",
+    "next": "^9.3.3",
     "next-intl": "^4.3.9",
     "next-mdx-remote": "^6.0.0",
-    "nodemailer": "^7.0.9",
+    "nodemailer": "^8.0.7",
     "openai": "^5.12.2",
     "papaparse": "^5.5.3",
     "pdf-lib": "^1.17.1",
@@ -99,7 +99,7 @@
     "ts-jest": "^29.4.3",
     "tsx": "^4.21.0",
     "typescript": "^5.0.0",
-    "vercel": "^39.3.0"
+    "vercel": "^54.2.0"
   },
   "eslintConfig": {
     "root": true,
