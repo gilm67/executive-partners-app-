@@ -48,10 +48,6 @@ export const metadata: Metadata = {
   // ✅ This is what Next uses to make og:image/twitter:image absolute
   metadataBase: new URL(CANONICAL_DOMAIN),
 
-  alternates: {
-    canonical: "/",
-  },
-
   title: {
     default: DEFAULT_TITLE,
     template: "%s | Executive Partners",
