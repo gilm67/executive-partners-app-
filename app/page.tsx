@@ -95,9 +95,9 @@ export default function HomePage() {
                 </div>
 
                 <h1 className="mt-4 font-[var(--font-playfair)] text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl">
-                  Your next move in{" "}
-                  <span className="gold">private banking</span>{" "}
-                  starts here.
+                  Private Banking Recruiter{" "}
+                  <span className="gold">Geneva & Switzerland</span>{" "}
+                  — Senior RM & Team Head Search.
                 </h1>
 
                 <p className="mt-4 text-white/90">
