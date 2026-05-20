@@ -13,7 +13,7 @@ const OG_IMAGE = "/og.webp";
 export const metadata: Metadata = {
   title: "Private Banking Recruiter Switzerland | Executive Partners Geneva",
   description:
-    "Leading executive search firm specializing in senior private banking roles across Geneva, Zurich, London, Dubai, Singapore. 200+ placements, 98% retention rate.",
+    "Geneva's leading executive recruiters for private banking and wealth management. Senior Relationship Managers, Team Heads and UHNW bankers placed across Switzerland, London, Dubai, Singapore and Hong Kong. 200+ placements.",
 
   openGraph: {
     title: "Private Banking Recruiter Switzerland | Executive Partners",
