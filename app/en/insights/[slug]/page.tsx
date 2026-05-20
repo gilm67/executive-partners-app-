@@ -125,13 +125,13 @@ export function generateMetadata({ params }: Props): Metadata {
       siteName: "Executive Partners",
       title,
       description,
-      images: [{ url: `${SITE}/og.webp` }],
+      images: [{ url: article.ogImage ? `${SITE}${article.ogImage}` : `${SITE}/og.webp` }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [`${SITE}/og.webp`],
+      images: [article.ogImage ? `${SITE}${article.ogImage}` : `${SITE}/og.webp`],
     },
     robots: { index: true, follow: true },
     other: {

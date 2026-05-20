@@ -57,6 +57,7 @@ export type InsightArticle = {
   pillar?: PillarCode;
   subTheme?: InsightSubTheme;
   keywords?: readonly string[];
+  ogImage?: string;
 };
 
 /**
@@ -65,6 +66,7 @@ export type InsightArticle = {
 export const INSIGHTS: readonly InsightArticle[] = [
   {
     slug: "the-emotional-strategist",
+    ogImage: "/og-articles/og-the-emotional-strategist.jpg",
     title: "The Emotional Strategist",
     date: "2026-05-18",
     summary: "When AI handles the analysis, the relationship manager is left with the only thing that ever actually mattered. The conversation the machine cannot have.",
@@ -111,6 +113,7 @@ Gil M. Chalem, Managing Partner, Executive Partners`,
 
   {
     slug: "the-last-wave",
+    ogImage: "/og-articles/og-the-last-wave.jpg",
     title: "The Last Wave",
     date: "2026-05-12",
     summary: "UBS has declared the Credit Suisse integration a success. For the private bankers still inside as H2 2026 begins, the most consequential chapter is the one starting now.",
@@ -253,6 +256,7 @@ In private banking, the people who own the banks are not the people who own the 
   },
   {
     slug: "wall-street-7000-pump-5",
+    ogImage: "/og-articles/og-wall-street-7000-pump-5.jpg",
     title: "When Wall Street Hits 7,000 and the Pump Hits $5",
     date: "2026-05-04",
     markets: ["CH", "UK", "US", "UAE", "ASIA"],
@@ -315,6 +319,7 @@ The S&P at 7,000 is the loudest financial narrative in the world right now. The 
   },
   {
     slug: "americans-already-here",
+    ogImage: "/og-articles/og-americans-already-here.jpg",
     title: "The Americans Are Already Here",
     date: "2026-04-28",
     markets: ["CH", "UK", "US", "UAE", "ASIA"],
@@ -370,6 +375,7 @@ The headlines will keep being about UBS. That is understandable. UBS is the larg
 
   {
     slug: "smoke-difc-dubai-private-banking-2026",
+    ogImage: "/og-articles/og-smoke-difc-dubai-private-banking-2026.jpg",
     title: "Smoke Over the DIFC",
     date: "2026-04-27",
     summary: "Eight weeks in. A ceasefire that held for less than eight hours. And 537 intercepted ballistic missiles later — here is what we actually know about Dubai's future as a private banking hub.",
@@ -431,6 +437,7 @@ The smoke over the DIFC will clear. The question is whether the capital and the 
   },
   {
     slug: "bern-holds-line-ubs-swiss-capital-rules",
+    ogImage: "/og-articles/og-bern-holds-line-ubs-swiss-capital-rules.jpg",
     title: "Bern Holds the Line",
     date: "2026-04-23",
     summary: "Inside yesterday's UBS capital rules verdict, and what every senior private banker watching from the inside should already be doing about it.",
@@ -729,6 +736,7 @@ The talent market in Zurich is not tightening. It is turning. The direction of t
   },
   {
     slug: "ai-trap-private-banking-portability",
+    ogImage: "/og-articles/og-ai-trap-private-banking-portability.jpg",
     title: "The AI Trap Nobody in Private Banking Is Talking About",
     date: "2026-04-07",
     markets: ["CH", "UK", "US", "UAE", "ASIA"],
@@ -800,6 +808,7 @@ The technology is not going away. The productivity gains are real. The competiti
 
   {
     slug: "when-goliath-moves-bahnhofstrasse",
+    ogImage: "/og-articles/og-when-goliath-moves-bahnhofstrasse.jpg",
     body: `Last November, something happened at the Zunfthaus zur Meisen in [Zurich](/en/markets/zurich) that would have been unthinkable five years ago. At the annual Wealth Management Summit the Swiss private banking industry's most intimate gathering of board members and C-level executives, Goldman Sachs was crowned the best private bank in Switzerland. Not the best American bank operating in Switzerland. The best private bank. Period. Beating Julius Baer. Beating Pictet. Beating Lombard Odier. On their own turf, measured by their own metrics.
 
 The Fin21 study, now in its fourth edition and based on the published financials of 69 Swiss banks, evaluated performance across four criteria: growth, capital strength, efficiency, and prosperity. Goldman Sachs swept the Strongest Growing category among large banks. Its newly appointed General Manager for Switzerland, Pascal Meinherz, reminded the room that out of the firm's $1.8 trillion in wealth management assets, a significant portion is invested in private markets exactly the kind of product that UHNW clients now demand and that most Swiss boutiques still struggle to deliver at scale.
@@ -884,6 +893,7 @@ The talent war in Swiss private banking has never been more interesting. And if 
   },
   {
     slug: "35000-jobs-one-question-nobody-asking",
+    ogImage: "/og-articles/og-35000-jobs-one-question-nobody-asking.jpg",
     body: `The numbers have been reported enough times that they no longer feel extraordinary. UBS absorbed Credit Suisse in March 2023, in an emergency transaction brokered by the Swiss federal government over a single weekend. Overnight, the combined institution swelled to just under 120,000 employees. It became, by some distance, the world's largest wealth manager, a $7 trillion AUM colossus that now counts roughly half of the world's billionaires among its private banking clients.
 
 Three years on, the integration is entering its final phase. The legacy Credit Suisse IT systems are being decommissioned. Around 85% of Swiss client accounts have been migrated. CEO Sergio Ermotti confirmed in January that a fresh round of layoffs would begin as soon as the decommissioning is complete.
@@ -952,6 +962,7 @@ Survival was the right answer in 2023. In 2026, the right answer is something mo
   },
   {
     slug: "when-safe-haven-isnt-safe-anymore",
+    ogImage: "/og-articles/og-when-safe-haven-isnt-safe-anymore.jpg",
     body: `There is a sentence that has circulated quietly in wealth management circles for the past twenty years. Dubai is different. It was the answer to every question about regional instability, every concern about proximity to conflict, every client who asked whether it was really wise to base oneself or one's assets in the middle of the Gulf. Dubai is different because it had transformed itself into something that the surrounding geography could not touch: a city built on the confidence of foreigners, running on their capital, their talent and their willingness to believe that the rules of the neighbourhood did not apply here.
 
 Since late February 2026, that sentence has become harder to say with a straight face.
@@ -1036,6 +1047,7 @@ It is always about trust.`,
   },
   {
     slug: "julius-baer-cut-jobs-strong-2024",
+    ogImage: "/og-articles/og-julius-baer-cut-jobs-strong-2024.jpg",
     body: `I had a conversation a few weeks ago with a senior relationship manager at Julius Baer. Good MEA banker. Solid UHNW book, CHF 650 million, with clients he had built over fourteen years. He was not worried. His AUM was up. His client retention was strong. The bank had just posted a 125% jump in net profit. He felt, reasonably enough, that he was on the right side of things.
 
 I did not tell him he was wrong. But I did tell him that the question he should be asking himself had nothing to do with his own performance.
@@ -1132,6 +1144,7 @@ It is a reminder that in this business, the question has never really been wheth
   },
   {
     slug: "why-senior-rms-going-independent",
+    ogImage: "/og-articles/og-why-senior-rms-going-independent.jpg",
     body: `Last month I had three separate conversations with senior private bankers who asked me some version of the same question. Not can you help me move to another bank. The question was different. It was: should I just go independent?
 
 One was at a major Swiss private bank navigating its third restructuring in four years. One had spent fifteen years at an institution he genuinely liked but was watching his client base age without any real platform to develop the next generation of relationships. The third had just lost a significant client to an independent wealth manager who, in his words, had no platform, no brand, and no research department and still won the mandate because the client trusted him personally.
@@ -1214,6 +1227,7 @@ The EAM model in Switzerland is robust, well-regulated, and genuinely competitiv
   },
   {
     slug: "ubs-integration-career-problem",
+    ogImage: "/og-articles/og-ubs-integration-career-problem.jpg",
     body: `Let me tell you about two phone calls I had last week.
 
 The first was from a senior RM at UBS in [Zurich](/en/markets/zurich). Twelve years in the business, CHF 800 million book, mostly UHNW clients inherited from the Credit Suisse side. He is watching colleagues get restructured out. He is watching the IT migration disrupt client relationships he spent years building. He wants to explore his options. Fair enough.
@@ -1290,6 +1304,7 @@ Stop leading with your AUM. Start leading with what makes you portable, producti
   },
   {
     slug: "storm-warning-tariffs-zero-rates-crypto",
+    ogImage: "/og-articles/og-storm-warning-tariffs-zero-rates-crypto.jpg",
     body: `I need to talk about what just happened. Because if you are a senior RM and you are not connecting the dots between what went down in late February and your own career, you are sleepwalking.
 
 In the space of ten days, three things hit at once.
@@ -1376,6 +1391,7 @@ I am in these hiring conversations every week across Geneva, Zurich, Dubai, Sing
   },
   {
     slug: "alternative-investment-tipping-point",
+    ogImage: "/og-articles/og-alternative-investment-tipping-point.jpg",
     body: `Here is something that should keep private bankers alert: individual investors hold roughly 50% of global capital, but only 16% of alternative investment assets. That 34-percentage-point gap represents the addressable market that the entire wealth management industry is now racing to capture.
 
 This is not just growth. It is a fundamental restructuring of who gets access to institutional-quality investments.
@@ -1476,6 +1492,7 @@ The question is not whether democratisation will reshape private wealth. It is w
   },
   {
     slug: "ubs-crossroads-succession-integration",
+    ogImage: "/og-articles/og-ubs-crossroads-succession-integration.jpg",
     body: `The most consequential leadership transition in global private banking is now underway. Sergio Ermotti, the man who was called back from Swiss Re to steer the emergency acquisition of Credit Suisse, has indicated he expects to step down as CEO of UBS by early 2027. In an interview with Swiss newspaper Tages-Anzeiger published in January 2026, Ermotti stated: I will complete the integration of Credit Suisse and remain CEO at least until the end of 2026 or spring 2027. The Financial Times subsequently reported that his departure is expected around April 2027, shortly after the bank's annual general meeting.
 
 What comes next will shape the trajectory of the world's largest wealth manager and with it, the careers and fortunes of thousands of private bankers across every major financial hub.
@@ -1741,6 +1758,7 @@ What strikes me most is not any single announcement. It is the velocity of chang
   },
   {
     slug: "2025-bonus-outlook-senior-rms",
+    ogImage: "/og-articles/og-2025-bonus-outlook-senior-rms.jpg",
     body: `In 2025, bonus expectations across private banking remain moderate but stable, with a clear trend toward rewarding measurable performance: [portable book](/en/portability)s, AUM retention, return on assets, and net new money. Regional variances reflect local dynamics, but the need for top talent with proven client loyalty is universal.
 
 ## Switzerland: multipliers in the 1.8x to 2.3x range
@@ -1781,6 +1799,7 @@ Your bonus will increasingly depend on AUM retention, NNM, ROA, and relationship
   },
   {
     slug: "ubs-vs-switzerland-24-billion-question",
+    ogImage: "/og-articles/og-ubs-vs-switzerland-24-billion-question.jpg",
     body: `On November 16, 2025, the Financial Times reported that UBS Chairman Colm Kelleher had held private discussions with US Treasury Secretary Scott Bessent about potentially relocating UBS's headquarters from [Zurich](/en/markets/zurich) to the United States.
 
 Within hours, UBS issued a formal statement reaffirming its commitment to Switzerland.
@@ -2434,6 +2453,7 @@ Right now, the smart money is on permanent. When Goldman vice chairmen start rel
   // =========================
   {
     slug: "investment-advisor-replacing-rm",
+    ogImage: "/og-articles/og-investment-advisor-replacing-rm.jpg",
     title: "The Investment Advisor Replacing the Relationship Manager",
     date: "2025-10-01",
     markets: ["CH", "UK", "UAE", "ASIA"],
@@ -2483,6 +2503,7 @@ In the next five years, only one thing will matter: who controls the portfolio. 
 
   {
     slug: "family-office-revolution",
+    ogImage: "/og-articles/og-family-office-revolution.jpg",
     body: `The family office sector is undergoing a transformation unlike anything seen in decades. What was once a privileged structure reserved for the ultra-wealthy few is rapidly evolving into a sophisticated ecosystem that is reshaping global wealth management.
 
 ## The explosive growth trajectory
@@ -2527,6 +2548,7 @@ The winners will be those who embrace technology as a core competency, build gen
   },
   {
     slug: "ubs-unbeatable",
+    ogImage: "/og-articles/og-ubs-unbeatable.jpg",
     body: `At first glance, the numbers look decisive. UBS manages USD 3.85 trillion in global wealth management assets. It absorbed Credit Suisse's remaining private banking operations. It has more relationship managers, more booking centers, more product capabilities, and more balance sheet than any competitor by a significant margin. The conclusion most observers draw: UBS is unbeatable. I think that conclusion is wrong.
 
 ## What dominance actually looks like
@@ -2574,6 +2596,7 @@ The most experienced, most portable private banking talent is not uniformly goin
   // =========================
   {
     slug: "from-zurich-hong-kong-navigating-wealth-multipolar-world",
+    ogImage: "/og-articles/og-from-zurich-hong-kong-navigating-wealth-multipolar-world.jpg",
     body: `The geography of global private wealth has fundamentally shifted. Where once [Geneva](/en/markets/geneva) and [Zurich](/en/markets/zurich) served as the unquestioned nerve centers of international wealth management, the world's rich are now spreading their assets, their residencies, and their banking relationships across multiple jurisdictions simultaneously. For the private banking professional navigating this shift, the change is not merely operational. It is existential.
 
 ## The redistribution is real and accelerating
