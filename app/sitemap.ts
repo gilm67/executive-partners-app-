@@ -88,6 +88,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/en/private-banker-jobs",
     "/en/portability",
     "/en/bp-simulator",
+    "/de/headhunter-genf",
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((p) => ({
