@@ -95,9 +95,9 @@ export default function HomePage() {
                 </div>
 
                 <h1 className="mt-4 font-[var(--font-playfair)] text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl">
-                  Private Banking Recruiter{" "}
-                  <span className="gold">Geneva & Switzerland</span>{" "}
-                  — Senior RM & Team Head Search.
+                  Private Banking Executive Search{" "}
+                  <span className="gold">& Headhunter</span>{" "}
+                  — Senior RMs & Team Heads Worldwide.
                 </h1>
 
                 <p className="mt-4 text-white/90">
