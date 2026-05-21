@@ -11,7 +11,7 @@ const HERO = "/hero-skyline-hq.webp";
 const OG_IMAGE = "/og.webp";
 
 export const metadata: Metadata = {
-  title: "Private Banking Recruiter Switzerland | Executive Partners Geneva",
+  title: "Private Banking Executive Search & Headhunter Switzerland | Executive Partners Geneva",
   description:
     "Geneva's leading executive recruiters for private banking and wealth management. Senior Relationship Managers, Team Heads and UHNW bankers placed across Switzerland, London, Dubai, Singapore and Hong Kong. 200+ placements.",
 
