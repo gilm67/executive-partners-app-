@@ -96,7 +96,7 @@ export default function HomePage() {
                 </h1>
 
                 {/* Subline */}
-                <p className="mt-5 text-base text-white/60 leading-relaxed max-w-lg mx-auto">
+                <p className="mt-5 text-base text-white/80 leading-relaxed max-w-lg mx-auto drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
                   Senior Relationship Managers, Team Heads and Investment Advisors placed across the world&apos;s leading private banking hubs.
                 </p>
 
@@ -116,28 +116,6 @@ export default function HomePage() {
                   </Link>
                 </div>
 
-                {/* Social proof strip */}
-                <div className="mt-10 flex flex-wrap items-center justify-center gap-6 border-t border-white/10 pt-8">
-                  <div className="text-center">
-                    <div className="text-2xl font-semibold text-white">200+</div>
-                    <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/40">Placements</div>
-                  </div>
-                  <div className="h-8 w-px bg-white/10" />
-                  <div className="text-center">
-                    <div className="text-2xl font-semibold text-white">98%</div>
-                    <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/40">Retention Rate</div>
-                  </div>
-                  <div className="h-8 w-px bg-white/10" />
-                  <div className="text-center">
-                    <div className="text-2xl font-semibold text-white">7</div>
-                    <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/40">Global Hubs</div>
-                  </div>
-                  <div className="h-8 w-px bg-white/10" />
-                  <div className="text-center">
-                    <div className="text-2xl font-semibold text-white">15y</div>
-                    <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/40">Experience</div>
-                  </div>
-                </div>
 
               </div>
             </div>
