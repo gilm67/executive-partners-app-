@@ -80,7 +80,7 @@ export default function HomePage() {
               className="pointer-events-none absolute inset-0 [box-shadow:inset_0_120px_180px_-120px_rgba(0,0,0,0.70)]"
             />
 
-            <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4">
+            <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4 -mt-12">
               <div className="max-w-3xl text-center">
 
                 {/* Eyebrow */}
@@ -96,7 +96,7 @@ export default function HomePage() {
                 </h1>
 
                 {/* Subline */}
-                <p className="mt-5 text-base text-white/80 leading-relaxed max-w-lg mx-auto drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                <p className="mt-5 text-base text-white/90 leading-relaxed max-w-lg mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
                   Senior Relationship Managers, Team Heads and Investment Advisors placed across the world&apos;s leading private banking hubs.
                 </p>
 
@@ -110,7 +110,7 @@ export default function HomePage() {
                   </Link>
                   <Link
                     href="/en/jobs"
-                    className="inline-flex items-center rounded-full border border-[#C9A14A]/40 px-7 py-3 text-sm font-semibold text-[#C9A14A] hover:bg-[#C9A14A]/10 transition-colors"
+                    className="inline-flex items-center rounded-full border border-[#D4AF37]/70 px-7 py-3 text-sm font-semibold text-[#D4AF37] hover:bg-[#D4AF37]/15 transition-colors drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]"
                   >
                     Browse Mandates →
                   </Link>
@@ -120,8 +120,23 @@ export default function HomePage() {
               </div>
             </div>
 
+            {/* Markets ticker — bottom of hero */}
+            <div className="absolute bottom-0 left-0 right-0 border-t border-white/8 bg-black/30 backdrop-blur-sm py-3">
+              <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-4">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#C9A14A]/70 mr-3">Active markets</span>
+                {["Geneva","Zurich","London","Dubai","Singapore","Hong Kong","Milan"].map((city, i) => (
+                  <span key={city} className="flex items-center gap-2">
+                    {i > 0 && <span className="text-white/20">·</span>}
+                    <span className="text-[12px] text-white/50">{city}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
             <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/5" />
           </div>
+
+          {/* Gold divider */}
+          <div className="h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
 
           {/* FREE TOOLS SECTION */}
           <div className="relative mx-auto mt-8 max-w-6xl px-4 pb-8 sm:mt-12">
