@@ -388,7 +388,7 @@ export default function HomeClient() {
         />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-transparent" />
 
-        <div className="mx-auto max-w-4xl px-4 py-24 sm:py-28 text-center">
+        <div className="mx-auto max-w-4xl px-4 py-24 sm:py-28 text-center hidden sm:block">
           <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/70 mb-5">
             Next step
           </p>
