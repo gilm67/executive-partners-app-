@@ -18,7 +18,7 @@ export default function HomepageHero() {
         <Image
           src="/hero-skyline-hq.jpg"
           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 1920px"
-          alt=""
+          alt="Private banking executive search Geneva — Executive Partners"
           fill
           priority
           className="object-cover object-center opacity-55"

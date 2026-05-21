@@ -88,7 +88,7 @@ export default function HomeClient() {
       <div className="pointer-events-none absolute inset-0">
         <Image
           src={imageSrc}
-          alt=""
+          alt="Executive Partners private banking Geneva skyline"
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover opacity-[0.55] scale-[1.04] transition duration-700 group-hover:scale-[1.08] group-hover:opacity-[0.65]"
