@@ -55,7 +55,7 @@ export default function Footer() {
         <div className="md:hidden">
 
           {/* Logo + tagline */}
-          <div className="pt-10 pb-8 flex flex-col items-center text-center border-b border-white/[0.06]">
+          <div className="pt-8 pb-6 flex flex-col items-center text-center border-b border-white/[0.06]">
             <Image
               src="/transparent-ep-logo.png"
               alt="Executive Partners"
@@ -71,7 +71,7 @@ export default function Footer() {
           </div>
 
           {/* CTA block — dark with gold border */}
-          <div className="py-6 border-b border-white/[0.06]">
+          <div className="py-5 border-b border-white/[0.06]">
             <Link href="https://calendly.com/execpartners/15-minute-career-consultation"
               target="_blank" rel="noopener noreferrer"
               className="flex flex-col items-center text-center w-full rounded-2xl px-6 py-6 gap-4 transition-all active:scale-[0.99]"
@@ -89,7 +89,7 @@ export default function Footer() {
           {/* Hub pills */}
           <div className="py-5 border-b border-white/[0.06]">
             <div className="text-[10px] font-semibold uppercase tracking-[0.12em] mb-3 text-center" style={{color:"rgba(201,161,74,.6)"}}>Our Hubs</div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 justify-center">
               {HUBS.map((h) => (
                 <span key={h.city}
                   className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium text-white/70"
@@ -101,14 +101,14 @@ export default function Footer() {
           </div>
 
           {/* Nav 2-col */}
-          <div className="py-6 grid grid-cols-2 gap-x-8 gap-y-7 border-b border-white/[0.06]">
+          <div className="py-6 grid grid-cols-3 gap-x-4 gap-y-6 border-b border-white/[0.06]">
             {NAV.map((col) => (
               <div key={col.label}>
                 <div className="mb-3.5 text-[10px] font-semibold uppercase tracking-[0.14em]" style={{color:"rgba(201,161,74,.8)"}}>{col.label}</div>
                 <ul className="space-y-3">
                   {col.links.map((link) => (
                     <li key={link.href}>
-                      <Link href={link.href} className="text-sm font-medium text-white/65 hover:text-white/95 visited:text-white/65 transition-colors">{link.text}</Link>
+                      <Link href={link.href} className="text-[13px] font-medium text-white/65 hover:text-white/90 transition-colors" style={{textDecoration:"none"}}>{link.text}</Link>
                     </li>
                   ))}
                 </ul>
@@ -118,9 +118,9 @@ export default function Footer() {
 
           {/* Bottom bar */}
           <div className="py-5 flex flex-col gap-2">
-            <div className="text-[11px] text-white/30">© {new Date().getFullYear()} Executive Partners. All rights reserved.</div>
+            <div className="text-[12px] text-white/40">© {new Date().getFullYear()} Executive Partners. All rights reserved.</div>
             <div className="flex items-center gap-3 text-[11px]">
-              <Link href="/en/privacy" className="text-white/35 hover:text-white/65 visited:text-white/35 transition-colors">GDPR Compliant</Link>
+              <Link href="/en/privacy" className="text-white/40 hover:text-white/70 transition-colors">GDPR Compliant</Link>
               <span className="w-px h-3 bg-white/15" />
               <span className="text-white/30">Confidentiality Guaranteed</span>
             </div>
