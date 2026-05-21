@@ -99,8 +99,8 @@ export default function HomePage() {
                 </div>
 
                 {/* Eyebrow */}
-                <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#C9A14A]">
-                  Private Banking · Executive Search · Since 2010
+                <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+                  Private Banking · Executive Search · Geneva
                 </p>
 
                 {/* H1 */}
