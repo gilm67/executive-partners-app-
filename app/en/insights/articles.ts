@@ -65,6 +65,98 @@ export type InsightArticle = {
  */
 export const INSIGHTS: readonly InsightArticle[] = [
   {
+    slug: "how-to-calculate-aum-portability",
+    title: "How to Calculate Your AUM Portability: The Framework Private Banks Don't Share With You",
+    date: "2026-05-21",
+    summary: "Most business plans in private banking are built backwards. This is the six-block framework that reveals what will actually move — and what won't.",
+    pillar: "P2",
+    linkedinUrl: "",
+    markets: ["CH", "UK", "UAE", "ASIA"],
+    featured: true,
+    keywords: ["AUM portability", "private banker business plan", "relationship manager lateral move", "how to calculate AUM portability", "RM break-even timeline", "portable book private banking"],
+    body: `How to Calculate Your AUM Portability: The Framework Private Banks Don't Share With You
+
+There is a conversation that happens in every serious lateral move in private banking, and it almost never happens honestly. A relationship manager sits across from a hiring committee, states a number: CHF 400 million, CHF 600 million, sometimes more. The room nods. Nobody challenges it directly. Nobody asks the questions that would actually reveal whether those assets will follow. And then twelve months later, when the ramp is tracking at thirty percent of the business plan, everyone acts surprised.
+
+The number is not the problem. The framework behind the number is.
+
+After more than two decades placing senior relationship managers across [Geneva](/en/markets/geneva), [Zurich](/en/markets/zurich), [London](/en/markets/london), [Dubai](/en/markets/dubai), [Singapore](/en/markets/singapore), and Hong Kong, I have seen the same pattern repeat itself with remarkable consistency. Banks underwrite portability on optimistic assumptions. RMs overstate what will move because they believe their own narrative. And the gap between what was promised and what arrives becomes the defining fact of a relationship that was supposed to be transformative.
+
+This article is an attempt to give relationship managers, and the institutions considering them, a more honest framework for thinking about portability before anyone sits down at a negotiating table.
+
+## Why the Standard Business Plan Fails
+
+The conventional business plan in private banking is structured backwards. It starts with a target. Usually whatever number the hiring bank needs to justify the package. Then it works down to a justification. AUM is stated. A transfer percentage is applied. A revenue figure is projected. The document is formatted, the assumptions are buried, and the deal gets done.
+
+The problem is that portability is not a percentage. It is an outcome shaped by at least six distinct variables, each of which can independently collapse the number. Treating it as a single figure. Seventy percent of CHF 500 million. That is not analysis. It is a rounding error dressed up as a forecast.
+
+The framework that Executive Partners uses to assess portability breaks the question into six blocks. Each block addresses a different dimension of the risk. Together, they produce a score that reflects not just what an RM claims to manage, but what they can credibly expect to move, and when.
+
+## Block One: AUM Composition and Wallet Share
+
+The first question is not how much the RM manages. It is how much of each client's total wealth they manage.
+
+An RM with CHF 400 million in AUM and an average wallet share of sixty percent has a very different portability profile from one with CHF 400 million and an average wallet share of fifteen percent. In the first case, the RM is the primary banking relationship. The client's financial life runs through them. In the second, they are one of several institutions the client uses, and the relationship is transactional rather than structural.
+
+Wallet share is the single most predictive variable in portability analysis, and it is almost never disclosed in a standard business plan. When assessing your own book, the honest question is not what you manage, but what proportion of each client's investable assets sits with your current institution. For most RMs, the answer is lower than they think.
+
+The second dimension within this block is concentration. A book of CHF 400 million spread across eighty clients transfers very differently from the same AUM concentrated in twelve relationships. Concentration creates fragility. The loss of two or three anchor clients can destroy the business case entirely. But it also means that securing those relationships before departure is both possible and decisive.
+
+## Block Two: Revenue Quality
+
+AUM is a stock. Revenue is a flow. And it is the flow that banks actually underwrite.
+
+A relationship manager with a high-AUM, low-revenue book, typical of clients who hold predominantly cash, fiduciaries, or conservative fixed income, will generate a very different return on assets than one whose clients actively trade, hold structured products, or delegate discretionary mandates. The difference can be a factor of three or four on identical AUM figures.
+
+Revenue quality also determines how quickly a book becomes self-sustaining at a new institution. A discretionary book, once transferred, begins generating revenue almost immediately. A more transactional book requires the client to actively re-engage. To take positions, accept ideas, rebuild trust with a new product shelf. That process takes time before it contributes meaningfully to the P&L.
+
+When building an honest portability assessment, the starting point is your current revenue per AUM, sometimes called return on assets or ROA. The industry average in Swiss private banking sits between forty and sixty basis points on managed assets. Anything materially above or below that benchmark deserves explanation.
+
+## Block Three: Relationship Depth and Past Portability
+
+The most reliable predictor of whether clients will follow an RM is whether they have done it before.
+
+An RM who has made a previous lateral move and retained seventy percent of their book is demonstrating something that no business plan projection can replicate: revealed preference. Their clients chose them over the institution. That is the strongest signal available.
+
+Conversely, an RM who has never moved, or who joined their current bank as a graduate and built their book from within the institution's infrastructure, faces a genuinely unknown variable. The clients may have been introduced by the bank, may rely on the bank's brand for their own counterparty relationships, or may simply have no loyalty to the individual beyond the convenience of inertia.
+
+Relationship depth is assessed through several proxies: the tenure of client relationships, the frequency of direct contact, whether clients know the RM's personal contact details, and whether the RM has ever referred clients to other institutions for products their current bank could not provide. The last point is particularly telling. An RM who has occasionally said to a client "we cannot do this here, let me introduce you to someone who can" has demonstrated that their relationship is not captive to the institution. That kind of generosity is, counterintuitively, one of the strongest portability indicators available.
+
+## Block Four: EAM Exposure
+
+External asset managers represent a specific and underappreciated portability risk.
+
+When a portion of an RM's book is sourced through or managed in conjunction with an EAM, the beneficial ownership of that relationship becomes genuinely ambiguous. The EAM may have introduced the client. The EAM may hold the client's primary advisory relationship. The EAM may have contractual arrangements with the current booking institution that restrict transfer. In some cases, the EAM will simply direct the assets to whichever institution offers the most favourable terms. Terms that have nothing to do with the RM.
+
+In practice, EAM-sourced AUM should be treated as non-portable in a base case and potentially portable in an upside scenario. Presenting it as fully transferable without a clear account of the EAM's incentives and existing contractual relationships is the fastest way to destroy credibility with a sophisticated hiring committee.
+
+## Block Five: Legal Constraints
+
+Non-compete clauses, non-solicitation agreements, and garden leave provisions are the most underestimated element of any lateral move in private banking.
+
+Swiss law is more permissive than most jurisdictions in this area. Non-compete clauses are enforceable only under specific conditions and for limited periods. But the practical effect of a six-month garden leave combined with a formal non-solicitation undertaking can reduce first-year portability by forty percent or more. Clients do not wait indefinitely. Relationships cool. New RMs are assigned. Inertia, which was working in your favour before departure, begins working against you.
+
+Any honest portability assessment must account for the legal situation explicitly. What does the employment contract say? What is the notice period? Is there a garden leave provision, and has the employer historically enforced it? Has the employer initiated legal action against former employees who moved to competitors?
+
+These are not hypothetical questions. They are the variables that determine whether a business plan is executable.
+
+## Block Six: Motivation and Timing
+
+The final block is the one that banks most consistently neglect, because it is the hardest to quantify. But it is often the most decisive.
+
+An RM who is moving because they have lost confidence in their current institution's strategy, because a key client has asked them to move, or because a specific platform capability is unavailable at their current bank, has a fundamentally different portability profile from one who is moving primarily for compensation. In the first set of cases, the RM has a narrative. One they can share with clients, one that positions the move as rational and even client-driven. In the second case, they have a problem. Clients are sophisticated. They understand when a move is about money, and it colours their willingness to follow.
+
+Timing matters equally. An RM who initiates a move at the beginning of a client lifecycle, when relationships are deepening, when assets are growing, when trust is being built, will retain more than one who moves at the end of a cycle, when clients are consolidating, reducing risk, or considering inter-generational transfer to family members who have no relationship with the RM at all.
+
+## What a Credible Portability Number Looks Like
+
+Applying these six blocks honestly to a CHF 500 million book typically produces a number between CHF 150 million and CHF 320 million in year one, depending on the composition of the book and the legal situation. That range is not pessimism. It is realism. And it is the range that sophisticated private banks model internally, regardless of what appears in the business plan they receive.
+
+The RMs who survive and thrive in lateral moves are not the ones who overstated their book and spent three years trying to close the gap. They are the ones who understood their own portability clearly enough to have an honest conversation before the offer was made, and who chose a platform that gave their clients a credible reason to follow.
+
+If you would like to apply this framework to your own book before your next conversation, the Executive Partners [Portability Score](/en/portability) walks through each of these six dimensions and produces a structured assessment you can use as the basis for a business plan that will withstand scrutiny.`,
+  },
+  {
     slug: "the-emotional-strategist",
     ogImage: "/og-articles/og-the-emotional-strategist.jpg",
     title: "The Emotional Strategist",
