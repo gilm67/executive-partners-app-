@@ -82,36 +82,63 @@ export default function HomePage() {
 
             <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4">
               <div className="max-w-3xl text-center">
-                <div className="flex justify-center">
-                  <Image
-                    src="/transparent-ep-logo.png"
-                    sizes="(max-width: 640px) 80vw, 400px"
-              alt="Executive Partners – Private Banking & Wealth Management Executive Search"
-                    width={210}
-                    height={70}
-                    priority
-                    className="h-auto w-[210px] drop-shadow-[0_0_18px_rgba(255,255,255,0.28)] sm:w-[260px] md:w-[320px]"
-                  />
-                </div>
 
-                <h1 className="mt-4 font-[var(--font-playfair)] text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl">
-                  Private Banking Executive Search{" "}
-                  <span className="gold">& Headhunter</span>{" "}
-                  — Senior RMs & Team Heads Worldwide.
-                </h1>
-
-                <p className="mt-4 text-white/90">
-                  Where the right talent meets the right platform.
+                {/* Eyebrow */}
+                <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#C9A14A]">
+                  Private Banking · Executive Search · Since 2010
                 </p>
 
-                <div className="mt-7">
+                {/* H1 */}
+                <h1 className="font-[var(--font-playfair)] text-5xl font-semibold tracking-tight text-white sm:text-6xl md:text-7xl leading-[1.05]">
+                  Where the right banker<br />
+                  meets the{" "}
+                  <span className="gold">right bank.</span>
+                </h1>
+
+                {/* Subline */}
+                <p className="mt-5 text-base text-white/60 leading-relaxed max-w-lg mx-auto">
+                  Senior Relationship Managers, Team Heads and Investment Advisors placed across the world&apos;s leading private banking hubs.
+                </p>
+
+                {/* Dual CTA */}
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                   <Link
                     href="/en/apply"
                     className="btn-primary btn-xl rounded-full px-8 shadow-lg"
                   >
                     Apply Confidentially
                   </Link>
+                  <Link
+                    href="/en/jobs"
+                    className="inline-flex items-center rounded-full border border-[#C9A14A]/40 px-7 py-3 text-sm font-semibold text-[#C9A14A] hover:bg-[#C9A14A]/10 transition-colors"
+                  >
+                    Browse Mandates →
+                  </Link>
                 </div>
+
+                {/* Social proof strip */}
+                <div className="mt-10 flex flex-wrap items-center justify-center gap-6 border-t border-white/10 pt-8">
+                  <div className="text-center">
+                    <div className="text-2xl font-semibold text-white">200+</div>
+                    <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/40">Placements</div>
+                  </div>
+                  <div className="h-8 w-px bg-white/10" />
+                  <div className="text-center">
+                    <div className="text-2xl font-semibold text-white">98%</div>
+                    <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/40">Retention Rate</div>
+                  </div>
+                  <div className="h-8 w-px bg-white/10" />
+                  <div className="text-center">
+                    <div className="text-2xl font-semibold text-white">7</div>
+                    <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/40">Global Hubs</div>
+                  </div>
+                  <div className="h-8 w-px bg-white/10" />
+                  <div className="text-center">
+                    <div className="text-2xl font-semibold text-white">15y</div>
+                    <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/40">Experience</div>
+                  </div>
+                </div>
+
               </div>
             </div>
 
