@@ -65,6 +65,98 @@ export type InsightArticle = {
  */
 export const INSIGHTS: readonly InsightArticle[] = [
   {
+    slug: "private-banker-business-plan",
+    title: "The Private Banker's Business Plan: What Your New Bank Actually Wants to See",
+    date: "2026-05-21",
+    summary: "Most business plans in private banking answer the wrong question. This is the structure that sophisticated hiring committees actually believe — and the logic that earns the guarantee.",
+    pillar: "P2",
+    linkedinUrl: "",
+    markets: ["CH", "UK", "UAE", "ASIA"],
+    featured: true,
+    keywords: ["private banker business plan", "RM business plan private banking", "AUM portability", "relationship manager lateral move", "private banking guarantee", "RM ramp timeline"],
+    body: `The Private Banker's Business Plan: What Your New Bank Actually Wants to See
+
+Every senior relationship manager who has been through a serious lateral move in private banking has written a business plan. Most of them have written a bad one. Not bad in the sense of poorly formatted or carelessly researched, but bad in the sense that it answered the wrong question. It told the hiring bank what the RM wanted them to believe, rather than what they actually needed to know.
+
+The business plan is the most misunderstood document in private banking recruitment. RMs treat it as a sales pitch. Banks treat it as a due diligence exercise. The gap between those two framings is where most lateral moves go wrong before they even begin.
+
+After placing over two hundred senior bankers across [Geneva](/en/markets/geneva), [Zurich](/en/markets/zurich), [London](/en/markets/london), [Dubai](/en/markets/dubai), [Singapore](/en/markets/singapore), and Hong Kong, I have read enough business plans to know what separates the ones that close at the number the RM wanted from the ones that get quietly discounted before the offer is made. The difference is almost never the quality of the writing. It is the quality of the thinking behind it.
+
+This article is a guide to building a business plan that a sophisticated hiring committee will actually believe.
+
+## What the Bank Is Really Asking
+
+Before writing a single line, it is worth understanding what a private bank's hiring committee is actually trying to establish when they read a business plan. They are not looking for ambition. They already know the RM is ambitious, or they would not be sitting across the table. They are not looking for a polished narrative about client relationships and market expertise. They have heard that narrative from every candidate who has sat in that chair.
+
+What they are looking for is three things, and only three things.
+
+First, they want to know whether the revenue projection is credible. Not optimistic, not aspirational, credible. There is a very specific range within which a business plan needs to land to be taken seriously, and it is narrower than most RMs think.
+
+Second, they want to understand the legal situation clearly enough to model the ramp timeline with some confidence. Garden leave, non-solicitation, non-compete: the hiring committee needs to know what they are underwriting before they can structure an offer.
+
+Third, they want to see evidence that the RM understands their own book well enough to have an honest conversation. The candidate who walks in knowing their average wallet share per client, their return on assets, and their realistic portable percentage in year one is a fundamentally different proposition from the one who states a headline AUM and expects the room to do the rest of the work.
+
+Everything else in the business plan is context. Useful context, sometimes important context, but context nonetheless.
+
+## The Structure That Works
+
+A business plan that lands well in a private banking hiring committee follows a specific sequence. It moves from the current reality to the credible projection, with the supporting logic made explicit at each step. It does not lead with the number. It earns the number.
+
+The opening section establishes the current book clearly and honestly. Total AUM under management, the number of active client relationships, the average ticket size, the market or markets served, and the approximate revenue generated in the last full year. These figures should be as precise as confidentiality constraints allow. Round numbers are a red flag. A candidate who manages exactly CHF 400 million from exactly fifty clients generating exactly CHF 2 million in revenue has clearly approximated. A candidate who manages CHF 387 million from forty-three active relationships generating CHF 1.9 million has clearly counted.
+
+The second section addresses composition. What proportion of the book is discretionary versus advisory versus execution-only? What is the breakdown by client domicile and booking centre? Are there EAM relationships in the book, and if so, how are they structured? This section exists because a CHF 400 million book composed primarily of discretionary mandates from long-standing direct relationships is worth dramatically more to a hiring bank than a CHF 400 million book split across EAM relationships, custody-only clients, and recent introductions. The number is the same. The value is not.
+
+## The Portability Case
+
+The portability section is where most business plans collapse under scrutiny, and it is the section that matters most.
+
+The standard approach is to apply a transfer percentage to the total AUM and present the result as the year one figure. Seventy percent of CHF 400 million equals CHF 280 million. The committee nods. The offer is structured around CHF 280 million. And then the actual transfer comes in at CHF 140 million and everyone spends the next two years managing the gap.
+
+A credible portability case does not work that way. It works client by client, or at least segment by segment, and it is honest about the variables that will determine the actual outcome.
+
+The factors that drive portability have been covered in detail in the [AUM portability framework](/en/insights/how-to-calculate-aum-portability) published separately on this site. In the context of the business plan, what matters is demonstrating that the RM has applied that kind of thinking to their own book, rather than simply stating a percentage and hoping the committee accepts it.
+
+A strong portability section identifies the anchor clients, the two or three relationships that represent a disproportionate share of the AUM, and makes a specific case for why each of them will move. It identifies the clients who are genuinely uncertain, where the relationship is strong but the institutional dependency is real, and presents them as the upside scenario rather than the base case. And it identifies the clients who are unlikely to move at all, because the relationship is too institution-dependent, too EAM-driven, or too recently established, and excludes them from the projection entirely.
+
+That level of honesty is counterintuitive. Most RMs are afraid that excluding clients from the business plan will reduce the offer. In practice, it almost always increases credibility, and credibility is what drives the guarantee.
+
+## The Ramp Timeline
+
+Private banks do not underwrite a business plan as a single number. They model it as a cash flow, quarter by quarter, from the date of hire through to the point at which the RM's book is generating enough revenue to cover their total cost. That break-even point, sometimes called the payback period, is the internal metric that determines how much risk the institution is prepared to take on the hire.
+
+The ramp timeline in a business plan needs to reflect the legal reality first and the client migration reality second. If there is a six-month garden leave, the revenue line starts at zero for the first two quarters regardless of any other assumptions. That is not a weakness in the plan. It is a fact, and presenting it clearly signals that the RM understands how banks think about this hire.
+
+After the garden leave period, the typical ramp in Swiss private banking follows a specific pattern. The first wave of client transfers, those from the anchor relationships who were briefed before departure and have been waiting, arrives in months seven through nine. The second wave, from relationships that needed more time to process the move, arrives in months twelve through eighteen. The third wave, from clients who needed to see the RM established at the new institution before committing, arrives in year two or later.
+
+A business plan that shows a smooth linear ramp from zero to full AUM over thirty-six months is almost certainly wrong. A business plan that shows a step-function ramp, front-loaded with anchor clients and followed by two subsequent waves with specific timing rationale, is almost certainly right and is far more likely to be believed.
+
+## Revenue Projections
+
+The revenue projection is where the business plan connects the AUM timeline to the P&L, and it is where the ROA assumption matters enormously.
+
+The hiring committee will apply their own ROA assumption to whatever AUM figure they accept. If the RM's stated ROA is materially higher than the bank's internal benchmark, the committee will discount it. If it is materially lower, they will wonder whether the RM's client base is the right fit for the platform. The target is a revenue projection that lands within a credible range of what the institution can verify through its own experience with similar books.
+
+In Swiss private banking, the standard ROA range for a managed book is forty to seventy basis points on AUM. Anything above seventy basis points requires explanation, usually in the form of a concentrated book of active traders or structured product buyers. Anything below forty requires a different explanation, usually in the form of a predominantly cash or custody book that will need to be repositioned over time.
+
+The business plan should state the ROA assumption explicitly and explain it. A candidate who says "I am projecting sixty basis points because my clients are predominantly discretionary with an average equity allocation of sixty-five percent" is making a specific, verifiable claim. A candidate who says "I expect to generate approximately two percent of AUM in revenue" is making a claim that no sophisticated committee will accept at face value.
+
+## Compensation Framework
+
+The final section of the business plan is the one that most RMs treat as the starting point rather than the conclusion. The compensation ask.
+
+A well-structured business plan earns the compensation ask by building the logic that supports it. The committee has seen the current book, accepted the portability case, agreed on the ramp timeline, and worked through the revenue projection. By the time the compensation framework appears, it should feel like the natural conclusion of a shared analysis rather than an opening position in a negotiation.
+
+The elements of a private banking compensation package are well understood: base salary, performance bonus, long-term incentive, sign-on, and guarantee. The guarantee is the most sensitive element and the one that most directly reflects the institution's confidence in the business plan. A bank that believes the portability case will offer a meaningful guarantee. A bank that does not will offer a short one, or none at all.
+
+The RM who understands this dynamic will present a compensation framework that is explicitly linked to the business plan assumptions. If the portability scenario delivers at the base case, the target compensation is X. If it delivers at the upside, it is Y. That kind of conditional structure signals financial sophistication and tends to produce better outcomes than a fixed ask.
+
+## The Document That Builds Trust
+
+The business plan is not a sales pitch. It is a trust-building exercise. The RM who walks into a hiring committee with a document that is honest about what will move, clear about the timeline, explicit about the assumptions, and realistic about the risks is the RM that institutions want to hire. Not because they are the most optimistic candidate in the room, but because they are the one the bank can actually plan around.
+
+If you would like to build your business plan using the same framework that Executive Partners applies to every candidate placement, the [Business Plan Simulator](/en/bp-simulator) will walk you through each section and generate a structured output you can take directly into your next conversation.`,
+  },
+  {
     slug: "how-to-calculate-aum-portability",
     title: "How to Calculate Your AUM Portability: The Framework Private Banks Don't Share With You",
     date: "2026-05-21",
