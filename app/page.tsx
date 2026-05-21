@@ -83,6 +83,21 @@ export default function HomePage() {
             <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4 -mt-12">
               <div className="max-w-3xl text-center">
 
+                {/* Logo mark */}
+                <div className="mb-8 flex justify-center">
+                  <div className="relative">
+                    <div className="absolute inset-0 rounded-full bg-[#D4AF37]/10 blur-xl scale-150" aria-hidden />
+                    <Image
+                      src="/transparent-ep-logo.png"
+                      alt="Executive Partners — Private Banking Executive Search"
+                      width={88}
+                      height={88}
+                      priority
+                      className="relative h-auto w-[88px] drop-shadow-[0_0_24px_rgba(212,175,55,0.45)]"
+                    />
+                  </div>
+                </div>
+
                 {/* Eyebrow */}
                 <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#C9A14A]">
                   Private Banking · Executive Search · Since 2010
