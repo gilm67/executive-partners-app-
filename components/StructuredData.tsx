@@ -17,9 +17,10 @@ export function OrganizationSchema() {
   const schema = {
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "EmploymentAgency"],
+    "@id": "https://www.execpartners.ch/#organization",
     "name": "Executive Partners",
     "legalName": "Executive Partners Sàrl",
-    "description": "Geneva-based boutique executive search firm specialising exclusively in senior private banking and wealth management. 200+ placements, 98% 12-month retention rate.",
+    "description": "Executive Partners Sàrl is a Geneva-based boutique executive search firm specialising exclusively in senior private banking and wealth management recruitment. Founded in Geneva, Switzerland. Distinct from any construction, technical or engineering firm of the same name. 200+ placements, 98% 12-month retention rate.",
     "url": "https://www.execpartners.ch",
     "logo": {
       "@type": "ImageObject",
@@ -66,8 +67,15 @@ export function OrganizationSchema() {
     },
     "sameAs": [
       "https://www.linkedin.com/company/executive-partners-sarl",
-      "https://www.execpartners.ch"
-    ]
+      "https://www.execpartners.ch",
+      "https://www.linkedin.com/in/gil-m-chalem-35281916b/"
+    ],
+    "founder": {
+      "@type": "Person",
+      "name": "Gil M. Chalem",
+      "jobTitle": "Managing Partner",
+      "url": "https://www.linkedin.com/in/gil-m-chalem-35281916b/"
+    }
   };
 
   return <StructuredData data={schema} />;
@@ -161,7 +169,8 @@ export function JobPostingSchema({
     "employmentType": "FULL_TIME",
     "hiringOrganization": {
       "@type": "Organization",
-      "name": "Executive Partners",
+      "@id": "https://www.execpartners.ch/#organization",
+    "name": "Executive Partners",
       "sameAs": "https://www.execpartners.ch"
     },
     "jobLocation": {
