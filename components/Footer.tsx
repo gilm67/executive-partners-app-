@@ -117,7 +117,7 @@ export default function Footer() {
           </div>
 
           {/* Bottom bar */}
-          <div className="py-5 flex flex-col gap-2">
+          <div className="py-5 flex flex-col gap-2 items-center text-center">
             <div className="text-[12px] text-white/40">© {new Date().getFullYear()} Executive Partners. All rights reserved.</div>
             <div className="flex items-center gap-3 text-[11px]">
               <Link href="/en/privacy" className="text-white/40 hover:text-white/70 transition-colors">GDPR Compliant</Link>
