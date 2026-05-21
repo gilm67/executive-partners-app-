@@ -90,10 +90,10 @@ export default function HomePage() {
                     <Image
                       src="/transparent-ep-logo.png"
                       alt="Executive Partners — Private Banking Executive Search"
-                      width={88}
-                      height={88}
+                      width={160}
+                      height={160}
                       priority
-                      className="relative h-auto w-[88px] drop-shadow-[0_0_24px_rgba(212,175,55,0.45)]"
+                      className="relative h-auto w-[140px] sm:w-[160px] drop-shadow-[0_0_40px_rgba(212,175,55,0.7)] brightness-110"
                     />
                   </div>
                 </div>
