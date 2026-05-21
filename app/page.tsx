@@ -55,7 +55,7 @@ export default function HomePage() {
       <main className="relative min-h-screen body-grain text-white">
         <section className="relative overflow-hidden">
           {/* Hero */}
-          <div className="relative h-[68vh] min-h-[560px] max-h-[820px] w-full md:h-[72vh]">
+          <div className="relative h-[92vh] min-h-[640px] max-h-[900px] w-full sm:h-[80vh] md:h-[72vh]">
             <Image
               src={HERO}
               alt="Executive Partners – global private banking hubs skyline at dusk"
@@ -80,11 +80,11 @@ export default function HomePage() {
               className="pointer-events-none absolute inset-0 [box-shadow:inset_0_120px_180px_-120px_rgba(0,0,0,0.70)]"
             />
 
-            <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4 -mt-12">
+            <div className="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4 md:-mt-12">
               <div className="max-w-3xl text-center">
 
                 {/* Logo mark */}
-                <div className="mb-8 flex justify-center">
+                <div className="mb-5 sm:mb-8 flex justify-center">
                   <div className="relative">
                     <div className="absolute inset-0 rounded-full bg-[#D4AF37]/10 blur-xl scale-150" aria-hidden />
                     <Image
@@ -93,30 +93,30 @@ export default function HomePage() {
                       width={160}
                       height={160}
                       priority
-                      className="relative h-auto w-[140px] sm:w-[160px] drop-shadow-[0_0_40px_rgba(212,175,55,0.7)] brightness-110"
+                      className="relative h-auto w-[100px] sm:w-[130px] md:w-[160px] drop-shadow-[0_0_40px_rgba(212,175,55,0.7)] brightness-110"
                     />
                   </div>
                 </div>
 
                 {/* Eyebrow */}
-                <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+                <p className="mb-4 sm:mb-6 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] sm:tracking-[0.22em] text-[#D4AF37] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
                   Private Banking · Executive Search · Geneva
                 </p>
 
                 {/* H1 */}
-                <h1 className="font-[var(--font-playfair)] text-5xl font-semibold tracking-tight text-white sm:text-6xl md:text-7xl leading-[1.05]">
+                <h1 className="font-[var(--font-playfair)] text-[2.6rem] font-semibold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08]">
                   Where the right banker<br />
                   meets the{" "}
                   <span className="gold">right bank.</span>
                 </h1>
 
                 {/* Subline */}
-                <p className="mt-5 text-base text-white/90 leading-relaxed max-w-lg mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+                <p className="mt-4 text-sm sm:text-base text-white/90 leading-relaxed max-w-lg mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
                   Senior Relationship Managers, Team Heads and Investment Advisors placed across the world&apos;s leading private banking hubs.
                 </p>
 
                 {/* Dual CTA */}
-                <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
                   <Link
                     href="/en/apply"
                     className="btn-primary btn-xl rounded-full px-8 shadow-lg"
@@ -137,10 +137,10 @@ export default function HomePage() {
 
             {/* Markets ticker — bottom of hero */}
             <div className="absolute bottom-0 left-0 right-0 border-t border-white/8 bg-black/30 backdrop-blur-sm py-3">
-              <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-4">
+              <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-4 flex-wrap">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#C9A14A]/70 mr-3">Active markets</span>
                 {["Geneva","Zurich","London","Dubai","Singapore","Hong Kong","Milan"].map((city, i) => (
-                  <span key={city} className="flex items-center gap-2">
+                  <span key={city} className="hidden sm:flex items-center gap-2">
                     {i > 0 && <span className="text-white/20">·</span>}
                     <span className="text-[12px] text-white/50">{city}</span>
                   </span>
