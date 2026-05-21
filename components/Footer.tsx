@@ -104,11 +104,11 @@ export default function Footer() {
           <div className="py-6 grid grid-cols-3 gap-x-4 gap-y-6 border-b border-white/[0.06]">
             {NAV.map((col) => (
               <div key={col.label}>
-                <div className="mb-3.5 text-[10px] font-semibold uppercase tracking-[0.14em]" style={{color:"rgba(201,161,74,.8)"}}>{col.label}</div>
+                <div className="mb-3.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-center" style={{color:"rgba(201,161,74,.8)"}}>{col.label}</div>
                 <ul className="space-y-3">
                   {col.links.map((link) => (
                     <li key={link.href}>
-                      <Link href={link.href} className="text-[13px] font-medium text-white/65 hover:text-white/90 transition-colors" style={{textDecoration:"none"}}>{link.text}</Link>
+                      <Link href={link.href} className="text-[13px] font-medium text-white/65 hover:text-white/90 transition-colors block text-center" style={{textDecoration:"none",color:"inherit"}}>{link.text}</Link>
                     </li>
                   ))}
                 </ul>
