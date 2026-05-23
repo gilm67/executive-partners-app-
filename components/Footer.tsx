@@ -39,6 +39,12 @@ const HUBS = [
   { city: "Dubai", flag: "🇦🇪" },
   { city: "Singapore", flag: "🇸🇬" },
   { city: "Hong Kong", flag: "🇭🇰" },
+  { city: "New York", flag: "🇺🇸" },
+  { city: "Miami", flag: "🇺🇸" },
+  { city: "Paris", flag: "🇫🇷" },
+  { city: "Milan", flag: "🇮🇹" },
+  { city: "Madrid", flag: "🇪🇸" },
+  { city: "Lisbon", flag: "🇵🇹" },
 ];
 
 export default function Footer() {
