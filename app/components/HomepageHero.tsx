@@ -16,7 +16,7 @@ export default function HomepageHero() {
       <div className="relative h-[68vh] min-h-[560px] max-h-[820px] md:h-[72vh]">
         {/* Background photo (premium feel) */}
         <Image
-          src="/hero-skyline-hq.jpg"
+          src="/hero-jeteau.png"
           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 100vw, 1920px"
           alt="Private banking executive search Geneva — Executive Partners"
           fill
