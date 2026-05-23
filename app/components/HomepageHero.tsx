@@ -21,7 +21,7 @@ export default function HomepageHero() {
           alt="Private banking executive search Geneva — Executive Partners"
           fill
           priority
-          className="object-cover object-center opacity-55"
+          className="object-cover object-bottom opacity-55"
         />
 
         {/* Base gradient under photo */}
