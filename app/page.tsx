@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import { ArrowRight, Sparkles, Calculator } from "lucide-react";
 import { OrganizationSchema, FAQSchema } from "@/components/StructuredData";
 
-const HERO = "/hero-jeteau.png";
+const HERO = "/hero-jeteau.jpg";
 const OG_IMAGE = "/og.webp";
 
 export const metadata: Metadata = {
