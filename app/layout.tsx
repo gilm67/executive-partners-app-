@@ -4,7 +4,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/react";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display, Cinzel, Cormorant_Garamond } from "next/font/google";
 
 import TopNav from "@/components/TopNav";
 import Footer from "@/components/Footer";
@@ -19,6 +19,21 @@ const inter = Inter({
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
+  display: "swap",
+  preload: false,
+});
+
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  variable: "--font-cinzel",
+  display: "swap",
+  preload: false,
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-cormorant",
   display: "swap",
   preload: false,
 });
@@ -130,7 +145,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={`h-full ${inter.variable} ${playfair.variable}`}
+      className={`h-full ${inter.variable} ${playfair.variable} ${cinzel.variable} ${cormorant.variable}`}
       suppressHydrationWarning
     >
       <head>

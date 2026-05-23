@@ -77,28 +77,36 @@ h5,
 h6 {
   font-family: var(--font-playfair, "Times New Roman", serif);
   color: #f9fafb;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.01em;
 }
 
 /* H1 – main hero titles */
 h1 {
   font-size: clamp(2.1rem, 3.4vw, 2.8rem);
-  line-height: 1.1;
-  font-weight: 600;
+  line-height: 1.05;
+  font-weight: 400;
+}
+h1 em {
+  font-style: italic;
+  color: #E8C97A;
 }
 
 /* H2 – section titles */
 h2 {
   font-size: clamp(1.6rem, 2.4vw, 2rem);
-  line-height: 1.25;
-  font-weight: 600;
+  line-height: 1.15;
+  font-weight: 400;
+}
+h2 em {
+  font-style: italic;
+  color: #E8C97A;
 }
 
 /* H3 – sub-section titles */
 h3 {
   font-size: 1.25rem;
   line-height: 1.3;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* Muted small text */
@@ -1049,4 +1057,54 @@ a:visited {
 }
 footer a:visited {
   color: rgba(255, 255, 255, 0.5);
+}
+
+
+/* =============================================
+   EP Typography Upgrade — Cinzel + Cormorant
+   ============================================= */
+
+/* Cinzel: nav labels, section eyebrows, badges, CTAs */
+.ep-label {
+  font-family: var(--font-cinzel, "Palatino Linotype", serif);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #C9A84C;
+}
+
+/* Cormorant Garamond: subtitles, lead paragraphs, quotes */
+.ep-subtitle {
+  font-family: var(--font-cormorant, "Georgia", serif);
+  font-size: 1.25rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: #C8BFAE;
+}
+
+/* Hero subtitle override */
+.ep-hero-sub {
+  font-family: var(--font-cormorant, "Georgia", serif);
+  font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgba(240, 235, 224, 0.78);
+  letter-spacing: 0.01em;
+}
+
+/* Eyebrow / section label row */
+.ep-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.ep-eyebrow::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: #C9A84C;
+  flex-shrink: 0;
 }
