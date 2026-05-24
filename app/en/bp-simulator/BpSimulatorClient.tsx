@@ -230,7 +230,7 @@ export default function BpSimulatorClient() {
             </span>
           </div>
           <h1 style={{color:"#ffffff", fontSize:"clamp(1.75rem,4vw,3rem)", fontWeight:700, letterSpacing:"-0.02em", margin:0}}>
-            Business Plan Simulator
+            Private Banking Business Plan Simulator
           </h1>
           <p style={{color:"rgba(255,255,255,0.58)", fontSize:"1rem", lineHeight:"1.65", marginTop:"0.75rem", maxWidth:"640px"}}>
             Model your AUM transfer, revenue ramp, and 3-year P&L the way a hiring committee actually reviews it.

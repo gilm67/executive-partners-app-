@@ -155,7 +155,7 @@ export default function CandidatesPage() {
               For Candidates · Private Banking Careers
             </p>
             <h1 className="text-4xl font-extrabold tracking-tight md:text-5xl">
-              Confidential Moves for Private Bankers
+              Private Banking Jobs Switzerland — Confidential Career Guidance
             </h1>
             <p className="mx-auto max-w-3xl text-neutral-300">
               Geneva &amp; Zurich first—plus Dubai, Singapore, London and New

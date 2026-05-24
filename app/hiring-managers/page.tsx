@@ -88,9 +88,12 @@ export default function HiringManagersPage() {
               For Hiring Managers
             </p>
             <h1 className="mt-4 text-3xl md:text-4xl font-semibold leading-tight">
+              Private Banking Recruitment Switzerland — Senior RMs, Team Heads &amp; Market Leaders
+            </h1>
+            <p className="mt-3 text-lg md:text-xl font-semibold leading-tight text-neutral-200">
               The wrong hire costs you two years.<br />
               <span className="text-[#C9A14A]">We've placed 200+ bankers. 98% are still there.</span>
-            </h1>
+            </p>
             <p className="mt-4 max-w-3xl text-sm md:text-base text-white/75">
               We specialise exclusively in private banking. We screen AUM portability, book composition, cross-border fit and compliance profile before you see a name. Average mandate-to-offer: 17 days.
             </p>

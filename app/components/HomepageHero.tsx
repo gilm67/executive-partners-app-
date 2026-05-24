@@ -59,7 +59,7 @@ export default function HomepageHero() {
             id="home-hero-heading"
             className="mx-auto mt-4 max-w-4xl text-center text-3xl font-semibold tracking-tight text-white sm:text-5xl"
           >
-            Executive Search for Private Banking &amp; Wealth Management Professionals
+            Private Banking Executive Search Geneva — Senior RMs, Team Heads &amp; Market Leaders
           </h1>
 
           {/* Subheading */}

@@ -118,7 +118,7 @@ export default function AboutPage() {
 
           {/* Title */}
           <h1 className="mt-3 text-center font-[var(--font-playfair)] text-4xl font-semibold tracking-tight md:text-5xl">
-            About Executive Partners — Connecting Top Talent with Excellence
+            Geneva's Specialist Private Banking Headhunter — 200+ Senior Placements
           </h1>
 
           <p className="mx-auto mt-3 max-w-3xl text-center text-neutral-300">
