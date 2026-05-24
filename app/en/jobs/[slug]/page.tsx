@@ -389,8 +389,14 @@ export async function generateMetadata({
       title,
       description,
       url: canonical,
-      type: "article",
+      type: "website",
       images: [{ url: `${base}/og.webp` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${base}/og.webp`],
     },
     robots: isFallback
       ? { index: false, follow: true }

@@ -114,6 +114,7 @@ export function generateMetadata({ params }: Props): Metadata {
 
   const url = `${SITE}/en/insights/${article.slug}`;
   const title = article.title;
+  const ogTitle = `${article.title} | Executive Partners`;
   const description = article.summary;
 
   return {
@@ -124,13 +125,13 @@ export function generateMetadata({ params }: Props): Metadata {
       type: "article",
       url,
       siteName: "Executive Partners",
-      title,
+      title: ogTitle,
       description,
       images: [{ url: article.ogImage ? `${SITE}${article.ogImage}` : `${SITE}/og.webp` }],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: ogTitle,
       description,
       images: [article.ogImage ? `${SITE}${article.ogImage}` : `${SITE}/og.webp`],
     },
