@@ -289,9 +289,9 @@ export default function PrivateBankingRecruiterZurichPage() {
             </p>
             <ul className="mt-4 space-y-2 text-sm text-brandGoldSoft">
               <li>
-                <Link href="/insights" className="hover:underline">
-                  UBS’s Silent Earthquake: 10,000 Jobs Set to Disappear by 2027
-                </Link>
+                <Link href="/en/insights/the-last-wave" className="hover:underline">
+                    The Last Wave: UBS Integration and What Comes Next
+                  </Link>
               </li>
               <li>
                 <Link href="/en/insights/the-emotional-strategist" className="hover:underline">
