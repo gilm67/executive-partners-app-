@@ -3,8 +3,24 @@ import Image from "next/image";
 import { getAllMarkets } from "@/lib/markets/data";
 
 export const metadata = {
-  title: "Markets — Executive Partners",
-  description: "Compensation, licensing, client base, and relocation guides by city.",
+  title: "Private Banking Markets — Geneva, Zurich, Dubai & Global Hubs | Executive Partners",
+  description: "Private banking recruitment across 12 global wealth hubs. Compensation benchmarks, licensing requirements, client segments and live mandates in Geneva, Zurich, Dubai, Singapore, London and more.",
+  alternates: { canonical: "https://www.execpartners.ch/en/markets" },
+  openGraph: {
+    title: "Private Banking Markets — Geneva, Zurich, Dubai & Global Hubs | Executive Partners",
+    description: "Private banking recruitment across 12 global wealth hubs. Compensation, licensing and live mandates by city.",
+    type: "website",
+    url: "https://www.execpartners.ch/en/markets",
+    images: [{ url: "/og.webp", width: 1200, height: 630 }],
+    siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Markets — Geneva, Zurich, Dubai & Global Hubs | Executive Partners",
+    description: "Compensation benchmarks, licensing, client segments and live mandates across 12 private banking hubs.",
+    images: ["/og.webp"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function MarketsIndexPage() {
