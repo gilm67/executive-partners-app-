@@ -345,7 +345,7 @@ export default function InsightDetailPage({ params }: Props) {
                     const href = m[4];
                     const isExternal = href.startsWith("http");
                     parts.push(
-                      
+                      <a
                         key={m.index}
                         href={href}
                         {...(isExternal ? { target: "_blank", rel: "noreferrer" } : {})}
