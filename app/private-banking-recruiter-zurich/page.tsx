@@ -294,15 +294,14 @@ export default function PrivateBankingRecruiterZurichPage() {
                 </Link>
               </li>
               <li>
-                <Link href="/insights" className="hover:underline">
-                  The AI Reckoning: How 5,200 Job Cuts Are Reshaping Private
-                  Banking Talent
-                </Link>
+                <Link href="/en/insights/the-emotional-strategist" className="hover:underline">
+                    The Emotional Strategist: When AI Handles the Analysis
+                  </Link>
               </li>
               <li>
-                <Link href="/insights" className="hover:underline">
-                  The Swiss Private Banking Talent Revolution
-                </Link>
+                <Link href="/en/insights/switzerland-running-out-banks" className="hover:underline">
+                    Switzerland Is Running Out of Banks
+                  </Link>
               </li>
             </ul>
           </div>

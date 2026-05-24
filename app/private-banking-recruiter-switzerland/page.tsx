@@ -306,9 +306,15 @@ export default function PrivateBankingRecruiterSwitzerlandPage() {
           <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
             <h3 className="text-base font-semibold text-white">Related insights</h3>
             <ul className="mt-4 space-y-2 text-sm text-brandGoldSoft">
-              <li><Link href="/insights" className="hover:underline">UBS's Silent Earthquake: 10,000 Jobs Set to Disappear by 2027</Link></li>
-              <li><Link href="/insights" className="hover:underline">The AI Reckoning: How 5,200 Job Cuts Are Reshaping Private Banking</Link></li>
-              <li><Link href="/insights" className="hover:underline">Swiss Private Banking Compensation: Geneva vs Zurich vs Dubai</Link></li>
+              <li><Link href="/en/insights/the-last-wave" className="hover:underline">
+                    The Last Wave: UBS Integration and What Comes Next
+                  </Link></li>
+              <li><Link href="/en/insights/the-emotional-strategist" className="hover:underline">
+                    The Emotional Strategist: When AI Handles the Analysis
+                  </Link></li>
+              <li><Link href="/en/insights/switzerland-running-out-banks" className="hover:underline">
+                    Switzerland Is Running Out of Banks
+                  </Link></li>
             </ul>
           </div>
           <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
