@@ -42,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // --- Static pages ---
   const staticPages: string[] = [
-    "/", "/en",
+    "/",
 
     "/jobs",
     
@@ -75,6 +75,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     "/en/jobs",
     
+    "/en",
     "/fr",
     "/en/candidates",
     "/en/eam-recruiter-switzerland",
@@ -125,7 +126,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const jobEntries: MetadataRoute.Sitemap = jobs
     .filter((j) => j?.slug && isActive((j as any).active))
     .map((j) => ({
-      url: normalize(base, `/jobs/${j.slug!}`),
+      url: normalize(base, `/en/jobs/${j.slug!}`),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,

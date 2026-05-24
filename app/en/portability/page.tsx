@@ -35,7 +35,7 @@ export default function PortabilityPage() {
           Portability Score™ · Executive Partners
         </p>
         <h1 className="mt-3 font-[var(--font-playfair)] text-4xl font-semibold leading-tight text-white md:text-5xl">
-          Assess Your AUM Portability Before Your Next Move
+          Free AUM Portability Calculator — Portability Score™
         </h1>
         <p className="mt-5 text-lg leading-relaxed text-neutral-300">
           Portability — a private banker's ability to transfer client assets when
