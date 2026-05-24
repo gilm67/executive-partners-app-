@@ -108,6 +108,12 @@ export async function generateMetadata({
       siteName: "Executive Partners",
       images: [{ url: "/og.webp" }],
     },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og.webp"],
+    },
     robots: { index: true, follow: true },
   };
 }
