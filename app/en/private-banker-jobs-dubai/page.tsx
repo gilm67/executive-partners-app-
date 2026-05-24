@@ -5,6 +5,14 @@ export const metadata: Metadata = {
   title: "Private Banker Jobs in Dubai | Executive Partners",
   description:
     "Confidential private banker and wealth manager roles in Dubai and the DIFC. Advisory for Senior RMs relocating from Switzerland, Europe and Asia to the UAE.",
+  alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-dubai" },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banker Jobs in Dubai | Executive Partners",
+    description: "Confidential private banker and wealth manager roles in Dubai and the DIFC. Advisory for Senior RMs relocating from Switzerland, Europe and Asia to the UAE",
+    images: ["/og.webp"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function Page() {

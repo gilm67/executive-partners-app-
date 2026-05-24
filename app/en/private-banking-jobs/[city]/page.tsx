@@ -98,7 +98,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: cfg.seoTitle,
     description: cfg.seoDescription,
     alternates: { canonical: url },
-    robots: { index: true, follow: true },
+    twitter: {
+    card: "summary_large_image",
+    title: `Private Banking Jobs in ${city} | Executive Partners`,
+    description: `Confidential private banking roles in ${city}. Senior RMs, Team Heads and Investment Advisors. Apply discreetly.`,
+    images: ["/og.webp"],
+  },
+  robots: { index: true, follow: true },
     openGraph: {
       title: cfg.seoTitle,
       description: cfg.seoDescription,

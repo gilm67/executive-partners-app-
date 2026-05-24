@@ -19,6 +19,13 @@ export const metadata: Metadata = {
     url: `${SITE}/portability`,
     images: [{ url: "/og.webp" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Portability Score™ — Assess Your AUM Transferability | Executive Partners",
+    description: "Calculate your true AUM portability before your next private banking career move. Our 30-point Portability Score™ has been applied across 200+ senior place",
+    images: ["/og.webp"],
+  },
+  robots: { index: true, follow: true },
 };
 
 const faqJsonLd = {

@@ -4,6 +4,14 @@ export const metadata: Metadata = {
   title: "Private Banker Jobs in Lisbon | Executive Partners",
   description:
     "Private banker and wealth manager roles in Lisbon, often linked to international and offshore client coverage.",
+  alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-lisbon" },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banker Jobs in Lisbon | Executive Partners",
+    description: "Private banker and wealth manager roles in Lisbon, often linked to international and offshore client coverage.",
+    images: ["/og.webp"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function Page() {

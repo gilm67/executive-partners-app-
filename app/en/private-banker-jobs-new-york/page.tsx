@@ -5,6 +5,14 @@ export const metadata: Metadata = {
   title: "Private Banker Jobs in New York | Executive Partners",
   description:
     "Senior private banker and wealth manager roles in New York, often with cross-border links to Switzerland and Europe.",
+  alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-new-york" },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banker Jobs in New York | Executive Partners",
+    description: "Senior private banker and wealth manager roles in New York, often with cross-border links to Switzerland and Europe.",
+    images: ["/og.webp"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function Page() {

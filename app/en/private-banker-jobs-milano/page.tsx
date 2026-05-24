@@ -5,6 +5,14 @@ export const metadata: Metadata = {
   title: "Private Banker Jobs in Milano | Executive Partners",
   description:
     "Private banker and wealth manager opportunities in Milano, serving Italian entrepreneurs and families as well as cross-border clients via Swiss platforms.",
+  alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-milano" },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banker Jobs in Milano | Executive Partners",
+    description: "Private banker and wealth manager opportunities in Milano, serving Italian entrepreneurs and families as well as cross-border clients via Swiss platforms.",
+    images: ["/og.webp"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function Page() {

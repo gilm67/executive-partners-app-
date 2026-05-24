@@ -19,6 +19,13 @@ export const metadata: Metadata = {
     images: [{ url: `${SITE}/og.webp` }],
   },
   robots: { index: true, follow: true },
+  twitter: {
+    card: "summary_large_image",
+    title: "Chasseur de têtes Private Banking Genève | Executive Partners",
+    description: "Cabinet de recrutement spécialisé en banque privée à Genève. Placement de Relationship Managers seniors, chefs d'équipe et banquiers UHNW.",
+    images: ["/og.webp"],
+  },
+  robots: { index: true, follow: true },
 };
 
 const schemaData = {

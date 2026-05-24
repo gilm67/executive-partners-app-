@@ -5,6 +5,14 @@ export const metadata: Metadata = {
   title: "Private Banker Jobs in Miami | Executive Partners",
   description:
     "Private banker and wealth manager roles in Miami, focused on Latin American and international offshore clients. Discreet advisory for Senior Relationship Managers and UHNW advisers.",
+  alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-miami" },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banker Jobs in Miami | Executive Partners",
+    description: "Private banker and wealth manager roles in Miami, focused on Latin American and international offshore clients. Discreet advisory for Senior Relationship M",
+    images: ["/og.webp"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function Page() {
