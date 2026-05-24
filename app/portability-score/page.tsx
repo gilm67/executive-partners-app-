@@ -1,3 +1,6 @@
+import type { Metadata } from "next";
+export const metadata: Metadata = { robots: { index: false, follow: false } };
+
 // app/portability/page.tsx
 import type { Metadata } from "next";
 import { requirePrivateSession } from "@/app/private/lib/require-session";

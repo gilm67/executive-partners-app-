@@ -20,6 +20,12 @@ export const metadata: Metadata = {
     siteName: "Executive Partners",
     images: [{ url: `${SITE}/og.webp` }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Insights auf Deutsch | Private Banking Schweiz | Executive Partners",
+    description: "Fact-checked Marktanalysen für Senior Private Banker in Zürich und Genf. AUM-Portabilität, Vergütung und Karrierestrategie.",
+    images: ["/og.webp"],
+  },
 };
 
 function formatDate(value: string) {

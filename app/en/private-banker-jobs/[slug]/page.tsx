@@ -30,6 +30,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `Private Banker Jobs – ${m.city} | Executive Partners`,
     description: `Director / MD private banker and team lead roles in ${m.city}. Discreet moves with documented AUM portability, cross-border fit and realistic business plans.`,
     alternates: { canonical: `https://www.execpartners.ch/en/private-banker-jobs/${slug}` },
+    twitter: {
+      card: "summary_large_image",
+      title: `Private Banker Jobs – ${m.city} | Executive Partners`,
+      description: `Confidential private banking roles in ${m.city} with documented AUM portability and realistic business plans.`,
+      images: ["/og.webp"],
+    },
     openGraph: {
       title: `Private Banker Jobs – ${m.city} | Executive Partners`,
       description: `Confidential private banking roles in ${m.city} with documented AUM portability and realistic business plans.`,
