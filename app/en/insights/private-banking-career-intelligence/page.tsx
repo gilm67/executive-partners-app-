@@ -22,18 +22,18 @@ export const metadata: Metadata = {
   title: "Private Banking Career Intelligence 2026 | Executive Partners",
   description:
     "Comprehensive career intelligence for private banking professionals. Market trends, compensation benchmarks, and strategic insights for RMs and wealth managers.",
-  alternates: { canonical: PAGE_PATH },
+  alternates: { canonical: PAGE_URL },
   openGraph: {
     title: "Private Banking Career Intelligence 2026 | Executive Partners",
     description:
       "Market insights, compensation data, and career strategies for senior private banking professionals.",
-    url: PAGE_PATH,
+    url: PAGE_URL,
     siteName: "Executive Partners",
-    type: "article",
+    type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Career Intelligence 2026",
+    title: "Private Banking Career Intelligence 2026 | Executive Partners",
     description:
       "Strategic career insights for private banking and wealth management professionals.",
   },
