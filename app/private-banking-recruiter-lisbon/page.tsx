@@ -147,22 +147,17 @@ export default function PrivateBankingRecruiterLisbonPage() {
         pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
-            label:
-              "Unlock Your Next Career Move: Senior RMs with Portable Books in the Spotlight",
-            href:
-              "/insights/unlock-your-next-career-move-senior-rms-with-portable-books-in-the-spotlight-across-global-wealth-hubs",
+            label: "The Last Wave: UBS Integration and What Comes Next",
+            href: "/en/insights/the-last-wave",
           },
           {
-            label: "What Do Gen Z Want from Wealth Managers…",
-            href:
-              "/insights/what-do-gen-z-want-from-wealth-managers-and-how-fast-is-industry-shifting",
+            label: "Switzerland Is Running Out of Banks",
+            href: "/en/insights/switzerland-running-out-banks",
           },
           {
-            label:
-              "Swiss Private Banking Talent Revolution: Digital Skills, NextGen Clients and the Battle for Expertise",
-            href:
-              "/insights/the-swiss-private-banking-talent-revolution-digital-skills-nextgen-clients-and-the-battle-for-expertise",
-          },
+            label: "The Emotional Strategist: When AI Handles the Analysis",
+            href: "/en/insights/the-emotional-strategist",
+          }
         ]}
       />
     </>

@@ -147,20 +147,17 @@ export default function PrivateBankingRecruiterMadridPage() {
         pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
-            label: "La Dolce Vita Returns: Why Italy Has Become Europe’s…",
-            href:
-              "/insights/la-dolce-vita-returns-why-italy-has-become-europe-2025-12-09",
+            label: "The Last Wave: UBS Integration and What Comes Next",
+            href: "/en/insights/the-last-wave",
           },
           {
-            label: "Swiss Private Banking: Thriving Against the Odds",
-            href:
-              "/insights/swiss-private-banking-thriving-against-the-odds-2025-12-09",
+            label: "Switzerland Is Running Out of Banks",
+            href: "/en/insights/switzerland-running-out-banks",
           },
           {
-            label: "Power Shift: How Private Banking Talent Dynamics Are Evolving",
-            href:
-              "/insights/the-power-shift-how-private-banking-talent-dynamics-are-evolving-2025-12-09",
-          },
+            label: "The Emotional Strategist: When AI Handles the Analysis",
+            href: "/en/insights/the-emotional-strategist",
+          }
         ]}
       />
     </>

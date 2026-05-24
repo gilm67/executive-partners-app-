@@ -147,22 +147,17 @@ export default function PrivateBankingRecruiterNewYorkPage() {
         pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
-            label:
-              "This Week Changed Everything: Four Events Reshaping Wealth Management",
-            href:
-              "/insights/this-week-changed-everything-four-events-reshaping-wealth-management-2025-12-09",
+            label: "The Americans Are Already Here",
+            href: "/en/insights/americans-already-here",
           },
           {
-            label: "Swiss Private Banking: Thriving Against the Odds",
-            href:
-              "/insights/swiss-private-banking-thriving-against-the-odds-2025-12-09",
+            label: "The Emotional Strategist: When AI Handles the Analysis",
+            href: "/en/insights/the-emotional-strategist",
           },
           {
-            label:
-              "The Power Shift: How Private Banking Talent Dynamics Are Evolving",
-            href:
-              "/insights/the-power-shift-how-private-banking-talent-dynamics-are-evolving-2025-12-09",
-          },
+            label: "The Last Wave: UBS Integration and What Comes Next",
+            href: "/en/insights/the-last-wave",
+          }
         ]}
       />
     </>

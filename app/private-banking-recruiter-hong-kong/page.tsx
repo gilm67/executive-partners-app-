@@ -146,21 +146,17 @@ export default function PrivateBankingRecruiterHongKongPage() {
         pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
-            label: "The Great UBS Paradox",
-            href: "/insights/the-great-ubs-paradox",
+            label: "The Americans Are Already Here",
+            href: "/en/insights/americans-already-here",
           },
           {
-            label:
-              "Swiss Private Banking: Thriving Against the Odds (Tariffs & Volatility)",
-            href:
-              "/insights/swiss-private-banking-thriving-against-the-odds-2025-12-09",
+            label: "The Emotional Strategist: When AI Handles the Analysis",
+            href: "/en/insights/the-emotional-strategist",
           },
           {
-            label:
-              "Swiss Private Banks Navigate Rate Cuts and Tariff Turbulence, Deliver Mixed Results",
-            href:
-              "/insights/swiss-private-banks-navigate-rate-cuts-and-tariff-turbulence-deliver-mixed-resul-2025-12-09",
-          },
+            label: "The Last Wave: UBS Integration and What Comes Next",
+            href: "/en/insights/the-last-wave",
+          }
         ]}
         relatedCities={[
           { label: "Singapore", href: "/private-banking-recruiter-singapore" },

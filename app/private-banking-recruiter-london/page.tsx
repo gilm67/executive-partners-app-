@@ -147,23 +147,17 @@ export default function PrivateBankingRecruiterLondonPage() {
         pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
-            label:
-              "This Week Changed Everything: Four Events Reshaping Wealth Management",
-            href:
-              "/insights/this-week-changed-everything-four-events-reshaping-wealth-management",
+            label: "The Americans Are Already Here",
+            href: "/en/insights/americans-already-here",
           },
           {
-            label:
-              "The Swiss Banking Earthquake: How the Credit Suisse Collapse…",
-            href:
-              "/insights/the-swiss-banking-earthquake-how-the-credit-suisse-collapse-is-creating-the-bigg-2025-12-09",
+            label: "The Emotional Strategist: When AI Handles the Analysis",
+            href: "/en/insights/the-emotional-strategist",
           },
           {
-            label:
-              "Unlock Your Next Career Move: Senior RMs with Portable Books",
-            href:
-              "/insights/unlock-your-next-career-move-senior-rms-with-portable-books-in-the-spotlight-acr-2025-12-09",
-          },
+            label: "The Last Wave: UBS Integration and What Comes Next",
+            href: "/en/insights/the-last-wave",
+          }
         ]}
         relatedCities={[
           { label: "Geneva", href: "/private-banking-recruiter-geneva" },

@@ -150,22 +150,17 @@ export default function PrivateBankingRecruiterParisPage() {
         pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
           {
-            label: "Swiss Private Banking: Thriving Against the Odds",
-            href:
-              "/insights/swiss-private-banking-thriving-against-the-odds-2025-12-09",
+            label: "The Americans Are Already Here",
+            href: "/en/insights/americans-already-here",
           },
           {
-            label:
-              "The Swiss Banking Earthquake: How the Credit Suisse Collapse…",
-            href:
-              "/insights/the-swiss-banking-earthquake-how-the-credit-suisse-collapse-is-creating-the-bigg-2025-12-09",
+            label: "The Emotional Strategist: When AI Handles the Analysis",
+            href: "/en/insights/the-emotional-strategist",
           },
           {
-            label:
-              "The AI Reckoning: How 5,200 Job Cuts Are Reshaping Private Banking Talent",
-            href:
-              "/insights/the-ai-reckoning-how-5-200-job-cuts-are-reshaping-private-banking-talent-forever-2025-12-09",
-          },
+            label: "The Last Wave: UBS Integration and What Comes Next",
+            href: "/en/insights/the-last-wave",
+          }
         ]}
         relatedCities={[
           { label: "Geneva", href: "/private-banking-recruiter-geneva" },

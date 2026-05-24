@@ -83,25 +83,19 @@ export default function PrivateBankingRecruiterDubaiPage() {
       ]}
       pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
       insightsLinks={[
-        {
-          label:
-            "This Week Changed Everything: Four Events Reshaping Wealth Management",
-          href:
-            "/insights/this-week-changed-everything-four-events-reshaping-wealth-management",
-        },
-        {
-          label:
-            "The AI Reckoning: How 5,200 Job Cuts Are Reshaping Private Banking Talent",
-          href:
-            "/insights/the-ai-reckoning-how-5-200-job-cuts-are-reshaping-private-banking-talent-forever",
-        },
-        {
-          label:
-            "The Power Shift: How Private Banking Talent Dynamics Are Evolving",
-          href:
-            "/insights/the-power-shift-how-private-banking-talent-dynamics-are-evolving",
-        },
-      ]}
+          {
+            label: "Smoke Over the DIFC: Dubai Private Banking 2026",
+            href: "/en/insights/smoke-difc-dubai-private-banking-2026",
+          },
+          {
+            label: "The Emotional Strategist: When AI Handles the Analysis",
+            href: "/en/insights/the-emotional-strategist",
+          },
+          {
+            label: "The Last Wave: UBS Integration and What Comes Next",
+            href: "/en/insights/the-last-wave",
+          }
+        ]}
     />
   );
 }
