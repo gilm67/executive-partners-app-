@@ -11,8 +11,8 @@ const SITE =
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.execpartners.ch");
 
 export const metadata: Metadata = {
-  title: "Business Plan Simulator | Private Banking | Executive Partners",
-  description: "Model AUM portability, revenue projections and net margin scenarios. AI-driven business plan simulator for private banking relationship managers.",
+  title: "Private Banking Business Plan Simulator — Model NNM, ROA & P&L | Executive Partners",
+  description: "Free private banking business plan simulator. Model your 3-year AUM ramp, NNM, ROA and P&L the way a hiring committee evaluates it — built on 200+ EP placements.",
   openGraph: {
     title: "Business Plan Simulator | Executive Partners",
     description: "Bank-style business case builder to stress-test portability assumptions. Model NNM, ROA, revenues, and margins.",

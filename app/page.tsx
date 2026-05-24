@@ -11,7 +11,7 @@ const HERO = "/hero-jeteau.jpg";
 const OG_IMAGE = "/og.webp";
 
 export const metadata: Metadata = {
-  title: "Private Banking Executive Search & Headhunter Switzerland | Executive Partners Geneva",
+  title: "Private Banking Recruiter Switzerland | Executive Partners Geneva",
   description:
     "Geneva's leading executive recruiters for private banking and wealth management. Senior Relationship Managers, Team Heads and UHNW bankers placed across Switzerland, London, Dubai, Singapore and Hong Kong. 200+ placements.",
 
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
 
   alternates: {
-    canonical: "https://www.execpartners.ch/en",
+    canonical: "https://www.execpartners.ch/",
   },
 };
 
