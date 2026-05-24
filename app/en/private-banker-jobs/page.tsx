@@ -5,9 +5,25 @@ import Link from "next/link";
 import { getAllMarkets } from "@/lib/markets/data";
 
 export const metadata: Metadata = {
-  title: "Private Banker Jobs by Market",
+  title: "Private Banker Jobs by Market | Executive Partners",
   description:
-    "Director / MD private banker and team head roles across Geneva, Zurich, London, Dubai, Singapore, Hong Kong and other key wealth hubs.",
+    "Director and MD private banker roles across Geneva, Zurich, London, Dubai, Singapore, Hong Kong and New York. Confidential. Senior-level only.",
+  alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs" },
+  openGraph: {
+    title: "Private Banker Jobs by Market | Executive Partners",
+    description: "Director and MD private banker roles across global wealth hubs. Confidential. Senior-level only.",
+    type: "website",
+    url: "https://www.execpartners.ch/en/private-banker-jobs",
+    images: [{ url: "/og.webp", width: 1200, height: 630 }],
+    siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banker Jobs by Market | Executive Partners",
+    description: "Director and MD private banker roles across Geneva, Zurich, Dubai, Singapore and more. Confidential. Senior-level only.",
+    images: ["/og.webp"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function PrivateBankerJobsIndexPage() {

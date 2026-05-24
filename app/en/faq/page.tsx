@@ -18,6 +18,12 @@ export const metadata: Metadata = {
     siteName: "Executive Partners",
     images: [{ url: `${SITE}/og.webp` }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking FAQ | Executive Search Switzerland | Executive Partners",
+    description: "Answers to common questions about private banking career moves, AUM portability, confidentiality and compensation across Geneva, Zurich, Dubai and Singapor",
+    images: ["https://www.execpartners.ch/og.webp"],
+  },
   robots: { index: true, follow: true },
 };
 

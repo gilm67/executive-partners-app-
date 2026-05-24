@@ -4,6 +4,22 @@ export const metadata: Metadata = {
   title: "Private Banking Recruitment Agency in Switzerland | Executive Partners",
   description:
     "Executive Partners is a Geneva-based private banking recruitment agency specialising in senior hires for Swiss and international wealth managers in Geneva and Zurich.",
+  alternates: { canonical: "https://www.execpartners.ch/en/private-banking-recruitment-agency" },
+  openGraph: {
+    title: "Private Banking Recruitment Agency Switzerland | Executive Partners",
+    description: "Executive Partners is a Geneva-based private banking recruitment agency placing senior RMs, Team Heads and Investment Advisors across Switzerland and globa",
+    type: "website",
+    url: "https://www.execpartners.ch/en/private-banking-recruitment-agency",
+    images: [{ url: "/og.webp" }],
+    siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Recruitment Agency Switzerland | Executive Partners",
+    description: "Executive Partners is a Geneva-based private banking recruitment agency placing senior RMs, Team Heads and Investment Advisors across Switzerland and globa",
+    images: ["/og.webp"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function Page() {

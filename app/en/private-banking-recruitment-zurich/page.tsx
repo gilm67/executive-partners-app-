@@ -4,6 +4,22 @@ export const metadata: Metadata = {
   title: "Private Banking Recruitment in Zurich | Executive Partners",
   description:
     "Executive Partners supports Swiss and international banks with senior private banking recruitment in Zurich. Discreet search for Senior RMs, Desk Heads and Wealth Managers.",
+  alternates: { canonical: "https://www.execpartners.ch/en/private-banking-recruitment-zurich" },
+  openGraph: {
+    title: "Private Banking Recruitment in Zurich | Executive Partners",
+    description: "Executive Partners supports Swiss and international banks with senior private banking recruitment in Zurich. Senior RMs, Team Heads and DACH specialists.",
+    type: "website",
+    url: "https://www.execpartners.ch/en/private-banking-recruitment-zurich",
+    images: [{ url: "/og.webp" }],
+    siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Recruitment in Zurich | Executive Partners",
+    description: "Executive Partners supports Swiss and international banks with senior private banking recruitment in Zurich. Senior RMs, Team Heads and DACH specialists.",
+    images: ["/og.webp"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function Page() {
