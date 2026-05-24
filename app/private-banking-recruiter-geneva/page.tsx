@@ -9,7 +9,7 @@ const PAGE_URL = `${SITE}/private-banking-recruiter-geneva`;
 /* ------------ metadata ------------ */
 export const metadata: Metadata = {
   title: {
-    absolute: "Executive Search Geneva | Private Banking Recruiter – Executive Partners",
+    absolute: "Private Banking Recruiter Geneva | Executive Partners",
   },
   description:
     "Geneva's specialist executive search firm for private banking. Senior Relationship Managers, Team Heads and UHNW bankers placed across Geneva, Zurich and global wealth hubs. Confidential. Senior-level only.",
@@ -291,20 +291,18 @@ export default function PrivateBankingRecruiterGenevaPage() {
               </p>
               <ul className="mt-4 space-y-2 text-sm text-brandGoldSoft">
                 <li>
-                  <Link href="/insights" className="hover:underline">
-                    This Week Changed Everything: Four Events Reshaping Wealth
-                    Management
+                  <Link href="/en/insights/the-emotional-strategist" className="hover:underline">
+                    The Emotional Strategist: When AI Handles the Analysis
                   </Link>
                 </li>
                 <li>
-                  <Link href="/insights" className="hover:underline">
-                    The Swiss Banking Earthquake: Credit Suisse &amp; the UBS
-                    opportunity
+                  <Link href="/en/insights/switzerland-running-out-banks" className="hover:underline">
+                    Switzerland Is Running Out of Banks
                   </Link>
                 </li>
                 <li>
-                  <Link href="/insights" className="hover:underline">
-                    The Great UBS Paradox
+                  <Link href="/en/insights/the-last-wave" className="hover:underline">
+                    The Last Wave: UBS Integration and What Comes Next
                   </Link>
                 </li>
               </ul>

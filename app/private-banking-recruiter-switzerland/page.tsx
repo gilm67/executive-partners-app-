@@ -16,7 +16,7 @@ const PAGE_URL = `${SITE}/private-banking-recruiter-switzerland`;
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter Switzerland | Executive Partners Geneva",
+    absolute: "Private Banking Recruiter Switzerland | Executive Partners",
   },
   description:
     "Switzerland's leading executive search firm for private banking. Senior Relationship Managers, Team Heads and UHNW bankers placed across Geneva, Zurich, Dubai, Singapore and London. 200+ placements. Confidential.",
