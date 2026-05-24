@@ -172,9 +172,12 @@ export default async function MarketPage({ params }: Props) {
               PRIVATE BANKING · {m.city.toUpperCase()}
             </p>
             <h1 className="font-[var(--font-playfair)] text-3xl font-semibold tracking-tight text-white md:text-4xl">
-              Move your book to{" "}
-              <span className="text-white/90">{m.city}</span> with confidence.
+              Private Banking Jobs &amp; Recruiter{" "}
+              <span className="text-white/90">{m.city}</span> — Senior RMs &amp; Team Heads
             </h1>
+            <p className="mt-2 text-sm font-medium text-white/80">
+              Move your book to {m.city} with confidence.
+            </p>
             <p className="mt-3 max-w-3xl text-sm text-neutral-200 md:text-base">
               {m.summary}
             </p>

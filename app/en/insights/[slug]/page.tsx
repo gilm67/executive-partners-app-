@@ -185,6 +185,7 @@ export default function InsightDetailPage({ params }: Props) {
     headline: article.title,
     description: article.summary,
     datePublished: article.date,
+    dateModified: article.date,
     inLanguage: "en",
     author: { "@type": "Person", name: "Gil M. Chalem" },
     publisher: {

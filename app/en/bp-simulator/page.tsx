@@ -25,9 +25,52 @@ export const metadata: Metadata = {
   },
 };
 
+const BP_FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is a private banking business plan simulator?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A private banking business plan simulator models the 3-year AUM ramp, NNM projections, ROA, and P&L the way a hiring committee evaluates a candidate. It helps relationship managers stress-test portability assumptions and calculate break-even timelines before approaching a new bank."
+      }
+    },
+    {
+      "@type": "Question",
+      name: "How do private banks evaluate a business plan from a relationship manager?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Private banks evaluate RM business plans across seven dimensions: portable AUM, NNM ramp by year, ROA assumptions, fixed cost coverage, break-even month, downside scenario, and committee readiness. The EP Business Plan Simulator scores each dimension to produce a Committee Readiness Score out of 100."
+      }
+    },
+    {
+      "@type": "Question",
+      name: "What NNM and ROA assumptions should I use in my private banking business plan?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Conservative NNM assumptions typically range from 30 to 50 percent of portable AUM in year one, rising to 60 to 80 percent by year three. ROA benchmarks in Swiss private banking range from 65 to 90 basis points for HNW books and 40 to 65 basis points for UHNW books. The simulator uses institution-type cost multipliers to produce realistic net margin figures."
+      }
+    },
+    {
+      "@type": "Question",
+      name: "Is the EP Business Plan Simulator free to use?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. The EP Business Plan Simulator is free, confidential, and requires no login. It is used by senior relationship managers preparing business plans for private banks in Geneva, Zurich, Dubai, Singapore, London, and New York."
+      }
+    }
+  ]
+};
+
 export default function Page() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BP_FAQ_SCHEMA) }}
+      />
       <BreadcrumbSchema
         items={[
           { name: "Home", url: SITE },
