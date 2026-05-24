@@ -27,11 +27,17 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "article",
-    url: "/private-banking-recruiter-madrid",
+    url: "https://www.execpartners.ch/private-banking-recruiter-madrid",
     title: "Private Banking Recruiter in Madrid – Executive Partners",
     description:
       "Specialist recruiter for Private Banking & Wealth Management in Madrid: Spanish UHNW, family business owners and LatAm corridors.",
     siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Recruiter in Madrid – Executive Partners",
+    description: "Specialist recruiter for Private Banking & Wealth Management in Madrid: Spanish UHNW, family business owners and LatAm corridors.",
+    images: ["https://www.execpartners.ch/og.webp"],
   },
   robots: { index: true, follow: true },
 };

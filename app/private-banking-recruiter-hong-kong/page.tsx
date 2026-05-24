@@ -26,11 +26,17 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "article",
-    url: "/private-banking-recruiter-hong-kong",
+    url: "https://www.execpartners.ch/private-banking-recruiter-hong-kong",
     title: "Private Banking Recruiter in Hong Kong – Executive Partners",
     description:
       "Specialist recruiter for Private Banking & Wealth Management in Hong Kong: Greater China and North Asia UHNW/HNW desks.",
     siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Recruiter in Hong Kong – Executive Partners",
+    description: "Specialist recruiter for Private Banking & Wealth Management in Hong Kong: Greater China and North Asia UHNW/HNW desks.",
+    images: ["https://www.execpartners.ch/og.webp"],
   },
   robots: { index: true, follow: true },
 };

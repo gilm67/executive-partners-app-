@@ -24,6 +24,12 @@ export const metadata: Metadata = {
     description:
       "Geneva-based executive search boutique focused on senior Private Bankers, RMs and Team Heads with portable UHNW/HNW books.",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Recruiter in Geneva – Executive Partners",
+    description: "Geneva-based executive search boutique focused on senior Private Bankers, RMs and Team Heads with portable UHNW/HNW books.",
+    images: ["https://www.execpartners.ch/og.webp"],
+  },
   robots: { index: true, follow: true },
 };
 
@@ -218,7 +224,7 @@ export default function PrivateBankingRecruiterGenevaPage() {
           {/* Section: Compensation table */}
           <section className="mt-14 rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
             <h2 className="text-xl font-semibold text-white">
-              2024–2025 Geneva compensation benchmarks
+              2025–2026 Geneva compensation benchmarks
             </h2>
             <p className="mt-3 text-sm text-neutral-300 md:text-[0.95rem]">
               The ranges below reflect typical packages observed across leading
@@ -268,7 +274,7 @@ export default function PrivateBankingRecruiterGenevaPage() {
 
             <p className="mt-4 text-xs text-neutral-500">
               These ranges are indicative and based on observed market levels in
-              Geneva across 2024–2025. Individual offers depend on platform,
+              Geneva across 2025–2026. Individual offers depend on platform,
               seniority, compliance history and proven, portable AUM.
             </p>
           </section>

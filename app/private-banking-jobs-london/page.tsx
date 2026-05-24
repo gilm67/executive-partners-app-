@@ -68,6 +68,12 @@ export const metadata: Metadata = {
     images: [{ url: "/og.webp" }],
     siteName: "Executive Partners",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Jobs in London | Executive Partners",
+    description: "Live London/UK mandates. Discreet search for HNW/UHNW Relationship Managers and senior leaders with UK onshore and international cross-border coverage.",
+    images: ["https://www.execpartners.ch/og.webp"],
+  },
   robots: { index: true, follow: true },
 };
 

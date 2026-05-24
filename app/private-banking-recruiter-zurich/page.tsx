@@ -27,11 +27,17 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    url: "/private-banking-recruiter-zurich",
+    url: "https://www.execpartners.ch/private-banking-recruiter-zurich",
     siteName: "Executive Partners",
     title: "Private Banking Recruiter in Zurich – Executive Partners",
     description:
       "Zurich-focused executive search boutique for Private Banking & Wealth Management: senior RMs, Team Heads and Market Leaders with portable UHNW/HNW books.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Recruiter in Zurich – Executive Partners",
+    description: "Zurich-focused executive search boutique for Private Banking & Wealth Management: senior RMs, Team Heads and Market Leaders with portable UHNW/HNW books.",
+    images: ["https://www.execpartners.ch/og.webp"],
   },
   robots: { index: true, follow: true },
 };
@@ -217,7 +223,7 @@ export default function PrivateBankingRecruiterZurichPage() {
         {/* Section: Compensation table */}
         <section className="mt-14 rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
           <h2 className="text-xl font-semibold text-white">
-            2024–2025 Zurich compensation benchmarks
+            2025–2026 Zurich compensation benchmarks
           </h2>
           <p className="mt-3 text-sm text-neutral-300 md:text-[0.95rem]">
             The ranges below summarise typical packages we observe for Zurich
@@ -266,7 +272,7 @@ export default function PrivateBankingRecruiterZurichPage() {
 
           <p className="mt-4 text-xs text-neutral-500">
             Ranges indicative only, based on Zurich market observations for
-            2024–2025. Actual offers depend on platform, seniority, cross-border
+            2025–2026. Actual offers depend on platform, seniority, cross-border
             risk, revenue mix and proven, portable AUM.
           </p>
         </section>

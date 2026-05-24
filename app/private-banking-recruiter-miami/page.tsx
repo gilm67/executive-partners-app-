@@ -27,11 +27,17 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "article",
-    url: "/private-banking-recruiter-miami",
+    url: "https://www.execpartners.ch/private-banking-recruiter-miami",
     title: "Private Banking Recruiter in Miami – Executive Partners",
     description:
       "Specialist recruiter for Private Banking & Wealth Management in Miami: LatAm UHNW, international offshore and US-based entrepreneurs.",
     siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Recruiter in Miami – Executive Partners",
+    description: "Specialist recruiter for Private Banking & Wealth Management in Miami: LatAm UHNW, international offshore and US-based entrepreneurs.",
+    images: ["https://www.execpartners.ch/og.webp"],
   },
   robots: { index: true, follow: true },
 };

@@ -67,6 +67,12 @@ export const metadata: Metadata = {
     images: [{ url: "/og.webp" }],
     siteName: "Executive Partners",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Jobs in Dubai | Executive Partners",
+    description: "Live MEA mandates from Dubai: Relationship Managers, Team Heads, Market Leaders. Discreet recruitment for UHNW/HNW private banking in the UAE.",
+    images: ["https://www.execpartners.ch/og.webp"],
+  },
   robots: { index: true, follow: true },
 };
 

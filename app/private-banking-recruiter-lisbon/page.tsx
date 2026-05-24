@@ -27,11 +27,17 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "article",
-    url: "/private-banking-recruiter-lisbon",
+    url: "https://www.execpartners.ch/private-banking-recruiter-lisbon",
     title: "Private Banking Recruiter in Lisbon – Executive Partners",
     description:
       "Specialist recruiter for Private Banking & Wealth Management in Lisbon: international HNW residents, tech/real-estate entrepreneurs and returning Portuguese families.",
     siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Recruiter in Lisbon – Executive Partners",
+    description: "Specialist recruiter for Private Banking & Wealth Management in Lisbon: international HNW residents, tech/real-estate entrepreneurs and returning Portugues",
+    images: ["https://www.execpartners.ch/og.webp"],
   },
   robots: { index: true, follow: true },
 };

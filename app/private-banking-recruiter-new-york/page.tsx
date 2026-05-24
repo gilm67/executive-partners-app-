@@ -27,11 +27,17 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "article",
-    url: "/private-banking-recruiter-new-york",
+    url: "https://www.execpartners.ch/private-banking-recruiter-new-york",
     title: "Private Banking Recruiter in New York – Executive Partners",
     description:
       "Specialist recruiter for Private Banking & Wealth Management in New York: US onshore, LatAm offshore and global UHNW coverage.",
     siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Recruiter in New York – Executive Partners",
+    description: "Specialist recruiter for Private Banking & Wealth Management in New York: US onshore, LatAm offshore and global UHNW coverage.",
+    images: ["https://www.execpartners.ch/og.webp"],
   },
   robots: { index: true, follow: true },
 };

@@ -13,11 +13,17 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "article",
-    url: "/private-banking-recruiter-dubai",
+    url: "https://www.execpartners.ch/private-banking-recruiter-dubai",
     title: "Private Banking Recruiter in Dubai – Executive Partners",
     description:
       "Specialist recruiter for Private Banking & Wealth Management in Dubai: GCC, MENA and NRI desks, UHNW/HNW RMs, Team Heads and Market Leaders.",
     siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Recruiter in Dubai – Executive Partners",
+    description: "Specialist recruiter for Private Banking & Wealth Management in Dubai: GCC, MENA and NRI desks, UHNW/HNW RMs, Team Heads and Market Leaders.",
+    images: ["https://www.execpartners.ch/og.webp"],
   },
   robots: { index: true, follow: true },
 };
