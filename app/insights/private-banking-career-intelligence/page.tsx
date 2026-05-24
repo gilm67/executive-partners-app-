@@ -19,6 +19,12 @@ export const metadata: Metadata = {
     siteName: "Executive Partners",
   },
   robots: { index: true, follow: true },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Career Intelligence 2026 | Executive Partners",
+    description: "Fact-checked 2026 benchmarks for Private Banking careers across Geneva, Zurich, London, Dubai, Singapore and more.",
+    images: ["/og.webp"],
+  },
 };
 
 export default function PrivateBankingCareerIntelligencePage() {
