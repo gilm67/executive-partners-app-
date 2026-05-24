@@ -317,12 +317,6 @@ export default async function InsightPostPage({ params }: { params: Params }) {
       </div>
     </main>
   );
-  twitter: {
-    card: "summary_large_image",
-    title: "Private Banking Insights | Executive Partners",
-    description: "Private banking market intelligence.",
-    images: ["https://www.execpartners.ch/og.webp"],
-  },
 }; app/insights/[slug]/page.tsx */
 import type { Metadata } from "next";
 import Link from "next/link";
