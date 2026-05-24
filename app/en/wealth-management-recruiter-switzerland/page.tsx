@@ -16,6 +16,12 @@ export const metadata: Metadata = {
     url: `${SITE}/en/wealth-management-recruiter-switzerland`,
     images: [{ url: `${SITE}/og.webp` }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Wealth Management Recruiter Switzerland | Executive Partners",
+    description: "Geneva-based wealth management recruiter specialising in senior RM, Investment Advisor and Team Head placements across Switzerland and global booking centr",
+    images: ["https://www.execpartners.ch/og.webp"],
+  },
   robots: { index: true, follow: true },
 };
 

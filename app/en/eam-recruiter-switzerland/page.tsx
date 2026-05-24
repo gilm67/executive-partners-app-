@@ -16,6 +16,12 @@ export const metadata: Metadata = {
     url: `${SITE}/en/eam-recruiter-switzerland`,
     images: [{ url: `${SITE}/og.webp` }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "EAM Recruiter Switzerland | Executive Partners Geneva",
+    description: "Geneva-based headhunter for External Asset Managers. Senior RM placement, EAM transition advisory and front-office team building across Switzerland.",
+    images: ["https://www.execpartners.ch/og.webp"],
+  },
   robots: { index: true, follow: true },
 };
 

@@ -1,9 +1,25 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Private Banking Headhunter in Geneva | Executive Partners",
+  title: "Private Banking Headhunter Geneva | Senior RM & Team Head Search | Executive Partners",
   description:
-    "Executive Partners is a Geneva-based private banking headhunter specialising in the recruitment of Senior RMs, Desk Heads and Wealth Managers for Swiss and international banks.",
+    "Executive Partners is a Geneva-based private banking headhunter specialising in the recruitment of Senior RMs, Desk Heads and Wealth Managers for Swiss and international banks. 200+ placements, 98% retention.",
+  alternates: { canonical: "https://www.execpartners.ch/en/private-banking-headhunter-geneva" },
+  openGraph: {
+    title: "Private Banking Headhunter Geneva | Executive Partners",
+    description: "Geneva-based private banking headhunter. Senior RMs, Team Heads and Market Leaders placed across Switzerland and global wealth hubs. Confidential. Senior-level only.",
+    type: "website",
+    url: "https://www.execpartners.ch/en/private-banking-headhunter-geneva",
+    images: [{ url: "https://www.execpartners.ch/og.webp", width: 1200, height: 630 }],
+    siteName: "Executive Partners",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Private Banking Headhunter Geneva | Executive Partners",
+    description: "Geneva-based private banking headhunter. Senior RMs, Team Heads and Market Leaders placed across Switzerland and global wealth hubs.",
+    images: ["https://www.execpartners.ch/og.webp"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function Page() {

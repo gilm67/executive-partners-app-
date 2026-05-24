@@ -20,6 +20,12 @@ export const metadata: Metadata = {
     siteName: "Executive Partners",
     images: [{ url: `${SITE}/og.webp` }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Headhunter Genf & Zürich | Private Banking | Executive Partners",
+    description: "Führende Personalberatung für Private Banking in der Schweiz. Senior RMs, Team Heads und UHNW-Banker in Genf, Zürich, Dubai und Singapur.",
+    images: ["https://www.execpartners.ch/og.webp"],
+  },
   robots: { index: true, follow: true },
 };
 
