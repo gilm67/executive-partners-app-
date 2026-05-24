@@ -18,7 +18,6 @@ export const metadata: Metadata = {
     url: `${SITE}/fr`,
     images: [{ url: `${SITE}/og.webp` }],
   },
-  robots: { index: true, follow: true },
   twitter: {
     card: "summary_large_image",
     title: "Chasseur de têtes Private Banking Genève | Executive Partners",
