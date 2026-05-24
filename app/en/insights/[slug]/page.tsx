@@ -1,3 +1,4 @@
+import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -315,15 +316,52 @@ export default function InsightDetailPage({ params }: Props) {
 
         {article.body ? (
           <div className="mt-6 space-y-4 text-white/80 leading-relaxed text-[0.95rem]">
-            {article.body.split("\n\n").map((para, i) =>
-              para.startsWith("## ") ? (
-                <h2 key={i} className="mt-8 text-lg font-semibold text-white">
-                  {para.replace("## ", "")}
-                </h2>
-              ) : (
-                <p key={i}>{para}</p>
-              )
-            )}
+            {article.body.split("\n\n").map((para, i) => {
+              if (para.startsWith("## ")) {
+                return (
+                  <h2 key={i} className="mt-8 text-lg font-semibold text-white">
+                    {para.replace("## ", "")}
+                  </h2>
+                );
+              }
+              if (para.startsWith("### ")) {
+                return (
+                  <h3 key={i} className="mt-6 text-base font-semibold text-white/90">
+                    {para.replace("### ", "")}
+                  </h3>
+                );
+              }
+              // Parse inline markdown: [text](url) and **bold**
+              const parseInline = (text: string): React.ReactNode[] => {
+                const parts: React.ReactNode[] = [];
+                const re = /(\*\*(.+?)\*\*|\[([^\]]+)\]\(([^)]+)\))/g;
+                let last = 0;
+                let m: RegExpExecArray | null;
+                while ((m = re.exec(text)) !== null) {
+                  if (m.index > last) parts.push(text.slice(last, m.index));
+                  if (m[0].startsWith("**")) {
+                    parts.push(<strong key={m.index} className="text-white font-semibold">{m[2]}</strong>);
+                  } else {
+                    const href = m[4];
+                    const isExternal = href.startsWith("http");
+                    parts.push(
+                      
+                        key={m.index}
+                        href={href}
+                        {...(isExternal ? { target: "_blank", rel: "noreferrer" } : {})}
+                        className="text-[#C9A14A] underline underline-offset-2 hover:text-[#F5D778]"
+                      >
+                        {m[3]}
+                      </a>
+                    );
+                  }
+                  last = m.index + m[0].length;
+                }
+                if (last < text.length) parts.push(text.slice(last));
+                return parts;
+              };
+              return <p key={i}>{parseInline(para)}</p>;
+            })}
           </div>
         ) : null}
 
