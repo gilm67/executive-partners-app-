@@ -30,7 +30,23 @@ const faqJsonLd = {
       name: "What is AUM portability in private banking?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Portability is the fraction of a banker's assets under management that can realistically be transferred to a new employer. It depends on where AUM sits, relationship depth, non-solicitation clauses, and whether clients have been approached by competitors.",
+        text: "AUM portability is the fraction of a relationship manager's assets under management that can realistically be transferred to a new employer. It depends on where AUM is booked, the depth of the personal client relationship versus bank brand dependency, non-solicitation obligations, and whether clients have been approached by competitors. A banker with CHF 300m AUM may have a true portable book of CHF 80m to CHF 180m depending on these factors.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What percentage of AUM is typically portable when a private banker changes banks?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Across 200+ senior placements, Executive Partners finds that true portable AUM typically ranges from 30 to 65 percent of stated AUM in year one. The main discount factors are EAM or custodian-held assets that follow the platform rather than the banker, clients with strong brand loyalty to the departing institution, cross-border compliance restrictions, and non-solicitation lock-out windows of three to twelve months.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do non-solicitation clauses affect AUM portability in Switzerland?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Swiss non-solicitation clauses typically run three to twelve months and restrict direct client contact after departure. They do not prevent clients from proactively following their banker. However, bankers with a high proportion of long-standing personal relationships and clients who initiate contact themselves tend to transfer significantly more AUM than bankers whose book is institutionally anchored. The Portability Score evaluates legal constraints as one of its six scoring blocks.",
       },
     },
     {
@@ -38,15 +54,23 @@ const faqJsonLd = {
       name: "How is the Portability Score™ calculated?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "The score covers six blocks: AUM composition and wallet share, revenue quality, relationship depth, EAM portability risk, legal constraints, and motivation and fit. Maximum score is 30 points. A score of 22 or above is required to advance. Any single block scored 1 out of 5 is a standalone disqualifier.",
+        text: "The Portability Score covers six blocks: AUM composition and wallet share, revenue quality, relationship depth and past portability, EAM portability risk, legal constraints, and motivation and fit. Each block is scored out of five points for a maximum total of 30. A score of 22 or above is the threshold to advance. Any single block scored 1 out of 5 is a standalone disqualifier regardless of the total score.",
       },
     },
     {
       "@type": "Question",
-      name: "Is the Portability Score™ free?",
+      name: "What score do I need to successfully move banks as a private banker?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. The tool is entirely free and confidential. No registration is required and your results are never shared without your consent.",
+        text: "Based on Executive Partners' placement history, a Portability Score of 22 or above out of 30 indicates a commercially viable move. Scores of 25 to 30 support strong business plans and competitive guarantee negotiations. Scores below 22 typically indicate one or more structural constraints — such as EAM concentration, thin wallet share, or legal lock-out — that should be resolved before approaching institutions.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is the Portability Score™ free and confidential?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. The Portability Score tool is entirely free, requires no registration, and is 100 percent confidential. Your results and inputs are never shared with any third party without your explicit consent. It has been used by over 500 private bankers across Geneva, Zurich, Dubai, Singapore, London, and New York.",
       },
     },
   ],
