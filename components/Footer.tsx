@@ -33,18 +33,18 @@ const NAV = [
 ];
 
 const HUBS = [
-  { city: "Geneva", flag: "🇨🇭" },
-  { city: "Zurich", flag: "🇨🇭" },
-  { city: "London", flag: "🇬🇧" },
-  { city: "Dubai", flag: "🇦🇪" },
-  { city: "Singapore", flag: "🇸🇬" },
-  { city: "Hong Kong", flag: "🇭🇰" },
-  { city: "New York", flag: "🇺🇸" },
-  { city: "Miami", flag: "🇺🇸" },
-  { city: "Paris", flag: "🇫🇷" },
-  { city: "Milan", flag: "🇮🇹" },
-  { city: "Madrid", flag: "🇪🇸" },
-  { city: "Lisbon", flag: "🇵🇹" },
+  { city: "Geneva", flag: "🇨🇭", slug: "geneva" },
+  { city: "Zurich", flag: "🇨🇭", slug: "zurich" },
+  { city: "London", flag: "🇬🇧", slug: "london" },
+  { city: "Dubai", flag: "🇦🇪", slug: "dubai" },
+  { city: "Singapore", flag: "🇸🇬", slug: "singapore" },
+  { city: "Hong Kong", flag: "🇭🇰", slug: "hong-kong" },
+  { city: "New York", flag: "🇺🇸", slug: "new-york" },
+  { city: "Miami", flag: "🇺🇸", slug: "miami" },
+  { city: "Paris", flag: "🇫🇷", slug: "paris" },
+  { city: "Milan", flag: "🇮🇹", slug: "milan" },
+  { city: "Madrid", flag: "🇪🇸", slug: "madrid" },
+  { city: "Lisbon", flag: "🇵🇹", slug: "lisbon" },
 ];
 
 export default function Footer() {
@@ -97,11 +97,11 @@ export default function Footer() {
             <div className="text-[10px] font-semibold uppercase tracking-[0.12em] mb-3 text-center" style={{color:"rgba(201,161,74,.6)"}}>Our Hubs</div>
             <div className="flex flex-wrap gap-1.5 justify-center">
               {HUBS.map((h) => (
-                <span key={h.city}
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium text-white/70"
+                <Link key={h.city} href={`/en/markets/${h.slug}`}
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium text-white/70 hover:text-white transition-colors"
                   style={{background:"rgba(255,255,255,.06)",border:"1px solid rgba(255,255,255,.1)"}}>
                   <span>{h.flag}</span>{h.city}
-                </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -163,7 +163,7 @@ export default function Footer() {
               <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-4" style={{color:"#C9A14A"}}>Our Hubs</h4>
               <ul className="space-y-3">
                 {HUBS.map((h) => (
-                  <li key={h.city} className="text-sm text-white/70 flex items-center gap-2"><span>{h.flag}</span>{h.city}</li>
+                  <li key={h.city} className="text-sm text-white/70 flex items-center gap-2"><Link href={`/en/markets/${h.slug}`} className="hover:text-white transition-colors flex items-center gap-2"><span>{h.flag}</span>{h.city}</Link></li>
                 ))}
               </ul>
             </div>

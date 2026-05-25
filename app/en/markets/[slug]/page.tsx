@@ -471,7 +471,7 @@ export default async function MarketPage({ params }: Props) {
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <Link
-                    href={`/en/private-banker-jobs/${slug}`}
+                    href={`/en/private-banker-jobs-${slug}`}
                     className="inline-flex items-center rounded-full bg-[#D4AF37] px-5 py-2.5 text-sm font-medium text-black transition hover:bg-[#f5d778]"
                   >
                     View {m.city} Private Banker jobs
@@ -593,7 +593,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           </div>
           <p className="mt-5 max-w-3xl text-sm text-neutral-300 md:text-base">
             If you want to explore{" "}
-            <Link href="/en/private-banker-jobs/geneva" className="text-[#F4D270] underline underline-offset-2">current Geneva private banker jobs</Link>
+            <Link href="/en/private-banker-jobs-geneva" className="text-[#F4D270] underline underline-offset-2">current Geneva private banker jobs</Link>
             , start with a confidential conversation. You can also share your profile via the{" "}
             <Link href="/en/candidates" className="text-[#F4D270] underline underline-offset-2">candidates hub</Link>
             , model a move using the{" "}
@@ -649,7 +649,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             To explore{" "}
             <Link
-              href="/en/private-banker-jobs/zurich"
+              href="/en/private-banker-jobs-zurich"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Zurich private banker jobs
@@ -731,7 +731,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           </div>
           <p className="mt-5 max-w-3xl text-sm text-neutral-300 md:text-base">
             You can review{" "}
-            <Link href="/en/private-banker-jobs/dubai" className="text-[#F4D270] underline underline-offset-2">current Dubai private banker roles</Link>
+            <Link href="/en/private-banker-jobs-dubai" className="text-[#F4D270] underline underline-offset-2">current Dubai private banker roles</Link>
             {" "}or{" "}
             <Link href="/en/candidates" className="text-[#F4D270] underline underline-offset-2">share your profile confidentially</Link>
             {" "}for upcoming mandates. For a deeper discussion,{" "}
@@ -784,7 +784,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             You can explore{" "}
             <Link
-              href="/en/private-banker-jobs/singapore"
+              href="/en/private-banker-jobs-singapore"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Singapore-based roles
@@ -859,7 +859,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             To review{" "}
             <Link
-              href="/en/private-banker-jobs/london"
+              href="/en/private-banker-jobs-london"
               className="text-[#F4D270] underline underline-offset-2"
             >
               London roles
@@ -933,7 +933,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             You can explore{" "}
             <Link
-              href="/en/private-banker-jobs/hong-kong"
+              href="/en/private-banker-jobs-hong-kong"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Hong Kong mandates
@@ -1006,7 +1006,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             You can review{" "}
             <Link
-              href="/en/private-banker-jobs/new-york"
+              href="/en/private-banker-jobs-new-york"
               className="text-[#F4D270] underline underline-offset-2"
             >
               New York private banker roles
@@ -1079,7 +1079,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             You can check{" "}
             <Link
-              href="/en/private-banker-jobs/miami"
+              href="/en/private-banker-jobs-miami"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Miami private banker jobs
@@ -1153,7 +1153,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             Review{" "}
             <Link
-              href="/en/private-banker-jobs/paris"
+              href="/en/private-banker-jobs-paris"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Paris private banking roles
@@ -1227,7 +1227,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             Explore{" "}
             <Link
-              href="/en/private-banker-jobs/madrid"
+              href="/en/private-banker-jobs-madrid"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Madrid private banker jobs
@@ -1300,7 +1300,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             Check{" "}
             <Link
-              href="/en/private-banker-jobs/lisbon"
+              href="/en/private-banker-jobs-lisbon"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Lisbon private banking opportunities
