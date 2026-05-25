@@ -240,7 +240,7 @@ export default function InsightsPage() {
               Join 17,000+ senior private banking professionals who read Gil M. Chalem every week. No noise. No fluff. Just the signals that matter.
             </p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
-              
+              <a
                 href="https://www.linkedin.com/newsletters/private-wealth-pulse-7049706791347752960/"
                 target="_blank"
                 rel="noopener noreferrer"
