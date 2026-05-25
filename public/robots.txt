@@ -14,3 +14,16 @@ Disallow: /en/bp-simulator?
 Disallow: /business-plan-simulator?
 
 Sitemap: https://www.execpartners.ch/sitemap.xml
+# Block SearchAction template URL
+Disallow: /en/insights?query=
+
+# Block old non-/en/ routes (now redirect to /en/)
+Disallow: /markets/
+Disallow: /jobs/
+Disallow: /candidates$
+Disallow: /employers
+Disallow: /about$
+Disallow: /top-talent
+Disallow: /recent-job-opening
+Disallow: /private-banking-jobs-
+Disallow: /business-plan-simulator$
