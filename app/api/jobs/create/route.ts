@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createJob, type NewJobInput } from "@/lib/sheets";
+import { createJob } from "@/lib/sheets";
 
 function hasAdminToken() {
   return !!process.env.APP_ADMIN_TOKEN;
@@ -12,7 +12,7 @@ function getAuthToken(req: Request) {
   return url.searchParams.get("token")?.trim() || "";
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   return NextResponse.json({
     ok: true,
     diag: "jobs/create",
@@ -39,17 +39,10 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const job: NewJobInput = {
+    const result = await createJob({
       title: body.title,
       location: body.location,
-      market: body.market,
-      seniority: body.seniority,
-      summary: body.summary,
-      confidential: body.confidential ?? true,
-      active: body.active ?? true,
-    };
-
-    const result = await createJob(job);
+    });
     return NextResponse.json({ ok: true, result });
   } catch (err: any) {
     console.error("[jobs/create]", err);
