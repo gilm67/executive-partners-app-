@@ -929,7 +929,7 @@ export default function PortabilityClient() {
             <h2 className="text-lg font-semibold text-white">5. Next steps with Executive Partners</h2>
             <p className="mt-2">If your portability profile looks compelling, we can help you approach the right platforms and booking centres in a structured, discreet way.</p>
             <div className="mt-4 flex flex-wrap gap-3">
-              <PrimaryButton onClick={() => setCapture((prev) => ({ ...prev, showModal: true }))}>Share my profile & book a call</PrimaryButton>
+              <button onClick={() => setCapture((prev) => ({ ...prev, showModal: true }))} className="inline-flex items-center rounded-xl bg-brandGold px-5 py-2.5 text-sm font-semibold text-black hover:opacity-90 transition-opacity">Share my profile &amp; book a call</button>
               <SecondaryButton href="/en/jobs">View live Private Banking mandates</SecondaryButton>
               <SecondaryButton href="/en/markets">Explore booking centres & markets</SecondaryButton>
             </div>

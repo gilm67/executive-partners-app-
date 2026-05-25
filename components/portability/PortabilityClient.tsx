@@ -1455,7 +1455,7 @@ export default function PortabilityClient() {
             </div>
  
             <div className="mt-4 flex flex-wrap gap-3">
-              <PrimaryButton href="/en/contact">Share my profile & book a call</PrimaryButton>
+              <button onClick={() => setCapture((prev) => ({ ...prev, showModal: true }))} className="inline-flex items-center rounded-xl bg-brandGold px-5 py-2.5 text-sm font-semibold text-black hover:opacity-90 transition-opacity">Share my profile &amp; book a call</button>
               <SecondaryButton href="/en/jobs">View live mandates</SecondaryButton>
               <SecondaryButton href="/en/markets">Explore booking centres</SecondaryButton>
             </div>
