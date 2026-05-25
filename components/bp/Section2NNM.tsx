@@ -110,7 +110,8 @@ function NumberInput({
       className="w-full bg-transparent outline-none"
       value={value ?? ''}
       onChange={(e) => onChange(safeNum(e.target.value))}
-    />
+              onFocus={(e) => e.currentTarget.select()}
+            />
   );
 }
 
@@ -129,7 +130,8 @@ function IntInput({
       className="w-full bg-transparent outline-none"
       value={value ?? ''}
       onChange={(e) => onChange(Math.max(0, Math.floor(safeNum(e.target.value))))}
-    />
+              onFocus={(e) => e.currentTarget.select()}
+            />
   );
 }
 

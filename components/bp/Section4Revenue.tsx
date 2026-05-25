@@ -272,6 +272,7 @@ export default function Section4Revenue() {
               className="w-full bg-transparent outline-none"
               value={(i as any).sign_on_bonus ?? 0}
               onChange={e => set({ sign_on_bonus: Number(e.target.value) || 0 } as any)}
+              onFocus={(e) => e.currentTarget.select()}
             />
           </Field>
           <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs space-y-1">
@@ -304,7 +305,8 @@ export default function Section4Revenue() {
                 className="w-full bg-transparent outline-none"
                 value={(i as any)[key] ?? ''}
                 onChange={e => set({ [key]: toNum(e.target.value) } as any)}
-              />
+              onFocus={(e) => e.currentTarget.select()}
+            />
             </Field>
           ))}
         </div>

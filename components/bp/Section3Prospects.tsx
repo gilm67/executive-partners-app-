@@ -184,7 +184,8 @@ function Num({ value, onChange }: { value: number | string; onChange: (v: number
       className="w-full bg-transparent outline-none"
       value={value ?? ''}
       onChange={(e) => onChange(safeNum(e.target.value))}
-    />
+              onFocus={(e) => e.currentTarget.select()}
+            />
   );
 }
 

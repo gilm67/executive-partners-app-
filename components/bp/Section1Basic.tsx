@@ -46,7 +46,9 @@ export default function Section1Basic({ showTips }: { showTips?: boolean }) {
         <div>
           <Field label="Years of Experience *">
             <input type="number" min={0} className="w-full bg-transparent outline-none"
-              value={i.years_experience} onChange={(e) => set({ years_experience: Number(e.target.value) || 0 })} />
+              value={i.years_experience} onChange={(e) => set({ years_experience: Number(e.target.value) || 0 })}
+              onFocus={(e) => e.currentTarget.select()}
+            />
           </Field>
           <Guide show={showTips}>
             Total years in private banking or wealth management front-office roles. Used in the committee readiness score —
@@ -57,7 +59,9 @@ export default function Section1Basic({ showTips }: { showTips?: boolean }) {
         <div>
           <Field label="Inherited Book (% of AUM) *">
             <input type="number" min={0} max={100} className="w-full bg-transparent outline-none"
-              value={i.inherited_book_pct} onChange={(e) => set({ inherited_book_pct: Number(e.target.value) || 0 })} />
+              value={i.inherited_book_pct} onChange={(e) => set({ inherited_book_pct: Number(e.target.value) || 0 })}
+              onFocus={(e) => e.currentTarget.select()}
+            />
           </Field>
           <Guide show={showTips}>
             What percentage of your current AUM was assigned to you by the institution rather than acquired through your own
@@ -140,7 +144,9 @@ export default function Section1Basic({ showTips }: { showTips?: boolean }) {
         <div>
           <Field label={`Current Base Salary (${i.currency}) *`}>
             <input type="number" min={0} className="w-full bg-transparent outline-none"
-              value={i.base_salary} onChange={(e) => set({ base_salary: Number(e.target.value) || 0 })} />
+              value={i.base_salary} onChange={(e) => set({ base_salary: Number(e.target.value) || 0 })}
+              onFocus={(e) => e.currentTarget.select()}
+            />
           </Field>
           <Guide show={showTips}>
             Your current gross annual base salary before bonus. This is used to calculate the all-in annual cost
@@ -152,7 +158,9 @@ export default function Section1Basic({ showTips }: { showTips?: boolean }) {
         <div>
           <Field label={`Last Bonus (${i.currency}) *`}>
             <input type="number" min={0} className="w-full bg-transparent outline-none"
-              value={i.last_bonus} onChange={(e) => set({ last_bonus: Number(e.target.value) || 0 })} />
+              value={i.last_bonus} onChange={(e) => set({ last_bonus: Number(e.target.value) || 0 })}
+              onFocus={(e) => e.currentTarget.select()}
+            />
           </Field>
           <Guide show={showTips}>
             Your most recent annual bonus (gross). The ratio of bonus to base salary is used as a proxy for
@@ -165,7 +173,9 @@ export default function Section1Basic({ showTips }: { showTips?: boolean }) {
           <Field label="Current Number of Clients *">
             <input type="number" min={0} className="w-full bg-transparent outline-none"
               value={i.current_number_clients}
-              onChange={(e) => set({ current_number_clients: Number(e.target.value) || 0 })} />
+              onChange={(e) => set({ current_number_clients: Number(e.target.value) || 0 })}
+              onFocus={(e) => e.currentTarget.select()}
+            />
           </Field>
           <Guide show={showTips}>
             The total number of active client relationships you manage. Above 80 clients typically indicates
@@ -178,7 +188,9 @@ export default function Section1Basic({ showTips }: { showTips?: boolean }) {
           <Field label={`Current AUM (in million ${i.currency}) *`}>
             <input type="number" min={0} step="0.1" className="w-full bg-transparent outline-none"
               value={i.current_assets_m}
-              onChange={(e) => set({ current_assets_m: Number(e.target.value) || 0 })} />
+              onChange={(e) => set({ current_assets_m: Number(e.target.value) || 0 })}
+              onFocus={(e) => e.currentTarget.select()}
+            />
           </Field>
           <Guide show={showTips}>
             Your total assets under management today, in millions. Enter the full headline figure — the
