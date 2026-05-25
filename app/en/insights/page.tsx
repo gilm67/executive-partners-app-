@@ -38,9 +38,9 @@ const LINKEDIN_ONLY = [
   { title: "Smoke Over the DIFC", date: "2026-04-27", url: "https://www.linkedin.com/pulse/smoke-over-difc-gil-m-chalem--d0lbe/" },
   { title: "Bern Holds the Line", date: "2026-04-23", url: "https://www.linkedin.com/pulse/bern-holds-line-gil-m-chalem--nudte/" },
   { title: "The 10 Billion Myth: Why Size Is the Wrong Lens on Swiss Private Banking Consolidation", date: "2026-04-21", url: "https://www.linkedin.com/pulse/10-billion-myth-why-size-wrong-lens-swiss-private-gil-m-chalem--myq8e/" },
-  { title: "The Bank That Can't Choose a CEO", date: "2026-04-20", url: "https://www.linkedin.com/pulse/bank-cant-choose-ceo-gil-m-chalem--g9qje/" },
+  { title: "The Bank That Can\'t Choose a CEO", date: "2026-04-20", url: "https://www.linkedin.com/pulse/bank-cant-choose-ceo-gil-m-chalem--g9qje/" },
   { title: "The Revenue Grid Nobody Shows You Before You Sign", date: "2026-04-14", url: "https://www.linkedin.com/pulse/revenue-grid-nobody-shows-you-before-sign-gil-m-chalem--w2cwe/" },
-  { title: "Dubai's Illusion Is Gone. Where Does That Leave You?", date: "2026-03-09", url: "https://www.linkedin.com/pulse/dubais-illusion-gone-where-does-leave-you-gil-m-chalem--mrdye/" },
+  { title: "Dubai\'s Illusion Is Gone. Where Does That Leave You?", date: "2026-03-09", url: "https://www.linkedin.com/pulse/dubais-illusion-gone-where-does-leave-you-gil-m-chalem--mrdye/" },
   { title: "Zurich 2026: Warum der Talentmarkt im Private Banking gerade umkippt", date: "2026-02-20", url: "https://www.linkedin.com/pulse/z%C3%BCrich-2026-warum-der-talentmarkt-im-private-banking-gil-m-chalem--wcx4e/" },
 ];
 
@@ -211,7 +211,7 @@ export default function InsightsPage() {
             {[...LINKEDIN_ONLY]
               .sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))
               .map((a) => (
-                
+                <a
                   key={a.url}
                   href={a.url}
                   target="_blank"
