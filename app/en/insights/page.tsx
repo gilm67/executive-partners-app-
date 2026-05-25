@@ -1,6 +1,4 @@
-"use client";
-
-import { useMemo } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { INSIGHTS } from "./articles";
 import { marketLabel } from "@/lib/markets/marketLabel";
@@ -20,6 +18,22 @@ function isNew(iso: string) {
   return Date.now() - safeDateMs(iso) <= 14 * 86400000;
 }
 
+export const metadata: Metadata = {
+  title: "Private Banking Insights & Market Intelligence",
+  description:
+    "Strategy, talent, and market analysis for senior private banking professionals. Written from Geneva, read across every major booking centre.",
+  alternates: {
+    canonical: "https://www.execpartners.ch/en/insights",
+  },
+  openGraph: {
+    title: "Private Banking Insights & Market Intelligence | Executive Partners",
+    description:
+      "Strategy, talent, and market analysis for senior private banking professionals. Written from Geneva, read across every major booking centre.",
+    url: "https://www.execpartners.ch/en/insights",
+    type: "website",
+  },
+};
+
 const LINKEDIN_ONLY = [
   { title: "Smoke Over the DIFC", date: "2026-04-27", url: "https://www.linkedin.com/pulse/smoke-over-difc-gil-m-chalem--d0lbe/" },
   { title: "Bern Holds the Line", date: "2026-04-23", url: "https://www.linkedin.com/pulse/bern-holds-line-gil-m-chalem--nudte/" },
@@ -38,12 +52,8 @@ const THEMES = [
 ];
 
 export default function InsightsPage() {
-  const sorted = useMemo(
-    () => [...INSIGHTS].sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date)),
-    []
-  );
-
-  const internal = useMemo(() => sorted.filter((a) => a.body).slice(0, 9), [sorted]);
+  const sorted = [...INSIGHTS].sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date));
+  const internal = sorted.filter((a) => a.body).slice(0, 9);
   const hero = internal[0];
   const rest = internal.slice(1);
 
@@ -201,11 +211,11 @@ export default function InsightsPage() {
             {[...LINKEDIN_ONLY]
               .sort((a, b) => safeDateMs(b.date) - safeDateMs(a.date))
               .map((a) => (
-                <a
+                
                   key={a.url}
                   href={a.url}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="nofollow noopener noreferrer"
                   className="group flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/8"
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -231,7 +241,6 @@ export default function InsightsPage() {
             </p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
               
-                <a
                 href="https://www.linkedin.com/newsletters/private-wealth-pulse-7049706791347752960/"
                 target="_blank"
                 rel="noopener noreferrer"
