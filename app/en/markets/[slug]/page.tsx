@@ -570,7 +570,7 @@ export default async function MarketPage({ params }: Props) {
                   href={`/en/insights/${a.slug}`}
                   className="group flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/8"
                 >
-                  <span className="text-xs text-white/50">{a.date}</span>
+                  <span className="text-xs text-white/50">{new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(a.date))}</span>
                   <h3 className="mt-3 flex-1 text-base font-semibold leading-snug text-white">{a.title}</h3>
                   <p className="mt-2 text-sm text-white/60 line-clamp-2">{a.summary}</p>
                   <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#D4AF37]">
@@ -724,7 +724,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </Link>{" "}
             or run first numbers in the{" "}
             <Link
-              href="/bp-simulator?src=zurich_market"
+              href="/en/bp-simulator?src=zurich_market"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Business Plan Simulator
@@ -853,7 +853,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             for future searches. If you want to model a move before speaking
             with a platform, try the{" "}
             <Link
-              href="/bp-simulator?src=singapore_market"
+              href="/en/bp-simulator?src=singapore_market"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Business Plan Simulator
@@ -934,7 +934,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </Link>{" "}
             and run indicative numbers through the{" "}
             <Link
-              href="/bp-simulator?src=london_market"
+              href="/en/bp-simulator?src=london_market"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Business Plan Simulator
@@ -1008,7 +1008,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </Link>{" "}
             and pre-test assumptions with the{" "}
             <Link
-              href="/bp-simulator?src=hong-kong_market"
+              href="/en/bp-simulator?src=hong-kong_market"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Business Plan Simulator
@@ -1081,7 +1081,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </Link>{" "}
             and use the{" "}
             <Link
-              href="/bp-simulator?src=new-york_market"
+              href="/en/bp-simulator?src=new-york_market"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Business Plan Simulator
@@ -1155,7 +1155,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </Link>{" "}
             and run an initial scenario through the{" "}
             <Link
-              href="/bp-simulator?src=miami_market"
+              href="/en/bp-simulator?src=miami_market"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Business Plan Simulator
@@ -1229,7 +1229,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </Link>{" "}
             and pre-test your assumptions in the{" "}
             <Link
-              href="/bp-simulator?src=paris_market"
+              href="/en/bp-simulator?src=paris_market"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Business Plan Simulator
@@ -1302,7 +1302,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </Link>{" "}
             to discuss a potential move and run scenarios in the{" "}
             <Link
-              href="/bp-simulator?src=madrid_market"
+              href="/en/bp-simulator?src=madrid_market"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Business Plan Simulator
@@ -1376,7 +1376,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </Link>{" "}
             and run initial numbers through the{" "}
             <Link
-              href="/bp-simulator?src=lisbon_market"
+              href="/en/bp-simulator?src=lisbon_market"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Business Plan Simulator
@@ -1434,7 +1434,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             for a confidential discussion. You can also pre-test a move using
             the{" "}
             <Link
-              href="/bp-simulator?src=market_generic"
+              href="/en/bp-simulator?src=market_generic"
               className="text-[#F4D270] underline underline-offset-2"
             >
               Business Plan Simulator
