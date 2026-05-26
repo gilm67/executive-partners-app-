@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getMarket, MARKET_SLUGS, fmt } from "@/lib/markets/data";
+import { INSIGHTS } from "@/app/en/insights/articles";
 
 // Next 15: params is async in server components
 type Params = Promise<{ slug: string }>;
@@ -536,6 +537,59 @@ export default async function MarketPage({ params }: Props) {
           </div>
         </div>
       </section>
+
+      {/* ── Related Intelligence ── */}
+      {(() => {
+        const MARKET_CODE: Record<string, string> = {
+          geneva: "CH", zurich: "CH", london: "UK", dubai: "UAE",
+          singapore: "ASIA", "hong-kong": "ASIA", "new-york": "US",
+          miami: "US", paris: "EU", milan: "EU", madrid: "EU", lisbon: "EU",
+        };
+        const code = MARKET_CODE[slug];
+        const related = code
+          ? INSIGHTS.filter((a) => a.body && (a.markets as readonly string[]).includes(code)).slice(0, 3)
+          : [];
+        if (!related.length) return null;
+        return (
+          <section className="mx-auto max-w-6xl px-6 pb-14">
+            <div className="mb-6">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">
+                Market intelligence
+              </p>
+              <h2 className="mt-2 text-xl font-semibold text-white">
+                Related insights for {m.city}
+              </h2>
+              <p className="mt-1 text-sm text-white/60">
+                Analysis and intelligence relevant to this market.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((a) => (
+                <Link
+                  key={a.slug}
+                  href={`/en/insights/${a.slug}`}
+                  className="group flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/8"
+                >
+                  <span className="text-xs text-white/50">{a.date}</span>
+                  <h3 className="mt-3 flex-1 text-base font-semibold leading-snug text-white">{a.title}</h3>
+                  <p className="mt-2 text-sm text-white/60 line-clamp-2">{a.summary}</p>
+                  <div className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#D4AF37]">
+                    Read <span className="transition group-hover:translate-x-0.5">&#8594;</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-6">
+              <Link
+                href="/en/insights"
+                className="text-sm text-white/60 hover:text-white underline underline-offset-4"
+              >
+                All market intelligence &#8594;
+              </Link>
+            </div>
+          </section>
+        );
+      })()}
     </main>
   );
 }
