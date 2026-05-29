@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Private Banking Jobs | Executive Partners",
     description:
-      "10 active mandates across LATAM, Swiss Onshore, CIS/CEE, Italian, Greek/Cypriot and Asian markets. Confidential. Comp-visible. Apply in 90 seconds.",
+      "Active mandates across Swiss Onshore, CIS/CEE, Italian, Greek/Cypriot, Asian and Latin American markets. Confidential. Compensation visible. Apply in 90 seconds.",
     url: `${SITE}/en/jobs`,
     images: [{ url: "/og.webp" }],
   },

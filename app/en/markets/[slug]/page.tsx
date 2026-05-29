@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Geneva gets a richer, fully custom SEO treatment
   if (slug === "geneva") {
     return {
-      title: "Private Banking Recruiter Geneva | Senior RM & Wealth Management Search | Executive Partners",
-      description: "Geneva's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and Investment Advisors at leading Swiss and international private banks. Compensation benchmarks, licensing and live mandates.",
+      title: "Private Banking Recruiter Geneva | Senior RMs, Team Heads & EAMs | Executive Partners",
+      description: "Specialist private banking recruiter in Geneva. Senior RMs, Team Heads and EAM coverage specialists placed at Swiss and international private banks. Live mandates, compensation benchmarks and portability analysis.",
       alternates: { canonical: "https://www.execpartners.ch/en/markets/geneva" },
       openGraph: { type: "website", url: "/en/markets/geneva", title: "Private Banking Recruiter Geneva | Executive Partners", description: "Geneva private banking recruitment: UHNW/HNW Senior RMs, Team Heads, EAM coverage. Compensation benchmarks, portability analysis and confidential mandates.", siteName: "Executive Partners" },
       robots: { index: true, follow: true },

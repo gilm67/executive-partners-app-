@@ -113,9 +113,9 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!article) return {};
 
   const url = `${SITE}/en/insights/${article.slug}`;
-  const title = article.title;
-  const ogTitle = `${article.title} | Executive Partners`;
-  const description = article.summary;
+  const title = article.seoTitle ?? article.title;
+  const ogTitle = `${article.seoTitle ?? article.title} | Executive Partners`;
+  const description = article.seoDescription ?? article.summary;
 
   return {
     title: { absolute: `${title} | Executive Partners` },

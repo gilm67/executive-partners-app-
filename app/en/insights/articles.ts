@@ -58,6 +58,14 @@ export type InsightArticle = {
   subTheme?: InsightSubTheme;
   keywords?: readonly string[];
   ogImage?: string;
+
+  /**
+   * 🔍 SEO overrides — use when article title is literary/abstract
+   * seoTitle: replaces article.title in <title> and OG tags (max 60 chars)
+   * seoDescription: replaces article.summary in meta description (max 155 chars)
+   */
+  seoTitle?: string;
+  seoDescription?: string;
 };
 
 /**
@@ -67,6 +75,8 @@ export const INSIGHTS: readonly InsightArticle[] = [
   {
     slug: "the-alpine-exit",
     title: "The Alpine Exit",
+    seoTitle: "What Happens to Swiss Private Banking if UBS Moves HQ Abroad",
+    seoDescription: "If UBS relocates its headquarters out of Switzerland, the consequences for Geneva, Zurich and the Swiss private banking talent market go far beyond one bank.",
     date: "2026-05-26",
     summary: "What happens to private banking if UBS leaves Switzerland — the structural, human, and competitive consequences that capital markets commentary has missed.",
     linkedinUrl: "https://www.linkedin.com/pulse/alpine-exit-gil-m-chalem/",
@@ -187,6 +197,8 @@ If you would like to understand where your profile sits within these benchmarks 
   {
     slug: "private-banker-business-plan",
     title: "The Private Banker's Business Plan: What Your New Bank Actually Wants to See",
+    seoTitle: "Private Banker Business Plan: What Hiring Committees Actually Want to See",
+    seoDescription: "Most private banker business plans answer the wrong question. This is the AUM portability framework and revenue structure that Swiss and international private banks actually expect.",
     date: "2026-05-21",
     summary: "Most business plans in private banking answer the wrong question. This is the structure that sophisticated hiring committees actually believe — and the logic that earns the guarantee.",
     pillar: "P2",
@@ -419,6 +431,8 @@ Gil M. Chalem, Managing Partner, Executive Partners`,
     slug: "the-last-wave",
     ogImage: "/og-articles/og-the-last-wave.jpg",
     title: "The Last Wave",
+    seoTitle: "UBS Integration Final Phase: Why Senior Private Bankers Are Leaving Now",
+    seoDescription: "UBS says the Credit Suisse integration is complete. The senior private bankers still inside know the final redundancy phase is just beginning — and the exit window is narrowing.",
     date: "2026-05-12",
     summary: "UBS has declared the Credit Suisse integration a success. For the private bankers still inside as H2 2026 begins, the most consequential chapter is the one starting now.",
     pillar: "P1",
@@ -483,6 +497,8 @@ Gil M. Chalem, Managing Partner, Executive Partners`,
   {
     slug: "switzerland-running-out-banks",
     title: "Switzerland Is Running Out of Banks",
+    seoTitle: "Switzerland Is Running Out of Private Banks — What the Consolidation Means",
+    seoDescription: "Swiss private banks are consolidating faster than at any point since 2008. The count is shrinking, the platforms are merging, and the talent implications are significant.",
     date: "2026-05-05",
     markets: ["CH", "UK", "UAE", "ASIA"],
     summary: "Why that should worry the people who run them and not the people who own them. Swiss private banking is consolidating at a pace not seen since the 1970s — and the franchise walks out of the building every evening at six.",
@@ -1198,6 +1214,8 @@ The talent war in Swiss private banking has never been more interesting. And if 
   {
     slug: "35000-jobs-one-question-nobody-asking",
     ogImage: "/og-articles/og-35000-jobs-one-question-nobody-asking.jpg",
+    seoTitle: "35,000 UBS-Credit Suisse Jobs: The Question Private Bankers Are Not Asking",
+    seoDescription: "120,000 employees. Three years of integration. UBS is entering the final redundancy phase. Here is the question senior private bankers inside UBS are not asking — but should be.",
     body: `The numbers have been reported enough times that they no longer feel extraordinary. UBS absorbed Credit Suisse in March 2023, in an emergency transaction brokered by the Swiss federal government over a single weekend. Overnight, the combined institution swelled to just under 120,000 employees. It became, by some distance, the world's largest wealth manager, a $7 trillion AUM colossus that now counts roughly half of the world's billionaires among its private banking clients.
 
 Three years on, the integration is entering its final phase. The legacy Credit Suisse IT systems are being decommissioned. Around 85% of Swiss client accounts have been migrated. CEO Sergio Ermotti confirmed in January that a fresh round of layoffs would begin as soon as the decommissioning is complete.
@@ -1797,6 +1815,8 @@ The question is not whether democratisation will reshape private wealth. It is w
   {
     slug: "ubs-crossroads-succession-integration",
     ogImage: "/og-articles/og-ubs-crossroads-succession-integration.jpg",
+    seoTitle: "UBS CEO Succession 2027: What Private Bankers Need to Know Now",
+    seoDescription: "Ermotti exits by 2027. His successor inherits a $7 trillion UBS mid-integration, under FINMA capital pressure and facing US bank competition on Swiss soil. What this means for private banking talent.",
     body: `The most consequential leadership transition in global private banking is now underway. Sergio Ermotti, the man who was called back from Swiss Re to steer the emergency acquisition of Credit Suisse, has indicated he expects to step down as CEO of UBS by early 2027. In an interview with Swiss newspaper Tages-Anzeiger published in January 2026, Ermotti stated: I will complete the integration of Credit Suisse and remain CEO at least until the end of 2026 or spring 2027. The Financial Times subsequently reported that his departure is expected around April 2027, shortly after the bank's annual general meeting.
 
 What comes next will shape the trajectory of the world's largest wealth manager and with it, the careers and fortunes of thousands of private bankers across every major financial hub.
