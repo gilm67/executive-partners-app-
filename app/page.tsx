@@ -116,18 +116,18 @@ export default function HomePage() {
                 </p>
 
                 {/* Dual CTA */}
-                <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <div className="mt-6 sm:mt-8 flex flex-col items-center justify-center gap-3">
                   <Link
                     href="/en/apply"
-                    className="btn-primary btn-xl rounded-full px-8 shadow-lg"
+                    className="btn-primary btn-xl rounded-full px-10 shadow-lg"
                   >
                     Apply Confidentially
                   </Link>
                   <Link
                     href="/en/jobs"
-                    className="inline-flex items-center rounded-full border border-[#D4AF37]/70 px-7 py-3 text-sm font-semibold text-[#D4AF37] hover:bg-[#D4AF37]/15 transition-colors drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]"
+                    className="inline-flex items-center text-sm font-medium text-white/70 hover:text-[#D4AF37] transition-colors drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]"
                   >
-                    Browse Mandates →
+                    or browse open mandates →
                   </Link>
                 </div>
 
