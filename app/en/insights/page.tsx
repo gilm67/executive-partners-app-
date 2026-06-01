@@ -24,6 +24,10 @@ export const metadata: Metadata = {
     "Strategy, talent, and market analysis for senior private banking professionals. Written from Geneva, read across every major booking centre.",
   alternates: {
     canonical: "https://www.execpartners.ch/en/insights",
+    languages: {
+      en: "https://www.execpartners.ch/en/insights",
+      de: "https://www.execpartners.ch/de/insights",
+    },
   },
   openGraph: {
     title: "Private Banking Insights & Market Intelligence | Executive Partners",

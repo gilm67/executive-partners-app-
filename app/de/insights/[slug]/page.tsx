@@ -39,10 +39,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: article.summary,
     alternates: {
       canonical: url,
-      languages: {
-        "de-CH": url,
-        en: `${SITE}/en/insights`,
-      },
     },
     openGraph: {
       type: "article",

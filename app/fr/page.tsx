@@ -9,7 +9,6 @@ export const metadata: Metadata = {
     "Executive Partners est un chasseur de têtes spécialisé en banque privée et gestion de patrimoine à Genève. Placement de Relationship Managers seniors, Chefs de desk et Directeurs de marché en Suisse, Londres, Dubaï et Singapour.",
   alternates: {
     canonical: `${SITE}/fr`,
-    languages: { "en": `${SITE}/en` },
   },
   openGraph: {
     title: "Recruteur Banque Privée Genève | Executive Partners",

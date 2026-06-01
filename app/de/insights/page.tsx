@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "Fact-checked Marktanalysen für Senior Private Banker in Zürich und der Deutschschweiz. UBS-Integration, FINMA-Regulierung, Kompensation und Portabilität.",
   alternates: {
     canonical: `${SITE}/de/insights`,
-    languages: { en: `${SITE}/en/insights`, de: `${SITE}/de/insights` },
+    languages: { de: `${SITE}/de/insights`, en: `${SITE}/en/insights` },
   },
   openGraph: {
     title: "Insights auf Deutsch | Executive Partners",

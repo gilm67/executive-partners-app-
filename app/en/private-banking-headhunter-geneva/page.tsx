@@ -4,7 +4,13 @@ export const metadata: Metadata = {
   title: "Private Banking Headhunter Geneva | Senior RM & Team Head Search | Executive Partners",
   description:
     "Executive Partners is a Geneva-based private banking headhunter specialising in the recruitment of Senior RMs, Desk Heads and Wealth Managers for Swiss and international banks. 200+ placements, 98% retention.",
-  alternates: { canonical: "https://www.execpartners.ch/en/private-banking-headhunter-geneva" },
+  alternates: {
+    canonical: "https://www.execpartners.ch/en/private-banking-headhunter-geneva",
+    languages: {
+      en: "https://www.execpartners.ch/en/private-banking-headhunter-geneva",
+      de: "https://www.execpartners.ch/de/headhunter-genf",
+    },
+  },
   openGraph: {
     title: "Private Banking Headhunter Geneva | Executive Partners",
     description: "Geneva-based private banking headhunter. Senior RMs, Team Heads and Market Leaders placed across Switzerland and global wealth hubs. Confidential. Senior-level only.",
