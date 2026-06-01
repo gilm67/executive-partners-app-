@@ -46,7 +46,7 @@ export default function CandidateFAQ({
   limit?: number;
   anchorId?: string;
 }) {
-  const [open, setOpen] = useState<string | null>("0-0");
+  const [open, setOpen] = useState<string | null | undefined>(undefined);
   const [activeSection, setActiveSection] = useState<string>("All");
   const [query, setQuery] = useState("");
 
@@ -235,6 +235,14 @@ export default function CandidateFAQ({
       .filter((g) => g.items.length > 0);
   }, [compact, displayed, faqSections]);
 
+  const firstKey = useMemo(() => {
+    const g = groups[0];
+    if (!g || !g.items[0]) return null;
+    return `${g.section}-0-${g.items[0].q.slice(0, 12)}`;
+  }, [groups]);
+
+  const effectiveOpen = open === undefined ? firstKey : open;
+
   return (
     <section
       id={anchorId}
@@ -336,7 +344,7 @@ export default function CandidateFAQ({
                   <div className="divide-y divide-white/10">
                     {group.items.map((item, qIdx) => {
                       const key = `${group.section}-${qIdx}-${item.q.slice(0, 12)}`;
-                      const isOpen = open === key;
+                      const isOpen = effectiveOpen === key;
 
                       return (
                         <div key={key}>

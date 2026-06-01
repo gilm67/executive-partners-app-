@@ -202,7 +202,7 @@ export default function HomeClient() {
                     icon={<Users className="h-5 w-5 text-[#F5D778]" />}
                     title="For Private Bankers"
                     items={["Discreet market calibration", "Portability & business plan review", "Negotiation & onboarding support"]}
-                    href="/jobs"
+                    href="/en/jobs"
                     cta="Explore Opportunities"
                     radial="bg-[radial-gradient(800px_360px_at_20%_20%,rgba(212,175,55,.15),transparent_60%)]"
                     buttonVariant="gold"
@@ -215,7 +215,7 @@ export default function HomeClient() {
                     icon={<TrendingUp className="h-5 w-5 text-[#DDEFFF]" />}
                     title="For Hiring Managers"
                     items={["Senior banker mapping", "Verified portability logic", "Clean compliance profiles"]}
-                    href="/hiring-managers"
+                    href="/en/hiring-managers"
                     cta="Brief a Role"
                     radial="bg-[radial-gradient(900px_380px_at_80%_20%,rgba(158,203,255,.13),transparent_60%)]"
                     buttonVariant="white"
@@ -238,7 +238,7 @@ export default function HomeClient() {
               icon={<Users className="h-5 w-5 text-[#F5D778]" />}
               title="For Private Bankers"
               items={["Discreet market calibration", "Portability & business plan review", "Negotiation & onboarding support"]}
-              href="/jobs"
+              href="/en/jobs"
               cta="Explore Opportunities"
               radial="bg-[radial-gradient(800px_360px_at_20%_20%,rgba(212,175,55,.15),transparent_60%)]"
               buttonVariant="gold"
@@ -249,7 +249,7 @@ export default function HomeClient() {
               icon={<TrendingUp className="h-5 w-5 text-[#DDEFFF]" />}
               title="For Hiring Managers"
               items={["Senior banker mapping", "Verified portability logic", "Clean compliance profiles"]}
-              href="/hiring-managers"
+              href="/en/hiring-managers"
               cta="Brief a Role"
               radial="bg-[radial-gradient(900px_380px_at_80%_20%,rgba(158,203,255,.13),transparent_60%)]"
               buttonVariant="white"
