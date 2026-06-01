@@ -79,7 +79,7 @@ export const INSIGHTS: readonly InsightArticle[] = [
     seoDescription: "If UBS relocates its headquarters out of Switzerland, the consequences for Geneva, Zurich and the Swiss private banking talent market go far beyond one bank.",
     date: "2026-05-26",
     summary: "What happens to private banking if UBS leaves Switzerland — the structural, human, and competitive consequences that capital markets commentary has missed.",
-    linkedinUrl: "https://www.linkedin.com/pulse/alpine-exit-gil-m-chalem/",
+    linkedinUrl: "https://www.linkedin.com/pulse/alpine-exit-gil-m-chalem--5dz5e/",
     pillar: "P1",
     subTheme: "Positioning",
     markets: ["CH", "UK", "US"],
