@@ -460,11 +460,8 @@ export default function PortabilityClient() {
       sf(7, 'bold', NAVY); pdf.text('EP BENCHMARK POSITION', ML, y+9);
       y += 13;
       bar(ML, y, CW, 7, computed.overallPct);
-      fill(ML + CW*0.65, y, 0.8, 7, GRAY);
-      fill(ML + CW*0.80, y, 0.8, 7, GOLD);
       sf(6.5, 'normal', GRAY);
-      pdf.text('Median 65%', ML + CW*0.65 - 15, y+16);
-      pdf.text('Top quartile 80%', ML + CW*0.80 - 18, y+16);
+      pdf.text('Calibrated against Executive Partners placement experience', ML, y+16);
       y += 28;
 
       hline(y); y += 14;
@@ -1362,13 +1359,9 @@ export default function PortabilityClient() {
                 <motion.div className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-brandGold/70 to-brandGold"
                   initial={{ width: 0 }} animate={{ width: `${computed.overallPct}%` }} transition={{ duration: 1, delay: 0.3 }}
                 />
-                <div className="absolute top-0 bottom-0 w-px bg-white/40" style={{ left: "65%" }} />
-                <div className="absolute top-0 bottom-0 w-px bg-brandGold/60" style={{ left: "80%" }} />
               </div>
-              <div className="flex justify-between mt-1.5 text-[10px] text-gray-500">
-                <span>0%</span>
-                <span className="absolute" style={{ left: "calc(65% - 20px)", position: "relative" }}>Median 65%</span>
-                <span>Top quartile 80%</span>
+              <div className="mt-1.5 text-[10px] text-gray-500">
+                Calibrated against Executive Partners placement experience. A precise read comes from a confidential conversation.
               </div>
             </div>
  
