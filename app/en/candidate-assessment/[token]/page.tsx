@@ -45,7 +45,7 @@ function AssessmentScript({ token }: { token: string }) {
           const TOKEN = "${token}";
           // Full assessment app injected here
           window.__EP_TOKEN = TOKEN;
-          document.addEventListener("DOMContentLoaded", initAssessment);
+          if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", initAssessment); } else { initAssessment(); }
           function initAssessment() {
             const root = document.getElementById("assessment-root");
             if (!root) return;
