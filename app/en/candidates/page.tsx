@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Private Banking Jobs Switzerland | Career Guidance for Private Bankers | Executive Partners",
+  title: "Private Banking Jobs Switzerland | Career Guidance for Private Bankers",
   description:
     "Explore private banking jobs in Geneva, Zurich, Dubai and Singapore. Confidential career guidance, portability review and placement support for senior relationship managers.",
   openGraph: {

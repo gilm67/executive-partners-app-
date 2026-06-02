@@ -5,7 +5,7 @@ import Link from "next/link";
 import { getAllMarkets } from "@/lib/markets/data";
 
 export const metadata: Metadata = {
-  title: "Private Banker Jobs by Market | Executive Partners",
+  title: "Private Banker Jobs by Market",
   description:
     "Director and MD private banker roles across Geneva, Zurich, London, Dubai, Singapore, Hong Kong and New York. Confidential. Senior-level only.",
   alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs" },

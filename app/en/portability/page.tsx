@@ -9,7 +9,7 @@ const SITE =
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "Free AUM Portability Calculator — Portability Score™ | Executive Partners",
+  title: "Free AUM Portability Calculator — Portability Score™",
   description:
     "Calculate your true AUM portability before your next private banking career move. Our 30-point Portability Score™ has been applied across 200+ senior placements in Switzerland and internationally.",
   alternates: { canonical: "https://www.execpartners.ch/en/portability" },

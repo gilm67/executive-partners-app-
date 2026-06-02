@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Private Banker Jobs in Geneva | Executive Partners",
+  title: "Private Banker Jobs in Geneva",
   description:
     "Confidential opportunities for Senior Relationship Managers and Private Bankers in Geneva. Executive Partners is a Geneva-based executive search firm specialised in Private Banking and Wealth Management.",
   alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-geneva" },

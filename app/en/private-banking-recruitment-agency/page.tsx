@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Private Banking Recruitment Agency in Switzerland | Executive Partners",
+  title: "Private Banking Recruitment Agency in Switzerland",
   description:
     "Executive Partners is a Geneva-based private banking recruitment agency specialising in senior hires for Swiss and international wealth managers in Geneva and Zurich.",
   alternates: { canonical: "https://www.execpartners.ch/en/private-banking-recruitment-agency" },

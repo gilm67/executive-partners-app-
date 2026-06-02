@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Private Banker Jobs in Singapore | Executive Partners",
+  title: "Private Banker Jobs in Singapore",
   description:
     "Senior private banker and wealth manager roles in Singapore. Advisory for RMs covering SEA, Greater China, NRI and international offshore clients.",
   alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-singapore" },

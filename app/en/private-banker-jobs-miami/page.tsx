@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Private Banker Jobs in Miami | Executive Partners",
+  title: "Private Banker Jobs in Miami",
   description:
     "Private banker and wealth manager roles in Miami, focused on Latin American and international offshore clients. Discreet advisory for Senior Relationship Managers and UHNW advisers.",
   alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-miami" },

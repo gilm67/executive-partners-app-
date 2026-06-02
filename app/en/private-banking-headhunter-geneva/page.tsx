@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Private Banking Headhunter Geneva | Senior RM & Team Head Search | Executive Partners",
+  title: "Private Banking Headhunter Geneva | Senior RM & Team Head Search",
   description:
     "Executive Partners is a Geneva-based private banking headhunter specialising in the recruitment of Senior RMs, Desk Heads and Wealth Managers for Swiss and international banks. 200+ placements, 98% retention.",
   alternates: {

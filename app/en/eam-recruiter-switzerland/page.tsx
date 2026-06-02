@@ -5,7 +5,7 @@ import { BreadcrumbSchema } from "@/components/StructuredData";
 const SITE = "https://www.execpartners.ch";
 
 export const metadata: Metadata = {
-  title: "EAM Recruiter Switzerland | External Asset Manager Headhunter | Executive Partners",
+  title: "EAM Recruiter Switzerland | External Asset Manager Headhunter",
   description:
     "Executive Partners specialises in recruiting for External Asset Managers and independent wealth managers in Switzerland. Senior bankers transitioning to EAM, and EAM platforms building front-office teams in Geneva and Zurich.",
   alternates: { canonical: `${SITE}/en/eam-recruiter-switzerland` },
