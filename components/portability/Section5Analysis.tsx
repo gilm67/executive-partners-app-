@@ -185,16 +185,30 @@ export default function Section5Analysis() {
   }, [overallScore]);
 
   const interpretation = useMemo(() => {
+    // Opening read keyed to the overall band.
+    let opener: string;
     if (overallScore >= 80)
-      return "Highly transferable book profile across Tier-1 platforms. Structuring and bank selection will drive execution speed.";
-    if (overallScore >= 70)
-      return "Strong portability profile. Main friction points are typically compliance portability and booking-centre fit.";
-    if (overallScore >= 60)
-      return "Good portability with identifiable constraints. A structured move plan and platform targeting is recommended.";
-    if (overallScore >= 40)
-      return "Conditional portability. Risk mitigation (KYC/booking/product dependencies) should be addressed before execution.";
-    return "Limited portability under standard conditions. Material constraints must be resolved to improve transfer probability.";
-  }, [overallScore]);
+      opener = "A highly transferable profile. At this level the headline number is rarely the issue: execution, bank selection and timing are what separate a clean move from a slow one.";
+    else if (overallScore >= 70)
+      opener = "A strong portability profile. The book is genuinely transferable, which means the conversation shifts from whether you can move to how the move is structured.";
+    else if (overallScore >= 60)
+      opener = "Good portability with constraints worth naming before you approach anyone. A structured plan turns a workable profile into a competitive one.";
+    else if (overallScore >= 40)
+      opener = "Conditional portability. The book can move, but specific dependencies need to be resolved first or they will surface during diligence at the worst moment.";
+    else
+      opener = "Limited portability under standard conditions. The constraints are material and worth addressing directly before any approach to a bank.";
+
+    // Identify the weakest dimension and name what a committee will press on.
+    const ranked = [
+      { key: "client_quality", v: dimensions.client_quality, line: "The point a committee will press hardest is client quality and concentration. Where revenue clusters in a handful of relationships, they will want to understand how durable those are and what happens if one or two do not follow." },
+      { key: "regulatory", v: dimensions.regulatory, line: "The point a committee will press hardest is regulatory portability: booking-centre fit, cross-border licensing and how cleanly KYC transfers. This is often the difference between a move that completes and one that stalls in onboarding." },
+      { key: "product_dependency", v: dimensions.product_dependency, line: "The point a committee will press hardest is product dependency: how much of your revenue relies on the current platform's products rather than relationships you own outright. Books that travel are built on the latter." },
+      { key: "relationship_strength", v: dimensions.relationship_strength, line: "The point a committee will press hardest is relationship depth, whether clients follow the banker or the institution. This single question drives more of what actually transfers than the headline score suggests." },
+    ].sort((a, b) => a.v - b.v);
+
+    const weakest = ranked[0];
+    return opener + " " + weakest.line + " That is the conversation worth having before you approach anyone.";
+  }, [overallScore, dimensions]);
 
   // Benchmarking & percentile (illustrative internal model; swap with real data when available)
   const benchmarking = useMemo(() => {
@@ -208,18 +222,20 @@ export default function Section5Analysis() {
     const market = (current_market as keyof typeof marketProfiles) || "CH";
     const profile = marketProfiles[market] || marketProfiles.CH;
 
-    let percentile = 50;
-    if (overallScore >= profile.topQuartile) percentile = 85;
-    else if (overallScore >= profile.avgScore + 5) percentile = 70;
-    else if (overallScore >= profile.avgScore) percentile = 55;
-    else if (overallScore >= profile.avgScore - 10) percentile = 40;
-    else percentile = 25;
+    let standing: string;
+    if (overallScore >= profile.topQuartile)
+      standing = "the upper range of profiles we assess in " + profile.label;
+    else if (overallScore >= profile.avgScore)
+      standing = "a competitive position for " + profile.label;
+    else if (overallScore >= profile.avgScore - 10)
+      standing = "the mid-range of profiles we assess in " + profile.label;
+    else
+      standing = "below the range we typically assess in " + profile.label + ", with clear constraints worth resolving before any approach to a bank";
 
     return {
       market: profile.label,
-      percentile,
-      avgScore: profile.avgScore,
-      comparison: overallScore >= profile.avgScore ? "above" : "below",
+      standing,
+      note: "Calibrated against Executive Partners' placement experience. A precise read comes from a confidential conversation.",
     };
   }, [overallScore, current_market]);
 
@@ -745,7 +761,7 @@ export default function Section5Analysis() {
         page.drawText("EXECUTIVE SUMMARY", { x: heroX, y: summaryY, size: 9, font: fontB, color: C_GOLD });
 
         let summY = summaryY - 14;
-        page.drawText(`• Benchmark: ${benchmarking.percentile}th percentile in ${benchmarking.market}`, {
+        page.drawText(`• Positioning: ${benchmarking.standing}`, {
           x: heroX,
           y: summY,
           size: 9,
@@ -753,7 +769,7 @@ export default function Section5Analysis() {
           color: C_TEXT,
         });
         summY -= 12;
-        page.drawText(`• Score ${benchmarking.comparison} market average (${benchmarking.avgScore})`, {
+        page.drawText(`• ${benchmarking.note}`, {
           x: heroX,
           y: summY,
           size: 9,
@@ -1080,10 +1096,9 @@ export default function Section5Analysis() {
             <div className="mt-4 rounded-lg border border-emerald-400/20 bg-emerald-400/5 p-3">
               <div className="mb-1 text-xs font-semibold text-emerald-300">MARKET POSITIONING</div>
               <div className="text-sm text-white">
-                {benchmarking.percentile}th percentile in {benchmarking.market}
-                <span className="text-white/60">
-                  {" "}
-                  • Score {benchmarking.comparison} market avg ({benchmarking.avgScore})
+                This profile sits in {benchmarking.standing}.
+                <span className="block mt-1 text-xs text-white/50">
+                  {benchmarking.note}
                 </span>
               </div>
             </div>
