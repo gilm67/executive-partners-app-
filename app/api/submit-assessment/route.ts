@@ -11,8 +11,6 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { token, data } = body;
-
-    // Validate token if provided
     if (token) {
       const tokensPath = path.join(process.cwd(), "data/assessment-tokens.json");
       if (fs.existsSync(tokensPath)) {
@@ -22,29 +20,20 @@ export async function POST(req: NextRequest) {
         }
       }
     }
-
-    // Build the analysis prompt
     const prompt = buildPrompt(data);
-
-    // Call Claude
     const message = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 2800,
-      system: "You are Gil M. Chalem, Managing Partner of Executive Partners, a Geneva boutique exclusively focused on private banking executive search. Write in practitioner-insider prose: direct, precise with CHF figures, no bullet points in flowing sections, no em dashes, confident and human. You are preparing a confidential briefing document for a hiring committee presentation.",
+      system: "You are Gil M. Chalem, Managing Partner of Executive Partners, a Geneva boutique exclusively focused on private banking executive search. Write in practitioner-insider prose: direct, precise with CHF figures, no bullet points in flowing sections, no em dashes, confident and human.",
       messages: [{ role: "user", content: prompt }],
     });
-
     const analysis = message.content[0].type === "text" ? message.content[0].text : "";
-
-    // Send email to Gil
     await resend.emails.send({
       from: "EP Assessment <noreply@execpartners.ch>",
       to: "gil.chalem@execpartners.ch",
-      subject: `EP Assessment — ${data.name} | ${data.institution} | CHF ${data.aum}M`,
+      subject: "EP Assessment — " + data.name + " | " + data.institution + " | CHF " + data.aum + "M",
       html: buildEmailHTML(data, analysis),
     });
-
-    // Mark token as used
     if (token) {
       const tokensPath = path.join(process.cwd(), "data/assessment-tokens.json");
       const tokens = JSON.parse(fs.readFileSync(tokensPath, "utf-8"));
@@ -53,7 +42,6 @@ export async function POST(req: NextRequest) {
       tokens[token].candidateName = data.name;
       fs.writeFileSync(tokensPath, JSON.stringify(tokens, null, 2));
     }
-
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
@@ -82,87 +70,69 @@ function buildPrompt(d: Record<string, unknown>): string {
   const dsRev = targetROA > 0 ? (ds * (targetROA / 10000)).toFixed(2) : "n/a";
   const totalCost = Math.round((Number(d.totalComp) || 0) * 1.18);
   const noticeGarden = (parseInt(String(d.notice)) || 0) + (parseInt(String(d.garden)) || 0);
+  const anchors = Array.isArray(d.anchors) ? d.anchors.join(", ") : "none";
+  const kycFlags = Array.isArray(d.kycFlags) ? d.kycFlags.join(", ") : "none";
 
-  return \`You are Gil M. Chalem, Managing Partner of Executive Partners. Generate a structured EP-quality analysis.
-
-VOICE: Practitioner-insider. Direct. Precise with CHF figures. No bullet points within sections. No em dashes. Flowing analytical prose. Confidential briefing document tone.
-
-CANDIDATE: \${d.name} | \${d.institution} | \${d.tenure} years | \${d.seniority} | \${d.market} | \${d.booking}
-
-BOOK: CHF \${aum}M AUM | \${d.clients} clients | Largest relationship: \${d.concentration}% | Self-originated: \${d.originated}% | Domicile: \${d.domicile}
-Portability estimate: \${d.portability}% | Reason: \${d.portabilityReason || "not stated"} | Prior move: \${d.priorMove || "none"}
-Anchors: \${Array.isArray(d.anchors) ? d.anchors.join(", ") : "none"} | Anchor AUM%: \${d.anchorPct}%
-
-REVENUE: CHF \${revenue}M annual | \${roa} bps ROA | Recurring: \${d.recurring}% | Transactional: \${d.transactional}%
-Co-management: \${d.coManage || "none"} | Wallet share: \${d.wallet} | Products: \${d.products}
-
-LEGAL: Notice: \${d.notice}m | Garden leave: \${d.garden}m | Lock-up: \${noticeGarden}m | Non-solicit: \${d.nonsolicit}
-Compliance: \${d.compliance} | KYC risk: \${d.kycRisk}% | Flags: \${Array.isArray(d.kycFlags) ? d.kycFlags.join(", ") : "none"} | Onboarding: \${d.onboarding}
-
-BUSINESS PLAN (CHF M): NNM Y1: \${nnm1} | Y2: \${nnm2} | Y3: \${nnm3} | Target ROA: \${targetROA} bps
-Transferred (\${port}%): CHF \${transferred}M | Y1: CHF \${y1}M → \${y1rev}M rev | Y2: CHF \${y2}M → \${y2rev}M rev | Y3: CHF \${y3}M → \${y3rev}M rev
-Downside (60%): CHF \${ds}M → \${dsRev}M rev | Prospects Y3: CHF \${d.prospects}M
-Base: CHF \${d.base}K | Total comp Y1: CHF \${d.totalComp}K | Guarantee: \${d.guarantee} | Total employer cost: CHF \${totalCost}K
-
-MOTIVATION: Push: \${d.push || "not stated"} | Pull: \${d.pull || "not stated"} | Platform knowledge: \${d.platform}
-Other conversations: \${d.competitors || "none"} | Additional: \${d.additional || "none"}
-
-GENERATE THIS STRUCTURE — flowing prose, no bullets, no em dashes:
-
-EP CANDIDATE ANALYSIS — \${String(d.name).toUpperCase()}
-\${d.institution} | \${d.market} | CHF \${aum}M AUM
-
-SECTION 1 — BOOK QUALITY ASSESSMENT
-Two paragraphs. Credibility of stated book. Concentration risk. Self-originated vs assigned. Domicile implications. Plausibility vs tenure and seniority.
-
-SECTION 2 — PORTABILITY VERDICT
-Two paragraphs. Clear verdict. EP 40% baseline adjusted for anchors, prior move, wallet share. Specific CHF figures for 12-month and 36-month transfer. 18-month rule applied.
-
-SECTION 3 — REVENUE QUALITY
-One substantive paragraph. ROA credibility. Recurring vs transactional for post-move continuity. Wallet share and new money potential. Product mix quality.
-
-SECTION 4 — LEGAL & COMPLIANCE RISK
-One paragraph. Effective transfer window after \${noticeGarden} months lock-up. KYC delay estimate. Overall legal risk rating.
-
-SECTION 5 — BUSINESS PLAN STRESS TEST
-Two paragraphs. NNM vs portability consistency. Revenue trajectory on cumulative AUM model. Breakeven vs cost structure. Compensation justification. Downside at 60% with CHF figures.
-
-SECTION 6 — MOTIVATION & FIT
-One paragraph. Push vs pull balance. Platform knowledge. Departure risk. One direct sentence on whether to proceed.
-
-SECTION 7 — EP VERDICT
-Five dimension scores (5 each): AUM quality, revenue quality, portability and relationship ownership, legal and compliance, motivation and fit. Total out of 25. Threshold 22+. Any disqualifiers. One specific next step.\`;
+  return [
+    "You are Gil M. Chalem, Managing Partner of Executive Partners. Generate a structured EP-quality analysis.",
+    "",
+    "VOICE: Practitioner-insider. Direct. Precise with CHF figures. No bullet points within sections. No em dashes. Flowing analytical prose.",
+    "",
+    "CANDIDATE: " + d.name + " | " + d.institution + " | " + d.tenure + " years | " + d.seniority + " | " + d.market + " | " + d.booking,
+    "BOOK: CHF " + aum + "M AUM | " + d.clients + " clients | Largest: " + d.concentration + "% | Self-originated: " + d.originated + "% | Domicile: " + d.domicile,
+    "Portability: " + d.portability + "% | Reason: " + (d.portabilityReason || "not stated") + " | Prior move: " + (d.priorMove || "none"),
+    "Anchors: " + anchors + " | Anchor AUM%: " + d.anchorPct + "%",
+    "REVENUE: CHF " + revenue + "M | " + roa + " bps ROA | Recurring: " + d.recurring + "% | Transactional: " + d.transactional + "%",
+    "Wallet share: " + d.wallet + " | Products: " + d.products + " | Co-mgmt: " + (d.coManage || "none"),
+    "LEGAL: Notice: " + d.notice + "m | Garden: " + d.garden + "m | Lock-up: " + noticeGarden + "m | Non-solicit: " + d.nonsolicit,
+    "Compliance: " + d.compliance + " | KYC risk: " + d.kycRisk + "% | Flags: " + kycFlags + " | Onboarding: " + d.onboarding,
+    "PLAN: NNM Y1: " + nnm1 + "M | Y2: " + nnm2 + "M | Y3: " + nnm3 + "M | ROA: " + targetROA + " bps",
+    "Transferred: CHF " + transferred + "M | Y1: " + y1 + "M -> " + y1rev + "M rev | Y2: " + y2 + "M -> " + y2rev + "M rev | Y3: " + y3 + "M -> " + y3rev + "M rev",
+    "Downside 60%: CHF " + ds + "M -> " + dsRev + "M | Prospects Y3: CHF " + d.prospects + "M",
+    "Comp: Base CHF " + d.base + "K | Total Y1 CHF " + d.totalComp + "K | Guarantee: " + d.guarantee + " | Employer cost: CHF " + totalCost + "K",
+    "MOTIVATION: Push: " + (d.push || "not stated"),
+    "Pull: " + (d.pull || "not stated"),
+    "Platform knowledge: " + d.platform + " | Conversations: " + (d.competitors || "none"),
+    "Additional: " + (d.additional || "none"),
+    "",
+    "GENERATE THIS STRUCTURE -- flowing prose, no bullets, no em dashes:",
+    "",
+    "EP CANDIDATE ANALYSIS -- " + String(d.name).toUpperCase(),
+    String(d.institution) + " | " + String(d.market) + " | CHF " + aum + "M AUM",
+    "",
+    "SECTION 1 -- BOOK QUALITY ASSESSMENT",
+    "Two paragraphs. Credibility, concentration risk, self-originated vs assigned, domicile, plausibility vs tenure.",
+    "",
+    "SECTION 2 -- PORTABILITY VERDICT",
+    "Two paragraphs. EP 40% baseline adjusted. Specific CHF figures for 12m and 36m transfer. 18-month rule.",
+    "",
+    "SECTION 3 -- REVENUE QUALITY",
+    "One paragraph. ROA credibility, recurring vs transactional, wallet share, product mix.",
+    "",
+    "SECTION 4 -- LEGAL AND COMPLIANCE RISK",
+    "One paragraph. Effective transfer window after " + noticeGarden + " months. KYC delay. Risk rating.",
+    "",
+    "SECTION 5 -- BUSINESS PLAN STRESS TEST",
+    "Two paragraphs. NNM consistency, revenue trajectory, breakeven, compensation. Downside at 60% with CHF figures.",
+    "",
+    "SECTION 6 -- MOTIVATION AND FIT",
+    "One paragraph. Push vs pull. Platform knowledge. Departure risk. One direct sentence on whether to proceed.",
+    "",
+    "SECTION 7 -- EP VERDICT",
+    "Five scores (5 each): AUM quality, revenue quality, portability, legal/compliance, motivation/fit. Total /25. Threshold 22+. Disqualifiers. Next step."
+  ].join("\n");
 }
 
 function buildEmailHTML(d: Record<string, unknown>, analysis: string): string {
-  const sections = analysis.split(/SECTION \d+ —/g).filter(Boolean);
-  const sectionTitles = analysis.match(/SECTION \d+ — [^\n]+/g) || [];
-
-  const sectionsHTML = sectionTitles.map((title, i) => \`
-    <div style="margin-bottom:28px">
-      <div style="font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#C9A84C;margin-bottom:8px;font-family:Georgia,serif">\${title}</div>
-      <div style="font-size:14px;line-height:1.8;color:#1A1A2E;white-space:pre-wrap">\${(sections[i + 1] || "").trim()}</div>
-    </div>
-  \`).join("");
-
-  return \`
-  <!DOCTYPE html>
-  <html>
-  <head><meta charset="UTF-8"></head>
-  <body style="margin:0;padding:0;background:#F8F6F1;font-family:'DM Sans',Arial,sans-serif">
-    <div style="max-width:680px;margin:0 auto;padding:32px 20px">
-      <div style="background:#0B0F1A;border-radius:10px 10px 0 0;padding:24px 28px">
-        <div style="font-family:Georgia,serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#C9A84C;margin-bottom:4px">Executive Partners — Confidential</div>
-        <div style="font-family:Georgia,serif;font-size:22px;color:#E8EAF0;font-weight:400">\${d.name} — Portability & Business Case Analysis</div>
-        <div style="font-size:12px;color:#8892A4;margin-top:6px">\${d.institution} | \${d.market} | CHF \${d.aum}M AUM | Submitted \${new Date().toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" })}</div>
-      </div>
-      <div style="background:#fff;border:1px solid #DDD8CC;border-top:none;border-radius:0 0 10px 10px;padding:28px">
-        \${sectionsHTML || \`<div style="white-space:pre-wrap;font-size:14px;line-height:1.8;color:#1A1A2E">\${analysis}</div>\`}
-      </div>
-      <div style="text-align:center;margin-top:20px;font-size:12px;color:#9B9B9B">
-        Executive Partners — gil.chalem@execpartners.ch — execpartners.ch
-      </div>
-    </div>
-  </body>
-  </html>\`;
+  const escaped = analysis.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const date = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  return "<!DOCTYPE html><html><head><meta charset=\'UTF-8\'></head><body style=\'margin:0;padding:0;background:#F8F6F1;font-family:Arial,sans-serif\'>" +
+    "<div style=\'max-width:680px;margin:0 auto;padding:32px 20px\'>" +
+    "<div style=\'background:#0B0F1A;border-radius:10px 10px 0 0;padding:24px 28px\'>" +
+    "<div style=\'font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#C9A84C;margin-bottom:4px\'>Executive Partners</div>" +
+    "<div style=\'font-size:22px;color:#E8EAF0\'>" + String(d.name) + " -- Portability Analysis</div>" +
+    "<div style=\'font-size:12px;color:#8892A4;margin-top:6px\'>" + String(d.institution) + " | CHF " + String(d.aum) + "M | " + date + "</div>" +
+    "</div><div style=\'background:#fff;border:1px solid #DDD8CC;border-top:none;border-radius:0 0 10px 10px;padding:28px\'>" +
+    "<pre style=\'font-size:14px;line-height:1.8;color:#1A1A2E;white-space:pre-wrap;font-family:Arial,sans-serif;margin:0\'>" + escaped + "</pre>" +
+    "</div></div></body></html>";
 }
