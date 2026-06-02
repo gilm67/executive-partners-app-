@@ -1173,6 +1173,28 @@ export default function Section5Analysis() {
         onSubmit={async (email) => {
           setUserEmail(email);
           setShowEmailGate(false);
+          // Capture the lead so EP is notified (mirrors BP Simulator)
+          try {
+            const summary = [
+              "PORTABILITY SCORE: " + overallScore + "/100 (" + verdict + ")",
+              "MARKET: " + (current_market || "—"),
+              "AUM: " + (total_aum_m ?? 0) + "M",
+              "EXPERIENCE: " + (years_experience ?? 0) + " yrs",
+              "SELF-ACQUIRED: " + (self_acquired_pct ?? 0) + "%",
+            ].join(" | ");
+            await fetch("/api/capture-lead", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: candidate_name || "",
+                email,
+                tool: "portability",
+                summary,
+              }),
+            });
+          } catch {
+            // Silent fail — never block the PDF
+          }
           await generateNativePDF("full");
         }}
         score={overallScore}
