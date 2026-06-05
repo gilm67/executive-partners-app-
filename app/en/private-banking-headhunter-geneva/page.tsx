@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Private Banking Headhunter Geneva | Senior RM & Team Head Search",
+  title: "Private Banking Headhunter Geneva | Executive Search for Senior RMs & Team Heads",
   description:
     "Executive Partners is a Geneva-based private banking headhunter specialising in the recruitment of Senior RMs, Desk Heads and Wealth Managers for Swiss and international banks. 200+ placements, 98% retention.",
   alternates: {
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Private Banking Headhunter Geneva ",
+    title: "Private Banking Headhunter Geneva | Senior RM Search",
     description: "Geneva-based private banking headhunter. Senior RMs, Team Heads and Market Leaders placed across Switzerland and global wealth hubs. Confidential. Senior-level only.",
     type: "website",
     url: "https://www.execpartners.ch/en/private-banking-headhunter-geneva",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Headhunter Geneva ",
+    title: "Private Banking Headhunter Geneva | Senior RM Search",
     description: "Geneva-based private banking headhunter. Senior RMs, Team Heads and Market Leaders placed across Switzerland and global wealth hubs.",
     images: ["https://www.execpartners.ch/og.webp"],
   },

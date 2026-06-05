@@ -1,14 +1,14 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Private Banking Recruiter in Switzerland",
+  title: "Executive Recruitment Switzerland | Private Banking Recruiter Geneva & Zurich",
   description:
     "Executive Partners is the leading executive search firm for Private Banking and Wealth Management in Switzerland. Based in Geneva and active in Zurich, London, Dubai, Singapore and Hong Kong.",
   alternates: { canonical: "https://www.execpartners.ch/en/private-banking-recruiter-switzerland" },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruiter Switzerland ",
-    description: "Geneva-based executive search for Private Banking & Wealth Management in Switzerland. Senior RMs, Team Heads and Investment Advisors.",
+    title: "Executive Recruitment Switzerland | Private Banking Recruiter",
+    description: "Executive recruitment in Switzerland for senior private banking professionals. Senior RMs, Team Heads and Market Leaders placed confidentially across Geneva, Zurich and global wealth hubs.",
     images: ["/og.webp"],
   },
   robots: { index: true, follow: true },
