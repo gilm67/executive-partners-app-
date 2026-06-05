@@ -129,6 +129,55 @@ export default function HiringManagersPage() {
           </div>
         </section>
 
+        
+        {/* ── COMPLIANCE RISK ── */}
+        <section className="mx-auto max-w-5xl">
+          <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-white/0 to-red-500/5 px-6 py-8 md:px-10 md:py-10 shadow-[0_22px_60px_rgba(0,0,0,0.65)] backdrop-blur">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-red-400/80">
+              Risk Mitigation
+            </p>
+            <h2 className="mt-3 text-2xl font-semibold leading-tight text-white md:text-3xl">
+              How we eliminate the legal and compliance risk of a senior lateral hire
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-white/65 max-w-3xl">
+              Every senior lateral hire in private banking carries three categories of legal and compliance risk that most recruitment processes do not surface until it is too late. EP addresses each one before you see a candidate name.
+            </p>
+
+            <div className="mt-8 grid gap-5 md:grid-cols-3">
+              {[
+                {
+                  title: "Non-solicit exposure",
+                  risk: "The risk: A banker joins your platform and contacts former clients before the non-solicit window has closed or in scope of a clause that prohibits indirect approaches. Your institution faces potential exposure in injunction or damages proceedings.",
+                  how: "How EP addresses it: Every candidate is screened for non-solicit clause duration, scope, and practical enforceability before introduction. We map the clause against planned client contact timelines and document any residual exposure in the candidate dossier — so your legal team is never surprised.",
+                },
+                {
+                  title: "KYC and documentation gaps",
+                  risk: "The risk: An incoming banker brings cross-border clients with open source-of-wealth questions, incomplete beneficial ownership structures, or CRS and FATCA gaps that create onboarding friction or trigger a regulatory review.",
+                  how: "How EP addresses it: We pre-screen cross-border book compliance status as part of the Portability Score assessment. Candidates with material documentation gaps are identified before introduction. Clients that would have stalled on onboarding are flagged before you make an offer — not after.",
+                },
+                {
+                  title: "Portability mismatch",
+                  risk: "The risk: A banker is hired on a verbal CHF 400M AUM claim. Twelve months later CHF 80M has transferred and the remainder is institutionally anchored at the previous bank. The business case fails. The hire becomes a multi-year cost.",
+                  how: "How EP addresses it: Every introduction includes a written portability rationale covering AUM composition, wallet share by client tier, realistic transfer timeline, and a year-one revenue estimate. The 98% twelve-month retention rate across EP placements is the outcome of this discipline.",
+                },
+              ].map((item) => (
+                <div key={item.title} className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                  <h3 className="text-sm font-semibold text-white mb-4">{item.title}</h3>
+                  <p className="text-xs text-red-400/75 leading-relaxed mb-4">{item.risk}</p>
+                  <p className="text-xs text-emerald-400/80 leading-relaxed">{item.how}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-[#C9A14A]/20 bg-[#C9A14A]/5 p-5">
+              <p className="text-sm font-semibold text-white mb-2">Team lift-outs and desk builds</p>
+              <p className="text-sm text-white/60 leading-relaxed">
+                For team moves and desk builds the legal complexity multiplies. EP manages the sequencing of individual approaches, coordinates non-solicit windows across team members, and documents each candidate independently — ensuring the process is defensible and that no single approach creates grounds for a conspiracy-to-breach claim. We have coordinated team moves of two to six bankers across Geneva, Zurich, and Dubai without a legal challenge.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* ── AVAILABLE NOW ── */}
         <section className="mx-auto max-w-5xl">
           <div className="rounded-3xl border border-[#C9A14A]/25 bg-black/40 px-6 py-7 md:px-10 md:py-8 backdrop-blur">

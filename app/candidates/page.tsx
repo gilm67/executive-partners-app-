@@ -278,7 +278,74 @@ export default function CandidatesPage() {
         </section>
 
         {/* ✅ FULL FAQ SECTION (anchor target for /candidates#faqs) */}
-        <CandidateFAQ compact={false} anchorId="faqs" />
+        
+      {/* ── WINNING DOSSIER ── */}
+      <section className="mx-auto max-w-5xl px-4 py-12">
+        <div className="rounded-3xl border border-[#C9A14A]/20 bg-gradient-to-br from-[#C9A14A]/8 via-white/[0.02] to-white/[0.02] px-6 py-8 md:px-10 md:py-10">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#C9A14A]">
+            The EP Process
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold text-white md:text-3xl">
+            How we turn your book into a winning business case
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-white/60 max-w-2xl">
+            A raw AUM figure is not a business case. A senior RM walking into a hiring conversation with a number — even a large one — is in a weaker position than one who arrives with a documented portability rationale, a three-year revenue model, and a pre-cleared compliance picture. Here is exactly what EP builds before your name goes anywhere.
+          </p>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                step: "01",
+                title: "Portability mapping",
+                benefit: "You know your real number before any bank does.",
+                desc: "We run the full Portability Score framework with you — AUM composition, wallet share by client tier, non-solicit clause analysis, and cross-border compliance status. Most bankers discover their true portable fraction is different from their assumption. You find out in a private conversation with us, not in a hiring meeting.",
+              },
+              {
+                step: "02",
+                title: "Business case construction",
+                benefit: "A document a hiring committee can approve, not a number they have to verify.",
+                desc: "We build a three-year revenue model: conservative year-one transfer estimate, base case by year two, target by year three. Break-even AUM. NPC buyout recommendation. The banks that move fastest on offers are working from documentation, not verbal AUM claims. We give you that documentation.",
+              },
+              {
+                step: "03",
+                title: "Compliance pre-check",
+                benefit: "Clients that would have stalled on onboarding are resolved before you resign.",
+                desc: "We map your cross-border client relationships against current KYC and AML standards at the target institution. Any documentation gaps are identified and addressed before the introduction. No surprises during onboarding. No clients rejected after you have already moved.",
+              },
+              {
+                step: "04",
+                title: "Selective introduction",
+                benefit: "One institution. One decision-maker. Full dossier attached.",
+                desc: "We introduce you to one institution at a time with the complete package attached. No simultaneous approaches. No market noise. No CV circulating without your knowledge. Average mandate-to-offer across EP placements: 17 days.",
+              },
+            ].map((item) => (
+              <div key={item.step} className="rounded-2xl border border-white/10 bg-white/5 p-5 flex flex-col">
+                <p className="text-2xl font-light text-[#C9A14A]/50 mb-3">{item.step}</p>
+                <h3 className="text-sm font-semibold text-white mb-1">{item.title}</h3>
+                <p className="text-xs font-medium text-[#C9A14A] mb-2 leading-snug">{item.benefit}</p>
+                <p className="text-xs leading-relaxed text-white/45 flex-1">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a
+              href="/en/portability"
+              className="inline-flex items-center rounded-xl bg-[#C9A14A] px-5 py-2.5 text-sm font-semibold text-black hover:opacity-90 transition"
+            >
+              Start with your Portability Score →
+            </a>
+            <a
+              href="/en/bp-simulator"
+              className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10 transition"
+            >
+              Build your business case
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <CandidateFAQ compact={false} anchorId="faqs" />
       </main>
     </>
   );
