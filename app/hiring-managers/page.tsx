@@ -12,7 +12,7 @@ const SITE =
     : "https://www.execpartners.ch");
 
 export const metadata: Metadata = {
-  title: "Private Banking Recruitment Agency Switzerland | Hiring Managers ",
+  title: "Private Banking Recruitment Switzerland | Senior RM & Team Head Search",
   description:
     "Executive search for senior private banking hires. Targeted recruitment for Directors, MDs, Team Heads across Switzerland, Dubai, Singapore, London, New York.",
   openGraph: {
