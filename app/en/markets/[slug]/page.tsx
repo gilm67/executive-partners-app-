@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: "Private Banking Recruiter Geneva | Senior RMs, Team Heads & EAMs ",
       description: "Specialist private banking recruiter in Geneva. Senior RMs, Team Heads and EAM coverage specialists placed at Swiss and international private banks. Live mandates, compensation benchmarks and portability analysis.",
       alternates: { canonical: "https://www.execpartners.ch/en/markets/geneva" },
-      openGraph: { type: "website", url: "/en/markets/geneva", title: "Private Banking Recruiter Geneva ", description: "Geneva private banking recruitment: UHNW/HNW Senior RMs, Team Heads, EAM coverage. Compensation benchmarks, portability analysis and confidential mandates.", siteName: "Executive Partners" },
+      openGraph: { type: "website", url: "/en/markets/geneva", title: "Private Banking Recruiter Geneva | Senior RM Jobs", description: "Geneva private banking recruitment: UHNW/HNW Senior RMs, Team Heads, EAM coverage. Compensation benchmarks, portability analysis and confidential mandates.", siteName: "Executive Partners" },
       robots: { index: true, follow: true },
     };
   }
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: "Private Banking Recruiter Dubai DIFC | Senior RM & GCC Wealth Management Search ",
       description: "Dubai's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and GCC/NRI bankers in DIFC and ADGM. Compensation benchmarks, DFSA licensing and live mandates.",
       alternates: { canonical: "https://www.execpartners.ch/en/markets/dubai" },
-      openGraph: { type: "website", url: "/en/markets/dubai", title: "Private Banking Recruiter Dubai DIFC ", description: "Dubai private banking recruitment: GCC, NRI and expat wealth. Senior RM and Team Head mandates across DIFC and ADGM. Tax-free packages and portability analysis.", siteName: "Executive Partners" },
+      openGraph: { type: "website", url: "/en/markets/dubai", title: "Private Banking Recruiter Dubai DIFC | Senior RM & GCC Jobs", description: "Dubai private banking recruitment: GCC, NRI and expat wealth. Senior RM and Team Head mandates across DIFC and ADGM. Tax-free packages and portability analysis.", siteName: "Executive Partners" },
       robots: { index: true, follow: true },
     };
   }
@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: "Private Banking Recruiter Zurich | Senior RM & DACH Wealth Management Search ",
       description: "Zurich's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and DACH-focused bankers at leading Swiss private banks. Compensation benchmarks, FINMA licensing and live mandates.",
       alternates: { canonical: "https://www.execpartners.ch/en/markets/zurich" },
-      openGraph: { type: "website", url: "/en/markets/zurich", title: "Private Banking Recruiter Zurich ", description: "Zurich private banking recruitment: onshore DACH, international UHNW. Senior RM and Team Head mandates at top Swiss platforms.", siteName: "Executive Partners" },
+      openGraph: { type: "website", url: "/en/markets/zurich", title: "Private Banking Recruiter Zurich | Senior RM Jobs", description: "Zurich private banking recruitment: onshore DACH, international UHNW. Senior RM and Team Head mandates at top Swiss platforms.", siteName: "Executive Partners" },
       robots: { index: true, follow: true },
     };
   }
@@ -61,7 +61,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: "Private Banking Recruiter Singapore | Senior RM & APAC Wealth Management Search ",
       description: "Singapore's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and SEA/North Asia bankers at MAS-regulated platforms. Compensation benchmarks, CMFAS licensing and live mandates.",
       alternates: { canonical: "https://www.execpartners.ch/en/markets/singapore" },
-      openGraph: { type: "website", url: "/en/markets/singapore", title: "Private Banking Recruiter Singapore ", description: "Singapore private banking recruitment: ASEAN, North Asia and cross-border wealth. Senior RM and Team Head mandates at top MAS platforms.", siteName: "Executive Partners" },
+      openGraph: { type: "website", url: "/en/markets/singapore", title: "Private Banking Recruiter Singapore | Senior RM Jobs", description: "Singapore private banking recruitment: ASEAN, North Asia and cross-border wealth. Senior RM and Team Head mandates at top MAS platforms.", siteName: "Executive Partners" },
       robots: { index: true, follow: true },
     };
   }
@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const m = getMarket(slug);
   if (!m) {
     return {
-      title: "Private Banking Markets ",
+      title: "Private Banking Markets | Geneva, Zurich, Dubai & Singapore",
       description:
         "Directional compensation benchmarks, licensing frameworks, hiring pulse and ecosystem snapshots for leading private banking hubs.",
       alternates: {
@@ -80,7 +80,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${m.city} — Private Banking Market `,
+    title: `${m.city} — Private Banking Recruiter & Jobs | Executive Partners`,
     description: `${m.city}: compensation benchmarks, licensing, client base, relocation & tax, hiring pulse, ecosystem and book portability for Private Banking / Wealth Management.`,
     alternates: {
       canonical: `https://www.execpartners.ch/en/markets/${slug}`,
@@ -88,7 +88,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       type: "website",
       url: `https://www.execpartners.ch/en/markets/${slug}`,
-      title: `${m.city} — Private Banking Market `,
+      title: `${m.city} — Private Banking Recruiter & Jobs | Executive Partners`,
       description: m.summary,
       images: [{ url: m.heroImage }],
       siteName: "Executive Partners",

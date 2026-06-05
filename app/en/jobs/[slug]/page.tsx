@@ -262,7 +262,7 @@ async function resolveJobBySlug(
     market: "Private Banking",
     seniority: "Director / Executive Director",
     summary:
-      "Confidential private banking mandate via Executive Partners. Full details shared after qualification.",
+      "Confidential private banking mandate — Executive Partners Geneva via Executive Partners. Full details shared after qualification.",
     confidential: true,
     active: true,
   };
@@ -376,7 +376,7 @@ export async function generateMetadata({
   const title = `${job.title} `;
   const description =
     job.summary ??
-    "Confidential private banking mandate via Executive Partners. Apply discretely.";
+    "Confidential private banking mandate — Executive Partners Geneva via Executive Partners. Apply discretely.";
 
   const canonical = `${base}/en/jobs/${encodeURIComponent(slug)}`;
   const applyTarget = `${base}${buildApplyHref(job)}`;
@@ -692,7 +692,7 @@ export default async function JobDetailPage({
   const summary =
     firstNonEmpty(job.summary) ||
     (isFallback
-      ? "Confidential private banking mandate via Executive Partners. Full details are shared after a short qualification call."
+      ? "Confidential private banking mandate — Executive Partners Geneva via Executive Partners. Full details are shared after a short qualification call."
       : "Confidential private banking opportunity. Details shared after a short qualification call.");
 
   const highlights = pickHighlights(job);
