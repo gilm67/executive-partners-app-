@@ -9,9 +9,6 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 const HUBS = ["All", "Geneva", "Zurich", "Lugano", "London", "Milan", "New York", "Hong Kong", "Singapore"];
 
 function ScreeningModal({ mandate, onClose, onPass }) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [fails, setFails] = useState([]);
@@ -191,7 +188,26 @@ function MandateCard({ mandate, onScreen, onBrief }) {
 export default function MandatesClient() {
   const [screening, setScreening] = useState(null);
   const [brief, setBrief] = useState(null);
-  const [filter, setFilter] = useState("All");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [filter, setFilter] = useState(() => {
+    const m = searchParams.get("market");
+    if (!m) return "All";
+    const match = HUBS.find(h => h.toLowerCase() === m.toLowerCase());
+    return match ?? "All";
+  });
+
+  const handleFilterChange = (hub: string) => {
+    setFilter(hub);
+    const params = new URLSearchParams(searchParams.toString());
+    if (hub === "All") {
+      params.delete("market");
+    } else {
+      params.set("market", hub.toLowerCase());
+    }
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };;
   const [selectedId, setSelectedId] = useState(null);
   const topRef = useRef(null);
 
@@ -248,7 +264,7 @@ export default function MandatesClient() {
 
             <div className="flex flex-wrap items-center gap-2 mb-6">
               {HUBS.map(h => (
-                <button key={h} onClick={() => setFilter(h)} className={`rounded-full px-4 py-1.5 text-xs font-semibold border transition ${filter === h ? "border-brandGold/60 bg-brandGold/15 text-brandGoldPale" : "border-white/10 bg-white/[0.03] text-neutral-400 hover:border-white/20 hover:text-white"}`}>{h}</button>
+                <button key={h} onClick={() => handleFilterChange(h)} className={`rounded-full px-4 py-1.5 text-xs font-semibold border transition ${filter === h ? "border-brandGold/60 bg-brandGold/15 text-brandGoldPale" : "border-white/10 bg-white/[0.03] text-neutral-400 hover:border-white/20 hover:text-white"}`}>{h}</button>
               ))}
               <span className="ml-auto text-xs text-neutral-500">{visible.length} mandate{visible.length !== 1 ? "s" : ""}</span>
             </div>
