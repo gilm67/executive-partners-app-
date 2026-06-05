@@ -1,5 +1,6 @@
 /* app/en/jobs/page.tsx */
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { BreadcrumbSchema } from "@/components/StructuredData";
 import MandatesClient from "./MandatesClient";
 import { MANDATES } from "./mandates-data";
@@ -126,7 +127,9 @@ export default function JobsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jobsJsonLd) }}
       />
 
-      <MandatesClient />
+      <Suspense fallback={<div className="min-h-[400px]" />}>
+        <MandatesClient />
+      </Suspense>
     </>
   );
 }
