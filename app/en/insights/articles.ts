@@ -73,6 +73,95 @@ export type InsightArticle = {
  */
 export const INSIGHTS: readonly InsightArticle[] = [
   {
+    slug: "is-your-aum-portable",
+    title: "Is Your AUM Actually Portable? The Six Questions Every Private Banker Gets Wrong",
+    seoTitle: "Is Your AUM Portable? The Six Questions Every Private Banker Gets Wrong",
+    seoDescription: "Most private bankers overestimate how much of their book will follow them. Here is the honest framework for testing AUM portability before you move, used by Executive Partners across 200+ placements in Geneva and Zurich.",
+    date: "2026-06-05",
+    summary: "Most private bankers overestimate how much of their book will follow them. Here is the honest framework for testing portability before you move.",
+    linkedinUrl: "",
+    pillar: "P2",
+    subTheme: "Positioning",
+    featured: true,
+    engagementScore: 95,
+    markets: ["CH"],
+    keywords: ["AUM portability private banking", "portable book Geneva", "private banker move Switzerland", "wallet share private banking", "non-solicit clause Switzerland", "NFCI margin private banking"],
+    body: `Banks already know how much of your book will transfer. Most bankers do not.
+
+Every private banker who has ever considered a move has done the same mental calculation. They look at their book, add up the AUM, multiply by a transfer assumption, and arrive at a number that feels comfortable. Comfortable enough to have a conversation. Comfortable enough to accept a meeting.
+
+That number is almost always wrong. Not slightly wrong, materially wrong. Across 200+ placements in Geneva and Zurich, the gap between what a banker believes is portable and what actually transfers is the single most consistent source of friction in a placement process. It delays offers, collapses business cases, and occasionally ends careers.
+
+This article is not about discouraging moves. The Geneva and Zurich markets are active, and the right banker on the right mandate will transfer more than they expect, because the platform does most of the work. It is about the six questions that separate bankers who understand their portability from bankers who are guessing.
+
+## 1. Are your clients loyal to you, or loyal to your institution?
+
+This sounds obvious. Every banker says their clients are loyal to them personally. The question is how you test it, not how you feel about it.
+
+The honest test: have you ever changed institutions before? If yes, what transferred? If a banker moved from Credit Suisse to Julius Baer five years ago and brought CHF 180M of a CHF 280M book, they have a real data point. They know which clients followed and, more importantly, why some did not.
+
+If this is the first potential move, the test is different. Ask yourself which of your clients would give you a new banking mandate today, right now, without a move, if you called and proposed it. Not clients who would take the call warmly. Clients who would actually move assets on the basis of that call. That is the population that transfers. The rest is institutional AUM dressed in relationship clothing.
+
+Banks understand this distinction better than bankers do. The first question any serious hiring institution will ask, not in the formal process but in the actual calibration conversation, is not what is your AUM. It is: tell me about the five clients at the top of your book. Walk me through the relationship. How long have you known them? Have they ever invested their own money based on your advice specifically? Would they bank you personally if you were independent?
+
+## 2. What is your wallet share, and do you know the real number?
+
+Wallet share is the proportion of a client's total investable wealth that sits with you. A CHF 50M relationship where the client has CHF 400M in total, spread across four institutions, is not a CHF 50M portable relationship. It is, at best, a CHF 30M opportunity, and realistically less once the friction of a move disrupts the convenience logic that kept them at your platform.
+
+The portability assumption most bankers apply is too generous because they know their own AUM but rarely know the client's total picture. Swiss private banking culture makes this harder, clients do not advertise their other banking relationships, and a relationship manager who asks directly can be perceived as intrusive.
+
+The practical approach: for your top twenty clients, estimate total wealth based on everything you know, property, businesses, lifestyle signals, other platform references, family context. Then apply your AUM as a fraction. In our experience at EP, bankers whose top clients are concentrated above 40% of total estimated wealth in their book tend to transfer well. Bankers where the fraction is below 20% across most of their top clients should plan on a slower, lower transfer curve, not because their relationships are weak, but because a meaningful portion of that AUM is sticky to the institution.
+
+This is EP's framework built from placement experience, not an industry standard. Every book is different. But the exercise forces an honest conversation with yourself before you have it with a bank.
+
+## 3. Do you have a non-solicit clause, and have you read it recently?
+
+This question has a comfortable answer and a correct answer. The comfortable answer is that non-solicit clauses are common, banks enforce them selectively, and everyone moves anyway. The correct answer is more nuanced.
+
+Non-solicit clauses in Swiss employment contracts are governed by the Swiss Code of Obligations (OR). Whether they are enforceable in practice depends significantly on how they are drafted, what they define as solicitation, and how Swiss courts interpret the specific clause. Swiss courts have been inconsistent on this. A broadly worded clause is harder to enforce than a precisely drafted one, but the uncertainty itself creates risk.
+
+The practical advice: read the clause yourself, not via a colleague's interpretation. If there is ambiguity about what constitutes solicitation, and there usually is, get a thirty-minute opinion from a Swiss employment lawyer before any conversation with a recruiter or a bank. This is not paranoia. It is due diligence. A CHF 300M book is worth more than a half-hour of legal advice.
+
+The banks you are considering know this too. Any institution making a serious offer will price the non-solicit into the transition package, either through garden leave coverage, NPC buyout, or a structured ramp assumption that does not require year-one transfer of your full book. The existence of a non-solicit is not a blocker. Not understanding its precise terms is.
+
+## 4. How much of your book is cross-border, and what is the compliance status of those relationships?
+
+This is the question that has caused more friction in placement processes over the last three years than any other. Cross-border private banking relationships, clients domiciled outside Switzerland banking in Geneva or Zurich, are only transferable if they are currently, documentably compliant. Not historically compliant. Ready to be onboarded at a new bank today.
+
+The KYC and AML standards that a hiring institution will apply to incoming clients have hardened substantially. FINMA enforcement actions resulted in fines totalling more than CHF 100 million imposed on Swiss financial institutions in 2025 alone. The new UBO register introduced via the revised Code of Obligations and AMLA covers more than 600,000 legal entities. Any bank taking on a senior RM with a cross-border book will conduct a pre-approval review of proposed client relationships. That review flags undocumented source of wealth, incomplete beneficial ownership structures, and any CRS or FATCA exposure that has not been properly declared.
+
+The practical consequence: a CHF 400M cross-border book where 30% of clients have open documentation questions is not a CHF 400M book for portability purposes. It is a CHF 280M book with a compliance tail that will complicate the approval process and potentially the offer terms.
+
+Bankers who have proactively managed their client files, who can say with confidence that every relationship in their book is clean, documented, and onboardable, have a real advantage in the current market. This is not a compliance observation. It is a portability observation.
+
+## 5. What is your real revenue margin, and how does it compare to market benchmarks?
+
+The metric that matters here is net fee and commission income (NFCI) as a proportion of AUM, what hiring institutions use to calculate payback period and three-year P&L contribution. According to PwC's Private Banking Market Update 2025, which covers 74 Swiss and Liechtenstein private banks, NFCI margins have remained broadly stable at 58 to 65 basis points across large banks and 58 to 64 basis points for smaller institutions, despite significant pressure from declining interest income.
+
+Total operating income is higher, 65 bps for large banks, up to 96 to 122 bps for smaller ones, but that figure includes interest income which has been contracting sharply since SNB rates began declining in March 2024 and is not a reliable benchmark for assessing a portable book.
+
+What this means practically: a banker presenting a book generating 45 to 50 bps in fee and commission income will face questions, not because the book is weak, but because the hiring bank's internal model will show a longer payback period. A CHF 500M book at 50 bps is still CHF 2.5M in annual NFCI, which justifies a strong offer at most platforms. But walking into that conversation without knowing your own number, or with a number that does not match the bank's calculation, costs credibility at a moment when credibility matters most.
+
+The more important point: if your revenue mix is heavily weighted toward discretionary mandates grandfathered at old fee structures, or toward Lombard lending that suppresses advisory revenue, you may be generating solid total income but a weak NFCI margin. Banks model NFCI, not total income.
+
+## 6. What is your actual timeline, and are you in control of it?
+
+Most moves take longer than the banker expects and shorter than the institution would prefer. The realistic timeline from first conversation to day one at a new platform in Geneva is four to seven months for a senior RM mandate: six to eight weeks of process, one to three months of notice or garden leave, and four to eight weeks of onboarding and client notification logistics.
+
+The question is whether the banker is driving that timeline or reacting to it. Bankers who approach the market with a vague sense that they might move within the next year are often slower to act when the right opportunity appears, and faster to accept suboptimal terms when the timeline accelerates for personal or institutional reasons outside their control.
+
+The control variable is preparation. Knowing your portability picture, having your client documentation in order, understanding your contractual position, and having a clear view of which platforms are genuinely strategic for your book, this preparation takes two to four weeks to do properly. Bankers who have done it before the first recruiter call are in a structurally better negotiating position than bankers who are discovering their own situation in real time during the process.
+
+## What this means in practice
+
+The purpose of this framework is not to discourage moves. The Geneva and Zurich markets are more active than the macro commentary suggests. PwC's 2025 data confirms that competition for talent is intensifying, personnel costs reached record levels across all bank clusters in 2024, and hiring of relationship managers continued to accelerate. Banks are paying well for bankers who arrive with clarity about their book, their compliance status, their constraints, and their timeline.
+
+The bankers who get the best outcomes are not necessarily the ones with the largest books. They are the ones who understand their own situation better than the bank does. That advantage is built before the first call, not during it.
+
+If you want to work through this framework in the context of your own book, the [EP Portability Score tool](/en/portability) runs the calculation in under ten minutes. Or speak with us directly, confidential, no obligation, and no CV required at this stage.`,
+  },
+
+  {
     slug: "compliance-golden-handcuff",
     title: "Compliance Is the New Golden Handcuff",
     seoTitle: "Why Compliance Has Become the Real Retention Tool in Swiss Private Banking",
