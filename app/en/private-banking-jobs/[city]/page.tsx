@@ -100,7 +100,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: { canonical: url },
     twitter: {
     card: "summary_large_image",
-    title: `Private Banking Jobs in ${city} | Executive Partners`,
+    title: `Private Banking Jobs in ${city} `,
     description: `Confidential private banking roles in ${city}. Senior RMs, Team Heads and Investment Advisors. Apply discreetly.`,
     images: ["/og.webp"],
   },

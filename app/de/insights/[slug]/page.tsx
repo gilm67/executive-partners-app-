@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const url = `${SITE}/de/insights/${article.slug}`;
 
   return {
-    title: { absolute: `${article.title} | Executive Partners` },
+    title: { absolute: `${article.title} ` },
     description: article.summary,
     alternates: {
       canonical: url,

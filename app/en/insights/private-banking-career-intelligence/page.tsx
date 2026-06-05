@@ -19,12 +19,12 @@ const PAGE_PATH = "/en/insights/private-banking-career-intelligence";
 const PAGE_URL = `${SITE}${PAGE_PATH}`;
 
 export const metadata: Metadata = {
-  title: "Private Banking Career Intelligence 2026 | Executive Partners",
+  title: "Private Banking Career Intelligence 2026 ",
   description:
     "Comprehensive career intelligence for private banking professionals. Market trends, compensation benchmarks, and strategic insights for RMs and wealth managers.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
-    title: "Private Banking Career Intelligence 2026 | Executive Partners",
+    title: "Private Banking Career Intelligence 2026 ",
     description:
       "Market insights, compensation data, and career strategies for senior private banking professionals.",
     url: PAGE_URL,
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Career Intelligence 2026 | Executive Partners",
+    title: "Private Banking Career Intelligence 2026 ",
     description:
       "Strategic career insights for private banking and wealth management professionals.",
   },

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.execpartners.ch/en/private-banking-recruiter-switzerland" },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruiter Switzerland | Executive Partners",
+    title: "Private Banking Recruiter Switzerland ",
     description: "Geneva-based executive search for Private Banking & Wealth Management in Switzerland. Senior RMs, Team Heads and Investment Advisors.",
     images: ["/og.webp"],
   },

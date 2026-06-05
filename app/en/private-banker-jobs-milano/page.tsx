@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-milano" },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in Milano | Executive Partners",
+    title: "Private Banker Jobs in Milano ",
     description: "Private banker and wealth manager opportunities in Milano, serving Italian entrepreneurs and families as well as cross-border clients via Swiss platforms.",
     images: ["/og.webp"],
   },

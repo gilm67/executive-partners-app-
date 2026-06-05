@@ -4,7 +4,7 @@ import JobJsonLd from "@/components/JobJsonLd";
 
 // 1) Canonical + basic SEO
 export const metadata: Metadata = {
-  title: "Private Banker — UHNW (Swiss Onshore) | Executive Partners",
+  title: "Private Banker — UHNW (Swiss Onshore) ",
   description:
     "Lead UHNW relationships with a Swiss onshore focus. Portability required; strong RM track record.",
   alternates: {

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "Executive Partners is Switzerland's specialist wealth management recruiter. Senior Relationship Managers, Investment Advisors, Team Heads and Market Leaders placed across Geneva, Zurich, London, Dubai and Singapore. Geneva-based headhunter, 200+ placements.",
   alternates: { canonical: `${SITE}/en/wealth-management-recruiter-switzerland` },
   openGraph: {
-    title: "Wealth Management Recruiter Switzerland | Executive Partners",
+    title: "Wealth Management Recruiter Switzerland ",
     description:
       "Geneva-based wealth management recruiter specialising in senior RM, Investment Advisor and Team Head placements across Switzerland and global booking centres.",
     url: `${SITE}/en/wealth-management-recruiter-switzerland`,
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Wealth Management Recruiter Switzerland | Executive Partners",
+    title: "Wealth Management Recruiter Switzerland ",
     description: "Geneva-based wealth management recruiter specialising in senior RM, Investment Advisor and Team Head placements across Switzerland and global booking centr",
     images: ["https://www.execpartners.ch/og.webp"],
   },

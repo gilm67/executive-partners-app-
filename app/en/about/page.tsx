@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "About | Executive Partners",
+  title: "About ",
   description: "Executive Partners is a Geneva-based boutique executive search firm dedicated exclusively to Private Banking and Wealth Management. 200+ placements, 98% retention.",
   alternates: { canonical: "https://www.execpartners.ch/en/about" },
 };

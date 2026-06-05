@@ -114,11 +114,11 @@ export function generateMetadata({ params }: Props): Metadata {
 
   const url = `${SITE}/en/insights/${article.slug}`;
   const title = article.seoTitle ?? article.title;
-  const ogTitle = `${article.seoTitle ?? article.title} | Executive Partners`;
+  const ogTitle = `${article.seoTitle ?? article.title} `;
   const description = article.seoDescription ?? article.summary;
 
   return {
-    title: { absolute: `${title} | Executive Partners` },
+    title: { absolute: `${title} ` },
     description,
     alternates: { canonical: url },
     openGraph: {

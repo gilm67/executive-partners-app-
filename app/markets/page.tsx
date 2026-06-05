@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Private Banking Markets — Global Wealth Hubs | Executive Partners",
+  title: "Private Banking Markets — Global Wealth Hubs ",
   description: "Private banking recruitment across Geneva, Zurich, Dubai, Singapore, London and 8 more global hubs. Compensation benchmarks, licensing and live mandates by city.",
   alternates: { canonical: "https://www.execpartners.ch/markets" },
   openGraph: {
-    title: "Private Banking Markets | Executive Partners",
+    title: "Private Banking Markets ",
     description: "Private banking recruitment across 12 global wealth hubs.",
     type: "website",
     url: "https://www.execpartners.ch/markets",
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Markets — Global Wealth Hubs | Executive Partners",
+    title: "Private Banking Markets — Global Wealth Hubs ",
     description: "Private banking recruitment across Geneva, Zurich, Dubai, Singapore, London and more.",
     images: ["/og.webp"],
   },

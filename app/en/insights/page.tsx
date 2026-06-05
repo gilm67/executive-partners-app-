@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Private Banking Insights & Market Intelligence | Executive Partners",
+    title: "Private Banking Insights & Market Intelligence ",
     description:
       "Strategy, talent, and market analysis for senior private banking professionals. Written from Geneva, read across every major booking centre.",
     url: "https://www.execpartners.ch/en/insights",

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-new-york" },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in New York | Executive Partners",
+    title: "Private Banker Jobs in New York ",
     description: "Senior private banker and wealth manager roles in New York, often with cross-border links to Switzerland and Europe.",
     images: ["/og.webp"],
   },

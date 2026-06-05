@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     canonical: `${SITE}/fr`,
   },
   openGraph: {
-    title: "Recruteur Banque Privée Genève | Executive Partners",
+    title: "Recruteur Banque Privée Genève ",
     description:
       "Chasseur de têtes spécialisé en banque privée à Genève. 200+ placements. Confidentialité totale.",
     url: `${SITE}/fr`,
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Chasseur de têtes Private Banking Genève | Executive Partners",
+    title: "Chasseur de têtes Private Banking Genève ",
     description: "Cabinet de recrutement spécialisé en banque privée à Genève. Placement de Relationship Managers seniors, chefs d'équipe et banquiers UHNW.",
     images: ["/og.webp"],
   },

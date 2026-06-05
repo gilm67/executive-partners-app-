@@ -5,13 +5,13 @@ export const metadata: Metadata = {
   description:
     "Explore private banking jobs in Geneva, Zurich, Dubai and Singapore. Confidential career guidance, portability review and placement support for senior relationship managers.",
   openGraph: {
-    title: "For Private Bankers | Executive Partners",
+    title: "For Private Bankers ",
     description:
       "Discreet career guidance for senior private banking professionals. Portability assessment and strategic moves.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Jobs Switzerland | Executive Partners",
+    title: "Private Banking Jobs Switzerland ",
     description:
       "Confidential career guidance for private banking relationship managers and team heads.",
   },

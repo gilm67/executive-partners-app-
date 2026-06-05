@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Role Not Found | Executive Partners",
+  title: "Role Not Found ",
   description:
     "The job you’re looking for may have been removed or is no longer open. Browse all current Private Banking roles.",
   robots: { index: false, follow: true },

@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: PAGE_URL,
-    title: "Private Banking Jobs in Switzerland | Executive Partners",
+    title: "Private Banking Jobs in Switzerland ",
     description:
       "Live Swiss mandates across Geneva, Zurich & Romandie. Discreet search for HNW/UHNW Relationship Managers and leaders.",
     images: [{ url: `${SITE}/og.webp` }],
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Jobs in Switzerland | Executive Partners",
+    title: "Private Banking Jobs in Switzerland ",
     description: "Live Swiss mandates across Geneva, Zurich & Romandie. Discreet search for HNW/UHNW Relationship Managers and leaders.",
     images: ["https://www.execpartners.ch/og.webp"],
   },

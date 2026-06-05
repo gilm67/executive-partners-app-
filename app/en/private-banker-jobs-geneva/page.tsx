@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-geneva" },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in Geneva | Executive Partners",
+    title: "Private Banker Jobs in Geneva ",
     description: "Confidential opportunities for Senior Relationship Managers and Private Bankers in Geneva. Executive Partners is a Geneva-based executive search firm speci",
     images: ["/og.webp"],
   },

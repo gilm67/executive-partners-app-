@@ -368,12 +368,12 @@ export async function generateMetadata({
   const { job, isFallback } = await resolveJobBySlug(slug);
   if (!job) {
     return {
-      title: "Role | Executive Partners",
+      title: "Role ",
       robots: { index: false, follow: true },
     };
   }
 
-  const title = `${job.title} | Executive Partners`;
+  const title = `${job.title} `;
   const description =
     job.summary ??
     "Confidential private banking mandate via Executive Partners. Apply discretely.";

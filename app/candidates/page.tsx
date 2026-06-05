@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.execpartners.ch/candidates" },
   openGraph: {
     title:
-      "Private Banking & Wealth Management Career Moves — Candidates | Executive Partners",
+      "Private Banking & Wealth Management Career Moves — Candidates ",
     description:
       "Discreet executive search for HNW/UHNW Private Banking talent. Geneva- and Zurich-led with mandates across London, Dubai, Singapore, Hong Kong, New York and Miami.",
     url: `${SITE}/candidates`,
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Private Banking & Wealth Management Career Moves — Candidates | Executive Partners",
+      "Private Banking & Wealth Management Career Moves — Candidates ",
     description:
       "Geneva-based boutique advising Senior Private Bankers, RMs and Team Heads on confidential career moves across major private banking hubs.",
   },

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description:
     "Browse active private banking jobs across Geneva, Zurich, Dubai, Singapore and Hong Kong. Senior Relationship Managers, Team Heads and Investment Advisors. Confidential. Apply in 90 seconds.",
   openGraph: {
-    title: "Private Banking Jobs | Executive Partners",
+    title: "Private Banking Jobs ",
     description:
       "Active mandates across Swiss Onshore, CIS/CEE, Italian, Greek/Cypriot, Asian and Latin American markets. Confidential. Compensation visible. Apply in 90 seconds.",
     url: `${SITE}/en/jobs`,
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Jobs | Executive Partners",
+    title: "Private Banking Jobs ",
     description:
       "Active mandates across Geneva, Zurich, Milan, Dubai, Singapore and Hong Kong. Confidential executive search.",
   },

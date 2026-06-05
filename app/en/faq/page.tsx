@@ -5,7 +5,7 @@ import Link from "next/link";
 const SITE = "https://www.execpartners.ch";
 
 export const metadata: Metadata = {
-  title: "Private Banking FAQ | Executive Search Switzerland | Executive Partners",
+  title: "Private Banking FAQ | Executive Search Switzerland ",
   description:
     "Answers to the most common questions about private banking careers, AUM portability, compensation, and executive search in Geneva, Zurich, Dubai and Singapore.",
   alternates: {
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking FAQ | Executive Search Switzerland | Executive Partners",
+    title: "Private Banking FAQ | Executive Search Switzerland ",
     description: "Answers to common questions about private banking career moves, AUM portability, confidentiality and compensation across Geneva, Zurich, Dubai and Singapor",
     images: ["https://www.execpartners.ch/og.webp"],
   },

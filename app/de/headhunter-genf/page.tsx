@@ -5,7 +5,7 @@ import Link from "next/link";
 const SITE = "https://www.execpartners.ch";
 
 export const metadata: Metadata = {
-  title: "Headhunter Genf & Zürich | Private Banking | Executive Partners",
+  title: "Headhunter Genf & Zürich | Private Banking ",
   description:
     "Executive Partners ist der führende Headhunter für Private Banking in Genf und Zürich. Personalberatung für Senior Relationship Manager, Team Heads und Investment Advisors. Vertraulich. Senior-Level only.",
   alternates: {
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     languages: { en: `${SITE}/en/private-banking-headhunter-geneva` },
   },
   openGraph: {
-    title: "Headhunter Genf & Zürich | Private Banking | Executive Partners",
+    title: "Headhunter Genf & Zürich | Private Banking ",
     description: "Führende Personalberatung für Private Banking in der Schweiz. Senior RMs, Team Heads und UHNW-Banker in Genf, Zürich, Dubai und Singapur.",
     locale: "de_CH",
     type: "website",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Headhunter Genf & Zürich | Private Banking | Executive Partners",
+    title: "Headhunter Genf & Zürich | Private Banking ",
     description: "Führende Personalberatung für Private Banking in der Schweiz. Senior RMs, Team Heads und UHNW-Banker in Genf, Zürich, Dubai und Singapur.",
     images: ["https://www.execpartners.ch/og.webp"],
   },

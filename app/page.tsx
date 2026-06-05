@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "Geneva's leading executive recruiters for private banking and wealth management. Senior Relationship Managers, Team Heads and UHNW bankers placed across Switzerland, London, Dubai, Singapore and Hong Kong. 200+ placements.",
 
   openGraph: {
-    title: "Private Banking Recruiter Switzerland | Executive Partners",
+    title: "Private Banking Recruiter Switzerland ",
     description:
       "Global executive search for senior private banking professionals. Geneva-based, globally connected.",
     type: "website",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruiter Switzerland | Executive Partners",
+    title: "Private Banking Recruiter Switzerland ",
     description:
       "Leading executive search for senior private banking roles worldwide.",
     images: [OG_IMAGE],

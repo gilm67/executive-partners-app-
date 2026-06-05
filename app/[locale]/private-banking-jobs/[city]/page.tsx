@@ -262,7 +262,7 @@ export async function generateMetadata({
   if (!cfg) return { robots: { index: false, follow: true } };
 
   const canonical = `${SITE}/en/private-banking-jobs/${cfg.key}`;
-  const pageTitle = `Private Banking Jobs in ${cfg.label} | Executive Partners`;
+  const pageTitle = `Private Banking Jobs in ${cfg.label} `;
 
   return {
     // ✅ prevents app/layout.tsx title.template from appending again

@@ -4,10 +4,14 @@ import { BriefDrawer } from "./BriefDrawer";
 import { MANDATES } from "./mandates-data";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 const HUBS = ["All", "Geneva", "Zurich", "Lugano", "London", "Milan", "New York", "Hong Kong", "Singapore"];
 
 function ScreeningModal({ mandate, onClose, onPass }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [fails, setFails] = useState([]);

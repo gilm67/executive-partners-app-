@@ -9,19 +9,19 @@ const SITE =
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "Portability Score™ — Assess Your AUM Transferability | Executive Partners",
+  title: "Portability Score™ — Assess Your AUM Transferability ",
   description:
     "Calculate your true AUM portability before your next private banking career move. Our 30-point Portability Score™ has been applied across 200+ senior placements in Switzerland and internationally.",
   alternates: { canonical: "https://www.execpartners.ch/portability" },
   openGraph: {
-    title: "Portability Score™ — Assess Your AUM Transferability | Executive Partners",
+    title: "Portability Score™ — Assess Your AUM Transferability ",
     description: "Assess your book's true portability across markets. Used by 500+ private bankers. Free, confidential, no obligation.",
     url: `${SITE}/portability`,
     images: [{ url: "/og.webp" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Portability Score™ — Assess Your AUM Transferability | Executive Partners",
+    title: "Portability Score™ — Assess Your AUM Transferability ",
     description: "Calculate your true AUM portability before your next private banking career move. Our 30-point Portability Score™ has been applied across 200+ senior place",
     images: ["/og.webp"],
   },

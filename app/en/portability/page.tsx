@@ -15,12 +15,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.execpartners.ch/en/portability" },
   twitter: {
     card: "summary_large_image",
-    title: "Free AUM Portability Calculator — Portability Score™ | Executive Partners",
+    title: "Free AUM Portability Calculator — Portability Score™ ",
     description: "Assess your book's true portability across markets. 30-point framework, used by 500+ private bankers. Free, confidential, no obligation.",
     images: ["/og.webp"],
   },
   openGraph: {
-    title: "Portability Score™ — Assess Your AUM Transferability | Executive Partners",
+    title: "Portability Score™ — Assess Your AUM Transferability ",
     description: "Assess your book's true portability across markets. Used by 500+ private bankers. Free, confidential, no obligation.",
     url: `${SITE}/en/portability`,
     images: [{ url: "/og.webp" }],

@@ -24,7 +24,7 @@ export async function generateMetadata({
   const canonical = `${base}/en/jobs/${encodeURIComponent(slug)}`;
 
   return {
-    title: "Redirecting… | Executive Partners",
+    title: "Redirecting… ",
     alternates: { canonical },
     robots: { index: false, follow: true }, // legacy URL
   };

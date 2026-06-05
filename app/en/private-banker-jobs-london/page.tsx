@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-london" },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in London | Executive Partners",
+    title: "Private Banker Jobs in London ",
     description: "Confidential private banker and wealth manager roles in London. Advisory for Senior Relationship Managers comparing Swiss and UK platforms.",
     images: ["/og.webp"],
   },

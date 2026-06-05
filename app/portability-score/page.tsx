@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: "AUM Portability & Market Access | Executive Partners",
+  title: "AUM Portability & Market Access ",
   description:
     "Assess AUM portability across booking centres and markets. Tools and advisory for Private Bankers planning a move.",
 };

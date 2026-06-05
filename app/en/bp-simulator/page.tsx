@@ -14,13 +14,13 @@ export const metadata: Metadata = {
   title: "Private Banking Business Plan Simulator — Model NNM, ROA & P&L",
   description: "Free private banking business plan simulator. Model your 3-year AUM ramp, NNM, ROA and P&L the way a hiring committee evaluates it — built on 200+ EP placements.",
   openGraph: {
-    title: "Business Plan Simulator | Executive Partners",
+    title: "Business Plan Simulator ",
     description: "Bank-style business case builder to stress-test portability assumptions. Model NNM, ROA, revenues, and margins.",
   },
   alternates: { canonical: "https://www.execpartners.ch/en/bp-simulator" },
   twitter: {
     card: "summary_large_image",
-    title: "Business Plan Simulator | Executive Partners",
+    title: "Business Plan Simulator ",
     description: "Model revenue, break-even timeline and approval readiness for private banking moves.",
   },
 };

@@ -60,7 +60,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: PAGE_PATH,
-    title: "Private Banking Jobs in Zurich | Executive Partners",
+    title: "Private Banking Jobs in Zurich ",
     description:
       "Live Zurich/Swiss mandates. Discreet search for HNW/UHNW Relationship Managers and senior leaders with CH onshore and international coverage.",
     images: [{ url: "/og.webp" }],
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Jobs in Zurich | Executive Partners",
+    title: "Private Banking Jobs in Zurich ",
     description: "Live Zurich/Swiss mandates. Discreet search for HNW/UHNW Relationship Managers and senior leaders with CH onshore and international coverage.",
     images: ["https://www.execpartners.ch/og.webp"],
   },

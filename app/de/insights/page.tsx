@@ -5,7 +5,7 @@ import { INSIGHTS_DE } from "./articles";
 const SITE = "https://www.execpartners.ch";
 
 export const metadata: Metadata = {
-  title: "Insights auf Deutsch | Private Banking Schweiz | Executive Partners",
+  title: "Insights auf Deutsch | Private Banking Schweiz ",
   description:
     "Fact-checked Marktanalysen für Senior Private Banker in Zürich und der Deutschschweiz. UBS-Integration, FINMA-Regulierung, Kompensation und Portabilität.",
   alternates: {
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     languages: { de: `${SITE}/de/insights`, en: `${SITE}/en/insights` },
   },
   openGraph: {
-    title: "Insights auf Deutsch | Executive Partners",
+    title: "Insights auf Deutsch ",
     description: "Marktanalysen und Talentsignale im Schweizer Private Banking.",
     locale: "de_CH",
     type: "website",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Insights auf Deutsch | Private Banking Schweiz | Executive Partners",
+    title: "Insights auf Deutsch | Private Banking Schweiz ",
     description: "Fact-checked Marktanalysen für Senior Private Banker in Zürich und Genf. AUM-Portabilität, Vergütung und Karrierestrategie.",
     images: ["/og.webp"],
   },

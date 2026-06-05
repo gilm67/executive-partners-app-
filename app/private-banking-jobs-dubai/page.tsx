@@ -61,7 +61,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: PAGE_PATH,
-    title: "Private Banking Jobs in Dubai | Executive Partners",
+    title: "Private Banking Jobs in Dubai ",
     description:
       "Live MEA mandates from Dubai: Relationship Managers, Team Heads, Market Leaders. Discreet recruitment for UHNW/HNW private banking in the UAE.",
     images: [{ url: "/og.webp" }],
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Jobs in Dubai | Executive Partners",
+    title: "Private Banking Jobs in Dubai ",
     description: "Live MEA mandates from Dubai: Relationship Managers, Team Heads, Market Leaders. Discreet recruitment for UHNW/HNW private banking in the UAE.",
     images: ["https://www.execpartners.ch/og.webp"],
   },

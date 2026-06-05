@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruiter Switzerland | Executive Partners",
+    title: "Private Banking Recruiter Switzerland ",
     description: "Switzerland's specialist executive search boutique for Private Banking & Wealth Management. 200+ placements across Geneva, Zurich and global hubs.",
     images: ["https://www.execpartners.ch/og.webp"],
   },

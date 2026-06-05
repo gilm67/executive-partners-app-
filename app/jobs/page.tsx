@@ -14,7 +14,7 @@ function siteBase() {
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Redirecting… | Executive Partners",
+  title: "Redirecting… ",
   alternates: { canonical: `${siteBase()}/en/jobs` },
   robots: { index: false, follow: true }, // legacy URL
 };

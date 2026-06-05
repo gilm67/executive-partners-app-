@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-lisbon" },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in Lisbon | Executive Partners",
+    title: "Private Banker Jobs in Lisbon ",
     description: "Private banker and wealth manager roles in Lisbon, often linked to international and offshore client coverage.",
     images: ["/og.webp"],
   },

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Private Banking Strategy & Market Intelligence | Pillar I | Executive Partners",
+  title: "Private Banking Strategy & Market Intelligence | Pillar I ",
   description:
     "Deep-dive analysis on private banking strategy, competitive positioning, ROA pressure, M&A and boutique vs scale dynamics. Written from Geneva by Gil M. Chalem.",
   alternates: { canonical: "https://www.execpartners.ch/en/insights/pillar/p1" },
   openGraph: {
-    title: "Private Banking Strategy & Market Intelligence | Executive Partners",
+    title: "Private Banking Strategy & Market Intelligence ",
     description: "Analysis on competitive positioning, ROA pressure, M&A and scale vs boutique dynamics in private banking.",
     type: "website",
     url: "https://www.execpartners.ch/en/insights/pillar/p1",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Strategy & Market Intelligence | Executive Partners",
+    title: "Private Banking Strategy & Market Intelligence ",
     description: "Analysis on competitive positioning, ROA pressure, M&A and scale vs boutique dynamics in private banking.",
     images: ["/og.webp"],
   },

@@ -96,7 +96,7 @@ export function generateMetadata({ params }: Props): Metadata {
   const st = slugToP1SubTheme(params.subTheme);
   if (!st) return {};
 
-  const title = `Private Wealth Pulse — ${subThemeLabel(st)} | Executive Partners`;
+  const title = `Private Wealth Pulse — ${subThemeLabel(st)} `;
   const description = subThemeIntro(st);
   const url = `${SITE}/en/insights/subtheme/${params.subTheme}`;
 

@@ -12,17 +12,17 @@ const SITE =
     : "https://www.execpartners.ch");
 
 export const metadata: Metadata = {
-  title: "Private Banking Recruitment Agency Switzerland | Hiring Managers | Executive Partners",
+  title: "Private Banking Recruitment Agency Switzerland | Hiring Managers ",
   description:
     "Executive search for senior private banking hires. Targeted recruitment for Directors, MDs, Team Heads across Switzerland, Dubai, Singapore, London, New York.",
   openGraph: {
-    title: "For Hiring Managers | Executive Partners",
+    title: "For Hiring Managers ",
     description:
       "Targeted senior hires in Private Banking & Wealth Management. Real AUM portability and long-term retention.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruitment Agency Switzerland | Executive Partners",
+    title: "Private Banking Recruitment Agency Switzerland ",
     description:
       "Executive search for senior private banking roles. Specialists in AUM portability assessment.",
   },

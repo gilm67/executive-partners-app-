@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-madrid" },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in Madrid | Executive Partners",
+    title: "Private Banker Jobs in Madrid ",
     description: "Private banking and wealth management roles in Madrid, including Iberian and Latin American client coverage with strong links to Switzerland and Europe.",
     images: ["/og.webp"],
   },

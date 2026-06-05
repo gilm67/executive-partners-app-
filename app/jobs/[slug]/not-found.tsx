@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Page Not Found | Executive Partners",
+  title: "Page Not Found ",
   description:
     "We couldn’t find that page. Explore open Private Banking roles or contact Executive Partners.",
   robots: { index: false, follow: false },

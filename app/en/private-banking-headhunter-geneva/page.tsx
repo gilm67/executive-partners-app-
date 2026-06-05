@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Private Banking Headhunter Geneva | Executive Partners",
+    title: "Private Banking Headhunter Geneva ",
     description: "Geneva-based private banking headhunter. Senior RMs, Team Heads and Market Leaders placed across Switzerland and global wealth hubs. Confidential. Senior-level only.",
     type: "website",
     url: "https://www.execpartners.ch/en/private-banking-headhunter-geneva",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Headhunter Geneva | Executive Partners",
+    title: "Private Banking Headhunter Geneva ",
     description: "Geneva-based private banking headhunter. Senior RMs, Team Heads and Market Leaders placed across Switzerland and global wealth hubs.",
     images: ["https://www.execpartners.ch/og.webp"],
   },

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Insights | Executive Partners",
+  title: "Insights ",
   description:
     "Private Wealth Pulse — market pulse and hiring insights across Switzerland and global wealth hubs.",
   alternates: {

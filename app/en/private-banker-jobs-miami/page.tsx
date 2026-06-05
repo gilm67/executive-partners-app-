@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-miami" },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in Miami | Executive Partners",
+    title: "Private Banker Jobs in Miami ",
     description: "Private banker and wealth manager roles in Miami, focused on Latin American and international offshore clients. Discreet advisory for Senior Relationship M",
     images: ["/og.webp"],
   },
