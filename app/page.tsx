@@ -7,7 +7,8 @@ import type { Metadata } from "next";
 import { ArrowRight, Sparkles, Calculator } from "lucide-react";
 import { OrganizationSchema, FAQSchema } from "@/components/StructuredData";
 
-const HERO = "/hero-jeteau.jpg";
+const HERO = "/hero-jeteau.webp";
+const HERO_MOBILE = "/hero-jeteau-mobile.webp";
 const OG_IMAGE = "/og.webp";
 
 export const metadata: Metadata = {
@@ -62,7 +63,8 @@ export default function HomePage() {
               fill
               priority
               fetchPriority="high"
-              sizes="(max-width: 768px) 100vw, 1200px"
+              quality={80}
+              sizes="(max-width: 480px) 480px, (max-width: 768px) 768px, 1200px"
               className="object-cover object-center"
             />
 
