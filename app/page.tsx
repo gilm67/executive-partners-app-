@@ -173,11 +173,116 @@ export default function HomePage() {
   );
 }
 
+/* ── REPLACE GatewayPanel and ActionCard with enhanced versions ── */
+
+function PortabilityPreview() {
+  return (
+    <div className="relative rounded-xl border border-[#D4AF37]/20 bg-[#0B1929] overflow-hidden">
+      {/* Chrome bar */}
+      <div className="flex items-center gap-1.5 border-b border-white/10 bg-white/5 px-3 py-2">
+        <div className="h-2 w-2 rounded-full bg-red-500/50" />
+        <div className="h-2 w-2 rounded-full bg-yellow-500/50" />
+        <div className="h-2 w-2 rounded-full bg-green-500/50" />
+        <div className="ml-2 flex-1 rounded bg-white/5 px-2 py-0.5 text-[9px] text-white/25">
+          execpartners.ch/en/portability
+        </div>
+      </div>
+      <div className="p-4 space-y-3">
+        {/* Score dial */}
+        <div className="flex items-center gap-4">
+          <div className="relative h-16 w-16 shrink-0">
+            <svg viewBox="0 0 36 36" className="h-16 w-16 -rotate-90">
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="3" />
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#D4AF37" strokeWidth="3"
+                strokeDasharray="68 32" strokeLinecap="round"
+                className="origin-center [animation:dash_2s_ease-in-out_infinite_alternate]" />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-base font-bold text-white">68</span>
+              <span className="text-[8px] text-white/35">/100</span>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-[#D4AF37]">Strong portability</p>
+            <p className="text-[10px] text-white/45 mt-0.5">CHF 154M estimated portable</p>
+            <p className="text-[10px] text-white/30">within 12 months</p>
+          </div>
+        </div>
+        {/* Mini bars */}
+        {[
+          { label: "Client loyalty", w: "75%", color: "bg-[#D4AF37]" },
+          { label: "Wallet share", w: "60%", color: "bg-emerald-400" },
+          { label: "Compliance status", w: "85%", color: "bg-blue-400" },
+        ].map(r => (
+          <div key={r.label}>
+            <div className="flex justify-between text-[9px] mb-1">
+              <span className="text-white/40">{r.label}</span>
+            </div>
+            <div className="h-1 w-full rounded-full bg-white/10">
+              <div className={`h-1 rounded-full ${r.color} opacity-70`} style={{ width: r.w }} />
+            </div>
+          </div>
+        ))}
+        <div className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-center">
+          <p className="text-[9px] uppercase tracking-wider text-white/30">100% encrypted · no data stored</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BPPreview() {
+  return (
+    <div className="relative rounded-xl border border-[#9ECBFF]/20 bg-[#0B1929] overflow-hidden">
+      {/* Chrome bar */}
+      <div className="flex items-center gap-1.5 border-b border-white/10 bg-white/5 px-3 py-2">
+        <div className="h-2 w-2 rounded-full bg-red-500/50" />
+        <div className="h-2 w-2 rounded-full bg-yellow-500/50" />
+        <div className="h-2 w-2 rounded-full bg-green-500/50" />
+        <div className="ml-2 flex-1 rounded bg-white/5 px-2 py-0.5 text-[9px] text-white/25">
+          execpartners.ch/en/bp-simulator
+        </div>
+      </div>
+      <div className="p-4 space-y-2.5">
+        {/* Revenue bars */}
+        <p className="text-[9px] uppercase tracking-wider text-white/30 mb-2">3-year revenue projection</p>
+        {[
+          { label: "Year 1 (conservative)", value: "CHF 890K", w: "45%", color: "bg-[#9ECBFF]" },
+          { label: "Year 2 (base case)", value: "CHF 1.54M", w: "72%", color: "bg-[#9ECBFF]" },
+          { label: "Year 3 (target)", value: "CHF 2.1M", w: "95%", color: "bg-[#9ECBFF]" },
+        ].map(r => (
+          <div key={r.label}>
+            <div className="flex justify-between text-[9px] mb-1">
+              <span className="text-white/40">{r.label}</span>
+              <span className="text-white/70 font-semibold">{r.value}</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-white/10">
+              <div className={`h-1.5 rounded-full ${r.color} opacity-60`} style={{ width: r.w }} />
+            </div>
+          </div>
+        ))}
+        {/* Key metrics */}
+        <div className="grid grid-cols-2 gap-2 mt-1">
+          {[
+            { label: "Break-even AUM", value: "CHF 95M" },
+            { label: "NPC buyout", value: "6 months" },
+          ].map(m => (
+            <div key={m.label} className="rounded-lg bg-white/5 border border-white/10 px-2 py-1.5 text-center">
+              <p className="text-[8px] text-white/35">{m.label}</p>
+              <p className="text-xs font-semibold text-[#9ECBFF]">{m.value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function GatewayPanel() {
   return (
     <section
       aria-label="Primary tools"
-      className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0B0F1A]/72 p-4 backdrop-blur-xl shadow-[0_26px_90px_rgba(0,0,0,.55)]"
+      className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0B0F1A]/72 p-5 backdrop-blur-xl shadow-[0_26px_90px_rgba(0,0,0,.55)]"
     >
       <div
         aria-hidden
@@ -188,29 +293,89 @@ function GatewayPanel() {
         }}
       />
 
-      <div className="relative grid gap-4 md:grid-cols-2">
-        <ActionCard
-          href="/en/portability"
-          icon={<Sparkles className="h-5 w-5" />}
-          eyebrow="Signature tool"
-          title="Calculate Portability Score™"
-          desc="Estimate realistic AUM transfer potential before you move."
-          variant="gold"
-        />
+      <div className="relative grid gap-5 md:grid-cols-2">
 
-        <ActionCard
-          href="/en/bp-simulator"
-          icon={<Calculator className="h-5 w-5" />}
-          eyebrow="Approval tool"
-          title="Business Plan Simulator"
-          desc="Model revenue, break-even timeline and approval readiness."
-          variant="ice"
-        />
+        {/* ── Portability Score card ── */}
+        <div className="relative overflow-hidden rounded-2xl border border-[#D4AF37]/28 bg-gradient-to-b from-[#D4AF37]/12 to-white/[0.03] p-5 shadow-[0_18px_55px_rgba(0,0,0,.45)]">
+          <div className="grid gap-5 md:grid-cols-[1fr_auto] items-start">
+            {/* Left: copy */}
+            <div className="flex flex-col gap-3">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.22em] text-white/65">Signature tool</p>
+                <div className="mt-1 flex items-center gap-2">
+                  <div className="grid h-8 w-8 place-items-center rounded-lg bg-[#D4AF37]/16 ring-1 ring-[#F5D778]/28 text-[#F5D778]">
+                    <Sparkles className="h-4 w-4" />
+                  </div>
+                  <h3 className="text-base font-semibold text-white">Portability Score™</h3>
+                </div>
+              </div>
+              <p className="text-sm text-white/65 leading-relaxed">
+                Model realistic AUM transfer potential before any conversation with a bank. Wallet share, compliance status, and timeline — calculated in minutes.
+              </p>
+              <ul className="space-y-1">
+                {["Client loyalty analysis","Wallet share estimate","Non-solicit risk flag","Transfer timeline"].map(f => (
+                  <li key={f} className="flex items-center gap-2 text-xs text-white/50">
+                    <span className="text-[#D4AF37]">✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/en/portability"
+                className="mt-1 inline-flex items-center gap-1.5 rounded-xl bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-black hover:opacity-90 transition self-start"
+              >
+                Calculate Your Score →
+              </Link>
+            </div>
+            {/* Right: preview */}
+            <div className="hidden md:block w-[180px] shrink-0">
+              <PortabilityPreview />
+            </div>
+          </div>
+        </div>
+
+        {/* ── BP Simulator card ── */}
+        <div className="relative overflow-hidden rounded-2xl border border-[#9ECBFF]/26 bg-gradient-to-b from-[#9ECBFF]/12 to-white/[0.03] p-5 shadow-[0_18px_55px_rgba(0,0,0,.45)]">
+          <div className="grid gap-5 md:grid-cols-[1fr_auto] items-start">
+            {/* Left: copy */}
+            <div className="flex flex-col gap-3">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.22em] text-white/65">Approval tool</p>
+                <div className="mt-1 flex items-center gap-2">
+                  <div className="grid h-8 w-8 place-items-center rounded-lg bg-[#9ECBFF]/16 ring-1 ring-[#CFE6FF]/26 text-[#CFE6FF]">
+                    <Calculator className="h-4 w-4" />
+                  </div>
+                  <h3 className="text-base font-semibold text-white">Business Plan Simulator</h3>
+                </div>
+              </div>
+              <p className="text-sm text-white/65 leading-relaxed">
+                Build a three-year revenue case before you walk into any hiring meeting. Banks close offers faster when portability logic arrives pre-documented.
+              </p>
+              <ul className="space-y-1">
+                {["3-year revenue projection","Break-even AUM calculation","NPC buyout recommendation","PDF export ready"].map(f => (
+                  <li key={f} className="flex items-center gap-2 text-xs text-white/50">
+                    <span className="text-[#9ECBFF]">✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/en/bp-simulator"
+                className="mt-1 inline-flex items-center gap-1.5 rounded-xl bg-[#9ECBFF]/20 border border-[#9ECBFF]/30 px-4 py-2 text-sm font-semibold text-[#CFE6FF] hover:bg-[#9ECBFF]/30 transition self-start"
+              >
+                Run Simulation →
+              </Link>
+            </div>
+            {/* Right: preview */}
+            <div className="hidden md:block w-[180px] shrink-0">
+              <BPPreview />
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div className="relative px-2 pt-4 text-center">
         <span className="text-xs text-white/55">
-          Used by 500+ private bankers • 100% confidential • No obligation
+          Used by 500+ private bankers · 100% confidential · No obligation
         </span>
       </div>
     </section>
@@ -236,58 +401,21 @@ function ActionCard({
     variant === "gold"
       ? "border-[#D4AF37]/28 bg-gradient-to-b from-[#D4AF37]/12 to-white/[0.03] hover:border-[#F5D778]/45"
       : "border-[#9ECBFF]/26 bg-gradient-to-b from-[#9ECBFF]/12 to-white/[0.03] hover:border-[#CFE6FF]/45";
-
   const iconWrap =
     variant === "gold"
       ? "bg-[#D4AF37]/16 ring-1 ring-[#F5D778]/28 text-[#F5D778]"
       : "bg-[#9ECBFF]/16 ring-1 ring-[#CFE6FF]/26 text-[#CFE6FF]";
-
   const ctaText =
     variant === "gold" ? "Calculate Your Score →" : "Run Simulation →";
-
   return (
-    <Link
-      href={href}
-      className={[
-        "group relative overflow-hidden rounded-2xl border p-6 backdrop-blur-md transition",
-        "shadow-[0_18px_55px_rgba(0,0,0,.45)] hover:shadow-[0_26px_78px_rgba(0,0,0,.60)]",
-        styles,
-      ].join(" ")}
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100"
-        style={{
-          background:
-            "radial-gradient(650px 260px at 22% 0%, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 60%)",
-        }}
-      />
-
+    <Link href={href} className={["group relative overflow-hidden rounded-2xl border p-6 backdrop-blur-md transition shadow-[0_18px_55px_rgba(0,0,0,.45)] hover:shadow-[0_26px_78px_rgba(0,0,0,.60)]", styles].join(" ")}>
       <div className="relative flex flex-col items-center text-center gap-3">
-        <div
-          className={[
-            "grid h-11 w-11 place-items-center rounded-xl",
-            iconWrap,
-          ].join(" ")}
-        >
-          {icon}
-        </div>
-
+        <div className={["grid h-11 w-11 place-items-center rounded-xl", iconWrap].join(" ")}>{icon}</div>
         <div className="min-w-0 w-full">
-          <div className="text-[11px] uppercase tracking-[0.22em] text-white/65 text-center">
-            {eyebrow}
-          </div>
-
-          <div className="mt-1 font-[var(--font-playfair)] text-2xl leading-tight text-white text-center">
-            {title}
-          </div>
-
-          <div className="mt-2 text-sm text-white/75 text-center">{desc}</div>
-
-          <div className="mt-5 inline-flex items-center justify-center gap-2 text-sm font-semibold text-white/90 w-full">
-            {ctaText}
-            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-          </div>
+          <div className="text-[11px] uppercase tracking-[0.22em] text-white/65 text-center">{eyebrow}</div>
+          <h3 className="mt-1 text-lg font-semibold text-white">{title}</h3>
+          <p className="mt-2 text-sm text-white/65">{desc}</p>
+          <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-white/80">{ctaText}</div>
         </div>
       </div>
     </Link>
