@@ -9,7 +9,7 @@ const PAGE_URL = `${SITE}/en/private-banking-recruiter-geneva`;
 /* ------------ metadata ------------ */
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter Geneva | Executive Partners",
+    absolute: "Private Banking Recruiter Geneva | Senior RMs & Team Heads – Executive Partners",
   },
   description:
     "Geneva's specialist executive search firm for private banking. Senior Relationship Managers, Team Heads and UHNW bankers placed across Geneva, Zurich and global wealth hubs. Confidential. Senior-level only.",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Private Banking Recruiter in Geneva – Executive Partners",
-    description: "Geneva-based executive search boutique focused on senior Private Bankers, RMs and Team Heads with portable UHNW/HNW books.",
+    description: "Geneva specialist for private banking recruitment. Senior RMs with CHF 75m–2bn+ AUM, Team Heads and Investment Advisors placed across UBP, Julius Baer, EFG and boutique platforms. Confidential.",
     images: ["https://www.execpartners.ch/og.webp"],
   },
   robots: { index: true, follow: true },

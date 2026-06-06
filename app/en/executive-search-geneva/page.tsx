@@ -9,9 +9,9 @@ const SITE =
 const PAGE_URL = `${SITE}/en/executive-search-geneva`;
 
 export const metadata: Metadata = {
-  title: "Executive Search Geneva | Private Banking & Wealth Management Recruiter",
+  title: "Executive Search Geneva | Private Banking Specialist – Executive Partners",
   description:
-    "Geneva's specialist executive search firm for private banking and wealth management. Senior Relationship Managers, Team Heads, Investment Advisors and EAM coverage roles. Confidential mandates. All searches conducted personally by Gil M. Chalem.",
+    "Geneva-based executive search specialist exclusively in private banking. Senior RMs, Investment Advisors and Desk Heads placed across Swiss and international platforms. Every search conducted personally by Gil M. Chalem.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
     type: "website",
