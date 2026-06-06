@@ -73,6 +73,79 @@ export type InsightArticle = {
  */
 export const INSIGHTS: readonly InsightArticle[] = [
   {
+    slug: "private-banking-business-plan-switzerland",
+    title: "The Private Banking Business Plan: What a Hiring Committee Actually Looks For",
+    seoTitle: "Private Banking Business Plan Switzerland | What Banks Evaluate",
+    seoDescription: "A private banking business plan in Switzerland is not a revenue projection. It is a stress test. Here is exactly what hiring committees evaluate, built on 200+ EP placements.",
+    date: "2026-06-06",
+    markets: ["CH"] as const,
+    featured: true,
+    pillar: "P1",
+    subTheme: "ROAPlatform",
+    keywords: ["private banking business plan", "private banker business plan Switzerland", "relationship manager break-even timeline", "AUM portability business case", "private banking business plan template"],
+    summary: "A private banking business plan in Switzerland is not a revenue projection. It is a stress test. Here is exactly what hiring committees evaluate before they make an offer.",
+    linkedinUrl: "https://www.linkedin.com/in/gilchalem/",
+    body: `The business plan does not get you the job. It gets you past the committee member who has already decided to say no.
+
+Every hiring committee in Swiss private banking contains at least one person whose role, consciously or not, is to find the number that does not hold up. The ROA assumption that is too optimistic. The portability percentage that assumes clients will follow without friction. The break-even timeline that only works if year one goes perfectly. Their job is to protect the institution from an expensive mistake. Your business plan's job is to give them nothing to find.
+
+That is a different document from the one most bankers write. Most bankers write a revenue projection dressed up as a strategic argument. They lead with total AUM, state a portability assumption without justifying it, model three years of growth on a straight line, and close with a paragraph about why the new platform is the right fit for their clients. Hiring committees have read that document four hundred times. It does not move them.
+
+What moves them is a document that has already stress-tested itself.
+
+What the document is actually evaluating
+
+The hiring committee is not reading your business plan to understand your ambitions. They are reading it to stress-test four specific variables.
+
+The first is portable AUM. Not total AUM. Not AUM under management. Portable AUM: the fraction of your book that is personal to you rather than institutional, that sits in accounts where you have direct client relationships, and where no non-solicit clause, KYC transfer barrier or booking centre constraint prevents a move. Swiss private banks have become expert at identifying inflated portability claims. A CHF 400 million book that is 60% institutional mandates, 20% family relationships managed by a colleague, and 20% clients who have never responded to a personal call is a CHF 80 million book in practice.
+
+The second is revenue quality. A book generating 45 basis points of average ROA across discretionary and advisory mandates is worth more to a hiring committee than a book generating 18 basis points across execution-only accounts, even if the second book is three times larger in AUM. Banks model revenue, not assets. The business plan must speak in revenue terms, not AUM terms, to be taken seriously.
+
+The third is the break-even timeline. Every hire carries a cost: the recruitment fee, the sign-on, the transition period during which the banker is present but not yet revenue-generating, and the compliance overhead of onboarding a new book. A hiring bank in Geneva or Zurich typically models a 14 to 22 month break-even on a senior RM hire. Your business plan must demonstrate, with credible assumptions, that the revenue ramp reaches that break-even within that window. Plans that show hockey-stick growth in year three without explaining year one are rejected.
+
+The fourth variable is compliance risk, and it has become the most underestimated factor in Swiss private banking hiring since 2023.
+
+The forced integration of Credit Suisse into UBS produced something that did not make the front pages: a forensic re-examination of how both institutions had managed client onboarding over the previous decade. What that examination surfaced was significant. Accounts with incomplete KYC documentation. Relationships with PEPs or PEP-adjacent family members that had been grandfathered rather than reviewed. Booking centre structures that had been designed around tax efficiency rather than substance. The remediation cost ran into the hundreds of millions across the combined entity.
+
+Every private bank in Geneva and Zurich watched that process. The response has been a quiet but systematic tightening of onboarding standards for incoming bankers and their books. A candidate who brings CHF 200 million in portable AUM but whose top ten clients include three accounts with elevated jurisdiction risk, two PEP relationships, and one account with a dormant beneficial ownership structure will face a compliance pre-screening that can take six to ten weeks and may result in a conditional offer: we will hire you, but we will not onboard those five accounts.
+
+That conditional offer changes the economics of your business plan entirely. If 30% of your portable AUM is subject to enhanced due diligence that may result in rejection, your year-one revenue assumption needs to reflect that. Most business plans do not. They present the gross portable number and leave the compliance haircut for the onboarding team to discover after the offer is signed. Hiring committees who have been through this once do not make that mistake twice. They screen for it in the document.
+
+The business plan should address compliance proactively. Identify the accounts in your portable book that will require enhanced due diligence. State the jurisdiction, the relationship type, and why you believe the account is onboardable at the new institution. This transparency is not a weakness. It is the signal that you have done the work and that the number you are presenting is real.
+
+The structure that works
+
+After reviewing and producing business plans across 200 placements in Geneva and Zurich, the structure that consistently advances candidates to the final stage follows this sequence.
+
+Open with a one-page executive summary that states portable AUM, expected year-one revenue, projected break-even month, and the three or four client segments that constitute your core franchise. This page is what gets read before the committee decides whether to read the rest.
+
+The second section covers client segmentation. Break your portable book into tranches by AUM size, relationship type, booking centre, and revenue profile. Do not present a single aggregate number. Show the committee how your book is composed, which clients you have spoken to informally about a potential move, and which segments have the highest and lowest portability risk.
+
+The third section is the revenue model. Build a three-year P&L that shows AUM ramp assumptions by year, ROA assumptions by mandate type, gross revenue, and estimated cost-to-serve. Use conservative assumptions and state them explicitly. A plan that assumes 80% portability in year one will be challenged. A plan that assumes 55% portability in year one and explains why will be respected.
+
+The fourth section addresses transition risk. Which clients present onboarding complexity? What is the estimated timeline from hire to first client transfer? Are there non-solicit or non-compete obligations that affect timing? Banks want to see that you have thought through the obstacles, not that you have ignored them.
+
+The fifth section closes with platform rationale. Why this institution specifically? What does the platform offer your clients that your current employer does not? This section is often written as generic flattery. Write it as a specific argument: your UHNW French entrepreneur clients need a platform with a Luxembourg booking centre and a strong credit offering, and this institution provides both. Specificity signals that you have done real analysis, not that you have sent the same plan to five banks simultaneously.
+
+The numbers that matter in 2025 and 2026
+
+Swiss private banks are currently hiring selectively. The post-UBS-Credit Suisse consolidation has reduced the number of active platforms, which means fewer open mandates but higher quality requirements for those that exist.
+
+The minimum threshold for a serious conversation at most Geneva and Zurich private banks is CHF 75 million in genuinely portable AUM. The typical mid-tier hire brings CHF 150 to 300 million. Senior hires with UHNW franchises of CHF 500 million or more trigger retention packages and counteroffers at the current employer before the move is concluded.
+
+ROA benchmarks vary by segment. Execution-only books average 12 to 18 basis points. Advisory books average 35 to 55 basis points. Discretionary books with structured product penetration can reach 70 to 90 basis points on the right platform. A business plan that does not state the current ROA profile of the portable book is leaving the most important number out of the document.
+
+Break-even modelling for a CHF 200 million portable book at 45 basis points ROA produces approximately CHF 900,000 in gross revenue in year one, assuming 70% portability in the first twelve months. Against a total hire cost of CHF 600,000 to CHF 800,000, that produces a break-even in months 10 to 11. That is a fundable hire. A book generating 18 basis points at the same AUM level produces CHF 360,000 in year-one revenue against the same cost base. That hire does not break even until year two or later, and will face significant scrutiny.
+
+Before you write the plan
+
+The business plan should not be the first time you assess your own portability. It should be the document that captures an assessment you have already done.
+
+The questions to answer before writing are the same questions the hiring committee will ask. How many of your clients know you personally rather than knowing the institution? How many have you spoken to outside of the bank context in the last twelve months? What is your non-solicit obligation and how long does it run? What fraction of your AUM is in accounts where you are the sole relationship contact? What is the booking centre of your top twenty clients and does that booking centre follow you to the new platform?
+
+The Executive Partners Portability Score runs through these questions with a structured 30-point framework before any introduction to a client institution is made. That assessment is available anonymously. What comes out of it is a realistic picture of the portable fraction, which is the only number that matters when a hiring committee opens your business plan.`,
+  },
+  {
     slug: "is-your-aum-portable",
     title: "Is Your AUM Actually Portable? The Six Questions Every Private Banker Gets Wrong",
     seoTitle: "Is Your AUM Portable? The Six Questions Every Private Banker Gets Wrong",
