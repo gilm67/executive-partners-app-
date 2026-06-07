@@ -1,4 +1,4 @@
-// app/private-banking-recruiter-paris/page.tsx
+// app/private-banking-recruiter-singapore/page.tsx
 import type { Metadata } from "next";
 import CityRecruiterPage from "@/components/CityRecruiterPage";
 
@@ -13,41 +13,41 @@ function siteBase() {
 }
 
 const SITE = siteBase();
-const PAGE_URL = `${SITE}/private-banking-recruiter-paris`;
+const PAGE_URL = `${SITE}/en/private-banking-recruiter-singapore`;
 
 /* ---------- metadata ---------- */
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter in Paris – Executive Partners",
+    absolute: "Private Banking Recruiter Singapore | Senior RM & Asia Wealth Search",
   },
   description:
-    "Executive search boutique focused on senior Private Banking & Wealth Management hires in Paris and major French / EU hubs. Senior RMs, Desk Heads and Market Leaders with UHNW/HNW domestic and cross-border books.",
+    "Executive search boutique for senior Private Banking & Wealth Management hires in Singapore. Singapore onshore, Non-Dom, International and Family Office coverage.",
   alternates: {
     canonical: "https://www.execpartners.ch/en/private-banking-recruiter-singapore",
   },
   openGraph: {
     type: "article",
-    url: "https://www.execpartners.ch/private-banking-recruiter-paris",
-    title: "Private Banking Recruiter in Paris – Executive Partners",
+    url: "https://www.execpartners.ch/en/private-banking-recruiter-singapore",
+    title: "Private Banking Recruiter Singapore | Senior RM & Asia Wealth Search",
     description:
-      "Specialist recruiter for Private Banking & Wealth Management in Paris: French UHNW/HNW, entrepreneurs and cross-border EU flows.",
+      "Specialist recruiter for Private Banking & Wealth Management in Singapore: Singapore onshore, Non-Dom and international UHNW.",
     siteName: "Executive Partners",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruiter in Paris – Executive Partners",
-    description: "Specialist recruiter for Private Banking & Wealth Management in Paris: French UHNW/HNW, entrepreneurs and cross-border EU flows.",
+    title: "Private Banking Recruiter Singapore | Senior RM & Asia Wealth Search",
+    description: "Specialist recruiter for Private Banking & Wealth Management in Singapore: Singapore onshore, Non-Dom and international UHNW.",
     images: ["https://www.execpartners.ch/og.webp"],
   },
   robots: { index: true, follow: true },
 };
 
-export default function PrivateBankingRecruiterParisPage() {
+export default function PrivateBankingRecruiterSingaporePage() {
   // ---------- Structured Data (JSON-LD) ----------
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": ["ProfessionalService", "LocalBusiness"],
-    name: "Executive Partners – Private Banking Recruiter in Paris",
+    name: "Executive Partners – Private Banking Recruiter in Singapore",
     url: PAGE_URL,
     image: `${SITE}/og.webp`,
     logo: `${SITE}/icon.png`,
@@ -58,11 +58,8 @@ export default function PrivateBankingRecruiterParisPage() {
       postalCode: "1204",
       addressCountry: "CH",
     },
-    areaServed: ["FR", "CH", "LU", "GB", "EU"],
-    sameAs: [
-      SITE,
-      "https://www.linkedin.com/company/executive-partners",
-    ],
+    areaServed: ["GB", "CH", "AE", "SG", "HK", "US"],
+    sameAs: [SITE],
   };
 
   const breadcrumbJsonLd = {
@@ -78,7 +75,7 @@ export default function PrivateBankingRecruiterParisPage() {
       {
         "@type": "ListItem",
         position: 2,
-        name: "Private Banking Recruiter in Paris",
+        name: "Private Banking Recruiter in Singapore",
         item: PAGE_URL,
       },
     ],
@@ -97,55 +94,55 @@ export default function PrivateBankingRecruiterParisPage() {
       />
 
       <CityRecruiterPage
-        city="Paris"
-        country="France"
-        heroEyebrow="Private Banking · Paris · Executive Search"
-        heroTitle="Private Banking Recruiter in Paris"
-        heroSubtitle="Senior Private Bankers and Desk Heads covering French UHNW, entrepreneurs and cross-border EU clients."
+        city="Singapore"
+        country="Singapore"
+        heroEyebrow="Private Banking · Singapore · Executive Search"
+        heroTitle="Private Banking Recruiter in Singapore"
+        heroSubtitle="Senior RMs and Desk Heads covering Singapore onshore, Non-Dom and international UHNW."
         heroIntro={
-          "Paris is a strategic hub for French UHNW families, listed-company executives and tech / private equity entrepreneurs. Large universal banks and specialist wealth managers are competing for senior Relationship Managers who can combine tax-aware advisory with sophisticated investment and credit capabilities."
+          "Singapore remains a strategic hub for ultra-high-net-worth families, single-family offices and international entrepreneurs despite tax changes and regulatory complexity. The most competitive platforms blend high-touch advisory, alternatives access and strong cross-border capabilities."
         }
         bulletPoints={[
-          "Senior RMs with EUR 150m–400m+ AUM across French UHNW/HNW and entrepreneurs.",
-          "Desk Heads for Paris onshore, key regional centres and EU cross-border coverage.",
-          "Moves between universal banks, pure-play wealth managers and family-office style platforms.",
-          "Advisory on compensation design, carried-interest style incentives and long-term retention.",
+          "Senior RMs with SGD 150m–400m+ portable AUM across Singapore onshore and international clients.",
+          "Desk Heads for UHNW, Family Office and International Wealth franchises.",
+          "Moves between global US platforms, Swiss banks and Singapore domestic private banks.",
+          "Advice on Singapore Non-Dom changes, booking-centre strategy and long-term mobility (Geneva, Zurich, Dubai, Singapore).",
         ]}
         marketSummary={
-          "For experienced bankers, Paris offers access to one of Europe’s deepest domestic wealth pools, increasingly driven by tech, PE and mid-market M&A wealth creation. The most attractive platforms balance strong brand recognition, open-architecture investment platforms and the ability to work seamlessly with lawyers, tax advisers and corporate finance partners. Hiring managers are prioritising bankers who can demonstrate recurring advisory revenues, low attrition and disciplined risk management in a tighter regulatory environment."
+          "In Singapore, hiring managers are emphasising advisory quality, alternatives penetration and cross-border coordination as much as raw AUM. Fee pressure and regulatory scrutiny mean banks want seasoned bankers who can evidence durable, multi-year revenues and clean portability."
         }
-        compCurrency="EUR"
+        compCurrency="SGD"
         compRows={[
           {
-            level: "Senior RM (onshore France)",
-            baseRange: "EUR 130k – 190k",
-            bonusRange: "30% – 70% of base",
-            totalRange: "≈ EUR 170k – 320k",
+            level: "Senior RM (8–12y, strong book)",
+            baseRange: "SGD 170k – 250k",
+            bonusRange: "40% – 100% of base",
+            totalRange: "≈ SGD 240k – 500k+",
           },
           {
             level: "Desk Head / Team Lead",
-            baseRange: "EUR 170k – 230k",
-            bonusRange: "50% – 90% of base",
-            totalRange: "≈ EUR 255k – 435k",
+            baseRange: "SGD 210k – 300k",
+            bonusRange: "60% – 120% of base",
+            totalRange: "≈ SGD 330k – 650k+",
           },
           {
-            level: "Market Head France",
-            baseRange: "EUR 210k – 280k",
-            bonusRange: "70% – 110% of base",
-            totalRange: "≈ EUR 360k – 580k",
+            level: "Market Head / Business Head",
+            baseRange: "SGD 260k – 380k",
+            bonusRange: "80% – 150% of base",
+            totalRange: "≈ SGD 470k – 950k+",
           },
         ]}
         bookingCentres={[
-          "Paris onshore",
-          "Luxembourg",
+          "Singapore booking centre",
           "Geneva & Zurich",
-          "London and other EU hubs",
+          "Jersey / Channel Islands",
+          "Dubai & Singapore",
         ]}
         desksCovered={[
-          "French UHNW families",
-          "Tech, PE and corporate executives",
-          "Mid-market entrepreneurs and family businesses",
-          "Non-resident French / cross-border EU",
+          "Singapore onshore HNW / UHNW",
+          "Non-Dom & international professionals",
+          "Family Offices & entrepreneurs",
+          "Global NRI / international wealth",
         ]}
         pdfHref="/pdfs/private-banking-career-intelligence-2026.pdf"
         insightsLinks={[
@@ -165,7 +162,7 @@ export default function PrivateBankingRecruiterParisPage() {
         relatedCities={[
           { label: "Geneva", href: "/private-banking-recruiter-geneva" },
           { label: "Zurich", href: "/private-banking-recruiter-zurich" },
-          { label: "Madrid", href: "/private-banking-recruiter-madrid" },
+          { label: "Dubai", href: "/private-banking-recruiter-dubai" },
         ]}
       />
     </>
