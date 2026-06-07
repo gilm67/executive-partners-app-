@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description:
     "Browse confidential private banking jobs in Switzerland, Dubai and Singapore. Senior Relationship Manager, Team Head and Investment Advisor roles. Compensation visible. Apply in 90 seconds.",
   openGraph: {
-    title: "Private Banking Jobs ",
+    title: "Private Banking Jobs Switzerland 2026 | Senior RM Roles",
     description:
       "Active mandates across Swiss Onshore, CIS/CEE, Italian, Greek/Cypriot, Asian and Latin American markets. Confidential. Compensation visible. Apply in 90 seconds.",
     url: `${SITE}/en/jobs`,
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Jobs ",
+    title: "Private Banking Jobs Switzerland 2026 | Senior RM Roles",
     description:
       "Active mandates across Geneva, Zurich, Milan, Dubai, Singapore and Hong Kong. Confidential executive search.",
   },
