@@ -18,7 +18,7 @@ const PAGE_URL = `${SITE}/en/private-banking-recruiter-madrid`;
 /* ---------- metadata ---------- */
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter in Madrid – Executive Partners",
+    absolute: "Private Banking Recruiter Madrid | Senior RM & Spanish UHNW Search",
   },
   description:
     "Executive search boutique focused on senior Private Banking & Wealth Management hires in Madrid and Iberian markets. Senior RMs and Desk Heads serving Spanish UHNW/HNW and LatAm-linked flows.",
@@ -28,14 +28,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "article",
     url: "https://www.execpartners.ch/en/private-banking-recruiter-madrid",
-    title: "Private Banking Recruiter in Madrid – Executive Partners",
+    title: "Private Banking Recruiter Madrid | Senior RM & Spanish UHNW Search",
     description:
       "Specialist recruiter for Private Banking & Wealth Management in Madrid: Spanish UHNW, family business owners and LatAm corridors.",
     siteName: "Executive Partners",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruiter in Madrid – Executive Partners",
+    title: "Private Banking Recruiter Madrid | Senior RM & Spanish UHNW Search",
     description: "Specialist recruiter for Private Banking & Wealth Management in Madrid: Spanish UHNW, family business owners and LatAm corridors.",
     images: ["https://www.execpartners.ch/og.webp"],
   },

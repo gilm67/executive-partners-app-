@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Private Banker Jobs in Paris",
+  title: "Private Banker Jobs Paris 2026 | Senior RM & Wealth Management Roles",
   description:
     "Senior private banker and wealth manager roles in Paris. Advisory for RMs covering French UHNW families, entrepreneurs and cross-border EU clients.",
   alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-paris" },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in Paris",
+    title: "Private Banker Jobs Paris 2026 | Senior RM & Wealth Management Roles",
     description: "Senior private banker and wealth manager roles in Paris. Advisory for RMs covering French UHNW families, entrepreneurs and cross-border EU clients.",
     images: ["/og.webp"],
   },

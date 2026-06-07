@@ -28,14 +28,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "article",
     url: "https://www.execpartners.ch/en/private-banking-recruiter-paris",
-    title: "Private Banking Recruiter in Paris – Executive Partners",
+    title: "Private Banking Recruiter Paris | Senior RM & French UHNW Search",
     description:
       "Specialist recruiter for Private Banking & Wealth Management in Paris: French UHNW/HNW, entrepreneurs and cross-border EU flows.",
     siteName: "Executive Partners",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruiter in Paris – Executive Partners",
+    title: "Private Banking Recruiter Paris | Senior RM & French UHNW Search",
     description: "Specialist recruiter for Private Banking & Wealth Management in Paris: French UHNW/HNW, entrepreneurs and cross-border EU flows.",
     images: ["https://www.execpartners.ch/og.webp"],
   },

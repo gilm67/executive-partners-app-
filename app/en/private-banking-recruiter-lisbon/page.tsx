@@ -18,7 +18,7 @@ const PAGE_URL = `${SITE}/en/private-banking-recruiter-lisbon`;
 /* ---------- metadata ---------- */
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter in Lisbon – Executive Partners",
+    absolute: "Private Banking Recruiter Lisbon | Senior RM & Portuguese Wealth Search",
   },
   description:
     "Executive search boutique focused on senior Private Banking & Wealth Management hires in Lisbon and the wider Portuguese market. Senior RMs serving international residents, returning expatriates and entrepreneurs.",
@@ -28,14 +28,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "article",
     url: "https://www.execpartners.ch/en/private-banking-recruiter-lisbon",
-    title: "Private Banking Recruiter in Lisbon – Executive Partners",
+    title: "Private Banking Recruiter Lisbon | Senior RM & Portuguese Wealth Search",
     description:
       "Specialist recruiter for Private Banking & Wealth Management in Lisbon: international HNW residents, tech/real-estate entrepreneurs and returning Portuguese families.",
     siteName: "Executive Partners",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruiter in Lisbon – Executive Partners",
+    title: "Private Banking Recruiter Lisbon | Senior RM & Portuguese Wealth Search",
     description: "Specialist recruiter for Private Banking & Wealth Management in Lisbon: international HNW residents, tech/real-estate entrepreneurs and returning Portugues",
     images: ["https://www.execpartners.ch/og.webp"],
   },

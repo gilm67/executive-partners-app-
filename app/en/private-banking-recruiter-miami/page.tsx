@@ -18,7 +18,7 @@ const PAGE_URL = `${SITE}/en/private-banking-recruiter-miami`;
 /* ---------- metadata ---------- */
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter in Miami – Executive Partners",
+    absolute: "Private Banking Recruiter Miami | Senior RM & LATAM Wealth Search",
   },
   description:
     "Executive search boutique focused on senior Private Banking & Wealth Management hires in Miami and key LatAm-linked booking centres. Senior Private Bankers, Desk Heads and Market Leaders with documented UHNW/HNW books.",
@@ -28,14 +28,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "article",
     url: "https://www.execpartners.ch/en/private-banking-recruiter-miami",
-    title: "Private Banking Recruiter in Miami – Executive Partners",
+    title: "Private Banking Recruiter Miami | Senior RM & LATAM Wealth Search",
     description:
       "Specialist recruiter for Private Banking & Wealth Management in Miami: LatAm UHNW, international offshore and US-based entrepreneurs.",
     siteName: "Executive Partners",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruiter in Miami – Executive Partners",
+    title: "Private Banking Recruiter Miami | Senior RM & LATAM Wealth Search",
     description: "Specialist recruiter for Private Banking & Wealth Management in Miami: LatAm UHNW, international offshore and US-based entrepreneurs.",
     images: ["https://www.execpartners.ch/og.webp"],
   },

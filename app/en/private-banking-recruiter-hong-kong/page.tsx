@@ -17,7 +17,7 @@ const PAGE_URL = `${SITE}/en/private-banking-recruiter-hong-kong`;
 /* ---------- metadata ---------- */
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter in Hong Kong – Executive Partners",
+    absolute: "Private Banking Recruiter Hong Kong | Senior RM & Asia Wealth Search",
   },
   description:
     "Executive search boutique for senior Private Banking & Wealth Management hires in Hong Kong. Greater China, North Asia and regional UHNW desks.",
@@ -27,14 +27,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "article",
     url: "https://www.execpartners.ch/en/private-banking-recruiter-hong-kong",
-    title: "Private Banking Recruiter in Hong Kong – Executive Partners",
+    title: "Private Banking Recruiter Hong Kong | Senior RM & Asia Wealth Search",
     description:
       "Specialist recruiter for Private Banking & Wealth Management in Hong Kong: Greater China and North Asia UHNW/HNW desks.",
     siteName: "Executive Partners",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruiter in Hong Kong – Executive Partners",
+    title: "Private Banking Recruiter Hong Kong | Senior RM & Asia Wealth Search",
     description: "Specialist recruiter for Private Banking & Wealth Management in Hong Kong: Greater China and North Asia UHNW/HNW desks.",
     images: ["https://www.execpartners.ch/og.webp"],
   },

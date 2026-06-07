@@ -4,7 +4,7 @@ import CityRecruiterPage from "@/components/CityRecruiterPage";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Private Banking Recruiter in Dubai – Executive Partners",
+    absolute: "Private Banking Recruiter Dubai DIFC | Senior RM & GCC Wealth Search",
   },
   description:
     "Executive search boutique focused on senior Private Banking & Wealth Management hires in Dubai and the wider GCC. Senior RMs, Team Heads and Market Leaders with portable UHNW/HNW books.",
@@ -14,14 +14,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "article",
     url: "https://www.execpartners.ch/en/private-banking-recruiter-dubai",
-    title: "Private Banking Recruiter in Dubai – Executive Partners",
+    title: "Private Banking Recruiter Dubai DIFC | Senior RM & GCC Wealth Search",
     description:
       "Specialist recruiter for Private Banking & Wealth Management in Dubai: GCC, MENA and NRI desks, UHNW/HNW RMs, Team Heads and Market Leaders.",
     siteName: "Executive Partners",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruiter in Dubai – Executive Partners",
+    title: "Private Banking Recruiter Dubai DIFC | Senior RM & GCC Wealth Search",
     description: "Specialist recruiter for Private Banking & Wealth Management in Dubai: GCC, MENA and NRI desks, UHNW/HNW RMs, Team Heads and Market Leaders.",
     images: ["https://www.execpartners.ch/og.webp"],
   },
