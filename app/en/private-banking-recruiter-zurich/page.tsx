@@ -250,6 +250,11 @@ export default function PrivateBankingRecruiterZurichPage() {
               </p>
               <ul className="mt-4 space-y-2 text-sm text-brandGoldSoft">
                 <li>
+                  <Link href="/en/insights/zurich-private-banking-market-2026" className="hover:underline">
+                    The Zurich Talent Paradox: Why the Biggest Market Is the Hardest Move
+                  </Link>
+                </li>
+                <li>
                   <Link href="/en/insights/is-your-aum-portable" className="hover:underline">
                     Is Your AUM Actually Portable? The Six Questions Every Banker Gets Wrong
                   </Link>
