@@ -289,12 +289,7 @@ export default function PrivateBankingRecruiterZurichPage() {
           {/* Final CTA */}
           <p className="mt-10 text-center text-sm text-neutral-400">
             Prefer to start with a discreet email?{" "}
-            
-              href="mailto:info@execpartners.ch"
-              className="underline decoration-brandGold/70 underline-offset-4 hover:text-white"
-            >
-              info@execpartners.ch
-            </a>
+<a href="mailto:info@execpartners.ch" className="underline decoration-brandGold/70 underline-offset-4 hover:text-white">info@execpartners.ch</a>
           </p>
 
         </div>
