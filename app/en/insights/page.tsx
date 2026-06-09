@@ -242,7 +242,7 @@ export default function InsightsPage() {
             <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">Private Wealth Pulse</div>
             <h2 className="mt-3 text-2xl font-semibold text-white">Get the analysis in your inbox.</h2>
             <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-white/65">
-              Join 17,000+ senior private banking professionals who read Gil M. Chalem every week. No noise. No fluff. Just the signals that matter.
+              Join 17,000+ senior private banking professionals who read our weekly briefing. No noise. No fluff. Just the signals that matter.
             </p>
             <SubscribeForm />
             <p className="mt-3 text-xs text-white/35">No spam. One email per week. Unsubscribe anytime.</p>
