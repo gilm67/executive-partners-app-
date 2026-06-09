@@ -83,6 +83,7 @@ export const INSIGHTS: readonly InsightArticle[] = [
     subTheme: "Positioning",
     markets: ["CH", "UK", "UAE"],
     keywords: ["Zurich private banking 2026", "private banking recruiter Zurich", "Zurich wealth management hiring", "senior RM Zurich", "UBS talent market"],
+    linkedinUrl: "",
     body: `Zurich's wealth management sector entered 2026 managing CHF 3.2 trillion in assets from a single canton, representing 41% of all Swiss banking assets under management. It places Zurich ahead of Geneva in institutional density, ahead of Singapore in absolute AUM concentration, and ahead of every other European financial centre in private banking employment. The city is not merely a participant in global wealth management. It is the gravitational centre.
 
 And yet the market that should be attracting senior talent at scale is instead losing a quiet, persistent war for the people who run it.
