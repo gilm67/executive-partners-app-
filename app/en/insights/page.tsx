@@ -251,7 +251,7 @@ export default function InsightsPage() {
                 href="/en/contact"
                 className="inline-flex items-center text-sm font-medium text-white/50 hover:text-white/80 transition underline underline-offset-4"
               >
-                Or speak with Gil directly
+                Speak with a recruiter directly
               </Link>
             </div>
           </div>
