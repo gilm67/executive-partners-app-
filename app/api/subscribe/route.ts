@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
     // 1. Notification to Gil
     await resend.emails.send({
-      from: "Executive Partners <no-reply@execpartners.ch>",
+      from: "Executive Partners <no-reply@auth.execpartners.ch>",
       to: "gil.chalem@execpartners.ch",
       subject: `📬 New PWP subscriber: ${email}`,
       html: `
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
     // 2. Welcome email to subscriber
     await resend.emails.send({
-      from: "Gil M. Chalem | Executive Partners <no-reply@execpartners.ch>",
+      from: "Gil M. Chalem | Executive Partners <no-reply@auth.execpartners.ch>",
       to: email,
       replyTo: "gil.chalem@execpartners.ch",
       subject: "Welcome to Private Wealth Pulse",
