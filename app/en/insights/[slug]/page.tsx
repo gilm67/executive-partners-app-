@@ -1,4 +1,5 @@
 import React from "react";
+import ArticleSubscribeForm from "@/components/ArticleSubscribeForm";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -529,6 +530,18 @@ export default function InsightDetailPage({ params }: Props) {
           </div>
         </section>
       ) : null}
+
+      {/* ── PWP Subscribe ── */}
+      <div className="mt-6 rounded-2xl border border-[#D4AF37]/20 bg-gradient-to-br from-[#D4AF37]/8 via-white/5 to-white/5 p-8 text-center">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">Private Wealth Pulse</div>
+        <h3 className="mt-3 text-xl font-semibold text-white">Get the analysis in your inbox.</h3>
+        <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-white/60">
+          One briefing per week. Senior private banking intelligence, written from Geneva.
+        </p>
+        <ArticleSubscribeForm />
+        <p className="mt-3 text-xs text-white/35">No spam. Unsubscribe anytime.</p>
+      </div>
+
 
       {/* ── Active Mandates CTA ── */}
       <section className="mt-10 rounded-2xl border border-[#C9A14A]/20 bg-[#C9A14A]/5 p-6">
