@@ -243,20 +243,33 @@ export default function InsightsPage() {
             <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-white/65">
               Join 17,000+ senior private banking professionals who read Gil M. Chalem every week. No noise. No fluff. Just the signals that matter.
             </p>
-            <div className="mt-7 flex flex-wrap justify-center gap-3">
-              <a
-                href="https://www.linkedin.com/newsletters/private-wealth-pulse-7049706791347752960/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-semibold text-black hover:opacity-90 transition"
+            <form
+              action="https://execpartners.beehiiv.com/subscribe"
+              method="post"
+              target="_blank"
+              className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md mx-auto"
+            >
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="your@email.com"
+                className="w-full sm:flex-1 rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/35 focus:outline-none focus:border-[#D4AF37]/50 focus:bg-white/10 transition"
+              />
+              <button
+                type="submit"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-semibold text-black hover:opacity-90 transition whitespace-nowrap"
               >
-                Subscribe on LinkedIn
-              </a>
+                Subscribe free
+              </button>
+            </form>
+            <p className="mt-3 text-xs text-white/35">No spam. One email per week. Unsubscribe anytime.</p>
+            <div className="mt-5">
               <Link
                 href="/en/contact"
-                className="inline-flex items-center rounded-xl border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition"
+                className="inline-flex items-center text-sm font-medium text-white/50 hover:text-white/80 transition underline underline-offset-4"
               >
-                Speak with Gil
+                Or speak with Gil directly
               </Link>
             </div>
           </div>
