@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { INSIGHTS } from "./articles";
 import { marketLabel } from "@/lib/markets/marketLabel";
+import SubscribeForm from "./SubscribeForm";
 
 function formatDate(iso: string) {
   try {
@@ -243,26 +244,7 @@ export default function InsightsPage() {
             <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-white/65">
               Join 17,000+ senior private banking professionals who read Gil M. Chalem every week. No noise. No fluff. Just the signals that matter.
             </p>
-            <form
-              action="https://execpartners.beehiiv.com/subscribe"
-              method="post"
-              target="_blank"
-              className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md mx-auto"
-            >
-              <input
-                type="email"
-                name="email"
-                required
-                placeholder="your@email.com"
-                className="w-full sm:flex-1 rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/35 focus:outline-none focus:border-[#D4AF37]/50 focus:bg-white/10 transition"
-              />
-              <button
-                type="submit"
-                className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-semibold text-black hover:opacity-90 transition whitespace-nowrap"
-              >
-                Subscribe free
-              </button>
-            </form>
+            <SubscribeForm />
             <p className="mt-3 text-xs text-white/35">No spam. One email per week. Unsubscribe anytime.</p>
             <div className="mt-5">
               <Link
