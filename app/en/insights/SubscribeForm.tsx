@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-function SubscribeForm() {
+export default function SubscribeForm() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle"|"loading"|"success"|"error">("idle");
 
@@ -46,8 +46,9 @@ function SubscribeForm() {
       >
         {status === "loading" ? "Sending..." : "Subscribe free"}
       </button>
-      {status === "error" && <p className="w-full text-xs text-red-400 mt-1">Something went wrong. Please try again.</p>}
+      {status === "error" && (
+        <p className="w-full text-xs text-red-400 mt-1">Something went wrong. Please try again.</p>
+      )}
     </form>
   );
 }
-
