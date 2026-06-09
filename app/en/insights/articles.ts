@@ -150,7 +150,7 @@ The Executive Partners Portability Score runs through these questions with a str
     title: "Is Your AUM Actually Portable? The Six Questions Every Private Banker Gets Wrong",
     seoTitle: "Is Your AUM Portable? The Six Questions Every Private Banker Gets Wrong",
     seoDescription: "Most private bankers overestimate how much of their book will follow them. Here is the honest framework for testing AUM portability before you move, used by Executive Partners across 200+ placements in Geneva and Zurich.",
-    date: "2026-06-05",
+    date: "2026-06-09",
     summary: "Most private bankers overestimate how much of their book will follow them. Here is the honest framework for testing portability before you move.",
     linkedinUrl: "",
     pillar: "P2",
