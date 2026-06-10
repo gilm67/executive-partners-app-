@@ -1,5 +1,47 @@
 import Link from "next/link";
 
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Gil M. Chalem",
+  jobTitle: "Managing Partner",
+  worksFor: {
+    "@type": "Organization",
+    name: "Executive Partners",
+    url: "https://www.execpartners.ch",
+  },
+  url: "https://www.execpartners.ch/en/about",
+  sameAs: ["https://www.linkedin.com/in/gil-m-chalem-35281916b/"],
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Geneva",
+    addressCountry: "CH",
+  },
+  description: "Senior executive recruiter dedicated exclusively to Private Banking and Wealth Management. 200+ placements across Geneva, Zurich, London, Dubai, Singapore and Hong Kong.",
+};
+
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Executive Partners",
+  url: "https://www.execpartners.ch",
+  logo: "https://www.execpartners.ch/icon.png",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "118 rue du Rhône",
+    addressLocality: "Geneva",
+    postalCode: "1204",
+    addressCountry: "CH",
+  },
+  founder: {
+    "@type": "Person",
+    name: "Gil M. Chalem",
+  },
+  numberOfEmployees: { "@type": "QuantitativeValue", value: 2 },
+  description: "Geneva-based boutique executive search firm dedicated exclusively to Private Banking and Wealth Management. 200+ placements, 98% 12-month retention.",
+  sameAs: ["https://www.linkedin.com/company/executive-partners"],
+};
+
 export const metadata = {
   title: "About ",
   description: "Executive Partners is a Geneva-based boutique executive search firm dedicated exclusively to Private Banking and Wealth Management. 200+ placements, 98% retention.",
@@ -282,6 +324,8 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
     </main>
   );
 }
