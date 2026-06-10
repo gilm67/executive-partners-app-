@@ -75,7 +75,7 @@ export default function InsightsPage() {
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-white/60">
             Private Wealth Pulse
             <span className="h-1 w-1 rounded-full bg-[#D4AF37]" />
-            17,000+ subscribers
+            2,300+ subscribers
           </div>
           <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-white md:text-5xl">
             Intelligence for senior<br />private banking professionals.
@@ -242,7 +242,7 @@ export default function InsightsPage() {
             <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">Private Wealth Pulse</div>
             <h2 className="mt-3 text-2xl font-semibold text-white">Get the analysis in your inbox.</h2>
             <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-white/65">
-              Join 17,000+ senior private banking professionals who read our weekly briefing. No noise. No fluff. Just the signals that matter.
+              Join 2,300+ senior private banking professionals who read our weekly briefing. No noise. No fluff. Just the signals that matter.
             </p>
             <SubscribeForm />
             <p className="mt-3 text-xs text-white/35">No spam. One email per week. Unsubscribe anytime.</p>

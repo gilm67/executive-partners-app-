@@ -91,6 +91,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/en/bp-simulator",
     "/de/headhunter-genf",
     "/en/faq",
+    "/en/private-banking-recruiter-geneva",
+    "/en/private-banking-recruiter-zurich",
+    "/en/private-banking-recruiter-london",
+    "/en/private-banking-recruiter-dubai",
+    "/en/private-banking-recruiter-singapore",
+    "/en/private-banking-recruiter-hong-kong",
+    "/en/private-banking-recruiter-new-york",
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((p) => ({
