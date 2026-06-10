@@ -500,15 +500,7 @@ export default function HomeClient() {
       </section>
 
       {/* FLOATING CTA */}
-      
-        href="https://calendly.com/execpartners/15-minute-career-consultation"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 hidden md:inline-flex items-center gap-2 rounded-full bg-[#D4AF37] px-5 py-3 text-sm font-semibold text-black shadow-[0_8px_32px_rgba(201,161,74,.45)] hover:opacity-90 transition"
-      >
-        <ShieldCheck className="h-4 w-4" />
-        Confidential call
-      </a>
+<a href="https://calendly.com/execpartners/15-minute-career-consultation" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 z-50 hidden md:inline-flex items-center gap-2 rounded-full bg-[#D4AF37] px-5 py-3 text-sm font-semibold text-black shadow-[0_8px_32px_rgba(201,161,74,.45)] hover:opacity-90 transition"><ShieldCheck className="h-4 w-4" />Confidential call</a>
 
     </div>
   );
