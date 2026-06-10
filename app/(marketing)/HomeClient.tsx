@@ -42,7 +42,13 @@ export default function HomeClient() {
 
   const handleEmailSubmit = async () => {
     if (!canSubmit) return;
-    await new Promise((r) => setTimeout(r, 600));
+    try {
+      await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+    } catch { /* silent fail */ }
     setFormSubmitted(true);
     setTimeout(() => {
       setShowEmailPopup(false);
