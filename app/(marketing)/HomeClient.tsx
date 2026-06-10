@@ -174,6 +174,18 @@ export default function HomeClient() {
         </div>
       </section>
 
+      {/* HIRING MANAGER BANNER */}
+      <div className="border-b border-white/8 bg-[#0b0f1a]/80">
+        <div className="mx-auto max-w-7xl px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+          <p className="text-xs text-white/50">
+            <span className="text-white/80 font-medium">Hiring a senior RM?</span> We fill mandates across 12 global hubs. Senior-level only. Same business day response.
+          </p>
+          <Link href="/en/hiring-managers" className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#D4AF37] hover:text-[#F0D060] transition whitespace-nowrap">
+            Brief a mandate <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+      </div>
+
       {/* VALUE SECTION */}
       <section className="py-20 sm:py-24 bg-[#0b0f1a]">
         <div className="mx-auto max-w-7xl px-4">
@@ -474,7 +486,77 @@ export default function HomeClient() {
           </div>
         </div>
       )}
+      {/* PWP SUBSCRIBE STRIP */}
+      <section className="border-t border-white/8 bg-[#0b0f1a] py-16">
+        <div className="mx-auto max-w-2xl px-4 text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">Private Wealth Pulse</p>
+          <h2 className="mt-3 text-2xl font-semibold text-white">Get the analysis in your inbox.</h2>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-white/60">
+            One briefing per week. Senior private banking intelligence, written from Geneva. 2,300+ subscribers.
+          </p>
+          <HomeSubscribeForm />
+          <p className="mt-3 text-xs text-white/35">No spam. Unsubscribe anytime.</p>
+        </div>
+      </section>
+
+      {/* FLOATING CTA */}
+      
+        href="https://calendly.com/execpartners/15-minute-career-consultation"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 hidden md:inline-flex items-center gap-2 rounded-full bg-[#D4AF37] px-5 py-3 text-sm font-semibold text-black shadow-[0_8px_32px_rgba(201,161,74,.45)] hover:opacity-90 transition"
+      >
+        <ShieldCheck className="h-4 w-4" />
+        Confidential call
+      </a>
+
     </div>
+  );
+}
+
+
+function HomeSubscribeForm() {
+  const [email, setEmail] = React.useState("");
+  const [status, setStatus] = React.useState<"idle"|"loading"|"success"|"error">("idle");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      setStatus(data.ok ? "success" : "error");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  if (status === "success") {
+    return <p className="mt-7 text-sm font-semibold text-emerald-400">✓ You are subscribed. Welcome to Private Wealth Pulse.</p>;
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md mx-auto">
+      <input
+        type="email"
+        required
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        placeholder="your@email.com"
+        className="w-full sm:flex-1 rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/35 focus:outline-none focus:border-[#D4AF37]/50 transition"
+      />
+      <button
+        type="submit"
+        disabled={status === "loading"}
+        className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-semibold text-black hover:opacity-90 transition whitespace-nowrap disabled:opacity-60"
+      >
+        {status === "loading" ? "Sending..." : "Subscribe free"}
+      </button>
+    </form>
   );
 }
 
