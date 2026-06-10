@@ -590,6 +590,32 @@ export default async function MarketPage({ params }: Props) {
           </section>
         );
       })()}
+      {/* ── Recruiter Page Link ── */}
+      {(() => {
+        const recruiterPages: Record<string, string> = {
+          "geneva": "/en/private-banking-recruiter-geneva",
+          "zurich": "/en/private-banking-recruiter-zurich",
+          "london": "/en/private-banking-recruiter-london",
+          "dubai": "/en/private-banking-recruiter-dubai",
+          "singapore": "/en/private-banking-recruiter-singapore",
+          "hong-kong": "/en/private-banking-recruiter-hong-kong",
+          "new-york": "/en/private-banking-recruiter-new-york",
+        };
+        const recruiterHref = recruiterPages[slug];
+        if (!recruiterHref) return null;
+        return (
+          <section className="mx-auto max-w-6xl px-6 pb-14">
+            <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#D4AF37]/5 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">Executive Search</p>
+                <h3 className="mt-1 text-base font-semibold text-white">Private Banking Recruiter in {m.city}</h3>
+                <p className="mt-1 text-sm text-white/60">Compensation benchmarks, hiring trends and live mandates for {m.city}.</p>
+              </div>
+              <Link href={recruiterHref} className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-black hover:opacity-90 transition">View recruiter page &#8594;</Link>
+            </div>
+          </section>
+        );
+      })()}
     </main>
   );
 }
