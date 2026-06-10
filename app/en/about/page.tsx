@@ -53,7 +53,7 @@ const team = [
     name: "Gil M. Chalem",
     title: "Managing Partner",
     initials: "GC",
-    bio: "Senior recruiter dedicated exclusively to Wealth Management and Private Banking with 17,000+ industry connections and a track record built on portability intelligence, not volume.",
+    bio: "Senior recruiter dedicated exclusively to Wealth Management and Private Banking with 2,300+ newsletter subscribers and 17,000+ LinkedIn connections and a track record built on portability intelligence, not volume.",
     tags: ["Geneva", "UHNW", "Swiss & Offshore", "MEA", "LATAM"],
     linkedin: "https://www.linkedin.com/in/gil-m-chalem-35281916b/",
   },
