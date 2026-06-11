@@ -35,12 +35,16 @@ export async function POST(req: NextRequest) {
       html: buildEmailHTML(data, analysis),
     });
     if (token) {
-      const tokensPath = path.join(process.cwd(), "data/assessment-tokens.json");
-      const tokens = JSON.parse(fs.readFileSync(tokensPath, "utf-8"));
-      tokens[token].used = true;
-      tokens[token].usedAt = new Date().toISOString();
-      tokens[token].candidateName = data.name;
-      fs.writeFileSync(tokensPath, JSON.stringify(tokens, null, 2));
+      try {
+        const tokensPath = path.join(process.cwd(), "data/assessment-tokens.json");
+        const tokens = JSON.parse(fs.readFileSync(tokensPath, "utf-8"));
+        tokens[token].used = true;
+        tokens[token].usedAt = new Date().toISOString();
+        tokens[token].candidateName = data.name;
+        fs.writeFileSync(tokensPath, JSON.stringify(tokens, null, 2));
+      } catch (writeErr) {
+        console.error("Token write skipped (read-only fs):", writeErr);
+      }
     }
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
