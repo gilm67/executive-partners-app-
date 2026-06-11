@@ -30,5 +30,13 @@
     "createdAt": "2026-06-11T10:16:05.828414",
     "used": false,
     "usedAt": null
+  },
+  "jys9jpdi": {
+    "candidateName": "Test Candidate",
+    "institution": "Test Bank",
+    "mandate": "Internal QA test",
+    "createdAt": "2026-06-11T11:27:12.710535",
+    "used": false,
+    "usedAt": null
   }
 }
