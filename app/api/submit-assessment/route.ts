@@ -30,11 +30,19 @@ export async function POST(req: NextRequest) {
       messages: [{ role: "user", content: prompt }],
     });
     const analysis = message.content[0].type === "text" ? message.content[0].text : "";
+    const rawText = buildRawSubmissionText(data);
+    const safeName = String(data.name || "candidate").replace(/[^a-zA-Z0-9-_ ]/g, "").trim().replace(/\s+/g, "-") || "candidate";
     const { data: resendData, error: resendError } = await resend.emails.send({
       from: "EP Assessment <noreply@auth.execpartners.ch>",
       to: "gil.chalem@execpartners.ch",
       subject: "EP Assessment — " + data.name + " | " + data.institution + " | CHF " + data.aum + "M",
       html: buildEmailHTML(data, analysis),
+      attachments: [
+        {
+          filename: safeName + "-assessment-raw.txt",
+          content: Buffer.from(rawText, "utf-8").toString("base64"),
+        },
+      ],
     });
     if (resendError) {
       console.error("Resend send error:", JSON.stringify(resendError));
@@ -132,6 +140,85 @@ function buildPrompt(d: Record<string, unknown>): string {
     "SECTION 7 -- EP VERDICT",
     "Five scores (5 each): AUM quality, revenue quality, portability, legal/compliance, motivation/fit. Total /25. Threshold 22+. Disqualifiers. Next step."
   ].join("\n");
+}
+
+function buildRawSubmissionText(d: Record<string, unknown>): string {
+  const date = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  const arr = (v: unknown) => Array.isArray(v) ? (v.length ? v.join(", ") : "none") : (v || "not specified");
+  const lines: string[] = [];
+  lines.push("EP AUM PORTABILITY & BUSINESS CASE ASSESSMENT");
+  lines.push("Raw candidate submission — " + date);
+  lines.push("=".repeat(60));
+  lines.push("");
+  lines.push("CANDIDATE PROFILE");
+  lines.push("Name: " + d.name);
+  lines.push("Current institution: " + d.institution);
+  lines.push("Years at institution: " + d.tenure);
+  lines.push("Seniority level: " + (d.seniority || "not specified"));
+  lines.push("Primary market coverage: " + d.market);
+  lines.push("Booking centre(s): " + (d.booking || "not specified"));
+  lines.push("");
+  lines.push("Q1 — BOOK SIZE & STRUCTURE");
+  lines.push("Total AUM: CHF " + d.aum + "M");
+  lines.push("Number of clients: " + d.clients);
+  lines.push("Largest relationship (% of AUM): " + (d.concentration || "not specified"));
+  lines.push("% self-originated: " + (d.originated || "not specified"));
+  lines.push("Client domicile distribution: " + (d.domicile || "not specified"));
+  lines.push("");
+  lines.push("Q2 — PORTABILITY ESTIMATE");
+  lines.push("12-month portability: " + d.portability + "%");
+  lines.push("Reason: " + (d.portabilityReason || "not specified"));
+  lines.push("Prior move: " + (d.priorMove || "none"));
+  lines.push("");
+  lines.push("Q3 — INSTITUTIONAL ANCHORS");
+  lines.push("Anchors: " + arr(d.anchors));
+  lines.push("Estimated % of AUM affected by anchors: " + (d.anchorPct || "not specified"));
+  lines.push("");
+  lines.push("Q4 — REVENUE PRODUCTION");
+  lines.push("Annual revenue: CHF " + d.revenue + "M");
+  lines.push("% recurring: " + (d.recurring || "not specified"));
+  lines.push("% transactional: " + (d.transactional || "not specified"));
+  lines.push("Co-management note: " + (d.coManage || "not specified"));
+  lines.push("");
+  lines.push("Q5 — WALLET SHARE & PRODUCT MIX");
+  lines.push("Wallet share: " + d.wallet);
+  lines.push("Product mix: " + d.products);
+  lines.push("");
+  lines.push("Q6 — NOTICE, GARDEN LEAVE & NON-SOLICITATION");
+  lines.push("Notice period: " + (d.notice || "not specified") + " months");
+  lines.push("Garden leave: " + (d.garden || "not specified") + " months");
+  lines.push("Non-solicitation: " + (d.nonsolicit || "not specified"));
+  lines.push("Compliance record: " + (d.compliance || "not specified"));
+  lines.push("Additional legal notes: " + (d.legalNotes || "none"));
+  lines.push("");
+  lines.push("Q7 — CLIENT ONBOARDING RISK");
+  lines.push("KYC risk %: " + (d.kycRisk || "not specified"));
+  lines.push("KYC flags: " + arr(d.kycFlags));
+  lines.push("Onboarding timeline: " + (d.onboarding || "not specified"));
+  lines.push("");
+  lines.push("Q8 — THREE-YEAR AUM & REVENUE BUILD");
+  lines.push("Year 1 NNM: CHF " + d.nnm1 + "M");
+  lines.push("Year 2 NNM: CHF " + d.nnm2 + "M");
+  lines.push("Year 3 NNM: CHF " + d.nnm3 + "M");
+  lines.push("Target ROA: " + d.targetROA + " bps");
+  lines.push("New prospect pipeline by Year 3: CHF " + (d.prospects || "not specified") + "M");
+  lines.push("Key assumptions and risks: " + (d.bpAssumptions || "none"));
+  lines.push("");
+  lines.push("Q9 — COMPENSATION EXPECTATIONS");
+  lines.push("Base salary: CHF " + (d.base || "not specified") + "K");
+  lines.push("Total Year 1 comp: CHF " + (d.totalComp || "not specified") + "K");
+  lines.push("Guarantee expectation: " + (d.guarantee || "not specified"));
+  lines.push("");
+  lines.push("Q10 — PRIMARY MOTIVATION");
+  lines.push("Push factors: " + (d.push || "not specified"));
+  lines.push("Pull factors: " + (d.pull || "not specified"));
+  lines.push("Other conversations: " + (d.competitors || "none"));
+  lines.push("");
+  lines.push("Q11 — PLATFORM KNOWLEDGE & ADDITIONAL CONTEXT");
+  lines.push("Platform knowledge: " + d.platform);
+  lines.push("Additional context: " + (d.additional || "none"));
+  lines.push("");
+  return lines.join("\n");
 }
 
 function buildEmailHTML(d: Record<string, unknown>, analysis: string): string {
