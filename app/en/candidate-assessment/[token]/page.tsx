@@ -174,6 +174,8 @@ function initApp(token: string) {
   }
 
   async function submitAssessment() {
+    if ((window as any).__epSubmitting) return;
+    (window as any).__epSubmitting = true;
     const btn = document.getElementById("submit-btn") as HTMLButtonElement;
     if (btn) { btn.disabled = true; btn.textContent = "Submitting…"; }
     const data = gatherData();
@@ -195,6 +197,7 @@ function initApp(token: string) {
       const msg = e instanceof Error ? e.message : "Unknown error";
       alert("Submission error: " + msg + "\n\nPlease try again or contact gil.chalem@execpartners.ch");
       if (btn) { btn.disabled = false; btn.textContent = "Submit Assessment →"; }
+      (window as any).__epSubmitting = false;
     }
   }
 
