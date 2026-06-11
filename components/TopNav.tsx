@@ -58,7 +58,7 @@ export default function TopNav() {
   ];
 
   const INSIGHTS: NavItem[] = [
-    { href: "/insights", label: "Insights" },
+    { href: "/insights", label: "Private Wealth Pulse" },
     {
       href: "/insights/private-banking-career-intelligence",
       label: "Career Intelligence 2026",
