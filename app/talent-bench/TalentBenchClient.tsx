@@ -66,109 +66,142 @@ export default function TalentBenchClient({
     }
   }
 
+  function pillClass(active: boolean) {
+    return active
+      ? "px-4 py-1.5 rounded-full text-xs font-medium uppercase tracking-wide bg-brand-gold text-brand-bg transition-colors"
+      : "px-4 py-1.5 rounded-full text-xs font-medium uppercase tracking-wide border border-white/15 text-brand-textMuted hover:border-brand-gold/50 hover:text-brand-text transition-colors";
+  }
+
   return (
     <>
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3 mb-10">
-        <select
-          value={functionFilter}
-          onChange={(e) => setFunctionFilter(e.target.value)}
-          className="border border-neutral-300 rounded-md px-3 py-2 text-sm bg-white"
-        >
+      {/* Filter row: function pills */}
+      <div className="mb-4">
+        <p className="text-xs uppercase tracking-widest text-brand-textMuted mb-2">
+          Function
+        </p>
+        <div className="flex flex-wrap gap-2">
           {functions.map((f) => (
-            <option key={f} value={f}>
-              {f === "All" ? "All functions" : f}
-            </option>
+            <button
+              key={f}
+              onClick={() => setFunctionFilter(f)}
+              className={pillClass(functionFilter === f)}
+            >
+              {f}
+            </button>
           ))}
-        </select>
-
-        <select
-          value={regionFilter}
-          onChange={(e) => setRegionFilter(e.target.value)}
-          className="border border-neutral-300 rounded-md px-3 py-2 text-sm bg-white"
-        >
-          {regions.map((r) => (
-            <option key={r} value={r}>
-              {r === "All" ? "All regions" : r}
-            </option>
-          ))}
-        </select>
-
-        <span className="ml-auto text-sm text-neutral-500 self-center">
-          {filtered.length} profile{filtered.length !== 1 ? "s" : ""}
-        </span>
+        </div>
       </div>
+
+      {/* Filter row: region pills */}
+      <div className="mb-8">
+        <p className="text-xs uppercase tracking-widest text-brand-textMuted mb-2">
+          Region
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          {regions.map((r) => (
+            <button
+              key={r}
+              onClick={() => setRegionFilter(r)}
+              className={pillClass(regionFilter === r)}
+            >
+              {r}
+            </button>
+          ))}
+          <span className="ml-auto text-sm text-brand-textMuted whitespace-nowrap pl-4">
+            {filtered.length} profile{filtered.length !== 1 ? "s" : ""}
+          </span>
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-brand-gold/40 via-white/10 to-transparent mb-10" />
 
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filtered.map((c) => (
           <div
             key={c.id}
-            className="border border-neutral-200 rounded-xl p-6 hover:shadow-md transition-shadow bg-white flex flex-col"
+            className="group relative rounded-xl p-7 bg-brand-surface border border-white/10 hover:border-brand-gold/40 transition-colors flex flex-col overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+            {/* Accent corner */}
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-brand-gold to-transparent opacity-60" />
+
+            <div className="flex items-start justify-between mb-4">
+              <span className="text-[11px] font-semibold uppercase tracking-widest text-brand-gold">
                 {c.function}
               </span>
-              <span className="text-xs text-neutral-400">{c.id}</span>
+              <span className="text-[11px] font-mono text-brand-textMuted/70">
+                {c.id}
+              </span>
             </div>
 
-            <h3 className="text-lg font-semibold mb-1">{c.title}</h3>
-            <p className="text-sm text-neutral-500 mb-4">
+            <h3 className="text-xl font-semibold mb-1 text-brand-text leading-snug">
+              {c.title}
+            </h3>
+            <p className="text-sm text-brand-goldSoft mb-5">
               {c.region} &middot; {c.seniority}
             </p>
 
-            <p className="text-sm text-neutral-700 leading-relaxed mb-4">
+            <p className="text-sm text-brand-text/85 leading-relaxed mb-5">
               {c.summary}
             </p>
 
-            <ul className="text-sm text-neutral-600 space-y-1 mb-4">
+            <ul className="text-sm text-brand-textMuted space-y-1.5 mb-6">
               {c.highlights.map((h, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <span className="mt-1.5 block w-1 h-1 rounded-full bg-neutral-400 flex-shrink-0" />
-                  {h}
+                <li key={i} className="flex items-start gap-2.5">
+                  <span className="mt-2 block w-1 h-1 rounded-full bg-brand-gold flex-shrink-0" />
+                  <span>{h}</span>
                 </li>
               ))}
             </ul>
 
-            <p className="text-xs text-neutral-500 mb-5 mt-auto">
-              {c.availability}
-            </p>
-
-            <button
-              onClick={() => {
-                setActiveCandidate(c);
-                setRequestSent(false);
-                setRequestEmail("");
-              }}
-              className="text-sm font-medium border border-neutral-900 rounded-md px-4 py-2 hover:bg-neutral-900 hover:text-white transition-colors"
-            >
-              Request full profile
-            </button>
+            <div className="mt-auto flex items-center justify-between gap-4 pt-4 border-t border-white/5">
+              <p className="text-xs text-brand-textMuted italic">
+                {c.availability}
+              </p>
+              <button
+                onClick={() => {
+                  setActiveCandidate(c);
+                  setRequestSent(false);
+                  setRequestEmail("");
+                }}
+                className="flex-shrink-0 text-xs font-semibold uppercase tracking-wide border border-brand-gold text-brand-gold rounded-full px-4 py-2 hover:bg-brand-gold hover:text-brand-bg transition-colors"
+              >
+                Request profile
+              </button>
+            </div>
           </div>
         ))}
       </div>
 
+      {filtered.length === 0 && (
+        <p className="text-center text-brand-textMuted py-16">
+          No profiles match these filters.
+        </p>
+      )}
+
       {/* Modal */}
       {activeCandidate && (
         <div
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setActiveCandidate(null)}
         >
           <div
-            className="bg-white rounded-xl p-6 max-w-md w-full"
+            className="bg-brand-surface border border-white/10 rounded-xl p-7 max-w-md w-full shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {!requestSent ? (
               <form onSubmit={handleRequest}>
-                <h3 className="text-lg font-semibold mb-2">
-                  Request full profile
-                </h3>
-                <p className="text-sm text-neutral-600 mb-4">
-                  {activeCandidate.title} &middot; {activeCandidate.region}{" "}
-                  ({activeCandidate.id})
+                <p className="text-[11px] uppercase tracking-widest text-brand-gold mb-2">
+                  Confidential request
                 </p>
-                <p className="text-sm text-neutral-600 mb-4">
+                <h3 className="text-lg font-semibold mb-2 text-brand-text">
+                  {activeCandidate.title}
+                </h3>
+                <p className="text-sm text-brand-textMuted mb-5">
+                  {activeCandidate.region} &middot; {activeCandidate.id}
+                </p>
+                <p className="text-sm text-brand-textMuted mb-5">
                   We will follow up directly with the full CV and a
                   confidentiality note, subject to mutual fit.
                 </p>
@@ -178,20 +211,20 @@ export default function TalentBenchClient({
                   placeholder="Your email address"
                   value={requestEmail}
                   onChange={(e) => setRequestEmail(e.target.value)}
-                  className="w-full border border-neutral-300 rounded-md px-3 py-2 text-sm mb-4"
+                  className="w-full border border-white/10 rounded-md px-3 py-2.5 text-sm mb-5 bg-brand-bg text-brand-text placeholder:text-brand-textMuted/60 focus:outline-none focus:ring-1 focus:ring-brand-gold"
                 />
                 <div className="flex gap-3 justify-end">
                   <button
                     type="button"
                     onClick={() => setActiveCandidate(null)}
-                    className="text-sm px-4 py-2 rounded-md border border-neutral-300"
+                    className="text-sm px-4 py-2 rounded-full border border-white/15 text-brand-textMuted hover:text-brand-text transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={sending}
-                    className="text-sm px-4 py-2 rounded-md bg-neutral-900 text-white disabled:opacity-50"
+                    className="text-sm px-5 py-2 rounded-full bg-brand-gold text-brand-bg font-semibold disabled:opacity-50 hover:opacity-85 transition-opacity"
                   >
                     {sending ? "Sending..." : "Send request"}
                   </button>
@@ -199,14 +232,19 @@ export default function TalentBenchClient({
               </form>
             ) : (
               <div>
-                <h3 className="text-lg font-semibold mb-2">Request sent</h3>
-                <p className="text-sm text-neutral-600 mb-4">
-                  Thank you. Gil will be in touch shortly with the full
-                  profile for {activeCandidate.id}.
+                <p className="text-[11px] uppercase tracking-widest text-brand-gold mb-2">
+                  Request sent
+                </p>
+                <h3 className="text-lg font-semibold mb-3 text-brand-text">
+                  Thank you
+                </h3>
+                <p className="text-sm text-brand-textMuted mb-6">
+                  Gil will be in touch shortly with the full profile for{" "}
+                  {activeCandidate.id}.
                 </p>
                 <button
                   onClick={() => setActiveCandidate(null)}
-                  className="text-sm px-4 py-2 rounded-md border border-neutral-300"
+                  className="text-sm px-5 py-2 rounded-full border border-white/15 text-brand-text hover:border-brand-gold/50 transition-colors"
                 >
                   Close
                 </button>
