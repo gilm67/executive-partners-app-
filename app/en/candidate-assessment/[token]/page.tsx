@@ -154,6 +154,7 @@ function initApp(token: string) {
   function gatherData() {
     return {
       name: (v("f-name") + " " + v("f-surname")).trim(),
+      email: v("f-email"),
       institution: v("f-institution"), tenure: v("f-tenure"), seniority: v("f-seniority"),
       market: v("f-market"), booking: v("f-booking"),
       aum: parseFloat(v("f-aum")) || 0, clients: v("f-clients"),
@@ -367,6 +368,7 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
   <div class="block-header"><div class="block-tag">Introduction</div><div class="block-title">Candidate Profile</div><div class="block-purpose">Basic information to personalise your analysis and calibrate benchmarks.</div></div>
   <div class="q-card">
     <div class="field-row"><div class="field-group"><label>First name *</label><input type="text" id="f-name" placeholder="First name"></div><div class="field-group"><label>Last name *</label><input type="text" id="f-surname" placeholder="Last name"></div></div>
+    <div class="field-row"><div class="field-group"><label>Email address *</label><input type="text" id="f-email" placeholder="you@example.com"></div><div></div></div>
     <div class="field-row"><div class="field-group"><label>Current institution *</label><input type="text" id="f-institution" placeholder="e.g. Julius Baer, UBS, Pictet"></div><div class="field-group"><label>Years at current institution *</label><input type="number" id="f-tenure" placeholder="e.g. 7" min="0" max="45"></div></div>
     <div class="field-row">
       <div class="field-group"><label>Seniority level</label><select id="f-seniority"><option value="">Select</option><option>Associate Director</option><option>Director</option><option>Executive Director</option><option>Managing Director</option><option>Team Head / Market Head</option><option>Other senior RM</option></select></div>
