@@ -30,12 +30,17 @@ export async function POST(req: NextRequest) {
       messages: [{ role: "user", content: prompt }],
     });
     const analysis = message.content[0].type === "text" ? message.content[0].text : "";
-    await resend.emails.send({
+    const { data: resendData, error: resendError } = await resend.emails.send({
       from: "EP Assessment <noreply@execpartners.ch>",
       to: "gil.chalem@execpartners.ch",
       subject: "EP Assessment — " + data.name + " | " + data.institution + " | CHF " + data.aum + "M",
       html: buildEmailHTML(data, analysis),
     });
+    if (resendError) {
+      console.error("Resend send error:", JSON.stringify(resendError));
+      throw new Error("Email send failed: " + (resendError.message || JSON.stringify(resendError)));
+    }
+    console.log("Resend send success, id:", resendData?.id);
     if (token) {
       try {
         const tokensPath = path.join(process.cwd(), "data/assessment-tokens.json");
