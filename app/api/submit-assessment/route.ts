@@ -180,6 +180,16 @@ async function buildSubmissionPDF(d: Record<string, unknown>, rawText: string): 
   const gold = rgb(0xC9 / 255, 0xA8 / 255, 0x4C / 255);
   const text = rgb(0x1A / 255, 0x1A / 255, 0x2E / 255);
   const muted = rgb(0x6B / 255, 0x6B / 255, 0x7A / 255);
+  const surface2 = rgb(0xF2 / 255, 0xEF / 255, 0xE8 / 255);
+
+  let logoImage: Awaited<ReturnType<typeof pdfDoc.embedPng>> | null = null;
+  try {
+    const logoPath = path.join(process.cwd(), "public/transparent-ep-logo.png");
+    const logoBytes = fs.readFileSync(logoPath);
+    logoImage = await pdfDoc.embedPng(logoBytes);
+  } catch (e) {
+    console.error("Logo embed failed:", e);
+  }
 
   const pageWidth = 595.28; // A4
   const pageHeight = 841.89;
@@ -187,23 +197,65 @@ async function buildSubmissionPDF(d: Record<string, unknown>, rawText: string): 
   const lineHeight = 14;
   const fontSize = 10;
 
+  const pages: typeof pdfDoc.addPage extends (...args: infer A) => infer R ? R[] : never = [];
+
   let page = pdfDoc.addPage([pageWidth, pageHeight]);
+  pages.push(page);
   let y = pageHeight - margin;
 
   function newPage() {
     page = pdfDoc.addPage([pageWidth, pageHeight]);
+    pages.push(page);
     y = pageHeight - margin;
+    drawHeaderBar();
   }
 
   function ensureSpace(needed: number) {
-    if (y - needed < margin) newPage();
+    if (y - needed < margin + 30) newPage();
+  }
+
+  function drawHeaderBar() {
+    page.drawRectangle({ x: 0, y: pageHeight - 70, width: pageWidth, height: 70, color: navy });
+    if (logoImage) {
+      const logoH = 28;
+      const logoW = (logoImage.width / logoImage.height) * logoH;
+      page.drawImage(logoImage, { x: margin, y: pageHeight - 49, width: logoW, height: logoH });
+      page.drawText("AUM Portability & Business Case Assessment", { x: margin + logoW + 14, y: pageHeight - 40, size: 9, font, color: rgb(0.9, 0.9, 0.92) });
+    } else {
+      page.drawText("EXECUTIVE PARTNERS", { x: margin, y: pageHeight - 32, size: 11, font: fontBold, color: gold });
+      page.drawText("AUM Portability & Business Case Assessment", { x: margin, y: pageHeight - 50, size: 9, font, color: rgb(0.9, 0.9, 0.92) });
+    }
+    y = pageHeight - 100;
   }
 
   function drawHeader() {
-    page.drawRectangle({ x: 0, y: pageHeight - 70, width: pageWidth, height: 70, color: navy });
-    page.drawText("EXECUTIVE PARTNERS", { x: margin, y: pageHeight - 32, size: 11, font: fontBold, color: gold });
-    page.drawText("AUM Portability & Business Case Assessment", { x: margin, y: pageHeight - 50, size: 9, font, color: rgb(0.9, 0.9, 0.92) });
-    y = pageHeight - 100;
+    drawHeaderBar();
+  }
+
+  function drawSummaryBox() {
+    const aum = d.aum != null ? "CHF " + d.aum + "M" : "—";
+    const revenue = d.revenue != null ? "CHF " + d.revenue + "M" : "—";
+    const portability = d.portability != null ? d.portability + "%" : "—";
+    const roa = (Number(d.aum) > 0 && Number(d.revenue) > 0)
+      ? Math.round((Number(d.revenue) / Number(d.aum)) * 10000) + " bps"
+      : "—";
+
+    const boxHeight = 50;
+    ensureSpace(boxHeight + 16);
+    page.drawRectangle({ x: margin, y: y - boxHeight, width: pageWidth - margin * 2, height: boxHeight, color: surface2 });
+    const cols = [
+      { label: "Total AUM", value: aum },
+      { label: "Annual Revenue", value: revenue },
+      { label: "Implied ROA", value: roa },
+      { label: "12m Portability", value: portability },
+    ];
+    const colWidth = (pageWidth - margin * 2) / cols.length;
+    cols.forEach((c, i) => {
+      const cx = margin + i * colWidth + 16;
+      page.drawText(c.label.toUpperCase(), { x: cx, y: y - 18, size: 8, font: fontBold, color: muted });
+      page.drawText(c.value, { x: cx, y: y - 36, size: 14, font: fontBold, color: navy });
+    });
+    y -= boxHeight + 18;
   }
 
   function drawSectionTitle(title: string) {
@@ -251,6 +303,8 @@ async function buildSubmissionPDF(d: Record<string, unknown>, rawText: string): 
   y -= 20;
   page.drawText(String(d.institution || "") + "  |  Submitted " + date, { x: margin, y, size: 10, font, color: muted });
   y -= 24;
+
+  drawSummaryBox();
 
   drawSectionTitle("Candidate Profile");
   drawField("Name", d.name);
@@ -320,6 +374,15 @@ async function buildSubmissionPDF(d: Record<string, unknown>, rawText: string): 
   drawSectionTitle("Q11 — Platform Knowledge & Additional Context");
   drawField("Platform knowledge", d.platform);
   drawField("Additional context", d.additional);
+
+  const total = pages.length;
+  pages.forEach((p, idx) => {
+    p.drawLine({ start: { x: margin, y: margin - 6 }, end: { x: pageWidth - margin, y: margin - 6 }, thickness: 0.5, color: rgb(0.85, 0.85, 0.85) });
+    p.drawText("Confidential — Executive Partners", { x: margin, y: margin - 18, size: 8, font, color: muted });
+    const pageLabel = "Page " + (idx + 1) + " of " + total;
+    const pageLabelWidth = font.widthOfTextAtSize(pageLabel, 8);
+    p.drawText(pageLabel, { x: pageWidth - margin - pageLabelWidth, y: margin - 18, size: 8, font, color: muted });
+  });
 
   return pdfDoc.save();
 }
