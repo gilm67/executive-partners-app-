@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { Resend } from "resend";
 import fs from "fs";
 import path from "path";
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 export const maxDuration = 60;
 
@@ -32,6 +33,9 @@ export async function POST(req: NextRequest) {
     const analysis = message.content[0].type === "text" ? message.content[0].text : "";
     const rawText = buildRawSubmissionText(data);
     const safeName = String(data.name || "candidate").replace(/[^a-zA-Z0-9-_ ]/g, "").trim().replace(/\s+/g, "-") || "candidate";
+    const pdfBytes = await buildSubmissionPDF(data, rawText);
+    const pdfBase64 = Buffer.from(pdfBytes).toString("base64");
+
     const { data: resendData, error: resendError } = await resend.emails.send({
       from: "EP Assessment <noreply@auth.execpartners.ch>",
       to: "gil.chalem@execpartners.ch",
@@ -39,8 +43,8 @@ export async function POST(req: NextRequest) {
       html: buildEmailHTML(data, analysis),
       attachments: [
         {
-          filename: safeName + "-assessment-raw.txt",
-          content: Buffer.from(rawText, "utf-8").toString("base64"),
+          filename: safeName + "-assessment.pdf",
+          content: pdfBase64,
         },
       ],
     });
@@ -49,6 +53,31 @@ export async function POST(req: NextRequest) {
       throw new Error("Email send failed: " + (resendError.message || JSON.stringify(resendError)));
     }
     console.log("Resend send success, id:", resendData?.id);
+
+    // Candidate confirmation email
+    if (data.email && typeof data.email === "string" && data.email.includes("@")) {
+      try {
+        const { error: candidateError } = await resend.emails.send({
+          from: "Executive Partners <noreply@auth.execpartners.ch>",
+          to: data.email,
+          subject: "Your EP Assessment — Received",
+          html: buildCandidateEmailHTML(data),
+          attachments: [
+            {
+              filename: safeName + "-assessment.pdf",
+              content: pdfBase64,
+            },
+          ],
+        });
+        if (candidateError) {
+          console.error("Candidate confirmation email error:", JSON.stringify(candidateError));
+        } else {
+          console.log("Candidate confirmation sent to:", data.email);
+        }
+      } catch (ce) {
+        console.error("Candidate confirmation send threw:", ce);
+      }
+    }
     if (token) {
       try {
         const tokensPath = path.join(process.cwd(), "data/assessment-tokens.json");
@@ -140,6 +169,178 @@ function buildPrompt(d: Record<string, unknown>): string {
     "SECTION 7 -- EP VERDICT",
     "Five scores (5 each): AUM quality, revenue quality, portability, legal/compliance, motivation/fit. Total /25. Threshold 22+. Disqualifiers. Next step."
   ].join("\n");
+}
+
+async function buildSubmissionPDF(d: Record<string, unknown>, rawText: string): Promise<Uint8Array> {
+  const pdfDoc = await PDFDocument.create();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  const navy = rgb(0x0B / 255, 0x0F / 255, 0x1A / 255);
+  const gold = rgb(0xC9 / 255, 0xA8 / 255, 0x4C / 255);
+  const text = rgb(0x1A / 255, 0x1A / 255, 0x2E / 255);
+  const muted = rgb(0x6B / 255, 0x6B / 255, 0x7A / 255);
+
+  const pageWidth = 595.28; // A4
+  const pageHeight = 841.89;
+  const margin = 50;
+  const lineHeight = 14;
+  const fontSize = 10;
+
+  let page = pdfDoc.addPage([pageWidth, pageHeight]);
+  let y = pageHeight - margin;
+
+  function newPage() {
+    page = pdfDoc.addPage([pageWidth, pageHeight]);
+    y = pageHeight - margin;
+  }
+
+  function ensureSpace(needed: number) {
+    if (y - needed < margin) newPage();
+  }
+
+  function drawHeader() {
+    page.drawRectangle({ x: 0, y: pageHeight - 70, width: pageWidth, height: 70, color: navy });
+    page.drawText("EXECUTIVE PARTNERS", { x: margin, y: pageHeight - 32, size: 11, font: fontBold, color: gold });
+    page.drawText("AUM Portability & Business Case Assessment", { x: margin, y: pageHeight - 50, size: 9, font, color: rgb(0.9, 0.9, 0.92) });
+    y = pageHeight - 100;
+  }
+
+  function drawSectionTitle(title: string) {
+    ensureSpace(30);
+    page.drawText(title, { x: margin, y, size: 12, font: fontBold, color: navy });
+    y -= 6;
+    page.drawLine({ start: { x: margin, y }, end: { x: pageWidth - margin, y }, thickness: 0.5, color: gold });
+    y -= 16;
+  }
+
+  function wrapText(value: string, maxWidth: number): string[] {
+    const words = value.split(/\s+/);
+    const lines: string[] = [];
+    let cur = "";
+    for (const word of words) {
+      const test = cur ? cur + " " + word : word;
+      if (font.widthOfTextAtSize(test, fontSize) > maxWidth && cur) {
+        lines.push(cur);
+        cur = word;
+      } else {
+        cur = test;
+      }
+    }
+    if (cur) lines.push(cur);
+    return lines.length ? lines : [""];
+  }
+
+  function drawField(label: string, value: unknown) {
+    const valStr = Array.isArray(value) ? (value.length ? value.join(", ") : "none") : String(value ?? "not specified");
+    ensureSpace(lineHeight * 2);
+    page.drawText(label, { x: margin, y, size: fontSize, font: fontBold, color: muted });
+    y -= lineHeight;
+    const lines = wrapText(valStr, pageWidth - margin * 2);
+    for (const line of lines) {
+      ensureSpace(lineHeight);
+      page.drawText(line, { x: margin, y, size: fontSize, font, color: text });
+      y -= lineHeight;
+    }
+    y -= 4;
+  }
+
+  drawHeader();
+  const date = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  page.drawText(String(d.name || ""), { x: margin, y, size: 16, font: fontBold, color: navy });
+  y -= 20;
+  page.drawText(String(d.institution || "") + "  |  Submitted " + date, { x: margin, y, size: 10, font, color: muted });
+  y -= 24;
+
+  drawSectionTitle("Candidate Profile");
+  drawField("Name", d.name);
+  drawField("Email", d.email);
+  drawField("Current institution", d.institution);
+  drawField("Years at institution", d.tenure);
+  drawField("Seniority level", d.seniority);
+  drawField("Primary market coverage", d.market);
+  drawField("Booking centre(s)", d.booking);
+
+  drawSectionTitle("Q1 — Book Size & Structure");
+  drawField("Total AUM (CHF M)", d.aum);
+  drawField("Number of clients", d.clients);
+  drawField("Largest relationship (% of AUM)", d.concentration);
+  drawField("% self-originated", d.originated);
+  drawField("Client domicile distribution", d.domicile);
+
+  drawSectionTitle("Q2 — Portability Estimate");
+  drawField("12-month portability", String(d.portability) + "%");
+  drawField("Reason", d.portabilityReason);
+  drawField("Prior move", d.priorMove);
+
+  drawSectionTitle("Q3 — Institutional Anchors");
+  drawField("Anchors", d.anchors);
+  drawField("Estimated % of AUM affected", d.anchorPct);
+
+  drawSectionTitle("Q4 — Revenue Production");
+  drawField("Annual revenue (CHF M)", d.revenue);
+  drawField("% recurring", d.recurring);
+  drawField("% transactional", d.transactional);
+  drawField("Co-management note", d.coManage);
+
+  drawSectionTitle("Q5 — Wallet Share & Product Mix");
+  drawField("Wallet share", d.wallet);
+  drawField("Product mix", d.products);
+
+  drawSectionTitle("Q6 — Notice, Garden Leave & Non-Solicitation");
+  drawField("Notice period (months)", d.notice);
+  drawField("Garden leave (months)", d.garden);
+  drawField("Non-solicitation", d.nonsolicit);
+  drawField("Compliance record", d.compliance);
+  drawField("Additional legal notes", d.legalNotes);
+
+  drawSectionTitle("Q7 — Client Onboarding Risk");
+  drawField("KYC risk %", d.kycRisk);
+  drawField("KYC flags", d.kycFlags);
+  drawField("Onboarding timeline", d.onboarding);
+
+  drawSectionTitle("Q8 — Three-Year AUM & Revenue Build");
+  drawField("Year 1 NNM (CHF M)", d.nnm1);
+  drawField("Year 2 NNM (CHF M)", d.nnm2);
+  drawField("Year 3 NNM (CHF M)", d.nnm3);
+  drawField("Target ROA (bps)", d.targetROA);
+  drawField("New prospect pipeline Y3 (CHF M)", d.prospects);
+  drawField("Key assumptions and risks", d.bpAssumptions);
+
+  drawSectionTitle("Q9 — Compensation Expectations");
+  drawField("Base salary (CHF 000s)", d.base);
+  drawField("Total Year 1 comp (CHF 000s)", d.totalComp);
+  drawField("Guarantee expectation", d.guarantee);
+
+  drawSectionTitle("Q10 — Primary Motivation");
+  drawField("Push factors", d.push);
+  drawField("Pull factors", d.pull);
+  drawField("Other conversations", d.competitors);
+
+  drawSectionTitle("Q11 — Platform Knowledge & Additional Context");
+  drawField("Platform knowledge", d.platform);
+  drawField("Additional context", d.additional);
+
+  return pdfDoc.save();
+}
+
+function buildCandidateEmailHTML(d: Record<string, unknown>): string {
+  const date = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  const firstName = String(d.name || "").split(" ")[0] || "there";
+  return "<!DOCTYPE html><html><head><meta charset='UTF-8'></head><body style='margin:0;padding:0;background:#F8F6F1;font-family:Arial,sans-serif'>" +
+    "<div style='max-width:600px;margin:0 auto;padding:32px 20px'>" +
+    "<div style='background:#0B0F1A;border-radius:10px 10px 0 0;padding:24px 28px'>" +
+    "<div style='font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#C9A84C;margin-bottom:4px'>Executive Partners</div>" +
+    "<div style='font-size:20px;color:#E8EAF0'>Assessment Received</div>" +
+    "</div><div style='background:#fff;border:1px solid #DDD8CC;border-top:none;border-radius:0 0 10px 10px;padding:28px'>" +
+    "<p style='font-size:14px;line-height:1.7;color:#1A1A2E'>Dear " + firstName + ",</p>" +
+    "<p style='font-size:14px;line-height:1.7;color:#1A1A2E'>Thank you for completing your AUM Portability and Business Case Assessment on " + date + ". Your responses have been received and are being reviewed confidentially.</p>" +
+    "<p style='font-size:14px;line-height:1.7;color:#1A1A2E'>A copy of your submitted answers is attached to this email for your own records.</p>" +
+    "<p style='font-size:14px;line-height:1.7;color:#1A1A2E'>Your information is treated as strictly confidential and is shared only with Gil M. Chalem, Managing Partner of Executive Partners. It is not shared with any third party, bank, or institution without your explicit consent.</p>" +
+    "<p style='font-size:14px;line-height:1.7;color:#1A1A2E'>Gil will review your assessment and be in touch within 24 hours to discuss next steps.</p>" +
+    "<p style='font-size:14px;line-height:1.7;color:#1A1A2E;margin-top:24px'>Best regards,<br>Executive Partners</p>" +
+    "<p style='font-size:11px;color:#6B6B7A;margin-top:24px;border-top:1px solid #DDD8CC;padding-top:14px'>Executive Partners | Geneva-based executive search for Private Banking & Wealth Management | execpartners.ch</p>" +
+    "</div></div></body></html>";
 }
 
 function buildRawSubmissionText(d: Record<string, unknown>): string {

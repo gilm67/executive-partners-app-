@@ -638,7 +638,8 @@ textarea{resize:vertical;min-height:84px;line-height:1.6}
 <div class="thank-you" id="thank-you">
   <div class="thank-you-icon">&#10003;</div>
   <h2>Assessment submitted</h2>
-  <p>Thank you. Your assessment has been received and is being processed. Gil M. Chalem will be in touch within 24 hours to discuss the analysis and next steps.</p>
+  <p>Thank you. Your assessment has been received and is being processed confidentially. A copy of your responses has been sent to the email address you provided for your own records.</p>
+  <p style="margin-top:14px">Your information is treated as strictly confidential and shared only with Gil M. Chalem. Gil will be in touch within 24 hours to discuss the analysis and next steps.</p>
 </div>
 </div>`;
 }
