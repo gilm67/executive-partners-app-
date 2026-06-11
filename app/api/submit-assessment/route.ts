@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     });
     const analysis = message.content[0].type === "text" ? message.content[0].text : "";
     const { data: resendData, error: resendError } = await resend.emails.send({
-      from: "EP Assessment <noreply@execpartners.ch>",
+      from: "EP Assessment <noreply@auth.execpartners.ch>",
       to: "gil.chalem@execpartners.ch",
       subject: "EP Assessment — " + data.name + " | " + data.institution + " | CHF " + data.aum + "M",
       html: buildEmailHTML(data, analysis),
