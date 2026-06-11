@@ -77,9 +77,30 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  /**
+   * ✅ 2) TALENT BENCH PROTECTION (password-gated)
+   * Cookie set by /api/talent-bench-auth on correct password
+   */
+  if (pathname.startsWith("/talent-bench")) {
+    const hasAccess = req.cookies.get("ep_talent_bench_auth")?.value === "granted";
+    const isLoginPage = pathname === "/talent-bench-login";
+
+    if (!hasAccess && !isLoginPage) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/talent-bench-login";
+
+      const next = sanitizeNext(pathname);
+      if (next) url.searchParams.set("redirect", next);
+
+      return NextResponse.redirect(url);
+    }
+
+    return NextResponse.next();
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/private/:path*"],
+  matcher: ["/private/:path*", "/talent-bench/:path*", "/talent-bench-login"],
 };
