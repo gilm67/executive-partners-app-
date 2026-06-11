@@ -39,7 +39,7 @@ function initApp(token: string) {
     .then(res => res.ok ? res.json() : null)
     .then(info => {
       if (!info) return;
-      const { candidateName, institution, mandate } = info;
+      const { candidateName } = info;
       if (candidateName) {
         const parts = candidateName.trim().split(" ");
         const first = parts[0] || "";
@@ -49,23 +49,17 @@ function initApp(token: string) {
         if (fName) fName.value = first;
         if (fSurname) fSurname.value = last;
       }
-      if (institution) {
-        const fInst = document.getElementById("f-institution") as HTMLInputElement;
-        if (fInst) fInst.value = institution;
-      }
       // Personalize subtitle
       const subtitle = document.querySelector(".ep-subtitle");
       if (subtitle && candidateName) {
-        subtitle.innerHTML = `Prepared exclusively for <strong>${candidateName}</strong>` +
-          (mandate ? ` &mdash; ${mandate}` : "") +
-          (institution ? ` at ${institution}` : "");
+        subtitle.innerHTML = `Prepared exclusively for <strong>${candidateName}</strong>`;
       }
       // Show candidate banner immediately
       if (candidateName) {
         const ini = candidateName.trim().split(" ").map((w: string) => w[0]).join("").toUpperCase().slice(0, 2);
         const el = document.getElementById("candidate-banner");
         if (el) {
-          el.innerHTML = `<div class="candidate-card"><div class="candidate-avatar">${ini}</div><div><div class="candidate-name">${candidateName}</div><div class="candidate-meta">${institution ? institution + " &mdash; " : ""}${mandate || "EP Portability Assessment"}</div></div></div>`;
+          el.innerHTML = `<div class="candidate-card"><div class="candidate-avatar">${ini}</div><div><div class="candidate-name">${candidateName}</div><div class="candidate-meta">EP Portability Assessment</div></div></div>`;
         }
       }
     })
