@@ -284,19 +284,19 @@ export default function HomeClient() {
       <section className="py-20 border-t border-white/8 bg-[#0b0f1a]">
         <div className="mx-auto max-w-7xl px-4">
 
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-            <div className="text-center sm:text-left">
+          <div className="flex flex-col items-center text-center gap-4 mb-10">
+            <div>
               <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">
                 Markets
               </p>
-              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight text-center">
+              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight">
                 Global Private Banking Hubs
               </h2>
-              <p className="mt-2 text-white/50 text-sm sm:text-base text-center sm:text-left">
+              <p className="mt-2 text-white/50 text-sm sm:text-base">
                 Explore mandates across 12 key booking centres
               </p>
             </div>
-            <div className="hidden sm:flex items-center gap-2 text-white/25 text-[11px] tracking-widest uppercase">
+            <div className="flex items-center gap-2 text-white/25 text-[11px] tracking-widest uppercase">
               <Globe className="h-3.5 w-3.5" />
               <span>12 financial centres</span>
             </div>
@@ -376,13 +376,13 @@ export default function HomeClient() {
       {/* INSIGHTS STRIP */}
       <section className="py-20 border-t border-white/8 bg-[#0b0f1a]">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+          <div className="flex flex-col items-center text-center gap-4 mb-10">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3 text-center sm:text-left">Private Wealth Pulse</p>
-              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight text-center">Latest Intelligence</h2>
-              <p className="mt-2 text-white/50 text-sm text-center sm:text-left">Strategy and talent analysis for senior private banking professionals.</p>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">Private Wealth Pulse</p>
+              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight">Latest Intelligence</h2>
+              <p className="mt-2 text-white/50 text-sm">Strategy and talent analysis for senior private banking professionals.</p>
             </div>
-            <Link href="/en/insights" className="shrink-0 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
+            <Link href="/en/insights" className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
               All articles <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
