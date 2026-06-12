@@ -141,7 +141,7 @@ export default function HomePage() {
             <div className="absolute bottom-0 left-0 right-0 border-t border-white/8 bg-black/30 backdrop-blur-sm py-3">
               <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-4 flex-wrap">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#C9A14A]/70 mr-3">Active markets</span>
-                {["Geneva","Zurich","London","Dubai","Singapore","Hong Kong","New York","Miami","Paris","Milan","Madrid","Lisbon"].map((city, i) => (
+                {["Geneva","Zurich","London","Dubai","Singapore","Hong Kong","New York","Miami","Paris","Milan","Madrid","Lisbon","Riyadh"].map((city, i) => (
                   <span key={city} className="hidden sm:flex items-center gap-2">
                     {i > 0 && <span className="text-white/20">·</span>}
                     <span className="text-[12px] text-white/50">{city}</span>
