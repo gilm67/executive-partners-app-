@@ -201,7 +201,7 @@ export default function HomeClient() {
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
               Confidential · Senior-level · Outcome-driven
             </div>
-            <h2 className="font-[var(--font-playfair)] text-4xl sm:text-5xl font-semibold tracking-tight leading-[1.15] text-center sm:text-left">
+            <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight leading-[1.15] text-center">
               Built for senior<br />
               <span className="text-[#D4AF37]">private banking</span> moves
             </h2>
@@ -289,7 +289,7 @@ export default function HomeClient() {
               <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3">
                 Markets
               </p>
-              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight text-center sm:text-left">
+              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight text-center">
                 Global Private Banking Hubs
               </h2>
               <p className="mt-2 text-white/50 text-sm sm:text-base text-center sm:text-left">
@@ -379,7 +379,7 @@ export default function HomeClient() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
               <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/80 mb-3 text-center sm:text-left">Private Wealth Pulse</p>
-              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight text-center sm:text-left">Latest Intelligence</h2>
+              <h2 className="font-[var(--font-playfair)] text-3xl sm:text-4xl font-semibold tracking-tight text-center">Latest Intelligence</h2>
               <p className="mt-2 text-white/50 text-sm text-center sm:text-left">Strategy and talent analysis for senior private banking professionals.</p>
             </div>
             <Link href="/en/insights" className="shrink-0 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white transition">
@@ -411,7 +411,7 @@ export default function HomeClient() {
           <p className="text-[11px] uppercase tracking-[0.22em] text-[#D4AF37]/70 mb-5">
             Next step
           </p>
-          <h2 className="font-[var(--font-playfair)] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.1]">
+          <h2 className="font-[var(--font-playfair)] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.1] text-center">
             Ready to calibrate<br />
             <span className="text-[#D4AF37]">your next move?</span>
           </h2>
@@ -497,7 +497,7 @@ export default function HomeClient() {
       <section className="border-t border-white/8 bg-[#0b0f1a] py-16">
         <div className="mx-auto max-w-2xl px-4 text-center">
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">Private Wealth Pulse</p>
-          <h2 className="mt-3 text-2xl font-semibold text-white">Get the analysis in your inbox.</h2>
+          <h2 className="mt-3 font-[var(--font-playfair)] text-2xl sm:text-3xl font-semibold tracking-tight text-white text-center">Get the analysis in your inbox.</h2>
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-white/60">
             One briefing per week. Senior private banking intelligence, written from Geneva. 2,300+ subscribers.
           </p>
