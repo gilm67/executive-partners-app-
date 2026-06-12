@@ -65,10 +65,10 @@ export default function Footer() {
             <Image
               src="/transparent-ep-logo.png"
               alt="Executive Partners"
-              width={160}
-              height={52}
-              sizes="160px"
-              className="h-auto w-[140px] opacity-90 mb-4"
+              width={290}
+              height={60}
+              sizes="180px"
+              className="h-auto w-[180px] opacity-90 mb-4"
             />
             <div className="flex items-center gap-1.5">
               <MapPin className="h-3 w-3 flex-shrink-0" style={{color:"#C9A14A"}} />
@@ -137,7 +137,7 @@ export default function Footer() {
         <div className="hidden md:block py-16">
           <div className="flex items-start justify-between mb-12 pb-12 border-b border-white/[0.06]">
             <div className="max-w-sm">
-              <Image src="/transparent-ep-logo.png" alt="Executive Partners" width={180} height={60} sizes="180px" className="h-auto w-[160px] opacity-90 mb-4" />
+              <Image src="/transparent-ep-logo.png" alt="Executive Partners" width={290} height={60} sizes="220px" className="h-auto w-[220px] opacity-90 mb-4" />
               <p className="text-sm text-white/80 leading-relaxed">Geneva-based executive search for Private Banking & Wealth Management. 200+ placements across 12 global hubs.</p>
             </div>
             <Link href="/en/contact"
