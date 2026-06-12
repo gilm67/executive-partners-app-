@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BreadcrumbSchema, ServiceSchema } from "@/components/StructuredData";
-import { ArrowRight, CheckCircle, Clock, Shield, TrendingUp } from "lucide-react";
+import { ArrowRight, CheckCircle, Clock, Shield, TrendingUp, Lock } from "lucide-react";
 
 const SITE =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -54,15 +54,6 @@ const CASES = [
     time: "Mandate to offer: 24 days",
     retention: "Still at the bank · 31 months",
   },
-];
-
-const AVAILABLE = [
-  { flag: "🇹🇷", label: "Turkish market Senior RM", detail: "UHNW profile · Geneva · Swiss private bank · Exploring discreetly" },
-  { flag: "🇮🇹", label: "Italian market Senior RM", detail: "CHF 200M+ · Milan / Geneva · Available Q3 2026" },
-  { flag: "🇷🇺", label: "CIS/CEE Senior RM", detail: "CHF 1.5B book · Zurich · Top-rated profile · Exploring discreetly" },
-  { flag: "🇧🇷", label: "LATAM Investment Advisor", detail: "LATAM/Mexico focus · Geneva · CHF 200M+ personal book · Available H2 2026" },
-  { flag: "🇦🇪", label: "MEA Senior RM", detail: "USD 185M portable · Dubai · Available immediately" },
-  { flag: "🇹🇷", label: "Turkish market RM", detail: "Geneva-based · Active mandate · Available Q2 2026" },
 ];
 
 export default function HiringManagersPage() {
@@ -178,40 +169,36 @@ export default function HiringManagersPage() {
           </div>
         </section>
 
-        {/* ── AVAILABLE NOW ── */}
+        {/* ── TALENT BENCH TEASER ── */}
         <section className="mx-auto max-w-5xl">
-          <div className="rounded-3xl border border-[#C9A14A]/25 bg-black/40 px-6 py-7 md:px-10 md:py-8 backdrop-blur">
-            <div className="flex items-center justify-between mb-5">
-              <div>
-                <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#C9A14A] mb-1">Live talent · Updated monthly</div>
-                <h2 className="text-xl md:text-2xl font-semibold">Bankers currently exploring</h2>
-              </div>
-              <Link href="/en/contact" className="hidden sm:flex items-center gap-1.5 text-xs text-[#C9A14A] hover:text-white transition-colors font-semibold">
-                Request introduction <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {AVAILABLE.map((a) => (
-                <div key={a.label} className="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
-                  <span className="text-xl flex-shrink-0">{a.flag}</span>
-                  <div>
-                    <div className="text-sm font-semibold text-white">{a.label}</div>
-                    <div className="text-xs text-white/55 mt-0.5">{a.detail}</div>
-                  </div>
+          <div className="rounded-3xl border border-[#C9A14A]/25 bg-gradient-to-br from-[#C9A14A]/10 via-black/40 to-black/40 px-6 py-8 md:px-10 md:py-10 backdrop-blur">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <div className="max-w-2xl">
+                <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#C9A14A] mb-2">
+                  <Lock className="h-3 w-3" />
+                  Confidential · By request
                 </div>
-              ))}
-            </div>
-            <p className="mt-4 text-[11px] text-white/35">All profiles anonymised. Full details shared after NDA or existing mandate relationship.</p>
-            <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
-              <Link href="/en/contact" className="sm:hidden inline-flex items-center gap-1.5 text-xs text-[#C9A14A] font-semibold">
-                Request introduction <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-              <Link
-                href="/talent-bench-login"
-                className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#C9A14A]/30 bg-[#C9A14A]/5 px-4 py-2 text-xs font-semibold text-[#C9A14A] hover:bg-[#C9A14A]/10 transition-colors"
-              >
-                Access our confidential Talent Bench <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+                <h2 className="text-xl md:text-2xl font-semibold text-white">
+                  A curated bench of senior bankers, ready to move
+                </h2>
+                <p className="mt-3 text-sm text-white/65 leading-relaxed">
+                  Beyond our live mandates, we maintain a confidential bench of senior Relationship Managers, Investment Advisors and Team Heads across Switzerland, the Middle East, CIS/CEE, LATAM and Southern Europe, each with portability already screened. Profiles are shared on an anonymised basis; full details follow an NDA or an existing mandate relationship.
+                </p>
+              </div>
+              <div className="flex flex-col gap-3 md:min-w-[240px]">
+                <Link
+                  href="/talent-bench-login"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#C9A14A] to-[#E8C46A] px-6 py-3 text-sm font-semibold text-[#090C14] hover:brightness-110 transition-all"
+                >
+                  Access the Talent Bench <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/en/contact"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-all"
+                >
+                  Request introduction
+                </Link>
+              </div>
             </div>
           </div>
         </section>
