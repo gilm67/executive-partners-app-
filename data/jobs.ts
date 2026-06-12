@@ -938,6 +938,21 @@ export const jobsBySlug: Record<string, Job> = {
     createdAt: "2026-04-15",
   },
 
+  "rm-saudi-riyadh-geneva": {
+    slug: "rm-saudi-riyadh-geneva",
+    title: "Senior Relationship Manager — Saudi / GCC Market",
+    market: "MEA · Saudi Arabia · GCC",
+    location: "Riyadh or Geneva",
+    seniority: "Director / Executive Director",
+    summary: "Senior RM for the Saudi and wider GCC market, based in Riyadh or Geneva. CHF 250M+ portable book required over a 3-year average. Established platform with existing Saudi/GCC infrastructure — this is not a greenfield mandate.",
+    overview: ["Manage and grow Saudi and wider GCC HNW/UHNW relationships from either a Riyadh or Geneva platform.", "Operate at the level of structuring, cross-border advisory and multi-generational wealth planning for Saudi and regional families.", "Bring a personally owned Saudi/GCC book to an established international platform."],
+    responsibilities: ["Build and develop Saudi/GCC client relationships with demonstrable portability.", "Deliver holistic solutions across advisory, discretionary, structured products and credit, tailored to Saudi and regional client needs.", "Maintain compliance discipline across Saudi (SAMA/CMA) and, where applicable, Swiss cross-border frameworks."],
+    qualifications: ["Majority of career managing Saudi or wider GCC clients from a private bank or EAM platform.", "CHF 250M+ 3-year average portable Saudi/GCC book.", "Arabic fluency a strong differentiator for Riyadh-based candidates; cross-border compliance discipline expected for Geneva-based candidates.", "Familiarity with onboarding under SAMA/CMA frameworks an advantage for Riyadh-based candidates."],
+    offer: ["Established Saudi/GCC franchise with existing infrastructure and regulatory approvals.", "Location genuinely open between Riyadh and Geneva, determined together with the successful candidate.", "Competitive package commensurate with experience and location."],
+    compliance: ["Saudi regulatory framework (SAMA/CMA) for Riyadh-based coverage.", "Swiss cross-border compliance for Geneva-based coverage of Saudi/GCC clients."],
+    confidential: true, active: true, createdAt: "2026-06-12",
+  },
+
 };
 
 /* ---------------- Exports ---------------- */
