@@ -4,11 +4,11 @@ import { getAllMarkets } from "@/lib/markets/data";
 
 export const metadata = {
   title: "Private Banking Markets — Geneva, Zurich, Dubai & Global Hubs",
-  description: "Private banking recruitment across 12 global wealth hubs. Compensation benchmarks, licensing requirements, client segments and live mandates in Geneva, Zurich, Dubai, Singapore, London and more.",
+  description: "Private banking recruitment across 13 global wealth hubs. Compensation benchmarks, licensing requirements, client segments and live mandates in Geneva, Zurich, Dubai, Singapore, London, Riyadh and more.",
   alternates: { canonical: "https://www.execpartners.ch/en/markets" },
   openGraph: {
     title: "Private Banking Markets — Geneva, Zurich, Dubai & Global Hubs ",
-    description: "Private banking recruitment across 12 global wealth hubs. Compensation, licensing and live mandates by city.",
+    description: "Private banking recruitment across 13 global wealth hubs. Compensation, licensing and live mandates by city.",
     type: "website",
     url: "https://www.execpartners.ch/en/markets",
     images: [{ url: "/og.webp", width: 1200, height: 630 }],
@@ -17,7 +17,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Private Banking Markets — Geneva, Zurich, Dubai & Global Hubs ",
-    description: "Compensation benchmarks, licensing, client segments and live mandates across 12 private banking hubs.",
+    description: "Compensation benchmarks, licensing, client segments and live mandates across 13 private banking hubs.",
     images: ["/og.webp"],
   },
   robots: { index: true, follow: true },

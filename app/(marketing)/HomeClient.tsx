@@ -163,7 +163,7 @@ export default function HomeClient() {
             {[
               { value: "200+", label: "Placements", sub: "Senior RMs & Private Bankers" },
               { value: "98%", label: "12-month Retention", sub: "Candidates still in seat" },
-              { value: "12+", label: "Global Hubs", sub: "Geneva · Dubai · Singapore" },
+              { value: "13+", label: "Global Hubs", sub: "Geneva · Dubai · Riyadh" },
               { value: "Billions", label: "in Client AUM", sub: "Represented across placements" },
             ].map((kpi) => (
               <div key={kpi.label} className="px-4 py-8 sm:px-8 sm:py-10 text-center">
@@ -189,7 +189,7 @@ export default function HomeClient() {
       <div className="border-b border-white/8 bg-[#0b0f1a]/80">
         <div className="mx-auto max-w-7xl px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
           <p className="text-xs text-white/50">
-            <span className="text-white/80 font-medium">Hiring a senior RM?</span> We fill mandates across 12 global hubs. Senior-level only. Same business day response.
+            <span className="text-white/80 font-medium">Hiring a senior RM?</span> We fill mandates across 13 global hubs. Senior-level only. Same business day response.
           </p>
           <Link href="/en/hiring-managers" className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#D4AF37] hover:text-[#F0D060] transition whitespace-nowrap">
             Brief a mandate <ArrowRight className="h-3 w-3" />

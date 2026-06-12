@@ -302,7 +302,7 @@ export default function CareerIntelligencePage() {
             Private Banking Career Intelligence 2026
           </h1>
           <p className="mx-auto mt-3 max-w-2xl text-center text-sm leading-relaxed text-white/55">
-            Hiring signals, compensation benchmarks, and portability intelligence for senior private banking professionals navigating their next move. 12 hubs. Placement data from 200+ transactions.
+            Hiring signals, compensation benchmarks, and portability intelligence for senior private banking professionals navigating their next move. 13 hubs. Placement data from 200+ transactions.
           </p>
 
           {/* Market Overview — sharpened */}

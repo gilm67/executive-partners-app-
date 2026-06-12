@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.execpartners.ch/markets" },
   openGraph: {
     title: "Private Banking Markets ",
-    description: "Private banking recruitment across 12 global wealth hubs.",
+    description: "Private banking recruitment across 13 global wealth hubs.",
     type: "website",
     url: "https://www.execpartners.ch/markets",
     images: [{ url: "/og.webp" }],

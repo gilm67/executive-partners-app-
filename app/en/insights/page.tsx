@@ -95,7 +95,7 @@ export default function InsightsPage() {
             {[
               { n: "200+", label: "Placements" },
               { n: "17k+", label: "Newsletter subscribers" },
-              { n: "12+", label: "Primary markets" },
+              { n: "13+", label: "Primary markets" },
               { n: "15+", label: "In-depth articles" },
             ].map((s) => (
               <div key={s.label}>

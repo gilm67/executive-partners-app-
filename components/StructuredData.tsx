@@ -47,7 +47,8 @@ export function OrganizationSchema() {
       { "@type": "City", "name": "Dubai" },
       { "@type": "City", "name": "Singapore" },
       { "@type": "City", "name": "Hong Kong" },
-      { "@type": "City", "name": "Milan" }
+      { "@type": "City", "name": "Milan" },
+      { "@type": "City", "name": "Riyadh" }
     ],
     "knowsAbout": [
       "Private Banking Recruitment",
@@ -124,7 +125,7 @@ export function FAQSchema() {
         "name": "Do you have private banking roles outside Switzerland?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. While our headquarters are in Geneva, we run active mandates across London, Dubai (DIFC), Singapore, Hong Kong, Milan, and select US locations including New York and Miami."
+          "text": "Yes. While our headquarters are in Geneva, we run active mandates across London, Dubai (DIFC), Riyadh, Singapore, Hong Kong, Milan, and select US locations including New York and Miami."
         }
       },
       {

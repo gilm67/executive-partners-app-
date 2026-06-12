@@ -176,7 +176,7 @@ export default function AboutPage() {
           {[
             { n: "200+", l: "Placements" },
             { n: "98%", l: "12-month retention" },
-            { n: "12", l: "Global hubs" },
+            { n: "13", l: "Global hubs" },
           ].map((s) => (
             <div key={s.l} className="py-10 text-center">
               <p className="text-4xl font-light text-white">{s.n}</p>

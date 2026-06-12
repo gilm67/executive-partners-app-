@@ -51,7 +51,7 @@ export async function POST(req: Request) {
             <div style="background:#fdf6e8;border:1px solid #f0e0bb;border-radius:10px;padding:18px;margin:0 0 24px;">
               <p style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#D4AF37;margin:0 0 6px;">Welcome gift</p>
               <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0 0 6px;">Private Banking Career Intelligence — H2 2026 Edition</p>
-              <p style="font-size:13px;color:#6b7280;margin:0 0 12px;">Compensation benchmarks, hiring signals, and AUM portability data across 12 global wealth hubs.</p>
+              <p style="font-size:13px;color:#6b7280;margin:0 0 12px;">Compensation benchmarks, hiring signals, and AUM portability data across 13 global wealth hubs.</p>
               <a href="https://www.execpartners.ch/pdfs/private-banking-career-intelligence-2026.pdf" style="display:inline-block;background:#0B1929;color:#D4AF37;font-size:13px;font-weight:600;padding:10px 18px;border-radius:8px;text-decoration:none;">Download your report (PDF)</a>
             </div>
 
