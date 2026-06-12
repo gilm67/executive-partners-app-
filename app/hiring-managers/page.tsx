@@ -179,10 +179,10 @@ export default function HiringManagersPage() {
                   Confidential · By request
                 </div>
                 <h2 className="text-xl md:text-2xl font-semibold text-white">
-                  A curated bench of senior bankers, ready to move
+                  A curated bench of senior private banking talent, ready to move
                 </h2>
                 <p className="mt-3 text-sm text-white/65 leading-relaxed">
-                  Beyond our live mandates, we maintain a confidential bench of senior Relationship Managers, Investment Advisors and Team Heads across Switzerland, the Middle East, CIS/CEE, LATAM and Southern Europe, each with portability already screened. Profiles are shared on an anonymised basis; full details follow an NDA or an existing mandate relationship.
+                  Beyond our live mandates, we maintain a confidential bench of senior professionals across front, middle and support functions, Relationship Managers, Investment Advisors, Team Heads, EAM and intermediary coverage specialists, and compliance and credit risk leaders, spanning Switzerland, the Middle East, CIS/CEE, LATAM and Southern Europe. Front-office profiles come with portability already screened. All profiles are shared on an anonymised basis; full details follow an NDA or an existing mandate relationship.
                 </p>
               </div>
               <div className="flex flex-col gap-3 md:min-w-[240px]">
