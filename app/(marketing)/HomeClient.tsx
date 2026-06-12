@@ -158,11 +158,12 @@ export default function HomeClient() {
       {/* KPI STRIP */}
       <section className="border-b border-white/8">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="grid grid-cols-3 divide-x divide-white/10 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-white/10 text-center">
             {[
               { value: "200+", label: "Placements", sub: "Senior RMs & Private Bankers" },
               { value: "98%", label: "12-month Retention", sub: "Candidates still in seat" },
               { value: "12+", label: "Global Hubs", sub: "Geneva · Dubai · Singapore" },
+              { value: "Billions", label: "in Client AUM", sub: "Represented across placements" },
             ].map((kpi) => (
               <div key={kpi.label} className="px-4 py-8 sm:px-8 sm:py-10 text-center">
                 <div className="font-[var(--font-playfair)] text-3xl sm:text-5xl font-semibold text-[#D4AF37]">
