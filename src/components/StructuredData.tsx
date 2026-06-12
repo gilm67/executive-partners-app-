@@ -26,7 +26,7 @@ export function OrganizationSchema() {
       "url": "https://www.execpartners.ch/transparent-ep-logo.png"
     },
     "image": "https://www.execpartners.ch/og.webp",
-    "email": "gil.chalem@execpartners.ch",
+    "email": "recruiter@execpartners.ch",
     "foundingDate": "2010",
     "address": {
       "@type": "PostalAddress",
@@ -61,7 +61,7 @@ export function OrganizationSchema() {
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "Business Inquiries",
-      "email": "gil.chalem@execpartners.ch",
+      "email": "recruiter@execpartners.ch",
       "url": "https://www.execpartners.ch/en/contact"
     },
     "sameAs": [

@@ -103,7 +103,7 @@ const jobsJsonLd = {
         applicationContact: {
           "@type": "ContactPoint",
           contactType: "Application",
-          email: "gil.chalem@execpartners.ch",
+          email: "recruiter@execpartners.ch",
           url: `${SITE}/en/apply`,
         },
       },

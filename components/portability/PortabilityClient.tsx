@@ -600,7 +600,7 @@ export default function PortabilityClient() {
         sf(7, 'normal', GOLD);
         pdf.text('Gil M. Chalem, Managing Partner  ·  Executive Partners', ML, H-12);
         sf(7, 'normal', WHITE);
-        pdf.text(`gil.chalem@execpartners.ch  ·  execpartners.ch  ·  p${p}/${total}`, MR-180, H-12);
+        pdf.text(`recruiter@execpartners.ch  ·  execpartners.ch  ·  p${p}/${total}`, MR-180, H-12);
       }
 
       pdf.save('portability-diagnostic-executive-partners.pdf');

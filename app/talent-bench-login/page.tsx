@@ -77,10 +77,10 @@ function LoginForm() {
         <p className="text-xs text-brand-textMuted mt-8 text-center">
           Don't have an access code? Contact{" "}
           <a
-            href="mailto:gil.chalem@execpartners.ch"
+            href="mailto:recruiter@execpartners.ch"
             className="text-brand-gold hover:underline"
           >
-            gil.chalem@execpartners.ch
+            recruiter@execpartners.ch
           </a>
         </p>
       </div>

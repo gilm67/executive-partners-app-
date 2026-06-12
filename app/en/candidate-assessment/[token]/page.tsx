@@ -227,7 +227,7 @@ function initApp(token: string) {
       if (ty) ty.classList.add("visible");
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Unknown error";
-      alert("Submission error: " + msg + "\n\nPlease try again or contact gil.chalem@execpartners.ch");
+      alert("Submission error: " + msg + "\n\nPlease try again or contact recruiter@execpartners.ch");
       if (btn) { btn.disabled = false; btn.textContent = "Submit Assessment →"; }
       (window as any).__epSubmitting = false;
     }
