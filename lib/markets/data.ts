@@ -16,7 +16,7 @@ export type Market = {
   slug: string; // url segment, lowercase, kebab
   city: string; // display
   country: string;
-  currency: "CHF" | "GBP" | "EUR" | "USD" | "AED" | "HKD" | "SGD";
+  currency: "CHF" | "GBP" | "EUR" | "USD" | "AED" | "HKD" | "SGD" | "SAR";
   locale: string; // for number formatting, e.g. "de-CH"
   heroImage: string; // /markets/geneva.jpg (placed in /public)
   summary: string; // short intro under hero
@@ -914,6 +914,88 @@ export const MARKETS: Market[] = [
       regulators: ["CMVM (Comissão do Mercado de Valores Mobiliários)", "Banco de Portugal"],
     },
   },
+  /* =========================
+     Saudi Arabia — Riyadh
+     ========================= */
+  {
+    slug: "riyadh",
+    city: "Riyadh",
+    country: "Saudi Arabia",
+    currency: "SAR",
+    locale: "en-SA",
+    heroImage: "/markets/riyadh.jpg",
+    summary:
+      "Riyadh is the centre of Saudi Arabia's onshore wealth management build-out under Vision 2030, with rapid growth in domestic HNW and UHNW wealth, a fast-expanding base of CMA-licensed capital market institutions, and increasing presence from international private banks and EAMs establishing local or regional coverage. Executive Partners tracks RM, private banker and coverage mandates for the Saudi onshore market, including roles based in Riyadh and Gulf-hub roles (Dubai, Geneva, Zurich) covering Saudi clients.",
+    compensation: [
+      { role: "RM / Senior Advisor", baseMin: 300_000, baseMax: 480_000, bonusPct: "20–60%" },
+      {
+        role: "Senior RM / Director",
+        baseMin: 450_000,
+        baseMax: 700_000,
+        bonusPct: "30–80%",
+        topQuartileNote:
+          "International banks and CMIs building out Saudi coverage may offer relocation, housing and schooling allowances on top of base.",
+      },
+      { role: "Team Lead / Market Head", baseMin: 650_000, baseMax: 1_000_000, bonusPct: "40–100%" },
+    ],
+    licensing: {
+      regulator: "SAMA / CMA (Saudi Arabia)",
+      mustHaveCerts: [
+        "CME or equivalent CMA-recognised qualification for client-facing investment roles",
+        "AML/KYC under SAMA and CMA frameworks",
+        "Arabic strongly preferred for onshore client coverage",
+      ],
+      notes:
+        "Banking is regulated by the Saudi Central Bank (SAMA); asset managers, advisers and brokers fall under the Capital Market Authority (CMA) as Capital Market Institutions (CMIs). Foreign banks typically enter via a SAMA-licensed branch or a CMA-licensed CMI. As of early 2025 there were around 188 CMIs registered with the CMA.",
+    },
+    clientBase: {
+      sourcing: [
+        "Saudi onshore UHNW/HNW families, entrepreneurs and royal-adjacent wealth",
+        "Family offices and holding structures tied to Vision 2030-linked sectors (PIF ecosystem, real estate, industrials)",
+        "Cross-border coverage from Gulf hubs (Dubai, Geneva, Zurich) for Saudi clients booking assets offshore",
+      ],
+    },
+    relocation: {
+      oneParagraph:
+        "Riyadh is at the centre of Saudi Arabia's economic diversification under Vision 2030, with significant investment in financial sector development and a fast-growing pool of licensed capital market institutions. Salary is generally not personally taxed, though social insurance (GOSI) contributions apply to Saudi and resident employees. Housing, schooling and relocation packages are common for international hires, and Arabic fluency is a major advantage for onshore client-facing roles.",
+      officialLinkLabel: "Capital Market Authority (CMA)",
+      officialLinkUrl: "https://cma.org.sa/",
+    },
+    cta: { confidentialCallHref: "/contact", uploadPlanHref: "/bp-simulator" },
+    legalDisclaimer: DEFAULT_DISCLAIMER,
+    hiringPulse: {
+      hotRoles: ["Senior RM Saudi Onshore", "Team Lead GCC/Saudi Coverage", "Private Banker — Family Office Coverage"],
+      hotSkills: ["Arabic-language client coverage", "Onboarding under CMA/SAMA frameworks", "Sharia-compliant product knowledge"],
+      notes:
+        "Hiring activity is being driven by international banks, EAMs and CMA-licensed CMIs building or expanding Saudi coverage, often from Riyadh, Dubai, Geneva or Zurich. Arabic-speaking bankers with genuine Saudi family or institutional relationships are in particularly short supply.",
+    },
+    atAGlance: [
+      { label: "Focus", value: "Saudi Onshore UHNW/HNW" },
+      { label: "Languages", value: "AR/EN", hint: "Arabic strongly preferred onshore" },
+      { label: "Deal Style", value: "Advisory + Sharia-compliant solutions" },
+      { label: "Regulatory Track", value: "Vision 2030 — fast-growing CMI base" },
+    ],
+    ecosystem: {
+      bookingCentres: ["Riyadh", "Dubai (DIFC)", "Geneva", "Zurich", "Luxembourg"],
+      keyBanks: [
+        "Saudi National Bank (SNB) Private Banking",
+        "Riyad Bank",
+        "Union Bancaire Privée (UBP)",
+        "J. Safra Sarasin",
+        "J.P. Morgan",
+        "Deutsche Bank",
+        "Credit Suisse legacy (UBS integration)",
+        "International CMA-licensed CMIs and wealth managers",
+      ],
+      eamsAndFOs: [
+        "CMA-licensed Capital Market Institutions providing wealth advisory and asset management",
+        "Family offices linked to Saudi UHNW families and Vision 2030-related holding groups",
+        "Regional EAMs extending coverage from Dubai and Geneva into the Saudi market",
+      ],
+      regulators: ["Saudi Central Bank (SAMA)", "Capital Market Authority (CMA)"],
+    },
+  },
+
 ];
 
 // ---------- utilities ----------
@@ -934,4 +1016,5 @@ export const CURRENCY_SYMBOL: Record<Market["currency"], string> = {
   AED: "AED",
   HKD: "HK$",
   SGD: "S$",
+  SAR: "SAR",
 };

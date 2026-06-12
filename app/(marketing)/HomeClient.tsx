@@ -297,12 +297,12 @@ export default function HomeClient() {
                 Global Private Banking Hubs
               </h2>
               <p className="mt-2 text-white/50 text-sm sm:text-base">
-                Explore mandates across 12 key booking centres
+                Explore mandates across 13 key booking centres
               </p>
             </div>
             <div className="flex items-center gap-2 text-white/25 text-[11px] tracking-widest uppercase">
               <Globe className="h-3.5 w-3.5" />
-              <span>12 financial centres</span>
+              <span>13 financial centres</span>
             </div>
           </div>
 
@@ -350,6 +350,7 @@ export default function HomeClient() {
               { idx: "10", flag: "🇮🇹", city: "Milan",     region: "Italy",           slug: "milan",     photo: "/markets/milan.jpg",     glow: "rgba(201,161,74,0.06)" },
               { idx: "11", flag: "🇪🇸", city: "Madrid",    region: "Spain",           slug: "madrid",    photo: "/markets/madrid.jpg",    glow: "rgba(255,160,80,0.06)" },
               { idx: "12", flag: "🇵🇹", city: "Lisbon",    region: "Portugal",        slug: "lisbon",    photo: "/markets/lisbon.jpg",    glow: "rgba(255,160,80,0.06)" },
+              { idx: "13", flag: "🇸🇦", city: "Riyadh",    region: "Saudi Arabia",     slug: "riyadh",    photo: "/markets/riyadh.jpg",    glow: "rgba(120,200,140,0.06)" },
             ].map((c) => (
               <Link
                 key={c.city}
