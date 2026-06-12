@@ -146,9 +146,9 @@ export default function Footer() {
               Speak with us <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-4 gap-10">
+          <div className="grid grid-cols-12 gap-10">
             {NAV.map((col) => (
-              <div key={col.label}>
+              <div key={col.label} className="col-span-2">
                 <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-4" style={{color:"#C9A14A"}}>{col.label}</h4>
                 <ul className="space-y-3">
                   {col.links.map((link) => (
@@ -159,11 +159,15 @@ export default function Footer() {
                 </ul>
               </div>
             ))}
-            <div>
+            <div className="col-span-6">
               <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-4" style={{color:"#C9A14A"}}>Our Hubs</h4>
-              <ul className="space-y-3">
+              <ul className="grid grid-cols-3 gap-x-6 gap-y-3">
                 {HUBS.map((h) => (
-                  <li key={h.city} className="text-sm text-white/70 flex items-center gap-2"><Link href={`/en/markets/${h.slug}`} className="hover:text-white transition-colors flex items-center gap-2"><span>{h.flag}</span>{h.city}</Link></li>
+                  <li key={h.city} className="text-sm text-white/70">
+                    <Link href={`/en/markets/${h.slug}`} className="hover:text-white transition-colors flex items-center gap-2">
+                      <span>{h.flag}</span>{h.city}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>
