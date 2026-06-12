@@ -202,9 +202,17 @@ export default function HiringManagersPage() {
               ))}
             </div>
             <p className="mt-4 text-[11px] text-white/35">All profiles anonymised. Full details shared after NDA or existing mandate relationship.</p>
-            <Link href="/en/contact" className="sm:hidden mt-4 inline-flex items-center gap-1.5 text-xs text-[#C9A14A] font-semibold">
-              Request introduction <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
+              <Link href="/en/contact" className="sm:hidden inline-flex items-center gap-1.5 text-xs text-[#C9A14A] font-semibold">
+                Request introduction <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              <Link
+                href="/talent-bench-login"
+                className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#C9A14A]/30 bg-[#C9A14A]/5 px-4 py-2 text-xs font-semibold text-[#C9A14A] hover:bg-[#C9A14A]/10 transition-colors"
+              >
+                Access our confidential Talent Bench <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
           </div>
         </section>
 
