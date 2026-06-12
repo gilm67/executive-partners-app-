@@ -29,10 +29,20 @@ export default function MarketsIndexPage() {
   return (
     <main className="mx-auto max-w-6xl px-6 py-12">
       <header className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-semibold">Markets</h1>
-        <p className="mt-2 text-neutral-300">
-          Explore compensation benchmarks, licensing, client base insights, and relocation guides for each hub.
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-semibold">Markets</h1>
+            <p className="mt-2 text-neutral-300">
+              Explore compensation benchmarks, licensing, client base insights, and relocation guides for each hub.
+            </p>
+          </div>
+          <Link
+            href="/en/markets/compare"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-[#C9A14A]/30 bg-[#C9A14A]/5 px-5 py-2.5 text-sm font-semibold text-[#D4AF37] hover:bg-[#C9A14A]/10 transition-colors whitespace-nowrap"
+          >
+            Compare markets
+          </Link>
+        </div>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import CandidateFAQ from "@/components/CandidateFAQ";
+import MandateRadar from "@/components/MandateRadar";
 import { INSIGHTS } from "@/app/en/insights/articles";
 
 // City data with region, country code and ambient glow color
@@ -180,6 +181,9 @@ export default function HomeClient() {
           </div>
         </div>
       </section>
+
+      {/* MANDATE RADAR */}
+      <MandateRadar />
 
       {/* HIRING MANAGER BANNER */}
       <div className="border-b border-white/8 bg-[#0b0f1a]/80">
