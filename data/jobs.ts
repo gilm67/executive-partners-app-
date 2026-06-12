@@ -772,21 +772,6 @@ export const jobsBySlug: Record<string, Job> = {
     confidential: true, active: true, createdAt: "2026-05-01",
   },
 
-  "arm-russian-geneva": {
-    slug: "arm-russian-geneva",
-    title: "Assistant Relationship Manager — Emerging Markets",
-    market: "CIS · CEE · Russian-speaking",
-    location: "Geneva, Switzerland",
-    seniority: "Associate / Senior Associate",
-    summary: "Assistant RM supporting an Emerging Markets desk in Geneva. Russian-speaking. No portable book required. Swiss residency mandatory.",
-    overview: ["Support senior relationship managers across client meetings, documentation and trade execution.", "Handle KYC updates, account openings and AML clarifications.", "Interact directly with clients by phone, email and in meetings."],
-    responsibilities: ["Prepare documentation for client meetings and business trips.", "Execute stock exchange orders, FX transactions, loan and payment applications.", "Assist with compliance projects and client lifecycle documentation."],
-    qualifications: ["5+ years in a similar role within a private bank.", "Banking apprenticeship, CYP or equivalent education.", "Fluent French and English required. Russian a strong differentiator.", "Swiss residency — hard requirement, no exceptions."],
-    offer: ["Geneva-based private banking environment.", "Structured career progression.", "Private banking bonus structure."],
-    compliance: ["FINMA-grade KYC/AML.", "Swiss residency mandatory."],
-    confidential: true, active: true, createdAt: "2026-05-01",
-  },
-
   "rm-italy-ch": {
     slug: "rm-italy-ch",
     title: "Senior Relationship Manager — Italian Market (Switzerland)",
