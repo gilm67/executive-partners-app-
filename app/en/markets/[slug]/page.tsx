@@ -831,6 +831,11 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </ul>
           </div>
           <p className="mt-5 max-w-3xl text-sm text-neutral-300 md:text-base">
+            We are currently running a confidential mandate for a{" "}
+            <Link href="/en/jobs/rm-mea-dubai" className="text-[#F4D270] underline underline-offset-2">Senior Relationship Manager covering GCC, Levant, Africa and India clients</Link>
+            {" "}from Dubai DIFC, minimum USD 150M portable book over a 3-year average. Arabic and English required, French, Hindi or Urdu a strong differentiator.
+          </p>
+          <p className="mt-5 max-w-3xl text-sm text-neutral-300 md:text-base">
             You can review{" "}
             <Link href="/en/private-banker-jobs-dubai" className="text-[#F4D270] underline underline-offset-2">current Dubai private banker roles</Link>
             {" "}or{" "}

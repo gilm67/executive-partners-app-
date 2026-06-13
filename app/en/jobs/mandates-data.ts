@@ -201,6 +201,18 @@ The ideal profile has spent a meaningful part of their private banking career ma
       { q: "Do you currently have a non-compete or non-solicit agreement?", options: [{ label: "No NCA / NDA", pass: true }, { label: "Yes — under 6 months", pass: true }, { label: "Yes — 6 to 12 months", pass: "warn" }, { label: "Yes — over 12 months", pass: false }] },
     ],
   },
+  { id: "rm-mea-dubai", listedDate: "2026-06-13", tag: "MEA · Dubai (DIFC)", title: "Senior Relationship Manager", subtitle: "GCC, Levant, Africa & India Coverage", location: "Dubai (DIFC)", flag: "🇦🇪", aum: "USD 150M+", aum_note: "3-year average portable book, GCC/Levant/Africa/India clients", comp_base: "USD 200K – 400K", comp_note: "base · bonus · tax-free", urgent: false,
+    profile_lines: ["Personal ownership of UHNW/HNW relationships across GCC, Levant, Africa or India — not team or institutionally supported", "Minimum USD 150M portable book measured over 3-year average", "5+ years private banking experience based in Dubai DIFC or a comparable Gulf booking centre", "Arabic and English required; French, Hindi or Urdu a strong differentiator depending on desk"],
+    brief: `An established international private banking platform in the DIFC is expanding its regional coverage team and is looking to add a senior relationship manager with a personally owned book spanning GCC, Levant, African or Indian UHNW and HNW clients.\n\nThis is a confidential mandate for a platform with existing DFSA licensing, booking capability and a genuinely multilingual coverage team — not a greenfield build. The successful candidate will bring a portable book with proven revenue and a strong compliance culture, and will be supported by an established product shelf spanning advisory, Lombard lending, private markets and real estate financing.\n\nThe platform is calibrating carefully on booking options, credit appetite and product fit, so business plans built on realistic wallet share rather than optimistic projections are essential. Candidates who combine Arabic and English with French, Hindi or Urdu are particularly well positioned for the broader GCC, Levant, Africa and India corridor this desk covers.`,
+    process: "Confidential call with Executive Partners · Single senior introduction · No panels",
+    screening: [
+      { q: "How many years have you personally managed GCC, Levant, African or Indian HNW/UHNW clients?", options: [{ label: "Under 2 years", pass: false }, { label: "2 – 4 years", pass: "warn" }, { label: "5 – 9 years", pass: true }, { label: "10 years or more", pass: true }] },
+      { q: "What is your 3-year average portable book for these client segments?", options: [{ label: "Under USD 75M", pass: false }, { label: "USD 75M – 150M", pass: "warn" }, { label: "USD 150M – 300M", pass: true }, { label: "Over USD 300M", pass: true }] },
+      { q: "Which languages do you speak fluently, in addition to English?", options: [{ label: "Arabic only", pass: true }, { label: "Arabic plus French, Hindi or Urdu", pass: true }, { label: "French, Hindi or Urdu without Arabic", pass: "warn" }, { label: "None of the above", pass: "warn" }] },
+      { q: "Are you currently based in Dubai DIFC or open to relocating there?", options: [{ label: "Yes, already based there", pass: true }, { label: "Open to relocating", pass: true }, { label: "Not open to relocation", pass: false }] },
+      { q: "Do you currently have a non-compete or non-solicit agreement?", options: [{ label: "No NCA / NDA", pass: true }, { label: "Yes — under 6 months", pass: true }, { label: "Yes — 6 to 12 months", pass: "warn" }, { label: "Yes — over 12 months", pass: false }] },
+    ],
+  },
 ];
 
 export type MandateOption = { label: string; pass: boolean | "warn" };
