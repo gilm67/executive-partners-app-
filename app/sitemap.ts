@@ -95,6 +95,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/en/private-banking-recruiter-zurich",
     "/en/private-banking-recruiter-london",
     "/en/private-banking-recruiter-dubai",
+    "/en/private-banking-recruiter-riyadh",
     "/en/private-banking-recruiter-singapore",
     "/en/private-banking-recruiter-hong-kong",
     "/en/private-banking-recruiter-new-york",

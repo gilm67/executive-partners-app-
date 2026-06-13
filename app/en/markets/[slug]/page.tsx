@@ -607,6 +607,7 @@ export default async function MarketPage({ params }: Props) {
           "zurich": "/en/private-banking-recruiter-zurich",
           "london": "/en/private-banking-recruiter-london",
           "dubai": "/en/private-banking-recruiter-dubai",
+          "riyadh": "/en/private-banking-recruiter-riyadh",
           "singapore": "/en/private-banking-recruiter-singapore",
           "hong-kong": "/en/private-banking-recruiter-hong-kong",
           "new-york": "/en/private-banking-recruiter-new-york",
@@ -886,7 +887,7 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             We are currently running a confidential mandate for a{" "}
             <Link href="/en/jobs/rm-saudi-riyadh-geneva" className="text-[#F4D270] underline underline-offset-2">Senior Relationship Manager covering Saudi/GCC clients</Link>
             {" "}based in Riyadh or Geneva. You can also review{" "}
-            <Link href="/en/private-banker-jobs-dubai" className="text-[#F4D270] underline underline-offset-2">current Gulf private banker roles</Link>
+            <Link href="/en/private-banker-jobs-riyadh" className="text-[#F4D270] underline underline-offset-2">private banker roles in Riyadh and Saudi Arabia</Link>
             {" "}or{" "}
             <Link href="/en/candidates" className="text-[#F4D270] underline underline-offset-2">share your profile confidentially</Link>
             {" "}for upcoming Saudi-linked mandates. For a deeper discussion,{" "}
