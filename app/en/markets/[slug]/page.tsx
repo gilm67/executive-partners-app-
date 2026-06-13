@@ -743,6 +743,11 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </li>
           </ul>
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            We are currently running a confidential mandate for an{" "}
+            <Link href="/en/jobs/ia-cis-cee-zurich" className="text-[#F4D270] underline underline-offset-2">Investment Advisor covering CIS &amp; CEE clients</Link>
+            {" "}based in Zurich, fluent Russian speakers with no existing book required.
+          </p>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             To explore{" "}
             <Link
               href="/en/private-banker-jobs-zurich"
@@ -944,6 +949,11 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </li>
           </ul>
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            We are currently running a confidential mandate for a{" "}
+            <Link href="/en/jobs/rm-singapore" className="text-[#F4D270] underline underline-offset-2">Senior Relationship Manager based in Singapore</Link>
+            , with a minimum CHF 250M portable book over a 3-year average, family office and succession experience valued.
+          </p>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             You can explore{" "}
             <Link
               href="/en/private-banker-jobs-singapore"
@@ -1019,6 +1029,11 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </li>
           </ul>
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            We are currently running a confidential mandate for a{" "}
+            <Link href="/en/jobs/rm-south-africa-london" className="text-[#F4D270] underline underline-offset-2">Senior Relationship Manager covering South African clients</Link>
+            {" "}from London, with a minimum portable book of CHF 200M and an understanding of South African offshore wealth and exchange control.
+          </p>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             To review{" "}
             <Link
               href="/en/private-banker-jobs-london"
@@ -1093,6 +1108,11 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
             </li>
           </ul>
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            We are currently running a confidential mandate for a{" "}
+            <Link href="/en/jobs/rm-hong-kong" className="text-[#F4D270] underline underline-offset-2">Senior Relationship Manager based in Hong Kong</Link>
+            , with a minimum USD/CHF 250M portable book over a 3-year average covering Greater China, Southeast Asia or international clients. Mandarin or Cantonese an advantage, relocation package available.
+          </p>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             You can explore{" "}
             <Link
               href="/en/private-banker-jobs-hong-kong"
@@ -1165,6 +1185,11 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
               connect US clients with international family members and assets.
             </li>
           </ul>
+          <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
+            We are currently running a confidential mandate for a{" "}
+            <Link href="/en/jobs/rm-latam-new-york" className="text-[#F4D270] underline underline-offset-2">Senior Relationship Manager covering LATAM clients</Link>
+            {" "}(Argentine, Brazilian or Mexican) from New York at Director/Executive Director level, minimum USD 300M portable book over a 3-year average. Spanish and/or Portuguese fluency mandatory, US work authorisation required.
+          </p>
           <p className="mt-4 max-w-3xl text-sm text-neutral-300 md:text-base">
             You can review{" "}
             <Link
