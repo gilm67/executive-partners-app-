@@ -10,7 +10,8 @@ export type MarketCode =
   | "MEA"
   | "LATAM"
   | "CIS"
-  | "CEE";
+  | "CEE"
+  | "SA";
 
 /**
  * Content strategy taxonomy
@@ -83,7 +84,7 @@ export const INSIGHTS: readonly InsightArticle[] = [
     linkedinUrl: "",
     pillar: "P1",
     subTheme: "Positioning",
-    markets: ["UAE", "MEA", "CH"],
+    markets: ["UAE", "MEA", "SA", "CH"],
     keywords: ["private banking Saudi Arabia", "private banking Dubai 2026", "Saudization private banking", "UBP Dubai", "Gulf wealth management hiring", "DIFC private banking"],
     body: `Everyone in private banking is asking the same question right now: is the money leaving the Gulf? Wrong question. The right one is: which bankers are actually positioned to keep it, win it, or lose it, depending on which side of this conversation they sit on.
 
