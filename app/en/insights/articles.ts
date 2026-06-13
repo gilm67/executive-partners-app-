@@ -10,7 +10,8 @@ export type MarketCode =
   | "MEA"
   | "LATAM"
   | "CIS"
-  | "CEE";
+  | "CEE"
+  | "SA";
 
 /**
  * Content strategy taxonomy
@@ -83,7 +84,7 @@ export const INSIGHTS: readonly InsightArticle[] = [
     linkedinUrl: "",
     pillar: "P1",
     subTheme: "Positioning",
-    markets: ["UAE", "MEA", "CH"],
+    markets: ["UAE", "MEA", "SA", "CH"],
     keywords: ["private banking Saudi Arabia", "private banking Dubai 2026", "Saudization private banking", "UBP Dubai", "Gulf wealth management hiring", "DIFC private banking"],
     body: `Everyone in private banking is asking the same question right now: is the money leaving the Gulf? Wrong question. The right one is: which bankers are actually positioned to keep it, win it, or lose it, depending on which side of this conversation they sit on.
 
@@ -105,9 +106,9 @@ The banker who struggles here is the one who treats Saudi the way they'd treat G
 
 Dubai: still the open door, and still the booking center that matters
 
-Dubai remains a different animal entirely, and this is precisely why it continues to anchor UHNW and HNW coverage across the GCC, Levant, Africa, and India. It is the booking and advisory hub for MEA, full stop, and nothing about the current conflict has changed that geography.
+[Dubai](/en/markets/dubai) remains a different animal entirely, and this is precisely why it continues to anchor UHNW and HNW coverage across the GCC, Levant, Africa, and India. It is the booking and advisory hub for MEA, full stop, and nothing about the current conflict has changed that geography.
 
-Swiss banks aren't pulling out, and that itself is a signal worth reading. Even as Iran's rhetoric escalated in March, UBS, Pictet, EFG, Lombard Odier, Julius Baer, and UBP all kept their regional operations running, the response was remote work precautions, not evacuations. UBP is a useful case study in how the two markets actually relate to each other. Its Dubai office has been the bank's MEA platform for over two decades, but the current growth push is freshly led, Arfat Qayyum, a former Credit Suisse Qatar CEO, took over as Senior Executive Officer in August 2025 and has since built out the team running more than 40 professionals managing over CHF15 billion in regional assets, including a February 2026 hire of Fahd Iqbal, UBS's former CIO Middle East, as head of investment services. In late 2025, UBP also opened a separate Riyadh office, and tellingly, put a Saudi national, Mishal Alhawas, in as CEO and Head of Advising, explicitly framed around Vision 2030 alignment. Same bank, same MEA leadership, two different staffing logics. Dubai is where you build an international, multilingual team. Riyadh is where the person running the show needs to be Saudi. Lombard Odier has made a comparable bet from the Dubai side, securing a DIFC license and committing to double its UAE headcount within three years. For RMs reading the market, the message is consistent: Swiss private banks are not retreating mid-crisis, they're expanding, and they're doing so with very different hiring rules depending on which side of the Saudi-UAE border the office sits.
+Swiss banks aren't pulling out, and that itself is a signal worth reading. Even as Iran's rhetoric escalated in March, UBS, Pictet, EFG, Lombard Odier, Julius Baer, and UBP all kept their regional operations running, the response was remote work precautions, not evacuations. UBP is a useful case study in how the two markets actually relate to each other. Its Dubai office has been the bank's MEA platform for over two decades, but the current growth push is freshly led, Arfat Qayyum, a former Credit Suisse Qatar CEO, took over as Senior Executive Officer in August 2025 and has since built out the team running more than 40 professionals managing over CHF15 billion in regional assets, including a February 2026 hire of Fahd Iqbal, UBS's former CIO Middle East, as head of investment services. In late 2025, UBP also opened a separate [Riyadh](/en/markets/riyadh) office, and tellingly, put a Saudi national, Mishal Alhawas, in as CEO and Head of Advising, explicitly framed around Vision 2030 alignment. Same bank, same MEA leadership, two different staffing logics. Dubai is where you build an international, multilingual team. Riyadh is where the person running the show needs to be Saudi. Lombard Odier has made a comparable bet from the Dubai side, securing a DIFC license and committing to double its UAE headcount within three years. For RMs reading the market, the message is consistent: Swiss private banks are not retreating mid-crisis, they're expanding, and they're doing so with very different hiring rules depending on which side of the Saudi-UAE border the office sits.
 
 What has changed is the bar. Mandates we're seeing prioritize relationship managers and team heads who bring portable books with proven revenue and a genuinely strong compliance culture, not just a Rolodex. Banks and EAMs are calibrating hard on booking options, credit appetite, and product shelf, particularly Lombard lending, private markets, and real estate financing, because business plans built on optimism rather than realistic wallet share don't survive a market where deposit stability is suddenly a board-level topic.
 
@@ -123,7 +124,7 @@ The longer game
 
 Here's the uncomfortable truth for anyone hiring or being hired into the region right now. This conflict will pass, conflicts in this region always do, but the banks, the regulators, and the clients who lived through it will remember who showed up with answers and who showed up with a pitch deck from 2023. Saudi Arabia is going to keep localizing senior roles. Dubai is going to keep rewarding portability and language depth. Both trends were true before the war, and both are now accelerating because of it.
 
-If you're a senior RM sitting on a portable book with the right language mix, the right compliance instincts, and the patience to navigate a market that is more selective than it was eighteen months ago, this is, counterintuitively, one of the better moments to be having that conversation. The gate is narrower. The people who get through it matter more.`,
+If you're a senior RM sitting on a portable book with the right language mix, the right compliance instincts, and the patience to navigate a market that is more selective than it was eighteen months ago, this is, counterintuitively, one of the better moments to be having that conversation. The gate is narrower. The people who get through it matter more. We are currently running a confidential mandate for a [Senior Relationship Manager covering Saudi/GCC clients](/en/jobs/rm-saudi-riyadh-geneva), based in Riyadh or Geneva. If that describes your situation, you can [share your profile confidentially](/en/candidates) for this or other upcoming Gulf-linked mandates.`,
   },
 
   {

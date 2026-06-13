@@ -209,6 +209,13 @@ const HUBS = [
     signal: "Dubai is the fastest-moving hiring market in EP's network in 2026. DIFC and ADGM platforms are expanding simultaneously. The talent gap for senior bankers with GCC and NRI coverage is acute — banks are moving faster on offers and paying above-cycle to close. Tax-free structures make total compensation significantly above Geneva equivalent at comparable seniority.",
   },
   {
+    city: "Riyadh", flag: "🇸🇦", slug: "riyadh",
+    demand: "Extremely High", demandColor: "text-[#C9A14A]",
+    comp: "SAR 450K–1M+ base + 30–100% bonus (Senior RM to Market Head)",
+    segments: "Saudi Onshore UHNW, Family Offices, Vision 2030-linked Holdings",
+    signal: "Riyadh is the centre of Saudi Arabia's onshore wealth build-out under Vision 2030. International private banks and CMA-licensed CMIs are establishing or expanding local coverage — UBP opened a dedicated Riyadh office in late 2025 with a Saudi national as CEO. Saudization is the defining factor for senior hiring: Director-level roles and above are increasingly reserved for Saudi nationals, so international candidates are more often placed in Gulf-hub coverage roles (Dubai, Geneva, Zurich) for the Saudi market. Arabic fluency and Sharia-compliant product knowledge are major differentiators for onshore roles.",
+  },
+  {
     city: "Singapore", flag: "🇸🇬", slug: "singapore",
     demand: "High", demandColor: "text-emerald-400",
     comp: "SGD 220–420K base + 60–150% bonus (Senior RM)",
@@ -319,7 +326,7 @@ export default function CareerIntelligencePage() {
                 Third, <strong className="text-white">the definition of a portable book has narrowed</strong>. Banks are approving offers faster when portability logic is pre-documented — AUM composition, wallet share, compliance status, and a written three-year revenue case. Bankers who walk in with that documentation are closing in weeks. Bankers who arrive with a verbal AUM figure are waiting months.
               </p>
               <p>
-                Dubai and Milan are the two highest-velocity hiring markets in EP's network right now. Geneva remains the deepest market by volume. Singapore is accelerating on the back of China family wealth flows. London, Hong Kong, and New York are selective but consistent.
+                Dubai and Riyadh are the two highest-velocity hiring markets in EP's network right now, with Milan close behind. Geneva remains the deepest market by volume. Singapore is accelerating on the back of China family wealth flows. London, Hong Kong, and New York are selective but consistent.
               </p>
             </div>
           </section>
@@ -332,6 +339,7 @@ export default function CareerIntelligencePage() {
               {[
                 { hub: "🇨🇭 Geneva / Zurich", rows: [["Senior RM · CHF 100–300M AUM","CHF 180–350K base + 50–150% bonus"],["Team Head · CHF 500M+ AUM","CHF 280–450K base + 80–200% bonus"],["Market Head","CHF 350–600K+ base + carry / equity"]] },
                 { hub: "🇦🇪 Dubai (DIFC · ADGM)", rows: [["Senior RM · USD 150–400M AUM","USD 200–400K base + 60–180% bonus · Tax-free"],["Team Head · USD 800M+ AUM","USD 350–550K base + 100–250% bonus"],["Premium vs Geneva","Total comp 20–40% above Swiss equivalent"]] },
+                { hub: "🇸🇦 Riyadh", rows: [["Senior RM · SAR 450–700K base","20–60% bonus · housing/relocation common"],["Team Head / Market Head","SAR 650K–1M+ base + 40–100% bonus"],["Hiring rule","Director-level and above increasingly Saudization-driven"]] },
                 { hub: "🇸🇬 Singapore", rows: [["Senior RM · SGD 200–500M AUM","SGD 220–420K base + 60–150% bonus"],["Team Head · SGD 1B+ AUM","SGD 400–650K base + 100–200% bonus"],["China / SEA connectivity","Commands material premium in 2026"]] },
                 { hub: "🇬🇧 London", rows: [["Senior RM · GBP 100–250M AUM","GBP 150–300K base + 40–120% bonus"],["Team Head · GBP 500M+ AUM","GBP 250–450K base + 80–180% bonus"],["Dual-licensed bankers","Premium for FCA + UAE or Swiss equivalents"]] },
                 { hub: "🇭🇰 Hong Kong", rows: [["Senior RM · HKD equivalent","HKD 1.8–3.5M base + variable"],["North Asia / Mainland China","Books above SGD 300M commanding top offers"],["SFC licensing","Required — factor into timeline"]] },

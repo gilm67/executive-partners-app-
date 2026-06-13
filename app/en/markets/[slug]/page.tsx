@@ -46,6 +46,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  if (slug === "riyadh") {
+    return {
+      title: "Private Banking Recruiter Riyadh | Saudi Arabia Wealth Management Search ",
+      description: "Saudi Arabia's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and Saudi onshore coverage bankers under Vision 2030. Saudization rules, compensation benchmarks and live mandates.",
+      alternates: { canonical: "https://www.execpartners.ch/en/markets/riyadh" },
+      openGraph: { type: "website", url: "/en/markets/riyadh", title: "Private Banking Recruiter Riyadh | Saudi Arabia Senior RM Jobs", description: "Saudi Arabia private banking recruitment: onshore UHNW/HNW, family offices and Vision 2030-linked wealth. Senior RM and Team Head mandates, Saudization guidance and Sharia-compliant coverage.", siteName: "Executive Partners" },
+      robots: { index: true, follow: true },
+    };
+  }
+
   if (slug === "zurich") {
     return {
       title: "Private Banking Recruiter Zurich | Senior RM & DACH Wealth Management Search ",
@@ -822,6 +832,72 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
           </p>
         </article>
       );
+
+    case "riyadh":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
+          <header className="mb-4">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
+              Saudi Arabia Private Banking - Market Intelligence 2026
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            Riyadh is at the centre of Saudi Arabia's onshore wealth management build-out under Vision 2030. International private banks and CMA-licensed Capital Market Institutions are establishing or expanding local coverage, and Union Bancaire Privee opened a dedicated Riyadh office in late 2025, led by a Saudi national as CEO and Head of Advising, a pattern that is becoming the norm for international entrants.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            Saudization is the defining factor for senior hiring in the Kingdom. Director-level and above private banking roles are increasingly reserved for Saudi nationals, so international candidates are no longer competing on merit alone, they are competing against a quota. Bankers without a Saudi passport are more likely to find roles covering the Saudi market from Gulf hubs such as Dubai, or from Geneva and Zurich.
+          </p>
+          <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 max-w-3xl">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-amber-400 mb-2">Current Market Assessment - 2026</div>
+            <p className="text-sm text-neutral-300">Saudi Awwal Bank's private banking division grew deposits 14 percent in the first nine months of last year, with almost 80 percent of clients investing through its in-house platform, a sign that local infrastructure and Saudi relationship managers are now driving growth. Shariah-compliant structures, succession and family business continuity, and explicit Vision 2030 alignment are the three things onshore clients consistently expect from their banker.</p>
+          </div>
+          <div className="mt-5 grid grid-cols-2 gap-4 max-w-3xl">
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">Hiring Rule</div>
+              <div className="text-lg font-bold text-white">Saudization</div>
+              <div className="text-xs text-neutral-400 mt-1">Director-level and above roles increasingly require Saudi nationality. International hires are typically based in Gulf hubs covering the Saudi market.</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">Compensation Range</div>
+              <div className="text-lg font-bold text-white">SAR 450K - 1M+</div>
+              <div className="text-xs text-neutral-400 mt-1">Base for Senior RM to Market Head roles, plus bonus. Relocation, housing and schooling allowances common for international hires.</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">Regulatory Frame</div>
+              <div className="text-lg font-bold text-white">SAMA - CMA</div>
+              <div className="text-xs text-neutral-400 mt-1">Banking under the Saudi Central Bank (SAMA). Asset managers and advisers under the Capital Market Authority (CMA) as licensed CMIs.</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">Key Client Segments</div>
+              <div className="text-lg font-bold text-white">Onshore UHNW - Family Offices</div>
+              <div className="text-xs text-neutral-400 mt-1">Saudi entrepreneur and royal-adjacent wealth, family businesses with succession needs, and Vision 2030-linked holding structures.</div>
+            </div>
+          </div>
+          <div className="mt-5 max-w-3xl">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-3">What We Are Advising Bankers Targeting Saudi Arabia 2026</div>
+            <ul className="space-y-2 text-sm text-neutral-100">
+              <li><strong>Check your nationality fit first.</strong> Senior onshore roles in Riyadh are increasingly Saudization-driven. If you do not hold a Saudi passport, a Dubai, Geneva or Zurich-based coverage role for the Saudi market is often the more realistic path.</li>
+              <li><strong>Build fluency in Shariah-compliant structures.</strong> These are now a baseline expectation for a large share of onshore clients, not a niche request.</li>
+              <li><strong>Lead with succession and governance, not product.</strong> A large share of Saudi HNW wealth sits inside operating family businesses. Bankers who can speak credibly about generational transfer earn trust faster than those pitching structured notes.</li>
+              <li><strong>Know your Vision 2030 narrative.</strong> Onshore clients want to know their banker understands where the Kingdom is going, not just where the oil price is today.</li>
+            </ul>
+          </div>
+          <p className="mt-5 max-w-3xl text-sm text-neutral-300 md:text-base">
+            We are currently running a confidential mandate for a{" "}
+            <Link href="/en/jobs/rm-saudi-riyadh-geneva" className="text-[#F4D270] underline underline-offset-2">Senior Relationship Manager covering Saudi/GCC clients</Link>
+            {" "}based in Riyadh or Geneva. You can also review{" "}
+            <Link href="/en/private-banker-jobs-dubai" className="text-[#F4D270] underline underline-offset-2">current Gulf private banker roles</Link>
+            {" "}or{" "}
+            <Link href="/en/candidates" className="text-[#F4D270] underline underline-offset-2">share your profile confidentially</Link>
+            {" "}for upcoming Saudi-linked mandates. For a deeper discussion,{" "}
+            <Link href="/en/contact" className="text-[#F4D270] underline underline-offset-2">contact Executive Partners</Link>
+            {" "}and use the{" "}
+            <Link href="/en/bp-simulator?src=riyadh_market" className="text-[#F4D270] underline underline-offset-2">Business Plan Simulator</Link>
+            {" "}to stress-test portability and revenue scenarios.
+          </p>
+        </article>
+      );
+
     case "singapore":
       return (
         <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
