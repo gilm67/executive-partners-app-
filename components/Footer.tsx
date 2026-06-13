@@ -37,6 +37,7 @@ const HUBS = [
   { city: "Zurich", flag: "🇨🇭", slug: "zurich" },
   { city: "London", flag: "🇬🇧", slug: "london" },
   { city: "Dubai", flag: "🇦🇪", slug: "dubai" },
+  { city: "Riyadh", flag: "🇸🇦", slug: "riyadh" },
   { city: "Singapore", flag: "🇸🇬", slug: "singapore" },
   { city: "Hong Kong", flag: "🇭🇰", slug: "hong-kong" },
   { city: "New York", flag: "🇺🇸", slug: "new-york" },
@@ -45,7 +46,6 @@ const HUBS = [
   { city: "Milan", flag: "🇮🇹", slug: "milan" },
   { city: "Madrid", flag: "🇪🇸", slug: "madrid" },
   { city: "Lisbon", flag: "🇵🇹", slug: "lisbon" },
-  { city: "Riyadh", flag: "🇸🇦", slug: "riyadh" },
 ];
 
 export default function Footer() {

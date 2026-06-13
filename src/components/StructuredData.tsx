@@ -44,10 +44,10 @@ export function OrganizationSchema() {
       { "@type": "City", "name": "Zurich" },
       { "@type": "City", "name": "London" },
       { "@type": "City", "name": "Dubai" },
+      { "@type": "City", "name": "Riyadh" },
       { "@type": "City", "name": "Singapore" },
       { "@type": "City", "name": "Hong Kong" },
-      { "@type": "City", "name": "Milan" },
-      { "@type": "City", "name": "Riyadh" }
+      { "@type": "City", "name": "Milan" }
     ],
     "knowsAbout": [
       "Private Banking Recruitment",

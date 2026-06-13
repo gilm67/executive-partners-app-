@@ -342,15 +342,15 @@ export default function HomeClient() {
           {/* Secondary hubs — 4-column compact cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {[
-              { idx: "05", flag: "🇸🇬", city: "Singapore", region: "Southeast Asia",  slug: "singapore", photo: "/markets/singapore.jpg", glow: "rgba(100,220,180,0.07)" },
-              { idx: "06", flag: "🇭🇰", city: "Hong Kong", region: "Asia Pacific",    slug: "hong-kong", photo: "/markets/hong-kong.jpg", glow: "rgba(255,140,100,0.07)" },
-              { idx: "07", flag: "🇺🇸", city: "New York",  region: "United States",   slug: "new-york",  photo: "/markets/new-york.jpg",  glow: "rgba(158,203,255,0.07)" },
-              { idx: "08", flag: "🇺🇸", city: "Miami",     region: "United States",   slug: "miami",     photo: "/markets/miami.jpg",     glow: "rgba(158,203,255,0.06)" },
-              { idx: "09", flag: "🇫🇷", city: "Paris",     region: "France",          slug: "paris",     photo: "/markets/paris.jpg",     glow: "rgba(201,161,74,0.06)" },
-              { idx: "10", flag: "🇮🇹", city: "Milan",     region: "Italy",           slug: "milan",     photo: "/markets/milan.jpg",     glow: "rgba(201,161,74,0.06)" },
-              { idx: "11", flag: "🇪🇸", city: "Madrid",    region: "Spain",           slug: "madrid",    photo: "/markets/madrid.jpg",    glow: "rgba(255,160,80,0.06)" },
-              { idx: "12", flag: "🇵🇹", city: "Lisbon",    region: "Portugal",        slug: "lisbon",    photo: "/markets/lisbon.jpg",    glow: "rgba(255,160,80,0.06)" },
-              { idx: "13", flag: "🇸🇦", city: "Riyadh",    region: "Saudi Arabia",     slug: "riyadh",    photo: "/markets/riyadh.jpg",    glow: "rgba(120,200,140,0.06)" },
+              { idx: "05", flag: "🇸🇦", city: "Riyadh",    region: "Saudi Arabia",     slug: "riyadh",    photo: "/markets/riyadh.jpg",    glow: "rgba(120,200,140,0.06)" },
+              { idx: "06", flag: "🇸🇬", city: "Singapore", region: "Southeast Asia",  slug: "singapore", photo: "/markets/singapore.jpg", glow: "rgba(100,220,180,0.07)" },
+              { idx: "07", flag: "🇭🇰", city: "Hong Kong", region: "Asia Pacific",    slug: "hong-kong", photo: "/markets/hong-kong.jpg", glow: "rgba(255,140,100,0.07)" },
+              { idx: "08", flag: "🇺🇸", city: "New York",  region: "United States",   slug: "new-york",  photo: "/markets/new-york.jpg",  glow: "rgba(158,203,255,0.07)" },
+              { idx: "09", flag: "🇺🇸", city: "Miami",     region: "United States",   slug: "miami",     photo: "/markets/miami.jpg",     glow: "rgba(158,203,255,0.06)" },
+              { idx: "10", flag: "🇫🇷", city: "Paris",     region: "France",          slug: "paris",     photo: "/markets/paris.jpg",     glow: "rgba(201,161,74,0.06)" },
+              { idx: "11", flag: "🇮🇹", city: "Milan",     region: "Italy",           slug: "milan",     photo: "/markets/milan.jpg",     glow: "rgba(201,161,74,0.06)" },
+              { idx: "12", flag: "🇪🇸", city: "Madrid",    region: "Spain",           slug: "madrid",    photo: "/markets/madrid.jpg",    glow: "rgba(255,160,80,0.06)" },
+              { idx: "13", flag: "🇵🇹", city: "Lisbon",    region: "Portugal",        slug: "lisbon",    photo: "/markets/lisbon.jpg",    glow: "rgba(255,160,80,0.06)" },
             ].map((c) => (
               <Link
                 key={c.city}
