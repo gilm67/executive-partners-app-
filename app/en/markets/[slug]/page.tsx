@@ -611,6 +611,11 @@ export default async function MarketPage({ params }: Props) {
           "singapore": "/en/private-banking-recruiter-singapore",
           "hong-kong": "/en/private-banking-recruiter-hong-kong",
           "new-york": "/en/private-banking-recruiter-new-york",
+          "miami": "/en/private-banking-recruiter-miami",
+          "paris": "/en/private-banking-recruiter-paris",
+          "madrid": "/en/private-banking-recruiter-madrid",
+          "milan": "/en/private-banking-recruiter-milan",
+          "lisbon": "/en/private-banking-recruiter-lisbon",
         };
         const recruiterHref = recruiterPages[slug];
         if (!recruiterHref) return null;
@@ -1338,6 +1343,62 @@ function WhyMoveBlock({ slug, city }: { slug: string; city: string }) {
               Business Plan Simulator
             </Link>
             .
+          </p>
+        </article>
+      );
+
+    case "milan":
+      return (
+        <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
+          <header className="mb-4">
+            <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
+              Milan Private Banking - Market Intelligence 2026
+            </h2>
+          </header>
+          <p className="max-w-3xl text-sm text-neutral-300 md:text-base">
+            Milan is the centre of gravity for Italian entrepreneur and family-business wealth, and remains tightly linked to Swiss booking centres. Intesa Sanpaolo Private Banking, UniCredit Private Banking and Banca Generali compete locally alongside UBS, UBP and the legacy Credit Suisse book now inside UBS. Italy's flat-tax relocation regime continues to draw UHNW individuals onshore, deepening the connection between Milan and Luxembourg or Swiss structures.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm text-neutral-300 md:text-base">
+            Demand is concentrated on bankers with personally owned Italian HNW and UHNW relationships, particularly entrepreneurs and industrial families navigating succession, real estate structuring and multi-generational wealth conversations. Cross-border regulatory knowledge between Italy and Switzerland is a genuine differentiator, and Italian language is mandatory for onshore-facing roles.
+          </p>
+          <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 max-w-3xl">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-amber-400 mb-2">Current Market Assessment - 2026</div>
+            <p className="text-sm text-neutral-300">Insurance wrappers and alternatives are gaining share in onshore Italian allocations. Senior RMs who can combine local entrepreneur relationships with access to Swiss or Luxembourg booking centres are commanding the strongest packages. Compensation remains below CH/UK equivalents, but the gap narrows materially for bankers with documented cross-border portability.</p>
+          </div>
+          <div className="mt-5 grid grid-cols-2 gap-4 max-w-3xl">
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">AUM Threshold</div>
+              <div className="text-lg font-bold text-white">EUR 180M+</div>
+              <div className="text-xs text-neutral-400 mt-1">Minimum portable book for senior RM mandates, 3-year average, Italian clients.</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">Compensation Range</div>
+              <div className="text-lg font-bold text-white">EUR 100K - 160K</div>
+              <div className="text-xs text-neutral-400 mt-1">Base for Senior RM to Team Lead, plus 30-80% bonus. Below CH/UK but improving for UHNW-focused roles.</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">Regulatory Frame</div>
+              <div className="text-lg font-bold text-white">Banca d'Italia - CONSOB</div>
+              <div className="text-xs text-neutral-400 mt-1">MiFID II and local suitability rules apply. Cross-border Italy/Switzerland frameworks are increasingly scrutinised.</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-brandGoldSoft mb-2">Key Client Segments</div>
+              <div className="text-lg font-bold text-white">Entrepreneurs - Family Business</div>
+              <div className="text-xs text-neutral-400 mt-1">Industrial families, succession and real estate structuring, flat-tax relocation arrivals.</div>
+            </div>
+          </div>
+          <p className="mt-5 max-w-3xl text-sm text-neutral-300 md:text-base">
+            We are currently running a confidential mandate for a{" "}
+            <Link href="/en/jobs/rm-italy-milan" className="text-[#F4D270] underline underline-offset-2">Senior Relationship Manager covering the Italian market</Link>
+            {" "}based in Milan. You can also review{" "}
+            <Link href="/en/private-banker-jobs-milano" className="text-[#F4D270] underline underline-offset-2">private banker roles in Milan</Link>
+            {" "}or{" "}
+            <Link href="/en/candidates" className="text-[#F4D270] underline underline-offset-2">share your profile confidentially</Link>
+            {" "}for upcoming Italian and cross-border mandates. For a deeper discussion,{" "}
+            <Link href="/en/contact" className="text-[#F4D270] underline underline-offset-2">contact Executive Partners</Link>
+            {" "}and use the{" "}
+            <Link href="/en/bp-simulator?src=milan_market" className="text-[#F4D270] underline underline-offset-2">Business Plan Simulator</Link>
+            {" "}to stress-test portability and revenue scenarios.
           </p>
         </article>
       );
