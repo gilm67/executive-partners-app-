@@ -6,24 +6,27 @@ Disallow: /_next/static/
 Disallow: /_next/image/
 Disallow: /api/
 
-# Block parameterised URLs
-Disallow: /apply
-Disallow: /en/apply
+# Block parameterised URLs only (not the base pages)
 Disallow: /bp-simulator?
 Disallow: /en/bp-simulator?
 Disallow: /business-plan-simulator?
 
-Sitemap: https://www.execpartners.ch/sitemap.xml
-# Block SearchAction template URL
+# Block search/filter query params
 Disallow: /en/insights?query=
 
-# Block old non-/en/ routes (now redirect to /en/)
-Disallow: /markets/
-Disallow: /jobs/
-Disallow: /candidates$
-Disallow: /employers
-Disallow: /about$
+# Block admin and internal pages
+Disallow: /admin/
 Disallow: /top-talent
+Disallow: /talent-bench
+Disallow: /talent-bench-login
+Disallow: /contact-admin
+Disallow: /hero-test
+Disallow: /portability-test
+Disallow: /test
+
+# Block old root-level routes that redirect to /en/ equivalents
+Disallow: /employers
 Disallow: /recent-job-opening
-Disallow: /private-banking-jobs-
 Disallow: /business-plan-simulator$
+
+Sitemap: https://www.execpartners.ch/sitemap.xml
