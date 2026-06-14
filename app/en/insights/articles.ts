@@ -704,6 +704,7 @@ If you would like to build your business plan using the same framework that Exec
   },
   {
     slug: "how-to-calculate-aum-portability",
+    ogImage: "/og-articles/og-how-to-calculate-aum-portability.jpg",
     title: "How to Calculate Your AUM Portability: The Framework Private Banks Don't Share With You",
     date: "2026-05-21",
     summary: "Most business plans in private banking are built backwards. This is the six-block framework that reveals what will actually move — and what won't.",
