@@ -6,7 +6,7 @@ import { MANDATES } from "./mandates-data";
 import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
-const HUBS = ["All", "Geneva", "Zurich", "Lugano", "London", "Milan", "New York", "Hong Kong", "Singapore"];
+const HUBS = ["All", "Geneva", "Zurich", "Lugano", "London", "Dubai", "Riyadh", "Milan", "New York", "Hong Kong", "Singapore"];
 
 function ScreeningModal({ mandate, onClose, onPass }) {
   const [answers, setAnswers] = useState({});
@@ -253,7 +253,7 @@ export default function MandatesClient() {
               <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90 mb-3">Private Banking · Discreet Mandates</p>
               <h1 className="font-[var(--font-playfair)] text-4xl font-semibold tracking-tight md:text-5xl mb-4">Private Banking Jobs in Switzerland</h1>
               <p className="mx-auto max-w-2xl text-neutral-300 leading-relaxed">
-                Live mandates across <strong>Geneva</strong> and <strong>Zurich</strong>, with international coverage in <strong>Dubai</strong>, <strong>Singapore</strong>, <strong>London</strong> &amp; <strong>New York</strong>. We publish a subset of searches; confidential roles are shared directly with qualified bankers.
+                Live mandates across <strong>Geneva</strong> and <strong>Zurich</strong>, with international coverage in <strong>Dubai</strong>, <strong>Riyadh</strong>, <strong>Singapore</strong>, <strong>London</strong> &amp; <strong>New York</strong>. We publish a subset of searches; confidential roles are shared directly with qualified bankers.
               </p>
               <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
                 <a href="/en/apply" className="rounded-full flex-shrink-0 whitespace-nowrap border border-brandGold/40 bg-black/30 px-3 py-1 text-xs font-semibold text-brandGoldPale hover:bg-brandGold/12 hover:text-white transition">Submit CV</a>

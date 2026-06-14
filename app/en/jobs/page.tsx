@@ -14,13 +14,13 @@ const SITE =
 
 /* ── SEO metadata ── */
 export const metadata: Metadata = {
-  title: "Private Banking Jobs Switzerland 2026 | Senior RM & Team Head Roles Geneva, Zurich, Dubai",
+  title: "Private Banking Jobs Switzerland 2026 | Senior RM & Team Head Roles Geneva, Zurich, Dubai, Riyadh",
   description:
-    "Browse confidential private banking jobs in Switzerland, Dubai and Singapore. Senior Relationship Manager, Team Head and Investment Advisor roles. Compensation visible. Apply in 90 seconds.",
+    "Browse confidential private banking jobs in Switzerland, Dubai, Riyadh and Singapore. Senior Relationship Manager, Team Head and Investment Advisor roles. Compensation visible. Apply in 90 seconds.",
   openGraph: {
     title: "Private Banking Jobs Switzerland 2026 | Senior RM Roles",
     description:
-      "Active mandates across Swiss Onshore, CIS/CEE, Italian, Greek/Cypriot, Asian and Latin American markets. Confidential. Compensation visible. Apply in 90 seconds.",
+      "Active mandates across Swiss Onshore, CIS/CEE, Italian, Greek/Cypriot, Gulf, Asian and Latin American markets. Confidential. Compensation visible. Apply in 90 seconds.",
     url: `${SITE}/en/jobs`,
     images: [{ url: "/og.webp" }],
   },
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Private Banking Jobs Switzerland 2026 | Senior RM Roles",
     description:
-      "Active mandates across Geneva, Zurich, Milan, Dubai, Singapore and Hong Kong. Confidential executive search.",
+      "Active mandates across Geneva, Zurich, Dubai, Riyadh, Milan, Singapore and Hong Kong. Confidential executive search.",
   },
   alternates: { canonical: `${SITE}/en/jobs` },
   robots: { index: true, follow: true },
