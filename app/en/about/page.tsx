@@ -17,7 +17,7 @@ const personJsonLd = {
     addressLocality: "Geneva",
     addressCountry: "CH",
   },
-  description: "Senior executive recruiter dedicated exclusively to Private Banking and Wealth Management. 200+ placements across Geneva, Zurich, London, Dubai, Singapore and Hong Kong.",
+  description: "Senior executive recruiter dedicated exclusively to Private Banking and Wealth Management. 200+ placements across 13 global hubs including Geneva, Zurich, London, Dubai, Riyadh, Singapore and Hong Kong.",
 };
 
 const orgJsonLd = {
@@ -96,7 +96,7 @@ const pillars = [
   {
     n: "06",
     title: "A network, not a database",
-    body: "Supported by former private banking heads, compliance specialists, and market intelligence partners across Geneva, London, Dubai, and Singapore.",
+    body: "Supported by former private banking heads, compliance specialists, and market intelligence partners across Geneva, London, Dubai, Riyadh, and Singapore.",
   },
 ];
 
@@ -253,7 +253,7 @@ export default function AboutPage() {
           <div>
             <p className="mb-1 text-sm font-semibold text-white">Supported by a worldwide expert network</p>
             <p className="text-sm leading-relaxed text-white/50">
-              We collaborate with former private banking heads, compliance and legal specialists, tax advisors, and market intelligence partners across Geneva, London, Zurich, Dubai, and Singapore — giving every mandate access to knowledge that goes well beyond standard recruitment.
+              We collaborate with former private banking heads, compliance and legal specialists, tax advisors, and market intelligence partners across Geneva, London, Zurich, Dubai, Riyadh, and Singapore — giving every mandate access to knowledge that goes well beyond standard recruitment.
             </p>
           </div>
         </div>

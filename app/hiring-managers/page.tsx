@@ -14,7 +14,7 @@ const SITE =
 export const metadata: Metadata = {
   title: "Private Banking Recruitment Switzerland | Senior RM & Team Head Search",
   description:
-    "Executive search for senior private banking hires. Targeted recruitment for Directors, MDs, Team Heads across Switzerland, Dubai, Singapore, London, New York.",
+    "Executive search for senior private banking hires. Targeted recruitment for Directors, MDs, Team Heads across Switzerland, Dubai, Riyadh, Singapore, London, New York.",
   openGraph: {
     title: "For Hiring Managers ",
     description:
@@ -67,7 +67,7 @@ export default function HiringManagersPage() {
       />
       <ServiceSchema
         name="Private Banking Executive Search"
-        description="Executive search for senior private banking hires. Targeted recruitment for Directors, MDs, Team Heads across Switzerland, Dubai, Singapore, London, New York."
+        description="Executive search for senior private banking hires. Targeted recruitment for Directors, MDs, Team Heads across Switzerland, Dubai, Riyadh, Singapore, London, New York."
       />
 
       <main className="min-h-[70vh] px-4 md:px-6 lg:px-10 py-12 md:py-16 space-y-8">

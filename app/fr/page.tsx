@@ -6,7 +6,7 @@ const SITE = "https://www.execpartners.ch";
 export const metadata: Metadata = {
   title: "Recruteur Banque Privée Genève | Executive Partners Suisse",
   description:
-    "Executive Partners est un chasseur de têtes spécialisé en banque privée et gestion de patrimoine à Genève. Placement de Relationship Managers seniors, Chefs de desk et Directeurs de marché en Suisse, Londres, Dubaï et Singapour.",
+    "Executive Partners est un chasseur de têtes spécialisé en banque privée et gestion de patrimoine à Genève. Placement de Relationship Managers seniors, Chefs de desk et Directeurs de marché en Suisse, Londres, Dubaï, Riyad et Singapour.",
   alternates: {
     canonical: `${SITE}/fr`,
   },
@@ -45,6 +45,7 @@ const schemaData = {
     { "@type": "City", name: "Zurich" },
     { "@type": "City", name: "Londres" },
     { "@type": "City", name: "Dubaï" },
+    { "@type": "City", name: "Riyad" },
     { "@type": "City", name: "Singapour" },
   ],
 };
@@ -61,7 +62,7 @@ export default function FrenchHomePage() {
         <div className="mx-auto max-w-3xl space-y-8">
 
           <p className="text-sm font-semibold uppercase tracking-widest text-[#C9A14A]">
-            Genève · Zurich · Londres · Dubaï · Singapour
+            Genève · Zurich · Londres · Dubaï · Riyad · Singapour
           </p>
 
           <h1 className="text-3xl md:text-5xl font-semibold leading-tight">

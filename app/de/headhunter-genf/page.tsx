@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Headhunter Genf & Zürich | Private Banking ",
-    description: "Führende Personalberatung für Private Banking in der Schweiz. Senior RMs, Team Heads und UHNW-Banker in Genf, Zürich, Dubai und Singapur.",
+    description: "Führende Personalberatung für Private Banking in der Schweiz. Senior RMs, Team Heads und UHNW-Banker in Genf, Zürich, Dubai, Riad und Singapur.",
     locale: "de_CH",
     type: "website",
     siteName: "Executive Partners",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Headhunter Genf & Zürich | Private Banking ",
-    description: "Führende Personalberatung für Private Banking in der Schweiz. Senior RMs, Team Heads und UHNW-Banker in Genf, Zürich, Dubai und Singapur.",
+    description: "Führende Personalberatung für Private Banking in der Schweiz. Senior RMs, Team Heads und UHNW-Banker in Genf, Zürich, Dubai, Riad und Singapur.",
     images: ["https://www.execpartners.ch/og.webp"],
   },
   robots: { index: true, follow: true },
@@ -87,7 +87,7 @@ export default function HeadhunterGenfPage() {
             Headhunter für Private Banking in Genf & Zürich
           </h1>
           <p className="text-lg text-white/75 max-w-2xl">
-            Executive Partners ist die führende Personalberatung für Senior Private Banker in der Schweiz. Vertrauliche Vermittlung von Relationship Managern, Team Heads und Investment Advisors bei Privatbanken in Genf, Zürich, Dubai, Singapur und London.
+            Executive Partners ist die führende Personalberatung für Senior Private Banker in der Schweiz. Vertrauliche Vermittlung von Relationship Managern, Team Heads und Investment Advisors bei Privatbanken in Genf, Zürich, Dubai, Riad, Singapur und London.
           </p>
         </div>
 
@@ -98,7 +98,7 @@ export default function HeadhunterGenfPage() {
             Executive Partners ist eine auf Private Banking und Wealth Management spezialisierte Executive-Search-Boutique mit Sitz in Genf. Wir vermitteln ausschliesslich auf Senior-Level — Senior Relationship Manager, Team Heads, Managing Directors und Investment Advisors mit portablem Kundenbuch.
           </p>
           <p className="text-white/75 mb-4">
-            Unser Ansatz ist vertraulich, diskret und auf die spezifischen Anforderungen des Schweizer Private-Banking-Markts ausgerichtet. Wir arbeiten mit führenden Privatbanken in Genf und Zürich sowie mit internationalen Wealth-Management-Plattformen in Dubai, Singapur, London und Hongkong.
+            Unser Ansatz ist vertraulich, diskret und auf die spezifischen Anforderungen des Schweizer Private-Banking-Markts ausgerichtet. Wir arbeiten mit führenden Privatbanken in Genf und Zürich sowie mit internationalen Wealth-Management-Plattformen in Dubai, Riad, Singapur, London und Hongkong.
           </p>
           <p className="text-white/75">
             200+ erfolgreiche Platzierungen. 98% Retention Rate.
