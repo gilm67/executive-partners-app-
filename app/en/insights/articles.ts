@@ -932,6 +932,7 @@ Gil M. Chalem, Managing Partner, Executive Partners`,
 
   {
     slug: "switzerland-running-out-banks",
+    ogImage: "/og-articles/og-switzerland-running-out-banks.jpg",
     title: "Switzerland Is Running Out of Banks",
     seoTitle: "Switzerland Is Running Out of Private Banks — What the Consolidation Means",
     seoDescription: "Swiss private banks are consolidating faster than at any point since 2008. The count is shrinking, the platforms are merging, and the talent implications are significant.",
@@ -3399,6 +3400,7 @@ Five years ago, a strong Swiss private banking profile needed deep expertise in 
   },
   {
     slug: "global-markets-outlook-2025-strategic-insights-private-bankers",
+    ogImage: "/og-articles/og-global-markets-outlook-2025.jpg",
     body: `The global economic landscape in 2025 presents private bankers with a complex tableau of opportunities and risks that demand sophisticated navigation.
 
 ## The macro framework
@@ -3432,6 +3434,7 @@ AI is genuinely changing private banking. The most immediate impact is operation
   },
   {
     slug: "turbulent-time-crisis-resilience-market-leadership-times",
+    ogImage: "/og-articles/og-turbulent-times-crisis-resilience.jpg",
     body: `What separates private banking leaders who emerge stronger from crises from those who simply survive? The Swiss private banking sector has navigated an extraordinary sequence of disruptions since 2020: the pandemic, the inflation and rate cycle, the Credit Suisse collapse, UBS's multi-year integration challenge, and geopolitical volatility affecting client portfolios and mobility.
 
 ## Two types of resilience
@@ -3466,6 +3469,7 @@ The current moment in Swiss private banking, with a major integration still comp
   },
   {
     slug: "ubss-silent-earthquake-10000-more-jobs-set-disappear-2027",
+    ogImage: "/og-articles/og-ubss-silent-earthquake.jpg",
     body: `According to Swiss publication SonntagsBlick, UBS is planning to cut up to 10,000 additional jobs by 2027, reducing total headcount to approximately 95,000 full-time positions. This is not just another round of restructuring. This is a signal that the Credit Suisse integration is far more challenging, far more expensive, and far messier than UBS has publicly acknowledged.
 
 ## The numbers
