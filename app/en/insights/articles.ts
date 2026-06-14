@@ -1236,6 +1236,7 @@ In my experience, that is not how this works.`,
   },
   {
     slug: "10-billion-myth-swiss-private-banking-consolidation",
+    ogImage: "/og-articles/og-swiss-consolidation-10-billion-myth.jpg",
     title: "The 10 Billion Myth",
     date: "2026-04-21",
     summary: "Why size is the wrong lens on Swiss private banking consolidation — and why the number that has taken on almost mythological status in the market is causing good bankers to make bad career decisions.",
@@ -1330,6 +1331,7 @@ In my experience, that is not how this works.`,
   },
   {
     slug: "private-banking-compensation-revenue-grid",
+    ogImage: "/og-articles/og-revenue-grid-private-banking.jpg",
     title: "The Revenue Grid Nobody Shows You Before You Sign",
     date: "2026-04-14",
     summary: "Two bankers. Same AUM. Identical titles. One takes home forty percent more than the other. Here is why — and what you should be negotiating for right now.",
@@ -4154,7 +4156,6 @@ For the private banker considering a move, EFG represents a genuine alternative 
   },
   {
     slug: "hong-kong-switzerland-offshore-wealth-crown",
-    ogImage: "/og-articles/og-hong-kong-switzerland-offshore-wealth-crown.jpg",
     title: "The Crown Changes Hands",
     seoTitle: "Hong Kong Overtakes Switzerland as Top Offshore Wealth Hub: What It Means",
     date: "2026-05-29",
