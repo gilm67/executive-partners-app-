@@ -166,6 +166,19 @@ export default function Page() {
           </p>
 
           <h2 className="text-2xl font-semibold mt-8">
+            Gulf-Based EAMs: Dubai and Riyadh
+          </h2>
+          <p className="text-white/70 leading-relaxed">
+            The Dubai DIFC and Riyadh markets have seen significant EAM and family office growth
+            over the last two years. Senior private bankers with GCC, Levant, African or Indian
+            client books are increasingly evaluating licensed independent platforms in the Gulf
+            as an alternative to large-bank employment. We advise bankers considering this
+            transition and work with select DFSA-licensed and CMA-licensed EAM structures in
+            Dubai and Riyadh on senior front-office mandates. Arabic-language capability and
+            Shariah-compliant product knowledge are material differentiators in these markets.
+          </p>
+
+          <h2 className="text-2xl font-semibold mt-8">
             Confidential. No Obligation.
           </h2>
           <p className="text-white/70 leading-relaxed">
@@ -216,6 +229,18 @@ export default function Page() {
               className="text-sm text-white/60 hover:text-white underline underline-offset-4"
             >
               Zurich market
+            </Link>
+            <Link
+              href="/en/markets/dubai"
+              className="text-sm text-white/60 hover:text-white underline underline-offset-4"
+            >
+              Dubai market
+            </Link>
+            <Link
+              href="/en/markets/riyadh"
+              className="text-sm text-white/60 hover:text-white underline underline-offset-4"
+            >
+              Riyadh market
             </Link>
           </div>
 
