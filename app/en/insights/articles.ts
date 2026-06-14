@@ -129,6 +129,7 @@ If you're a senior RM sitting on a portable book with the right language mix, th
 
   {
     slug: "the-platform-illusion",
+    ogImage: "/og-articles/og-the-platform-illusion.jpg",
     title: "The Platform Illusion",
     seoTitle: "The Platform Illusion: Why the Pitch That Wins Mandates Never Transfers AUM",
     seoDescription: "Banks sell platform quality. Clients follow the banker. The most common and most costly mistake senior private bankers make when building their case for a move.",
@@ -181,6 +182,7 @@ The platform matters at the margin, for undecided clients, for specific product 
   },
   {
     slug: "zurich-private-banking-market-2026",
+    ogImage: "/og-articles/og-zurich-talent-paradox.jpg",
     title: "The Zurich Talent Paradox: Why the Biggest Market Is the Hardest Move",
     seoTitle: "Zurich Private Banking Recruiter 2026 | Talent Paradox & Hiring Trends",
     seoDescription: "Zurich manages CHF 3.2 trillion in private banking assets but is quietly running out of the senior talent that runs it. What senior RMs need to know before making a move in 2026.",
@@ -227,6 +229,7 @@ If you are a senior RM based in Zurich and considering whether 2026 is the right
   },
   {
     slug: "private-banking-business-plan-switzerland",
+    ogImage: "/og-articles/og-private-banking-business-plan.jpg",
     title: "The Private Banking Business Plan: What a Hiring Committee Actually Looks For",
     seoTitle: "Private Banking Business Plan Switzerland | What Banks Evaluate",
     seoDescription: "A private banking business plan in Switzerland is not a revenue projection. It is a stress test. Here is exactly what hiring committees evaluate, built on 200+ EP placements.",
@@ -300,6 +303,7 @@ The Executive Partners Portability Score runs through these questions with a str
   },
   {
     slug: "is-your-aum-portable",
+    ogImage: "/og-articles/og-is-your-aum-portable.jpg",
     title: "Is Your AUM Actually Portable? The Six Questions Every Private Banker Gets Wrong",
     seoTitle: "Is Your AUM Portable? The Six Questions Every Private Banker Gets Wrong",
     seoDescription: "Most private bankers overestimate how much of their book will follow them. Here is the honest framework for testing AUM portability before you move, used by Executive Partners across 200+ placements in Geneva and Zurich.",
@@ -389,6 +393,7 @@ If you want to work through this framework in the context of your own book, the 
 
   {
     slug: "the-geneva-paradox",
+    ogImage: "/og-articles/og-the-geneva-paradox.jpg",
     title: "The Geneva Paradox",
     seoTitle: "The Geneva Paradox: Why Geneva's Best Bankers Are the Most Frustrated",
     seoDescription: "Geneva has more private banking talent per square kilometre than any city in the world, and some of the most frustrated senior bankers. The AUM is there. What is missing is the conversation.",
@@ -446,6 +451,7 @@ If you want to work through this for your own book, the [EP Portability Score to
 
   {
     slug: "compliance-golden-handcuff",
+    ogImage: "/og-articles/og-compliance-golden-handcuff.jpg",
     title: "Compliance Is the New Golden Handcuff",
     seoTitle: "Why Compliance Has Become the Real Retention Tool in Swiss Private Banking",
     seoDescription: "The most effective retention tool in Swiss private banking is not a deferred bonus. It is the KYC file. How regulatory complexity quietly became a barrier to banker mobility.",
@@ -488,6 +494,7 @@ The most effective retention tool in private banking today is paperwork. The ins
   },
   {
     slug: "the-alpine-exit",
+    ogImage: "/og-articles/og-the-alpine-exit.jpg",
     title: "The Alpine Exit",
     seoTitle: "What Happens to Swiss Private Banking if UBS Moves HQ Abroad",
     seoDescription: "If UBS relocates its headquarters out of Switzerland, the consequences for Geneva, Zurich and the Swiss private banking talent market go far beyond one bank.",
@@ -530,6 +537,7 @@ The alpine view from Bahnhofstrasse is still there. Whether the institution behi
   },
   {
     slug: "what-is-a-relationship-manager-worth",
+    ogImage: "/og-articles/og-what-is-a-relationship-manager-worth.jpg",
     title: "What Is a Relationship Manager Actually Worth? The Revenue Grid Nobody Shows You Before You Sign",
     date: "2026-05-21",
     summary: "There is an internal revenue model the bank built around your candidacy before they made you an offer. It contains their real assumptions about your portable AUM, their ROA projection, and the payback period on your guarantee. This is how to read it.",
