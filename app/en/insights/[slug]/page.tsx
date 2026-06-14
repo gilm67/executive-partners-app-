@@ -184,13 +184,16 @@ export default function InsightDetailPage({ params }: Props) {
 
   const articleJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": "NewsArticle",
     headline: article.title,
     description: article.summary,
+    image: article.ogImage
+      ? [`${SITE}${article.ogImage}`]
+      : [`${SITE}/og.webp`],
     datePublished: article.date,
     dateModified: article.date,
     inLanguage: "en",
-    author: { "@type": "Person", name: "Gil M. Chalem" },
+    author: { "@type": "Person", name: "Gil M. Chalem", url: SITE },
     publisher: {
       "@type": "Organization",
       name: "Executive Partners",

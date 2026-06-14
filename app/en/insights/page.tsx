@@ -94,7 +94,7 @@ export default function InsightsPage() {
           <div className="mt-10 flex flex-wrap gap-8">
             {[
               { n: "200+", label: "Placements" },
-              { n: "17k+", label: "Newsletter subscribers" },
+              { n: "17k+", label: "LinkedIn connections" },
               { n: "13+", label: "Primary markets" },
               { n: "15+", label: "In-depth articles" },
             ].map((s) => (
