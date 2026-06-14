@@ -80,6 +80,8 @@ export const INSIGHTS: readonly InsightArticle[] = [
     seoTitle: "Private Banking in Saudi Arabia and Dubai 2026: The Sandbox Talent Map",
     seoDescription: "Is the money leaving the Gulf? Wrong question. Inside the Saudization rules, the Dubai hiring bar, and the Swiss bank moves reshaping private banking careers in Saudi Arabia and Dubai in 2026.",
     date: "2026-06-13",
+    featured: true,
+    engagementScore: 91,
     summary: "Everyone is asking if the money is leaving the Gulf. The better question is which bankers are positioned to keep it, win it, or lose it. Inside the Saudization rules, the Dubai hiring bar, and what Swiss banks are doing on both sides of the border.",
     linkedinUrl: "",
     pillar: "P1",

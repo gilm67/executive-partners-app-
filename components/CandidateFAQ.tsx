@@ -87,7 +87,11 @@ export default function CandidateFAQ({
           },
           {
             q: "Do you have roles outside Switzerland?",
-            a: "We work on mandates across multiple global markets spanning Europe (Geneva, Zurich, London, Frankfurt, Paris, Madrid, Milano), the Middle East (Dubai, Abu Dhabi), Asia-Pacific (Singapore, Hong Kong), and the Americas (New York, Miami). If we don't currently have an active role matching your profile in your target location, we'll keep you in our database and reach out when relevant opportunities arise. We also offer proactive market mapping if you're targeting a specific bank or region—we can help you understand the landscape, timing, and realistic entry points.",
+            a: "We work on mandates across multiple global markets spanning Europe (Geneva, Zurich, London, Frankfurt, Paris, Madrid, Milano), the Middle East (Dubai DIFC, Riyadh), Asia-Pacific (Singapore, Hong Kong), and the Americas (New York, Miami). If we don't currently have an active role matching your profile in your target location, we'll keep you in our database and reach out when relevant opportunities arise. We also offer proactive market mapping if you're targeting a specific bank or region—we can help you understand the landscape, timing, and realistic entry points.",
+          },
+          {
+            q: "I manage Saudi or GCC clients — what are my options in Riyadh vs Dubai?",
+            a: "It depends on your nationality and where your relationships are best served. Riyadh is the onshore Saudi hub under Vision 2030, but Saudization rules mean Director-level and above roles are increasingly reserved for Saudi nationals. International bankers without a Saudi passport are more likely to find roles covering Saudi clients from Dubai DIFC, Geneva or Zurich. If you are a Saudi national with an onshore book, Riyadh now has genuine international bank infrastructure — UBP opened a dedicated Riyadh office in late 2025 with a Saudi national as CEO. If you are international with a GCC, Levant or Africa book, Dubai DIFC is the more natural base. We have active mandates on both sides of this equation.",
           },
         ],
       },
