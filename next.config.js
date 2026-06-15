@@ -4,10 +4,6 @@ const nextConfig = {
     minimumCacheTTL: 31536000,
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-  },
-  eslint: { ignoreDuringBuilds: true },
-  typescript: { ignoreBuildErrors: false },
-  images: {
     remotePatterns: [
       {
         protocol: "https",
@@ -16,6 +12,8 @@ const nextConfig = {
       },
     ],
   },
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: false },
  
   async redirects() {
     return [
@@ -31,12 +29,7 @@ const nextConfig = {
       { source: '/bp-simulator', destination: '/en/bp-simulator', permanent: true },
       { source: '/apply', destination: '/en/apply', permanent: true },
       { source: '/privacy', destination: '/en/privacy', permanent: true },
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "execpartners.ch" }],
-        destination: "https://www.execpartners.ch/:path*",
-        permanent: true,
-      },
+      { type: "host", value: "execpartners.ch" },
       { source: "/portability", destination: "/en/portability", permanent: true },
       { source: "/insights", destination: "/en/insights", permanent: true },
       { source: "/insights/:path*", destination: "/en/insights/:path*", permanent: true },
@@ -71,7 +64,7 @@ const nextConfig = {
       { source: "/candidates", destination: "/en/candidates", permanent: true },
       { source: "/candidates/", destination: "/en/candidates", permanent: true },
       { source: "/hiring-managers", destination: "/en/hiring-managers", permanent: true },
-      { source: "/contact", destination: "/en/contact", permanent: true },
+      { source: "/contact", destination: "/en/contact", permanent: true }
     ];
   },
 };

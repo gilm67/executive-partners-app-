@@ -12,19 +12,21 @@ const SITE =
     : "https://www.execpartners.ch");
 
 export const metadata: Metadata = {
-  title: "Private Banking Recruitment Switzerland | Senior RM & Team Head Search",
+  title: "Private Banking Recruitment Switzerland | Senior RM & Team Head Search | Executive Partners",
   description:
     "Executive search for senior private banking hires. Targeted recruitment for Directors, MDs, Team Heads across Switzerland, Dubai, Riyadh, Singapore, London, New York.",
   openGraph: {
-    title: "For Hiring Managers ",
+    title: "Private Banking Recruitment Switzerland | Senior RM & Team Head Search",
     description:
       "Targeted senior hires in Private Banking & Wealth Management. Real AUM portability and long-term retention.",
+    images: [{ url: "/og.webp", width: 1200, height: 630, alt: "Executive Partners – Private Banking Recruitment" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruitment Agency Switzerland ",
+    title: "Private Banking Recruitment Switzerland | Executive Partners",
     description:
       "Executive search for senior private banking roles. Specialists in AUM portability assessment.",
+    images: ["/og.webp"],
   },
   alternates: { canonical: "https://www.execpartners.ch/en/hiring-managers" },
 };

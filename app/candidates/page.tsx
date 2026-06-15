@@ -22,13 +22,13 @@ export const metadata: Metadata = {
   },
   description:
     "Confidential executive search support for Senior Private Bankers, Relationship Managers and Team Heads. Benchmark compensation, assess portability and submit your CV securely across global wealth hubs.",
-  alternates: { canonical: "https://www.execpartners.ch/candidates" },
+  alternates: { canonical: "https://www.execpartners.ch/en/candidates" },
   openGraph: {
     title:
       "Private Banking & Wealth Management Career Moves — Candidates ",
     description:
       "Discreet executive search for HNW/UHNW Private Banking talent. Geneva- and Zurich-led with mandates across London, Dubai, Singapore, Hong Kong, New York and Miami.",
-    url: `${SITE}/candidates`,
+    url: `${SITE}/en/candidates`,
     siteName: "Executive Partners",
     images: [{ url: "/og.webp" }],
     type: "website",

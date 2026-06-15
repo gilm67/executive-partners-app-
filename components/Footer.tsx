@@ -141,10 +141,11 @@ export default function Footer() {
               <Image src="/transparent-ep-logo.png" alt="Executive Partners" width={290} height={60} sizes="220px" className="h-auto w-[220px] opacity-90 mb-4" />
               <p className="text-sm text-white/80 leading-relaxed">Geneva-based executive search for Private Banking & Wealth Management. 200+ placements across 13 global hubs.</p>
             </div>
-            <Link href="/en/contact"
+            <Link href="https://calendly.com/execpartners/15-minute-career-consultation"
+              target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all hover:brightness-110"
               style={{background:"linear-gradient(135deg, #C9A14A 0%, #E8C46A 100%)",color:"#0B0E13"}}>
-              Speak with us <ArrowRight className="h-4 w-4" />
+              Schedule a call <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="grid grid-cols-12 gap-10">

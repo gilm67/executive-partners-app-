@@ -24,8 +24,33 @@ export default function HiringManagersBriefPage() {
             naming specific clients or disclosing sensitive account numbers.
           </p>
 
-          {/* NOTE: wire this form to an API route or email handler later */}
-          <form className="mt-6 space-y-7">
+          <form
+            className="mt-6 space-y-7"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const data = new FormData(e.currentTarget);
+              const parts = [
+                `Booking centre: ${data.get("bookingCentre") || "—"}`,
+                `Market focus: ${data.get("marketFocus") || "—"}`,
+                `Summary: ${data.get("mandateSummary") || "—"}`,
+                `Role: ${data.get("roleTitle") || "—"}`,
+                `Reporting line: ${data.get("reportingLine") || "—"}`,
+                `Team context: ${data.get("teamContext") || "—"}`,
+                `Target AUM: ${data.get("minPortableAum") || "—"}`,
+                `Client segments: ${data.get("targetSegments") || "—"}`,
+                `Languages: ${data.get("languages") || "—"}`,
+                `Book characteristics: ${data.get("bookCharacteristics") || "—"}`,
+                `Target ROA: ${data.get("targetRoa") || "—"}`,
+                `NNM expectations: ${data.get("targetNnm") || "—"}`,
+                `Compensation budget: ${data.get("compBudget") || "—"}`,
+                `Licensing requirements: ${data.get("licensing") || "—"}`,
+                `Process & timelines: ${data.get("process") || "—"}`,
+              ];
+              const body = encodeURIComponent(parts.join("\n\n"));
+              const subject = encodeURIComponent("Hiring Brief — Executive Partners");
+              window.location.href = `mailto:recruiter@execpartners.ch?subject=${subject}&body=${body}`;
+            }}
+          >
             {/* SECTION: MANDATE OVERVIEW */}
             <div className="space-y-3">
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-300/80">
@@ -309,9 +334,9 @@ export default function HiringManagersBriefPage() {
             <div className="pt-2">
               <button
                 type="submit"
-                className="btn-primary btn-xl w-full md:w-auto"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#C9A14A] to-[#E8C46A] px-8 py-3 text-sm font-semibold text-[#090C14] hover:brightness-110 transition-all w-full md:w-auto"
               >
-                Submit brief
+                Submit brief →
               </button>
             </div>
           </form>
