@@ -85,7 +85,7 @@ export default function CandidatesPage() {
     "@type": "WebPage",
     name:
       "Private Banking & Wealth Management Career Moves for Candidates | Executive Partners",
-    url: `${SITE}/candidates`,
+    url: `${SITE}/en/candidates`,
     description:
       "Confidential advisory and executive search support for Senior Private Bankers, Relationship Managers and Team Heads across leading global wealth hubs.",
     inLanguage: "en",
@@ -117,7 +117,7 @@ export default function CandidatesPage() {
       <BreadcrumbSchema
         items={[
           { name: "Home", url: SITE },
-          { name: "For Private Bankers", url: `${SITE}/candidates` },
+          { name: "For Private Bankers", url: `${SITE}/en/candidates` },
         ]}
       />
 
