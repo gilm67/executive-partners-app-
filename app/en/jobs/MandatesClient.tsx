@@ -1,6 +1,7 @@
 // @ts-nocheck
 "use client";
 import { BriefDrawer } from "./BriefDrawer";
+import MandateAlertForm from "./MandateAlertForm";
 import { MANDATES } from "./mandates-data";
 
 import { useState, useRef, useEffect } from "react";
@@ -275,9 +276,13 @@ export default function MandatesClient() {
 
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center">
               <p className="text-neutral-300 mb-4">Don't see your exact market? We run confidential mandates continuously.</p>
-              <div className="flex flex-wrap items-center justify-center gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
                 <a href="/en/contact" className="inline-flex items-center gap-2 rounded-xl border border-brandGold/70 bg-brandGold/15 px-5 py-2.5 text-sm font-semibold text-brandGoldPale hover:bg-brandGold/25 hover:text-white transition">Contact us</a>
                 <a href="/en/candidates" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-semibold text-neutral-300 hover:bg-white/10 hover:text-white transition">Register confidentially</a>
+              </div>
+              <div className="border-t border-white/10 pt-6">
+                <p className="text-xs text-neutral-500 mb-3 uppercase tracking-wider font-semibold">Or get notified of new mandates</p>
+                <MandateAlertForm />
               </div>
             </div>
           </>

@@ -158,6 +158,56 @@ export default async function ApplyPage({
         </p>
       </header>
 
+      {/* SOCIAL PROOF */}
+      <section className="mx-auto max-w-3xl mb-8">
+        <div className="grid grid-cols-3 gap-4 text-center mb-6">
+          <div>
+            <div className="text-2xl font-bold text-[#D4AF37]">200+</div>
+            <div className="text-[11px] text-white/50 mt-0.5">Placements</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-[#D4AF37]">98%</div>
+            <div className="text-[11px] text-white/50 mt-0.5">12-month retention</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-[#D4AF37]">17d</div>
+            <div className="text-[11px] text-white/50 mt-0.5">Avg. mandate-to-offer</div>
+          </div>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-3 mb-2">
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <div className="flex items-center gap-2 text-xs text-white/60 mb-1.5">
+              <span>🇮🇹</span><span className="font-semibold">Italian desk · Geneva</span>
+            </div>
+            <p className="text-xs text-white/45">CHF 280M portable book · Still at the bank, 22 months</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <div className="flex items-center gap-2 text-xs text-white/60 mb-1.5">
+              <span>🇷🇺</span><span className="font-semibold">CIS/CEE desk · Zurich</span>
+            </div>
+            <p className="text-xs text-white/45">USD 140M book · Still at the bank, 14 months</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <div className="flex items-center gap-2 text-xs text-white/60 mb-1.5">
+              <span>🇨🇭</span><span className="font-semibold">Swiss onshore · Geneva</span>
+            </div>
+            <p className="text-xs text-white/45">CHF 190M portable book · Still at the bank, 31 months</p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 text-center">
+          <p className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-3">What happens after you apply</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-xs text-white/60">
+            <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">1. Confidential review</span>
+            <span className="text-white/20">→</span>
+            <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">2. Portability assessment</span>
+            <span className="text-white/20">→</span>
+            <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">3. Single discreet introduction</span>
+          </div>
+        </div>
+      </section>
+
       {/* FORM SECTION */}
       <section className="rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-7">
         <ApplyForm
