@@ -14,7 +14,7 @@ const OG_IMAGE = "/og.webp";
 export const metadata: Metadata = {
   title: { absolute: "Private Banking Recruiter Switzerland | Executive Partners Geneva" },
   description:
-    "Geneva's leading executive recruiters for private banking and wealth management. Senior Relationship Managers, Team Heads and UHNW bankers placed across Switzerland, London, Dubai, Singapore and Hong Kong. 200+ placements.",
+    "Switzerland's leading executive recruiters for private banking and wealth management, based in Geneva. Senior Relationship Managers, Team Heads and UHNW bankers placed across Geneva, Zurich, London, Dubai, Singapore and Hong Kong. 200+ placements.",
 
   openGraph: {
     title: "Private Banking Recruiter Switzerland ",
@@ -102,7 +102,7 @@ export default function HomePage() {
 
                 {/* Eyebrow */}
                 <p className="mb-4 sm:mb-6 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.15em] sm:tracking-[0.22em] text-[#D4AF37] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-                  Private Banking · Executive Search · Geneva
+                  Private Banking · Executive Search · Switzerland
                 </p>
 
                 {/* H1 */}
