@@ -249,7 +249,7 @@ export default function TopNav() {
               >
                 <button
                   type="button"
-                  className={ddButtonClasses(insightsActive, dd === "Intelligence")}
+                  className={ddButtonClasses(insightsActive, dd === "Insights")}
                   aria-haspopup="menu"
                   aria-expanded={dd === "Insights"}
                   onClick={() => setDd(dd === "Insights" ? null : "Insights")}
