@@ -60,7 +60,7 @@ const breadcrumbJsonLd = {
   "@type": "BreadcrumbList",
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "Home", item: SITE },
-    { "@type": "ListItem", position: 2, name: "Markets", item: `${SITE}/markets` },
+    { "@type": "ListItem", position: 2, name: "Markets", item: `${SITE}/en/markets` },
     { "@type": "ListItem", position: 3, name: "Private Banking Recruiter – Zurich", item: PAGE_URL },
   ],
 };
