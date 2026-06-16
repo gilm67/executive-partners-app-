@@ -1,192 +1,132 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const SITE = "https://www.execpartners.ch";
+const PAGE_URL = `${SITE}/en/private-banker-jobs-milano`;
+
 export const metadata: Metadata = {
-  title: "Private Banker Jobs in Milano",
+  title: { absolute: "Private Banker Jobs in Milan | Senior RM Recruitment – Executive Partners" },
   description:
-    "Private banker and wealth manager opportunities in Milano, serving Italian entrepreneurs and families as well as cross-border clients via Swiss platforms.",
-  alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-milano" },
+    "Milan private banking recruitment. Senior RMs covering Italian UHNW and entrepreneur wealth. Confidential. Compensation benchmarks included.",
+  alternates: { canonical: PAGE_URL },
+  openGraph: {
+    type: "website", url: PAGE_URL, siteName: "Executive Partners",
+    title: "Private Banker Jobs in Milan – Executive Partners",
+    description: "Senior private banking roles in Milan. Italian UHNW, entrepreneur wealth coverage. Confidential search.",
+    images: [{ url: "/og.webp", width: 1200, height: 630, alt: "Executive Partners – Milan Private Banking" }],
+  },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in Milano ",
-    description: "Private banker and wealth manager opportunities in Milano, serving Italian entrepreneurs and families as well as cross-border clients via Swiss platforms.",
+    title: "Private Banker Jobs in Milan – Executive Partners",
+    description: "Confidential Milan private banking roles. Italian UHNW, entrepreneur wealth coverage. Compensation benchmarks included.",
     images: ["/og.webp"],
   },
   robots: { index: true, follow: true },
 };
 
+const orgJsonLd = {
+  "@context": "https://schema.org", "@type": ["ProfessionalService", "LocalBusiness"],
+  name: "Executive Partners – Private Banking Recruitment Milan", url: PAGE_URL, image: `${SITE}/og.webp`,
+  areaServed: ["Milan", "Italy"], industry: "Private Banking & Wealth Management Recruitment",
+  sameAs: ["https://www.linkedin.com/company/executive-partners", SITE],
+};
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org", "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+    { "@type": "ListItem", position: 2, name: "Markets", item: `${SITE}/en/markets` },
+    { "@type": "ListItem", position: 3, name: "Private Banker Jobs – Milan", item: PAGE_URL },
+  ],
+};
+
 export default function Page() {
   return (
-    <main className="min-h-screen bg-[#0B0E13] text-white py-16 px-4">
-      <div className="container-max max-w-5xl space-y-10">
-        {/* BREADCRUMB */}
-        <nav className="text-xs text-white/60">
-          <Link href="/en/markets" className="hover:text-[#D4AF37]">
-            Markets
-          </Link>
-          <span className="mx-1">/</span>
-          <span>Private Banker Jobs in Milano</span>
-        </nav>
-
-        {/* HERO / INTRO */}
-        <header className="space-y-4">
-          <p className="uppercase tracking-[0.2em] text-[11px] text-white/60">
-            PRIVATE BANKING · MILANO
-          </p>
-          <h1 className="text-3xl md:text-5xl font-semibold leading-tight">
-            Private Banker Jobs in <span className="gold">Milano</span>
-          </h1>
-          <p className="text-white/80 text-base md:text-lg max-w-3xl">
-            Executive Partners advises private bankers and wealth managers in
-            Milano who cover Italian entrepreneurs, family businesses and
-            affluent families, often in close connection with Swiss booking
-            centres such as Lugano, Zurich and Geneva.
-          </p>
-
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Link
-              href="/en/apply"
-              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-            >
-              Apply confidentially
-            </Link>
-            <Link
-              href="/en/jobs"
-              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium border border-white/40 text-white hover:border-[#D4AF37] hover:text-[#D4AF37] transition"
-            >
-              View open roles
-            </Link>
-          </div>
-        </header>
-
-        {/* MAIN CONTENT + SIDE CARD */}
-        <section className="grid gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,1.25fr)] items-start">
-          <div className="space-y-8">
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Italian &amp; Cross-Border Mandates
-              </h2>
-              <p className="mt-3 text-white/75">
-                Milano is a key hub for Italian private wealth, with strong
-                connectivity to Swiss and international platforms. Mandates
-                often involve:
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <main className="relative min-h-screen bg-[#0B0F1A] text-white">
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(900px 360px at 15% -10%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 55%), radial-gradient(900px 360px at 110% 0%, rgba(245,231,192,.18) 0%, rgba(245,231,192,0) 60%)" }} />
+        <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
+          <nav className="text-xs text-white/60 mb-8">
+            <Link href="/en/markets" className="hover:text-[#D4AF37]">Markets</Link>
+            <span className="mx-1">/</span><span>Private Banker Jobs in Milan</span>
+          </nav>
+          <header className="max-w-3xl">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">Milan · Italy · Executive Search</p>
+            <h1 className="mt-4 text-3xl font-extrabold tracking-tight md:text-4xl">Private Banker Jobs in Milan</h1>
+            <p className="mt-4 text-sm text-neutral-300 md:text-[0.95rem] leading-relaxed">
+              Milan is Italy's financial capital and the principal hub for{" "}
+              <span className="font-semibold text-neutral-100">Italian UHNW entrepreneur and family wealth</span>, with strong cross-border connectivity to Swiss booking centres. Executive Partners advises Senior RMs and Team Heads on confidential moves across Italian and international platforms.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/en/apply" className="btn btn-primary btn-xl">Apply confidentially</Link>
+              <Link href="/en/jobs" className="btn btn-ghost">View live mandates</Link>
+            </div>
+          </header>
+          <section className="mt-12 grid gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)]">
+            <div className="space-y-4 text-sm text-neutral-200 md:text-[0.95rem] leading-relaxed">
+              <h2 className="text-xl font-semibold text-white">Milan's entrepreneur wealth franchise</h2>
+              <p>
+                Italian UHNW wealth is concentrated among industrial families and entrepreneurs whose business and personal banking needs are deeply intertwined, requiring bankers who combine investment advisory with genuine credit and corporate finance fluency.
               </p>
-              <ul className="mt-3 space-y-1 text-white/80 list-disc list-inside">
-                <li>
-                  Private bankers serving Italian entrepreneurs, business
-                  owners and family groups
-                </li>
-                <li>
-                  Roles with Italian banks, European platforms and Swiss
-                  institutions
-                </li>
-                <li>
-                  Cross-border structures where Milano fronts the relationship
-                  and Switzerland hosts the booking centre
-                </li>
-                <li>
-                  Senior hires to strengthen coverage of Italy-focused UHNW
-                  clients
-                </li>
+              <p>Over the last 18 months, hiring demand has concentrated on:</p>
+              <ul className="list-disc space-y-1 pl-5 text-neutral-200">
+                <li>RMs with <span className="font-semibold">genuinely portable Italian entrepreneur books</span></li>
+                <li>Bankers bridging Milan with Geneva, Zurich and Lugano booking centres</li>
+                <li>Credit and Lombard-savvy advisors serving family-owned business wealth</li>
+                <li>Cross-border specialists handling Italian fiscal residency planning</li>
               </ul>
             </div>
-
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Considering a Move Between Milano &amp; Switzerland
-              </h2>
-              <p className="mt-3 text-white/75">
-                We help you evaluate the benefits and trade-offs of staying in
-                Milano versus moving to a Swiss booking centre while continuing
-                to cover Italian clients.
-              </p>
-              <p className="mt-3 text-white/75">
-                Discussions cover platform strength, custody options,
-                cross-border rules, remuneration and long-term positioning for
-                your client franchise.
-              </p>
+            <aside className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <h3 className="text-base font-semibold text-white">How Executive Partners supports Milan hiring</h3>
+              <ul className="mt-4 space-y-2 text-sm text-neutral-200">
+                <li>• Senior RM &amp; Team Head search</li>
+                <li>• Italian entrepreneur wealth portability mapping</li>
+                <li>• Cross-border fiscal compliance pre-screening</li>
+                <li>• Milan vs. Swiss booking-centre comparison</li>
+                <li>• 12–24 month NNM projection and business plan support</li>
+              </ul>
+              <div className="mt-5"><Link href="/en/apply" className="btn btn-secondary w-full text-sm font-medium">Senior RM? Submit your profile</Link></div>
+            </aside>
+          </section>
+          <section className="mt-14 rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
+            <h2 className="text-xl font-semibold text-white">2025–2026 Milan compensation benchmarks</h2>
+            <p className="mt-3 text-sm text-neutral-300 md:text-[0.95rem]">Ranges reflect typical packages observed across Milan-based private banks and wealth managers.</p>
+            <div className="mt-6 overflow-x-auto">
+              <table className="min-w-full text-left text-sm text-neutral-100">
+                <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-neutral-400">
+                  <tr><th className="py-2 pr-4">Role</th><th className="py-2 pr-4">Base salary (EUR)</th><th className="py-2 pr-4">Bonus range</th><th className="py-2 pr-4">Typical total</th></tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  <tr><td className="py-2 pr-4">RM (5–10 years)</td><td className="py-2 pr-4">80k – 110k</td><td className="py-2 pr-4">20% – 60%</td><td className="py-2 pr-4">100k – 175k</td></tr>
+                  <tr><td className="py-2 pr-4">Senior RM (10–20 years)</td><td className="py-2 pr-4">110k – 155k</td><td className="py-2 pr-4">40% – 110%</td><td className="py-2 pr-4">155k – 325k</td></tr>
+                  <tr><td className="py-2 pr-4">Ultra UHNW RM</td><td className="py-2 pr-4">155k – 200k</td><td className="py-2 pr-4">80% – 180%</td><td className="py-2 pr-4">280k – 560k</td></tr>
+                  <tr><td className="py-2 pr-4">Team Head</td><td className="py-2 pr-4">180k – 240k</td><td className="py-2 pr-4">100% – 220%</td><td className="py-2 pr-4">360k – 770k</td></tr>
+                </tbody>
+              </table>
             </div>
-
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Discreet Advisory for Senior Bankers
-              </h2>
-              <p className="mt-3 text-white/75">
-                Our approach is low-volume and fully confidential. We work with
-                a small number of experienced private bankers at any time and
-                help them navigate strategic moves instead of reacting to
-                short-term offers.
-              </p>
+            <p className="mt-4 text-xs text-neutral-500">These ranges are indicative and based on observed market levels in Milan across 2025–2026.</p>
+          </section>
+          <section className="mt-12 rounded-3xl border border-[#C9A14A]/20 bg-[#C9A14A]/5 p-6 md:p-7">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#C9A14A] mb-1">Anonymised placement</div>
+            <div className="flex items-center gap-2 mb-2"><span className="text-lg">🇮🇹</span><span className="text-sm font-semibold text-white/80">Entrepreneur wealth desk · Milan</span></div>
+            <p className="text-sm text-white/70">Senior Relationship Manager · EUR 280M portable book · Mandate to offer: 23 days · Still at the bank, 22 months</p>
+          </section>
+          <section className="mt-12 grid gap-6 md:grid-cols-2">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+              <h3 className="text-base font-semibold text-white">Deep-dive insights for Milan-based bankers</h3>
+              <p className="mt-2 text-sm text-neutral-300">Market commentary on Italian entrepreneur wealth and cross-border Swiss connectivity.</p>
+              <ul className="mt-4 space-y-2 text-sm text-brandGoldSoft"><li><Link href="/en/insights" className="hover:underline">Browse Private Wealth Pulse →</Link></li></ul>
             </div>
-          </div>
-
-          {/* SNAPSHOT CARD */}
-          <aside className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur space-y-4">
-            <h3 className="text-lg font-semibold">Milano Wealth Snapshot</h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li>• Core hub for Italian entrepreneur &amp; family wealth</li>
-              <li>• Strong cooperation with Swiss booking centres</li>
-              <li>• Mix of domestic banks and international platforms</li>
-              <li>• Growing interest in alternatives and private markets</li>
-            </ul>
-            <div className="pt-4 border-t border-white/10 space-y-2 text-xs text-white/60">
-              <p>
-                If you manage a portable Italian or cross-border client base, we
-                can map which Milano and Swiss platforms are best aligned with
-                your strategy.
-              </p>
-              <Link
-                href="/en/apply"
-                className="inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-              >
-                Start a confidential discussion
-              </Link>
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+              <h3 className="text-base font-semibold text-white">Work with Executive Partners</h3>
+              <p className="mt-2 text-sm text-neutral-300">Whether you are a Milan platform or a Senior RM evaluating Italian or cross-border opportunities, we provide factual, confidential guidance.</p>
+              <div className="mt-4 flex flex-wrap gap-3"><Link href="/en/hiring-managers" className="btn btn-primary btn-sm">Brief a mandate</Link><Link href="/en/apply" className="btn btn-ghost btn-sm">Submit your profile</Link></div>
             </div>
-          </aside>
-        </section>
-
-        {/* CANDIDATES / HIRING MANAGERS STRIP */}
-        <section className="grid gap-6 md:grid-cols-2 border-t border-white/10 pt-10">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <h3 className="text-lg font-semibold">For Private Bankers</h3>
-            <p className="mt-2 text-sm text-white/75">
-              Share a high-level overview of your Italian and cross-border book.
-              We will only approach platforms where your franchise is genuinely
-              strategic.
-            </p>
-            <div className="mt-4">
-              <Link
-                href="/en/apply"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-              >
-                Apply confidentially
-              </Link>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <h3 className="text-lg font-semibold">For Hiring Managers</h3>
-            <p className="mt-2 text-sm text-white/75">
-              If you are building an Italy-focused team, we can identify senior
-              Milano bankers with real client depth and portable portfolios.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Link
-                href="/en/hiring-managers"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium border border-white/40 text-white hover:border-[#D4AF37] hover:text-[#D4AF37] transition"
-              >
-                Brief a mandate
-              </Link>
-              <Link
-                href="/en/contact"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium text-white/70 hover:text-[#D4AF37] transition"
-              >
-                Contact Executive Partners
-              </Link>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
+          </section>
+          <p className="mt-10 text-center text-sm text-neutral-400">Prefer to start with a discreet email?{" "}<a href="mailto:recruiter@execpartners.ch" className="underline decoration-brandGold/70 underline-offset-4 hover:text-white">recruiter@execpartners.ch</a></p>
+        </div>
+      </main>
+    </>
   );
 }

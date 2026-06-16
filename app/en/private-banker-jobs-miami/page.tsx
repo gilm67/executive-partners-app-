@@ -1,187 +1,132 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const SITE = "https://www.execpartners.ch";
+const PAGE_URL = `${SITE}/en/private-banker-jobs-miami`;
+
 export const metadata: Metadata = {
-  title: "Private Banker Jobs in Miami",
+  title: { absolute: "Private Banker Jobs in Miami | Senior RM Recruitment – Executive Partners" },
   description:
-    "Private banker and wealth manager roles in Miami, focused on Latin American and international offshore clients. Discreet advisory for Senior Relationship Managers and UHNW advisers.",
-  alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-miami" },
+    "Miami private banking recruitment. Senior RMs covering LATAM and US offshore wealth. Confidential. Compensation benchmarks included.",
+  alternates: { canonical: PAGE_URL },
+  openGraph: {
+    type: "website", url: PAGE_URL, siteName: "Executive Partners",
+    title: "Private Banker Jobs in Miami – Executive Partners",
+    description: "Senior private banking roles in Miami. LATAM, US offshore coverage. Confidential search.",
+    images: [{ url: "/og.webp", width: 1200, height: 630, alt: "Executive Partners – Miami Private Banking" }],
+  },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in Miami ",
-    description: "Private banker and wealth manager roles in Miami, focused on Latin American and international offshore clients. Discreet advisory for Senior Relationship M",
+    title: "Private Banker Jobs in Miami – Executive Partners",
+    description: "Confidential Miami private banking roles. LATAM, US offshore coverage. Compensation benchmarks included.",
     images: ["/og.webp"],
   },
   robots: { index: true, follow: true },
 };
 
+const orgJsonLd = {
+  "@context": "https://schema.org", "@type": ["ProfessionalService", "LocalBusiness"],
+  name: "Executive Partners – Private Banking Recruitment Miami", url: PAGE_URL, image: `${SITE}/og.webp`,
+  areaServed: ["Miami", "LATAM", "United States"], industry: "Private Banking & Wealth Management Recruitment",
+  sameAs: ["https://www.linkedin.com/company/executive-partners", SITE],
+};
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org", "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+    { "@type": "ListItem", position: 2, name: "Markets", item: `${SITE}/en/markets` },
+    { "@type": "ListItem", position: 3, name: "Private Banker Jobs – Miami", item: PAGE_URL },
+  ],
+};
+
 export default function Page() {
   return (
-    <main className="min-h-screen bg-[#0B0E13] text-white py-16 px-4">
-      <div className="container-max mx-auto max-w-5xl space-y-10">
-        {/* BREADCRUMB */}
-        <nav className="text-xs text-white/60">
-          <Link href="/en/markets" className="hover:text-[#D4AF37]">
-            Markets
-          </Link>
-          <span className="mx-1">/</span>
-          <span>Private Banker Jobs in Miami</span>
-        </nav>
-
-        {/* HERO / INTRO */}
-        <header className="space-y-4">
-          <p className="uppercase tracking-[0.2em] text-[11px] text-white/60">
-            PRIVATE BANKING · MIAMI
-          </p>
-          <h1 className="text-3xl md:text-5xl font-semibold leading-tight">
-            Private Banker Jobs in <span className="gold">Miami</span>
-          </h1>
-          <p className="text-white/80 text-base md:text-lg max-w-3xl">
-            Executive Partners supports private bankers and wealth managers
-            based in or relocating to Miami, with a strong focus on Latin
-            American and international offshore client coverage through
-            international and regional platforms.
-          </p>
-
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Link
-              href="/en/apply"
-              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-            >
-              Apply confidentially
-            </Link>
-            <Link
-              href="/en/jobs"
-              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium border border-white/40 text-white hover:border-[#D4AF37] hover:text-[#D4AF37] transition"
-            >
-              View open roles
-            </Link>
-          </div>
-        </header>
-
-        {/* MAIN CONTENT + SIDE CARD */}
-        <section className="grid gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,1.25fr)] items-start">
-          <div className="space-y-8">
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Mandates in the Miami Wealth Hub
-              </h2>
-              <p className="mt-3 text-white/75">
-                Our Miami mandates are typically focused on UHNW and upper-HNW
-                clients across Latin America and international offshore books.
-                Roles often include:
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <main className="relative min-h-screen bg-[#0B0F1A] text-white">
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(900px 360px at 15% -10%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 55%), radial-gradient(900px 360px at 110% 0%, rgba(245,231,192,.18) 0%, rgba(245,231,192,0) 60%)" }} />
+        <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
+          <nav className="text-xs text-white/60 mb-8">
+            <Link href="/en/markets" className="hover:text-[#D4AF37]">Markets</Link>
+            <span className="mx-1">/</span><span>Private Banker Jobs in Miami</span>
+          </nav>
+          <header className="max-w-3xl">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">Miami · United States · Executive Search</p>
+            <h1 className="mt-4 text-3xl font-extrabold tracking-tight md:text-4xl">Private Banker Jobs in Miami</h1>
+            <p className="mt-4 text-sm text-neutral-300 md:text-[0.95rem] leading-relaxed">
+              Miami has become the dominant US booking centre for{" "}
+              <span className="font-semibold text-neutral-100">LATAM and international offshore wealth</span>, drawing both global private banks and a fast-growing wave of independent EAMs serving Brazilian, Mexican, Colombian and Argentine clients. Executive Partners advises Senior RMs on confidential moves across this market.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/en/apply" className="btn btn-primary btn-xl">Apply confidentially</Link>
+              <Link href="/en/jobs" className="btn btn-ghost">View live mandates</Link>
+            </div>
+          </header>
+          <section className="mt-12 grid gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)]">
+            <div className="space-y-4 text-sm text-neutral-200 md:text-[0.95rem] leading-relaxed">
+              <h2 className="text-xl font-semibold text-white">Miami's rise as the LATAM booking centre</h2>
+              <p>
+                Sustained LATAM capital flight, combined with Florida's tax environment and large Latin American diaspora, has made Miami the preferred US base for international private banking coverage of Brazilian, Mexican and broader LATAM wealth, often competing directly with Swiss and Caribbean booking centres for the same clients.
               </p>
-              <ul className="mt-3 space-y-1 text-white/80 list-disc list-inside">
-                <li>Senior Relationship Managers with LATAM offshore portfolios</li>
-                <li>Team leaders and desk heads for key Latin American markets</li>
-                <li>
-                  Senior advisers covering entrepreneurs, family offices and
-                  multi-jurisdictional families
-                </li>
-                <li>
-                  Moves between Swiss, US and Caribbean booking centres with Miami
-                  as the client hub
-                </li>
+              <p>Over the last 18 months, hiring demand has concentrated on:</p>
+              <ul className="list-disc space-y-1 pl-5 text-neutral-200">
+                <li>RMs with <span className="font-semibold">genuinely portable LATAM offshore books</span></li>
+                <li>Portuguese or Spanish-fluent bankers for Brazilian and Hispanic coverage</li>
+                <li>Specialists bridging Miami with Swiss or Caribbean booking centres</li>
+                <li>SEC-registered advisors with strong compliance track records</li>
               </ul>
             </div>
-
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Supporting Your Move or Step-Up in Miami
-              </h2>
-              <p className="mt-3 text-white/75">
-                Whether you are already in Miami or considering relocating from
-                Switzerland, Europe or LATAM, we compare platforms on
-                compensation, product access, booking-centre architecture and
-                long-term support for your client base.
-              </p>
-              <p className="mt-3 text-white/75">
-                We only introduce your profile to a short list of franchises
-                that genuinely add value to your existing relationships.
-              </p>
+            <aside className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <h3 className="text-base font-semibold text-white">How Executive Partners supports Miami hiring</h3>
+              <ul className="mt-4 space-y-2 text-sm text-neutral-200">
+                <li>• Senior RM search across US and international platforms</li>
+                <li>• LATAM portability mapping</li>
+                <li>• SEC / FINRA compliance pre-screening</li>
+                <li>• Miami vs. Swiss booking-centre comparison</li>
+                <li>• 12–24 month NNM projection and business plan support</li>
+              </ul>
+              <div className="mt-5"><Link href="/en/apply" className="btn btn-secondary w-full text-sm font-medium">Senior RM? Submit your profile</Link></div>
+            </aside>
+          </section>
+          <section className="mt-14 rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
+            <h2 className="text-xl font-semibold text-white">2025–2026 Miami compensation benchmarks</h2>
+            <p className="mt-3 text-sm text-neutral-300 md:text-[0.95rem]">Ranges reflect typical packages observed across Miami-based private banks and wealth managers.</p>
+            <div className="mt-6 overflow-x-auto">
+              <table className="min-w-full text-left text-sm text-neutral-100">
+                <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-neutral-400">
+                  <tr><th className="py-2 pr-4">Role</th><th className="py-2 pr-4">Base salary (USD)</th><th className="py-2 pr-4">Bonus range</th><th className="py-2 pr-4">Typical total</th></tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  <tr><td className="py-2 pr-4">RM (5–10 years)</td><td className="py-2 pr-4">110k – 150k</td><td className="py-2 pr-4">20% – 60%</td><td className="py-2 pr-4">140k – 240k</td></tr>
+                  <tr><td className="py-2 pr-4">Senior RM (10–20 years)</td><td className="py-2 pr-4">150k – 210k</td><td className="py-2 pr-4">40% – 110%</td><td className="py-2 pr-4">210k – 440k</td></tr>
+                  <tr><td className="py-2 pr-4">Ultra UHNW RM (LATAM)</td><td className="py-2 pr-4">210k – 270k</td><td className="py-2 pr-4">80% – 180%</td><td className="py-2 pr-4">380k – 760k</td></tr>
+                  <tr><td className="py-2 pr-4">Team Head</td><td className="py-2 pr-4">240k – 320k</td><td className="py-2 pr-4">100% – 200%</td><td className="py-2 pr-4">480k – 960k</td></tr>
+                </tbody>
+              </table>
             </div>
-
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Discreet, Long-Term Relationship
-              </h2>
-              <p className="mt-3 text-white/75">
-                Many of the Miami bankers we advise speak with us well before
-                any concrete move. Our role is to help you understand timing,
-                platform positioning and market dynamics, not to push you into
-                a transaction.
-              </p>
+            <p className="mt-4 text-xs text-neutral-500">These ranges are indicative and based on observed market levels in Miami across 2025–2026.</p>
+          </section>
+          <section className="mt-12 rounded-3xl border border-[#C9A14A]/20 bg-[#C9A14A]/5 p-6 md:p-7">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#C9A14A] mb-1">Anonymised placement</div>
+            <div className="flex items-center gap-2 mb-2"><span className="text-lg">🇺🇸</span><span className="text-sm font-semibold text-white/80">LATAM offshore desk · Miami</span></div>
+            <p className="text-sm text-white/70">Senior Relationship Manager · USD 165M portable book · Mandate to offer: 20 days · Still at the bank, 23 months</p>
+          </section>
+          <section className="mt-12 grid gap-6 md:grid-cols-2">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+              <h3 className="text-base font-semibold text-white">Deep-dive insights for Miami-based bankers</h3>
+              <p className="mt-2 text-sm text-neutral-300">Market commentary on LATAM wealth flows and Miami's rise as a booking centre.</p>
+              <ul className="mt-4 space-y-2 text-sm text-brandGoldSoft"><li><Link href="/en/insights" className="hover:underline">Browse Private Wealth Pulse →</Link></li></ul>
             </div>
-          </div>
-
-          {/* SNAPSHOT CARD */}
-          <aside className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur space-y-4">
-            <h3 className="text-lg font-semibold">Miami Wealth Snapshot</h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li>• Key hub for Latin American UHNW &amp; HNW offshore wealth</li>
-              <li>• Mix of global private banks, broker-dealers and boutiques</li>
-              <li>• Platforms often linked to Swiss, New York or Caribbean booking</li>
-              <li>• Increasing demand for sophisticated advisory &amp; wealth planning</li>
-            </ul>
-            <div className="pt-4 border-t border-white/10 space-y-2 text-xs text-white/60">
-              <p>
-                If you manage a portable LATAM or offshore book, we can map
-                which Miami platforms best match your client profile and risk
-                appetite.
-              </p>
-              <Link
-                href="/en/apply"
-                className="inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-              >
-                Start a confidential discussion
-              </Link>
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+              <h3 className="text-base font-semibold text-white">Work with Executive Partners</h3>
+              <p className="mt-2 text-sm text-neutral-300">Whether you are a Miami platform or a Senior RM evaluating LATAM offshore opportunities, we provide factual, confidential guidance.</p>
+              <div className="mt-4 flex flex-wrap gap-3"><Link href="/en/hiring-managers" className="btn btn-primary btn-sm">Brief a mandate</Link><Link href="/en/apply" className="btn btn-ghost btn-sm">Submit your profile</Link></div>
             </div>
-          </aside>
-        </section>
-
-        {/* CANDIDATES / HIRING MANAGERS STRIP */}
-        <section className="grid gap-6 md:grid-cols-2 border-t border-white/10 pt-10">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <h3 className="text-lg font-semibold">For Private Bankers</h3>
-            <p className="mt-2 text-sm text-white/75">
-              Share a high-level overview of your LATAM/offshore franchise and
-              current platform. We will only approach institutions where your
-              book and profile are genuinely strategic.
-            </p>
-            <div className="mt-4">
-              <Link
-                href="/en/apply"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-              >
-                Apply confidentially
-              </Link>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <h3 className="text-lg font-semibold">For Hiring Managers</h3>
-            <p className="mt-2 text-sm text-white/75">
-              Looking to hire senior Miami-based bankers with real portable
-              LATAM books? We can calibrate the market, approach specific
-              profiles and provide documented business cases.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Link
-                href="/en/hiring-managers"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium border border-white/40 text-white hover:border-[#D4AF37] hover:text-[#D4AF37] transition"
-              >
-                Brief a mandate
-              </Link>
-              <Link
-                href="/en/contact"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium text-white/70 hover:text-[#D4AF37] transition"
-              >
-                Contact Executive Partners
-              </Link>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
+          </section>
+          <p className="mt-10 text-center text-sm text-neutral-400">Prefer to start with a discreet email?{" "}<a href="mailto:recruiter@execpartners.ch" className="underline decoration-brandGold/70 underline-offset-4 hover:text-white">recruiter@execpartners.ch</a></p>
+        </div>
+      </main>
+    </>
   );
 }

@@ -1,171 +1,132 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const SITE = "https://www.execpartners.ch";
+const PAGE_URL = `${SITE}/en/private-banker-jobs-hong-kong`;
+
 export const metadata: Metadata = {
-  title: "Private Banker Jobs in Hong Kong",
+  title: { absolute: "Private Banker Jobs in Hong Kong | Senior RM Recruitment – Executive Partners" },
   description:
-    "Senior private banker and wealth manager roles in Hong Kong. Advisory for RMs covering Greater China, UHNW Asian families and international offshore clients.",
-  alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-hong-kong" },
+    "Hong Kong private banking recruitment. Senior RMs and Team Heads covering Greater China, North Asia and NRI wealth. Confidential. Compensation benchmarks included.",
+  alternates: { canonical: PAGE_URL },
+  openGraph: {
+    type: "website", url: PAGE_URL, siteName: "Executive Partners",
+    title: "Private Banker Jobs in Hong Kong – Executive Partners",
+    description: "Senior private banking roles in Hong Kong. Greater China, North Asia coverage. Confidential search.",
+    images: [{ url: "/og.webp", width: 1200, height: 630, alt: "Executive Partners – Hong Kong Private Banking" }],
+  },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in Hong Kong",
-    description: "Senior private banker and wealth manager roles in Hong Kong. Advisory for RMs covering Greater China, UHNW Asian families and international offshore clients.",
+    title: "Private Banker Jobs in Hong Kong – Executive Partners",
+    description: "Confidential Hong Kong private banking roles. Greater China, North Asia coverage. Compensation benchmarks included.",
     images: ["/og.webp"],
   },
   robots: { index: true, follow: true },
 };
 
+const orgJsonLd = {
+  "@context": "https://schema.org", "@type": ["ProfessionalService", "LocalBusiness"],
+  name: "Executive Partners – Private Banking Recruitment Hong Kong", url: PAGE_URL, image: `${SITE}/og.webp`,
+  areaServed: ["Hong Kong", "Greater China", "North Asia"], industry: "Private Banking & Wealth Management Recruitment",
+  sameAs: ["https://www.linkedin.com/company/executive-partners", SITE],
+};
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org", "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+    { "@type": "ListItem", position: 2, name: "Markets", item: `${SITE}/en/markets` },
+    { "@type": "ListItem", position: 3, name: "Private Banker Jobs – Hong Kong", item: PAGE_URL },
+  ],
+};
+
 export default function Page() {
   return (
-    <main className="min-h-screen bg-[#0B0E13] text-white py-16 px-4">
-     <div className="container-max mx-auto max-w-5xl space-y-10">
-        <nav className="text-xs text-white/60">
-          <Link href="/en/markets" className="hover:text-[#D4AF37]">
-            Markets
-          </Link>
-          <span className="mx-1">/</span>
-          <span>Private Banker Jobs in Hong Kong</span>
-        </nav>
-
-        <header className="space-y-4">
-          <p className="uppercase tracking-[0.2em] text-[11px] text-white/60">
-            PRIVATE BANKING · HONG KONG
-          </p>
-          <h1 className="text-3xl md:text-5xl font-semibold leading-tight">
-            Private Banker Jobs in <span className="gold">Hong Kong</span>
-          </h1>
-          <p className="text-white/80 text-base md:text-lg max-w-3xl">
-            Hong Kong remains Asia's premier booking centre for Greater China
-            and UHNW Asian wealth. We support Senior RMs and Private Bankers
-            serving mainland Chinese, Hong Kong and international clients across
-            global and regional platforms.
-          </p>
-
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Link
-              href="/en/apply"
-              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-            >
-              Apply confidentially
-            </Link>
-            <Link
-              href="/en/jobs"
-              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium border border-white/40 text-white hover:border-[#D4AF37] hover:text-[#D4AF37] transition"
-            >
-              View open roles
-            </Link>
-          </div>
-        </header>
-
-        <section className="grid gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,1.25fr)] items-start">
-          <div className="space-y-8">
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Typical Mandates in Hong Kong
-              </h2>
-              <p className="mt-3 text-white/75">
-                Our clients include global private banks, regional champions and
-                specialist platforms. Mandates often focus on:
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <main className="relative min-h-screen bg-[#0B0F1A] text-white">
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(900px 360px at 15% -10%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 55%), radial-gradient(900px 360px at 110% 0%, rgba(245,231,192,.18) 0%, rgba(245,231,192,0) 60%)" }} />
+        <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
+          <nav className="text-xs text-white/60 mb-8">
+            <Link href="/en/markets" className="hover:text-[#D4AF37]">Markets</Link>
+            <span className="mx-1">/</span><span>Private Banker Jobs in Hong Kong</span>
+          </nav>
+          <header className="max-w-3xl">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">Hong Kong · Asia · Executive Search</p>
+            <h1 className="mt-4 text-3xl font-extrabold tracking-tight md:text-4xl">Private Banker Jobs in Hong Kong</h1>
+            <p className="mt-4 text-sm text-neutral-300 md:text-[0.95rem] leading-relaxed">
+              Hong Kong remains the principal gateway for{" "}
+              <span className="font-semibold text-neutral-100">Greater China, North Asia and NRI wealth</span>, with an SFC-regulated framework that continues to compete with Singapore for cross-border mandates. Executive Partners advises Senior RMs and Team Heads on confidential moves across global and regional platforms.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/en/apply" className="btn btn-primary btn-xl">Apply confidentially</Link>
+              <Link href="/en/jobs" className="btn btn-ghost">View live mandates</Link>
+            </div>
+          </header>
+          <section className="mt-12 grid gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)]">
+            <div className="space-y-4 text-sm text-neutral-200 md:text-[0.95rem] leading-relaxed">
+              <h2 className="text-xl font-semibold text-white">Hong Kong vs. Singapore: the live comparison</h2>
+              <p>
+                Most senior bankers we advise in Hong Kong are weighing the platform against Singapore directly. Mainland China capital controls, political risk perception and SFC licensing timelines all factor into where a given book is best booked.
               </p>
-              <ul className="mt-3 space-y-1 text-white/80 list-disc list-inside">
-                <li>UHNW / HNW desks covering Greater China and mainland Chinese clients</li>
-                <li>Cross-border Asian and international offshore wealth</li>
-                <li>Team leaders and segment heads</li>
-                <li>Senior advisers connecting Hong Kong with Swiss and European booking centres</li>
+              <p>Over the last 18 months, hiring demand has concentrated on:</p>
+              <ul className="list-disc space-y-1 pl-5 text-neutral-200">
+                <li>RMs with <span className="font-semibold">genuinely portable Greater China or North Asia books</span></li>
+                <li>Mandarin or Cantonese-fluent bankers for mainland coverage</li>
+                <li>Team leaders connecting Hong Kong with Singapore and London desks</li>
+                <li>Specialists in cross-border China wealth structuring</li>
               </ul>
             </div>
-
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Hong Kong as a Global Wealth Hub
-              </h2>
-              <p className="mt-3 text-white/75">
-                Hong Kong recently overtook Switzerland as the world's largest
-                offshore wealth centre per BCG data. Demand for senior
-                relationship managers with established Greater China networks
-                and clean compliance profiles has never been higher.
-              </p>
+            <aside className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <h3 className="text-base font-semibold text-white">How Executive Partners supports Hong Kong hiring</h3>
+              <ul className="mt-4 space-y-2 text-sm text-neutral-200">
+                <li>• Senior RM &amp; Team Head search</li>
+                <li>• Greater China / North Asia portability mapping</li>
+                <li>• SFC licensing pre-screening</li>
+                <li>• Hong Kong vs. Singapore platform comparison</li>
+                <li>• 12–24 month NNM projection and business plan support</li>
+              </ul>
+              <div className="mt-5"><Link href="/en/apply" className="btn btn-secondary w-full text-sm font-medium">Senior RM? Submit your profile</Link></div>
+            </aside>
+          </section>
+          <section className="mt-14 rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
+            <h2 className="text-xl font-semibold text-white">2025–2026 Hong Kong compensation benchmarks</h2>
+            <p className="mt-3 text-sm text-neutral-300 md:text-[0.95rem]">Ranges reflect typical packages observed across SFC-licensed private banks and wealth managers.</p>
+            <div className="mt-6 overflow-x-auto">
+              <table className="min-w-full text-left text-sm text-neutral-100">
+                <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-neutral-400">
+                  <tr><th className="py-2 pr-4">Role</th><th className="py-2 pr-4">Base salary (HKD)</th><th className="py-2 pr-4">Bonus range</th><th className="py-2 pr-4">Typical total</th></tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  <tr><td className="py-2 pr-4">RM (5–10 years)</td><td className="py-2 pr-4">900k – 1.2m</td><td className="py-2 pr-4">20% – 60%</td><td className="py-2 pr-4">1.1m – 1.9m</td></tr>
+                  <tr><td className="py-2 pr-4">Senior RM (10–20 years)</td><td className="py-2 pr-4">1.2m – 1.7m</td><td className="py-2 pr-4">40% – 110%</td><td className="py-2 pr-4">1.7m – 3.5m</td></tr>
+                  <tr><td className="py-2 pr-4">Ultra UHNW RM (Greater China)</td><td className="py-2 pr-4">1.7m – 2.1m</td><td className="py-2 pr-4">80% – 180%</td><td className="py-2 pr-4">3.1m – 5.9m</td></tr>
+                  <tr><td className="py-2 pr-4">Team Head</td><td className="py-2 pr-4">2m – 2.6m</td><td className="py-2 pr-4">100% – 200%</td><td className="py-2 pr-4">4m – 7.8m</td></tr>
+                </tbody>
+              </table>
             </div>
-
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Long-Term Career Positioning
-              </h2>
-              <p className="mt-3 text-white/75">
-                We help senior bankers evaluate moves between Hong Kong,
-                Singapore and Swiss booking centres, assessing licensing,
-                compensation structures, platform offering and client
-                relationship portability.
-              </p>
+            <p className="mt-4 text-xs text-neutral-500">These ranges are indicative and based on observed market levels in Hong Kong across 2025–2026.</p>
+          </section>
+          <section className="mt-12 rounded-3xl border border-[#C9A14A]/20 bg-[#C9A14A]/5 p-6 md:p-7">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#C9A14A] mb-1">Anonymised placement</div>
+            <div className="flex items-center gap-2 mb-2"><span className="text-lg">🇭🇰</span><span className="text-sm font-semibold text-white/80">Greater China desk · Hong Kong</span></div>
+            <p className="text-sm text-white/70">Senior Relationship Manager · HKD 1.8B portable book · Mandate to offer: 24 days · Still at the bank, 18 months</p>
+          </section>
+          <section className="mt-12 grid gap-6 md:grid-cols-2">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+              <h3 className="text-base font-semibold text-white">Deep-dive insights for Hong Kong-based bankers</h3>
+              <p className="mt-2 text-sm text-neutral-300">Market commentary on Greater China wealth flows and Hong Kong vs. Singapore dynamics.</p>
+              <ul className="mt-4 space-y-2 text-sm text-brandGoldSoft"><li><Link href="/en/insights" className="hover:underline">Browse Private Wealth Pulse →</Link></li></ul>
             </div>
-          </div>
-
-          <aside className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur space-y-4">
-            <h3 className="text-lg font-semibold">
-              Hong Kong Private Banking Snapshot
-            </h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li>• World's largest offshore wealth centre per BCG 2025</li>
-              <li>• Dominant hub for Greater China UHNW clients</li>
-              <li>• Strong presence of global and regional PB platforms</li>
-              <li>• Increasing connectivity with Swiss and Singapore booking centres</li>
-            </ul>
-            <div className="pt-4 border-t border-white/10 space-y-2 text-xs text-white/60">
-              <p>
-                We benchmark Hong Kong opportunities against your current
-                platform and markets, identifying where your franchise is best
-                positioned.
-              </p>
-              <Link
-                href="/en/apply"
-                className="inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-              >
-                Start a confidential discussion
-              </Link>
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+              <h3 className="text-base font-semibold text-white">Work with Executive Partners</h3>
+              <p className="mt-2 text-sm text-neutral-300">Whether you are a Hong Kong platform or a Senior RM weighing options against Singapore, we provide factual, confidential guidance.</p>
+              <div className="mt-4 flex flex-wrap gap-3"><Link href="/en/hiring-managers" className="btn btn-primary btn-sm">Brief a mandate</Link><Link href="/en/apply" className="btn btn-ghost btn-sm">Submit your profile</Link></div>
             </div>
-          </aside>
-        </section>
-
-        <section className="grid gap-6 md:grid-cols-2 border-t border-white/10 pt-10">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <h3 className="text-lg font-semibold">For Private Bankers</h3>
-            <p className="mt-2 text-sm text-white/75">
-              Share your core markets, AUM and platform constraints. We will only
-              introduce you to Hong Kong institutions aligned with your strategy.
-            </p>
-            <div className="mt-4">
-              <Link
-                href="/en/apply"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-              >
-                Apply confidentially
-              </Link>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <h3 className="text-lg font-semibold">For Hiring Managers</h3>
-            <p className="mt-2 text-sm text-white/75">
-              We support selective growth in Hong Kong with senior bankers
-              who bring real portability and cultural fit, not just headcount.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Link
-                href="/en/hiring-managers"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium border border-white/40 text-white hover:border-[#D4AF37] hover:text-[#D4AF37] transition"
-              >
-                Brief a mandate
-              </Link>
-              <Link
-                href="/en/contact"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium text-white/70 hover:text-[#D4AF37] transition"
-              >
-                Contact Executive Partners
-              </Link>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
+          </section>
+          <p className="mt-10 text-center text-sm text-neutral-400">Prefer to start with a discreet email?{" "}<a href="mailto:recruiter@execpartners.ch" className="underline decoration-brandGold/70 underline-offset-4 hover:text-white">recruiter@execpartners.ch</a></p>
+        </div>
+      </main>
+    </>
   );
 }

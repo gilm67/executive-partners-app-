@@ -1,174 +1,132 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const SITE = "https://www.execpartners.ch";
+const PAGE_URL = `${SITE}/en/private-banker-jobs-lisbon`;
+
 export const metadata: Metadata = {
-  title: "Private Banker Jobs in Lisbon, Portugal | Executive Partners",
+  title: { absolute: "Private Banker Jobs in Lisbon | Senior RM Recruitment – Executive Partners" },
   description:
-    "Private banking and wealth management roles in Lisbon, including Portuguese onshore, Brazilian market and international offshore client coverage with strong links to Geneva, Zurich and London.",
-  alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-lisbon" },
+    "Lisbon private banking recruitment. Senior RMs covering Portuguese, Brazilian and cross-border wealth. Confidential. Compensation benchmarks included.",
+  alternates: { canonical: PAGE_URL },
+  openGraph: {
+    type: "website", url: PAGE_URL, siteName: "Executive Partners",
+    title: "Private Banker Jobs in Lisbon – Executive Partners",
+    description: "Senior private banking roles in Lisbon. Portuguese, Brazilian, cross-border coverage. Confidential search.",
+    images: [{ url: "/og.webp", width: 1200, height: 630, alt: "Executive Partners – Lisbon Private Banking" }],
+  },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in Lisbon, Portugal",
-    description: "Private banking roles in Lisbon covering Portuguese onshore, Brazilian and international offshore clients. Senior RM and advisory mandates with Swiss and European booking links.",
+    title: "Private Banker Jobs in Lisbon – Executive Partners",
+    description: "Confidential Lisbon private banking roles. Portuguese, Brazilian, cross-border coverage. Compensation benchmarks included.",
     images: ["/og.webp"],
   },
   robots: { index: true, follow: true },
 };
 
+const orgJsonLd = {
+  "@context": "https://schema.org", "@type": ["ProfessionalService", "LocalBusiness"],
+  name: "Executive Partners – Private Banking Recruitment Lisbon", url: PAGE_URL, image: `${SITE}/og.webp`,
+  areaServed: ["Lisbon", "Portugal", "Brazil"], industry: "Private Banking & Wealth Management Recruitment",
+  sameAs: ["https://www.linkedin.com/company/executive-partners", SITE],
+};
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org", "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+    { "@type": "ListItem", position: 2, name: "Markets", item: `${SITE}/en/markets` },
+    { "@type": "ListItem", position: 3, name: "Private Banker Jobs – Lisbon", item: PAGE_URL },
+  ],
+};
+
 export default function Page() {
   return (
-    <main className="min-h-screen bg-[#0B0E13] text-white py-16 px-4">
-      <div className="container-max max-w-5xl space-y-10">
-
-        {/* Breadcrumb */}
-        <nav className="text-xs text-white/60">
-          <Link href="/en/markets" className="hover:text-[#D4AF37]">Markets</Link>
-          <span className="mx-1">/</span>
-          <Link href="/en/markets/lisbon" className="hover:text-[#D4AF37]">Lisbon</Link>
-          <span className="mx-1">/</span>
-          <span>Private Banker Jobs</span>
-        </nav>
-
-        {/* Hero */}
-        <header className="space-y-4">
-          <p className="uppercase tracking-[0.2em] text-[11px] text-white/60">
-            PRIVATE BANKING · LISBON / PORTUGAL
-          </p>
-          <h1 className="text-3xl md:text-5xl font-semibold leading-tight">
-            Private Banker Jobs in <span className="text-[#D4AF37]">Lisbon</span>
-          </h1>
-          <p className="text-white/80 text-base md:text-lg max-w-3xl">
-            Lisbon is an emerging hub for international wealth professionals, combining
-            Portuguese onshore HNW clients, a growing Brazilian market coverage desk,
-            and international offshore clients who have relocated under Portugal&apos;s
-            residency and tax programmes. We advise senior private bankers and
-            relationship managers in Lisbon, typically in roles linked to Swiss,
-            UK or other European booking centres.
-          </p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Link
-              href="/en/apply"
-              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-            >
-              Apply confidentially
-            </Link>
-            <Link
-              href="/en/jobs"
-              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium border border-white/40 text-white hover:border-[#D4AF37] hover:text-[#D4AF37] transition"
-            >
-              View open roles
-            </Link>
-          </div>
-        </header>
-
-        {/* Main content */}
-        <section className="grid gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,1.25fr)] items-start">
-          <div className="space-y-8">
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">Lisbon as a Private Banking Hub</h2>
-              <p className="mt-3 text-white/75">
-                Lisbon has attracted a growing pool of international wealth professionals
-                and UHNW individuals, partly driven by Portugal&apos;s residency programmes.
-                Banks and EAMs active in Lisbon typically serve Portuguese domestic HNW
-                clients, Brazilian offshore wealth (often booked in Geneva, Zurich or
-                Luxembourg), and relocated international clients from the UK, France
-                and further afield.
-              </p>
-              <p className="mt-3 text-white/75">
-                Demand for senior relationship managers in Lisbon tends to focus on
-                Portuguese-speaking bankers with cross-border knowledge and an understanding
-                of how to structure wealth between Lisbon and a Swiss or European booking
-                centre. Language is critical: Portuguese and English are the minimum for
-                most roles, with French or Spanish adding material value depending on the
-                client base.
-              </p>
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <main className="relative min-h-screen bg-[#0B0F1A] text-white">
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(900px 360px at 15% -10%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 55%), radial-gradient(900px 360px at 110% 0%, rgba(245,231,192,.18) 0%, rgba(245,231,192,0) 60%)" }} />
+        <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
+          <nav className="text-xs text-white/60 mb-8">
+            <Link href="/en/markets" className="hover:text-[#D4AF37]">Markets</Link>
+            <span className="mx-1">/</span><span>Private Banker Jobs in Lisbon</span>
+          </nav>
+          <header className="max-w-3xl">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">Lisbon · Portugal · Executive Search</p>
+            <h1 className="mt-4 text-3xl font-extrabold tracking-tight md:text-4xl">Private Banker Jobs in Lisbon</h1>
+            <p className="mt-4 text-sm text-neutral-300 md:text-[0.95rem] leading-relaxed">
+              Lisbon has grown into a meaningful booking centre for{" "}
+              <span className="font-semibold text-neutral-100">Portuguese, Brazilian and broader Lusophone wealth</span>, helped by Portugal's NHR-successor tax regimes and a wave of relocating entrepreneurs. Executive Partners advises Senior RMs on confidential moves across Iberian and cross-border platforms.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/en/apply" className="btn btn-primary btn-xl">Apply confidentially</Link>
+              <Link href="/en/jobs" className="btn btn-ghost">View live mandates</Link>
             </div>
-
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">What We Advise Bankers Considering Lisbon</h2>
-              <ul className="mt-3 space-y-2 text-white/80 list-disc list-inside">
-                <li>Portuguese and English fluency is the baseline for onshore roles</li>
-                <li>Brazilian market coverage from Lisbon is a growing niche, often booking into Geneva or Luxembourg</li>
-                <li>Cross-border regulatory knowledge between Portugal and Switzerland is a genuine differentiator</li>
-                <li>Non-habitual resident and golden visa expertise is valued for UHNW client-facing roles</li>
-                <li>Compensation is below Geneva and Zurich equivalents, but improving for senior roles with portable books</li>
+          </header>
+          <section className="mt-12 grid gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)]">
+            <div className="space-y-4 text-sm text-neutral-200 md:text-[0.95rem] leading-relaxed">
+              <h2 className="text-xl font-semibold text-white">Lisbon's growing role in Lusophone wealth</h2>
+              <p>
+                Portugal's tax reforms and Lisbon's rising profile as a relocation destination for European and Brazilian entrepreneurs have created genuine demand for bankers who can bridge Portuguese onshore coverage with Brazilian and broader Lusophone offshore relationships.
+              </p>
+              <p>Over the last 18 months, hiring demand has concentrated on:</p>
+              <ul className="list-disc space-y-1 pl-5 text-neutral-200">
+                <li>RMs with <span className="font-semibold">genuinely portable Portuguese or Brazilian books</span></li>
+                <li>Portuguese-fluent bankers with cross-border compliance depth</li>
+                <li>Specialists bridging Lisbon with Geneva and Zurich booking centres</li>
+                <li>Entrepreneur and family-office focused advisory coverage</li>
               </ul>
             </div>
-
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">Discreet Advisory for Senior Bankers</h2>
-              <p className="mt-3 text-white/75">
-                We help you assess whether a Lisbon-based role fits your client franchise,
-                language profile and longer-term positioning, and whether your book would
-                best be served onshore or via a cross-border structure linked to Geneva or
-                Zurich. Every conversation is confidential.
-              </p>
+            <aside className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <h3 className="text-base font-semibold text-white">How Executive Partners supports Lisbon hiring</h3>
+              <ul className="mt-4 space-y-2 text-sm text-neutral-200">
+                <li>• Senior RM search across Iberian platforms</li>
+                <li>• Portuguese / Brazilian portability mapping</li>
+                <li>• Cross-border tax and compliance pre-screening</li>
+                <li>• Lisbon vs. Swiss booking-centre comparison</li>
+                <li>• 12–24 month NNM projection and business plan support</li>
+              </ul>
+              <div className="mt-5"><Link href="/en/apply" className="btn btn-secondary w-full text-sm font-medium">Senior RM? Submit your profile</Link></div>
+            </aside>
+          </section>
+          <section className="mt-14 rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
+            <h2 className="text-xl font-semibold text-white">2025–2026 Lisbon compensation benchmarks</h2>
+            <p className="mt-3 text-sm text-neutral-300 md:text-[0.95rem]">Ranges reflect typical packages observed across Lisbon-based private banks and wealth managers.</p>
+            <div className="mt-6 overflow-x-auto">
+              <table className="min-w-full text-left text-sm text-neutral-100">
+                <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-neutral-400">
+                  <tr><th className="py-2 pr-4">Role</th><th className="py-2 pr-4">Base salary (EUR)</th><th className="py-2 pr-4">Bonus range</th><th className="py-2 pr-4">Typical total</th></tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  <tr><td className="py-2 pr-4">RM (5–10 years)</td><td className="py-2 pr-4">70k – 95k</td><td className="py-2 pr-4">20% – 50%</td><td className="py-2 pr-4">85k – 145k</td></tr>
+                  <tr><td className="py-2 pr-4">Senior RM (10–20 years)</td><td className="py-2 pr-4">95k – 135k</td><td className="py-2 pr-4">40% – 100%</td><td className="py-2 pr-4">135k – 270k</td></tr>
+                  <tr><td className="py-2 pr-4">Ultra UHNW RM</td><td className="py-2 pr-4">135k – 170k</td><td className="py-2 pr-4">70% – 160%</td><td className="py-2 pr-4">230k – 440k</td></tr>
+                  <tr><td className="py-2 pr-4">Team Head</td><td className="py-2 pr-4">150k – 200k</td><td className="py-2 pr-4">90% – 200%</td><td className="py-2 pr-4">285k – 600k</td></tr>
+                </tbody>
+              </table>
             </div>
-          </div>
-
-          {/* Snapshot card */}
-          <aside className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur space-y-4">
-            <h3 className="text-lg font-semibold">Lisbon Wealth Snapshot</h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li>• Portuguese onshore HNW and family wealth</li>
-              <li>• Brazilian offshore market (Geneva/Luxembourg booking)</li>
-              <li>• International relocatees under residency programmes</li>
-              <li>• Portuguese and English mandatory, French/Spanish valuable</li>
-              <li>• Strong links to Geneva, Zurich, London, Luxembourg</li>
-            </ul>
-            <div className="pt-4 border-t border-white/10 text-xs text-white/60 space-y-3">
-              <p>We place senior private bankers covering Portuguese and Brazilian clients in Lisbon and from cross-border hub roles.</p>
-              <Link
-                href="/en/apply"
-                className="inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-              >
-                Start a confidential discussion
-              </Link>
+            <p className="mt-4 text-xs text-neutral-500">These ranges are indicative and based on observed market levels in Lisbon across 2025–2026.</p>
+          </section>
+          <section className="mt-12 rounded-3xl border border-[#C9A14A]/20 bg-[#C9A14A]/5 p-6 md:p-7">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#C9A14A] mb-1">Anonymised placement</div>
+            <div className="flex items-center gap-2 mb-2"><span className="text-lg">🇵🇹</span><span className="text-sm font-semibold text-white/80">Portuguese/Brazilian desk · Lisbon</span></div>
+            <p className="text-sm text-white/70">Senior Relationship Manager · EUR 95M portable book · Mandate to offer: 27 days · Still at the bank, 15 months</p>
+          </section>
+          <section className="mt-12 grid gap-6 md:grid-cols-2">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+              <h3 className="text-base font-semibold text-white">Deep-dive insights for Lisbon-based bankers</h3>
+              <p className="mt-2 text-sm text-neutral-300">Market commentary on Portuguese tax reform and Lusophone wealth flows.</p>
+              <ul className="mt-4 space-y-2 text-sm text-brandGoldSoft"><li><Link href="/en/insights" className="hover:underline">Browse Private Wealth Pulse →</Link></li></ul>
             </div>
-          </aside>
-        </section>
-
-        {/* CTA strip */}
-        <section className="grid gap-6 md:grid-cols-2 border-t border-white/10 pt-10">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <h3 className="text-lg font-semibold">For Private Bankers</h3>
-            <p className="mt-2 text-sm text-white/75">
-              Share a high-level overview of your Portuguese or Brazilian client franchise.
-              We advise on onshore vs offshore structure, platform fit and compensation.
-            </p>
-            <div className="mt-4">
-              <Link
-                href="/en/apply"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-              >
-                Apply confidentially
-              </Link>
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+              <h3 className="text-base font-semibold text-white">Work with Executive Partners</h3>
+              <p className="mt-2 text-sm text-neutral-300">Whether you are a Lisbon platform or a Senior RM evaluating Iberian opportunities, we provide factual, confidential guidance.</p>
+              <div className="mt-4 flex flex-wrap gap-3"><Link href="/en/hiring-managers" className="btn btn-primary btn-sm">Brief a mandate</Link><Link href="/en/apply" className="btn btn-ghost btn-sm">Submit your profile</Link></div>
             </div>
-          </div>
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <h3 className="text-lg font-semibold">For Hiring Managers</h3>
-            <p className="mt-2 text-sm text-white/75">
-              If you are building or expanding a Lisbon team, we can identify senior bankers
-              with genuine Portuguese or Brazilian client relationships and portable revenue.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Link
-                href="/en/hiring-managers"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium border border-white/40 text-white hover:border-[#D4AF37] hover:text-[#D4AF37] transition"
-              >
-                Brief a mandate
-              </Link>
-              <Link
-                href="/en/markets/lisbon"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium text-white/70 hover:text-[#D4AF37] transition"
-              >
-                Lisbon market page →
-              </Link>
-            </div>
-          </div>
-        </section>
-
-      </div>
-    </main>
+          </section>
+          <p className="mt-10 text-center text-sm text-neutral-400">Prefer to start with a discreet email?{" "}<a href="mailto:recruiter@execpartners.ch" className="underline decoration-brandGold/70 underline-offset-4 hover:text-white">recruiter@execpartners.ch</a></p>
+        </div>
+      </main>
+    </>
   );
 }

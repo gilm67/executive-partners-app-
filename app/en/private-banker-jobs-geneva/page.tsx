@@ -1,194 +1,133 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const SITE = "https://www.execpartners.ch";
+const PAGE_URL = `${SITE}/en/private-banker-jobs-geneva`;
+
 export const metadata: Metadata = {
-  title: "Private Banker Jobs in Geneva",
+  title: { absolute: "Private Banker Jobs in Geneva | Senior RM Recruitment – Executive Partners" },
   description:
-    "Confidential opportunities for Senior Relationship Managers and Private Bankers in Geneva. Executive Partners is a Geneva-based executive search firm specialised in Private Banking and Wealth Management.",
-  alternates: { canonical: "https://www.execpartners.ch/en/private-banker-jobs-geneva" },
+    "Geneva private banking recruitment. Senior RMs, Team Heads and Market Leaders covering UHNW, MEA, LATAM and cross-border wealth. Confidential. Compensation benchmarks included.",
+  alternates: { canonical: PAGE_URL },
+  openGraph: {
+    type: "website", url: PAGE_URL, siteName: "Executive Partners",
+    title: "Private Banker Jobs in Geneva – Executive Partners",
+    description: "Senior private banking roles in Geneva. UHNW, MEA, LATAM coverage. Confidential search.",
+    images: [{ url: "/og.webp", width: 1200, height: 630, alt: "Executive Partners – Geneva Private Banking" }],
+  },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banker Jobs in Geneva ",
-    description: "Confidential opportunities for Senior Relationship Managers and Private Bankers in Geneva. Executive Partners is a Geneva-based executive search firm speci",
+    title: "Private Banker Jobs in Geneva – Executive Partners",
+    description: "Confidential Geneva private banking roles. UHNW, MEA, LATAM coverage. Compensation benchmarks included.",
     images: ["/og.webp"],
   },
   robots: { index: true, follow: true },
 };
 
+const orgJsonLd = {
+  "@context": "https://schema.org", "@type": ["ProfessionalService", "LocalBusiness"],
+  name: "Executive Partners – Private Banking Recruitment Geneva", url: PAGE_URL, image: `${SITE}/og.webp`,
+  address: { "@type": "PostalAddress", streetAddress: "118 rue du Rhône", addressLocality: "Geneva", postalCode: "1204", addressCountry: "CH" },
+  areaServed: ["Geneva", "Switzerland", "MEA", "LATAM"], industry: "Private Banking & Wealth Management Recruitment",
+  sameAs: ["https://www.linkedin.com/company/executive-partners", SITE],
+};
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org", "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+    { "@type": "ListItem", position: 2, name: "Markets", item: `${SITE}/en/markets` },
+    { "@type": "ListItem", position: 3, name: "Private Banker Jobs – Geneva", item: PAGE_URL },
+  ],
+};
+
 export default function Page() {
   return (
-    <main className="min-h-screen bg-[#0B0E13] text-white py-16 px-4">
-     <div className="container-max mx-auto max-w-5xl space-y-10">
-        {/* BREADCRUMB */}
-        <nav className="text-xs text-white/60">
-          <Link href="/en/markets" className="hover:text-[#D4AF37]">
-            Markets
-          </Link>
-          <span className="mx-1">/</span>
-          <span>Private Banker Jobs in Geneva</span>
-        </nav>
-
-        {/* HERO / INTRO */}
-        <header className="space-y-4">
-          <p className="uppercase tracking-[0.2em] text-[11px] text-white/60">
-            PRIVATE BANKING · GENEVA
-          </p>
-          <h1 className="text-3xl md:text-5xl font-semibold leading-tight">
-            Private Banker Jobs in <span className="gold">Geneva</span>
-          </h1>
-          <p className="text-white/80 text-base md:text-lg max-w-3xl">
-            Executive Partners is an executive search firm based in Geneva and
-            specialised in Private Banking &amp; Wealth Management. We work on
-            confidential mandates for Senior Relationship Managers, Private
-            Bankers, Desk Heads and Market Leaders serving UHNW and HNW clients.
-          </p>
-
-          <div className="flex flex-wrap gap-3 pt-2">
-            <Link
-              href="/en/apply"
-              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-            >
-              Apply confidentially
-            </Link>
-            <Link
-              href="/en/jobs"
-              className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium border border-white/40 text-white hover:border-[#D4AF37] hover:text-[#D4AF37] transition"
-            >
-              View open roles
-            </Link>
-          </div>
-        </header>
-
-        {/* MAIN CONTENT + SIDE CARD */}
-        <section className="grid gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,1.25fr)] items-start">
-          <div className="space-y-8">
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Typical Mandates in Geneva
-              </h2>
-              <p className="mt-3 text-white/75">
-                Our clients include Swiss pure-play private banks, global
-                institutions, boutiques and EAM-focused platforms. Mandates
-                often involve:
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <main className="relative min-h-screen bg-[#0B0F1A] text-white">
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(900px 360px at 15% -10%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 55%), radial-gradient(900px 360px at 110% 0%, rgba(245,231,192,.18) 0%, rgba(245,231,192,0) 60%)" }} />
+        <div className="relative mx-auto w-full max-w-6xl px-4 pb-20 pt-12">
+          <nav className="text-xs text-white/60 mb-8">
+            <Link href="/en/markets" className="hover:text-[#D4AF37]">Markets</Link>
+            <span className="mx-1">/</span><span>Private Banker Jobs in Geneva</span>
+          </nav>
+          <header className="max-w-3xl">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">Geneva · Switzerland · Executive Search</p>
+            <h1 className="mt-4 text-3xl font-extrabold tracking-tight md:text-4xl">Private Banker Jobs in Geneva</h1>
+            <p className="mt-4 text-sm text-neutral-300 md:text-[0.95rem] leading-relaxed">
+              Geneva is one of Europe's most internationally connected wealth centres, home to{" "}
+              <span className="font-semibold text-neutral-100">Swiss pure-play private banks, global platforms and a dense EAM and family office ecosystem</span>. Executive Partners, headquartered on rue du Rhône, advises Senior RMs, Team Heads and Market Leaders on confidential moves across UHNW, MEA, LATAM and cross-border coverage.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/en/apply" className="btn btn-primary btn-xl">Apply confidentially</Link>
+              <Link href="/en/jobs" className="btn btn-ghost">View live mandates</Link>
+            </div>
+          </header>
+          <section className="mt-12 grid gap-8 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)]">
+            <div className="space-y-4 text-sm text-neutral-200 md:text-[0.95rem] leading-relaxed">
+              <h2 className="text-xl font-semibold text-white">Why Geneva remains a strategic hiring market</h2>
+              <p>
+                Geneva's combination of FINMA-regulated booking stability and deep access to UHNW families across MEA, Southern Europe and LATAM keeps it structurally distinct from Zurich's DACH-heavy franchise. Banks here increasingly screen for revenue quality and onboarding discipline over headline AUM alone.
               </p>
-              <ul className="mt-3 space-y-1 text-white/80 list-disc list-inside">
-                <li>
-                  Senior Relationship Managers with portable UHNW / HNW
-                  portfolios
-                </li>
-                <li>
-                  Desk Heads and Market Leaders across core Swiss &amp;
-                  international markets
-                </li>
-                <li>
-                  Wealth Planners and investment-focused advisers for complex
-                  client cases
-                </li>
-                <li>
-                  Senior hires supporting international booking centres
-                  connected to Geneva
-                </li>
+              <p>Over the last 18 months, hiring demand has concentrated on:</p>
+              <ul className="list-disc space-y-1 pl-5 text-neutral-200">
+                <li>Senior RMs with <span className="font-semibold">genuinely portable UHNW/HNW books</span> across MEA, CEE and LATAM</li>
+                <li>Cross-border specialists (Portugal, Spain, France, Italy)</li>
+                <li>Team Heads managing CHF 200-500M+ portable, compliant AUM</li>
+                <li>Advisors with strong DPM and advisory penetration</li>
               </ul>
             </div>
-
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
-                How We Work with Private Bankers
-              </h2>
-              <p className="mt-3 text-white/75">
-                We do not run a volume model. Many of our Geneva mandates are
-                completely confidential and never advertised. We assess your
-                portability, revenue contribution, team fit and long-term
-                objectives before introducing you to a short list of calibrated
-                platforms.
-              </p>
-              <p className="mt-3 text-white/75">
-                You remain fully in control of where and when your profile is
-                presented. We only share your details with explicit consent.
-              </p>
+            <aside className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <h3 className="text-base font-semibold text-white">How Executive Partners supports Geneva hiring</h3>
+              <ul className="mt-4 space-y-2 text-sm text-neutral-200">
+                <li>• Senior RM, Team Head &amp; Market Leader search</li>
+                <li>• AUM portability and booking-centre mapping</li>
+                <li>• Revenue &amp; ROA analysis by client segment</li>
+                <li>• Compliance and cross-border risk screening</li>
+                <li>• 12–24 month NNM projection and business plan support</li>
+              </ul>
+              <div className="mt-5"><Link href="/en/apply" className="btn btn-secondary w-full text-sm font-medium">Senior RM? Submit your profile</Link></div>
+            </aside>
+          </section>
+          <section className="mt-14 rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
+            <h2 className="text-xl font-semibold text-white">2025–2026 Geneva compensation benchmarks</h2>
+            <p className="mt-3 text-sm text-neutral-300 md:text-[0.95rem]">Ranges reflect typical packages observed across leading Geneva-based private banks.</p>
+            <div className="mt-6 overflow-x-auto">
+              <table className="min-w-full text-left text-sm text-neutral-100">
+                <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-neutral-400">
+                  <tr><th className="py-2 pr-4">Role</th><th className="py-2 pr-4">Base salary (CHF)</th><th className="py-2 pr-4">Bonus range</th><th className="py-2 pr-4">Typical total</th></tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  <tr><td className="py-2 pr-4">RM (5–10 years)</td><td className="py-2 pr-4">140k – 180k</td><td className="py-2 pr-4">20% – 60%</td><td className="py-2 pr-4">170k – 280k</td></tr>
+                  <tr><td className="py-2 pr-4">Senior RM (10–20 years)</td><td className="py-2 pr-4">180k – 250k</td><td className="py-2 pr-4">40% – 120%</td><td className="py-2 pr-4">250k – 550k</td></tr>
+                  <tr><td className="py-2 pr-4">Ultra UHNW RM</td><td className="py-2 pr-4">250k – 320k</td><td className="py-2 pr-4">80% – 200%</td><td className="py-2 pr-4">450k – 900k+</td></tr>
+                  <tr><td className="py-2 pr-4">Team Head</td><td className="py-2 pr-4">250k – 350k</td><td className="py-2 pr-4">100% – 250%</td><td className="py-2 pr-4">550k – 1.1m+</td></tr>
+                </tbody>
+              </table>
             </div>
-
-            <div>
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Long-Term Advisory, Not Just a Single Move
-              </h2>
-              <p className="mt-3 text-white/75">
-                Many senior bankers speak with us 12–24 months before making a
-                change. We help you understand how different platforms in Geneva
-                compare on culture, risk appetite, booking centres, pricing and
-                support for UHNW families, entrepreneurs and family offices.
-              </p>
+            <p className="mt-4 text-xs text-neutral-500">These ranges are indicative and based on observed market levels in Geneva across 2025–2026.</p>
+          </section>
+          <section className="mt-12 rounded-3xl border border-[#C9A14A]/20 bg-[#C9A14A]/5 p-6 md:p-7">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#C9A14A] mb-1">Anonymised placement</div>
+            <div className="flex items-center gap-2 mb-2"><span className="text-lg">🇨🇭</span><span className="text-sm font-semibold text-white/80">Swiss onshore desk · Geneva</span></div>
+            <p className="text-sm text-white/70">Senior Relationship Manager · CHF 190M portable book · Mandate to offer: 22 days · Still at the bank, 31 months</p>
+          </section>
+          <section className="mt-12 grid gap-6 md:grid-cols-2">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+              <h3 className="text-base font-semibold text-white">Deep-dive insights for Geneva-based bankers</h3>
+              <p className="mt-2 text-sm text-neutral-300">Market commentary on Swiss private banking, UBS and global wealth dynamics.</p>
+              <ul className="mt-4 space-y-2 text-sm text-brandGoldSoft"><li><Link href="/en/insights" className="hover:underline">Browse Private Wealth Pulse →</Link></li></ul>
             </div>
-          </div>
-
-          {/* SNAPSHOT CARD */}
-          <aside className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur space-y-4">
-            <h3 className="text-lg font-semibold">Geneva Private Banking Snapshot</h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li>• Swiss pure-play and global platforms with strong UHNW focus</li>
-              <li>• Mix of onshore Swiss and international offshore desks</li>
-              <li>• Competitive platforms for LATAM, MEA, CEE, UK &amp; Europe</li>
-              <li>• Strong ecosystem of EAMs, family offices and boutiques</li>
-            </ul>
-            <div className="pt-4 border-t border-white/10 space-y-2 text-xs text-white/60">
-              <p>
-                If you manage a portable UHNW / HNW portfolio, we can map which
-                Geneva platforms are currently most accretive for your
-                franchise.
-              </p>
-              <Link
-                href="/en/apply"
-                className="inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-              >
-                Start a confidential discussion
-              </Link>
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+              <h3 className="text-base font-semibold text-white">Work with Executive Partners</h3>
+              <p className="mt-2 text-sm text-neutral-300">Whether you are a Geneva-based bank or a Senior RM considering a move, we provide factual, confidential guidance.</p>
+              <div className="mt-4 flex flex-wrap gap-3"><Link href="/en/hiring-managers" className="btn btn-primary btn-sm">Brief a mandate</Link><Link href="/en/apply" className="btn btn-ghost btn-sm">Submit your profile</Link></div>
             </div>
-          </aside>
-        </section>
-
-        {/* CANDIDATES / HIRING MANAGERS STRIP */}
-        <section className="grid gap-6 md:grid-cols-2 border-t border-white/10 pt-10">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <h3 className="text-lg font-semibold">For Private Bankers</h3>
-            <p className="mt-2 text-sm text-white/75">
-              Share a high-level overview of your book, markets and current
-              platform. We will only approach Geneva institutions aligned with
-              your strategy.
-            </p>
-            <div className="mt-4">
-              <Link
-                href="/en/apply"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium bg-[#D4AF37] text-black hover:bg-[#f5d778] transition"
-              >
-                Apply confidentially
-              </Link>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <h3 className="text-lg font-semibold">For Hiring Managers</h3>
-            <p className="mt-2 text-sm text-white/75">
-              Looking to hire senior Geneva-based bankers with real
-              portability? We can calibrate the market and provide a vetted
-              shortlist with documented business cases.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Link
-                href="/en/hiring-managers"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium border border-white/40 text-white hover:border-[#D4AF37] hover:text-[#D4AF37] transition"
-              >
-                Brief a mandate
-              </Link>
-              <Link
-                href="/en/contact"
-                className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium text-white/70 hover:text-[#D4AF37] transition"
-              >
-                Contact Executive Partners
-              </Link>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
+          </section>
+          <p className="mt-10 text-center text-sm text-neutral-400">Prefer to start with a discreet email?{" "}<a href="mailto:recruiter@execpartners.ch" className="underline decoration-brandGold/70 underline-offset-4 hover:text-white">recruiter@execpartners.ch</a></p>
+        </div>
+      </main>
+    </>
   );
 }
