@@ -1,5 +1,37 @@
 import { Metadata } from "next";
 
+const SITE = "https://www.execpartners.ch";
+const PAGE_URL = `${SITE}/en/private-banking-recruiter-switzerland`;
+
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": ["ProfessionalService", "LocalBusiness"],
+  name: "Executive Partners – Private Banking Recruiter Switzerland",
+  url: PAGE_URL,
+  image: `${SITE}/og.webp`,
+  logo: `${SITE}/icon.png`,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "118 rue du Rhône",
+    addressLocality: "Geneva",
+    postalCode: "1204",
+    addressCountry: "CH",
+  },
+  areaServed: ["Switzerland", "Geneva", "Zurich", "Europe"],
+  industry: "Private Banking & Wealth Management Recruitment",
+  sameAs: ["https://www.linkedin.com/company/executive-partners", SITE],
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE },
+    { "@type": "ListItem", position: 2, name: "Markets", item: `${SITE}/en/markets` },
+    { "@type": "ListItem", position: 3, name: "Private Banking Recruiter – Switzerland", item: PAGE_URL },
+  ],
+};
+
 export const metadata: Metadata = {
   title: "Private Banking Recruiter Switzerland | Senior RMs, Geneva & Zurich – Executive Partners",
   description:
@@ -16,7 +48,10 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="min-h-screen bg-[#0B0E13] text-white py-20 px-4">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <main className="min-h-screen bg-[#0B0E13] text-white py-20 px-4">
       <div className="container-max max-w-3xl space-y-8">
         <h1 className="text-3xl md:text-5xl font-semibold leading-tight">
           Private Banking & Wealth Management Recruiter in Switzerland
@@ -65,6 +100,7 @@ export default function Page() {
           </a>
         </div>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

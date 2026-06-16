@@ -279,6 +279,15 @@ export default function TopNav() {
                 )}
               </div>
 
+              {/* German language link */}
+              <Link
+                href="/de"
+                className="rounded-full px-2.5 py-1.5 text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                title="Deutsche Version"
+              >
+                DE
+              </Link>
+
               {/* Contact CTA */}
               <Link
                 href={CONTACT_BASE.href}
@@ -397,6 +406,17 @@ export default function TopNav() {
                 </li>
               );
             })}
+
+            {/* Mobile German language link */}
+            <li className="mt-2">
+              <Link
+                href="/de"
+                className="block rounded-md px-3 py-2 text-sm text-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                onClick={() => setOpen(false)}
+              >
+                Deutsche Version (DE)
+              </Link>
+            </li>
 
             {/* Mobile Contact CTA */}
             <li className="mt-2">
