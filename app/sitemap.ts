@@ -78,6 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     
     "/en",
     "/fr",
+    "/de",
     "/en/candidates",
     "/en/eam-recruiter-switzerland",
     "/en/wealth-management-recruiter-switzerland",
