@@ -53,7 +53,7 @@ export default function PrivateBankingRecruiterDubaiPage() {
               Executive Partners is a Switzerland-based boutique focused exclusively on <span className="font-semibold text-neutral-100">Private Banking &amp; Wealth Management</span>. In Dubai, we place Senior Relationship Managers, Team Heads and Market Leaders operating out of the <span className="font-semibold text-neutral-100">DIFC, with a focus on MEA, GCC, South Asian and international UHNW client coverage</span>.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/contact" className="btn btn-primary btn-xl">Discuss a mandate or move</Link>
+              <Link href="/en/contact" className="btn btn-primary btn-xl">Discuss a mandate or move</Link>
               <Link href="/pdfs/private-banking-career-intelligence-2026.pdf" target="_blank" rel="noopener noreferrer" className="btn btn-ghost">Download Career Intelligence 2026 (PDF)</Link>
             </div>
           </header>
@@ -81,7 +81,7 @@ export default function PrivateBankingRecruiterDubaiPage() {
                 <li>• Revenue &amp; ROA analysis by client segment</li>
                 <li>• 12–24 month NNM projection and business plan support</li>
               </ul>
-              <div className="mt-5"><Link href="/apply" className="btn btn-secondary w-full text-sm font-medium">Senior RM? Submit your profile</Link></div>
+              <div className="mt-5"><Link href="/en/apply" className="btn btn-secondary w-full text-sm font-medium">Senior RM? Submit your profile</Link></div>
             </aside>
           </section>
 
@@ -123,8 +123,8 @@ export default function PrivateBankingRecruiterDubaiPage() {
               <h3 className="text-base font-semibold text-white">Work with Executive Partners in Dubai</h3>
               <p className="mt-2 text-sm text-neutral-300">Whether you are a DIFC-based bank or a Senior RM considering a move, we provide confidential guidance on platforms, compensation and portability.</p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <Link href="/contact" className="btn btn-primary btn-sm">Talk to us about a mandate</Link>
-                <Link href="/apply" className="btn btn-ghost btn-sm">Submit your profile</Link>
+                <Link href="/en/contact" className="btn btn-primary btn-sm">Talk to us about a mandate</Link>
+                <Link href="/en/apply" className="btn btn-ghost btn-sm">Submit your profile</Link>
               </div>
             </div>
           </section>

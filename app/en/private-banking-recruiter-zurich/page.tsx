@@ -110,7 +110,7 @@ export default function PrivateBankingRecruiterZurichPage() {
               .
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/contact" className="btn btn-primary btn-xl">
+              <Link href="/en/contact" className="btn btn-primary btn-xl">
                 Discuss a mandate or move
               </Link>
               <Link
@@ -177,7 +177,7 @@ export default function PrivateBankingRecruiterZurichPage() {
               </ul>
               <div className="mt-5">
                 <Link
-                  href="/apply"
+                  href="/en/apply"
                   className="btn btn-secondary w-full text-sm font-medium"
                 >
                   Senior RM? Submit your profile
@@ -281,10 +281,10 @@ export default function PrivateBankingRecruiterZurichPage() {
                 move, we provide confidential guidance on platforms, compensation and portability.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <Link href="/contact" className="btn btn-primary btn-sm">
+                <Link href="/en/contact" className="btn btn-primary btn-sm">
                   Talk to us about a mandate
                 </Link>
-                <Link href="/apply" className="btn btn-ghost btn-sm">
+                <Link href="/en/apply" className="btn btn-ghost btn-sm">
                   Submit your profile
                 </Link>
               </div>

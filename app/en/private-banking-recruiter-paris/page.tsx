@@ -25,7 +25,7 @@ export default function Page() {
             <h1 className="mt-4 text-3xl font-extrabold tracking-tight md:text-4xl">Private Banking Recruiter in Paris</h1>
             <p className="mt-4 text-sm text-neutral-300 md:text-[0.95rem] leading-relaxed">Executive Partners is a Switzerland-based boutique focused exclusively on <span className="font-semibold text-neutral-100">Private Banking &amp; Wealth Management</span>. In Paris, we place Senior Relationship Managers, Team Heads and Market Leaders with a specific focus on <span className="font-semibold text-neutral-100">French UHNW entrepreneur and family wealth, frontalier coverage between France and Swiss booking centres, and cross-border portability between the two largest French-language financial markets in the world</span>.</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/contact" className="btn btn-primary btn-xl">Discuss a mandate or move</Link>
+              <Link href="/en/contact" className="btn btn-primary btn-xl">Discuss a mandate or move</Link>
               <Link href="/pdfs/private-banking-career-intelligence-2026.pdf" target="_blank" rel="noopener noreferrer" className="btn btn-ghost">Download Career Intelligence 2026 (PDF)</Link>
             </div>
           </header>
@@ -53,7 +53,7 @@ export default function Page() {
                 <li>• Revenue &amp; ROA analysis by client segment</li>
                 <li>• 12–24 month NNM projection and business plan support</li>
               </ul>
-              <div className="mt-5"><Link href="/apply" className="btn btn-secondary w-full text-sm font-medium">Senior RM? Submit your profile</Link></div>
+              <div className="mt-5"><Link href="/en/apply" className="btn btn-secondary w-full text-sm font-medium">Senior RM? Submit your profile</Link></div>
             </aside>
           </section>
           <section className="mt-14 rounded-3xl border border-white/10 bg-black/40 p-6 shadow-[0_18px_50px_rgba(0,0,0,0.75)] backdrop-blur md:p-8">
@@ -86,8 +86,8 @@ export default function Page() {
               <h3 className="text-base font-semibold text-white">Work with Executive Partners in Paris</h3>
               <p className="mt-2 text-sm text-neutral-300">Whether you are a Paris-based bank or a Senior RM considering a move, we provide confidential guidance on platforms, compensation and portability.</p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <Link href="/contact" className="btn btn-primary btn-sm">Talk to us about a mandate</Link>
-                <Link href="/apply" className="btn btn-ghost btn-sm">Submit your profile</Link>
+                <Link href="/en/contact" className="btn btn-primary btn-sm">Talk to us about a mandate</Link>
+                <Link href="/en/apply" className="btn btn-ghost btn-sm">Submit your profile</Link>
               </div>
             </div>
           </section>
