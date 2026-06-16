@@ -151,6 +151,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="dns-prefetch" href="https://vercel.live" />
+      <link rel="alternate" hrefLang="en" href="https://www.execpartners.ch/en" />
+      <link rel="alternate" hrefLang="fr" href="https://www.execpartners.ch/fr" />
+      <link rel="alternate" hrefLang="de" href="https://www.execpartners.ch/de" />
+      <link rel="alternate" hrefLang="x-default" href="https://www.execpartners.ch/en" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}

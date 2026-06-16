@@ -27,6 +27,7 @@ const NAV = [
       { href: "/en/about", text: "About" },
       { href: "/en/markets", text: "Markets" },
       { href: "/en/insights", text: "Insights" },
+      { href: "/en/faq", text: "FAQ" },
       { href: "/en/contact", text: "Contact" },
     ],
   },

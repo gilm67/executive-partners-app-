@@ -181,7 +181,7 @@ export default function PortabilityForm() {
       "Please advise optimal custodians and onboarding path."
     ];
     const body = encodeURIComponent(lines.filter(Boolean).join("\n"));
-    window.location.href = `mailto:info@execpartners.ch?subject=${subj}&body=${body}`;
+    window.location.href = `mailto:recruiter@execpartners.ch?subject=${subj}&body=${body}`;
   }
 
   async function downloadDossier() {

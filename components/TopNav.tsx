@@ -17,11 +17,11 @@ export default function TopNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false); // mobile panel
   const [scrolled, setScrolled] = useState(false);
-  const [dd, setDd] = useState<null | "Tools" | "Intelligence">(null); // desktop dropdown
+  const [dd, setDd] = useState<null | "Tools" | "Insights">(null); // desktop dropdown
 
   // ✅ Prevent dropdown from closing instantly when moving cursor button -> panel
   const closeTimer = useRef<number | null>(null);
-  const openDd = (which: "Tools" | "Intelligence") => {
+  const openDd = (which: "Tools" | "Insights") => {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
     setDd(which);
   };
@@ -244,24 +244,24 @@ export default function TopNav() {
               {/* Insights dropdown */}
               <div
                 className="relative"
-                onMouseEnter={() => openDd("Intelligence")}
+                onMouseEnter={() => openDd("Insights")}
                 onMouseLeave={scheduleCloseDd}
               >
                 <button
                   type="button"
                   className={ddButtonClasses(insightsActive, dd === "Intelligence")}
                   aria-haspopup="menu"
-                  aria-expanded={dd === "Intelligence"}
-                  onClick={() => setDd(dd === "Intelligence" ? null : "Intelligence")}
+                  aria-expanded={dd === "Insights"}
+                  onClick={() => setDd(dd === "Insights" ? null : "Insights")}
                 >
-                  Intelligence <span className="text-xs opacity-80">▾</span>
+                  Insights <span className="text-xs opacity-80">▾</span>
                 </button>
 
-                {dd === "Intelligence" && (
+                {dd === "Insights" && (
                   <div
                     role="menu"
                     className={ddPanel}
-                    onMouseEnter={() => openDd("Intelligence")}
+                    onMouseEnter={() => openDd("Insights")}
                     onMouseLeave={scheduleCloseDd}
                   >
                     {INSIGHTS_BASE.map((i) => (
@@ -371,9 +371,9 @@ export default function TopNav() {
               );
             })}
 
-            {/* Mobile section: Intelligence */}
+            {/* Mobile section: Insights */}
             <li className="mt-2 px-3 pt-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">
-              Intelligence
+              Insights
             </li>
             {INSIGHTS_BASE.map((item) => {
               const active = isActive(item.href.replace(base, "") || item.href);

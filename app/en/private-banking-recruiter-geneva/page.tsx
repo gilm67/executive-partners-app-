@@ -134,7 +134,7 @@ export default function PrivateBankingRecruiterGenevaPage() {
 
             {/* Hero CTAs */}
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/contact" className="btn btn-primary btn-xl">
+              <Link href="/en/contact" className="btn btn-primary btn-xl">
                 Discuss a mandate or move
               </Link>
               <Link
@@ -212,7 +212,7 @@ export default function PrivateBankingRecruiterGenevaPage() {
               </ul>
               <div className="mt-5">
                 <Link
-                  href="/apply"
+                  href="/en/apply"
                   className="btn btn-secondary w-full text-sm font-medium"
                 >
                   Senior RM? Submit your profile
@@ -318,10 +318,10 @@ export default function PrivateBankingRecruiterGenevaPage() {
                 compensation and portability.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <Link href="/contact" className="btn btn-primary btn-sm">
+                <Link href="/en/contact" className="btn btn-primary btn-sm">
                   Talk to us about a mandate
                 </Link>
-                <Link href="/apply" className="btn btn-ghost btn-sm">
+                <Link href="/en/apply" className="btn btn-ghost btn-sm">
                   Submit your profile
                 </Link>
               </div>
@@ -332,10 +332,10 @@ export default function PrivateBankingRecruiterGenevaPage() {
           <p className="mt-10 text-center text-sm text-neutral-400">
             Prefer to start with a discreet email?{" "}
             <a
-              href="mailto:info@execpartners.ch"
+              href="mailto:recruiter@execpartners.ch"
               className="underline decoration-brandGold/70 underline-offset-4 hover:text-white"
             >
-              info@execpartners.ch
+              recruiter@execpartners.ch
             </a>
           </p>
         </div>
