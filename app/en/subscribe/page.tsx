@@ -3,7 +3,7 @@ import SubscribeForm from "@/app/en/insights/SubscribeForm";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Subscribe to Private Wealth Pulse | Executive Partners",
+  title: { absolute: "Subscribe to Private Wealth Pulse | Executive Partners" },
   description:
     "Weekly private banking intelligence — AUM portability, talent flows, compensation benchmarks and market dynamics across Geneva, Zurich, Dubai, Singapore and London. Free. No spam.",
   alternates: { canonical: "https://www.execpartners.ch/en/subscribe" },

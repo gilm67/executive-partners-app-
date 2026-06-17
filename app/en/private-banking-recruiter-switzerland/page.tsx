@@ -33,7 +33,7 @@ const breadcrumbJsonLd = {
 };
 
 export const metadata: Metadata = {
-  title: "Private Banking Recruiter Switzerland | Senior RMs, Geneva & Zurich – Executive Partners",
+  title: { absolute: "Private Banking Recruiter Switzerland | Senior RMs, Geneva & Zurich – Executive Partners" },
   description:
     "Switzerland's specialist executive search firm for private banking. Senior Relationship Managers, Team Heads and UHNW bankers placed across Geneva and Zurich. 200+ placements. Fully confidential.",
   alternates: { canonical: "https://www.execpartners.ch/en/private-banking-recruiter-switzerland" },

@@ -30,8 +30,11 @@ export default function TopNav() {
     closeTimer.current = window.setTimeout(() => setDd(null), 180);
   };
 
-  // ✅ locale-aware base
-  const base = useMemo(() => (pathname?.startsWith("/en") ? "/en" : ""), [pathname]);
+  // ✅ Nav targets (Markets/Jobs/Candidates/Hiring Managers/About/Contact/Tools/Insights)
+  // have no separate French or German version, so always point at /en regardless of
+  // the current path. Previously this only matched pages already under /en/, so the
+  // bare homepage ("/") and /de fell through to unprefixed links (/markets, /jobs...).
+  const base = "/en";
 
   // ✅ Normalize pathname for active matching (strip /en)
   const normalizedPath = useMemo(() => {

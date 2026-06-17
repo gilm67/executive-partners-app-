@@ -5,7 +5,7 @@ const SITE = "https://www.execpartners.ch";
 const PAGE_URL = `${SITE}/en/private-banking-recruitment-agency`;
 
 export const metadata: Metadata = {
-  title: "Private Banking Recruitment Agency in Switzerland | Executive Partners",
+  title: { absolute: "Private Banking Recruitment Agency in Switzerland | Executive Partners" },
   description:
     "Executive Partners is a Geneva-based private banking recruitment agency specialising exclusively in senior hires for Swiss and international wealth managers. Senior RMs, Team Heads and Investment Advisors placed across Geneva, Zurich, Dubai, Singapore, Riyadh and London.",
   alternates: { canonical: PAGE_URL },

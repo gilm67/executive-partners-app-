@@ -20,14 +20,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!m) {
     return {
-      title: "Private Banker Jobs – Executive Partners",
+      title: { absolute: "Private Banker Jobs – Executive Partners" },
       description:
         "Senior private banker and team head roles with documented AUM portability and realistic business plans.",
     };
   }
 
   return {
-    title: `Private Banker Jobs – ${m.city} `,
+    title: `Private Banker Jobs – ${m.city}`,
     description: `Director / MD private banker and team lead roles in ${m.city}. Discreet moves with documented AUM portability, cross-border fit and realistic business plans.`,
     alternates: { canonical: `https://www.execpartners.ch/en/private-banker-jobs/${slug}` },
     twitter: {

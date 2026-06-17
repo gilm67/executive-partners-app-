@@ -18,7 +18,7 @@ const PAGE_URL = `${SITE}/contact`;
 /* ---------------- metadata ---------------- */
 export const metadata: Metadata = {
   title:
-    "Contact Executive Partners | Private Banking & Wealth Management Recruitment (Geneva)",
+    { absolute: "Contact Executive Partners | Private Banking & Wealth Management Recruitment (Geneva)" },
   description:
     "Contact Executive Partners for confidential searches in private banking and wealth management. Geneva-based with mandates across Switzerland, the UK, the US, Dubai, Singapore and Hong Kong.",
   alternates: { canonical: PAGE_URL },

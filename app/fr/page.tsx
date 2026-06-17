@@ -4,7 +4,7 @@ import Link from "next/link";
 const SITE = "https://www.execpartners.ch";
 
 export const metadata: Metadata = {
-  title: "Recruteur Banque Privée Genève | Executive Partners Suisse",
+  title: { absolute: "Recruteur Banque Privée Genève | Executive Partners Suisse" },
   description:
     "Executive Partners est un chasseur de têtes spécialisé en banque privée et gestion de patrimoine à Genève. Placement de Relationship Managers seniors, Chefs de desk et Directeurs de marché en Suisse, Londres, Dubaï, Riyad et Singapour.",
   alternates: {

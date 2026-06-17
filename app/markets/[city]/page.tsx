@@ -381,7 +381,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { city } = await params;
   const info = MARKETS[city];
-  if (!info) return { title: "Market — Executive Partners" };
+  if (!info) return { title: { absolute: "Market — Executive Partners" } };
 
   const url = `${SITE}/markets/${city}`;
   const title = `${info.title} — Private Banking Market`;

@@ -5,7 +5,7 @@ import Link from "next/link";
 const SITE = "https://www.execpartners.ch";
 
 export const metadata: Metadata = {
-  title: "Private Banking FAQ | Executive Search Switzerland ",
+  title: "Private Banking FAQ | Executive Search Switzerland",
   description:
     "Answers to the most common questions about private banking careers, AUM portability, compensation, and executive search in Geneva, Zurich, Dubai and Singapore.",
   alternates: {

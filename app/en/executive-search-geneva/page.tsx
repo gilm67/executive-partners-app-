@@ -9,7 +9,7 @@ const SITE =
 const PAGE_URL = `${SITE}/en/executive-search-geneva`;
 
 export const metadata: Metadata = {
-  title: "Executive Search Geneva | Private Banking Specialist – Executive Partners",
+  title: { absolute: "Executive Search Geneva | Private Banking Specialist – Executive Partners" },
   description:
     "Geneva-based executive search specialist exclusively in private banking. Senior RMs, Investment Advisors and Desk Heads placed across Swiss and international platforms. Every search conducted personally by Gil M. Chalem.",
   alternates: { canonical: PAGE_URL },

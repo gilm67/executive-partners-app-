@@ -1,0 +1,260 @@
+diff --git a/app/contact/page.tsx b/app/contact/page.tsx
+index 0e0de873..ecead9cd 100644
+--- a/app/contact/page.tsx
++++ b/app/contact/page.tsx
+@@ -18,7 +18,7 @@ const PAGE_URL = `${SITE}/contact`;
+ /* ---------------- metadata ---------------- */
+ export const metadata: Metadata = {
+   title:
+-    "Contact Executive Partners | Private Banking & Wealth Management Recruitment (Geneva)",
++    { absolute: "Contact Executive Partners | Private Banking & Wealth Management Recruitment (Geneva)" },
+   description:
+     "Contact Executive Partners for confidential searches in private banking and wealth management. Geneva-based with mandates across Switzerland, the UK, the US, Dubai, Singapore and Hong Kong.",
+   alternates: { canonical: PAGE_URL },
+diff --git a/app/de/page.tsx b/app/de/page.tsx
+index 64250c8a..f3dfaeee 100644
+--- a/app/de/page.tsx
++++ b/app/de/page.tsx
+@@ -6,7 +6,7 @@ const SITE = "https://www.execpartners.ch";
+ const PAGE_URL = `${SITE}/de`;
+ 
+ export const metadata: Metadata = {
+-  title: "Executive Partners | Private Banking Personalberatung Schweiz",
++  title: { absolute: "Executive Partners | Private Banking Personalberatung Schweiz" },
+   description:
+     "Executive Partners ist eine auf Private Banking und Wealth Management spezialisierte Personalberatung mit Sitz in Genf. Vertrauliche Vermittlung von Senior Relationship Managern, Team Heads und Investment Advisors in der Schweiz und international.",
+   alternates: {
+diff --git a/app/en/bp-simulator/page.tsx b/app/en/bp-simulator/page.tsx
+index 146588f7..e7484e80 100644
+--- a/app/en/bp-simulator/page.tsx
++++ b/app/en/bp-simulator/page.tsx
+@@ -11,7 +11,7 @@ const SITE =
+   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.execpartners.ch");
+ 
+ export const metadata: Metadata = {
+-  title: "Private Banking Business Plan Simulator | Build Your 3-Year Case – Executive Partners",
++  title: { absolute: "Private Banking Business Plan Simulator | Build Your 3-Year Case – Executive Partners" },
+   description: "Free private banking business plan simulator. Model your 3-year AUM ramp, NNM, ROA and P&L the way a hiring committee evaluates it — built on 200+ EP placements.",
+   openGraph: {
+     title: "Business Plan Simulator ",
+diff --git a/app/en/executive-search-geneva/page.tsx b/app/en/executive-search-geneva/page.tsx
+index 081512a2..49372ef2 100644
+--- a/app/en/executive-search-geneva/page.tsx
++++ b/app/en/executive-search-geneva/page.tsx
+@@ -9,7 +9,7 @@ const SITE =
+ const PAGE_URL = `${SITE}/en/executive-search-geneva`;
+ 
+ export const metadata: Metadata = {
+-  title: "Executive Search Geneva | Private Banking Specialist – Executive Partners",
++  title: { absolute: "Executive Search Geneva | Private Banking Specialist – Executive Partners" },
+   description:
+     "Geneva-based executive search specialist exclusively in private banking. Senior RMs, Investment Advisors and Desk Heads placed across Swiss and international platforms. Every search conducted personally by Gil M. Chalem.",
+   alternates: { canonical: PAGE_URL },
+diff --git a/app/en/faq/page.tsx b/app/en/faq/page.tsx
+index 24b1a51f..04ae1469 100644
+--- a/app/en/faq/page.tsx
++++ b/app/en/faq/page.tsx
+@@ -5,7 +5,7 @@ import Link from "next/link";
+ const SITE = "https://www.execpartners.ch";
+ 
+ export const metadata: Metadata = {
+-  title: "Private Banking FAQ | Executive Search Switzerland ",
++  title: "Private Banking FAQ | Executive Search Switzerland",
+   description:
+     "Answers to the most common questions about private banking careers, AUM portability, compensation, and executive search in Geneva, Zurich, Dubai and Singapore.",
+   alternates: {
+diff --git a/app/en/hiring-managers/brief/page.tsx b/app/en/hiring-managers/brief/page.tsx
+index 23cae43b..072645ae 100644
+--- a/app/en/hiring-managers/brief/page.tsx
++++ b/app/en/hiring-managers/brief/page.tsx
+@@ -2,7 +2,7 @@ import type { Metadata } from "next";
+ import BriefForm from "./BriefForm";
+ 
+ export const metadata: Metadata = {
+-  title: "Share a Hiring Brief – Executive Partners",
++  title: { absolute: "Share a Hiring Brief – Executive Partners" },
+   description:
+     "Share a confidential hiring brief for senior private banking roles. We revert with clarifying questions or a proposed call slot.",
+   alternates: { canonical: "https://www.execpartners.ch/en/hiring-managers/brief" },
+diff --git a/app/en/markets/compare/page.tsx b/app/en/markets/compare/page.tsx
+index 4a915a7d..2637f15e 100644
+--- a/app/en/markets/compare/page.tsx
++++ b/app/en/markets/compare/page.tsx
+@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
+ import CompareMarkets from "@/components/markets/CompareMarkets";
+ 
+ export const metadata: Metadata = {
+-  title: "Compare Private Banking Markets | Executive Partners",
++  title: { absolute: "Compare Private Banking Markets | Executive Partners" },
+   description:
+     "Compare compensation benchmarks, licensing, hiring pulse and ecosystem across Geneva, Zurich, Dubai, Singapore, London and other private banking hubs side by side.",
+   alternates: { canonical: "https://www.execpartners.ch/en/markets/compare" },
+diff --git a/app/en/portability/page.tsx b/app/en/portability/page.tsx
+index c8e86f7c..4c583876 100644
+--- a/app/en/portability/page.tsx
++++ b/app/en/portability/page.tsx
+@@ -9,7 +9,7 @@ const SITE =
+ export const runtime = "nodejs";
+ 
+ export const metadata: Metadata = {
+-  title: "AUM Portability Calculator for Private Bankers | Portability Score™ — Executive Partners",
++  title: { absolute: "AUM Portability Calculator for Private Bankers | Portability Score™ — Executive Partners" },
+   description:
+     "Free AUM portability calculator for senior private bankers. Find out exactly how much of your book is portable before your next move. 30-point framework, 200+ placements tested.",
+   alternates: { canonical: "https://www.execpartners.ch/en/portability" },
+diff --git a/app/en/private-banker-jobs/[slug]/page.tsx b/app/en/private-banker-jobs/[slug]/page.tsx
+index 3d3d72e6..9829cf97 100644
+--- a/app/en/private-banker-jobs/[slug]/page.tsx
++++ b/app/en/private-banker-jobs/[slug]/page.tsx
+@@ -20,14 +20,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
+ 
+   if (!m) {
+     return {
+-      title: "Private Banker Jobs – Executive Partners",
++      title: { absolute: "Private Banker Jobs – Executive Partners" },
+       description:
+         "Senior private banker and team head roles with documented AUM portability and realistic business plans.",
+     };
+   }
+ 
+   return {
+-    title: `Private Banker Jobs – ${m.city} `,
++    title: `Private Banker Jobs – ${m.city}`,
+     description: `Director / MD private banker and team lead roles in ${m.city}. Discreet moves with documented AUM portability, cross-border fit and realistic business plans.`,
+     alternates: { canonical: `https://www.execpartners.ch/en/private-banker-jobs/${slug}` },
+     twitter: {
+diff --git a/app/en/private-banking-recruiter-switzerland/page.tsx b/app/en/private-banking-recruiter-switzerland/page.tsx
+index 7e604681..6a412823 100644
+--- a/app/en/private-banking-recruiter-switzerland/page.tsx
++++ b/app/en/private-banking-recruiter-switzerland/page.tsx
+@@ -33,7 +33,7 @@ const breadcrumbJsonLd = {
+ };
+ 
+ export const metadata: Metadata = {
+-  title: "Private Banking Recruiter Switzerland | Senior RMs, Geneva & Zurich – Executive Partners",
++  title: { absolute: "Private Banking Recruiter Switzerland | Senior RMs, Geneva & Zurich – Executive Partners" },
+   description:
+     "Switzerland's specialist executive search firm for private banking. Senior Relationship Managers, Team Heads and UHNW bankers placed across Geneva and Zurich. 200+ placements. Fully confidential.",
+   alternates: { canonical: "https://www.execpartners.ch/en/private-banking-recruiter-switzerland" },
+diff --git a/app/en/private-banking-recruitment-agency/page.tsx b/app/en/private-banking-recruitment-agency/page.tsx
+index c7b96f60..20574325 100644
+--- a/app/en/private-banking-recruitment-agency/page.tsx
++++ b/app/en/private-banking-recruitment-agency/page.tsx
+@@ -5,7 +5,7 @@ const SITE = "https://www.execpartners.ch";
+ const PAGE_URL = `${SITE}/en/private-banking-recruitment-agency`;
+ 
+ export const metadata: Metadata = {
+-  title: "Private Banking Recruitment Agency in Switzerland | Executive Partners",
++  title: { absolute: "Private Banking Recruitment Agency in Switzerland | Executive Partners" },
+   description:
+     "Executive Partners is a Geneva-based private banking recruitment agency specialising exclusively in senior hires for Swiss and international wealth managers. Senior RMs, Team Heads and Investment Advisors placed across Geneva, Zurich, Dubai, Singapore, Riyadh and London.",
+   alternates: { canonical: PAGE_URL },
+diff --git a/app/en/subscribe/page.tsx b/app/en/subscribe/page.tsx
+index c34abf63..bbfb1774 100644
+--- a/app/en/subscribe/page.tsx
++++ b/app/en/subscribe/page.tsx
+@@ -3,7 +3,7 @@ import SubscribeForm from "@/app/en/insights/SubscribeForm";
+ import Link from "next/link";
+ 
+ export const metadata: Metadata = {
+-  title: "Subscribe to Private Wealth Pulse | Executive Partners",
++  title: { absolute: "Subscribe to Private Wealth Pulse | Executive Partners" },
+   description:
+     "Weekly private banking intelligence — AUM portability, talent flows, compensation benchmarks and market dynamics across Geneva, Zurich, Dubai, Singapore and London. Free. No spam.",
+   alternates: { canonical: "https://www.execpartners.ch/en/subscribe" },
+diff --git a/app/en/wealth-management-recruiter-switzerland/page.tsx b/app/en/wealth-management-recruiter-switzerland/page.tsx
+index f8a96c50..dccccce4 100644
+--- a/app/en/wealth-management-recruiter-switzerland/page.tsx
++++ b/app/en/wealth-management-recruiter-switzerland/page.tsx
+@@ -5,7 +5,7 @@ import { BreadcrumbSchema } from "@/components/StructuredData";
+ const SITE = "https://www.execpartners.ch";
+ 
+ export const metadata: Metadata = {
+-  title: "Wealth Management Recruiter Switzerland | Executive Partners Geneva",
++  title: { absolute: "Wealth Management Recruiter Switzerland | Executive Partners Geneva" },
+   description:
+     "Executive Partners is Switzerland's specialist wealth management recruiter. Senior Relationship Managers, Investment Advisors, Team Heads and Market Leaders placed across Geneva, Zurich, London, Dubai and Singapore. Geneva-based headhunter, 200+ placements.",
+   alternates: { canonical: `${SITE}/en/wealth-management-recruiter-switzerland` },
+diff --git a/app/fr/page.tsx b/app/fr/page.tsx
+index f43f1efd..406942de 100644
+--- a/app/fr/page.tsx
++++ b/app/fr/page.tsx
+@@ -4,7 +4,7 @@ import Link from "next/link";
+ const SITE = "https://www.execpartners.ch";
+ 
+ export const metadata: Metadata = {
+-  title: "Recruteur Banque Privée Genève | Executive Partners Suisse",
++  title: { absolute: "Recruteur Banque Privée Genève | Executive Partners Suisse" },
+   description:
+     "Executive Partners est un chasseur de têtes spécialisé en banque privée et gestion de patrimoine à Genève. Placement de Relationship Managers seniors, Chefs de desk et Directeurs de marché en Suisse, Londres, Dubaï, Riyad et Singapour.",
+   alternates: {
+diff --git a/app/go/linkedin/page.tsx b/app/go/linkedin/page.tsx
+index 49c516ec..718fcdf6 100644
+--- a/app/go/linkedin/page.tsx
++++ b/app/go/linkedin/page.tsx
+@@ -2,7 +2,7 @@ import Link from "next/link";
+ import OutboundLink from "@/components/ui/OutboundLink";
+ 
+ export const metadata = {
+-  title: "LinkedIn — Executive Partners",
++  title: { absolute: "LinkedIn — Executive Partners" },
+   description:
+     "Quick access to Gil M. Chalem’s LinkedIn articles and newsletter.",
+   robots: { index: false, follow: false },
+diff --git a/app/hiring-managers/page.tsx b/app/hiring-managers/page.tsx
+index b803d00c..1c0bbc82 100644
+--- a/app/hiring-managers/page.tsx
++++ b/app/hiring-managers/page.tsx
+@@ -12,7 +12,7 @@ const SITE =
+     : "https://www.execpartners.ch");
+ 
+ export const metadata: Metadata = {
+-  title: "Private Banking Recruitment Switzerland | Senior RM & Team Head Search | Executive Partners",
++  title: { absolute: "Private Banking Recruitment Switzerland | Senior RM & Team Head Search | Executive Partners" },
+   description:
+     "Executive search for senior private banking hires. Targeted recruitment for Directors, MDs, Team Heads across Switzerland, Dubai, Riyadh, Singapore, London, New York.",
+   openGraph: {
+diff --git a/app/markets/[city]/page.tsx b/app/markets/[city]/page.tsx
+index f4459feb..a01570c7 100644
+--- a/app/markets/[city]/page.tsx
++++ b/app/markets/[city]/page.tsx
+@@ -381,7 +381,7 @@ export async function generateMetadata({
+ }): Promise<Metadata> {
+   const { city } = await params;
+   const info = MARKETS[city];
+-  if (!info) return { title: "Market — Executive Partners" };
++  if (!info) return { title: { absolute: "Market — Executive Partners" } };
+ 
+   const url = `${SITE}/markets/${city}`;
+   const title = `${info.title} — Private Banking Market`;
+diff --git a/app/talent-bench/page.tsx b/app/talent-bench/page.tsx
+index a2c352db..4110e41c 100644
+--- a/app/talent-bench/page.tsx
++++ b/app/talent-bench/page.tsx
+@@ -2,7 +2,7 @@ import candidates from "@/data/candidates.json";
+ import TalentBenchClient from "./TalentBenchClient";
+ 
+ export const metadata = {
+-  title: "Confidential Talent Bench | Executive Partners",
++  title: { absolute: "Confidential Talent Bench | Executive Partners" },
+   description:
+     "A curated, anonymized selection of senior private banking and wealth management professionals currently engaged with Executive Partners.",
+ };
+diff --git a/components/TopNav.tsx b/components/TopNav.tsx
+index 5e0f15eb..16966655 100644
+--- a/components/TopNav.tsx
++++ b/components/TopNav.tsx
+@@ -30,8 +30,11 @@ export default function TopNav() {
+     closeTimer.current = window.setTimeout(() => setDd(null), 180);
+   };
+ 
+-  // ✅ locale-aware base
+-  const base = useMemo(() => (pathname?.startsWith("/en") ? "/en" : ""), [pathname]);
++  // ✅ Nav targets (Markets/Jobs/Candidates/Hiring Managers/About/Contact/Tools/Insights)
++  // have no separate French or German version, so always point at /en regardless of
++  // the current path. Previously this only matched pages already under /en/, so the
++  // bare homepage ("/") and /de fell through to unprefixed links (/markets, /jobs...).
++  const base = "/en";
+ 
+   // ✅ Normalize pathname for active matching (strip /en)
+   const normalizedPath = useMemo(() => {

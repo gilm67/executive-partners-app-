@@ -6,7 +6,7 @@ const SITE = "https://www.execpartners.ch";
 const PAGE_URL = `${SITE}/de`;
 
 export const metadata: Metadata = {
-  title: "Executive Partners | Private Banking Personalberatung Schweiz",
+  title: { absolute: "Executive Partners | Private Banking Personalberatung Schweiz" },
   description:
     "Executive Partners ist eine auf Private Banking und Wealth Management spezialisierte Personalberatung mit Sitz in Genf. Vertrauliche Vermittlung von Senior Relationship Managern, Team Heads und Investment Advisors in der Schweiz und international.",
   alternates: {

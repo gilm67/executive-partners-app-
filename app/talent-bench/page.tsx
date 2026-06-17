@@ -2,7 +2,7 @@ import candidates from "@/data/candidates.json";
 import TalentBenchClient from "./TalentBenchClient";
 
 export const metadata = {
-  title: "Confidential Talent Bench | Executive Partners",
+  title: { absolute: "Confidential Talent Bench | Executive Partners" },
   description:
     "A curated, anonymized selection of senior private banking and wealth management professionals currently engaged with Executive Partners.",
 };

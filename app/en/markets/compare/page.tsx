@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import CompareMarkets from "@/components/markets/CompareMarkets";
 
 export const metadata: Metadata = {
-  title: "Compare Private Banking Markets | Executive Partners",
+  title: { absolute: "Compare Private Banking Markets | Executive Partners" },
   description:
     "Compare compensation benchmarks, licensing, hiring pulse and ecosystem across Geneva, Zurich, Dubai, Singapore, London and other private banking hubs side by side.",
   alternates: { canonical: "https://www.execpartners.ch/en/markets/compare" },

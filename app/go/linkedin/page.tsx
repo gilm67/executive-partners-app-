@@ -2,7 +2,7 @@ import Link from "next/link";
 import OutboundLink from "@/components/ui/OutboundLink";
 
 export const metadata = {
-  title: "LinkedIn — Executive Partners",
+  title: { absolute: "LinkedIn — Executive Partners" },
   description:
     "Quick access to Gil M. Chalem’s LinkedIn articles and newsletter.",
   robots: { index: false, follow: false },

@@ -5,7 +5,7 @@ import { BreadcrumbSchema } from "@/components/StructuredData";
 const SITE = "https://www.execpartners.ch";
 
 export const metadata: Metadata = {
-  title: "Wealth Management Recruiter Switzerland | Executive Partners Geneva",
+  title: { absolute: "Wealth Management Recruiter Switzerland | Executive Partners Geneva" },
   description:
     "Executive Partners is Switzerland's specialist wealth management recruiter. Senior Relationship Managers, Investment Advisors, Team Heads and Market Leaders placed across Geneva, Zurich, London, Dubai and Singapore. Geneva-based headhunter, 200+ placements.",
   alternates: { canonical: `${SITE}/en/wealth-management-recruiter-switzerland` },
