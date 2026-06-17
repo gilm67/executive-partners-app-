@@ -1,0 +1,12 @@
+diff --git a/app/page.tsx b/app/page.tsx
+index 41245c4a..d1383078 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -46,7 +46,6 @@ export const metadata: Metadata = {
+ };
+ 
+ export const dynamic = "force-static";
+-export const revalidate = false;
+ 
+ export default function HomePage() {
+   return (
