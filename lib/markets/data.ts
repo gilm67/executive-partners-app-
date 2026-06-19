@@ -995,23 +995,74 @@ export const MARKETS: Market[] = [
       eamsAndFOs: ["Boutique family offices", "Local wealth managers focused on HNW/upper affluent"],
       regulators: ["CMVM (Comissão do Mercado de Valores Mobiliários)", "Banco de Portugal"],
     },
-  },
+  },,
   {
     slug: 'tel-aviv',
     city: 'Tel Aviv',
     country: 'Israel',
-    title: 'Private Banking Recruiter Tel Aviv | Israel Senior RM Jobs',
+    currency: 'USD',
+    locale: 'en-IL',
+    heroImage: '/images/markets/tel-aviv-hero.webp',
     summary:
-      'Israel specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and Israeli-market bankers covering UHNW/HNW tech-entrepreneur and cross-border wealth.',
-    keywords: [
-      'private banking jobs tel aviv',
-      'wealth management recruiter israel',
-      'senior relationship manager tel aviv',
-      'israeli market private banker',
-      'cross-border wealth management israel',
-      'ISA licence private banking',
+      'Israel specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and Israeli-market bankers covering UHNW/HNW tech-entrepreneur and cross-border wealth from Geneva and Zurich.',
+
+    compensation: [
+      {
+        role: 'RM / Senior Advisor (Geneva/Zurich)',
+        baseLow: 180000,
+        baseHigh: 280000,
+        currency: 'CHF',
+        bonusRange: '20–60%',
+        note: 'Israeli-market desk; book booked in CH or LU',
+      },
+      {
+        role: 'Senior RM / Director (Geneva/Zurich)',
+        baseLow: 280000,
+        baseHigh: 420000,
+        currency: 'CHF',
+        bonusRange: '30–80%',
+        note: 'Portable book CHF 300M+ expected at Director entry',
+      },
+      {
+        role: 'Israeli Desk Head / Market Leader',
+        baseLow: 380000,
+        baseHigh: 550000,
+        currency: 'CHF',
+        bonusRange: '40–100%',
+        note: 'P&L ownership; team build mandate common',
+      },
+      {
+        role: 'Onshore RM (Tel Aviv rep office)',
+        baseLow: 150000,
+        baseHigh: 245000,
+        currency: 'USD',
+        bonusRange: '20–50%',
+        note: 'ISA licence required; non-transactional advisory only',
+      },
     ],
-  },
+
+    licensing: {
+      regulator: 'ISA (Israel Securities Authority) for onshore; FINMA for Swiss booking',
+      mustHaveCerts: [
+        'ISA investment advisory or marketing licence (onshore client-facing roles)',
+        'AML/KYC under ISA and Bank of Israel frameworks',
+        'Hebrew for onshore; English sufficient for offshore coverage',
+        'FATCA/CRS expertise for cross-border client relationships',
+      ],
+      notes:
+        'The Investment Advice, Investment Marketing and Portfolio Management Law of 1995 governs onshore advisory activity. Swiss private banks operate via ISA-licensed representative offices; transactions execute through the Geneva or Zurich booking centre. ISA Investment Codex enacted September 2025.',
+    },
+
+    clientBase: {
+      sourcing: [
+        'Tech founders and executives with liquidity events from Israeli unicorn exits',
+        'Multi-generational Israeli UHNW families with cross-border asset allocation',
+        'Diaspora investors — Israeli-Americans, Israeli-Europeans — booking through Geneva or Zurich',
+        'Institutional family offices managing Israel-linked portfolios',
+        'Entrepreneurs from cyber, deep-tech, AI and medtech sectors',
+      ],
+    },
+  }
 ];
 
 // ---------- utilities ----------
