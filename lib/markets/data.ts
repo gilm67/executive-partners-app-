@@ -1000,8 +1000,6 @@ export const MARKETS: Market[] = [
     slug: 'tel-aviv',
     city: 'Tel Aviv',
     country: 'Israel',
-    flag: '🇮🇱',
-    region: 'Middle East',
     title: 'Private Banking Recruiter Tel Aviv | Israel Senior RM Jobs',
     summary:
       'Israel specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and Israeli-market bankers covering UHNW/HNW tech-entrepreneur and cross-border wealth.',
