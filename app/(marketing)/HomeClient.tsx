@@ -32,6 +32,7 @@ const CITIES = [
   { name: "Milan",     region: "Italy",        glow: "rgba(201,161,74,.12)",  primary: false },
   { name: "Madrid",    region: "Spain",        glow: "rgba(255,160,80,.12)",  primary: false },
   { name: "Lisbon",    region: "Portugal",     glow: "rgba(255,160,80,.11)",  primary: false },
+  { name: "Tel Aviv",  region: "Israel",       glow: "rgba(100,180,100,.12)", primary: false },
 ];
 
 export default function HomeClient() {
@@ -163,7 +164,7 @@ export default function HomeClient() {
             {[
               { value: "200+", label: "Placements", sub: "Senior RMs & Private Bankers" },
               { value: "98%", label: "12-month Retention", sub: "Candidates still in seat" },
-              { value: "13+", label: "Global Hubs", sub: "Geneva · Dubai · Riyadh" },
+              { value: "14+", label: "Global Hubs", sub: "Geneva · Dubai · Tel Aviv" },
               { value: "Billions", label: "in Client AUM", sub: "Represented across placements" },
             ].map((kpi) => (
               <div key={kpi.label} className="px-4 py-8 sm:px-8 sm:py-10 text-center">
@@ -351,6 +352,7 @@ export default function HomeClient() {
               { idx: "11", flag: "🇮🇹", city: "Milan",     region: "Italy",           slug: "milan",     photo: "/markets/milan.jpg",     glow: "rgba(201,161,74,0.06)" },
               { idx: "12", flag: "🇪🇸", city: "Madrid",    region: "Spain",           slug: "madrid",    photo: "/markets/madrid.jpg",    glow: "rgba(255,160,80,0.06)" },
               { idx: "13", flag: "🇵🇹", city: "Lisbon",    region: "Portugal",        slug: "lisbon",    photo: "/markets/lisbon.jpg",    glow: "rgba(255,160,80,0.06)" },
+              { idx: "14", flag: "🇮🇱", city: "Tel Aviv",  region: "Israel · Cross-border",  slug: "tel-aviv",  photo: "/images/markets/tel-aviv-hero.webp", glow: "rgba(100,180,100,0.07)" },
             ].map((c) => (
               <Link
                 key={c.city}
