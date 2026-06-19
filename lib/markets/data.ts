@@ -1037,7 +1037,7 @@ export const MARKETS: Market[] = [
 
     relocation: {
       oneParagraph:
-        'Most mandates are Swiss-based Israeli desk roles requiring no relocation. Onshore Tel Aviv positions at representative offices are senior-level; Israel applies progressive income tax with a top rate of 50%, though new residents benefit from a ten-year exemption on foreign-source income. Tel Aviv and Herzliya Pituach are among Israel's highest-cost areas.',
+        'Most mandates are Swiss-based Israeli desk roles requiring no relocation. Onshore Tel Aviv positions at representative offices are senior-level; Israel applies progressive income tax with a top rate of 50%, though new residents benefit from a ten-year exemption on foreign-source income. Tel Aviv and Herzliya Pituach are among Israel\'s highest-cost areas.',
       officialLinkLabel: 'Israel Securities Authority (ISA)',
       officialLinkUrl: 'https://www.isa.gov.il/',
     },
