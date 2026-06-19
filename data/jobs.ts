@@ -953,6 +953,40 @@ export const jobsBySlug: Record<string, Job> = {
     confidential: true, active: true, createdAt: "2026-06-12",
   },
 
+
+  "rm-israeli-market-tel-aviv": {
+    slug: "rm-israeli-market-tel-aviv",
+    title: "Senior Relationship Manager — Israeli Market",
+    market: "Israeli Market · Tel Aviv",
+    location: "Tel Aviv",
+    seniority: "Director / Senior Director",
+    summary: "A leading European private bank with an established Tel Aviv presence seeks a Senior RM to manage and develop a defined UHNW/HNW Israeli client book from day one. Active ISA advisory licence required. No portable AUM required — existing book provided.",
+    overview: [
+      "Assume and develop a defined portfolio of Israeli UHNW and HNW clients from the Tel Aviv office from day one.",
+      "Consolidate and deepen existing client relationships while selectively identifying new business opportunities within the Israeli market.",
+      "Operate at the level of cross-border advisory, multi-generational wealth planning and structured solutions tailored to Israeli client profiles.",
+    ],
+    responsibilities: [
+      "Manage and grow a portfolio of Israeli UHNW and HNW clients with a focus on relationship depth, wallet share and long-term retention.",
+      "Deliver tailored advisory and discretionary solutions across the full product spectrum, including private markets, structured products, lending and succession planning.",
+      "Work closely with investment advisors, product specialists and the cross-border platform to deliver a comprehensive and competitive client experience.",
+      "Maintain full compliance with ISA regulatory requirements and the bank's internal governance and KYC/AML framework.",
+      "Contribute to the ongoing development of the Israeli-market desk and its strategic positioning within the institution.",
+    ],
+    qualifications: [
+      "Active ISA investment advisory licence — a strict and non-negotiable requirement for this onshore position.",
+      "Minimum eight years of private banking experience with dedicated coverage of Israeli UHNW or HNW clients.",
+      "Hebrew fluency at a professional client-facing level; English required; additional European languages valued.",
+      "Deep understanding of Israeli client culture, wealth structures, and cross-border booking dynamics between Israel and European financial centres.",
+      "Demonstrable experience handling tech-entrepreneur liquidity events, family succession and multi-generational wealth structures.",
+      "Clean compliance record and exemplary KYC/AML discipline throughout career.",
+      "Genuine and referenceable relationship depth within the Israeli business and entrepreneurial community.",
+    ],
+    compensation: "Competitive, calibrated to Director/Senior Director level. Existing client book provided from day one — no portable AUM required.",
+    languages: ["Hebrew (mandatory)", "English (mandatory)"],
+    listedDate: "2026-06-19",
+    confidential: true,
+  },
 };
 
 /* ---------------- Exports ---------------- */

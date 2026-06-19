@@ -61,3 +61,4 @@ tsconfig.tsbuildinfo
 apply-mobile-fixes.sh
 fix-image-sizes.py
 fix-tailwind-classes.py
+.env*.local
