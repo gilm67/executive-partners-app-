@@ -982,10 +982,16 @@ export const jobsBySlug: Record<string, Job> = {
       "Clean compliance record and exemplary KYC/AML discipline throughout career.",
       "Genuine and referenceable relationship depth within the Israeli business and entrepreneurial community.",
     ],
-    compensation: "Competitive, calibrated to Director/Senior Director level. Existing client book provided from day one — no portable AUM required.",
-    languages: ["Hebrew (mandatory)", "English (mandatory)"],
-    listedDate: "2026-06-19",
+    offer: [
+      "Competitive compensation calibrated to Director/Senior Director level.",
+      "Existing client book provided from day one — no portable AUM required.",
+      "Structured platform with strong institutional backing and cross-border investment capabilities.",
+      "Credible long-term commitment to the Israeli market from an established European private bank.",
+    ],
+    languages: ["Hebrew", "English"],
+    createdAt: "2026-06-19",
     confidential: true,
+    active: true,
   },
 };
 
