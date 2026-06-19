@@ -995,8 +995,8 @@ export const MARKETS: Market[] = [
       eamsAndFOs: ["Boutique family offices", "Local wealth managers focused on HNW/upper affluent"],
       regulators: ["CMVM (Comissão do Mercado de Valores Mobiliários)", "Banco de Portugal"],
     },
-  },,
-  {
+  },
+    {
     slug: 'tel-aviv',
     city: 'Tel Aviv',
     country: 'Israel',
@@ -1004,37 +1004,13 @@ export const MARKETS: Market[] = [
     locale: 'en-IL',
     heroImage: '/images/markets/tel-aviv-hero.webp',
     summary:
-      'Israel specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and Israeli-market bankers covering UHNW/HNW tech-entrepreneur and cross-border wealth from Geneva and Zurich.',
+      'Israel private banking recruitment: onshore and cross-border UHNW/HNW, tech-entrepreneur wealth and family offices. Senior RM and Team Head mandates, ISA licensing guidance and live roles.',
 
     compensation: [
-      {
-        role: 'RM / Senior Advisor (Geneva/Zurich)',
-        baseMin: 180000,
-        baseMax: 280000,
-        bonusPct: '20–60%',
-        topQuartileNote: 'Israeli-market desk; book booked in CH or LU',
-      },
-      {
-        role: 'Senior RM / Director (Geneva/Zurich)',
-        baseMin: 280000,
-        baseMax: 420000,
-        bonusPct: '30–80%',
-        topQuartileNote: 'Portable book CHF 300M+ expected at Director entry',
-      },
-      {
-        role: 'Israeli Desk Head / Market Leader',
-        baseMin: 380000,
-        baseMax: 550000,
-        bonusPct: '40–100%',
-        topQuartileNote: 'P&L ownership; team build mandate common',
-      },
-      {
-        role: 'Onshore RM (Tel Aviv rep office)',
-        baseMin: 150000,
-        baseMax: 245000,
-        bonusPct: '20–50%',
-        topQuartileNote: 'ISA licence required; non-transactional advisory only',
-      },
+      { role: 'RM / Senior Advisor (Geneva/Zurich)', baseMin: 180000, baseMax: 280000, bonusPct: '20–60%', topQuartileNote: 'Israeli-market desk; book booked in CH or LU' },
+      { role: 'Senior RM / Director (Geneva/Zurich)', baseMin: 280000, baseMax: 420000, bonusPct: '30–80%', topQuartileNote: 'Portable book CHF 300M+ expected at Director entry' },
+      { role: 'Israeli Desk Head / Market Leader', baseMin: 380000, baseMax: 550000, bonusPct: '40–100%', topQuartileNote: 'P&L ownership; team build mandate common' },
+      { role: 'Onshore RM (Tel Aviv rep office)', baseMin: 150000, baseMax: 245000, bonusPct: '20–50%', topQuartileNote: 'ISA licence required; non-transactional advisory only' },
     ],
 
     licensing: {
@@ -1042,21 +1018,77 @@ export const MARKETS: Market[] = [
       mustHaveCerts: [
         'ISA investment advisory or marketing licence (onshore client-facing roles)',
         'AML/KYC under ISA and Bank of Israel frameworks',
-        'Hebrew for onshore; English sufficient for offshore coverage',
+        'Hebrew for onshore client coverage; English sufficient for offshore desk roles',
         'FATCA/CRS expertise for cross-border client relationships',
       ],
       notes:
-        'The Investment Advice, Investment Marketing and Portfolio Management Law of 1995 governs onshore advisory activity. Swiss private banks operate via ISA-licensed representative offices; transactions execute through the Geneva or Zurich booking centre. ISA Investment Codex enacted September 2025.',
+        'The Investment Advice, Investment Marketing and Portfolio Management Law of 1995 governs onshore advisory. Swiss private banks operate via ISA-licensed representative offices; transactions execute through Geneva or Zurich. ISA Investment Codex enacted September 2025.',
     },
 
     clientBase: {
       sourcing: [
         'Tech founders and executives with liquidity events from Israeli unicorn exits',
         'Multi-generational Israeli UHNW families with cross-border asset allocation',
-        'Diaspora investors — Israeli-Americans, Israeli-Europeans — booking through Geneva or Zurich',
+        'Diaspora investors booking through Geneva, Zurich or Luxembourg',
         'Institutional family offices managing Israel-linked portfolios',
         'Entrepreneurs from cyber, deep-tech, AI and medtech sectors',
       ],
+    },
+
+    relocation: {
+      oneParagraph:
+        'Most mandates are Swiss-based Israeli desk roles requiring no relocation. Onshore Tel Aviv positions at representative offices are senior-level; Israel applies progressive income tax with a top rate of 50%, though new residents benefit from a ten-year exemption on foreign-source income. Tel Aviv and Herzliya Pituach are among Israel's highest-cost areas.',
+      officialLinkLabel: 'Israel Securities Authority (ISA)',
+      officialLinkUrl: 'https://www.isa.gov.il/',
+    },
+
+    cta: { confidentialCallHref: '/contact', uploadPlanHref: '/bp-simulator' },
+
+    legalDisclaimer:
+      'Compensation ranges are directional benchmarks for 2026 private banking roles (mid-senior RM to team lead). Final offers vary by portable book, ROA, compliance history and firm performance. Figures are not an offer and are provided for guidance only.',
+
+    hiringPulse: {
+      hotRoles: [
+        'Senior RM Israeli Market (Geneva/Zurich based)',
+        'Israeli Desk Head — Cross-Border Coverage',
+        'Private Banker — Tech-Entrepreneur Segment',
+      ],
+      hotSkills: [
+        'Hebrew and English client coverage',
+        'Cross-border structuring (CH/LU booking)',
+        'ISA investment advisory licence',
+        'Tech-exit liquidity event handling',
+      ],
+      notes:
+        'Demand driven by Swiss private banks expanding Israeli-market desks. ~USD 80B in Israeli tech exits in 2025 generated a new wave of UHNW clients requiring cross-border wealth structuring.',
+    },
+
+    atAGlance: [
+      { label: 'Focus', value: 'Israeli UHNW/HNW — Tech & Cross-Border' },
+      { label: 'Languages', value: 'Hebrew / English' },
+      { label: 'Deal Style', value: 'Advisory + Discretionary + Offshore Structuring' },
+      { label: 'Regulatory Track', value: 'ISA onshore + FINMA offshore booking' },
+    ],
+
+    ecosystem: {
+      bookingCentres: ['Geneva', 'Zurich', 'Luxembourg', 'Tel Aviv (advisory only)'],
+      keyBanks: [
+        'UBS (advisory office, Herzliya Pituach)',
+        'Julius Baer (representative office, Tel Aviv)',
+        'EFG International (representative office, Tel Aviv, opened 2022)',
+        'Lombard Odier (representative office, Tel Aviv, opened 2017)',
+        'Citi Private Bank (Tel Aviv office)',
+        'Rothschild & Co (Herzliya)',
+        'Dreyfus Bank (sole office outside Switzerland is in Tel Aviv)',
+        'HSBC (full branch, Israel)',
+        'Union Bancaire Privée — UBP (Israeli market coverage)',
+      ],
+      eamsAndFOs: [
+        'ISA-licensed investment advisers and portfolio managers',
+        'Family offices linked to Israeli tech and UHNW families',
+        'Multi-family offices based in Tel Aviv and Herzliya',
+      ],
+      regulators: ['Israel Securities Authority (ISA)', 'Bank of Israel'],
     },
   }
 ];
