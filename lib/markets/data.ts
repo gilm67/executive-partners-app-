@@ -1000,17 +1000,17 @@ export const MARKETS: Market[] = [
     slug: 'tel-aviv',
     city: 'Tel Aviv',
     country: 'Israel',
-    currency: 'USD',
-    locale: 'en-IL',
+    currency: 'CHF',
+    locale: 'de-CH',
     heroImage: '/images/markets/tel-aviv-hero.webp',
     summary:
       'Israel private banking recruitment: onshore and cross-border UHNW/HNW, tech-entrepreneur wealth and family offices. Senior RM and Team Head mandates, ISA licensing guidance and live roles.',
 
     compensation: [
-      { role: 'RM / Senior Advisor (Geneva/Zurich)', baseMin: 180000, baseMax: 280000, bonusPct: '20–60%', topQuartileNote: 'Israeli-market desk; book booked in CH or LU' },
-      { role: 'Senior RM / Director (Geneva/Zurich)', baseMin: 280000, baseMax: 420000, bonusPct: '30–80%', topQuartileNote: 'Portable book CHF 300M+ expected at Director entry' },
-      { role: 'Israeli Desk Head / Market Leader', baseMin: 380000, baseMax: 550000, bonusPct: '40–100%', topQuartileNote: 'P&L ownership; team build mandate common' },
-      { role: 'Onshore RM (Tel Aviv rep office)', baseMin: 150000, baseMax: 245000, bonusPct: '20–50%', topQuartileNote: 'ISA licence required; non-transactional advisory only' },
+      { role: 'RM / Senior Advisor — Israeli desk (Geneva/Zurich)', baseMin: 160000, baseMax: 250000, bonusPct: '20–50%', topQuartileNote: 'Book booked in CH or LU; Hebrew fluency a prerequisite' },
+      { role: 'Senior RM / Director — Israeli desk (Geneva/Zurich)', baseMin: 240000, baseMax: 350000, bonusPct: '30–70%', topQuartileNote: 'Portable book CHF 200–400M typical range at Director entry' },
+      { role: 'Israeli Desk Head / Market Leader', baseMin: 300000, baseMax: 480000, bonusPct: '40–100%', topQuartileNote: 'Full P&L ownership; team build mandate; top of range at major platforms only' },
+      { role: 'Onshore RM — Tel Aviv rep office (NIS-denominated)', baseMin: 130000, baseMax: 200000, bonusPct: '20–45%', topQuartileNote: 'NIS equivalent approx NIS 500K–750K; ISA licence required; non-transactional advisory only' },
     ],
 
     licensing: {
