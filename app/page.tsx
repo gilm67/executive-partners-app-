@@ -152,6 +152,7 @@ export default function HomePage() {
                   { city: "Milan", slug: "milan" },
                   { city: "Madrid", slug: "madrid" },
                   { city: "Lisbon", slug: "lisbon" },
+                  { city: "Tel Aviv", slug: "tel-aviv" },
                 ].map((m, i) => (
                   <span key={m.city} className="hidden sm:flex items-center gap-2">
                     {i > 0 && <span className="text-white/20">·</span>}
