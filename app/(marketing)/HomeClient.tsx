@@ -164,7 +164,7 @@ export default function HomeClient() {
             {[
               { value: "200+", label: "Placements", sub: "Senior RMs & Private Bankers" },
               { value: "98%", label: "12-month Retention", sub: "Candidates still in seat" },
-              { value: "14+", label: "Global Hubs", sub: "Geneva · Dubai · Tel Aviv" },
+              { value: "14+", label: "Global Hubs", sub: "Geneva · Dubai · Singapore" },
               { value: "Billions", label: "in Client AUM", sub: "Represented across placements" },
             ].map((kpi) => (
               <div key={kpi.label} className="px-4 py-8 sm:px-8 sm:py-10 text-center">
