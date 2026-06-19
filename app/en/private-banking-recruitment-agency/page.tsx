@@ -123,7 +123,7 @@ export default function Page() {
               We advise senior private bankers confidentially on strategic moves. We help you
               understand your AUM portability, build a credible business plan, navigate
               non-compete agreements, and identify which platforms genuinely fit your client
-              franchise, whether in Switzerland or across our 13 global hubs.
+              franchise, whether in Switzerland or across our 14 global hubs.
             </p>
             <p className="text-sm leading-relaxed text-neutral-300">
               Your profile is never shared without your explicit consent.
@@ -136,7 +136,7 @@ export default function Page() {
 
         {/* Markets */}
         <section className="mt-14">
-          <h2 className="text-lg font-semibold">Active across 13 global hubs</h2>
+          <h2 className="text-lg font-semibold">Active across 14 global hubs</h2>
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {HUBS.map((h) => (
               <Link

@@ -17,7 +17,7 @@ const personJsonLd = {
     addressLocality: "Geneva",
     addressCountry: "CH",
   },
-  description: "Senior executive recruiter dedicated exclusively to Private Banking and Wealth Management. 200+ placements across 13 global hubs including Geneva, Zurich, London, Dubai, Riyadh, Singapore and Hong Kong.",
+  description: "Senior executive recruiter dedicated exclusively to Private Banking and Wealth Management. 200+ placements across 14 global hubs including Geneva, Zurich, London, Dubai, Riyadh, Singapore and Hong Kong.",
 };
 
 const orgJsonLd = {

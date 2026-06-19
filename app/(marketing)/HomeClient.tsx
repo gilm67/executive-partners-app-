@@ -189,7 +189,7 @@ export default function HomeClient() {
       <div className="border-b border-white/8 bg-[#0b0f1a]/80">
         <div className="mx-auto max-w-7xl px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
           <p className="text-xs text-white/50">
-            <span className="text-white/80 font-medium">Hiring a senior RM?</span> We fill mandates across 13 global hubs. Senior-level only. Same business day response.
+            <span className="text-white/80 font-medium">Hiring a senior RM?</span> We fill mandates across 14 global hubs. Senior-level only. Same business day response.
           </p>
           <Link href="/en/hiring-managers" className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#D4AF37] hover:text-[#F0D060] transition whitespace-nowrap">
             Brief a mandate <ArrowRight className="h-3 w-3" />

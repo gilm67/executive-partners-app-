@@ -140,7 +140,7 @@ export default function Footer() {
           <div className="flex items-start justify-between mb-12 pb-12 border-b border-white/[0.06]">
             <div className="max-w-sm">
               <Image src="/transparent-ep-logo.png" alt="Executive Partners" width={290} height={60} sizes="220px" className="h-auto w-[220px] opacity-90 mb-4" />
-              <p className="text-sm text-white/80 leading-relaxed">Geneva-based executive search for Private Banking & Wealth Management. 200+ placements across 13 global hubs.</p>
+              <p className="text-sm text-white/80 leading-relaxed">Geneva-based executive search for Private Banking & Wealth Management. 200+ placements across 14 global hubs.</p>
             </div>
             <Link href="https://calendly.com/execpartners/15-minute-career-consultation"
               target="_blank" rel="noopener noreferrer"

@@ -75,7 +75,7 @@ export const metadata: Metadata = {
     url: "/",
     title: DEFAULT_TITLE,
     description:
-      "Executive search for Private Banking & Wealth Management: senior Relationship Managers, Team Heads and leadership roles across Switzerland, the UK, US, Dubai, Singapore and Hong Kong.",
+      "Executive search for Private Banking & Wealth Management: senior Relationship Managers, Team Heads and leadership roles across Switzerland, the UK, US, Dubai, Singapore, Hong Kong and Tel Aviv.",
     siteName: "Executive Partners",
     locale: "en_GB",
     images: [
@@ -175,7 +175,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           "telephone": "",
           "address": {"@type": "PostalAddress", "addressLocality": "Geneva", "addressCountry": "CH"},
           "founder": {"@type": "Person", "name": "Gil M. Chalem"},
-          "areaServed": ["Geneva","Zurich","London","Dubai","Singapore","Hong Kong"]
+          "areaServed": ["Geneva","Zurich","London","Dubai","Singapore","Hong Kong","Tel Aviv"]
         })}}
       />
       </head>
