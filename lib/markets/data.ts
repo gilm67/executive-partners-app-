@@ -996,6 +996,24 @@ export const MARKETS: Market[] = [
       regulators: ["CMVM (Comissão do Mercado de Valores Mobiliários)", "Banco de Portugal"],
     },
   },
+  {
+    slug: 'tel-aviv',
+    city: 'Tel Aviv',
+    country: 'Israel',
+    flag: '🇮🇱',
+    region: 'Middle East',
+    title: 'Private Banking Recruiter Tel Aviv | Israel Senior RM Jobs',
+    summary:
+      'Israel specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and Israeli-market bankers covering UHNW/HNW tech-entrepreneur and cross-border wealth.',
+    keywords: [
+      'private banking jobs tel aviv',
+      'wealth management recruiter israel',
+      'senior relationship manager tel aviv',
+      'israeli market private banker',
+      'cross-border wealth management israel',
+      'ISA licence private banking',
+    ],
+  },
 ];
 
 // ---------- utilities ----------
