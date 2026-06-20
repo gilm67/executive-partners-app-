@@ -1,6 +1,24 @@
 import { Metadata } from "next"
 import Link from "next/link"
 
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: 'Executive Partners',
+  description: 'Private banking recruitment company based in Geneva, Switzerland. Senior-only executive search for Relationship Managers, Team Heads and Investment Advisors across 14 global hubs.',
+  url: 'https://www.execpartners.ch/en/private-banking-recruitment-company',
+  telephone: '',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Geneva',
+    addressCountry: 'CH',
+  },
+  areaServed: ['CH', 'GB', 'AE', 'SG', 'HK', 'US', 'FR', 'IT', 'IL', 'SA', 'ES', 'PT'],
+  serviceType: 'Private Banking Executive Search',
+  knowsAbout: ['Private Banking', 'Wealth Management', 'AUM Portability', 'Relationship Manager Placement'],
+}
+
 export const metadata: Metadata = {
   title: "Private Banking Recruitment Company | Executive Partners Switzerland",
   description: "Executive Partners is a private banking recruitment company based in Geneva, Switzerland. Senior-only executive search for Relationship Managers, Team Heads and Investment Advisors across 14 global hubs. 200+ placements. 98% retention.",
@@ -18,7 +36,9 @@ const MANDATES=["Senior Relationship Managers with portable HNW or UHNW books","
 
 export default function Page() {
   return (
-    <main id="main" className="max-w-3xl mx-auto px-6 py-16">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <main id="main" className="max-w-3xl mx-auto px-6 py-16">
       <p className="text-sm uppercase tracking-widest opacity-50 mb-4">Private Banking · Executive Search · Switzerland</p>
       <h1 className="text-4xl font-semibold leading-tight mb-6">Private Banking Recruitment Company</h1>
       <p className="text-lg opacity-80 leading-relaxed mb-8">Executive Partners is a Geneva-based private banking recruitment company focused exclusively on wealth management and private banking. We run senior-only mandates across Switzerland and 14 global hubs.</p>
@@ -60,8 +80,10 @@ export default function Page() {
           <li><Link href="/en/private-banking-recruiter-geneva" className="underline underline-offset-2">Private banking recruitment in Geneva</Link></li>
           <li><Link href="/en/hiring-managers" className="underline underline-offset-2">For hiring managers: brief a mandate</Link></li>
           <li><Link href="/en/markets" className="underline underline-offset-2">All market hubs</Link></li>
+          <li><Link href="/en/private-banking-recruitment-agency" className="underline underline-offset-2">Private banking recruitment agency</Link></li>
         </ul>
       </section>
     </main>
+    </>
   )
 }
