@@ -8,9 +8,10 @@ import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 export const maxDuration = 60;
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-const resend = new Resend(process.env.RESEND_API_KEY);
+// resend: lazy init inside handler
 
 export async function POST(req: NextRequest) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     const body = await req.json();
     const { token, data } = body;
