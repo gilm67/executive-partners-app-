@@ -12,9 +12,9 @@ const HERO_MOBILE = "/hero-jeteau-mobile.webp";
 const OG_IMAGE = "/og.webp";
 
 export const metadata: Metadata = {
-  title: { absolute: "Private Banking Recruiter Switzerland | Executive Partners Geneva" },
+  title: { absolute: "Private Banking Recruitment Company Switzerland | Executive Partners" },
   description:
-    "Switzerland's leading executive recruiters for private banking and wealth management, based in Geneva. Senior Relationship Managers, Team Heads and UHNW bankers placed across Geneva, Zurich, London, Dubai, Singapore and Hong Kong. 200+ placements.",
+    "Switzerland's leading private banking recruitment company, based in Geneva. Senior executive search for private banking and wealth management professionals worldwide. Senior Relationship Managers, Team Heads and UHNW bankers placed across Geneva, Zurich, London, Dubai, Singapore and Hong Kong. 200+ placements.",
 
   openGraph: {
     title: "Private Banking Recruiter Switzerland ",
