@@ -74,6 +74,79 @@ export type InsightArticle = {
  */
 export const INSIGHTS: readonly InsightArticle[] = [
   {
+    slug: "private-banking-recruitment-company-2026",
+    title: "The Private Banking Recruitment Company Test Most Banks Never Run",
+    seoTitle: "What to Look for in a Private Banking Recruitment Company | Private Wealth Pulse",
+    seoDescription: "Most banks ask the wrong question when briefing a private banking recruitment company. Here is what to ask instead, and what the answer tells you.",
+    linkedinUrl: "",
+    date: "2026-06-20",
+    summary: "Most banks open a recruitment briefing with a headline AUM number and assume the recruitment company will do the rest. That assumption is the problem.",
+    pillar: "P2",
+    subTheme: "Positioning",
+    markets: ["CH", "UK", "UAE", "ASIA", "US"],
+    keywords: ["private banking recruitment company", "private banking recruiter", "AUM portability"],
+    body: `The worst briefing call a private banking recruitment company can receive opens with a number. "We need someone with a CHF 300 million book." The hiring manager says it with confidence, as if the figure resolves the question. It does not. What it reveals is that the bank has not yet thought about the right problem.
+
+AUM is an outcome, not a specification. A private banker sitting on CHF 300 million today might transfer CHF 80 million in twelve months, or CHF 240 million, or nothing, depending on factors that have nothing to do with the size of the book and everything to do with how it was built. The recruitment company that takes that briefing at face value, screens for headline AUM, and presents three candidates who all look the same on paper has done administrative work, not search work. The bill arrives regardless.
+
+This piece is about how to tell the difference before the invoice lands.
+
+## The database question
+
+Every private banking recruitment company will tell you they have proprietary access to the market. Some do. Most have a LinkedIn Recruiter licence and a CRM they bought off the shelf. The database itself is rarely the differentiator because, at the senior end of private banking, the universe of genuinely portable, commercially relevant candidates in any given market is smaller than most banks assume. In Swiss private banking, the pool of Senior RMs with validated portability, clean compliance records, and a realistic transfer timeline in the twelve-month window is measured in dozens per market segment, not hundreds.
+
+The question worth asking any private banking recruitment company before you brief them is simple: how do you validate portability before presenting a candidate? If the answer involves client count, tenure at the bank, or AUM figure alone, keep asking. Those are inputs. Portability is an output derived from wallet share concentration, non-solicit clause specifics, the nature of the client relationship, the client own wealth complexity, and booking-centre dependencies the bank may not have considered.
+
+A recruitment company that can do this work before the first meeting saves you from the single most expensive error in private banking hiring: the candidate who interviews well, resigns, and transfers thirty percent of what was projected.
+
+## What the shortlist should tell you
+
+A well-constructed shortlist from a competent private banking recruitment company does not just name candidates. It tells you why each person is on it, what the realistic transfer scenario looks like, where the compliance exposure sits, and what the first-year revenue case is under conservative assumptions. If you receive a longlist of eight people with a one-paragraph summary each, you are receiving a search engine result, not a recommendation.
+
+The shortlist length itself is diagnostic. Senior private banking mandates at the Director or Managing Director level should produce one to three candidates, not eight. More than that means one of two things: the recruitment company cast wide because it could not qualify narrow, or it is showing you volume to justify its process. Either way, the evaluation burden has been transferred to you.
+
+The right structure is a shortlist where every name requires a conversation, not a filter. By the time a candidate appears on paper, the recruitment company should already know how the book is structured, what the client concentration looks like, whether there are departure dependencies at the current institution, and what the candidate realistic financial position is relative to the move. A senior RM who is mid-way through a deferred compensation cycle is a different risk profile than one who vested last quarter.
+
+## The geography trap
+
+Most private banking recruitment companies organise themselves around geography. They have a Swiss desk, a London desk, a Middle East practice. That structure makes internal sense for them. It rarely reflects how private banking actually works.
+
+The market for a French-speaking UHNW relationship manager serving North African families is not a Geneva story or a London story. It is a specific profile that sits across both, draws from Paris as well, and may equally be filled by someone currently based in Geneva who built the book in a previous role in Monaco. A recruitment company with a rigid geographic model will present you with candidates from its nearest office. A specialist will map the actual candidate universe regardless of where it sits.
+
+This is worth testing directly in the briefing call. Describe the profile you need, including the client origin, language requirements, and booking-centre preference, and then ask the recruitment company where it expects to find candidates. If the answer starts with a city rather than a profile characteristic, that tells you something important about how the firm thinks.
+
+## Red flags that are easy to miss
+
+The clearest warning sign in a private banking recruitment process is a candidate presented within four days of the briefing call. It sounds like responsiveness. It is usually the opposite. The candidate who is available that fast is almost always already circulating. By the time you see the CV, two other banks have had the first conversation, one has moved to second interview, and the offer will land before your process reaches the reference stage. You will have spent three weeks evaluating someone who was never really available to you.
+
+Speed is a selling point for commodity recruitment. In senior private banking search, the candidates worth finding are not on the market. They are in seat, performing, and not returning messages from people they do not know. Getting to them takes time, a prior relationship, or both. A recruitment company that leads with turnaround time is telling you something about the quality of the candidates it intends to show you.
+
+The second flag is a firm that can tell you about its candidates but not about the market. Any competent private banking recruitment company running an active mandate should be able to tell you, without prompting, what compensation is doing for that profile right now, which platforms are offering sign-on and which have pulled back, and whether the candidate you are considering is fielding competing interest. That is not sensitive information. It is what an adviser knows and a database vendor does not.
+
+The third, and most decisive, is a firm that schedules the first interview before it has walked you through the portability case. The meeting should exist to evaluate fit, alignment, and cultural chemistry. By that point, the commercial case should already be on paper. If the recruitment company is asking you to do the portability discovery yourself in a live conversation with the candidate, it has outsourced the most important part of its job to you.
+
+## What good actually looks like
+
+The private banking recruitment companies worth working with share a few characteristics that are easy to identify once you know what to look for.
+
+They run a smaller number of mandates than generalist competitors. Not because they lack capacity, but because they take search quality seriously enough to limit throughput. A firm running fifty mandates simultaneously in private banking is, by definition, not doing the deep candidate qualification work that the market requires.
+
+They have a view on the market independent of the candidates they are currently working with. They can tell you what is happening in Italian desk hiring in Geneva right now, not in a marketing newsletter but in a specific, current, sourced way. That knowledge comes from sustained relationships with both sides of the market over time, not from a recent search campaign.
+
+They are transparent about what they do not know. A candidate with a CHF 250 million book who has been at the same institution for twelve years is a different portability proposition than one with the same AUM who changed banks twice in that period. A good recruitment company tells you that difference explicitly, rather than presenting the headline figure and letting you find the complexity in due diligence.
+
+## The test
+
+Before you engage any private banking recruitment company on a senior mandate, ask one question: can you show me how you validate AUM portability before presenting a candidate?
+
+The answer, and how it is delivered, will tell you most of what you need to know. A firm that can walk you through wallet share concentration, non-solicit exposure, and booking-centre transfer complexity in plain language before the first CV lands is operating at the level the mandate requires.
+
+The fee is the same either way. The outcomes are not.
+
+If you are a private banker considering a move and want to understand your own transfer position before any conversation with a bank, the [AUM Portability Score tool](https://www.execpartners.ch/en/portability) runs the calculation in minutes, confidentially, with no obligation. If you are a bank evaluating how we work as a [private banking recruitment company](https://www.execpartners.ch/en/private-banking-recruitment-company), the full picture is here.`,
+  },
+
+  {
     slug: "the-acquisition-trap",
     ogImage: "/og-articles/og-the-acquisition-trap.jpg",
     title: "The Acquisition Trap",
