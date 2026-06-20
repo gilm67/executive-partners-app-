@@ -62,6 +62,13 @@ const nextConfig = {
       { source: "/job-detail-:slug(.*)", destination: "/en/jobs", permanent: true },
       { source: "/job-details-:slug(.*)", destination: "/en/jobs", permanent: true },
       { source: "/about us", destination: "/en/about", permanent: true },
+      { source: "/private-banking-recruiter-:slug(.*)", destination: "/en/private-banking-recruiter-:slug", permanent: true },
+      { source: "/private-banking-recruitment-:slug(.*)", destination: "/en/private-banking-recruitment-:slug", permanent: true },
+      { source: "/private-banking-headhunter-:slug(.*)", destination: "/en/private-banking-headhunter-:slug", permanent: true },
+      { source: "/private-banker-jobs-:slug(.*)", destination: "/en/private-banker-jobs-:slug", permanent: true },
+      { source: "/wealth-management-recruiter-:slug(.*)", destination: "/en/wealth-management-recruiter-:slug", permanent: true },
+      { source: "/eam-recruiter-:slug(.*)", destination: "/en/eam-recruiter-:slug", permanent: true },
+
     ];
   },
 };
