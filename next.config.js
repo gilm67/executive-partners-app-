@@ -17,15 +17,7 @@ const nextConfig = {
 
   async redirects() {
     return [
-      // Non-www → www
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "execpartners.ch" }],
-        destination: "https://www.execpartners.ch/:path*",
-        permanent: true,
-      },
-      // Root-level → /en/ equivalents
-      { source: "/markets", destination: "/en/markets", permanent: true },
+{ source: "/markets", destination: "/en/markets", permanent: true },
       { source: "/jobs", destination: "/en/jobs", permanent: true },
       { source: "/jobs/:path*", destination: "/en/jobs/:path*", permanent: true },
       { source: "/candidates", destination: "/en/candidates", permanent: true },
@@ -43,9 +35,7 @@ const nextConfig = {
       { source: "/apply", destination: "/en/apply", permanent: true },
       { source: "/privacy", destination: "/en/privacy", permanent: true },
       { source: "/markets/:path((?!.*\..*).+)", destination: "/en/markets/:path", permanent: true },
-      // Trailing slash cleanup
       { source: "/en/jobs/", destination: "/en/jobs", permanent: true },
-      // Legacy URLs
       { source: "/top-talent", destination: "/en/candidates", permanent: true },
       { source: "/executive-recruiters", destination: "/en/hiring-managers", permanent: true },
       { source: "/executive-recruiters/", destination: "/en/hiring-managers", permanent: true },
@@ -67,8 +57,7 @@ const nextConfig = {
       { source: "/private-banking-headhunter-:slug(.*)", destination: "/en/private-banking-headhunter-:slug", permanent: true },
       { source: "/private-banker-jobs-:slug(.*)", destination: "/en/private-banker-jobs-:slug", permanent: true },
       { source: "/wealth-management-recruiter-:slug(.*)", destination: "/en/wealth-management-recruiter-:slug", permanent: true },
-      { source: "/eam-recruiter-:slug(.*)", destination: "/en/eam-recruiter-:slug", permanent: true },
-
+      { source: "/eam-recruiter-:slug(.*)", destination: "/en/eam-recruiter-:slug", permanent: true }
     ];
   },
 };

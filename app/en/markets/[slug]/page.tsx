@@ -632,7 +632,28 @@ export default async function MarketPage({ params }: Props) {
           </section>
         );
       })()}
-    </main>
+    
+          {/* Specialist desk links for Geneva and Zurich */}
+          {(slug === "geneva" || slug === "zurich") && (
+            <div className="mt-12 pt-10 border-t border-white/10">
+              <p className="text-xs uppercase tracking-widest text-white/30 mb-4">Specialist Desk Recruiters</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                {[
+                  { href: "/en/latam-private-banking-recruiter-geneva", label: "LATAM private banking recruiter" },
+                  { href: "/en/mea-private-banking-recruiter-geneva", label: "MEA private banking recruiter" },
+                  { href: "/en/nri-private-banking-recruiter-switzerland", label: "NRI private banking recruiter" },
+                  { href: "/en/israeli-market-private-banking-switzerland", label: "Israeli market private banking" },
+                  { href: "/en/private-banking-headhunter-geneva", label: "Private banking headhunter Geneva" },
+                  { href: "/en/private-banking-recruiter-switzerland", label: "Private banking recruiter Switzerland" },
+                ].map(({ href, label }) => (
+                  <Link key={href} href={href} className="text-white/50 hover:text-white transition border border-white/10 rounded px-3 py-2">
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+          </main>
   );
 }
 

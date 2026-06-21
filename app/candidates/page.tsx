@@ -346,6 +346,23 @@ export default function CandidatesPage() {
       </section>
 
       <CandidateFAQ compact={false} anchorId="faqs" />
+
+      {/* Specialist market desks */}
+      <section className="px-4 py-10 border-t border-white/10 max-w-5xl mx-auto w-full">
+        <p className="text-xs uppercase tracking-widest text-white/30 mb-5">Specialist Market Desks</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+          {[
+            { href: "/en/latam-private-banking-recruiter-geneva", label: "LATAM private banking — Geneva" },
+            { href: "/en/mea-private-banking-recruiter-geneva", label: "MEA private banking — Geneva" },
+            { href: "/en/nri-private-banking-recruiter-switzerland", label: "NRI private banking — Switzerland" },
+            { href: "/en/israeli-market-private-banking-switzerland", label: "Israeli market — Switzerland" },
+          ].map(({ href, label }) => (
+            <a key={href} href={href} className="text-white/50 hover:text-white transition border border-white/10 rounded px-3 py-2">
+              {label}
+            </a>
+          ))}
+        </div>
+      </section>
       </main>
     </>
   );

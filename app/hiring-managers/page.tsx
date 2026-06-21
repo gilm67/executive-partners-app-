@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description:
     "Executive search for senior private banking hires. Targeted recruitment for Directors, MDs, Team Heads across Switzerland, Dubai, Riyadh, Singapore, London, New York.",
   openGraph: {
-    title: "Private Banking Recruitment Switzerland | Senior RM & Team Head Search",
+    title: "Private Banking Recruitment Switzerland | Senior RM & Team Head Search | Executive Partners",
     description:
       "Targeted senior hires in Private Banking & Wealth Management. Real AUM portability and long-term retention.",
     images: [{ url: "/og.webp", width: 1200, height: 630, alt: "Executive Partners – Private Banking Recruitment" }],
