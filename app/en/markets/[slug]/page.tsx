@@ -18,10 +18,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Geneva gets a richer, fully custom SEO treatment
   if (slug === "geneva") {
     return {
-      title: "Private Banking Recruiter Geneva | Senior RMs, Team Heads & EAMs",
-      description: "Specialist private banking recruiter in Geneva. Senior RMs, Team Heads and EAM coverage specialists placed at Swiss and international private banks. Live mandates, compensation benchmarks and portability analysis.",
+      title: "Private Banking Geneva | 2026 Compensation Benchmarks, Market Intelligence & Senior RM Mandates",
+      description: "Geneva private banking market hub: 2026 compensation benchmarks, FINMA licensing, key banks and EAM ecosystem. Executive Partners places Senior RMs and Team Heads confidentially at Swiss and international platforms.",
       alternates: { canonical: "https://www.execpartners.ch/en/markets/geneva" },
-      openGraph: { type: "website", url: "/en/markets/geneva", title: "Private Banking Recruiter Geneva | Senior RM Jobs", description: "Geneva private banking recruitment: UHNW/HNW Senior RMs, Team Heads, EAM coverage. Compensation benchmarks, portability analysis and confidential mandates.", siteName: "Executive Partners" },
+      openGraph: { type: "website", url: "/en/markets/geneva", title: "Private Banking Geneva | Compensation Benchmarks & Market Hub", description: "Geneva private banking: UHNW and HNW compensation data, FINMA licensing, EAM ecosystem and live Senior RM mandates. The Geneva private banking market hub from Executive Partners.", siteName: "Executive Partners" },
       robots: { index: true, follow: true },
     };
   }
@@ -58,10 +58,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (slug === "zurich") {
     return {
-      title: "Private Banking Recruiter Zurich | Senior RM & DACH Wealth Management Search",
-      description: "Zurich's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and DACH-focused bankers at leading Swiss private banks. Compensation benchmarks, FINMA licensing and live mandates.",
+      title: "Private Banking Zurich | 2026 DACH Compensation Benchmarks & Market Intelligence",
+      description: "Zurich private banking market hub: 2026 DACH compensation benchmarks, FINMA licensing, onshore wealth dynamics and key banks. Executive Partners places Senior RMs and Team Heads at leading Zurich platforms.",
       alternates: { canonical: "https://www.execpartners.ch/en/markets/zurich" },
-      openGraph: { type: "website", url: "/en/markets/zurich", title: "Private Banking Recruiter Zurich | Senior RM Jobs", description: "Zurich private banking recruitment: onshore DACH, international UHNW. Senior RM and Team Head mandates at top Swiss platforms.", siteName: "Executive Partners" },
+      openGraph: { type: "website", url: "/en/markets/zurich", title: "Private Banking Zurich | DACH Compensation Benchmarks & Market Hub", description: "Zurich private banking: DACH onshore compensation benchmarks, FINMA licensing, key banks and live Senior RM mandates. The Zurich private banking market hub from Executive Partners.", siteName: "Executive Partners" },
       robots: { index: true, follow: true },
     };
   }

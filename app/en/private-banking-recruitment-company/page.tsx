@@ -19,6 +19,18 @@ const jsonLd = {
   knowsAbout: ['Private Banking', 'Wealth Management', 'AUM Portability', 'Relationship Manager Placement'],
 }
 
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    { '@type': 'Question', name: 'What does a private banking recruitment company do?', acceptedAnswer: { '@type': 'Answer', text: 'A private banking recruitment company sources and places senior front-office professionals, primarily Relationship Managers, Team Heads and Investment Advisors, at private banks, EAMs and family offices. A specialist firm like Executive Partners focuses exclusively on private banking and wealth management, with deep knowledge of AUM portability, compensation benchmarks and client-franchise dynamics.' } },
+    { '@type': 'Question', name: 'How does Executive Partners differ from other private banking recruitment companies?', acceptedAnswer: { '@type': 'Answer', text: 'Executive Partners works exclusively on senior private banking mandates. Every candidate is assessed for AUM portability, revenue quality and compliance history before being presented. We operate on a retained or engaged basis, never contingency. Our 98% twelve-month retention rate across 200+ placements reflects that model.' } },
+    { '@type': 'Question', name: 'Which markets does Executive Partners cover?', acceptedAnswer: { '@type': 'Answer', text: 'Executive Partners covers 14 global private banking hubs: Geneva, Zurich, London, Dubai, Singapore, Hong Kong, New York, Miami, Paris, Milan, Madrid, Lisbon, Riyadh and Tel Aviv.' } },
+    { '@type': 'Question', name: 'Do you work with senior bankers who are not actively looking for a new role?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Most senior bankers who engage Executive Partners are not actively searching. They want to understand their AUM portability, assess their market value, and identify which platforms are the best strategic fit. All conversations are fully confidential and carry no obligation.' } },
+  ],
+}
+
 export const metadata: Metadata = {
   title: "Private Banking Recruitment Company | Executive Partners Switzerland",
   description: "Executive Partners is a private banking recruitment company based in Geneva, Switzerland. Senior-only executive search for Relationship Managers, Team Heads and Investment Advisors across 14 global hubs. 200+ placements. 98% retention.",
@@ -38,6 +50,7 @@ export default function Page() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <main id="main" className="max-w-3xl mx-auto px-6 py-16">
       <p className="text-sm uppercase tracking-widest opacity-50 mb-4">Private Banking · Executive Search · Switzerland</p>
       <h1 className="text-4xl font-semibold leading-tight mb-6">Private Banking Recruitment Company</h1>
@@ -74,10 +87,31 @@ export default function Page() {
         </div>
         <p className="text-xs opacity-40 mt-4">Prefer email? <a href="mailto:recruiter@execpartners.ch" className="underline">recruiter@execpartners.ch</a></p>
       </section>
-      <section>
+      <section className="mb-16 border-t border-current border-opacity-10 pt-12">
+        <h2 className="text-xl font-semibold mb-8">Frequently Asked Questions</h2>
+        <div className="space-y-6">
+          {[
+            { q: "What does a private banking recruitment company do?", a: "A private banking recruitment company sources and places senior front-office professionals, primarily Relationship Managers, Team Heads and Investment Advisors, at private banks, EAMs and family offices. A specialist firm like Executive Partners focuses exclusively on private banking and wealth management, with deep knowledge of AUM portability, compensation benchmarks and client-franchise dynamics." },
+            { q: "How does Executive Partners differ from other private banking recruitment companies?", a: "Executive Partners works exclusively on senior private banking mandates. Every candidate is assessed for AUM portability, revenue quality and compliance history before being presented. We operate on a retained or engaged basis, never contingency. Our 98% twelve-month retention rate across 200+ placements reflects that model." },
+            { q: "Which markets does Executive Partners cover?", a: "Executive Partners covers 14 global private banking hubs: Geneva, Zurich, London, Dubai, Singapore, Hong Kong, New York, Miami, Paris, Milan, Madrid, Lisbon, Riyadh and Tel Aviv." },
+            { q: "Do you work with senior bankers who are not actively looking?", a: "Yes. Most senior bankers who engage Executive Partners are not actively searching. They want to understand their AUM portability, assess their market value, and identify which platforms are the best strategic fit. All conversations are fully confidential and carry no obligation." },
+          ].map(({q, a}) => (
+            <div key={q} className="border-b border-current border-opacity-10 pb-6 last:border-0">
+              <h3 className="font-medium mb-2">{q}</h3>
+              <p className="text-sm opacity-60 leading-relaxed">{a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+            <section>
         <h2 className="text-lg font-semibold mb-4">Related</h2>
         <ul className="space-y-2 text-sm opacity-60">
-          <li><Link href="/en/private-banking-recruiter-geneva" className="underline underline-offset-2">Private banking recruitment in Geneva</Link></li>
+          <li><Link href="/en/private-banking-recruiter-geneva" className="underline underline-offset-2">Private banking recruiter Geneva</Link></li>
+          <li><Link href="/en/private-banking-recruiter-switzerland" className="underline underline-offset-2">Private banking recruiter Switzerland</Link></li>
+          <li><Link href="/en/latam-private-banking-recruiter-geneva" className="underline underline-offset-2">LATAM private banking recruiter Geneva</Link></li>
+          <li><Link href="/en/mea-private-banking-recruiter-geneva" className="underline underline-offset-2">MEA private banking recruiter Geneva</Link></li>
+          <li><Link href="/en/nri-private-banking-recruiter-switzerland" className="underline underline-offset-2">NRI private banking recruiter Switzerland</Link></li>
+          <li><Link href="/en/israeli-market-private-banking-switzerland" className="underline underline-offset-2">Israeli market private banking Switzerland</Link></li>
           <li><Link href="/en/hiring-managers" className="underline underline-offset-2">For hiring managers: brief a mandate</Link></li>
           <li><Link href="/en/markets" className="underline underline-offset-2">All market hubs</Link></li>
           <li><Link href="/en/private-banking-recruitment-agency" className="underline underline-offset-2">Private banking recruitment agency</Link></li>

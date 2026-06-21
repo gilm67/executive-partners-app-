@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Private Banking Headhunter Geneva | Executive Search for Senior RMs & Team Heads",
+  title: "Private Banking Headhunter Geneva | Proactive Direct Search for Senior RMs Not Actively in the Market",
   description:
-    "Executive Partners is a Geneva-based private banking headhunter specialising in the recruitment of Senior RMs, Desk Heads and Wealth Managers for Swiss and international banks. 200+ placements, 98% retention.",
+    "Executive Partners is a Geneva-based private banking headhunter that reaches senior bankers who are not actively in the market. Confidential direct approach for Senior RMs, Desk Heads and Team Leaders at Swiss and international banks. 200+ placements, 98% retention.",
   alternates: {
     canonical: "https://www.execpartners.ch/en/private-banking-headhunter-geneva",
     languages: {
@@ -33,7 +33,7 @@ export default function Page() {
     <main className="min-h-screen bg-[#0B0E13] text-white py-20 px-4">
       <div className="container-max max-w-3xl space-y-8">
         <h1 className="text-3xl md:text-5xl font-semibold leading-tight">
-          Private Banking Headhunter in Geneva
+          Private Banking Headhunter: Reaching Senior Bankers Who Are Not in the Market
         </h1>
 
         <p className="text-white/80 text-lg">

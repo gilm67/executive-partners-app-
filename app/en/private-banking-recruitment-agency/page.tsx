@@ -5,13 +5,13 @@ const SITE = "https://www.execpartners.ch";
 const PAGE_URL = `${SITE}/en/private-banking-recruitment-agency`;
 
 export const metadata: Metadata = {
-  title: { absolute: "Private Banking Recruitment Agency in Switzerland | Executive Partners" },
+  title: { absolute: "Retained Private Banking Recruitment Agency Switzerland | Executive Partners" },
   description:
-    "Executive Partners is a Geneva-based private banking recruitment agency specialising exclusively in senior hires for Swiss and international wealth managers. Senior RMs, Team Heads and Investment Advisors placed across Geneva, Zurich, Dubai, Singapore, Riyadh and London.",
+    "Executive Partners is a Geneva-based retained private banking recruitment agency working exclusively with banks and EAMs on confidential senior mandates. No contingency. No panels. One calibrated shortlist per search.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
-    title: "Private Banking Recruitment Agency Switzerland | Executive Partners",
-    description: "Geneva-based boutique placing Senior RMs, Team Heads and Investment Advisors across 13 global wealth hubs. Confidential. Senior-level only.",
+    title: "Retained Private Banking Recruitment Agency Switzerland | Executive Partners",
+    description: "Geneva-based retained boutique private banking recruitment agency. Senior RMs, Team Heads and Investment Advisors placed across 14 global wealth hubs. Confidential. No contingency. No panels.",
     type: "website",
     url: PAGE_URL,
     images: [{ url: "/og.webp" }],
@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Private Banking Recruitment Agency Switzerland | Executive Partners",
-    description: "Geneva-based boutique placing Senior RMs, Team Heads and Investment Advisors across 13 global wealth hubs. Confidential. Senior-level only.",
+    title: "Retained Private Banking Recruitment Agency Switzerland | Executive Partners",
+    description: "Geneva-based retained boutique private banking recruitment agency. Senior RMs, Team Heads and Investment Advisors placed across 14 global wealth hubs. Confidential. No contingency. No panels.",
     images: ["/og.webp"],
   },
   robots: { index: true, follow: true },
@@ -45,7 +45,7 @@ const HUBS = [
 const TOOLS = [
   { label: "AUM Portability Score", href: "/en/portability", desc: "Estimate how much of your book will follow you." },
   { label: "Business Plan Simulator", href: "/en/bp-simulator", desc: "Stress-test revenue and wallet share before a move." },
-  { label: "Career Intelligence 2026 (PDF)", href: "/pdfs/private-banking-career-intelligence-2026.pdf", desc: "Compensation benchmarks and hiring signals across 13 hubs." },
+  { label: "Career Intelligence 2026 (PDF)", href: "/pdfs/private-banking-career-intelligence-2026.pdf", desc: "Compensation benchmarks and hiring signals across 14 hubs." },
 ];
 
 export default function Page() {
@@ -71,7 +71,7 @@ export default function Page() {
             <span className="font-semibold text-neutral-100">exclusively</span> on private banking
             and wealth management. We place Senior Relationship Managers, Team Heads, Investment
             Advisors and Market Leaders across{" "}
-            <span className="font-semibold text-neutral-100">13 global wealth hubs</span>, from
+            <span className="font-semibold text-neutral-100">14 global wealth hubs</span>, from
             Geneva and Zurich to Dubai, Riyadh, Singapore and London. Every search is conducted
             personally by Gil M. Chalem, Managing Partner.
           </p>
@@ -90,7 +90,7 @@ export default function Page() {
           {[
             { n: "200+", label: "Placements" },
             { n: "98%", label: "Retention rate" },
-            { n: "13", label: "Global hubs" },
+            { n: "14", label: "Global hubs" },
             { n: "2,300+", label: "PWP subscribers" },
           ].map((s) => (
             <div key={s.label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
@@ -110,7 +110,7 @@ export default function Page() {
               assessment, and compensation benchmark relevant to your platform and target markets.
             </p>
             <p className="text-sm leading-relaxed text-neutral-300">
-              We work on a retained or exclusive basis for senior mandates and cover all 13 hubs
+              We work on a retained or exclusive basis for senior mandates and cover all 14 hubs
               from a single Geneva-based point of contact. No panels. No volume play.
             </p>
             <Link href="/en/hiring-managers" className="inline-block text-sm font-semibold text-[#D4AF37] hover:underline">
