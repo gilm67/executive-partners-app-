@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     description:
       "Confidential career guidance for private banking relationship managers and team heads.",
   },
-  alternates: { canonical: "https://www.execpartners.ch/en/candidates" },
+  alternates: { canonical: "https://www.execpartners.ch/en/candidates", languages: { "fr": "https://www.execpartners.ch/fr/candidats", "de": "https://www.execpartners.ch/de", "x-default": "https://www.execpartners.ch/en/candidates" } },
 };
 
 export { default } from "../../candidates/page";

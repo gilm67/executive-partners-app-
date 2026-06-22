@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     "Geneva private banking recruiter. Senior-only search for Relationship Managers, Team Heads and UHNW bankers across Switzerland and 14 global wealth hubs.",
   alternates: {
     canonical: "https://www.execpartners.ch/en/private-banking-recruiter-geneva",
+    languages: { "fr": "https://www.execpartners.ch/fr/chasseur-de-tetes-banque-privee-geneve", "x-default": "https://www.execpartners.ch/en/private-banking-recruiter-geneva" },
   },
   openGraph: {
     type: "website",

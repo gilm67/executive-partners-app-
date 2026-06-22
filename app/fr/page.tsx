@@ -9,6 +9,11 @@ export const metadata: Metadata = {
     "Executive Partners est un chasseur de têtes spécialisé en banque privée et gestion de patrimoine à Genève. Placement de Relationship Managers seniors, Chefs de desk et Directeurs de marché en Suisse, Londres, Dubaï, Riyad et Singapour.",
   alternates: {
     canonical: `${SITE}/fr`,
+    languages: {
+      "en": `${SITE}/en`,
+      "de": `${SITE}/de`,
+      "x-default": `${SITE}/en`,
+    },
   },
   openGraph: {
     title: "Recruteur Banque Privée Genève ",
@@ -186,6 +191,31 @@ export default function FrenchHomePage() {
           </p>
 
           <hr className="border-white/10" />
+
+          {/* French sub-pages nav — internal links for crawlability */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <Link
+              href="/fr/candidats"
+              className="block rounded-xl border border-white/10 bg-white/5 p-4 hover:bg-white/10 transition"
+            >
+              <p className="text-[#C9A14A] font-semibold text-sm mb-1">Pour les candidats →</p>
+              <p className="text-white/50 text-xs leading-relaxed">Placement confidentiel, portabilité AUM, business plan</p>
+            </Link>
+            <Link
+              href="/fr/marches/geneve"
+              className="block rounded-xl border border-white/10 bg-white/5 p-4 hover:bg-white/10 transition"
+            >
+              <p className="text-[#C9A14A] font-semibold text-sm mb-1">Marché de Genève →</p>
+              <p className="text-white/50 text-xs leading-relaxed">Salaires 2026, licences FINMA, mandats actifs</p>
+            </Link>
+            <Link
+              href="/fr/chasseur-de-tetes-banque-privee-geneve"
+              className="block rounded-xl border border-white/10 bg-white/5 p-4 hover:bg-white/10 transition"
+            >
+              <p className="text-[#C9A14A] font-semibold text-sm mb-1">Chasseur de têtes →</p>
+              <p className="text-white/50 text-xs leading-relaxed">Notre approche, marchés couverts, soumettre un mandat</p>
+            </Link>
+          </div>
 
           <div className="flex flex-wrap gap-4 pt-2">
             <Link
