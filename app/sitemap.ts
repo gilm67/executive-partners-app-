@@ -129,6 +129,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/en/private-banker-jobs-tel-aviv",
     "/en/markets/tel-aviv",
     "/en/apac-private-banking-recruiter-switzerland",
+
+    // French pages
+    "/fr/candidats",
+    "/fr/marches/geneve",
+    "/fr/chasseur-de-tetes-banque-privee-geneve",
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((p) => ({
