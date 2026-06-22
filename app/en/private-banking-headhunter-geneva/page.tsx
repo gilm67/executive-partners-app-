@@ -7,12 +7,12 @@ const PAGE_URL = `${SITE}/en/private-banking-headhunter-geneva`
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
-  name: "Executive Partners — Private Banking Headhunter Geneva",
+  name: "Executive Partners | Private Banking Headhunter Geneva",
   url: PAGE_URL,
   description: "Geneva-based private banking headhunter reaching senior bankers who are not actively in the market. Confidential direct search for Senior RMs, Desk Heads and Team Leaders at Swiss and international banks.",
   address: { "@type": "PostalAddress", addressLocality: "Geneva", addressCountry: "CH" },
   areaServed: ["Geneva", "Zurich", "Switzerland"],
-  serviceType: "Private Banking Executive Search — Direct Headhunt",
+  serviceType: "Private Banking Executive Search | Direct Headhunt",
 }
 
 const faqJsonLd = {
@@ -27,8 +27,8 @@ const faqJsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: "Private Banking Headhunter Geneva | Proactive Direct Search for Senior RMs Not Actively in the Market",
-  description: "Executive Partners is a Geneva-based private banking headhunter that reaches senior bankers who are not actively in the market. Confidential direct approach for Senior RMs, Desk Heads and Team Leaders at Swiss and international banks. 200+ placements, 98% retention.",
+  title: "Private Banking Headhunter Geneva | Senior RM Direct Search",
+  description: "Geneva private banking headhunter. Direct search for Senior RMs and Desk Heads at Swiss and international banks not actively on the market.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
     title: "Private Banking Headhunter Geneva | Senior RM Search",

@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Private Banker Jobs Tel Aviv | Israeli Market Roles | Executive Partners",
+  title: "Private Banker Jobs Tel Aviv | Israeli Market Roles",
   description:
-    "Senior private banker and Relationship Manager jobs in Tel Aviv and the Israeli market. Cross-border and onshore roles with Swiss private banks, EAMs and family offices.",
+    "Senior private banker and RM roles in Tel Aviv and the Israeli market. Cross-border and onshore positions with Swiss private banks, EAMs and family offices.",
   alternates: {
     canonical: "https://www.execpartners.ch/en/private-banker-jobs-tel-aviv",
   },
   openGraph: {
     title: "Private Banker Jobs Tel Aviv | Israeli Market Roles",
     description:
-      "Senior RM and private banker jobs for the Israeli market — Geneva, Zurich and Tel Aviv based. Hebrew-language and cross-border coverage mandates.",
+      "Senior RM and private banker jobs for the Israeli market. Geneva, Zurich and Tel Aviv based. Hebrew-language and cross-border coverage mandates.",
     url: "https://www.execpartners.ch/en/private-banker-jobs-tel-aviv",
     siteName: "Executive Partners",
     type: "website",

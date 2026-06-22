@@ -11,8 +11,8 @@ const SITE =
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://www.execpartners.ch");
 
 export const metadata: Metadata = {
-  title: { absolute: "Private Banking Business Plan Simulator | Build Your 3-Year Case – Executive Partners" },
-  description: "Free private banking business plan simulator. Model your 3-year AUM ramp, NNM, ROA and P&L the way a hiring committee evaluates it — built on 200+ EP placements.",
+  title: { absolute: "Private Banking Business Plan Simulator | Executive Partners" },
+  description: "Free private banking business plan simulator. Model your 3-year AUM, NNM, ROA and P&L the way a hiring committee evaluates it. Built on 200+ EP placements.",
   openGraph: {
     title: "Business Plan Simulator ",
     description: "Bank-style business case builder to stress-test portability assumptions. Model NNM, ROA, revenues, and margins.",
@@ -87,7 +87,7 @@ export default function Page() {
         <p className="text-sm text-white/40 leading-relaxed max-w-3xl">
           The EP Business Plan Simulator is the only tool built specifically for private bankers
           modelling AUM transfer, NNM projections, and 3-year P&amp;L the way a hiring committee
-          actually reviews them. Uses a cumulative AUM revenue model — not NNM × ROA — with
+          actually reviews them. Uses a cumulative AUM revenue model (not NNM x ROA) with
           institution-type cost multipliers, garden leave factors, breakeven calculation by month,
           committee readiness scoring across seven dimensions, and an auto-generated downside scenario.
           Used by senior Relationship Managers preparing business plans for private banks in

@@ -4,14 +4,14 @@ import Link from "next/link";
 export const revalidate = 1800; // 30 min
 
 export const metadata: Metadata = {
-  title: "Private Banking Recruiter Tel Aviv | Israel Wealth Management Search",
+  title: "Private Banking Recruiter Tel Aviv | Israeli Market Search",
   description:
-    "Executive Partners is the specialist private banking recruiter for the Israeli market. Senior RM, Team Head and Desk Head mandates covering UHNW/HNW Israeli clients from Geneva, Zurich and Tel Aviv.",
+    "Specialist private banking recruiter for the Israeli market. Senior RM and Desk Head mandates covering Israeli UHNW clients from Geneva, Zurich and Tel Aviv.",
   alternates: {
     canonical: "https://www.execpartners.ch/en/private-banking-recruiter-tel-aviv",
   },
   openGraph: {
-    title: "Private Banking Recruiter Tel Aviv | Israel Wealth Management Search",
+    title: "Private Banking Recruiter Tel Aviv | Israeli Market Search",
     description:
       "Senior RM and Team Head mandates for the Israeli private banking market. Cross-border and onshore coverage from Geneva, Zurich and Tel Aviv.",
     url: "https://www.execpartners.ch/en/private-banking-recruiter-tel-aviv",
@@ -52,8 +52,8 @@ export default function TelAvivRecruiterPage() {
         What we recruit for in the Israeli market
       </h2>
       <ul className="text-white/70 space-y-2 mb-10 list-disc list-inside">
-        <li>Senior Relationship Manager — Israeli Market (Geneva or Zurich based)</li>
-        <li>Israeli Desk Head — Cross-Border Coverage</li>
+        <li>Senior Relationship Manager | Israeli Market (Geneva or Zurich based)</li>
+        <li>Israeli Desk Head | Cross-Border Coverage</li>
         <li>Private Banker — Tech-Entrepreneur Segment</li>
         <li>Onshore Relationship Manager (Tel Aviv representative office)</li>
         <li>Market Leader — Israel Coverage Build-Out</li>

@@ -8,12 +8,12 @@ const PAGE_URL = `${SITE}/en/latam-private-banking-recruiter-geneva`
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
-  name: "Executive Partners — LATAM Private Banking Recruiter Geneva",
+  name: "Executive Partners | LATAM Private Banking Recruiter Geneva",
   url: PAGE_URL,
   description: "Specialist private banking recruiter in Geneva for the Latin American market. Senior RMs covering Brazil, Mexico, Colombia, Argentina and LATAM cross-border wealth placed at Swiss private banks.",
   address: { "@type": "PostalAddress", addressLocality: "Geneva", addressCountry: "CH" },
   areaServed: ["Geneva", "Switzerland", "Latin America"],
-  serviceType: "Private Banking Executive Search — LATAM Market",
+  serviceType: "Private Banking Executive Search | LATAM Market",
 }
 
 const faqJsonLd = {
@@ -56,8 +56,8 @@ const faqJsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: "LATAM Private Banking Recruiter Geneva | Latin American Banker Jobs Switzerland",
-  description: "Executive Partners is Geneva's specialist recruiter for the Latin American private banking market. Senior RMs covering Brazil, Mexico, Colombia, Argentina and LATAM cross-border wealth placed at Swiss private banks. Confidential mandates, portability analysis.",
+  title: "LATAM Private Banking Recruiter Geneva | Senior RM Search",
+  description: "Specialist private banking recruiter for LATAM. Senior RMs covering Brazil, Mexico, Colombia and Argentina placed at Swiss private banks in Geneva.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
     title: "LATAM Private Banking Recruiter Geneva | Latin American Senior RM Jobs",

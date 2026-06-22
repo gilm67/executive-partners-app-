@@ -43,8 +43,8 @@ const orgJsonLd = {
 };
 
 export const metadata = {
-  title: "About",
-  description: "Executive Partners is a Geneva-based boutique executive search firm dedicated exclusively to Private Banking and Wealth Management. 200+ placements, 98% retention.",
+  title: { absolute: "About Executive Partners | Geneva Private Banking Recruiter" },
+  description: "Geneva-based boutique executive search for Private Banking and Wealth Management. 200+ placements. 98% retention rate.",
   alternates: { canonical: "https://www.execpartners.ch/en/about" },
 };
 

@@ -8,12 +8,12 @@ const PAGE_URL = `${SITE}/en/nri-private-banking-recruiter-switzerland`
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
-  name: "Executive Partners — NRI Private Banking Recruiter Switzerland",
+  name: "Executive Partners | NRI Private Banking Recruiter Switzerland",
   url: PAGE_URL,
   description: "Specialist private banking recruiter in Switzerland for the NRI and South Asian market. Senior RMs covering Non-Resident Indian, South Asian entrepreneur and family wealth placed at Swiss private banks in Geneva and Zurich.",
   address: { "@type": "PostalAddress", addressLocality: "Geneva", addressCountry: "CH" },
   areaServed: ["Geneva", "Zurich", "Switzerland"],
-  serviceType: "Private Banking Executive Search — NRI and South Asian Market",
+  serviceType: "Private Banking Executive Search | NRI and South Asian Market",
 }
 
 const faqJsonLd = {
@@ -56,8 +56,8 @@ const faqJsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: "NRI Private Banking Recruiter Switzerland | Non-Resident Indian Banker Jobs Geneva Zurich",
-  description: "Executive Partners is Switzerland's specialist recruiter for NRI and South Asian private banking. Senior RMs covering Non-Resident Indian and South Asian entrepreneur wealth placed at Swiss private banks in Geneva and Zurich. Confidential mandates.",
+  title: "NRI Private Banking Recruiter Switzerland | Senior RM Search",
+  description: "NRI and South Asian private banking recruiter in Switzerland. Senior RMs covering Non-Resident Indian wealth placed at Swiss private banks in Geneva or Zurich.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
     title: "NRI Private Banking Recruiter Switzerland | Non-Resident Indian Senior RM Jobs",

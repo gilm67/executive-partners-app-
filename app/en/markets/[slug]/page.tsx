@@ -90,7 +90,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${m.city} — Private Banking Recruiter & Jobs`,
+    title: `${m.city} | Private Banking Recruiter & Jobs`,
     description: `${m.city}: compensation benchmarks, licensing, client base, relocation & tax, hiring pulse, ecosystem and book portability for Private Banking / Wealth Management.`,
     alternates: {
       canonical: `https://www.execpartners.ch/en/markets/${slug}`,
@@ -98,7 +98,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       type: "website",
       url: `https://www.execpartners.ch/en/markets/${slug}`,
-      title: `${m.city} — Private Banking Recruiter & Jobs | Executive Partners`,
+      title: `${m.city} | Private Banking Recruiter & Jobs`,
       description: m.summary,
       images: [{ url: m.heroImage }],
       siteName: "Executive Partners",

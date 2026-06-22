@@ -8,12 +8,12 @@ const PAGE_URL = `${SITE}/en/israeli-market-private-banking-switzerland`
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
-  name: "Executive Partners — Israeli Market Private Banking Switzerland",
+  name: "Executive Partners | Israeli Market Private Banking Switzerland",
   url: PAGE_URL,
   description: "Specialist recruiter for Israeli market private banking in Switzerland. Senior RMs and Israeli desk heads covering Israeli UHNW and tech-entrepreneur wealth, based in Geneva or Zurich and placed at leading Swiss private banks.",
   address: { "@type": "PostalAddress", addressLocality: "Geneva", addressCountry: "CH" },
   areaServed: ["Geneva", "Zurich", "Switzerland"],
-  serviceType: "Private Banking Executive Search — Israeli Market",
+  serviceType: "Private Banking Executive Search | Israeli Market",
 }
 
 const faqJsonLd = {
@@ -56,8 +56,8 @@ const faqJsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: "Israeli Market Private Banking Switzerland | Senior RM and Desk Head Search Geneva Zurich",
-  description: "Executive Partners recruits Israeli market private bankers in Switzerland. Senior RMs and Israeli desk heads covering Israeli UHNW and tech-entrepreneur wealth, based in Geneva or Zurich. ISA licence guidance. Confidential mandates.",
+  title: "Israeli Market Private Banking Switzerland | Senior RM Search",
+  description: "Israeli market private banking recruiter, Switzerland. Senior RMs and desk heads with Israeli UHNW books in Geneva and Zurich. ISA licence. Confidential mandates.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
     title: "Israeli Market Private Banking Switzerland | Senior RM Search Geneva Zurich",

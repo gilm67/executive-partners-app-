@@ -16,12 +16,6 @@ const FALLBACK_JOB_SLUGS: string[] = [
   "senior-relationship-manager-portugal-geneva",
 ];
 
-/** Curated Insights */
-const INSIGHTS_POSTS: Array<{ slug: string; dateISO?: string; priority?: number }> = [
-  { slug: "swiss-private-banking-weekly-update-sep-2025", dateISO: "2025-09-08", priority: 0.75 },
-  { slug: "agility-small-bankers-win", dateISO: "2025-09-09", priority: 0.8 },
-];
-
 /** Normalize URL against canonical base */
 function normalize(base: string, path: string): string {
   const raw = `${base}${path.startsWith("/") ? path : `/${path}`}`;
@@ -126,6 +120,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/en/private-banker-jobs-madrid",
     "/en/private-banker-jobs-milano",
     "/en/private-banker-jobs-lisbon",
+
+    "/en/executive-search-geneva",
+    "/en/private-banking-recruiter-switzerland",
+    "/en/private-banking-recruitment-agency",
+    "/en/private-banking-recruitment-zurich",
+    "/en/private-banking-recruiter-tel-aviv",
+    "/en/private-banker-jobs-tel-aviv",
+    "/en/markets/tel-aviv",
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticPages.map((p) => ({

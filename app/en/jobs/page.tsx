@@ -14,9 +14,9 @@ const SITE =
 
 /* ── SEO metadata ── */
 export const metadata: Metadata = {
-  title: "Private Banking Jobs Switzerland 2026 | Senior RM & Team Head Roles Geneva, Zurich, Dubai, Riyadh",
+  title: "Private Banking Jobs Switzerland 2026 | Senior RM Roles",
   description:
-    "Browse confidential private banking jobs in Switzerland, Dubai, Riyadh and Singapore. Senior Relationship Manager, Team Head and Investment Advisor roles. Compensation visible. Apply in 90 seconds.",
+    "Confidential private banking jobs in Switzerland, Dubai and Singapore. Senior RM and Team Head roles. Compensation shown. Apply in 90 seconds.",
   openGraph: {
     title: "Private Banking Jobs Switzerland 2026 | Senior RM Roles",
     description:

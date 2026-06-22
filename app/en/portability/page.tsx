@@ -9,18 +9,18 @@ const SITE =
 export const runtime = "nodejs";
 
 export const metadata: Metadata = {
-  title: { absolute: "AUM Portability Calculator for Private Bankers | Portability Score™ — Executive Partners" },
+  title: { absolute: "AUM Portability Calculator | Private Banking Portability Score™" },
   description:
     "Free AUM portability calculator for senior private bankers. Find out exactly how much of your book is portable before your next move. 30-point framework, 200+ placements tested.",
   alternates: { canonical: "https://www.execpartners.ch/en/portability" },
   twitter: {
     card: "summary_large_image",
-    title: "Free AUM Portability Calculator — Portability Score™ ",
+    title: "Free AUM Portability Calculator | Portability Score™",
     description: "Assess your book's true portability across markets. 30-point framework, used by 500+ private bankers. Free, confidential, no obligation.",
     images: ["/og.webp"],
   },
   openGraph: {
-    title: "Portability Score™ — Assess Your AUM Transferability ",
+    title: "Portability Score™ | Assess Your AUM Transferability",
     description: "Assess your book's true portability across markets. Used by 500+ private bankers. Free, confidential, no obligation.",
     url: `${SITE}/en/portability`,
     images: [{ url: "/og.webp" }],
@@ -35,11 +35,11 @@ export default function PortabilityPage() {
           Portability Score™ · Executive Partners
         </p>
         <h1 className="mt-3 font-[var(--font-playfair)] text-4xl font-semibold leading-tight text-white md:text-5xl">
-          Free AUM Portability Calculator — Portability Score™
+          Free AUM Portability Calculator | Portability Score™
         </h1>
         <p className="mt-5 text-lg leading-relaxed text-neutral-300">
-          Portability — a private banker's ability to transfer client assets when
-          changing employer — is the single most important variable in any senior
+          Portability, defined as a private banker's ability to transfer client assets when
+          changing employer, is the single most important variable in any senior
           career move in wealth management.
         </p>
         <p className="mt-4 leading-relaxed text-neutral-400">

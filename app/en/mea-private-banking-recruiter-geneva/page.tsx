@@ -8,12 +8,12 @@ const PAGE_URL = `${SITE}/en/mea-private-banking-recruiter-geneva`
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
-  name: "Executive Partners — MEA Private Banking Recruiter Geneva",
+  name: "Executive Partners | MEA Private Banking Recruiter Geneva",
   url: PAGE_URL,
   description: "Specialist private banking recruiter in Geneva for the Middle East and Africa market. Senior RMs covering GCC, Francophone Africa, Sub-Saharan Africa and MEA cross-border wealth placed at Swiss private banks.",
   address: { "@type": "PostalAddress", addressLocality: "Geneva", addressCountry: "CH" },
   areaServed: ["Geneva", "Switzerland", "Middle East", "Africa"],
-  serviceType: "Private Banking Executive Search — MEA Market",
+  serviceType: "Private Banking Executive Search | MEA Market",
 }
 
 const faqJsonLd = {
@@ -56,8 +56,8 @@ const faqJsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: "MEA Private Banking Recruiter Geneva | Middle East Africa Banker Jobs Switzerland",
-  description: "Executive Partners is Geneva's specialist recruiter for MEA private banking. Senior RMs covering GCC, Francophone Africa and Sub-Saharan Africa cross-border wealth placed at Swiss private banks. Confidential mandates, portability analysis.",
+  title: "MEA Private Banking Recruiter Geneva | Middle East & Africa",
+  description: "Specialist private banking recruiter for MEA. Senior RMs covering GCC, Francophone Africa and Sub-Saharan Africa placed at Swiss private banks in Geneva.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
     title: "MEA Private Banking Recruiter Geneva | Middle East Africa Senior RM Jobs",

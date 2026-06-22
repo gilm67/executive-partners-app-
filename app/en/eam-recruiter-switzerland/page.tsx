@@ -5,9 +5,9 @@ import { BreadcrumbSchema } from "@/components/StructuredData";
 const SITE = "https://www.execpartners.ch";
 
 export const metadata: Metadata = {
-  title: "EAM Recruiter Switzerland | External Asset Manager Headhunter",
+  title: "EAM Recruiter Switzerland | External Asset Manager Search",
   description:
-    "Executive Partners specialises in recruiting for External Asset Managers and independent wealth managers in Switzerland. Senior bankers transitioning to EAM, and EAM platforms building front-office teams in Geneva and Zurich.",
+    "Specialist EAM recruiter in Switzerland. Senior bankers moving to EAM and platforms building front-office teams in Geneva and Zurich.",
   alternates: { canonical: `${SITE}/en/eam-recruiter-switzerland` },
   openGraph: {
     title: "EAM Recruiter Switzerland | Executive Partners Geneva",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 const schemaData = {
   "@context": "https://schema.org",
   "@type": "Service",
-  name: "EAM Recruitment Switzerland — External Asset Manager Headhunter",
+  name: "EAM Recruitment Switzerland | External Asset Manager Headhunter",
   description:
     "Executive search for External Asset Managers and independent wealth managers in Switzerland. Senior RM placement, EAM transition advisory and front-office team building in Geneva and Zurich.",
   provider: {
@@ -46,7 +46,7 @@ const schemaData = {
     { "@type": "City", name: "Zurich" },
     { "@type": "Country", name: "Switzerland" },
   ],
-  serviceType: "Executive Search — External Asset Manager",
+  serviceType: "Executive Search | External Asset Manager",
 };
 
 export default function Page() {
@@ -127,8 +127,8 @@ export default function Page() {
           </p>
           <p className="text-white/70 leading-relaxed">
             Executive Partners advises senior bankers at this decision point. We assess EAM
-            readiness across five dimensions — AUM portability, regulatory licensing, custodian
-            access, product scope and operational infrastructure — and provide a structured
+            readiness across five dimensions: AUM portability, regulatory licensing, custodian
+            access, product scope and operational infrastructure, and provide a structured
             transition roadmap before any platform approach is made. Use our{" "}
             <Link href="/en/portability" className="text-[#C9A14A] hover:underline">
               Portability Readiness Score
@@ -142,7 +142,7 @@ export default function Page() {
           <p className="text-white/70 leading-relaxed">
             Established EAMs and multi-family offices building out their front-office teams face a
             specific recruitment challenge: they need senior Relationship Managers who are
-            genuinely EAM-ready — with a portable book, a track record of independent client
+            genuinely EAM-ready, with a portable book, a track record of independent client
             ownership and the commercial discipline to operate outside a large bank infrastructure.
             Generic recruitment firms cannot screen for this. We can.
           </p>

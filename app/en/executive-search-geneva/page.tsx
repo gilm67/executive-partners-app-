@@ -9,14 +9,14 @@ const SITE =
 const PAGE_URL = `${SITE}/en/executive-search-geneva`;
 
 export const metadata: Metadata = {
-  title: { absolute: "Executive Search Geneva | Private Banking Specialist – Executive Partners" },
+  title: { absolute: "Executive Search Geneva | Private Banking Specialist" },
   description:
-    "Geneva-based executive search specialist exclusively in private banking. Senior RMs, Investment Advisors and Desk Heads placed across Swiss and international platforms. Every search conducted personally by Gil M. Chalem.",
+    "Geneva executive search specialist for private banking. Senior RMs, Investment Advisors and Desk Heads placed across Swiss and international platforms.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
     type: "website",
     url: PAGE_URL,
-    title: "Executive Search Geneva | Private Banking Recruiter — Executive Partners",
+    title: "Executive Search Geneva | Private Banking Recruiter",
     description:
       "Specialist executive search in Geneva for senior private banking talent. Senior RMs, Team Heads and Investment Advisors placed at leading Swiss and international private banks.",
     siteName: "Executive Partners",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Executive Search Geneva | Private Banking Recruiter — Executive Partners",
+    title: "Executive Search Geneva | Private Banking Recruiter",
     description:
       "Geneva-based executive search for senior private banking and wealth management talent. Confidential. Senior-level only.",
     images: [`${SITE}/og.webp`],
@@ -141,7 +141,7 @@ export default function ExecutiveSearchGenevaPage() {
               <strong className="text-white">Portability analysis.</strong>{" "}
               Every senior candidate is assessed against the EP framework:
               AUM composition, revenue quality, wallet share, EAM exposure and
-              legal constraints — before they reach your desk.
+              legal constraints, before they reach your desk.
             </span>
           </li>
           <li className="flex gap-3">

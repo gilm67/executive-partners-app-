@@ -25,7 +25,7 @@ const faqJsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: "Private Banking Recruiter Switzerland | Senior RMs, Geneva & Zurich",
+  title: "Private Banking Recruiter Switzerland | Geneva & Zurich",
   description: "Executive Partners is Switzerland's specialist private banking recruiter. Senior Relationship Managers, Team Heads and UHNW bankers placed confidentially across Geneva and Zurich. 200+ placements.",
   alternates: { canonical: PAGE_URL },
   openGraph: {

@@ -5,10 +5,10 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: { absolute: "Subscribe to Private Wealth Pulse | Executive Partners" },
   description:
-    "Weekly private banking intelligence — AUM portability, talent flows, compensation benchmarks and market dynamics across Geneva, Zurich, Dubai, Singapore and London. Free. No spam.",
+    "Weekly private banking intelligence: AUM portability, talent flows, compensation benchmarks and market dynamics across Geneva, Zurich, Dubai, Singapore and London. Free. No spam.",
   alternates: { canonical: "https://www.execpartners.ch/en/subscribe" },
   openGraph: {
-    title: "Private Wealth Pulse — Weekly Private Banking Intelligence",
+    title: "Private Wealth Pulse | Weekly Private Banking Intelligence",
     description:
       "One insight per week on what is actually moving in private banking. Free, no paywall, no spam. 2,300+ subscribers.",
     url: "https://www.execpartners.ch/en/subscribe",
@@ -70,7 +70,7 @@ export default function SubscribePage() {
         </h1>
 
         <p className="mx-auto mt-5 max-w-2xl text-center text-sm leading-relaxed text-neutral-300 md:text-base">
-          One article per week on what is actually moving in private banking — AUM portability,
+          One article per week on what is actually moving in private banking: AUM portability,
           talent flows, compensation benchmarks, and market dynamics across Geneva, Zurich, Dubai,
           Singapore, London, and Riyadh. No paywall. No recruitment spam. Just the signals that
           matter to senior practitioners.

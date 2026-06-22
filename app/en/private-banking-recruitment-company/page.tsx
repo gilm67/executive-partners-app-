@@ -32,11 +32,12 @@ const faqJsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: "Private Banking Recruitment Company | Executive Partners Switzerland",
-  description: "Executive Partners is a private banking recruitment company based in Geneva, Switzerland. Senior-only executive search for Relationship Managers, Team Heads and Investment Advisors across 14 global hubs. 200+ placements. 98% retention.",
+  title: "Private Banking Recruitment Company | Geneva Switzerland",
+  description: "Geneva private banking recruitment company. Senior-only search for Relationship Managers, Team Heads and Investment Advisors across 14 global hubs. 200+ placements.",
   alternates: { canonical: "https://www.execpartners.ch/en/private-banking-recruitment-company" },
+  robots: { index: true, follow: true },
   openGraph: {
-    title: "Private Banking Recruitment Company | Executive Partners Switzerland",
+    title: "Private Banking Recruitment Company | Geneva Switzerland",
     description: "Geneva-based private banking recruitment company specialising in senior RM and Team Head search across Switzerland and major global wealth hubs.",
     url: "https://www.execpartners.ch/en/private-banking-recruitment-company",
     siteName: "Executive Partners", type: "website",

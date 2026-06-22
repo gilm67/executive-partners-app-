@@ -5,12 +5,12 @@ const SITE = "https://www.execpartners.ch";
 const PAGE_URL = `${SITE}/en/private-banking-recruitment-agency`;
 
 export const metadata: Metadata = {
-  title: { absolute: "Retained Private Banking Recruitment Agency Switzerland | Executive Partners" },
+  title: { absolute: "Retained Private Banking Recruitment Agency Switzerland" },
   description:
-    "Executive Partners is a Geneva-based retained private banking recruitment agency working exclusively with banks and EAMs on confidential senior mandates. No contingency. No panels. One calibrated shortlist per search.",
+    "Retained private banking recruitment agency, Geneva. Exclusive mandates with banks and EAMs. No contingency. No panels. One calibrated shortlist per search.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
-    title: "Retained Private Banking Recruitment Agency Switzerland | Executive Partners",
+    title: "Retained Private Banking Recruitment Agency Switzerland",
     description: "Geneva-based retained boutique private banking recruitment agency. Senior RMs, Team Heads and Investment Advisors placed across 14 global wealth hubs. Confidential. No contingency. No panels.",
     type: "website",
     url: PAGE_URL,
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Retained Private Banking Recruitment Agency Switzerland | Executive Partners",
+    title: "Retained Private Banking Recruitment Agency Switzerland",
     description: "Geneva-based retained boutique private banking recruitment agency. Senior RMs, Team Heads and Investment Advisors placed across 14 global wealth hubs. Confidential. No contingency. No panels.",
     images: ["/og.webp"],
   },

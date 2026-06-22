@@ -4,7 +4,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Private Banking Recruiter Tel Aviv | Israel Senior RM Jobs',
   description:
-    'Israel specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and Israeli-market bankers. ISA licence context, compensation benchmarks and live mandates.',
+    'Israel specialist private banking headhunter. Senior RMs and Team Heads placed in Geneva and Zurich. ISA licence context, benchmarks and live mandates.',
   alternates: {
     canonical: 'https://www.execpartners.ch/en/markets/tel-aviv',
   },
@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     siteName: 'Executive Partners',
     type: 'website',
   },
+  robots: { index: true, follow: true },
 }
 
 export default function TelAvivMarketPage() {
@@ -25,12 +26,12 @@ export default function TelAvivMarketPage() {
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="market-hero">
         <p className="market-label">PRIVATE BANKING · TEL AVIV</p>
-        <h1>Private Banking Jobs &amp; Recruiter Tel Aviv — Senior RMs &amp; Team Heads</h1>
+        <h1>Private Banking Jobs &amp; Recruiter Tel Aviv | Senior RMs &amp; Team Heads</h1>
         <p className="market-sub">Place your book in Israel&apos;s most competitive wealth market.</p>
         <p>
           Tel Aviv is Israel&apos;s financial capital and one of the most concentrated pools of
           technology-generated private wealth outside the United States. Billionaire density is
-          among the highest per capita in the world — 41 USD billionaires as of 2025 — driven by
+          among the highest per capita in the world (41 USD billionaires as of 2025), driven by
           decades of high-tech exits, cyber and deep-tech venture liquidity, and a diaspora
           investor base that books assets in Geneva, Zurich and Luxembourg while maintaining
           strong local ties. Executive Partners tracks Relationship Manager, private banker and
@@ -56,7 +57,7 @@ export default function TelAvivMarketPage() {
             <p className="pulse-label">Hot roles</p>
             <ul>
               <li>Senior RM Israeli Market (Geneva / Zurich based)</li>
-              <li>Israeli Desk Head — Cross-Border Coverage</li>
+              <li>Israeli Desk Head | Cross-Border Coverage</li>
               <li>Private Banker — Tech-Entrepreneur Segment</li>
               <li>Onshore Relationship Manager (Tel Aviv)</li>
             </ul>

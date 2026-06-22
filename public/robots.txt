@@ -23,6 +23,7 @@ Disallow: /contact-admin
 Disallow: /hero-test
 Disallow: /portability-test
 Disallow: /test
+Disallow: /private
 
 # Block old root-level routes that redirect to /en/ equivalents
 Disallow: /employers
