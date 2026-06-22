@@ -38,8 +38,8 @@ const NAV = [
       { href: "/en/mea-private-banking-recruiter-geneva", text: "MEA" },
       { href: "/en/nri-private-banking-recruiter-switzerland", text: "NRI" },
       { href: "/en/israeli-market-private-banking-switzerland", text: "Israeli Market" },
-      { href: "/en/private-banking-recruitment-company", text: "Our Firm" },
       { href: "/en/apac-private-banking-recruiter-switzerland", text: "APAC" },
+      { href: "/en/private-banking-recruitment-company", text: "Our Firm" },
     ],
   },
 ];
