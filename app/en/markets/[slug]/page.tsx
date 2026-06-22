@@ -140,7 +140,7 @@ export default async function MarketPage({ params }: Props) {
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home",    item: "https://www.execpartners.ch/en" },
       { "@type": "ListItem", position: 2, name: "Markets", item: "https://www.execpartners.ch/en/markets" },
-      { "@type": "ListItem", position: 3, name: `${m.city} \u2014 Private Banking`, item: `https://www.execpartners.ch/en/markets/${slug}` },
+      { "@type": "ListItem", position: 3, name: `${m.city} — Private Banking`, item: `https://www.execpartners.ch/en/markets/${slug}` },
     ],
   };
 
@@ -306,12 +306,12 @@ export default async function MarketPage({ params }: Props) {
           <article className="rounded-2xl border border-white/10 bg-black/30 p-6 shadow-xl backdrop-blur-sm md:p-8">
             <header className="mb-5">
               <h2 className="font-[var(--font-playfair)] text-xl font-semibold md:text-2xl">
-                Compensation &amp; Bonus Benchmarks
+                Private Banking Salary Benchmarks — {m.city} 2026
               </h2>
               <p className="mt-2 text-sm text-neutral-300 md:text-base">
-                Directional ranges for mid-senior Relationship Managers through
-                team leadership. Actual offers vary by portable book, ROA,
-                product mix and firm performance.
+                Directional compensation ranges for mid-senior Relationship Managers through
+                Team Head level in {m.city}. Final offers vary by portable book size, ROA,
+                product mix, lending penetration and firm performance.
               </p>
             </header>
             <div className="overflow-x-auto rounded-xl ring-1 ring-white/10">
