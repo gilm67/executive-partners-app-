@@ -82,7 +82,7 @@ export const INSIGHTS: readonly InsightArticle[] = [
     date: "2026-06-22",
     summary: "Swiss private banks are adding NRI to their strategic plans but hiring the wrong profile. A recruiter's view of what genuine Non-Resident Indian private banking coverage actually requires, why South Asian is not the same as NRI, and where the real pipeline sits.",
     pillar: "P2",
-    markets: ["CH", "UK", "UAE", "SG"],
+    markets: ["CH", "UK", "UAE", "ASIA"],
     keywords: ["NRI private banking", "non-resident Indian wealth management", "NRI private banker Switzerland", "NRI private banking Geneva", "NRI private banking recruiter"],
     ogImage: "/og-articles/og-nri-private-banking-switzerland-desk-hiring.jpg",
     featured: false,
