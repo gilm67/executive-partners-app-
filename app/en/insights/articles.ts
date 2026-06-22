@@ -74,6 +74,79 @@ export type InsightArticle = {
  */
 export const INSIGHTS: readonly InsightArticle[] = [
   {
+    slug: "singapore-hongkong-talent-war-2026",
+    title: "Singapore Won the Asia Talent War. Hong Kong Didn't Get the Memo.",
+    seoTitle: "Singapore vs Hong Kong Private Banking Talent War 2026",
+    seoDescription: "Everyone assumed Singapore had won the Asia private banking talent war. Counter-offer data, salary premiums, and hiring numbers from Hong Kong say otherwise.",
+    linkedinUrl: "",
+    date: "2026-06-22",
+    summary: "Everyone assumed Singapore had won the Asia talent war. The counter-offer data from Hong Kong says otherwise.",
+    pillar: "P1",
+    subTheme: "Positioning",
+    markets: ["ASIA"],
+    keywords: ["Singapore private banking", "Hong Kong private banking", "Asia wealth management talent", "relationship manager Asia", "private banking hiring 2026"],
+    body: `Singapore Won the Asia Talent War. Hong Kong Didn't Get the Memo.
+
+The consensus hardened somewhere around 2022. Singapore had won. The talent, the family offices, the UHNW relocations, the institutional momentum. Hong Kong was geopolitically compromised, post-pandemic depleted, and structurally disadvantaged for any banker whose clients valued optionality. The narrative was clean, it was comfortable, and most of the industry stopped questioning it.
+
+From the desk of a search firm placing senior relationship managers across both markets, what we see today bears little resemblance to that settled conclusion.
+
+The signal most people are missing
+
+Before the headline hiring numbers, the most telling indicator is counter-offer behaviour. When a [Hong Kong](/en/markets/hong-kong)-based senior RM enters a process with a [Singapore](/en/markets/singapore) institution, the retention effort from their current Hong Kong employer has become substantially more aggressive than it was eighteen months ago. Banks that were previously willing to let senior talent relocate are now making compelling economic arguments to stay, restructured packages, expanded mandates, accelerated reviews. That shift in employer behaviour is a leading indicator that the market consensus has not yet caught up with.
+
+The parallel signal in Singapore is the Employment Pass processing timeline, which has extended for certain profiles and is now a factor in offer acceptance decisions in a way it simply was not two years ago. When candidates factor immigration timelines into their evaluation of a firm's offer, operational friction has become talent friction. Singapore's institutions are aware of this and working around it, but it is real and it is costing them candidates.
+
+These are recruiter observations, not market report summaries. They matter because they move before the published data does.
+
+What Hong Kong actually looks like right now
+
+UBS, the largest private bank in Asia, is hiring around 50 private bankers in [Hong Kong](/en/markets/hong-kong) this year alone. Greater China generates 70% of the bank's Asia-Pacific transaction revenue, a concentration that makes any retrenchment from Hong Kong strategically unthinkable. BNP Paribas Hong Kong is targeting a 10 to 20% net increase in Greater China relationship managers, with its wealth management head describing the competition as extremely fierce.(1) DBS grew its Hong Kong private banking RM headcount by 41% in the last reported period, against 24% in Singapore.(2) These are not marginal adjustments.
+
+The supply side is where pressure becomes acute. Specialist recruitment firm Elpis Search estimates that demand for experienced relationship managers in Hong Kong currently exceeds supply by at least 20%, with candidates in active processes receiving salary adjustments of up to 25%.(1) For a senior RM evaluating a move, those figures compress the financial case for Singapore considerably, particularly when cost-of-living differentials are factored in.
+
+The structural driver is not difficult to identify. Hong Kong's IPO market raised over HK$100 billion in the first half of 2025, making the city the top IPO venue globally for that period.(3) Each cycle of that kind creates a fresh cohort of liquid wealth, and that wealth typically stays close to the market where it was generated. Mainland Chinese clients with new liquidity events are not routing their assets through Singapore by default. They are booking locally, and the private banks serving them are staffing accordingly.
+
+The broader private banking headcount in Hong Kong grew by nearly 400 professionals across major institutions over two years, a 12% increase, while total AUM at those institutions rose 14% in the first half of 2025 alone.(3) Bloomberg Intelligence projects that Hong Kong could surpass Switzerland to become the world's largest cross-border wealth hub, managing USD 2.9 trillion in assets, with cross-border wealth across both hubs forecast to grow at 12% annually over the next five years.(2)
+
+What Singapore actually looks like right now
+
+None of this means [Singapore](/en/markets/singapore) has lost what it built. The family office infrastructure is substantial and still expanding. Singapore crossed 2,000 single-family offices in 2025, with combined AUM reaching USD 66.8 billion, a 43% year-on-year increase.(4) The MAS regulatory framework, incentives extended through 2029, and the Variable Capital Company structure have created an institutionalised ecosystem that Hong Kong is actively attempting to replicate but has not yet matched. Approximately 59% of Asia's family offices are located in Singapore.(5)
+
+Singapore's comparative strength is structural rather than cyclical. Regulatory predictability, English-language governance, proximity to Southeast Asian growth markets, and a quality of life that senior international talent finds genuinely liveable: these advantages do not disappear because Hong Kong is hiring aggressively. For Swiss, British, or European bankers relocating to Asia for the first time, Singapore remains the lower-friction entry point into the region.
+
+The challenge is that structural advantage does not prevent talent competition from tightening. The talent pipeline is under strain in ways that were not publicly acknowledged twelve months ago. Singapore does not have enough qualified investment professionals to staff the family offices it has attracted, with 43% of Asia-Pacific single-family offices planning to hire more professional non-family staff, a proportion significantly above the global average of 29%.(5) For the private banks trying to recruit from that same constrained pool, the competition is not only with other banks. It is with the family office sector, with EAMs, and increasingly with Dubai. A wealth management leader at a recent Hubbis forum put it plainly: Singapore, Hong Kong, and Dubai are all fishing in the same pool.(6)
+
+That pool has not grown proportionally to demand in either city.
+
+What this means for a senior RM making the choice
+
+The conversations we have with relationship managers considering Asia have changed materially over the past eighteen months. In 2022 and 2023, the question was almost always the same: which Singapore bank is the right platform? Hong Kong rarely came up unless the banker was already there or had deep Mainland Chinese client relationships. Today the question is genuinely open, and the economic case for Hong Kong is more frequently made by candidates themselves, not just the hiring banks.
+
+A senior RM with a predominantly Greater China book, Mandarin-speaking clients, and a track record anchored in North Asian markets is looking at the best [Hong Kong](/en/markets/hong-kong) hiring environment in years. The salary premiums are real, the institutional commitment from the major banks is unambiguous, and the wealth creation cycle driven by IPO liquidity is at a peak. Client proximity and compensation are pointing in the same direction.
+
+A senior RM with a Southeast Asian, Indian subcontinent, or internationally diversified book is still almost certainly better served by [Singapore](/en/markets/singapore). The family office density creates mandate diversity that Hong Kong cannot yet replicate at scale. The regulatory environment creates long-term stability. And the international talent community in Singapore is more established, which matters when you are building a life, not just a book.
+
+The error, which practitioners and market commentators are both making, is to treat the 2022 verdict as the permanent one. The verdict was correct for 2022. It reflected a specific set of conditions that have since shifted. What the current data describes is not a Singapore decline. It is a Hong Kong resurgence running alongside continued Singapore growth, with neither city holding a clean lead across all client segments and banker profiles.
+
+What the practitioner should actually ask
+
+The question worth asking is not which city is winning but which city is right for this book, this client profile, and this risk tolerance. That calculation has become more genuinely complex than the consensus allows for. A recruiter who tells a senior RM that Singapore is the obvious answer in 2026 is not giving them advice. They are giving them 2022's answer.
+
+Executive Partners currently has active mandates in both [Hong Kong](/en/jobs/rm-hong-kong) and [Singapore](/en/jobs/rm-singapore). If you want to understand what your AUM profile, your client concentration, and your career stage actually imply for an Asia mandate, the [EP Portability Score](/en/portability) is a starting point. The calculation is more specific than the consensus, and in a market moving this fast, specificity is the only thing that holds.
+
+---
+
+(1) Elpis Search, via Futunn, March 2026
+(2) Bloomberg Intelligence, via Global Finance Magazine, December 2025
+(3) Hong Kong Monetary Authority, via Hubbis, first half 2025
+(4) Empaxis, December 2025
+(5) Deloitte Private / Empaxis, 2025
+(6) Hubbis Investment Forum, Singapore, February 2025
+`,
+  },
+
+  {
     slug: "private-banking-recruitment-company-2026",
     title: "The Private Banking Recruitment Company Test Most Banks Never Run",
     seoTitle: "What to Look for in a Private Banking Recruitment Company | Private Wealth Pulse",
