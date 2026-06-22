@@ -193,7 +193,7 @@ export default function InsightDetailPage({ params }: Props) {
     datePublished: article.date,
     dateModified: article.date,
     inLanguage: "en",
-    author: { "@type": "Person", name: "Gil M. Chalem", url: SITE },
+    author: { "@type": "Person", name: "Gil M. Chalem", url: `${SITE}/en/about`, sameAs: ["https://www.linkedin.com/in/gil-m-chalem-35281916b/", SITE] },
     publisher: {
       "@type": "Organization",
       name: "Executive Partners",

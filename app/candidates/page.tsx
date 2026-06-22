@@ -44,38 +44,29 @@ export const metadata: Metadata = {
 };
 
 export default function CandidatesPage() {
-  // JSON-LD: FAQ (rich results) — keep top 3 questions aligned with on-page teaser
+  // JSON-LD: FAQPage — all 18 Q&As for rich results + People Also Ask
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     mainEntity: [
-      {
-        "@type": "Question",
-        name: "Is my application confidential?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text:
-            "Yes. We operate quiet, invitation-only processes and never share your CV or details without your explicit permission.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Which markets do you cover?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text:
-            "Geneva and Zurich as a priority, plus Dubai, Singapore, London, New York and Hong Kong for cross-border Private Banking.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "What seniorities do you place?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text:
-            "Senior Relationship Managers (Director/ED/MD), Team Heads, Market/Desk Leads and select leadership roles.",
-        },
-      },
+      { "@type": "Question", name: "Do candidates pay fees to Executive Partners?", acceptedAnswer: { "@type": "Answer", text: "No. Our fees are paid entirely by hiring banks. You never pay anything to work with Executive Partners. This is standard in executive recruitment across the banking sector." } },
+      { "@type": "Question", name: "How confidential is the placement process?", acceptedAnswer: { "@type": "Answer", text: "Completely confidential. We never contact your current employer or disclose your interest in moving to anyone without your explicit permission. Most conversations happen outside office hours and we use personal email addresses, not work emails." } },
+      { "@type": "Question", name: "I am not actively looking but want to understand my options. Can I still talk to you?", acceptedAnswer: { "@type": "Answer", text: "Absolutely. Most of our best placements come from passive candidates who were open to the right opportunity. We can help you understand your market value and options without any commitment to move." } },
+      { "@type": "Question", name: "How long does a typical private banking placement take?", acceptedAnswer: { "@type": "Answer", text: "From first conversation to signed offer: 8-16 weeks on average. Timeline depends on bank approval process, your notice period, regulatory requirements, and complexity of your client portfolio." } },
+      { "@type": "Question", name: "Do you have private banking roles outside Switzerland?", acceptedAnswer: { "@type": "Answer", text: "We work on mandates across Geneva, Zurich, London, Dubai DIFC, Riyadh, Singapore, Hong Kong, New York and Miami. If we do not have an active role in your target location, we keep you in our database and reach out when relevant opportunities arise." } },
+      { "@type": "Question", name: "What are private banking options in Riyadh versus Dubai for GCC-focused bankers?", acceptedAnswer: { "@type": "Answer", text: "Riyadh is the onshore Saudi hub under Vision 2030, but Saudization rules mean Director-level roles are increasingly reserved for Saudi nationals. International bankers without a Saudi passport are more likely to find roles covering Saudi clients from Dubai DIFC, Geneva or Zurich." } },
+      { "@type": "Question", name: "What if my AUM is not fully portable?", acceptedAnswer: { "@type": "Answer", text: "We are realistic about portability. Most relationship managers transfer 30-80% of their book when moving. Banks understand this and price offers accordingly. Our Portability Score tool helps estimate realistic transfer rates based on your specific client profile." } },
+      { "@type": "Question", name: "How do private banks verify AUM claims during due diligence?", acceptedAnswer: { "@type": "Answer", text: "Banks typically request portfolio statements, anonymised client lists, revenue reports, AUM breakdown by asset class, client concentration analysis, and non-compete agreement review. We coach you so there are no surprises." } },
+      { "@type": "Question", name: "What if some of my clients have compliance issues?", acceptedAnswer: { "@type": "Answer", text: "Be upfront about this early. Banks will discover it during due diligence, and honesty is always the best approach. Compliance issues do not automatically disqualify you. We help you frame challenges honestly and prepare disclosure documentation." } },
+      { "@type": "Question", name: "How does Executive Partners vet candidates before representing them?", acceptedAnswer: { "@type": "Answer", text: "We assess your book of business and likely portability, professional background, career motivations, regulatory and compliance profile, and fit with specific banks cultures and strategies." } },
+      { "@type": "Question", name: "What is Executive Partners role in the private banking hiring process?", acceptedAnswer: { "@type": "Answer", text: "We act as your advocate throughout: market positioning, bank introduction, compensation negotiation, due diligence coaching, and onboarding support. We are a partner in your career transition, not a transactional recruiter." } },
+      { "@type": "Question", name: "How do you keep a private banking job search confidential?", acceptedAnswer: { "@type": "Answer", text: "No LinkedIn messages or work emails. Conversations happen outside office hours. No contact with your employer without explicit written permission. Bank introductions are discreet and do not flag your interest internally." } },
+      { "@type": "Question", name: "What compensation should a senior relationship manager expect?", acceptedAnswer: { "@type": "Answer", text: "Compensation varies by bank size, geography, book size and seniority. Switzerland, the UK and the Middle East typically offer higher compensation than continental Europe. We give realistic expectations based on your profile and the specific bank." } },
+      { "@type": "Question", name: "Are there private banking roles for different experience levels?", acceptedAnswer: { "@type": "Answer", text: "Yes. We work on mandates for experienced RMs with 7+ years, rising talents targeting VP promotions or specialisation in alternatives, and relocating professionals building new markets. Most of our activity is in the experienced RM segment." } },
+      { "@type": "Question", name: "What support does Executive Partners provide after a placement offer is signed?", acceptedAnswer: { "@type": "Answer", text: "We support you through regulatory approvals at your new bank, notice period and non-compete navigation, client transition planning, and onboarding in the first 90 days. Our relationship does not end at the offer." } },
+      { "@type": "Question", name: "What happens if a placement does not work out?", acceptedAnswer: { "@type": "Answer", text: "This is rare given our retention rate, but if a role is not working we maintain relationships long-term and support you in finding the right next move. A successful 18-month tenure is always better than a failed 6-month exit." } },
+      { "@type": "Question", name: "How do I get started with Executive Partners?", acceptedAnswer: { "@type": "Answer", text: "Simply reach out with your LinkedIn profile or a brief CV. We will schedule a confidential conversation to understand your background, discuss your aspirations, and assess whether we have active mandates that match your profile." } },
+      { "@type": "Question", name: "How long before I hear about private banking opportunities after registering?", acceptedAnswer: { "@type": "Answer", text: "If we see a strong match with an active mandate, we reach out within 2-4 weeks. If not, we keep your profile active and contact you when relevant opportunities align. Demand for relationship managers spikes around year-end and mid-year." } },
     ],
   };
 

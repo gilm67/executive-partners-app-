@@ -421,8 +421,59 @@ export default async function JobDetailPage({
     const applyHref = "/en/apply?role=" + mandateData["id"];
     const paragraphs = mandateData.brief.split("\n\n");
     const steps = mandateData.process.split(" \u00b7 ");
+
+    const mandateJobPosting = {
+      "@context": "https://schema.org",
+      "@type": "JobPosting",
+      title: `${mandateData.title} \u2014 ${mandateData.subtitle}`,
+      description: mandateData.brief,
+      datePosted: mandateData.listedDate,
+      validThrough: "2026-12-31",
+      employmentType: "FULL_TIME",
+      industry: "Private Banking & Wealth Management",
+      hiringOrganization: {
+        "@type": "Organization", name: "Executive Partners",
+        sameAs: base, logo: `${base}/transparent-ep-logo.png`,
+      },
+      jobLocation: {
+        "@type": "Place",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: mandateData.location.split(/,| or /)[0].trim(),
+          addressCountry: (() => {
+            const l = mandateData.location.toLowerCase();
+            if (l.includes("milan")) return "IT";
+            if (l.includes("london")) return "GB";
+            if (l.includes("hong kong")) return "HK";
+            if (l.includes("singapore")) return "SG";
+            if (l.includes("new york") || l.includes("miami")) return "US";
+            if (l.includes("dubai")) return "AE";
+            if (l.includes("riyadh")) return "SA";
+            if (l.includes("tel aviv")) return "IL";
+            return "CH";
+          })(),
+        },
+      },
+      url: `${base}/en/jobs/${mandateData.id}`,
+      applicationContact: {
+        "@type": "ContactPoint", contactType: "Application",
+        email: "recruiter@execpartners.ch",
+        url: `${base}/en/apply`,
+      },
+      directApply: false,
+    };
+    const mandateBreadcrumb = {
+      "@context": "https://schema.org", "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Jobs", item: `${base}/en/jobs` },
+        { "@type": "ListItem", position: 2, name: `${mandateData.title} \u2014 ${mandateData.subtitle}`, item: `${base}/en/jobs/${mandateData.id}` },
+      ],
+    };
+
     return (
       <main className="relative min-h-screen bg-[#0B0F1A] text-white">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(mandateJobPosting) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(mandateBreadcrumb) }} />
 
         {/* Ambient background */}
         <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(1400px 500px at 10% -10%, rgba(201,161,74,.14) 0%, rgba(201,161,74,0) 55%), radial-gradient(1100px 420px at 110% 0%, rgba(245,231,192,.10) 0%, rgba(245,231,192,0) 60%)" }} />

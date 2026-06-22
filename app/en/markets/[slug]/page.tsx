@@ -134,8 +134,19 @@ export default async function MarketPage({ params }: Props) {
     );
   }
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home",    item: "https://www.execpartners.ch/en" },
+      { "@type": "ListItem", position: 2, name: "Markets", item: "https://www.execpartners.ch/en/markets" },
+      { "@type": "ListItem", position: 3, name: `${m.city} \u2014 Private Banking`, item: `https://www.execpartners.ch/en/markets/${slug}` },
+    ],
+  };
+
   return (
     <main className="relative min-h-screen text-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
   {/* ── FAQ Schema — Geneva, Zurich, Dubai ── */}
   {slug === "geneva" && (
