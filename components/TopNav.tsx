@@ -17,11 +17,11 @@ export default function TopNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false); // mobile panel
   const [scrolled, setScrolled] = useState(false);
-  const [dd, setDd] = useState<null | "Tools" | "Insights">(null); // desktop dropdown
+  const [dd, setDd] = useState<null | "Tools" | "Insights" | "Specialists">(null); // desktop dropdown
 
   // ✅ Prevent dropdown from closing instantly when moving cursor button -> panel
   const closeTimer = useRef<number | null>(null);
-  const openDd = (which: "Tools" | "Insights") => {
+  const openDd = (which: "Tools" | "Insights" | "Specialists") => {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
     setDd(which);
   };
@@ -68,6 +68,14 @@ export default function TopNav() {
     },
   ];
 
+  const SPECIALISTS: NavItem[] = [
+    { href: "/latam-private-banking-recruiter-geneva", label: "LATAM Private Banking" },
+    { href: "/mea-private-banking-recruiter-geneva", label: "MEA Private Banking" },
+    { href: "/nri-private-banking-recruiter-switzerland", label: "NRI Private Banking" },
+    { href: "/israeli-market-private-banking-switzerland", label: "Israeli Market" },
+    { href: "/private-banking-recruitment-company", label: "Our Firm" },
+  ];
+
   const CONTACT: NavItem = { href: "/contact", label: "Contact" };
 
   // Apply base to internal routes
@@ -83,6 +91,11 @@ export default function TopNav() {
     () => INSIGHTS.map((i) => (i.external ? i : { ...i, href: withBase(base, i.href) })),
     [base]
   );
+  const SPECIALISTS_BASE = useMemo(
+    () => SPECIALISTS.map((i) => (i.external ? i : { ...i, href: withBase(base, i.href) })),
+    [base]
+  );
+
   const CONTACT_BASE = useMemo(
     () => (CONTACT.external ? CONTACT : { ...CONTACT, href: withBase(base, CONTACT.href) }),
     [base]
@@ -162,6 +175,7 @@ export default function TopNav() {
 
   const toolsActive = TOOLS.some((i) => isActive(i.href));
   const insightsActive = INSIGHTS.some((i) => isActive(i.href));
+  const specialistsActive = SPECIALISTS.some((i) => isActive(i.href));
 
   return (
     <header className={bar}>
@@ -268,6 +282,44 @@ export default function TopNav() {
                     onMouseLeave={scheduleCloseDd}
                   >
                     {INSIGHTS_BASE.map((i) => (
+                      <Link
+                        key={i.href}
+                        href={i.href}
+                        role="menuitem"
+                        className={ddItemClasses(isActive(i.href))}
+                        onClick={() => setDd(null)}
+                      >
+                        {i.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Specialists dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => openDd("Specialists")}
+                onMouseLeave={scheduleCloseDd}
+              >
+                <button
+                  type="button"
+                  className={ddButtonClasses(specialistsActive, dd === "Specialists")}
+                  aria-haspopup="menu"
+                  aria-expanded={dd === "Specialists"}
+                  onClick={() => setDd(dd === "Specialists" ? null : "Specialists")}
+                >
+                  Specialists <span className="text-xs opacity-80">▾</span>
+                </button>
+
+                {dd === "Specialists" && (
+                  <div
+                    role="menu"
+                    className={ddPanel}
+                    onMouseEnter={() => openDd("Specialists")}
+                    onMouseLeave={scheduleCloseDd}
+                  >
+                    {SPECIALISTS_BASE.map((i) => (
                       <Link
                         key={i.href}
                         href={i.href}
@@ -396,6 +448,32 @@ export default function TopNav() {
                   : "text-slate-200 hover:text-white hover:bg-white/5",
               ].join(" ");
 
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={cls}
+                    onClick={() => setOpen(false)}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+
+            {/* Mobile section: Specialists */}
+            <li className="mt-2 px-3 pt-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">
+              Specialists
+            </li>
+            {SPECIALISTS_BASE.map((item) => {
+              const active = isActive(item.href.replace(base, "") || item.href);
+              const cls = [
+                "block rounded-md px-3 py-2 text-sm transition-colors",
+                active
+                  ? "bg-white/10 text-[#F5D778]"
+                  : "text-slate-200 hover:text-white hover:bg-white/5",
+              ].join(" ");
               return (
                 <li key={item.href}>
                   <Link

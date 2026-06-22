@@ -31,6 +31,16 @@ const NAV = [
       { href: "/en/contact", text: "Contact" },
     ],
   },
+  {
+    label: "Specialists",
+    links: [
+      { href: "/en/latam-private-banking-recruiter-geneva", text: "LATAM" },
+      { href: "/en/mea-private-banking-recruiter-geneva", text: "MEA" },
+      { href: "/en/nri-private-banking-recruiter-switzerland", text: "NRI" },
+      { href: "/en/israeli-market-private-banking-switzerland", text: "Israeli Market" },
+      { href: "/en/private-banking-recruitment-company", text: "Our Firm" },
+    ],
+  },
 ];
 
 const HUBS = [
@@ -163,7 +173,7 @@ export default function Footer() {
                 </ul>
               </div>
             ))}
-            <div className="col-span-6">
+            <div className="col-span-4">
               <h4 className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-4" style={{color:"#C9A14A"}}>Our Hubs</h4>
               <ul className="grid grid-cols-3 gap-x-6 gap-y-3">
                 {HUBS.map((h) => (
