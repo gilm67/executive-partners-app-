@@ -65,6 +65,7 @@ export const metadata: Metadata = {
     url: PAGE_URL,
     type: "website",
     siteName: "Executive Partners",
+    images: [{ url: `${SITE}/og-articles/og-nri-private-banking-recruiter-switzerland.jpg`, width: 1200, height: 630 }],
   },
   robots: { index: true, follow: true },
 }
