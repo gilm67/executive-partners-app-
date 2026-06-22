@@ -74,6 +74,7 @@ export default function TopNav() {
     { href: "/nri-private-banking-recruiter-switzerland", label: "NRI Private Banking" },
     { href: "/israeli-market-private-banking-switzerland", label: "Israeli Market" },
     { href: "/private-banking-recruitment-company", label: "Our Firm" },
+    { href: "/apac-private-banking-recruiter-switzerland", label: "APAC Private Banking" },
   ];
 
   const CONTACT: NavItem = { href: "/contact", label: "Contact" };
