@@ -93,10 +93,6 @@ export const markets: Market[] = [
     },
   },
 
-      { label: "Focus", value: "PB, AM, Family Offices" },
-      { label: "Region", value: "German-speaking CH" },
-    ],
-  },
   {
     slug: "dubai",
     title: "Dubai",
