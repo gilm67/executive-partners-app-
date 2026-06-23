@@ -4162,7 +4162,6 @@ For the private banker considering a move, EFG represents a genuine alternative 
   {
     slug: "what-is-aum-portability-private-banking",
     speakable: true,
-    speakable: true,
     title: "What Is AUM Portability in Private Banking?",
     seoTitle: "AUM Portability in Private Banking: The Definitive Guide (2026)",
     seoDescription: "AUM portability is the estimated percentage of a private banker's client assets that would follow them to a new bank. Learn how it is calculated, what affects it, and how banks assess it in 2026.",
