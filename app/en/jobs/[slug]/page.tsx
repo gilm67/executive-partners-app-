@@ -431,6 +431,16 @@ export default async function JobDetailPage({
       validThrough: "2026-12-31",
       employmentType: "FULL_TIME",
       industry: "Private Banking & Wealth Management",
+      baseSalary: {
+        "@type": "MonetaryAmount",
+        currency: mandateData.comp_base.match(/CHF|USD|EUR|GBP/i)?.[0]?.toUpperCase() ?? "CHF",
+        value: {
+          "@type": "QuantitativeValue",
+          minValue: (() => { const m = mandateData.comp_base.match(/([\d]+)K/); return m ? parseInt(m[1]) * 1000 : undefined; })(),
+          maxValue: (() => { const m = [...mandateData.comp_base.matchAll(/([\d]+)K/g)]; return m.length > 1 ? parseInt(m[1][1]) * 1000 : undefined; })(),
+          unitText: "YEAR",
+        },
+      },
       hiringOrganization: {
         "@type": "Organization", name: "Executive Partners",
         sameAs: base, logo: `${base}/transparent-ep-logo.png`,
