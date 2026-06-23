@@ -4157,4 +4157,191 @@ For the private banker considering a move, EFG represents a genuine alternative 
     keywords: ["Hong Kong wealth management", "Switzerland offshore banking", "BCG Global Wealth Report 2026", "cross-border wealth ranking", "Swiss private banking talent"],
     body: "For thirty years, Geneva's claim to the top of the offshore wealth table was treated as a law of nature. Not a competitive position. Not something that required defending. A fact, like the Alps or the franc. The 2026 Global Wealth Report from Boston Consulting Group ended that assumption in a single data point.\n\nHong Kong now books $2.95 trillion in cross-border private wealth. Switzerland books $2.94 trillion. The margin is $10 billion on a base of nearly $3 trillion, which is to say the margin is almost nothing. But the direction is everything. Boston Consulting Group, which has been tracking this convergence since at least 2022, is unambiguous: this reversal is unlikely to be undone. The hubs in Asia are growing faster than the European safe haven. The structural forces driving that divergence are not temporary.\n\nThe reaction in Geneva has been some version of surprise. It should not have been.\n\nIn 2022, the same institution published a forecast placing Hong Kong ahead of Switzerland before the end of that decade. The Swiss market noted it, debated it in conference panels, added it to the risk section of various strategy presentations, and largely continued as before. That is not a criticism unique to Switzerland. It is what incumbents do. The position felt safe enough that the urgency to act never quite materialised. The $10 billion gap is the cost of that calculation.\n\n## Where wealth actually gets created\n\nThe mechanics of what happened are not complicated. Hong Kong's rise is a direct consequence of where wealth is being generated. China has been producing high-net-worth and ultra-high-net-worth individuals at a rate that no European economy can match. In 2021, the number of Chinese dollar millionaires surpassed the number of German ones. By 2025, Chinese billionaire creation was running at a pace that made Switzerland's own domestic wealth generation look almost static by comparison.\n\nA booking centre proximate to that wealth creation will attract assets. Hong Kong's geographic and cultural position as the gateway between mainland Chinese capital and international markets gives it a structural advantage that Geneva cannot replicate by improving its product offering or tightening its legal framework. The assets are created next door. The relationships are local. The language is Cantonese and Mandarin. The trust is generational and proximity-based.\n\nBoston Consulting Group's report projects that global financial wealth will grow at roughly 7 percent annually through 2030, assuming that geopolitical tensions and the energy shock ease in the second half of this year. The growth will not be evenly distributed. The fastest expansion will be in Asia, concentrated around the same wealth creation dynamic that has already pushed Hong Kong to the top of the rankings. Switzerland will grow too, but it will grow at a rate that reflects the slower accumulation of wealth in Western Europe and the continued regulatory friction that makes Swiss booking genuinely difficult for a category of clients who might otherwise choose Geneva.\n\n## The compliance posture and what it costs\n\nThere is an uncomfortable conversation embedded in this data that the Swiss market has generally preferred to avoid. The compliance tightening of the past decade, accelerated dramatically by the events of 2022, has been necessary. The reputational damage from earlier eras, the pressure from FINMA, the cascading effects of the Credit Suisse collapse, and the political imperative to demonstrate that Swiss banking can clean itself up without external imposition, all of these made a stricter, more risk-averse posture not just defensible but essential.\n\nThe cost is real, however. A significant proportion of the clients who might have historically booked in Geneva now find the process either too uncertain, too long, or simply too adversarial to be worth the effort. The enhanced due diligence requirements for certain nationalities, the source-of-wealth documentation burden, the restrictions on specific asset categories and geographies, these are not arbitrary inconveniences. They are the product of hard lessons learned at considerable expense. But they are also, as a practical matter, a filter that directs mobile wealth toward jurisdictions with a more accommodating posture.\n\nHong Kong has not faced the same regulatory reckoning as Switzerland. Its compliance environment has its own complications, including a legal framework that is increasingly shaped by mainland political priorities in ways that create a different category of risk for internationally mobile clients. But for a specific and very large segment of Asian wealth, Hong Kong's compliance burden is simply less than Geneva's. The assets follow the path of least resistance, as they always have.\n\nBoston Consulting Group's note that Hong Kong's concentration on mainland China ties its trajectory tightly to economic and regulatory developments there is the other side of this ledger. A jurisdiction that derives its competitive advantage primarily from proximity to one country's wealth creation is exposed to that country's political and economic trajectory in a way that a genuinely neutral booking centre is not. Switzerland has lost the rankings race for now. It has not lost the argument about long-term stability and political neutrality, which remains the most durable value proposition in private banking for clients who need it most.\n\n## The talent question nobody is asking\n\nThe conversation I have not seen in the coverage of this week's report is the one about people. Rankings and AUM figures describe outcomes. They do not explain the mechanism by which outcomes change. The mechanism is talent, and the talent question in Swiss private banking right now is more urgent than the market seems to appreciate.\n\nThe banks that will win the next decade of cross-border wealth management are not the ones with the deepest balance sheet or the most comprehensive product platform. They are the ones with the right bankers in the right seats. Specifically, they are the banks that have invested in building teams with genuine Asian market capability sitting in Geneva and Zurich, not just in their Singapore or Hong Kong offices.\n\nMandarin-speaking relationship managers who can service clients with Chinese wealth exposure from a Swiss booking platform are genuinely rare. The combination of private banking technical competence, language capability at a professional financial level, cultural intelligence, and Swiss regulatory literacy is not something you can hire easily or develop quickly. The banks that have those bankers are in a structurally stronger position than any product or platform advantage can create. The banks that have been treating Asian coverage as a regional matter handled from their Asian offices are building a dependency that leaves them exposed.\n\nThis is not a theoretical observation. In the mandates I work on regularly, the difficulty of finding a senior relationship manager with credible Asian market coverage in Geneva is among the most consistent constraints I encounter. The candidate pool is thin. The competition for the few strong profiles that exist is intense. The compensation required to move them is high. And the lead time to build a team from scratch is measured in years, not quarters.\n\nThe same logic applies, to varying degrees, to other growth markets. The bankers who will generate the next wave of AUM growth in Swiss private banking are disproportionately those who can access the sources of new wealth creation in Asia, in the Gulf, in Latin America, and in the diaspora communities of internationally mobile UHNW families. Building that coverage capability is a talent strategy, not a product strategy.\n\n## What Switzerland should do with a $10 billion gap\n\nThe right response to this week's data is not panic and it is not defensive dismissal. It is a serious conversation about what the Swiss offshore model is actually for, who it serves best, and where its genuine competitive advantage lies in a world where proximity to Asian wealth creation is no longer available as a differentiating factor.\n\nSwitzerland's case rests on rule of law, political neutrality, institutional stability, multi-generational banking relationships, and a regulatory framework that, for all its friction, provides genuine protection for clients who need predictability over a long time horizon. These are not trivial attributes. They are precisely the attributes that matter most to clients with genuine long-term wealth preservation needs, as distinct from clients who are primarily seeking to capitalise on near-term growth opportunities.\n\nThe $10 billion margin between Hong Kong and Switzerland is not the story. The story is the structural divergence in wealth creation geography that produced it, and the question of whether Swiss private banking has built the human capability to access the next generation of that wealth. In some institutions, the answer is a cautious yes. In most, the honest answer is that the work is not yet done.\n\nThat conversation needs to start now. The ranking has already changed. The talent pipeline takes years to build.\n\n---\n\n[1] Boston Consulting Group, Global Wealth Report 2026, published 27 May 2026. Cross-border AUM figures as of end-2025.\n[2] BCG Global Wealth Report 2022: forecast of Hong Kong displacing Switzerland as largest offshore booking centre.\n[3] Global financial wealth grew 10.7% in 2025, reaching $333 trillion. Equities contributed 13.2% and gold 44% of asset appreciation, BCG 2026.",
   },
+
+  {
+    slug: "what-is-aum-portability-private-banking",
+    title: "What Is AUM Portability in Private Banking?",
+    seoTitle: "AUM Portability in Private Banking: The Definitive Guide (2026)",
+    seoDescription: "AUM portability is the estimated percentage of a private banker's client assets that would follow them to a new bank. Learn how it is calculated, what affects it, and how banks assess it in 2026.",
+    date: "2026-06-22",
+    engagementScore: 88,
+    featured: false,
+    summary: "AUM portability is the single most important number in any senior private banking career move. Banks use it to price offers. Bankers use it to negotiate. Most people get it wrong.",
+    linkedinUrl: "",
+    pillar: "P1",
+    subTheme: "Positioning",
+    markets: ["CH", "UK", "UAE", "ASIA", "US"],
+    keywords: ["AUM portability", "private banking AUM transfer", "portable book private banking", "how to calculate AUM portability", "private banker career move"],
+    body: `The question every senior private banker eventually faces is not whether to move, but whether their clients will follow. That question has a name in the industry: AUM portability. It is also the number that determines whether a hiring bank makes an offer, how large that offer is, and how much transition support they are willing to provide.
+
+Most private bankers significantly overestimate their portability. Most banks start from significant scepticism. The gap between those two positions is where most career moves get complicated.
+
+## What AUM portability actually measures
+
+AUM portability is not a fixed number. It is an estimate of the proportion of a banker's current assets under management that are likely to follow them to a new platform within a defined window, typically twelve to eighteen months.
+
+The estimate depends on several variables that are specific to each banker's book, each client relationship, and each market. A banker managing CHF 300M in Geneva does not have CHF 300M in portable AUM. They have some fraction of that, maybe CHF 120M, maybe CHF 240M, and the actual figure depends on things that cannot be read off a portfolio statement.
+
+The relevant variables are: the nature of the relationship (personal versus institutionally owned), the client's banking history (single-banked versus multi-banked), the jurisdiction of the booking (which affects how easy it is for a client to move assets), the existence and scope of non-solicitation agreements, the product complexity of the book (discretionary mandates are harder to move than advisory), and the time elapsed since the last significant market event affecting the client's risk appetite.
+
+## Why bankers get this wrong
+
+The most common error is conflating AUM under management with personally owned relationships. A banker with CHF 300M on their book who inherited 40% of that from a predecessor, and whose largest five clients were originally introduced by the bank rather than by the banker, does not have CHF 300M in portable AUM. They have the fraction that is genuinely theirs, relationships they built, clients who trust them personally, names who would follow them regardless of the bank's brand.
+
+The second common error is ignoring concentration risk. A book where three clients represent 60% of AUM is not a book where you can assume 60% portability on those three relationships. High concentration means high variance. If the three large clients stay, portability is fine. If one of them decides the disruption of a bank move is not worth it, portability drops sharply.
+
+The third error is underweighting legal constraints. Non-solicitation clauses in Swiss employment contracts are enforceable. Garden leave periods are real. The window during which a banker cannot reach out to former clients is not just a technicality, it is a period during which competing bankers at the old institution are actively managing those relationships.
+
+## How banks assess portability
+
+When a senior private banker interviews at a new platform, the business case review is not a formality. Banks have been doing this long enough to have developed systematic approaches to separating credible portability claims from aspirational ones.
+
+The typical documentation request includes: a breakdown of the book by client (anonymised), showing AUM, revenue contribution, booking centre, relationship start date, and product mix; a self-assessment of each significant relationship categorised as personally owned, jointly owned, or institutionally owned; an honest assessment of the non-solicit scope and duration; and a timeline showing when each major client relationship was established.
+
+The most credible business plans are not the ones with the highest portability numbers. They are the ones where the reasoning is internally consistent, the concentrations are acknowledged, and the timeline is realistic. A banker who walks in saying I will bring 85% in six months without evidence of self-originated relationships is not being taken at face value. A banker who says I have twelve personally owned relationships representing CHF 140M, of which I believe eight will follow me in the first year based on specific reasons I can explain for each, that banker has a business case.
+
+## What determines a credible portability estimate
+
+The starting point is always the quality and depth of the personal relationship. Private banking is a relationship business. A client who has lunch with their banker three times a year, whose children the banker knows by name, and who has been with that banker across two different institutions already, is mobile. A client who is managed by a team and who has never met the banker outside of a formal review is not.
+
+Beyond relationship quality, the key factors are: how long the client has been with the banker (not the bank), whether the client has a genuine preference for the booking centre or is indifferent, the fee sensitivity of the client, and the client's broader banking situation. A client who books everything at one institution is harder to move than a client who already multi-banks.
+
+Regulatory jurisdiction matters more than most bankers acknowledge. Moving Swiss-booked assets between Swiss banks is operationally straightforward. Moving assets from a Swiss booking centre to a Dubai booking centre requires client consent, additional KYC documentation, and in many cases a re-suitability assessment. The friction cost is real, and some clients will not make that journey.
+
+## The portability calculation in practice
+
+Executive Partners uses a structured six-dimension scoring model to estimate realistic AUM portability before any bank introduction. The dimensions are: client loyalty (personal relationship strength), wallet share (share of total client wealth currently managed), regulatory jurisdiction (ease of transfer given booking centre), product complexity (advisory versus DPM versus structured), client concentration (risk from top-five client exposure), and legal constraints (non-solicit scope and duration).
+
+Each dimension is scored, weighted, and combined into a single portability estimate with a range, not a point estimate. The range matters. A book might realistically transfer 40% to 65% of AUM depending on market conditions, timing, and client decisions that cannot be fully controlled. A business plan built on 65% and stress-tested at 40% is credible. A business plan built on 65% with no downside scenario is not.
+
+The tool is available at execpartners.ch/en/portability and takes approximately twelve minutes to complete. The output is a portability score, an estimated range of portable AUM, and an identification of which dimensions most constrain the estimate, which is often more useful than the headline number.
+
+## Why this matters for compensation negotiation
+
+Portability estimates drive offer structures in ways that are not always visible to candidates. A bank hiring a banker with a credible case for CHF 150M in portable AUM within twelve months will structure the offer differently from a bank hiring a banker with a similar total book but a less compelling portability case.
+
+The non-producible contribution (NPC), the upfront contribution to offset a clawback obligation at the departing bank, is typically sized as a multiple of current year compensation and is higher for candidates with stronger portability evidence. The variable component of the first-year package is often linked to AUM onboarded at defined milestones, which means the candidate's own portability estimate becomes the baseline against which performance is measured.
+
+Understanding your own portability accurately, before walking into any hiring conversation, is not just a due diligence exercise. It is a negotiation asset.
+
+---
+
+[1] FINMA, Circular 2009/1 on guidelines for asset management agreements.
+[2] Swiss Code of Obligations, Art. 340 et seq.: non-competition and non-solicitation clauses.`,
+  },
+  {
+    slug: "private-banking-salary-switzerland-2026",
+    title: "Private Banking Salaries in Switzerland 2026: What Senior RMs Actually Earn",
+    seoTitle: "Private Banking Salary Switzerland 2026 | Senior RM Compensation Benchmarks",
+    seoDescription: "Compensation benchmarks for Senior Relationship Managers, Team Heads and Investment Advisors in Swiss private banking 2026. Base salary, bonus and total package ranges for Geneva and Zurich.",
+    date: "2026-06-22",
+    engagementScore: 90,
+    featured: false,
+    summary: "The 2026 compensation data for senior private banking in Switzerland shows a market that is paying more for the right profile and less for the wrong one. Here are the actual numbers.",
+    linkedinUrl: "",
+    pillar: "P1",
+    subTheme: "ROAPlatform",
+    markets: ["CH"],
+    keywords: ["private banking salary Switzerland 2026", "relationship manager salary Geneva", "private banker compensation Zurich", "senior RM salary Switzerland", "private banking bonus 2026"],
+    body: `Salary data in Swiss private banking is not published. The banks do not release it, the candidates do not discuss it openly, and the numbers that circulate in conference conversations are often shaped more by the speaker's agenda than by actual market data. The benchmarks below are drawn from live mandate negotiations and placement activity across Geneva and Zurich in 2025 and early 2026. They reflect what banks are actually offering, not what the industry wishes it could pay.
+
+## Geneva: Compensation by level
+
+Geneva's compensation for front-office private banking professionals reflects the city's status as the world's largest offshore wealth management centre. The market is competitive at the senior level and increasingly bifurcated: institutions are paying premium packages for candidates with verified portable books and demonstrable ROA, and below-market packages for candidates whose portability claims do not survive scrutiny.
+
+Director level (Senior RM): Base salary CHF 180,000 to 250,000. Total compensation including bonus CHF 290,000 to 450,000. Bonus typically 50 to 100 percent of base. Candidates with a multi-year revenue history, a verifiable portable book above CHF 150M, and strong ROA can negotiate at or above the top of this range. Non-producible contributions to offset clawback obligations at the departing bank are common at this level and typically sized at 6 to 18 months of total prior compensation.
+
+Team Lead and Market Head (Executive Director equivalent): Base salary CHF 220,000 to 300,000. Total compensation CHF 380,000 to 560,000. Bonus range 60 to 120 percent. Compensation at this level is increasingly driven by the desk's collective revenue performance rather than individual AUM.
+
+Managing Director and Regional Director: Base salary CHF 280,000 to 400,000. Total compensation CHF 500,000 to 750,000 and above. Bonus range 80 to 150 percent. Equity participation or deferred compensation structures are common at this level, particularly at boutique banks and EAM platforms offering partnership tracks.
+
+## Zurich: How the DACH market differs
+
+Zurich's compensation structure differs from Geneva's in ways that are often misunderstood. The base salary range is broadly similar, but the bonus structure is more conservative, and the total package for comparable seniority often runs 10 to 15 percent below Geneva for equivalent AUM. This reflects the market's character: Zurich's private banking focuses more on onshore DACH wealth, where relationships are typically longer, more stable, and less mobile, and where the business development intensity that commands premium bonuses is lower.
+
+Senior RM and Director in Zurich: Base salary CHF 170,000 to 240,000. Total compensation CHF 270,000 to 420,000. Bonus 50 to 90 percent. International UHNW mandates at Zurich platforms command compensation closer to the Geneva range.
+
+## What actually determines your package
+
+The benchmark ranges above are directional. What a specific candidate receives within or outside those ranges depends on five factors that banks weight differently but all assess.
+
+First: AUM portability, specifically verified AUM rather than claimed AUM. A candidate who can document CHF 180M in personally owned relationships with a credible timeline for transfer will receive a materially better offer than a candidate claiming CHF 300M but unable to distinguish personally originated from institutionally owned relationships.
+
+Second: Revenue quality. ROA matters as much as AUM. A CHF 150M book generating 90 basis points in fee income is worth more to a hiring bank than a CHF 200M book generating 40 basis points. Banks build internal business cases using revenue assumptions, and those assumptions are driven by the historical ROA of the candidate's existing book.
+
+Third: Clawback obligation. The cost to a candidate of leaving their current employer, the unvested portion of deferred compensation, directly affects how much transition support a new bank needs to provide and therefore influences the total first-year package structure.
+
+Fourth: Time to break-even. Banks model how long it takes for the revenue generated by a new hire's transferred AUM to cover the cost of that hire, including base salary, NPC, and any signing components. A candidate with higher portability and better ROA has a shorter break-even, which makes the hire less risky and the offer more competitive.
+
+Fifth: Market specificity. A banker who covers a market segment where the hiring institution has a strategic gap, currently including Israeli market, Turkish UHNW, and Brazilian offshore, commands a premium that can take the package significantly above benchmark.
+
+## What the 2026 market is paying for
+
+The premium segments in 2026 are: Relationship Managers with genuine Israeli market coverage and an active ISA licence, where supply is extremely thin relative to demand; Turkish UHNW coverage, where regulatory complexity creates scarcity; and candidates with a credible South American offshore book, particularly Brazilian and Argentine market specialists.
+
+The competitive segments where compensation is more standardised are Swiss onshore, CIS and CEE coverage from established corridors, and Western European cross-border where many banks already have capable teams.
+
+---
+
+These benchmarks reflect placement activity and mandate negotiations handled by Executive Partners across Geneva and Zurich in 2025 and early 2026. They are directional and do not represent an offer or guarantee of compensation.`,
+  },
+  {
+    slug: "isa-licence-private-banking-switzerland",
+    title: "What Is an ISA Licence and Why Does It Matter for Swiss Private Banking?",
+    seoTitle: "ISA Licence Private Banking Switzerland: What It Is and Why Banks Want It",
+    seoDescription: "The ISA licence is the Israeli regulatory authorisation that Swiss private banks now require for relationship managers covering Israeli UHNW clients. Here is what it means and why it has become the key hiring filter.",
+    date: "2026-06-22",
+    engagementScore: 82,
+    featured: false,
+    summary: "Several Swiss private banks have opened or are expanding Israeli market desks. The ISA licence is the hard requirement most candidates cannot meet. Here is what it is and why it matters.",
+    linkedinUrl: "",
+    pillar: "P1",
+    subTheme: "Positioning",
+    markets: ["CH", "UAE"],
+    keywords: ["ISA licence private banking", "Israeli market private banking Switzerland", "Investment Services Act Israel", "private banking Israeli clients", "ISA licence recruiter"],
+    body: `In 2024 and 2025, several Swiss private banks made a quiet but significant commitment: they either opened Israeli market desks or formally expanded coverage of Israeli UHNW clients from their Geneva and Zurich platforms. The hiring demand that followed introduced a term into the Swiss private banking recruitment conversation that had previously been peripheral: the ISA licence.
+
+The ISA licence has become the single most common hard requirement in Israeli market mandates at Swiss and international banks. It is also the requirement that eliminates most candidates from consideration before the conversation about AUM, market coverage or compensation even begins.
+
+## What the ISA licence is
+
+The ISA licence is the authorisation issued under Israel's Investment Services Act that permits individuals to provide investment advice or portfolio management services in Israel. It is the Israeli equivalent of the FCA's discretionary management authorisation in the UK, the SFC Type 4 or Type 9 licence in Hong Kong, or the SEC investment advisor registration in the United States.
+
+For private bankers working with Israeli UHNW clients from a Swiss booking centre, the ISA licence matters in a specific and practical way: Israeli law restricts who can provide investment advice to Israeli residents, including those banking offshore. A banker without the appropriate authorisation who provides investment advice to an Israeli client, even from Geneva, even for assets booked in Switzerland, is potentially operating in breach of Israeli regulatory requirements.
+
+Swiss banks covering Israeli clients have increasingly concluded that the legal and reputational risk of employing bankers who lack the appropriate Israeli authorisation outweighs the commercial cost of requiring it. The result is a hiring filter that sounds technical but has become a hard gate.
+
+## Who has an ISA licence and who does not
+
+The ISA licence is issued by the Israel Securities Authority. Obtaining it requires passing a series of examinations administered in Hebrew, demonstrating relevant professional experience, and submitting an application to the ISA. The process is substantive and takes time.
+
+The pool of private bankers outside Israel who hold an active ISA licence is small. Most of the candidates who hold it are Israeli nationals or individuals with deep Israeli market experience who worked at Israeli financial institutions before transitioning to Swiss or international private banking. A banker who has spent their career managing Israeli UHNW clients from Geneva or Zurich and who has never lived or worked in Israel will almost certainly not hold the licence.
+
+This creates the scarcity dynamic that defines the current Israeli market hiring environment in Switzerland. The banks want to expand coverage. The talent supply is thin. The compensation that follows from that mismatch is among the most competitive in Swiss private banking for the right profile.
+
+## What banks actually want
+
+The ISA licence is a necessary condition in most Israeli desk mandates at Swiss banks, but it is not sufficient on its own. What banks are looking for, once the licence requirement is satisfied, is genuine Israeli market coverage: personal relationships with Israeli UHNW and HNW individuals, entrepreneurs, business owners, former technology company founders, real estate developers, and family office principals, built over years of direct engagement.
+
+The AUM requirements in Israeli market mandates vary significantly. Several of the banks currently hiring for this coverage have explicitly stated no minimum AUM requirement. They are prioritising ISA licence and market coverage quality over book size. This is unusual relative to Swiss private banking norms and reflects the genuine scarcity of the candidate profile. A relationship manager with an active ISA licence and a credible Israeli UHNW network, even with a book well below CHF 100M, is a compelling candidate for several Swiss platforms right now.
+
+## The regulatory context
+
+Israel's Investment Services Act has been in place since 1995, but its extraterritorial application to offshore services has become more actively enforced in the past decade as Israeli regulatory authorities have paid increasing attention to the practices of international banks managing Israeli client assets from offshore booking centres.
+
+Several Swiss banks were part of earlier regulatory settlements with Israeli authorities over undeclared assets, a process that accelerated the drive toward formal compliance frameworks including the ISA licence requirement. The banks that now require it are in part responding to that regulatory history and the reputational preference for operating within Israeli regulatory frameworks rather than testing their boundaries.
+
+## What this means for candidates and for banks
+
+For a private banker with Israeli market experience who does not hold the ISA licence, the question is whether obtaining it is worth the investment. The examination process is in Hebrew, which immediately limits the population of candidates for whom this is feasible. For those who do speak Hebrew and have the market background, the path is clear: the licence opens a mandate environment where demand significantly exceeds supply.
+
+For banks, the constraint is real. Several institutions have been running Israeli market searches for months without finding candidates who combine the ISA licence, genuine market coverage, and the cultural and linguistic fluency that Israeli UHNW clients expect. The willingness to waive minimum AUM requirements is a direct consequence of that constraint.
+
+Executive Partners runs confidential Israeli market mandates for several Swiss and international private banking institutions. The hard requirement on ISA licence is consistent across these mandates. The AUM requirement varies, and some mandates explicitly carry no minimum. The common thread is the combination of regulatory authorisation and personal market relationships that the licence alone cannot create.
+
+---
+
+[1] Israel Securities Authority, Investment Advice, Investment Marketing and Investment Portfolio Management Law, 5755-1995.
+[2] FINMA, Supervisory Notice: cross-border services and the applicable licensing requirements in client jurisdictions, 2019.`,
+  },
 ] as const;
