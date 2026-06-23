@@ -25,14 +25,60 @@ export const markets: Market[] = [
   {
     slug: "geneva",
     title: "Geneva",
+    name: "Private Banking & Wealth Management Recruitment — Geneva",
+    headline: "Executive Partners is Geneva-based and places senior private bankers, relationship managers, and wealth management professionals across the city's leading private banks, EAMs, and family offices.",
     country: "Switzerland",
     description:
-      "Private banking & wealth management hub serving UHNW clients across Europe and beyond.",
+      "Geneva is the world's most concentrated private banking market by AUM per capita, home to over 100 banks and the headquarters of most major Swiss and international private banking franchises. Executive Partners operates exclusively in this market from its Geneva base.",
     heroImage: "/images/markets/geneva.jpg",
     facts: [
-      { label: "Focus", value: "Private Banking, Wealth Mgmt" },
+      { label: "Focus", value: "Private Banking, EAM, Family Offices" },
       { label: "Region", value: "Lake Geneva / Romandy" },
+      { label: "Language", value: "French / English" },
+      { label: "Currency", value: "CHF" },
     ],
+    hiringPulse: [
+      "Sustained demand for French-speaking senior RMs with European and MENA client books",
+      "EAM sector expanding rapidly — independent asset managers actively hiring experienced bankers",
+      "UBP, Lombard Odier, Pictet, and Mirabaud running selective senior mandates",
+      "Strong appetite for bankers with UHNW books above CHF 300M and proven portability",
+      "Family office structuring and next-gen wealth transition driving new advisory mandates",
+      "Compliance timelines lengthening; 3 - 6 month onboarding standard at major platforms",
+    ],
+    comp: {
+      currency: "CHF",
+      netNote:
+        "Indicative gross figures for Geneva-based roles. Actual packages vary by AUM, revenue generation, book portability, and seniority. Swiss social contributions apply.",
+      bands: [
+        { level: "Senior Relationship Manager", base: "CHF 180K - 260K", bonus: "40 - 80%", note: "Min. CHF 250M AUM typically expected" },
+        { level: "Director / Team Head", base: "CHF 260K - 380K", bonus: "50 - 100%", note: "Revenue target CHF 1.5M+" },
+        { level: "Managing Director", base: "CHF 380K - 550K+", bonus: "60 - 130%", note: "Book CHF 500M+ for Tier 1 platforms" },
+        { level: "EAM / Independent Advisor", base: "CHF 120K - 200K", bonus: "Revenue share model", note: "Retrocession and AUM-based structures common" },
+      ],
+    },
+    regulatory: [
+      "FINMA oversight applies to all client-facing roles; registration mandatory for advisors",
+      "Swiss Banking Act and FINSA/FINIA framework governs all wealth management activity",
+      "Garden leave clauses typically 3 - 6 months at senior level; factored into all EP mandates",
+      "Non-solicitation agreements strictly enforced; client portability analysis essential pre-move",
+      "EAM regulation tightened under FINIA 2020 — independent managers require FINMA authorisation",
+      "AML/KYC standards among the world's most stringent; FINMA Circular 2016/7 applies",
+    ],
+    ecosystem: {
+      title: "Geneva Private Banking Ecosystem",
+      items: [
+        "Pictet", "Lombard Odier", "UBP (Union Bancaire Privee)", "Mirabaud",
+        "Edmond de Rothschild", "SYZ Group", "Banque Syz", "Julius Baer (Geneva)",
+        "UBS (Geneva)", "BNP Paribas Wealth Management", "Credit Agricole (LCL)",
+        "BCGE", "Reyl & Cie", "Notz Stucki", "Piguet Galland",
+      ],
+      trends: [
+        "EAM sector consolidation", "UHNW family office mandates",
+        "Next-gen wealth transition", "MENA and African client flows",
+        "Digital asset integration", "Sustainable / ESG mandates",
+        "Cross-border APAC coverage", "Independent manager FINIA compliance",
+      ],
+    },
   },
     {
     slug: "zurich",
@@ -96,6 +142,8 @@ export const markets: Market[] = [
   {
     slug: "dubai",
     title: "Dubai",
+    name: "Private Banking & Wealth Management Recruitment — Dubai",
+    headline: "Executive Partners sources senior private bankers and relationship managers for Dubai's leading international private banking franchises and DIFC-based wealth platforms.",
     country: "United Arab Emirates",
     description:
       "Fast-growing wealth hub serving Middle East, Africa, and South Asia with international banks.",
@@ -108,6 +156,8 @@ export const markets: Market[] = [
   {
     slug: "london",
     title: "London",
+    name: "Private Banking & Wealth Management Recruitment — London",
+    headline: "Executive Partners places senior private bankers and wealth managers across London's international UHNW platforms, from global private banking majors to boutique multi-family offices.",
     country: "United Kingdom",
     description:
       "Global hub for international wealth, with deep capital markets and multi-family office presence.",
@@ -120,6 +170,8 @@ export const markets: Market[] = [
   {
     slug: "new-york",
     title: "New York",
+    name: "Private Banking & Wealth Management Recruitment — New York",
+    headline: "Executive Partners sources senior private bankers and wealth management professionals for New York's leading UHNW platforms, private banks, and alternative investment firms.",
     country: "United States",
     description:
       "Wall Street and beyond — a world-leading center for investment banking, asset management, and private wealth.",
@@ -132,6 +184,8 @@ export const markets: Market[] = [
   {
     slug: "miami",
     title: "Miami",
+    name: "Private Banking & Wealth Management Recruitment — Miami",
+    headline: "Executive Partners places senior private bankers and relationship managers serving LATAM UHNW clients across Miami's fast-growing international wealth management market.",
     country: "United States",
     description:
       "Gateway to LATAM wealth, with rapid UHNW inflows and international private banking presence.",
@@ -144,6 +198,8 @@ export const markets: Market[] = [
   {
     slug: "singapore",
     title: "Singapore",
+    name: "Private Banking & Wealth Management Recruitment — Singapore",
+    headline: "Executive Partners sources senior private bankers and relationship managers for Singapore's leading private banking platforms and family offices serving ASEAN, South Asian, and global UHNW clients.",
     country: "Singapore",
     description:
       "Asia’s premier wealth hub with strong regulatory environment and cross-border private banking.",
@@ -156,6 +212,8 @@ export const markets: Market[] = [
   {
     slug: "hong-kong",
     title: "Hong Kong",
+    name: "Private Banking & Wealth Management Recruitment — Hong Kong",
+    headline: "Executive Partners places senior private bankers and wealth management professionals across Hong Kong's UHNW platforms serving Greater China, North Asia, and international clients.",
     country: "China (SAR)",
     description:
       "Gateway to China and North Asia, with deep-rooted UHNW private banking franchises.",
