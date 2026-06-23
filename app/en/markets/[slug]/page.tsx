@@ -76,6 +76,46 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  if (slug === "london") {
+    return {
+      title: "Private Banking Recruiter London | Senior RM & UHNW Wealth Management Search",
+      description: "London's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and international wealth managers at FCA-regulated platforms. Compensation benchmarks, FCA licensing and live mandates.",
+      alternates: { canonical: "https://www.execpartners.ch/en/markets/london" },
+      openGraph: { type: "website", url: "/en/markets/london", title: "Private Banking Recruiter London | Senior RM & UHNW Jobs", description: "London private banking recruitment: UK resident, non-dom and international UHNW wealth. Senior RM and Team Head mandates at leading London platforms.", siteName: "Executive Partners" },
+      robots: { index: true, follow: true },
+    };
+  }
+
+  if (slug === "hong-kong") {
+    return {
+      title: "Private Banking Recruiter Hong Kong | Senior RM & Greater China Wealth Management Search",
+      description: "Hong Kong's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and North Asia bankers at SFC-regulated platforms. Compensation benchmarks, SFC licensing and live mandates.",
+      alternates: { canonical: "https://www.execpartners.ch/en/markets/hong-kong" },
+      openGraph: { type: "website", url: "/en/markets/hong-kong", title: "Private Banking Recruiter Hong Kong | Greater China Senior RM Jobs", description: "Hong Kong private banking recruitment: Greater China, North Asia and UHNW international wealth. Senior RM and Team Head mandates at leading HK platforms.", siteName: "Executive Partners" },
+      robots: { index: true, follow: true },
+    };
+  }
+
+  if (slug === "new-york") {
+    return {
+      title: "Private Banking Recruiter New York | Senior RM & UHNW Wealth Management Search",
+      description: "New York's specialist private banking headhunter. Executive Partners places Senior RMs, Team Heads and LATAM coverage bankers at SEC/FINRA-regulated platforms. Compensation benchmarks and live mandates.",
+      alternates: { canonical: "https://www.execpartners.ch/en/markets/new-york" },
+      openGraph: { type: "website", url: "/en/markets/new-york", title: "Private Banking Recruiter New York | Senior RM & UHNW Jobs", description: "New York private banking recruitment: US taxable wealth, LATAM and international UHNW. Senior RM and Team Head mandates at leading US platforms.", siteName: "Executive Partners" },
+      robots: { index: true, follow: true },
+    };
+  }
+
+  if (slug === "miami") {
+    return {
+      title: "Private Banking Recruiter Miami | Senior RM & LATAM Wealth Management Search",
+      description: "Miami's specialist private banking headhunter. Executive Partners places Senior RMs and Team Heads serving LATAM UHNW clients at international platforms. Compensation benchmarks and live mandates.",
+      alternates: { canonical: "https://www.execpartners.ch/en/markets/miami" },
+      openGraph: { type: "website", url: "/en/markets/miami", title: "Private Banking Recruiter Miami | LATAM Senior RM Jobs", description: "Miami private banking recruitment: LATAM UHNW and offshore wealth. Senior RM and Team Head mandates at leading Miami and US platforms.", siteName: "Executive Partners" },
+      robots: { index: true, follow: true },
+    };
+  }
+
   const m = getMarket(slug);
   if (!m) {
     return {
