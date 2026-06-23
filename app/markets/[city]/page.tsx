@@ -383,7 +383,7 @@ export async function generateMetadata({
   const info = MARKETS[city];
   if (!info) return { title: { absolute: "Market — Executive Partners" } };
 
-  const url = `${SITE}/markets/${city}`;
+  const url = `${SITE}/en/markets/${city}`;
   const title = `${info.title} — Private Banking Market`;
   const description = info.intro;
 
