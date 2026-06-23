@@ -4162,6 +4162,7 @@ For the private banker considering a move, EFG represents a genuine alternative 
   {
     slug: "what-is-aum-portability-private-banking",
     speakable: true,
+    speakable: true,
     title: "What Is AUM Portability in Private Banking?",
     seoTitle: "AUM Portability in Private Banking: The Definitive Guide (2026)",
     seoDescription: "AUM portability is the estimated percentage of a private banker's client assets that would follow them to a new bank. Learn how it is calculated, what affects it, and how banks assess it in 2026.",
@@ -4234,6 +4235,7 @@ Understanding your own portability accurately, before walking into any hiring co
   {
     slug: "private-banking-salary-switzerland-2026",
     speakable: true,
+    speakable: true,
     title: "Private Banking Salaries in Switzerland 2026: What Senior RMs Actually Earn",
     seoTitle: "Private Banking Salary Switzerland 2026 | Senior RM Compensation Benchmarks",
     seoDescription: "Compensation benchmarks for Senior Relationship Managers, Team Heads and Investment Advisors in Swiss private banking 2026. Base salary, bonus and total package ranges for Geneva and Zurich.",
@@ -4290,6 +4292,7 @@ These benchmarks reflect placement activity and mandate negotiations handled by 
   },
   {
     slug: "isa-licence-private-banking-switzerland",
+    speakable: true,
     speakable: true,
     title: "What Is an ISA Licence and Why Does It Matter for Swiss Private Banking?",
     seoTitle: "ISA Licence Private Banking Switzerland: What It Is and Why Banks Want It",
