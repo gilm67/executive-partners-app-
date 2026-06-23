@@ -209,6 +209,13 @@ export default function FrenchHomePage() {
               <p className="text-white/50 text-xs leading-relaxed">Salaires 2026, licences FINMA, mandats actifs</p>
             </Link>
             <Link
+              href="/fr/marches/zurich"
+              className="block rounded-xl border border-white/10 bg-white/5 p-4 hover:bg-white/10 transition"
+            >
+              <p className="text-[#C9A14A] font-semibold text-sm mb-1">Marché de Zurich →</p>
+              <p className="text-white/50 text-xs leading-relaxed">Salaires 2026, DACH vs offshore, UBS · Julius Baer · Vontobel</p>
+            </Link>
+            <Link
               href="/fr/chasseur-de-tetes-banque-privee-geneve"
               className="block rounded-xl border border-white/10 bg-white/5 p-4 hover:bg-white/10 transition"
             >

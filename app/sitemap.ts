@@ -133,6 +133,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // French pages
     "/fr/candidats",
     "/fr/marches/geneve",
+    "/fr/marches/zurich",
     "/fr/chasseur-de-tetes-banque-privee-geneve",
   ];
 

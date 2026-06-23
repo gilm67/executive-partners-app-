@@ -66,6 +66,7 @@ export type InsightArticle = {
    */
   seoTitle?: string;
   seoDescription?: string;
+  speakable?: boolean; // Adds SpeakableSpecification schema — use on definitional/reference articles
 };
 
 /**
@@ -4160,6 +4161,7 @@ For the private banker considering a move, EFG represents a genuine alternative 
 
   {
     slug: "what-is-aum-portability-private-banking",
+    speakable: true,
     title: "What Is AUM Portability in Private Banking?",
     seoTitle: "AUM Portability in Private Banking: The Definitive Guide (2026)",
     seoDescription: "AUM portability is the estimated percentage of a private banker's client assets that would follow them to a new bank. Learn how it is calculated, what affects it, and how banks assess it in 2026.",
@@ -4180,7 +4182,7 @@ Most private bankers significantly overestimate their portability. Most banks st
 
 AUM portability is not a fixed number. It is an estimate of the proportion of a banker's current assets under management that are likely to follow them to a new platform within a defined window, typically twelve to eighteen months.
 
-The estimate depends on several variables that are specific to each banker's book, each client relationship, and each market. A banker managing CHF 300M in Geneva does not have CHF 300M in portable AUM. They have some fraction of that, maybe CHF 120M, maybe CHF 240M, and the actual figure depends on things that cannot be read off a portfolio statement.
+The estimate depends on several variables that are specific to each banker's book, each client relationship, and each market. A banker managing CHF 300M in [Geneva](/en/markets/geneva) does not have CHF 300M in portable AUM. They have some fraction of that, maybe CHF 120M, maybe CHF 240M, and the actual figure depends on things that cannot be read off a portfolio statement.
 
 The relevant variables are: the nature of the relationship (personal versus institutionally owned), the client's banking history (single-banked versus multi-banked), the jurisdiction of the booking (which affects how easy it is for a client to move assets), the existence and scope of non-solicitation agreements, the product complexity of the book (discretionary mandates are harder to move than advisory), and the time elapsed since the last significant market event affecting the client's risk appetite.
 
@@ -4214,7 +4216,7 @@ Executive Partners uses a structured six-dimension scoring model to estimate rea
 
 Each dimension is scored, weighted, and combined into a single portability estimate with a range, not a point estimate. The range matters. A book might realistically transfer 40% to 65% of AUM depending on market conditions, timing, and client decisions that cannot be fully controlled. A business plan built on 65% and stress-tested at 40% is credible. A business plan built on 65% with no downside scenario is not.
 
-The tool is available at execpartners.ch/en/portability and takes approximately twelve minutes to complete. The output is a portability score, an estimated range of portable AUM, and an identification of which dimensions most constrain the estimate, which is often more useful than the headline number.
+The tool is available at [execpartners.ch/en/portability](/en/portability) and takes approximately twelve minutes to complete. The output is a portability score, an estimated range of portable AUM, and an identification of which dimensions most constrain the estimate, which is often more useful than the headline number.
 
 ## Why this matters for compensation negotiation
 
@@ -4231,6 +4233,7 @@ Understanding your own portability accurately, before walking into any hiring co
   },
   {
     slug: "private-banking-salary-switzerland-2026",
+    speakable: true,
     title: "Private Banking Salaries in Switzerland 2026: What Senior RMs Actually Earn",
     seoTitle: "Private Banking Salary Switzerland 2026 | Senior RM Compensation Benchmarks",
     seoDescription: "Compensation benchmarks for Senior Relationship Managers, Team Heads and Investment Advisors in Swiss private banking 2026. Base salary, bonus and total package ranges for Geneva and Zurich.",
@@ -4247,7 +4250,7 @@ Understanding your own portability accurately, before walking into any hiring co
 
 ## Geneva: Compensation by level
 
-Geneva's compensation for front-office private banking professionals reflects the city's status as the world's largest offshore wealth management centre. The market is competitive at the senior level and increasingly bifurcated: institutions are paying premium packages for candidates with verified portable books and demonstrable ROA, and below-market packages for candidates whose portability claims do not survive scrutiny.
+[Geneva](/en/markets/geneva)'s compensation for front-office private banking professionals reflects the city's status as the world's largest offshore wealth management centre. The market is competitive at the senior level and increasingly bifurcated: institutions are paying premium packages for candidates with verified portable books and demonstrable ROA, and below-market packages for candidates whose portability claims do not survive scrutiny.
 
 Director level (Senior RM): Base salary CHF 180,000 to 250,000. Total compensation including bonus CHF 290,000 to 450,000. Bonus typically 50 to 100 percent of base. Candidates with a multi-year revenue history, a verifiable portable book above CHF 150M, and strong ROA can negotiate at or above the top of this range. Non-producible contributions to offset clawback obligations at the departing bank are common at this level and typically sized at 6 to 18 months of total prior compensation.
 
@@ -4257,7 +4260,7 @@ Managing Director and Regional Director: Base salary CHF 280,000 to 400,000. Tot
 
 ## Zurich: How the DACH market differs
 
-Zurich's compensation structure differs from Geneva's in ways that are often misunderstood. The base salary range is broadly similar, but the bonus structure is more conservative, and the total package for comparable seniority often runs 10 to 15 percent below Geneva for equivalent AUM. This reflects the market's character: Zurich's private banking focuses more on onshore DACH wealth, where relationships are typically longer, more stable, and less mobile, and where the business development intensity that commands premium bonuses is lower.
+[Zurich](/en/markets/zurich)'s compensation structure differs from [Geneva](/en/markets/geneva)'s in ways that are often misunderstood. The base salary range is broadly similar, but the bonus structure is more conservative, and the total package for comparable seniority often runs 10 to 15 percent below Geneva for equivalent AUM. This reflects the market's character: Zurich's private banking focuses more on onshore DACH wealth, where relationships are typically longer, more stable, and less mobile, and where the business development intensity that commands premium bonuses is lower.
 
 Senior RM and Director in Zurich: Base salary CHF 170,000 to 240,000. Total compensation CHF 270,000 to 420,000. Bonus 50 to 90 percent. International UHNW mandates at Zurich platforms command compensation closer to the Geneva range.
 
@@ -4273,7 +4276,7 @@ Third: Clawback obligation. The cost to a candidate of leaving their current emp
 
 Fourth: Time to break-even. Banks model how long it takes for the revenue generated by a new hire's transferred AUM to cover the cost of that hire, including base salary, NPC, and any signing components. A candidate with higher portability and better ROA has a shorter break-even, which makes the hire less risky and the offer more competitive.
 
-Fifth: Market specificity. A banker who covers a market segment where the hiring institution has a strategic gap, currently including Israeli market, Turkish UHNW, and Brazilian offshore, commands a premium that can take the package significantly above benchmark.
+Fifth: Market specificity. A banker who covers a market segment where the hiring institution has a strategic gap, currently including [Israeli market](/en/israeli-market-private-banking-switzerland), Turkish UHNW, and Brazilian offshore, commands a premium that can take the package significantly above benchmark.
 
 ## What the 2026 market is paying for
 
@@ -4287,6 +4290,7 @@ These benchmarks reflect placement activity and mandate negotiations handled by 
   },
   {
     slug: "isa-licence-private-banking-switzerland",
+    speakable: true,
     title: "What Is an ISA Licence and Why Does It Matter for Swiss Private Banking?",
     seoTitle: "ISA Licence Private Banking Switzerland: What It Is and Why Banks Want It",
     seoDescription: "The ISA licence is the Israeli regulatory authorisation that Swiss private banks now require for relationship managers covering Israeli UHNW clients. Here is what it means and why it has become the key hiring filter.",
@@ -4299,7 +4303,7 @@ These benchmarks reflect placement activity and mandate negotiations handled by 
     subTheme: "Positioning",
     markets: ["CH", "UAE"],
     keywords: ["ISA licence private banking", "Israeli market private banking Switzerland", "Investment Services Act Israel", "private banking Israeli clients", "ISA licence recruiter"],
-    body: `In 2024 and 2025, several Swiss private banks made a quiet but significant commitment: they either opened Israeli market desks or formally expanded coverage of Israeli UHNW clients from their Geneva and Zurich platforms. The hiring demand that followed introduced a term into the Swiss private banking recruitment conversation that had previously been peripheral: the ISA licence.
+    body: `In 2024 and 2025, several Swiss private banks made a quiet but significant commitment: they either opened Israeli market desks or formally expanded coverage of Israeli UHNW clients from their [Geneva](/en/markets/geneva) and [Zurich](/en/markets/zurich) platforms. The hiring demand that followed introduced a term into the Swiss private banking recruitment conversation that had previously been peripheral: the ISA licence.
 
 The ISA licence has become the single most common hard requirement in Israeli market mandates at Swiss and international banks. It is also the requirement that eliminates most candidates from consideration before the conversation about AUM, market coverage or compensation even begins.
 
@@ -4337,7 +4341,7 @@ For a private banker with Israeli market experience who does not hold the ISA li
 
 For banks, the constraint is real. Several institutions have been running Israeli market searches for months without finding candidates who combine the ISA licence, genuine market coverage, and the cultural and linguistic fluency that Israeli UHNW clients expect. The willingness to waive minimum AUM requirements is a direct consequence of that constraint.
 
-Executive Partners runs confidential Israeli market mandates for several Swiss and international private banking institutions. The hard requirement on ISA licence is consistent across these mandates. The AUM requirement varies, and some mandates explicitly carry no minimum. The common thread is the combination of regulatory authorisation and personal market relationships that the licence alone cannot create.
+Executive Partners runs [confidential Israeli market mandates](/en/israeli-market-private-banking-switzerland) for several Swiss and international private banking institutions. The hard requirement on ISA licence is consistent across these mandates. The AUM requirement varies, and some mandates explicitly carry no minimum. The common thread is the combination of regulatory authorisation and personal market relationships that the licence alone cannot create.
 
 ---
 

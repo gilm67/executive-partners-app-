@@ -245,6 +245,18 @@ export default function InsightDetailPage({ params }: Props) {
         }
       : null;
 
+  // SpeakableSpecification — for definitional articles that AI Overview should cite
+  const speakableJsonLd = article.speakable ? {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": pageUrl,
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: ["h1", "h2", ".article-summary", "p"],
+    },
+    url: pageUrl,
+  } : null;
+
   const pillar = article.pillar;
   const subTheme = article.subTheme;
   const subThemeHub = subThemeHubHref(subTheme);
@@ -263,6 +275,12 @@ export default function InsightDetailPage({ params }: Props) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      ) : null}
+      {speakableJsonLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableJsonLd) }}
         />
       ) : null}
 

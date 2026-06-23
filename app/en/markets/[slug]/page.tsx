@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: "Private Banking Zurich | 2026 DACH Compensation Benchmarks & Market Intelligence",
       description: "Zurich private banking market hub: 2026 DACH compensation benchmarks, FINMA licensing, onshore wealth dynamics and key banks. Executive Partners places Senior RMs and Team Heads at leading Zurich platforms.",
-      alternates: { canonical: "https://www.execpartners.ch/en/markets/zurich" },
+      alternates: { canonical: "https://www.execpartners.ch/en/markets/zurich", languages: { "fr": "https://www.execpartners.ch/fr/marches/zurich", "x-default": "https://www.execpartners.ch/en/markets/zurich" } },
       openGraph: { type: "website", url: "/en/markets/zurich", title: "Private Banking Zurich | DACH Compensation Benchmarks & Market Hub", description: "Zurich private banking: DACH onshore compensation benchmarks, FINMA licensing, key banks and live Senior RM mandates. The Zurich private banking market hub from Executive Partners.", siteName: "Executive Partners" },
       robots: { index: true, follow: true },
     };
