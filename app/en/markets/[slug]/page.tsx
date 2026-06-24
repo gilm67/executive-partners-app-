@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: "Private Banking Geneva | 2026 Compensation Benchmarks, Market Intelligence & Senior RM Mandates",
       description: "Geneva private banking market hub: 2026 compensation benchmarks, FINMA licensing, key banks and EAM ecosystem. Executive Partners places Senior RMs and Team Heads confidentially at Swiss and international platforms.",
-      alternates: { canonical: "https://www.execpartners.ch/en/markets/geneva", languages: { "fr": "https://www.execpartners.ch/fr/marches/geneve", "x-default": "https://www.execpartners.ch/en/markets/geneva" } },
+      alternates: { canonical: "https://www.execpartners.ch/en/markets/geneva", languages: { "fr": "https://www.execpartners.ch/fr/marches/geneve", "de": "https://www.execpartners.ch/de/privatbanken-genf", "x-default": "https://www.execpartners.ch/en/markets/geneva" } },
       openGraph: { type: "website", url: "/en/markets/geneva", title: "Private Banking Geneva | Compensation Benchmarks & Market Hub", description: "Geneva private banking: UHNW and HNW compensation data, FINMA licensing, EAM ecosystem and live Senior RM mandates. The Geneva private banking market hub from Executive Partners.", siteName: "Executive Partners" },
       robots: { index: true, follow: true },
     };
