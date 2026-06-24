@@ -16,12 +16,29 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { token, data } = body;
     if (token) {
-      const tokensPath = path.join(process.cwd(), "data/assessment-tokens.json");
-      if (fs.existsSync(tokensPath)) {
-        const tokens = JSON.parse(fs.readFileSync(tokensPath, "utf-8"));
-        if (!tokens[token]) {
-          return NextResponse.json({ error: "Invalid or expired token" }, { status: 403 });
+      let tokenValid = false;
+      // Check Vercel KV first (production tokens created via intake tool)
+      try {
+        const kvUrl = process.env.KV_REST_API_URL;
+        const kvToken = process.env.KV_REST_API_TOKEN;
+        if (kvUrl && kvToken) {
+          const kvRes = await fetch(`${kvUrl}/get/assessment:token:${token}`, {
+            headers: { Authorization: `Bearer ${kvToken}` },
+          });
+          const kvData = await kvRes.json();
+          if (kvData?.result) tokenValid = true;
         }
+      } catch { /* fall through to file check */ }
+      // Fallback: check JSON file (legacy tokens)
+      if (!tokenValid) {
+        const tokensPath = path.join(process.cwd(), "data/assessment-tokens.json");
+        if (fs.existsSync(tokensPath)) {
+          const tokens = JSON.parse(fs.readFileSync(tokensPath, "utf-8"));
+          if (tokens[token]) tokenValid = true;
+        }
+      }
+      if (!tokenValid) {
+        return NextResponse.json({ error: "Invalid or expired token" }, { status: 403 });
       }
     }
     const prompt = buildPrompt(data);
