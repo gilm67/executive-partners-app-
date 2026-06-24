@@ -95,6 +95,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/de/headhunter-zuerich",
     "/de/privatbanken-zuerich",
     "/de/privatbanken-genf",
+    "/de/insights/zuerich-privatbank-talentmarkt-und-gehaelter-2026",
     "/en/faq",
     "/en/private-banking-recruiter-geneva",
     "/en/private-banking-recruiter-zurich",

@@ -14,6 +14,23 @@ export type InsightArticleDe = {
 
 export const INSIGHTS_DE: readonly InsightArticleDe[] = [
   {
+    slug: "zuerich-privatbank-talentmarkt-und-gehaelter-2026",
+    title: "Zürich Privatbank 2026: Gehälter, Talentmarkt und was Senior RMs jetzt wissen müssen",
+    date: "2026-06-24",
+    markets: ["CH"],
+    summary: "Zürich ist der grösste Finanzplatz der Schweiz — aber der Talentmarkt im Private Banking befindet sich im Wandel. UBS-Integration, steigende Compliance-Anforderungen und ein Wettbewerb um erfahrene Relationship Manager, den der Markt so noch nicht erlebt hat.",
+    readTime: "8 min",
+    keywords: [
+      "Zürich Privatbank Gehalt 2026",
+      "Relationship Manager Zürich",
+      "Private Banking Recruitment Zürich",
+      "UBS Julius Baer Vontobel Stellen",
+      "Headhunter Zürich Privatbank",
+      "FINMA Compliance 2026",
+      "Zürich Talentmarkt",
+    ],
+  },
+  {
     slug: "zurich-talentmarkt-2026",
     title:
       "Zürich 2026: Warum der Talentmarkt im Private Banking gerade umkippt",
