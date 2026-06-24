@@ -96,6 +96,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/de/privatbanken-zuerich",
     "/de/privatbanken-genf",
     "/de/insights/zuerich-privatbank-talentmarkt-und-gehaelter-2026",
+    "/fr/insights/geneve-banque-privee-salaires-et-marche-2026",
+    "/fr/insights",
     "/en/faq",
     "/en/private-banking-recruiter-geneva",
     "/en/private-banking-recruiter-zurich",
