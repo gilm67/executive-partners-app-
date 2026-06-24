@@ -61,6 +61,7 @@ export type Inputs = {
   score?: number;
   ai_notes?: string;
   committee_score?: number;      // v2: committee readiness score (0-100)
+  captured_email?: string;       // set by bottom capture form to skip modal
 
   // Export bridge (Section 5 -> Calibration CTA)
   exportStatus?: ExportStatus;
@@ -229,6 +230,7 @@ export const useBP = create<BPState>((set, get) => ({
     score: 0,
     ai_notes: "",
     committee_score: 0,
+    captured_email: "",
 
     // Export bridge defaults
     exportStatus: "idle",

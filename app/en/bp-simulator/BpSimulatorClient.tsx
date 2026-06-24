@@ -34,6 +34,7 @@ export default function BpSimulatorClient() {
   const [prefill, setPrefill] = useState<ToolPrefill>(null);
   const [, setPrefillStatus] = useState<PrefillStatus>("idle");
 
+  const setBP = useBP((s: any) => s.set) as (patch: any) => void;
   const exportStatus = useBP((s: any) => s.exportStatus) as
     | "idle" | "generating" | "ready" | "error";
   const exportFileName = useBP((s: any) => s.exportFileName) as string | null;
@@ -126,6 +127,7 @@ export default function BpSimulatorClient() {
     }
 
     setBottomCapture(p => ({ ...p, submitting: false, done: true }));
+    setBP({ captured_email: bottomCapture.email });
     track("bp_email_captured", { market: String(storeI.current_market || ""), aum: Number(storeI.current_assets_m || 0), score: Number(storeI.score || 0) });
 
     // Trigger Section5's save button if it exists

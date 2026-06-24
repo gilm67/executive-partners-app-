@@ -15,7 +15,9 @@ export default function EmailGateModal({
   isOpen,
   onClose,
   onSubmit,
+  toolName,
 }: EmailGateModalProps): JSX.Element | null {
+  const isBP = toolName === "bp_simulator";
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,12 +69,13 @@ export default function EmailGateModal({
           </div>
 
           <h2 className="text-xl font-semibold text-white">
-            Receive your confidential Portability Diagnostic
+            {isBP ? "Download your confidential Business Plan PDF" : "Receive your confidential Portability Diagnostic"}
           </h2>
 
           <p className="mt-2 text-sm text-white/70">
-            This professional diagnostic is used internally to assess client
-            transferability across Tier-1 private banks.
+            {isBP
+              ? "Your complete 3-year P&L model, committee readiness score, and breakeven analysis — formatted as a confidential EP report."
+              : "This professional diagnostic is used internally to assess client transferability across Tier-1 private banks."}
             <br />
             <span className="text-white/60">
               Geneva · London · Dubai · Singapore
@@ -82,9 +85,19 @@ export default function EmailGateModal({
 
         {/* Value bullets */}
         <div className="mb-4 space-y-1 text-sm text-white/80">
-          <div>• Overall portability score</div>
-          <div>• Risk flags & structural constraints</div>
-          <div>• Practical recommendations</div>
+          {isBP ? (
+            <>
+              <div>• Committee Readiness Score (0-100)</div>
+              <div>• 3-year P&L model &amp; breakeven month</div>
+              <div>• Risk flags &amp; strengthening recommendations</div>
+            </>
+          ) : (
+            <>
+              <div>• Overall portability score</div>
+              <div>• Risk flags &amp; structural constraints</div>
+              <div>• Practical recommendations</div>
+            </>
+          )}
         </div>
 
         {/* Form */}
@@ -128,7 +141,7 @@ export default function EmailGateModal({
               disabled={loading}
               className="inline-flex items-center rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-[#0B0E13] hover:bg-white/90 disabled:opacity-60"
             >
-              {loading ? "Sending…" : "Receive my confidential report"}
+              {loading ? "Sending…" : isBP ? "Download my Business Plan PDF" : "Receive my confidential report"}
             </button>
           </div>
         </form>

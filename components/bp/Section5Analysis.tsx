@@ -330,7 +330,9 @@ export default function Section5Analysis() {
   }
 
   function onSaveAndPDF() {
-    if (!userEmail) { setShowEmailGate(true); return; }
+    const resolvedEmail = userEmail || (i as any).captured_email || null;
+    if (!resolvedEmail) { setShowEmailGate(true); return; }
+    if (!userEmail && resolvedEmail) setUserEmail(resolvedEmail);
     performSaveAndPDF();
   }
 
