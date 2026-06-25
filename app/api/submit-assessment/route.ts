@@ -5,6 +5,70 @@ import fs from "fs";
 import path from "path";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
+// ── Google Sheets logger ──────────────────────────────
+const SHEET_ID = "1Osr2RrgQZqDjK28knSXlqNXqJk2rcaATLqE1Yjy_W0c";
+const ASSESSMENTS_SHEET = "Assessments";
+
+async function logAssessmentToSheet(d: Record<string, unknown>, analysis: string, token: string) {
+  try {
+    const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    const privateKeyRaw = process.env.GOOGLE_PRIVATE_KEY;
+    if (!clientEmail || !privateKeyRaw) return;
+    const privateKey = privateKeyRaw.replace(/\n/g, "\n");
+    const now = Math.floor(Date.now() / 1000);
+    const header = { alg: "RS256", typ: "JWT" };
+    const payload = { iss: clientEmail, scope: "https://www.googleapis.com/auth/spreadsheets", aud: "https://oauth2.googleapis.com/token", exp: now + 3600, iat: now };
+    const encode = (obj: object) => Buffer.from(JSON.stringify(obj)).toString("base64url");
+    const signingInput = `${encode(header)}.${encode(payload)}`;
+    const keyData = privateKey.replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "").replace(/\s/g, "");
+    const binaryKey = Buffer.from(keyData, "base64");
+    const cryptoKey = await crypto.subtle.importKey("pkcs8", binaryKey, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"]);
+    const signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", cryptoKey, Buffer.from(signingInput));
+    const jwt = `${signingInput}.${Buffer.from(signature).toString("base64url")}`;
+    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion: jwt }),
+    });
+    const tokenData = await tokenRes.json();
+    if (!tokenData.access_token) return;
+
+    // Extract EP verdict score from analysis text
+    const scoreMatch = analysis.match(/Total[:\s]+(\d+)\s*\/\s*25/i);
+    const epScore = scoreMatch ? scoreMatch[1] + "/25" : "—";
+
+    const timestamp = new Date().toLocaleString("en-GB", { timeZone: "Europe/Zurich", day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    const aum = String(d.aum || "—");
+    const roa = (Number(d.aum) > 0 && Number(d.revenue) > 0) ? Math.round((Number(d.revenue) / Number(d.aum)) * 10000) + " bps" : "—";
+    const portability = String(d.portability || "—") + "%";
+
+    // Truncate analysis to first 500 chars for sheet readability
+    const analysisSummary = analysis.slice(0, 500).replace(/\n/g, " ").replace(/\s+/g, " ").trim() + "...";
+
+    await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${ASSESSMENTS_SHEET}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${tokenData.access_token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ values: [[
+          timestamp,
+          String(d.name || "—"),
+          String(d.email || "—"),
+          String(d.institution || "—"),
+          String(d.market || "—"),
+          aum + "M",
+          roa,
+          portability,
+          epScore,
+          token || "—",
+          analysisSummary,
+        ]] }),
+      }
+    );
+  } catch (e) {
+    console.error("Sheet log failed (non-blocking):", e);
+  }
+}
+
 export const maxDuration = 60;
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -108,6 +172,9 @@ export async function POST(req: NextRequest) {
         console.error("Token write skipped (read-only fs):", writeErr);
       }
     }
+    // Log to Google Sheets Assessments tab (non-blocking)
+    logAssessmentToSheet(data, analysis, token || "").catch(() => {});
+
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
