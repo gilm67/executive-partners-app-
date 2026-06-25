@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 
 const ROLES = [
   "Assistant Relationship Manager (ARM)",
@@ -28,12 +28,7 @@ const MARKETS = [
   "Other",
 ];
 
-const EXPERIENCE = [
-  "1-3 years",
-  "3-5 years",
-  "5-10 years",
-  "10+ years",
-];
+const EXPERIENCE = ["1-3 years", "3-5 years", "5-10 years", "10+ years"];
 
 type FormState = {
   firstName: string;
@@ -49,16 +44,31 @@ type FormState = {
 };
 
 const EMPTY: FormState = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  role: "",
-  institution: "",
-  experience: "",
-  markets: [],
-  languages: "",
-  brief: "",
-  consent: false,
+  firstName: "", lastName: "", email: "", role: "",
+  institution: "", experience: "", markets: [],
+  languages: "", brief: "", consent: false,
+};
+
+const inp: React.CSSProperties = {
+  backgroundColor: "#ffffff",
+  color: "#111827",
+  border: "1px solid #d1d5db",
+  borderRadius: "8px",
+  padding: "10px 14px",
+  fontSize: "14px",
+  width: "100%",
+  boxSizing: "border-box",
+  display: "block",
+};
+
+const lbl: React.CSSProperties = {
+  display: "block",
+  fontSize: "11px",
+  fontWeight: 600,
+  color: "#6b7280",
+  textTransform: "uppercase",
+  letterSpacing: "0.06em",
+  marginBottom: "6px",
 };
 
 export default function SpecialistBenchPage() {
@@ -66,14 +76,11 @@ export default function SpecialistBenchPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
-  const toggleMarket = (m: string) => {
+  const toggleMarket = (m: string) =>
     setForm((f) => ({
       ...f,
-      markets: f.markets.includes(m)
-        ? f.markets.filter((x) => x !== m)
-        : [...f.markets, m],
+      markets: f.markets.includes(m) ? f.markets.filter((x) => x !== m) : [...f.markets, m],
     }));
-  };
 
   const handleSubmit = async () => {
     if (!form.firstName || !form.lastName || !form.email || !form.role || !form.institution || !form.experience || !form.consent) {
@@ -88,7 +95,7 @@ export default function SpecialistBenchPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error("Submission failed");
+      if (!res.ok) throw new Error();
       setStatus("success");
     } catch {
       setStatus("error");
@@ -97,135 +104,171 @@ export default function SpecialistBenchPage() {
 
   if (status === "success") {
     return (
-      <main className="min-h-screen bg-[#F8F7F4] flex items-center justify-center px-4">
-        <div className="max-w-lg w-full bg-white rounded-2xl shadow-lg p-10 text-center">
-          <div className="w-16 h-16 rounded-full bg-[#1B3A6B]/10 flex items-center justify-center mx-auto mb-6">
-            <svg className="w-8 h-8 text-[#1B3A6B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <main style={{ minHeight: "100vh", background: "#F8F7F4", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+        <div style={{ maxWidth: "480px", width: "100%", background: "#fff", borderRadius: "16px", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", padding: "48px 40px", textAlign: "center" }}>
+          <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(27,58,107,0.08)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
+            <svg width="32" height="32" fill="none" stroke="#1B3A6B" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-semibold text-[#1B3A6B] mb-3">You are on the bench.</h2>
-          <p className="text-gray-600 leading-relaxed mb-6">
-            Your profile has been added to our Specialist Bench. We will reach out confidentially when a partner bank requests your specific expertise. No noise, no spam.
+          <h2 style={{ color: "#1B3A6B", fontSize: "22px", fontWeight: 600, marginBottom: "12px" }}>You are on the bench.</h2>
+          <p style={{ color: "#4b5563", lineHeight: 1.7, marginBottom: "24px" }}>
+            Your profile has been added to our Specialist Bench. We will reach out confidentially when a partner bank requests your specific expertise.
           </p>
-          <p className="text-sm text-gray-400">Executive Partners, Geneva</p>
+          <p style={{ fontSize: "13px", color: "#9ca3af" }}>Executive Partners, Geneva</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#F8F7F4]">
-      <section className="bg-[#1B3A6B] text-white py-16 px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#C9A14A] text-sm font-semibold tracking-widest uppercase mb-4">
+    <main style={{ minHeight: "100vh", background: "#F8F7F4" }}>
+
+      {/* Hero */}
+      <section style={{ background: "#1B3A6B", padding: "72px 16px" }}>
+        <div style={{ maxWidth: "720px", margin: "0 auto", textAlign: "center" }}>
+          <p style={{ color: "#C9A14A", fontSize: "12px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "16px" }}>
             Executive Partners — Specialist Bench
           </p>
-          <h1 className="text-3xl md:text-4xl font-semibold leading-tight mb-5">
+          <h1 style={{ color: "#ffffff", fontSize: "clamp(26px, 4vw, 38px)", fontWeight: 600, lineHeight: 1.25, marginBottom: "20px" }}>
             Your expertise deserves the right opportunity.
           </h1>
-          <p className="text-white/75 text-lg leading-relaxed max-w-2xl mx-auto">
+          <p style={{ color: "rgba(255,255,255,0.72)", fontSize: "17px", lineHeight: 1.7, maxWidth: "560px", margin: "0 auto" }}>
             We work exclusively in private banking and wealth management. If you hold a specialist or support role and you are open to the right conversation, register here. We approach you when a partner bank is looking for exactly your profile. Nothing more.
           </p>
         </div>
       </section>
 
-      <section className="bg-[#C9A14A]/10 border-y border-[#C9A14A]/30 py-5 px-4">
-        <div className="max-w-3xl mx-auto flex flex-wrap gap-6 justify-center text-sm text-[#1B3A6B] font-medium">
-          <span className="flex items-center gap-2"><span className="text-[#C9A14A]">◆</span> Strictly confidential</span>
-          <span className="flex items-center gap-2"><span className="text-[#C9A14A]">◆</span> No unsolicited outreach to your current employer</span>
-          <span className="flex items-center gap-2"><span className="text-[#C9A14A]">◆</span> We contact you only when there is a real match</span>
+      {/* Trust strip */}
+      <section style={{ background: "rgba(201,161,74,0.08)", borderTop: "1px solid rgba(201,161,74,0.25)", borderBottom: "1px solid rgba(201,161,74,0.25)", padding: "18px 16px" }}>
+        <div style={{ maxWidth: "720px", margin: "0 auto", display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center" }}>
+          {["Strictly confidential", "No unsolicited outreach to your current employer", "We contact you only when there is a real match"].map((t) => (
+            <span key={t} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "#1B3A6B", fontWeight: 600 }}>
+              <span style={{ color: "#C9A14A" }}>◆</span> {t}
+            </span>
+          ))}
         </div>
       </section>
 
-      <section className="py-14 px-4">
-        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-10">
-          <h2 className="text-xl font-semibold text-[#1B3A6B] mb-8">Register your profile</h2>
+      {/* Form */}
+      <section style={{ padding: "56px 16px" }}>
+        <div style={{ maxWidth: "640px", margin: "0 auto", background: "#ffffff", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "clamp(24px, 5vw, 40px)" }}>
+          <h2 style={{ color: "#1B3A6B", fontSize: "20px", fontWeight: 600, marginBottom: "32px", marginTop: 0 }}>Register your profile</h2>
 
-          <div className="grid grid-cols-2 gap-4 mb-5">
+          {/* Name row */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">First name <span className="text-[#C9A14A]">*</span></label>
-              <input type="text" value={form.firstName} onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))} className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A6B]/30 focus:border-[#1B3A6B]" placeholder="Jean" />
+              <label style={lbl}>First name <span style={{ color: "#C9A14A" }}>*</span></label>
+              <input type="text" value={form.firstName} onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))} style={inp} placeholder="Jean" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Last name <span className="text-[#C9A14A]">*</span></label>
-              <input type="text" value={form.lastName} onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))} className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A6B]/30 focus:border-[#1B3A6B]" placeholder="Dupont" />
+              <label style={lbl}>Last name <span style={{ color: "#C9A14A" }}>*</span></label>
+              <input type="text" value={form.lastName} onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))} style={inp} placeholder="Dupont" />
             </div>
           </div>
 
-          <div className="mb-5">
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Professional email <span className="text-[#C9A14A]">*</span></label>
-            <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A6B]/30 focus:border-[#1B3A6B]" placeholder="j.dupont@privatebank.com" />
-            <p className="text-xs text-gray-400 mt-1">Personal email accepted. We never contact your employer.</p>
+          {/* Email */}
+          <div style={{ marginBottom: "20px" }}>
+            <label style={lbl}>Professional email <span style={{ color: "#C9A14A" }}>*</span></label>
+            <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} style={inp} placeholder="j.dupont@privatebank.com" />
+            <p style={{ fontSize: "12px", color: "#9ca3af", marginTop: "4px", marginBottom: 0 }}>Personal email accepted. We never contact your employer.</p>
           </div>
 
-          <div className="mb-5">
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Current role <span className="text-[#C9A14A]">*</span></label>
-            <select value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A6B]/30 focus:border-[#1B3A6B] bg-white">
+          {/* Role */}
+          <div style={{ marginBottom: "20px" }}>
+            <label style={lbl}>Current role <span style={{ color: "#C9A14A" }}>*</span></label>
+            <select value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} style={inp}>
               <option value="">Select your role</option>
               {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-5">
+          {/* Institution + Experience */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Current institution <span className="text-[#C9A14A]">*</span></label>
-              <input type="text" value={form.institution} onChange={(e) => setForm((f) => ({ ...f, institution: e.target.value }))} className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A6B]/30 focus:border-[#1B3A6B]" placeholder="Pictet, UBS, EFG..." />
+              <label style={lbl}>Current institution <span style={{ color: "#C9A14A" }}>*</span></label>
+              <input type="text" value={form.institution} onChange={(e) => setForm((f) => ({ ...f, institution: e.target.value }))} style={inp} placeholder="Pictet, UBS, EFG..." />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Experience <span className="text-[#C9A14A]">*</span></label>
-              <select value={form.experience} onChange={(e) => setForm((f) => ({ ...f, experience: e.target.value }))} className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A6B]/30 focus:border-[#1B3A6B] bg-white">
+              <label style={lbl}>Experience <span style={{ color: "#C9A14A" }}>*</span></label>
+              <select value={form.experience} onChange={(e) => setForm((f) => ({ ...f, experience: e.target.value }))} style={inp}>
                 <option value="">Select</option>
                 {EXPERIENCE.map((e) => <option key={e} value={e}>{e}</option>)}
               </select>
             </div>
           </div>
 
-          <div className="mb-5">
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Markets / geographies you cover</label>
-            <div className="flex flex-wrap gap-2">
+          {/* Markets */}
+          <div style={{ marginBottom: "20px" }}>
+            <label style={lbl}>Markets / geographies you cover</label>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
               {MARKETS.map((m) => (
-                <button key={m} type="button" onClick={() => toggleMarket(m)} className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${form.markets.includes(m) ? "bg-[#1B3A6B] text-white border-[#1B3A6B]" : "bg-white text-gray-600 border-gray-200 hover:border-[#1B3A6B]/40"}`}>{m}</button>
+                <button key={m} type="button" onClick={() => toggleMarket(m)}
+                  style={{
+                    padding: "6px 14px", borderRadius: "999px", fontSize: "12px", fontWeight: 500, cursor: "pointer", transition: "all 0.15s",
+                    background: form.markets.includes(m) ? "#1B3A6B" : "#ffffff",
+                    color: form.markets.includes(m) ? "#ffffff" : "#4b5563",
+                    border: form.markets.includes(m) ? "1px solid #1B3A6B" : "1px solid #d1d5db",
+                  }}>
+                  {m}
+                </button>
               ))}
             </div>
           </div>
 
-          <div className="mb-5">
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Languages</label>
-            <input type="text" value={form.languages} onChange={(e) => setForm((f) => ({ ...f, languages: e.target.value }))} className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A6B]/30 focus:border-[#1B3A6B]" placeholder="French (native), English (fluent), German (working)" />
+          {/* Languages */}
+          <div style={{ marginBottom: "20px" }}>
+            <label style={lbl}>Languages</label>
+            <input type="text" value={form.languages} onChange={(e) => setForm((f) => ({ ...f, languages: e.target.value }))} style={inp} placeholder="French (native), English (fluent), German (working)" />
           </div>
 
-          <div className="mb-6">
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Anything we should know? <span className="text-gray-400">(optional)</span></label>
-            <textarea value={form.brief} onChange={(e) => setForm((f) => ({ ...f, brief: e.target.value }))} rows={3} className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A6B]/30 focus:border-[#1B3A6B] resize-none" placeholder="Specialisation, certifications, particular market expertise..." />
+          {/* Brief */}
+          <div style={{ marginBottom: "24px" }}>
+            <label style={lbl}>Anything we should know? <span style={{ fontSize: "11px", fontWeight: 400, color: "#9ca3af", textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
+            <textarea value={form.brief} onChange={(e) => setForm((f) => ({ ...f, brief: e.target.value }))} rows={3}
+              style={{ ...inp, resize: "none", height: "80px", fontFamily: "inherit" }}
+              placeholder="Specialisation, certifications, particular market expertise..." />
           </div>
 
-          <div className="mb-7 bg-[#F8F7F4] rounded-xl p-4">
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" checked={form.consent} onChange={(e) => setForm((f) => ({ ...f, consent: e.target.checked }))} className="mt-0.5 accent-[#1B3A6B] w-4 h-4" />
-              <span className="text-xs text-gray-600 leading-relaxed">
-                I consent to Executive Partners storing my profile and contacting me confidentially when a relevant opportunity arises. I understand my information will not be shared with any third party without my prior agreement. I can withdraw at any time by emailing <a href="mailto:recruiter@execpartners.ch" className="text-[#1B3A6B] underline">recruiter@execpartners.ch</a>.
+          {/* Consent */}
+          <div style={{ background: "#F8F7F4", borderRadius: "10px", padding: "16px", marginBottom: "28px" }}>
+            <label style={{ display: "flex", alignItems: "flex-start", gap: "12px", cursor: "pointer" }}>
+              <input type="checkbox" checked={form.consent} onChange={(e) => setForm((f) => ({ ...f, consent: e.target.checked }))}
+                style={{ marginTop: "2px", width: "16px", height: "16px", accentColor: "#1B3A6B", flexShrink: 0 }} />
+              <span style={{ fontSize: "12px", color: "#4b5563", lineHeight: 1.6 }}>
+                I consent to Executive Partners storing my profile and contacting me confidentially when a relevant opportunity arises. I understand my information will not be shared with any third party without my prior agreement. I can withdraw at any time by emailing{" "}
+                <a href="mailto:recruiter@execpartners.ch" style={{ color: "#1B3A6B" }}>recruiter@execpartners.ch</a>.
               </span>
             </label>
           </div>
 
-          {errorMsg && <p className="text-red-500 text-sm mb-4">{errorMsg}</p>}
+          {errorMsg && <p style={{ color: "#ef4444", fontSize: "13px", marginBottom: "16px" }}>{errorMsg}</p>}
 
-          <button onClick={handleSubmit} disabled={status === "loading"} className="w-full bg-[#1B3A6B] hover:bg-[#152e58] text-white font-semibold py-3.5 rounded-xl transition-colors disabled:opacity-50 text-sm tracking-wide">
+          <button onClick={handleSubmit} disabled={status === "loading"}
+            style={{ width: "100%", background: "#1B3A6B", color: "#ffffff", border: "none", borderRadius: "10px", padding: "14px", fontSize: "14px", fontWeight: 600, letterSpacing: "0.03em", cursor: "pointer", opacity: status === "loading" ? 0.6 : 1 }}>
             {status === "loading" ? "Submitting..." : "Join the Specialist Bench"}
           </button>
 
-          {status === "error" && <p className="text-red-500 text-sm mt-3 text-center">Something went wrong. Please email us at recruiter@execpartners.ch.</p>}
+          {status === "error" && (
+            <p style={{ color: "#ef4444", fontSize: "13px", textAlign: "center", marginTop: "12px" }}>
+              Something went wrong. Please email recruiter@execpartners.ch.
+            </p>
+          )}
 
-          <p className="text-xs text-gray-400 text-center mt-5">Strictly confidential. No unsolicited approaches to your current employer.</p>
+          <p style={{ fontSize: "12px", color: "#9ca3af", textAlign: "center", marginTop: "20px", marginBottom: 0 }}>
+            Strictly confidential. No unsolicited approaches to your current employer.
+          </p>
         </div>
       </section>
 
-      <section className="pb-16 px-4">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="text-sm text-gray-500">
+      {/* Footer note */}
+      <section style={{ paddingBottom: "64px", padding: "0 16px 64px" }}>
+        <div style={{ maxWidth: "640px", margin: "0 auto", textAlign: "center" }}>
+          <p style={{ fontSize: "13px", color: "#6b7280" }}>
             Looking for senior Relationship Manager positions?{" "}
-            <a href="/en/candidate-assessment" className="text-[#1B3A6B] font-medium hover:underline">Use our Business Plan Simulator instead.</a>
+            <a href="/en/candidate-assessment" style={{ color: "#1B3A6B", fontWeight: 500 }}>
+              Use our Business Plan Simulator instead.
+            </a>
           </p>
         </div>
       </section>
