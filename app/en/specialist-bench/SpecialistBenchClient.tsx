@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 
 const ROLES = [
@@ -16,31 +15,17 @@ const ROLES = [
 ];
 
 const MARKETS = [
-  "Switzerland (CH)",
-  "France",
-  "Germany / Austria",
-  "UK",
-  "Middle East (UAE / Saudi)",
-  "Asia (Singapore / HK)",
-  "LATAM",
-  "Italy",
-  "Israel",
-  "Other",
+  "Switzerland (CH)", "France", "Germany / Austria", "UK",
+  "Middle East (UAE / Saudi)", "Asia (Singapore / HK)",
+  "LATAM", "Italy", "Israel", "Other",
 ];
 
 const EXPERIENCE = ["1-3 years", "3-5 years", "5-10 years", "10+ years"];
 
 type FormState = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
-  institution: string;
-  experience: string;
-  markets: string[];
-  languages: string;
-  brief: string;
-  consent: boolean;
+  firstName: string; lastName: string; email: string; role: string;
+  institution: string; experience: string; markets: string[];
+  languages: string; brief: string; consent: boolean;
 };
 
 const EMPTY: FormState = {
@@ -49,27 +34,43 @@ const EMPTY: FormState = {
   languages: "", brief: "", consent: false,
 };
 
-const inp: React.CSSProperties = {
-  backgroundColor: "#ffffff",
-  color: "#111827",
-  border: "1px solid #d1d5db",
-  borderRadius: "8px",
-  padding: "10px 14px",
-  fontSize: "14px",
-  width: "100%",
-  boxSizing: "border-box",
-  display: "block",
-};
-
-const lbl: React.CSSProperties = {
-  display: "block",
-  fontSize: "11px",
-  fontWeight: 600,
-  color: "#6b7280",
-  textTransform: "uppercase",
-  letterSpacing: "0.06em",
-  marginBottom: "6px",
-};
+const GLOBAL_OVERRIDE = `
+  .sb-wrap input,
+  .sb-wrap select,
+  .sb-wrap textarea {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    font-family: inherit !important;
+    -webkit-appearance: auto !important;
+    appearance: auto !important;
+    box-shadow: none !important;
+  }
+  .sb-wrap input::placeholder,
+  .sb-wrap textarea::placeholder {
+    color: #9ca3af !important;
+    opacity: 1 !important;
+  }
+  .sb-wrap textarea {
+    resize: none !important;
+    min-height: 80px !important;
+  }
+  .sb-wrap input[type="checkbox"] {
+    width: 16px !important;
+    height: 16px !important;
+    padding: 0 !important;
+    display: inline-block !important;
+    accent-color: #1B3A6B !important;
+    flex-shrink: 0 !important;
+  }
+`;
 
 export default function SpecialistBenchPage() {
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -123,22 +124,7 @@ export default function SpecialistBenchPage() {
 
   return (
     <main style={{ minHeight: "100vh", background: "#F8F7F4" }}>
-      <style>{`
-        .sb-field {
-          background-color: #ffffff !important;
-          color: #111827 !important;
-          border: 1px solid #d1d5db !important;
-          border-radius: 8px !important;
-          padding: 10px 14px !important;
-          font-size: 14px !important;
-          width: 100% !important;
-          box-sizing: border-box !important;
-          display: block !important;
-          font-family: inherit !important;
-        }
-        .sb-field::placeholder { color: #9ca3af !important; }
-        .sb-textarea { resize: none !important; height: 80px !important; }
-      `}</style>
+      <style dangerouslySetInnerHTML={{ __html: GLOBAL_OVERRIDE }} />
 
       {/* Hero */}
       <section style={{ background: "#1B3A6B", padding: "72px 16px" }}>
@@ -168,60 +154,69 @@ export default function SpecialistBenchPage() {
 
       {/* Form */}
       <section style={{ padding: "56px 16px" }}>
-        <div style={{ maxWidth: "640px", margin: "0 auto", background: "#ffffff", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "clamp(24px, 5vw, 40px)" }}>
+        <div className="sb-wrap" style={{ maxWidth: "640px", margin: "0 auto", background: "#ffffff", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "clamp(24px, 5vw, 40px)" }}>
           <h2 style={{ color: "#1B3A6B", fontSize: "20px", fontWeight: 600, marginBottom: "32px", marginTop: 0 }}>Register your profile</h2>
 
-          {/* Name row */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
             <div>
-              <label style={lbl}>First name <span style={{ color: "#C9A14A" }}>*</span></label>
-              <input type="text" value={form.firstName} onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))} className="sb-field" placeholder="Jean" />
+              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
+                First name <span style={{ color: "#C9A14A" }}>*</span>
+              </label>
+              <input type="text" value={form.firstName} onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))} placeholder="Jean" />
             </div>
             <div>
-              <label style={lbl}>Last name <span style={{ color: "#C9A14A" }}>*</span></label>
-              <input type="text" value={form.lastName} onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))} className="sb-field" placeholder="Dupont" />
+              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
+                Last name <span style={{ color: "#C9A14A" }}>*</span>
+              </label>
+              <input type="text" value={form.lastName} onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))} placeholder="Dupont" />
             </div>
           </div>
 
-          {/* Email */}
           <div style={{ marginBottom: "20px" }}>
-            <label style={lbl}>Professional email <span style={{ color: "#C9A14A" }}>*</span></label>
-            <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="sb-field" placeholder="j.dupont@privatebank.com" />
+            <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
+              Professional email <span style={{ color: "#C9A14A" }}>*</span>
+            </label>
+            <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} placeholder="j.dupont@privatebank.com" />
             <p style={{ fontSize: "12px", color: "#9ca3af", marginTop: "4px", marginBottom: 0 }}>Personal email accepted. We never contact your employer.</p>
           </div>
 
-          {/* Role */}
           <div style={{ marginBottom: "20px" }}>
-            <label style={lbl}>Current role <span style={{ color: "#C9A14A" }}>*</span></label>
-            <select value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} className="sb-field">
+            <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
+              Current role <span style={{ color: "#C9A14A" }}>*</span>
+            </label>
+            <select value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}>
               <option value="">Select your role</option>
               {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
 
-          {/* Institution + Experience */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
             <div>
-              <label style={lbl}>Current institution <span style={{ color: "#C9A14A" }}>*</span></label>
-              <input type="text" value={form.institution} onChange={(e) => setForm((f) => ({ ...f, institution: e.target.value }))} className="sb-field" placeholder="Pictet, UBS, EFG..." />
+              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
+                Current institution <span style={{ color: "#C9A14A" }}>*</span>
+              </label>
+              <input type="text" value={form.institution} onChange={(e) => setForm((f) => ({ ...f, institution: e.target.value }))} placeholder="Pictet, UBS, EFG..." />
             </div>
             <div>
-              <label style={lbl}>Experience <span style={{ color: "#C9A14A" }}>*</span></label>
-              <select value={form.experience} onChange={(e) => setForm((f) => ({ ...f, experience: e.target.value }))} className="sb-field">
+              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
+                Experience <span style={{ color: "#C9A14A" }}>*</span>
+              </label>
+              <select value={form.experience} onChange={(e) => setForm((f) => ({ ...f, experience: e.target.value }))}>
                 <option value="">Select</option>
                 {EXPERIENCE.map((e) => <option key={e} value={e}>{e}</option>)}
               </select>
             </div>
           </div>
 
-          {/* Markets */}
           <div style={{ marginBottom: "20px" }}>
-            <label style={lbl}>Markets / geographies you cover</label>
+            <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>
+              Markets / geographies you cover
+            </label>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
               {MARKETS.map((m) => (
                 <button key={m} type="button" onClick={() => toggleMarket(m)}
                   style={{
-                    padding: "6px 14px", borderRadius: "999px", fontSize: "12px", fontWeight: 500, cursor: "pointer", transition: "all 0.15s",
+                    padding: "6px 14px", borderRadius: "999px", fontSize: "12px", fontWeight: 500, cursor: "pointer",
                     background: form.markets.includes(m) ? "#1B3A6B" : "#ffffff",
                     color: form.markets.includes(m) ? "#ffffff" : "#4b5563",
                     border: form.markets.includes(m) ? "1px solid #1B3A6B" : "1px solid #d1d5db",
@@ -232,25 +227,24 @@ export default function SpecialistBenchPage() {
             </div>
           </div>
 
-          {/* Languages */}
           <div style={{ marginBottom: "20px" }}>
-            <label style={lbl}>Languages</label>
-            <input type="text" value={form.languages} onChange={(e) => setForm((f) => ({ ...f, languages: e.target.value }))} className="sb-field" placeholder="French (native), English (fluent), German (working)" />
+            <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
+              Languages
+            </label>
+            <input type="text" value={form.languages} onChange={(e) => setForm((f) => ({ ...f, languages: e.target.value }))} placeholder="French (native), English (fluent), German (working)" />
           </div>
 
-          {/* Brief */}
           <div style={{ marginBottom: "24px" }}>
-            <label style={lbl}>Anything we should know? <span style={{ fontSize: "11px", fontWeight: 400, color: "#9ca3af", textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
+            <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
+              Anything we should know? <span style={{ fontSize: "11px", fontWeight: 400, color: "#9ca3af", textTransform: "none", letterSpacing: 0 }}>(optional)</span>
+            </label>
             <textarea value={form.brief} onChange={(e) => setForm((f) => ({ ...f, brief: e.target.value }))} rows={3}
-              className="sb-field sb-textarea"
               placeholder="Specialisation, certifications, particular market expertise..." />
           </div>
 
-          {/* Consent */}
           <div style={{ background: "#F8F7F4", borderRadius: "10px", padding: "16px", marginBottom: "28px" }}>
             <label style={{ display: "flex", alignItems: "flex-start", gap: "12px", cursor: "pointer" }}>
-              <input type="checkbox" checked={form.consent} onChange={(e) => setForm((f) => ({ ...f, consent: e.target.checked }))}
-                style={{ marginTop: "2px", width: "16px", height: "16px", accentColor: "#1B3A6B", flexShrink: 0 }} />
+              <input type="checkbox" checked={form.consent} onChange={(e) => setForm((f) => ({ ...f, consent: e.target.checked }))} />
               <span style={{ fontSize: "12px", color: "#4b5563", lineHeight: 1.6 }}>
                 I consent to Executive Partners storing my profile and contacting me confidentially when a relevant opportunity arises. I understand my information will not be shared with any third party without my prior agreement. I can withdraw at any time by emailing{" "}
                 <a href="mailto:recruiter@execpartners.ch" style={{ color: "#1B3A6B" }}>recruiter@execpartners.ch</a>.
@@ -277,8 +271,7 @@ export default function SpecialistBenchPage() {
         </div>
       </section>
 
-      {/* Footer note */}
-      <section style={{ paddingBottom: "64px", padding: "0 16px 64px" }}>
+      <section style={{ padding: "0 16px 64px" }}>
         <div style={{ maxWidth: "640px", margin: "0 auto", textAlign: "center" }}>
           <p style={{ fontSize: "13px", color: "#6b7280" }}>
             Looking for senior Relationship Manager positions?{" "}
