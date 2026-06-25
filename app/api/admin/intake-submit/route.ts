@@ -68,18 +68,18 @@ function buildOutreachEN(direction: "inbound" | "outbound", name: string, instit
   const firstName = name.split(" ")[0];
   if (direction === "outbound") {
     return {
-      subject: `Your commercial profile — confidential assessment, ${market}`,
+      subject: `${firstName} — something prepared for your profile`,
       body: `Hi ${firstName},
 
-I have been following your trajectory at ${institution} and I think your ${market} profile is genuinely compelling in the current market — [YOUR ONE OBSERVATION FROM THEIR CV].
+[REPLACE THIS LINE WITH ONE SPECIFIC OBSERVATION FROM THEIR CV OR LINKEDIN — e.g. "Your eight years covering the Israeli desk from Geneva puts you in a very small group of profiles with genuine ISA-licensed portability — something three institutions are actively looking for right now." The more specific this line, the higher your response rate. Do not send without completing it.]
 
-Before I say more, I want to give you something useful regardless of where this goes.
+Before I say anything more about the market context, I want to give you something useful that stands on its own.
 
-I am sending you a personalised Business Plan framework — pre-configured for your market and seniority. It takes around 20 minutes and generates a committee-ready P&L model, a portability score, and a breakeven projection. The exact numbers a hiring committee runs on your profile before they agree to meet you. Most senior RMs have never seen this analysis about themselves.
+I have prepared a personalised business plan framework for your profile. Twenty minutes, completely confidential, and at the end you will have a clear picture of how a hiring committee reads your commercial case — figures most senior RMs have never seen about themselves.
 
-Your personalised link: ${tokenUrl}
+${tokenUrl}
 
-Everything stays completely confidential. No institution is named at this stage. Nothing goes anywhere without your explicit sign-off. I review every submission personally and come back with a frank assessment of your commercial position and what we can do together.
+Nothing goes anywhere without your explicit consent. No institution is named at this stage.
 
 Gil M. Chalem
 Managing Partner — Executive Partners
@@ -87,20 +87,20 @@ execpartners.ch`,
     };
   } else {
     return {
-      subject: `Next step — your confidential EP profile`,
+      subject: `${firstName} — your confidential EP assessment`,
       body: `Hi ${firstName},
 
-Thank you for reaching out. I have reviewed your background and I think there is something worth exploring seriously.
+Thank you for reaching out. I have looked at your background carefully and I think there is something worth exploring properly.
 
-Before we go further I want to make sure I can genuinely help you — and that means understanding your commercial profile properly, not just your CV.
+[REPLACE THIS LINE WITH ONE SPECIFIC OBSERVATION FROM THEIR CV — e.g. "Your transition from Julius Baer to an EAM structure tells me you have already thought hard about platform flexibility — which is exactly the conversation I want to have with you." One sentence. Specific to them.]
 
-I am sending you a personalised Business Plan Assessment. It takes about 20 minutes and at the end you will have something most recruiters never give you: a clear, honest picture of how a hiring committee will read your profile commercially — your portability assumption, your revenue ramp, your breakeven month.
+Before I say anything about specific situations, I want to give you something useful first.
 
-I noticed [YOUR ONE OBSERVATION FROM THEIR CV]. I want to make sure the numbers support what the narrative suggests before I put your name in front of anyone.
+I have prepared a personalised business plan framework for your profile. It takes twenty minutes and gives you a clear, honest picture of how a hiring committee reads your commercial case — your portability assumption, your revenue ramp, your breakeven month. Most senior RMs have never seen this analysis about themselves, and it will be useful regardless of what you decide to do next.
 
-Your personalised link: ${tokenUrl}
+${tokenUrl}
 
-I review every submission personally. Once I have your numbers I will come back with a frank assessment and, if the profile is strong, tell you exactly what I have in mind for you. The institution is not named at this stage — that conversation happens once we have established the fit.
+I review every submission personally. Once I have your numbers I will come back with a frank assessment and, if the profile is strong, tell you exactly what I have in mind. No institution is named at this stage.
 
 Gil M. Chalem
 Managing Partner — Executive Partners
@@ -113,18 +113,18 @@ function buildOutreachFR(direction: "inbound" | "outbound", name: string, instit
   const firstName = name.split(" ")[0];
   if (direction === "outbound") {
     return {
-      subject: `Votre profil commercial — evaluation confidentielle, ${market}`,
+      subject: `${firstName} — quelque chose prepare pour votre profil`,
       body: `Bonjour ${firstName},
 
-Je suis votre parcours chez ${institution} depuis quelque temps et je pense que votre profil sur le marche ${market} est particulierement pertinent dans le contexte actuel — [VOTRE OBSERVATION SPECIFIQUE DU CV].
+[REMPLACEZ CETTE LIGNE par une observation specifique issue de leur LinkedIn ou CV — ex : "Vos huit ans sur le desk israelien depuis Geneve vous placent dans un groupe tres restreint de profils avec une portabilite ISA reelle — ce que trois etablissements recherchent activement en ce moment." Plus cette ligne est precise, plus votre taux de reponse sera eleve. Ne pas envoyer sans la completer.]
 
-Avant d'aller plus loin, je souhaite vous apporter quelque chose d'utile independamment de la suite.
+Avant d'aller plus loin sur le contexte de marche, je souhaite vous apporter quelque chose d'utile qui se justifie independamment.
 
-Je vous envoie un cadre personnalise de Business Plan, pre-configure pour votre marche et votre niveau de seniorite. Il faut environ 20 minutes et genere un modele P&L pret pour comite, un score de portabilite et une projection de seuil de rentabilite.
+J'ai prepare un cadre de business plan personnalise pour votre profil. Vingt minutes, strictement confidentiel, et a l'issue vous aurez une vision claire de la facon dont un comite de recrutement lit votre dossier commercial — des chiffres que la plupart des banquiers seniors n'ont jamais vus sur eux-memes.
 
-Votre lien personnalise : ${tokenUrl}
+${tokenUrl}
 
-Tout reste strictement confidentiel. Aucun etablissement n'est nomme a ce stade. Rien n'avance sans votre accord explicite.
+Rien n'avance sans votre accord explicite. Aucun etablissement n'est nomme a ce stade.
 
 Gil M. Chalem
 Associe Gerant — Executive Partners
@@ -132,20 +132,20 @@ execpartners.ch`,
     };
   } else {
     return {
-      subject: `Prochaine etape — votre profil confidentiel EP`,
+      subject: `${firstName} — votre evaluation confidentielle EP`,
       body: `Bonjour ${firstName},
 
-Merci d'avoir pris contact. J'ai examine votre parcours et je pense qu'il y a quelque chose qui merite d'etre explore serieusement.
+Merci d'avoir pris contact. J'ai examine votre parcours attentivement et je pense qu'il y a quelque chose qui merite d'etre explore serieusement.
 
-Avant d'aller plus loin, je souhaite m'assurer que je peux reellement vous aider — ce qui implique de comprendre votre profil commercial en profondeur, pas seulement votre CV.
+[REMPLACEZ CETTE LIGNE par une observation specifique — ex : "Votre passage de Julius Baer vers une structure EAM me dit que vous avez deja reflechi a la flexibilite de plateforme — c'est exactement la conversation que je souhaite avoir avec vous." Une phrase. Specifique a eux.]
 
-Je vous envoie une evaluation personnalisee de Business Plan. Elle prend environ 20 minutes et vous donnera quelque chose que la plupart des recruteurs ne vous offrent jamais : une image claire et honnete de la facon dont un comite de recrutement lira votre profil commercialement.
+Avant de parler de situations concretes, je souhaite d'abord vous apporter quelque chose d'utile.
 
-J'ai note [VOTRE OBSERVATION SPECIFIQUE DU CV].
+J'ai prepare un cadre de business plan personnalise pour votre profil. Il faut vingt minutes et vous donnera une image claire et honnete de la facon dont un comite de recrutement lit votre dossier commercial — votre hypothese de portabilite, votre progression de revenus, votre seuil de rentabilite. La plupart des banquiers seniors n'ont jamais vu cette analyse sur eux-memes, et elle vous sera utile quelle que soit votre decision.
 
-Votre lien personnalise : ${tokenUrl}
+${tokenUrl}
 
-Je revois chaque dossier personnellement. L'etablissement n'est pas nomme a ce stade.
+Je revois chaque dossier personnellement. Une fois vos chiffres en main, je reviens avec une evaluation franche et, si le profil est solide, je vous dis exactement ce que j'ai en tete. Aucun etablissement n'est nomme a ce stade.
 
 Gil M. Chalem
 Associe Gerant — Executive Partners
