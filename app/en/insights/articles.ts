@@ -82,7 +82,7 @@ export const INSIGHTS: readonly InsightArticle[] = [
     date: "2026-06-25",
     summary: "Switzerland dropped to third in the 2026 IMD World Competitiveness Ranking. Its governance and infrastructure scores remain first globally. But BCG data shows Hong Kong has overtaken Switzerland in cross-border wealth bookings, and Asian hubs are projected to grow at 9% annually versus 6% for Switzerland through 2030. The issue is not the ranking. It is what the ranking is measuring.",
     pillar: "P1",
-    subTheme: "Swiss Financial Centre",
+    subTheme: "Positioning",
     markets: ["CH", "ASIA", "HK"],
     keywords: ["IMD competitiveness ranking", "Swiss private banking", "Singapore wealth management", "Hong Kong offshore wealth", "Geneva financial centre", "cross-border wealth", "BCG global wealth report 2026"],
     body: `Switzerland did not lose its number one competitiveness ranking because it became weaker. It lost it because Singapore became faster.
