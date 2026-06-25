@@ -72,7 +72,71 @@ export type InsightArticle = {
 /**
  * 🔹 Insights single source of truth
  */
-export const INSIGHTS: readonly InsightArticle[] = [
+export const INSIGHTS: readonly InsightArticle[] = [\n  {
+    slug: "switzerland-third-private-banking-competitiveness",
+    title: "Switzerland Is Still First in Governance. Private Banking Cannot Bank on That.",
+    seoTitle: "Switzerland Drops to Third in IMD 2026 Rankings: What It Means for Private Banking",
+    seoDescription: "Switzerland fell from first to third in the 2026 IMD World Competitiveness Ranking as Singapore and Hong Kong pull ahead. For Swiss private banking, the governance score is not the problem. Assuming it is sufficient is.",
+    linkedinUrl: "",
+    date: "2026-06-25",
+    summary: "Switzerland dropped to third in the 2026 IMD World Competitiveness Ranking. Its governance and infrastructure scores remain first globally. But BCG data shows Hong Kong has overtaken Switzerland in cross-border wealth bookings, and Asian hubs are projected to grow at 9% annually versus 6% for Switzerland through 2030. The issue is not the ranking. It is what the ranking is measuring.",
+    pillar: "Market Intelligence",
+    subTheme: "Swiss Financial Centre",
+    markets: ["CH", "ASIA", "HK"],
+    keywords: ["IMD competitiveness ranking", "Swiss private banking", "Singapore wealth management", "Hong Kong offshore wealth", "Geneva financial centre", "cross-border wealth", "BCG global wealth report 2026"],
+    body: `Switzerland did not lose its number one competitiveness ranking because it became weaker. It lost it because Singapore became faster.
+
+The 2026 IMD World Competitiveness Ranking, released last week by the Lausanne-based business school that has measured this for 38 years, placed Singapore first, Hong Kong second, and Switzerland third. The headline number moved two places. The implications for private banking moved considerably further.
+
+The macro commentary arriving in most inboxes this week focuses on the drop itself, the swing from first to third in a single year, and reaches for reassurance. Switzerland still leads the world in government efficiency. It still leads in infrastructure. The rule of law is intact. Public finances carry a budget surplus. Nobel prizes per capita: still first. These things matter. But for a senior relationship manager sitting in Geneva or Zurich, managing a book of international clients and watching where the next generation of wealth is actually being created, the rankings table is not the story. The direction of travel is.
+
+**What the IMD numbers actually say**
+
+Switzerland's Economic Performance sub-factor dropped 24 places to 37th in 2026. IMD's own analysis attributes a meaningful portion of this to one-off effects, specifically swings in direct investment flows tied to valuation and repatriation timing, compounded by the US tariff shock that hit small, non-bloc economies disproportionately hard. Singapore and Hong Kong absorbed less of that damage, partly because their trade exposure profiles differ, and partly because their economic structures allow faster adjustment when external conditions shift.
+
+IMD's research director Arturo Bris was pointed on this: geopolitical conditions are worsening, global fragmentation is increasing, and in that environment, economies with their own credible institutions gain an advantage precisely because businesses can carry on as usual when international systems stop serving national needs. Switzerland scores on that measure. Where it does not score is on the agility question, and that is where the private banking read-across gets uncomfortable.
+
+The same consensus-driven governance that produces exceptional institutional stability also slows decision-making when speed matters. It is not a design flaw. It is an explicit feature of how Switzerland governs, and for most of the last century it served the financial center extremely well. The concern is not that this changes overnight. The concern is that the world around it is changing much faster.
+
+**The BCG number that matters more**
+
+The IMD ranking is a macro lens. The BCG 2026 Global Wealth Report provides something sharper: in cross-border wealth bookings, Hong Kong has overtaken Switzerland for the first time. The gap is narrow, $2.95 trillion booked offshore in Hong Kong against $2.94 trillion in Switzerland, but the direction has been clear for several years. Boston Consulting Group projects Hong Kong and Singapore will continue growing their cross-border books at roughly 9% annually through 2030. Switzerland's projected rate is 6%.
+
+That 3-percentage-point gap compounds. At those growth rates, by the end of the decade, Asian hubs are not competing with Geneva on the same field. They are operating in a different weight class.
+
+The drivers are structural. Chinese and South Asian wealth creation is accelerating at a rate that simply favors proximity. The UHNW client base is younger, more geographically dispersed, and considerably less attached to the historical logic of booking assets in Switzerland because that is where private banking lives. IPO proceeds from Hong Kong-listed companies, family office formation in Singapore, the intergenerational transfer of wealth across Southeast Asia: these flows do not naturally gravitate toward a time zone that is seven hours behind Singapore and a regulatory structure built for a different era of cross-border mobility.
+
+Meanwhile, Swiss private bank net new money fell more than 14% year-on-year in 2025, according to a ZHAW study covering 69 Swiss institutions. Fresh entrepreneurial wealth is increasingly booked in Singapore, Dubai, and New York. This is not a headline event. It is a slow migration that does not announce itself in any single quarter but reshapes the market over a decade.
+
+**What private banking is actually competing on**
+
+The traditional Swiss private banking proposition rests on three pillars: stability, confidentiality, and neutrality. All three remain intact as legal and regulatory realities. The question is whether they still function as competitive differentiators, or whether they have become baseline expectations that clients simply assume before they ask the next question.
+
+A senior private banker relocating from Zurich to Singapore is not abandoning stability. Singapore's rule of law ranking is credible. Its regulatory framework through MAS is rigorous, transparent, and in several areas more efficient to operate within than the Swiss equivalent. A UHNW family booking assets in Singapore is not choosing instability. They are choosing proximity to where their business interests, their children, and their next investment are located.
+
+This is the shift that IMD's competitiveness data captures imperfectly but Boston Consulting Group's AUM flow data captures precisely. The competition is no longer between a stable incumbent and a riskier challenger. It is between two credible, well-regulated financial centers, one of which is adding 9% in cross-border wealth per year and one of which is adding 6%.
+
+**The talent signal**
+
+From a recruitment perspective, the pattern is visible in candidate conversations. Senior relationship managers covering Asian client books, UHNW families with business interests spread across Singapore, Hong Kong, Dubai, and Geneva, are increasingly being asked by their employers to consider regional relocation packages. Swiss private banks with significant Asia exposure have been expanding headcount in Singapore and Hong Kong for several years, not pulling back from Geneva, but not assuming Geneva is where the book needs to be managed from.
+
+The IMD ranking, taken in isolation, changes none of this. The composite picture, IMD's competitiveness drop, BCG's AUM flow projections, the 14% decline in Swiss net new money, and the accelerating pace of wealth creation in markets that sit physically closer to Singapore than to Geneva, suggests that the private banking community in Switzerland is facing a structural question it has been slow to formulate clearly.
+
+The question is not whether Switzerland remains competitive. By most institutional measures, it does. The question is whether the forms of competitiveness that Switzerland leads on, governance efficiency, infrastructure quality, institutional stability, are the forms of competitiveness that determine where the next $3 trillion in cross-border wealth flows over the next decade.
+
+**The response that would matter**
+
+IMD's Arturo Bris has noted publicly that Switzerland's consensus-driven politics is a double-edged instrument. It produces exceptional long-term outcomes. It struggles with fast-moving crises. The tariff shock of 2025-2026 was exactly the kind of rapid external disruption where smaller, more agile economies can absorb and redirect faster than a political system built on multi-stakeholder consensus.
+
+Swiss private banks are not waiting for policy reform to act. The institutions that are competing well in 2026 are the ones that have built genuine dual-hub capabilities, running client coverage from both Switzerland and Asia simultaneously, investing in relationship managers who can navigate both regulatory environments, and treating proximity to the client as a cost-of-business reality rather than a geographic choice. The ones that are not competing as well are the ones that continue to treat Geneva's institutional pedigree as the product, when what the client is increasingly buying is the relationship manager's judgment, network, and ability to be physically present when it matters.
+
+A third-place finish in a competitiveness ranking is not a crisis. A 14% drop in net new money, a narrowing of the cross-border wealth gap to $10 billion, and a projected growth differential of 3 percentage points annually: these are the numbers worth running. Switzerland's governance ranking is not the problem. Assuming it is sufficient is.
+
+If you are a senior private banker trying to model what your book looks like in five years, and where the next generation of your clients will want that book managed, the EP Portability Score tool at execpartners.ch gives you a starting point for the numbers. The strategic questions behind the numbers are worth having earlier rather than later.
+
+*Private Wealth Pulse is published weekly by Executive Partners, Geneva. Subscribe at execpartners.ch/subscribe.*`,
+  },
+
   {
     slug: "the-sandbox-talent-map",
     ogImage: "/og-articles/og-the-sandbox-talent-map.jpg",
