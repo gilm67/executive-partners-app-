@@ -123,6 +123,22 @@ export default function SpecialistBenchPage() {
 
   return (
     <main style={{ minHeight: "100vh", background: "#F8F7F4" }}>
+      <style>{`
+        .sb-field {
+          background-color: #ffffff !important;
+          color: #111827 !important;
+          border: 1px solid #d1d5db !important;
+          border-radius: 8px !important;
+          padding: 10px 14px !important;
+          font-size: 14px !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+          display: block !important;
+          font-family: inherit !important;
+        }
+        .sb-field::placeholder { color: #9ca3af !important; }
+        .sb-textarea { resize: none !important; height: 80px !important; }
+      `}</style>
 
       {/* Hero */}
       <section style={{ background: "#1B3A6B", padding: "72px 16px" }}>
@@ -159,25 +175,25 @@ export default function SpecialistBenchPage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
             <div>
               <label style={lbl}>First name <span style={{ color: "#C9A14A" }}>*</span></label>
-              <input type="text" value={form.firstName} onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))} style={inp} placeholder="Jean" />
+              <input type="text" value={form.firstName} onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))} className="sb-field" placeholder="Jean" />
             </div>
             <div>
               <label style={lbl}>Last name <span style={{ color: "#C9A14A" }}>*</span></label>
-              <input type="text" value={form.lastName} onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))} style={inp} placeholder="Dupont" />
+              <input type="text" value={form.lastName} onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))} className="sb-field" placeholder="Dupont" />
             </div>
           </div>
 
           {/* Email */}
           <div style={{ marginBottom: "20px" }}>
             <label style={lbl}>Professional email <span style={{ color: "#C9A14A" }}>*</span></label>
-            <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} style={inp} placeholder="j.dupont@privatebank.com" />
+            <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="sb-field" placeholder="j.dupont@privatebank.com" />
             <p style={{ fontSize: "12px", color: "#9ca3af", marginTop: "4px", marginBottom: 0 }}>Personal email accepted. We never contact your employer.</p>
           </div>
 
           {/* Role */}
           <div style={{ marginBottom: "20px" }}>
             <label style={lbl}>Current role <span style={{ color: "#C9A14A" }}>*</span></label>
-            <select value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} style={inp}>
+            <select value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} className="sb-field">
               <option value="">Select your role</option>
               {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
@@ -187,11 +203,11 @@ export default function SpecialistBenchPage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
             <div>
               <label style={lbl}>Current institution <span style={{ color: "#C9A14A" }}>*</span></label>
-              <input type="text" value={form.institution} onChange={(e) => setForm((f) => ({ ...f, institution: e.target.value }))} style={inp} placeholder="Pictet, UBS, EFG..." />
+              <input type="text" value={form.institution} onChange={(e) => setForm((f) => ({ ...f, institution: e.target.value }))} className="sb-field" placeholder="Pictet, UBS, EFG..." />
             </div>
             <div>
               <label style={lbl}>Experience <span style={{ color: "#C9A14A" }}>*</span></label>
-              <select value={form.experience} onChange={(e) => setForm((f) => ({ ...f, experience: e.target.value }))} style={inp}>
+              <select value={form.experience} onChange={(e) => setForm((f) => ({ ...f, experience: e.target.value }))} className="sb-field">
                 <option value="">Select</option>
                 {EXPERIENCE.map((e) => <option key={e} value={e}>{e}</option>)}
               </select>
@@ -219,14 +235,14 @@ export default function SpecialistBenchPage() {
           {/* Languages */}
           <div style={{ marginBottom: "20px" }}>
             <label style={lbl}>Languages</label>
-            <input type="text" value={form.languages} onChange={(e) => setForm((f) => ({ ...f, languages: e.target.value }))} style={inp} placeholder="French (native), English (fluent), German (working)" />
+            <input type="text" value={form.languages} onChange={(e) => setForm((f) => ({ ...f, languages: e.target.value }))} className="sb-field" placeholder="French (native), English (fluent), German (working)" />
           </div>
 
           {/* Brief */}
           <div style={{ marginBottom: "24px" }}>
             <label style={lbl}>Anything we should know? <span style={{ fontSize: "11px", fontWeight: 400, color: "#9ca3af", textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
             <textarea value={form.brief} onChange={(e) => setForm((f) => ({ ...f, brief: e.target.value }))} rows={3}
-              style={{ ...inp, resize: "none", height: "80px", fontFamily: "inherit" }}
+              className="sb-field sb-textarea"
               placeholder="Specialisation, certifications, particular market expertise..." />
           </div>
 
