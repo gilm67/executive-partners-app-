@@ -193,9 +193,9 @@ export default function SpecialistBenchPage() {
 
           {/* Email */}
           <div style={{ marginBottom: "18px" }}>
-            <label style={LBL}>Professional email <span style={{ color: "#C9A14A" }}>*</span></label>
-            <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} placeholder="j.dupont@privatebank.com" />
-            <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)", marginTop: "5px", marginBottom: 0 }}>Personal email accepted. We never contact your employer.</p>
+            <label style={LBL}>Personal email <span style={{ color: "#C9A14A" }}>*</span></label>
+            <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} placeholder="jean.dupont@gmail.com" />
+            
           </div>
 
           {/* Role */}
@@ -248,6 +248,12 @@ export default function SpecialistBenchPage() {
           </div>
 
           {/* Brief */}
+          <div style={{ marginBottom: "18px" }}>
+            <label style={LBL}>LinkedIn profile <span style={{ textTransform: "none", letterSpacing: 0, fontWeight: 400, color: "rgba(255,255,255,0.25)" }}>(optional)</span></label>
+            <input type="url" value={form.linkedin} onChange={(e) => setForm((f) => ({ ...f, linkedin: e.target.value }))} placeholder="https://linkedin.com/in/yourname" />
+            <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)", marginTop: "5px", marginBottom: 0 }}>Helps us understand your background — no CV needed.</p>
+          </div>
+
           <div style={{ marginBottom: "22px" }}>
             <label style={LBL}>
               Anything we should know?{" "}
