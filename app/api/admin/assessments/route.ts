@@ -9,7 +9,7 @@ const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 async function getGoogleToken(): Promise<string> {
   const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!;
   const privateKeyRaw = process.env.GOOGLE_PRIVATE_KEY!;
-  const privateKey = privateKeyRaw.replace(/\n/g, "\n");
+  const privateKey = privateKeyRaw.replace(/\\n/g, "\n");
   const now = Math.floor(Date.now() / 1000);
   const header = { alg: "RS256", typ: "JWT" };
   const payload = { iss: clientEmail, scope: SCOPES.join(" "), aud: "https://oauth2.googleapis.com/token", exp: now + 3600, iat: now };
