@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const SHEET_ID = "1Osr2RrgQZqDjK28knSXlqNXqJk2rcaATLqE1Yjy_W0c";
 const SHEET_TAB = "SpecialistBench";
 
@@ -27,6 +25,7 @@ async function appendToSheet(row: string[]) {
 
 export async function POST(req: NextRequest) {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
     const body = await req.json();
     const { firstName, lastName, email, role, institution, experience, markets, languages, brief } = body;
 
