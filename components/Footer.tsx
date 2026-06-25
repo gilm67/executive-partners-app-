@@ -10,6 +10,7 @@ const NAV = [
       { href: "/en/jobs", text: "Browse Jobs" },
       { href: "/en/candidates", text: "Career Guidance" },
       { href: "/en/portability", text: "Portability Score" },
+      { href: "/en/specialist-bench", text: "Specialist Bench" },
       { href: "/en/bp-simulator", text: "BP Simulator" },
     ],
   },
