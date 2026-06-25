@@ -72,7 +72,8 @@ export type InsightArticle = {
 /**
  * 🔹 Insights single source of truth
  */
-export const INSIGHTS: readonly InsightArticle[] = [\n  {
+export const INSIGHTS: readonly InsightArticle[] = [
+  {
     slug: "switzerland-third-private-banking-competitiveness",
     title: "Switzerland Is Still First in Governance. Private Banking Cannot Bank on That.",
     seoTitle: "Switzerland Drops to Third in IMD 2026 Rankings: What It Means for Private Banking",
