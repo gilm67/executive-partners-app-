@@ -25,13 +25,13 @@ const EXPERIENCE = ["1-3 years", "3-5 years", "5-10 years", "10+ years"];
 type FormState = {
   firstName: string; lastName: string; email: string; role: string;
   institution: string; experience: string; markets: string[];
-  languages: string; brief: string; consent: boolean;
+  languages: string; linkedin: string; brief: string; consent: boolean;
 };
 
 const EMPTY: FormState = {
   firstName: "", lastName: "", email: "", role: "",
   institution: "", experience: "", markets: [],
-  languages: "", brief: "", consent: false,
+  languages: "", linkedin: "", brief: "", consent: false,
 };
 
 const DARK_CSS = `

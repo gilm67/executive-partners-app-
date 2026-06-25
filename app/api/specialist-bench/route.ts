@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const body = await req.json();
-    const { firstName, lastName, email, role, institution, experience, markets, languages, brief } = body;
+    const { firstName, lastName, email, role, institution, experience, markets, languages, linkedin, brief } = body;
 
     if (!firstName || !lastName || !email || !role || !institution || !experience) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     const marketsStr = Array.isArray(markets) ? markets.join(", ") : "";
 
     try {
-      await appendToSheet([timestamp, fullName, email, role, institution, experience, marketsStr, languages || "", brief || "", "New"]);
+      await appendToSheet([timestamp, fullName, email, role, institution, experience, marketsStr, languages || "", linkedin || "", brief || "", "New"]);
     } catch (sheetErr) {
       console.error("Sheet append failed:", sheetErr);
     }
