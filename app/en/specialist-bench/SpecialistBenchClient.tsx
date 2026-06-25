@@ -34,16 +34,16 @@ const EMPTY: FormState = {
   languages: "", brief: "", consent: false,
 };
 
-const GLOBAL_OVERRIDE = `
-  .sb-wrap input,
-  .sb-wrap select,
-  .sb-wrap textarea {
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-    color: #111827 !important;
-    border: 1px solid #d1d5db !important;
+const DARK_CSS = `
+  .sb-form input:not([type="checkbox"]),
+  .sb-form select,
+  .sb-form textarea {
+    background-color: #0f1929 !important;
+    background: #0f1929 !important;
+    color: #e5e7eb !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
     border-radius: 8px !important;
-    padding: 10px 14px !important;
+    padding: 11px 14px !important;
     font-size: 14px !important;
     width: 100% !important;
     box-sizing: border-box !important;
@@ -52,25 +52,47 @@ const GLOBAL_OVERRIDE = `
     -webkit-appearance: auto !important;
     appearance: auto !important;
     box-shadow: none !important;
+    outline: none !important;
   }
-  .sb-wrap input::placeholder,
-  .sb-wrap textarea::placeholder {
-    color: #9ca3af !important;
+  .sb-form input:not([type="checkbox"]):focus,
+  .sb-form select:focus,
+  .sb-form textarea:focus {
+    border-color: rgba(201,161,74,0.5) !important;
+  }
+  .sb-form input::placeholder,
+  .sb-form textarea::placeholder {
+    color: rgba(255,255,255,0.25) !important;
     opacity: 1 !important;
   }
-  .sb-wrap textarea {
+  .sb-form select option {
+    background-color: #0f1929 !important;
+    color: #e5e7eb !important;
+  }
+  .sb-form textarea {
     resize: none !important;
     min-height: 80px !important;
   }
-  .sb-wrap input[type="checkbox"] {
+  .sb-form input[type="checkbox"] {
     width: 16px !important;
     height: 16px !important;
     padding: 0 !important;
-    display: inline-block !important;
-    accent-color: #1B3A6B !important;
+    background: transparent !important;
+    border: 1px solid rgba(255,255,255,0.25) !important;
+    border-radius: 3px !important;
+    accent-color: #C9A14A !important;
     flex-shrink: 0 !important;
   }
 `;
+
+const LBL: React.CSSProperties = {
+  display: "block",
+  fontSize: "11px",
+  fontWeight: 600,
+  color: "rgba(255,255,255,0.45)",
+  textTransform: "uppercase",
+  letterSpacing: "0.07em",
+  marginBottom: "7px",
+};
 
 export default function SpecialistBenchPage() {
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -105,102 +127,94 @@ export default function SpecialistBenchPage() {
 
   if (status === "success") {
     return (
-      <main style={{ minHeight: "100vh", background: "#F8F7F4", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-        <div style={{ maxWidth: "480px", width: "100%", background: "#fff", borderRadius: "16px", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", padding: "48px 40px", textAlign: "center" }}>
-          <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(27,58,107,0.08)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
-            <svg width="32" height="32" fill="none" stroke="#1B3A6B" viewBox="0 0 24 24">
+      <main style={{ minHeight: "100vh", background: "#0B0F1A", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+        <div style={{ maxWidth: "480px", width: "100%", background: "#0f1929", border: "1px solid rgba(201,161,74,0.2)", borderRadius: "16px", padding: "48px 40px", textAlign: "center" }}>
+          <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(201,161,74,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
+            <svg width="28" height="28" fill="none" stroke="#C9A14A" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 style={{ color: "#1B3A6B", fontSize: "22px", fontWeight: 600, marginBottom: "12px" }}>You are on the bench.</h2>
-          <p style={{ color: "#4b5563", lineHeight: 1.7, marginBottom: "24px" }}>
+          <h2 style={{ color: "#ffffff", fontSize: "22px", fontWeight: 600, marginBottom: "12px" }}>You are on the bench.</h2>
+          <p style={{ color: "rgba(255,255,255,0.6)", lineHeight: 1.7, marginBottom: "24px" }}>
             Your profile has been added to our Specialist Bench. We will reach out confidentially when a partner bank requests your specific expertise.
           </p>
-          <p style={{ fontSize: "13px", color: "#9ca3af" }}>Executive Partners, Geneva</p>
+          <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.3)" }}>Executive Partners, Geneva</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main style={{ minHeight: "100vh", background: "#F8F7F4" }}>
-      <style dangerouslySetInnerHTML={{ __html: GLOBAL_OVERRIDE }} />
+    <main style={{ minHeight: "100vh", background: "#0B0F1A" }}>
+      <style dangerouslySetInnerHTML={{ __html: DARK_CSS }} />
 
       {/* Hero */}
-      <section style={{ background: "#1B3A6B", padding: "72px 16px" }}>
+      <section style={{ background: "linear-gradient(180deg, #0f1929 0%, #0B0F1A 100%)", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "80px 16px 72px" }}>
         <div style={{ maxWidth: "720px", margin: "0 auto", textAlign: "center" }}>
-          <p style={{ color: "#C9A14A", fontSize: "12px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "16px" }}>
+          <p style={{ color: "#C9A14A", fontSize: "11px", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "20px" }}>
             Executive Partners — Specialist Bench
           </p>
-          <h1 style={{ color: "#ffffff", fontSize: "clamp(26px, 4vw, 38px)", fontWeight: 600, lineHeight: 1.25, marginBottom: "20px" }}>
-            Your expertise deserves the right opportunity.
+          <h1 style={{ color: "#ffffff", fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 600, lineHeight: 1.2, marginBottom: "20px", letterSpacing: "-0.01em" }}>
+            Your expertise deserves<br />the right opportunity.
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.72)", fontSize: "17px", lineHeight: 1.7, maxWidth: "560px", margin: "0 auto" }}>
+          <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "17px", lineHeight: 1.75, maxWidth: "540px", margin: "0 auto" }}>
             We work exclusively in private banking and wealth management. If you hold a specialist or support role and you are open to the right conversation, register here. We approach you when a partner bank is looking for exactly your profile. Nothing more.
           </p>
         </div>
       </section>
 
       {/* Trust strip */}
-      <section style={{ background: "rgba(201,161,74,0.08)", borderTop: "1px solid rgba(201,161,74,0.25)", borderBottom: "1px solid rgba(201,161,74,0.25)", padding: "18px 16px" }}>
-        <div style={{ maxWidth: "720px", margin: "0 auto", display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center" }}>
+      <section style={{ background: "rgba(201,161,74,0.05)", borderBottom: "1px solid rgba(201,161,74,0.12)", padding: "16px" }}>
+        <div style={{ maxWidth: "720px", margin: "0 auto", display: "flex", flexWrap: "wrap", gap: "24px", justifyContent: "center" }}>
           {["Strictly confidential", "No unsolicited outreach to your current employer", "We contact you only when there is a real match"].map((t) => (
-            <span key={t} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "#1B3A6B", fontWeight: 600 }}>
-              <span style={{ color: "#C9A14A" }}>◆</span> {t}
+            <span key={t} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "rgba(255,255,255,0.65)", fontWeight: 500 }}>
+              <span style={{ color: "#C9A14A", fontSize: "10px" }}>◆</span> {t}
             </span>
           ))}
         </div>
       </section>
 
       {/* Form */}
-      <section style={{ padding: "56px 16px" }}>
-        <div className="sb-wrap" style={{ maxWidth: "640px", margin: "0 auto", background: "#ffffff", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "clamp(24px, 5vw, 40px)" }}>
-          <h2 style={{ color: "#1B3A6B", fontSize: "20px", fontWeight: 600, marginBottom: "32px", marginTop: 0 }}>Register your profile</h2>
+      <section style={{ padding: "60px 16px 80px" }}>
+        <div className="sb-form" style={{ maxWidth: "620px", margin: "0 auto", background: "#0d1728", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "16px", padding: "clamp(24px, 5vw, 40px)" }}>
+          <h2 style={{ color: "#ffffff", fontSize: "18px", fontWeight: 600, marginBottom: "28px", marginTop: 0 }}>Register your profile</h2>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
+          {/* Name */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "18px" }}>
             <div>
-              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
-                First name <span style={{ color: "#C9A14A" }}>*</span>
-              </label>
+              <label style={LBL}>First name <span style={{ color: "#C9A14A" }}>*</span></label>
               <input type="text" value={form.firstName} onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))} placeholder="Jean" />
             </div>
             <div>
-              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
-                Last name <span style={{ color: "#C9A14A" }}>*</span>
-              </label>
+              <label style={LBL}>Last name <span style={{ color: "#C9A14A" }}>*</span></label>
               <input type="text" value={form.lastName} onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))} placeholder="Dupont" />
             </div>
           </div>
 
-          <div style={{ marginBottom: "20px" }}>
-            <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
-              Professional email <span style={{ color: "#C9A14A" }}>*</span>
-            </label>
+          {/* Email */}
+          <div style={{ marginBottom: "18px" }}>
+            <label style={LBL}>Professional email <span style={{ color: "#C9A14A" }}>*</span></label>
             <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} placeholder="j.dupont@privatebank.com" />
-            <p style={{ fontSize: "12px", color: "#9ca3af", marginTop: "4px", marginBottom: 0 }}>Personal email accepted. We never contact your employer.</p>
+            <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)", marginTop: "5px", marginBottom: 0 }}>Personal email accepted. We never contact your employer.</p>
           </div>
 
-          <div style={{ marginBottom: "20px" }}>
-            <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
-              Current role <span style={{ color: "#C9A14A" }}>*</span>
-            </label>
+          {/* Role */}
+          <div style={{ marginBottom: "18px" }}>
+            <label style={LBL}>Current role <span style={{ color: "#C9A14A" }}>*</span></label>
             <select value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}>
               <option value="">Select your role</option>
               {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
+          {/* Institution + Experience */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "18px" }}>
             <div>
-              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
-                Current institution <span style={{ color: "#C9A14A" }}>*</span>
-              </label>
+              <label style={LBL}>Current institution <span style={{ color: "#C9A14A" }}>*</span></label>
               <input type="text" value={form.institution} onChange={(e) => setForm((f) => ({ ...f, institution: e.target.value }))} placeholder="Pictet, UBS, EFG..." />
             </div>
             <div>
-              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
-                Experience <span style={{ color: "#C9A14A" }}>*</span>
-              </label>
+              <label style={LBL}>Experience <span style={{ color: "#C9A14A" }}>*</span></label>
               <select value={form.experience} onChange={(e) => setForm((f) => ({ ...f, experience: e.target.value }))}>
                 <option value="">Select</option>
                 {EXPERIENCE.map((e) => <option key={e} value={e}>{e}</option>)}
@@ -208,18 +222,18 @@ export default function SpecialistBenchPage() {
             </div>
           </div>
 
-          <div style={{ marginBottom: "20px" }}>
-            <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "8px" }}>
-              Markets / geographies you cover
-            </label>
+          {/* Markets */}
+          <div style={{ marginBottom: "18px" }}>
+            <label style={LBL}>Markets / geographies you cover</label>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
               {MARKETS.map((m) => (
                 <button key={m} type="button" onClick={() => toggleMarket(m)}
                   style={{
-                    padding: "6px 14px", borderRadius: "999px", fontSize: "12px", fontWeight: 500, cursor: "pointer",
-                    background: form.markets.includes(m) ? "#1B3A6B" : "#ffffff",
-                    color: form.markets.includes(m) ? "#ffffff" : "#4b5563",
-                    border: form.markets.includes(m) ? "1px solid #1B3A6B" : "1px solid #d1d5db",
+                    padding: "6px 13px", borderRadius: "999px", fontSize: "12px", fontWeight: 500, cursor: "pointer",
+                    background: form.markets.includes(m) ? "#C9A14A" : "transparent",
+                    color: form.markets.includes(m) ? "#0B0F1A" : "rgba(255,255,255,0.55)",
+                    border: form.markets.includes(m) ? "1px solid #C9A14A" : "1px solid rgba(255,255,255,0.15)",
+                    transition: "all 0.15s",
                   }}>
                   {m}
                 </button>
@@ -227,55 +241,61 @@ export default function SpecialistBenchPage() {
             </div>
           </div>
 
-          <div style={{ marginBottom: "20px" }}>
-            <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
-              Languages
-            </label>
+          {/* Languages */}
+          <div style={{ marginBottom: "18px" }}>
+            <label style={LBL}>Languages</label>
             <input type="text" value={form.languages} onChange={(e) => setForm((f) => ({ ...f, languages: e.target.value }))} placeholder="French (native), English (fluent), German (working)" />
           </div>
 
-          <div style={{ marginBottom: "24px" }}>
-            <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>
-              Anything we should know? <span style={{ fontSize: "11px", fontWeight: 400, color: "#9ca3af", textTransform: "none", letterSpacing: 0 }}>(optional)</span>
+          {/* Brief */}
+          <div style={{ marginBottom: "22px" }}>
+            <label style={LBL}>
+              Anything we should know?{" "}
+              <span style={{ textTransform: "none", letterSpacing: 0, fontWeight: 400, color: "rgba(255,255,255,0.25)" }}>(optional)</span>
             </label>
             <textarea value={form.brief} onChange={(e) => setForm((f) => ({ ...f, brief: e.target.value }))} rows={3}
               placeholder="Specialisation, certifications, particular market expertise..." />
           </div>
 
-          <div style={{ background: "#F8F7F4", borderRadius: "10px", padding: "16px", marginBottom: "28px" }}>
+          {/* Consent */}
+          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "10px", padding: "16px", marginBottom: "24px" }}>
             <label style={{ display: "flex", alignItems: "flex-start", gap: "12px", cursor: "pointer" }}>
               <input type="checkbox" checked={form.consent} onChange={(e) => setForm((f) => ({ ...f, consent: e.target.checked }))} />
-              <span style={{ fontSize: "12px", color: "#4b5563", lineHeight: 1.6 }}>
+              <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.45)", lineHeight: 1.65 }}>
                 I consent to Executive Partners storing my profile and contacting me confidentially when a relevant opportunity arises. I understand my information will not be shared with any third party without my prior agreement. I can withdraw at any time by emailing{" "}
-                <a href="mailto:recruiter@execpartners.ch" style={{ color: "#1B3A6B" }}>recruiter@execpartners.ch</a>.
+                <a href="mailto:recruiter@execpartners.ch" style={{ color: "#C9A14A" }}>recruiter@execpartners.ch</a>.
               </span>
             </label>
           </div>
 
-          {errorMsg && <p style={{ color: "#ef4444", fontSize: "13px", marginBottom: "16px" }}>{errorMsg}</p>}
+          {errorMsg && <p style={{ color: "#f87171", fontSize: "13px", marginBottom: "14px" }}>{errorMsg}</p>}
 
           <button onClick={handleSubmit} disabled={status === "loading"}
-            style={{ width: "100%", background: "#1B3A6B", color: "#ffffff", border: "none", borderRadius: "10px", padding: "14px", fontSize: "14px", fontWeight: 600, letterSpacing: "0.03em", cursor: "pointer", opacity: status === "loading" ? 0.6 : 1 }}>
+            style={{
+              width: "100%", background: "#C9A14A", color: "#0B0F1A", border: "none",
+              borderRadius: "10px", padding: "14px", fontSize: "14px", fontWeight: 700,
+              letterSpacing: "0.03em", cursor: "pointer", opacity: status === "loading" ? 0.6 : 1,
+            }}>
             {status === "loading" ? "Submitting..." : "Join the Specialist Bench"}
           </button>
 
           {status === "error" && (
-            <p style={{ color: "#ef4444", fontSize: "13px", textAlign: "center", marginTop: "12px" }}>
+            <p style={{ color: "#f87171", fontSize: "13px", textAlign: "center", marginTop: "12px" }}>
               Something went wrong. Please email recruiter@execpartners.ch.
             </p>
           )}
 
-          <p style={{ fontSize: "12px", color: "#9ca3af", textAlign: "center", marginTop: "20px", marginBottom: 0 }}>
+          <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: "18px", marginBottom: 0 }}>
             Strictly confidential. No unsolicited approaches to your current employer.
           </p>
         </div>
       </section>
 
       <section style={{ padding: "0 16px 64px" }}>
-        <div style={{ maxWidth: "640px", margin: "0 auto", textAlign: "center" }}>
-          <p style={{ fontSize: "13px", color: "#6b7280" }}>
+        <div style={{ maxWidth: "620px", margin: "0 auto", textAlign: "center" }}>
+          <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.3)" }}>
             Looking for senior Relationship Manager positions?{" "}
-            <a href="/en/candidate-assessment" style={{ color: "#1B3A6B", fontWeight: 500 }}>
+            <a href="/en/candidate-assessment" style={{ color: "#C9A14A" }}>
               Use our Business Plan Simulator instead.
             </a>
           </p>
