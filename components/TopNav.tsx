@@ -51,6 +51,7 @@ export default function TopNav() {
     { href: "/markets", label: "Markets" },
     { href: "/jobs", label: "Jobs" },
     { href: "/candidates", label: "Candidates" },
+    { href: "/en/specialist-bench", label: "Specialist Bench" },
     { href: "/hiring-managers", label: "Hiring Managers" },
     { href: "/about", label: "About" },
   ];
@@ -58,7 +59,6 @@ export default function TopNav() {
   const TOOLS: NavItem[] = [
     { href: "/bp-simulator", label: "Business Plan Simulator" },
     { href: "/portability", label: "Portability Score" },
-    { href: "/en/specialist-bench", label: "Specialist Bench" },
   ];
 
   const INSIGHTS: NavItem[] = [
