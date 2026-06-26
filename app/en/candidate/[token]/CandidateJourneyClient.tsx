@@ -598,7 +598,7 @@ export default function CandidateJourneyClient({ token }: { token: string }) {
             <div className="rounded-xl border border-[#9ECBFF]/20 bg-[#9ECBFF]/5 px-4 py-3">
               <p className="text-xs text-[#9ECBFF] font-semibold mb-0.5">Step 2 of 3 — Business Plan Simulator</p>
               <p className="text-xs text-white/50">
-                Build your bank-ready revenue case. Banks close offers faster when candidates arrive with the numbers pre-built. Complete all sections and save your BP, then continue to the final section.
+                Fill all 5 sections. Once you reach Section 5 (Analysis & Committee Readiness), a "Continue to Motivation & Fit" button will appear automatically below.
               </p>
             </div>
           </div>
@@ -616,9 +616,10 @@ export default function CandidateJourneyClient({ token }: { token: string }) {
                 </div>
                 <button
                   onClick={() => { setCompletedSteps(prev => [...prev, 1]); setPhase("motivation"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-                  className="shrink-0 rounded-full bg-[#D4AF37] px-6 py-2.5 text-sm font-semibold text-black"
+                  className="shrink-0 rounded-full px-6 py-2.5 text-sm font-semibold"
+                  style={{backgroundColor:"#D4AF37", color:"#000000"}}
                 >
-                  Continue to Motivation →
+                  Continue to Motivation & Fit →
                 </button>
               </div>
             </div>

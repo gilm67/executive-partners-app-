@@ -112,19 +112,11 @@ export default function BPClient({
    * Replace the selector with the exact key you use for computed output if needed.
    */
   const resultsSignal = useBP((s: any) => {
-    // 🔧 If you know the key, prefer something explicit like:
-    // return s.summary?.ok || s.report?.id || s.outputReady;
-
-    return (
-      s.summary ||
-      s.results ||
-      s.output ||
-      s.report ||
-      s.pdfUrl ||
-      s.exportUrl ||
-      s.aiEvaluation ||
-      null
-    );
+    // Fire when Section 5 has computed a score and written ai_notes to the store
+    // Both are set via useEffect in Section5Analysis whenever the analysis renders
+    const score = s.i?.score;
+    const notes = s.i?.ai_notes;
+    return (score && score > 0 && notes) ? true : null;
   });
 
   // fire only once
