@@ -166,14 +166,18 @@ export default function HomePage() {
           {/* Gold divider */}
           <div className="h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
 
-          {/* FREE TOOLS SECTION */}
-          <div className="relative mx-auto mt-8 max-w-6xl px-4 pb-8 sm:mt-12">
-            <div className="mb-6 text-center pt-4">
-              <h2 className="font-[var(--font-playfair)] text-3xl font-semibold text-white md:text-4xl">
-                Free Tools for Private Bankers
+          {/* TOOLS AS PRODUCT SECTION */}
+          <div className="relative mx-auto mt-10 max-w-6xl px-4 pb-10 sm:mt-16">
+            <div className="mb-8 text-center pt-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#D4AF37]/80 mb-3">
+                Portability Intelligence · Executive Partners
+              </p>
+              <h2 className="font-[var(--font-playfair)] text-3xl font-semibold text-white md:text-4xl lg:text-5xl leading-tight">
+                The only recruiter built on<br className="hidden sm:block" />{" "}
+                <span className="text-[#D4AF37]">portability intelligence</span>
               </h2>
-              <p className="mt-3 text-lg text-white/80">
-                Assess your portability and model your business plan in minutes
+              <p className="mt-4 text-base text-white/60 max-w-xl mx-auto leading-relaxed">
+                Two institutional-grade tools. Free. No login required. Used by 500+ senior private bankers before their next move.
               </p>
             </div>
             <GatewayPanel />
@@ -295,101 +299,150 @@ function GatewayPanel() {
   return (
     <section
       aria-label="Primary tools"
-      className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0B0F1A]/72 p-5 backdrop-blur-xl shadow-[0_26px_90px_rgba(0,0,0,.55)]"
+      className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0B0F1A]/80 backdrop-blur-xl shadow-[0_40px_120px_rgba(0,0,0,.7)]"
     >
+      {/* Ambient glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 rounded-3xl"
         style={{
           background:
-            "radial-gradient(900px 260px at 18% 0%, rgba(201,161,74,.22) 0%, rgba(201,161,74,0) 60%), radial-gradient(900px 260px at 92% 25%, rgba(158,203,255,.16) 0%, rgba(158,203,255,0) 55%), linear-gradient(to bottom, rgba(255,255,255,.06), rgba(0,0,0,0))",
+            "radial-gradient(800px 300px at 15% 0%, rgba(201,161,74,.18) 0%, transparent 60%), radial-gradient(800px 300px at 90% 20%, rgba(158,203,255,.12) 0%, transparent 55%)",
         }}
       />
 
-      <div className="relative grid gap-5 md:grid-cols-2">
+      <div className="relative grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/8">
 
-        {/* ── Portability Score card ── */}
-        <div className="relative overflow-hidden rounded-2xl border border-[#D4AF37]/28 bg-gradient-to-b from-[#D4AF37]/12 to-white/[0.03] p-5 shadow-[0_18px_55px_rgba(0,0,0,.45)]">
-          <div className="grid gap-5 md:grid-cols-[1fr_auto] items-start">
-            {/* Left: copy */}
-            <div className="flex flex-col gap-3">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.22em] text-white/65">Signature tool</p>
-                <div className="mt-1 flex items-center gap-2">
-                  <div className="grid h-8 w-8 place-items-center rounded-lg bg-[#D4AF37]/16 ring-1 ring-[#F5D778]/28 text-[#F5D778]">
-                    <Sparkles className="h-4 w-4" />
-                  </div>
-                  <h3 className="text-base font-semibold text-white">Portability Score™</h3>
-                </div>
+        {/* ── PORTABILITY SCORE ── */}
+        <div className="relative p-7 lg:p-9 flex flex-col gap-6">
+          {/* Badge */}
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-[#D4AF37]">
+              <Sparkles className="h-3 w-3" /> Signature tool
+            </span>
+          </div>
+
+          {/* Headline */}
+          <div>
+            <h3 className="text-2xl font-semibold text-white leading-tight">
+              AUM Portability Score™
+            </h3>
+            <p className="mt-2 text-sm text-white/55 leading-relaxed max-w-sm">
+              Know exactly how much of your book will realistically follow you before speaking to any bank. 30-point framework, 200+ placements tested.
+            </p>
+          </div>
+
+          {/* Feature list */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+            {[
+              "Wallet share depth",
+              "Legal risk by jurisdiction",
+              "EAM co-management flags",
+              "Institutional tenure score",
+              "Transfer range estimate",
+              "PDF dossier download",
+            ].map(f => (
+              <div key={f} className="flex items-center gap-1.5 text-xs text-white/50">
+                <span className="text-[#D4AF37] text-sm">✓</span> {f}
               </div>
-              <p className="text-sm text-white/65 leading-relaxed">
-                Model realistic AUM transfer potential before any conversation with a bank. Wallet share, compliance status, and timeline — calculated in minutes.
-              </p>
-              <ul className="space-y-1">
-                {["Client loyalty analysis","Wallet share estimate","Non-solicit risk flag","Transfer timeline"].map(f => (
-                  <li key={f} className="flex items-center gap-2 text-xs text-white/50">
-                    <span className="text-[#D4AF37]">✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/en/portability"
-                className="mt-1 inline-flex items-center gap-1.5 rounded-xl bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-black hover:opacity-90 transition self-start"
-              >
-                Calculate Your Score →
-              </Link>
-            </div>
-            {/* Right: preview */}
-            <div className="hidden md:block w-[180px] shrink-0">
-              <PortabilityPreview />
-            </div>
+            ))}
+          </div>
+
+          {/* Preview — mobile visible */}
+          <div className="md:hidden">
+            <PortabilityPreview />
+          </div>
+
+          {/* CTA */}
+          <div className="flex items-center gap-3 mt-auto pt-2">
+            <Link
+              href="/en/portability"
+              className="inline-flex items-center gap-2 rounded-full bg-[#D4AF37] px-6 py-2.5 text-sm font-semibold text-black hover:bg-[#c49a38] transition shadow-lg shadow-[#D4AF37]/20"
+            >
+              Calculate your score
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+            <span className="text-[11px] text-white/35">2 minutes · free</span>
           </div>
         </div>
 
-        {/* ── BP Simulator card ── */}
-        <div className="relative overflow-hidden rounded-2xl border border-[#9ECBFF]/26 bg-gradient-to-b from-[#9ECBFF]/12 to-white/[0.03] p-5 shadow-[0_18px_55px_rgba(0,0,0,.45)]">
-          <div className="grid gap-5 md:grid-cols-[1fr_auto] items-start">
-            {/* Left: copy */}
-            <div className="flex flex-col gap-3">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.22em] text-white/65">Approval tool</p>
-                <div className="mt-1 flex items-center gap-2">
-                  <div className="grid h-8 w-8 place-items-center rounded-lg bg-[#9ECBFF]/16 ring-1 ring-[#CFE6FF]/26 text-[#CFE6FF]">
-                    <Calculator className="h-4 w-4" />
-                  </div>
-                  <h3 className="text-base font-semibold text-white">Business Plan Simulator</h3>
-                </div>
+        {/* ── BP SIMULATOR ── */}
+        <div className="relative p-7 lg:p-9 flex flex-col gap-6">
+          {/* Badge */}
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#9ECBFF]/35 bg-[#9ECBFF]/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-[#9ECBFF]">
+              <Calculator className="h-3 w-3" /> Approval tool
+            </span>
+          </div>
+
+          {/* Headline */}
+          <div>
+            <h3 className="text-2xl font-semibold text-white leading-tight">
+              Business Plan Simulator
+            </h3>
+            <p className="mt-2 text-sm text-white/55 leading-relaxed max-w-sm">
+              Build a bank-ready, three-year revenue case before walking into any hiring committee. Banks close offers faster when you arrive with the numbers pre-built.
+            </p>
+          </div>
+
+          {/* Feature list */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+            {[
+              "3-year P&L projection",
+              "Break-even AUM",
+              "Committee readiness score",
+              "Portability assumption",
+              "NPC buyout recommendation",
+              "PDF export ready",
+            ].map(f => (
+              <div key={f} className="flex items-center gap-1.5 text-xs text-white/50">
+                <span className="text-[#9ECBFF] text-sm">✓</span> {f}
               </div>
-              <p className="text-sm text-white/65 leading-relaxed">
-                Build a three-year revenue case before you walk into any hiring meeting. Banks close offers faster when portability logic arrives pre-documented.
-              </p>
-              <ul className="space-y-1">
-                {["3-year revenue projection","Break-even AUM calculation","NPC buyout recommendation","PDF export ready"].map(f => (
-                  <li key={f} className="flex items-center gap-2 text-xs text-white/50">
-                    <span className="text-[#9ECBFF]">✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/en/bp-simulator"
-                className="mt-1 inline-flex items-center gap-1.5 rounded-xl bg-[#9ECBFF]/20 border border-[#9ECBFF]/30 px-4 py-2 text-sm font-semibold text-[#CFE6FF] hover:bg-[#9ECBFF]/30 transition self-start"
-              >
-                Run Simulation →
-              </Link>
-            </div>
-            {/* Right: preview */}
-            <div className="hidden md:block w-[180px] shrink-0">
-              <BPPreview />
-            </div>
+            ))}
+          </div>
+
+          {/* Preview — mobile visible */}
+          <div className="md:hidden">
+            <BPPreview />
+          </div>
+
+          {/* CTA */}
+          <div className="flex items-center gap-3 mt-auto pt-2">
+            <Link
+              href="/en/bp-simulator"
+              className="inline-flex items-center gap-2 rounded-full border border-[#9ECBFF]/40 bg-[#9ECBFF]/10 px-6 py-2.5 text-sm font-semibold text-[#CFE6FF] hover:bg-[#9ECBFF]/20 transition"
+            >
+              Run simulation
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+            <span className="text-[11px] text-white/35">5 minutes · free</span>
           </div>
         </div>
 
       </div>
 
-      <div className="relative px-2 pt-4 text-center">
-        <span className="text-xs text-white/55">
-          Used by 500+ private bankers · 100% confidential · No obligation
-        </span>
+      {/* Desktop previews — shown as bottom strip */}
+      <div className="hidden md:grid grid-cols-2 divide-x divide-white/8 border-t border-white/8">
+        <div className="p-5 lg:p-7">
+          <PortabilityPreview />
+        </div>
+        <div className="p-5 lg:p-7">
+          <BPPreview />
+        </div>
+      </div>
+
+      {/* Trust strip */}
+      <div className="border-t border-white/8 px-6 py-3 flex items-center justify-center gap-6 flex-wrap">
+        {[
+          "200+ senior placements tested",
+          "100% confidential",
+          "No login required",
+          "No data stored",
+        ].map(t => (
+          <span key={t} className="text-[11px] text-white/35 flex items-center gap-1.5">
+            <span className="text-[#D4AF37]/60">·</span> {t}
+          </span>
+        ))}
       </div>
     </section>
   );
