@@ -367,11 +367,10 @@ export default function PortabilityClient() {
   const updateProfile = (patch: Partial<ProfileState>) => setProfile(p => ({ ...p, ...patch }));
   const updateLegal = (patch: Partial<LegalState>) => setLegalState(p => ({ ...p, ...patch }));
  
-  const _executeDownload = async () => {
+  const _executeDownload = () => {
     if (exporting) return;
     setExporting(true);
     try {
-      const { jsPDF } = await import('jspdf');
       const NAVY: [number,number,number] = [27,58,107];
       const GOLD: [number,number,number] = [212,175,55];
       const DARK: [number,number,number] = [20,20,30];
@@ -606,6 +605,7 @@ export default function PortabilityClient() {
       pdf.save('portability-diagnostic-executive-partners.pdf');
     } catch (e) {
       console.error('PDF generation error:', e);
+      alert('PDF generation failed. Please try again or contact recruiter@execpartners.ch');
     } finally {
       setExporting(false);
     }
@@ -630,9 +630,9 @@ export default function PortabilityClient() {
         }),
       });
     } catch { /* silent fail */ }
+    _executeDownload();
     setCapture(p => ({ ...p, submitting: false, done: true, showModal: false }));
     track('portability_email_captured', { score: computed.overallPct, market: profile.market, hub: profile.mainHub });
-    _executeDownload();
   };
  
   /* ── Style helpers ────────────────────────────────────── */
