@@ -602,7 +602,15 @@ export default function PortabilityClient() {
         pdf.text(`recruiter@execpartners.ch  ·  execpartners.ch  ·  p${p}/${total}`, MR-180, H-12);
       }
 
-      pdf.save('portability-diagnostic-executive-partners.pdf');
+      const blob = pdf.output('blob');
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'portability-diagnostic-executive-partners.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (e) {
       console.error('PDF generation error:', e);
       alert('PDF generation failed. Please try again or contact recruiter@execpartners.ch');
