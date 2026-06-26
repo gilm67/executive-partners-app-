@@ -1451,7 +1451,7 @@ export default function PortabilityClient() {
                 type="button"
                 onClick={handleDownload}
                 disabled={exporting}
-                className="w-full sm:w-auto rounded-full bg-brandGold px-8 py-3 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60 transition"
+                className="w-full sm:w-auto rounded-full bg-[#C9A14A] px-8 py-3 text-sm font-semibold text-black hover:bg-[#b8902e] disabled:opacity-60 transition"  style={{color:'#000000',backgroundColor:'#C9A14A'}}
               >
                 {exporting ? "Preparing PDF..." : "Download full PDF diagnostic →"}
               </button>
