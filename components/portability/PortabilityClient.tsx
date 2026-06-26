@@ -202,6 +202,7 @@ export default function PortabilityClient({
   });
   const [exporting, setExporting] = useState(false);
   const captureRef = useRef<HTMLDivElement | null>(null);
+  const scoreReadyFired = useRef(false);
  
   /* ── Scoring Engine ─────────────────────────────────────── */
  
@@ -383,6 +384,25 @@ export default function PortabilityClient({
     };
   }, [coreScores, legalState, advancedScores, bookingCentres, permissions, profile]);
  
+  /* ── Fire onScoreReady once score is computed ── */
+  useMemo(() => {
+    if (onScoreReady && computed.overallPct > 0 && !scoreReadyFired.current) {
+      scoreReadyFired.current = true;
+      onScoreReady({
+        overallPct: computed.overallPct,
+        overallLevel: computed.overallLevel,
+        expectedTransferRange: computed.expectedTransferRange,
+        onboardingSpeed: computed.onboardingSpeed,
+        corePct: computed.corePct,
+        legalPct: computed.legalPct,
+        advancedPct: computed.advancedPct,
+        roaBps: profile.roaBps,
+        market: profile.market,
+        hub: profile.mainHub,
+      });
+    }
+  }, [computed.overallPct]); // eslint-disable-line react-hooks/exhaustive-deps
+
   /* ── Handlers ─────────────────────────────────────────── */
  
   const updateProfile = (patch: Partial<ProfileState>) => setProfile(p => ({ ...p, ...patch }));
