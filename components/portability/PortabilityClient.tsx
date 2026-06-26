@@ -628,6 +628,7 @@ export default function PortabilityClient() {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: capture.name, email: capture.email, tool: "portability",
+          score: computed.overallPct, level: computed.overallLevel,
           summary: `Score: ${computed.overallPct}% (${computed.overallLevel}) | Core: ${computed.corePct}% | Legal: ${computed.legalPct}% | Advanced: ${computed.advancedPct}% | Transfer: ${computed.expectedTransferRange} | Market: ${profile.market} | Hub: ${profile.mainHub} | Tenure: ${profile.tenureKey} | Wallet: ${profile.walletShareScore}/5 | EAM: ${legalState.eamExposure}/5 | Jurisdiction: ${legalState.jurisdiction || "unspecified"}`,
         }),
       });
@@ -682,8 +683,8 @@ export default function PortabilityClient() {
                 </div>
               </div>
  
-              <h2 className="text-base font-semibold text-white">Send your full diagnostic to your inbox</h2>
-              <p className="mt-1 text-sm text-gray-400">PDF downloads immediately. We may follow up confidentially, no pipeline pressure.</p>
+              <h2 className="text-base font-semibold text-white">Download your confidential EP dossier</h2>
+              <p className="mt-1 text-sm text-gray-400">Your diagnostic is formatted as a bank-ready PDF — scores, flags, and specific recommendations you can share with a hiring committee or discuss with us directly. Downloads immediately to your device.</p>
  
               <form onSubmit={handleCaptureSubmit} className="mt-5 space-y-3">
                 <input type="text" value={capture.name} onChange={e => setCapture(p => ({ ...p, name: e.target.value }))}
