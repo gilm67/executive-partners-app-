@@ -1442,18 +1442,18 @@ export default function PortabilityClient() {
             <p className="mt-2">If your portability profile is commercially credible, we can help you approach the right platforms and booking centres in a structured, discreet process, one that protects your reputation throughout.</p>
  
             {/* Download CTA — prominent, natural position after completing the tool */}
-            <div className="mt-5 rounded-xl border border-brandGold/40 bg-brandGold/5 p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-5 rounded-xl border border-brandGold/40 bg-brandGold/5 p-5 flex flex-col gap-4">
               <div>
-                <p className="text-sm font-semibold text-white">Download your full PDF diagnostic</p>
-                <p className="text-xs text-gray-400 mt-0.5">Your complete score, flags, and recommendations formatted as a confidential EP report.</p>
+                <p className="text-base font-semibold text-white">Download your confidential EP dossier</p>
+                <p className="text-sm text-gray-300 mt-1">Your complete score, flags, and specific recommendations formatted as a bank-ready PDF. Enter your email and it downloads immediately to your device.</p>
               </div>
               <button
                 type="button"
                 onClick={handleDownload}
                 disabled={exporting}
-                className="shrink-0 rounded-full bg-brandGold px-6 py-2.5 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60 transition whitespace-nowrap"
+                className="w-full sm:w-auto rounded-full bg-brandGold px-8 py-3 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60 transition"
               >
-                {exporting ? "Preparing PDF..." : "Download full PDF diagnostic"}
+                {exporting ? "Preparing PDF..." : "Download full PDF diagnostic →"}
               </button>
             </div>
  
