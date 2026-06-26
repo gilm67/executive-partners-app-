@@ -473,8 +473,11 @@ export default function CandidateJourneyClient({ token }: { token: string }) {
   const handleBpDone = () => {
     setBpResultReady(true);
     setCompletedSteps(prev => [...prev, 1]);
-    setPhase("motivation");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Auto-advance to motivation after 2.5s — candidate sees completion, then transitions
+    setTimeout(() => {
+      setPhase("motivation");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 2500);
   };
 
   const handleSubmit = async () => {
@@ -595,12 +598,22 @@ export default function CandidateJourneyClient({ token }: { token: string }) {
                 </p>
               </div>
             )}
+            {!bpResultReady ? (
             <div className="rounded-xl border border-[#9ECBFF]/20 bg-[#9ECBFF]/5 px-4 py-3">
               <p className="text-xs text-[#9ECBFF] font-semibold mb-0.5">Step 2 of 3 — Business Plan Simulator</p>
               <p className="text-xs text-white/50">
-                Fill all 5 sections. Once you reach Section 5 (Analysis & Committee Readiness), a "Continue to Motivation & Fit" button will appear automatically below.
+                Fill all 5 sections including Section 5 (Analysis). You will be automatically advanced to the final step once complete.
               </p>
             </div>
+            ) : (
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-4 flex items-center gap-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 text-lg">✓</div>
+              <div>
+                <p className="text-sm font-semibold text-emerald-300">Business Plan complete</p>
+                <p className="text-xs text-white/40 mt-0.5">Advancing to Motivation & Fit in a moment…</p>
+              </div>
+            </div>
+            )}
           </div>
           <BPClient
             prefill={bpPrefill}
