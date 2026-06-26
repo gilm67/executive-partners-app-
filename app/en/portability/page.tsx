@@ -63,29 +63,29 @@ export default function PortabilityPage() {
       </section>
 
 
-        {/* SEO H2 sections */}
-        <div className="mt-12 space-y-6 border-t border-white/10 pt-10">
-
-          {[
-            {
-              q: "How much of my AUM is actually portable?",
-              a: "Most private bankers overestimate their portable AUM by 20 to 40 percent. The mistake is treating total AUM and portable AUM as the same number. In books where top clients sit below average wallet share concentration, the portable fraction typically represents 30 to 45 percent of headline AUM, not the 60 to 70 percent most bankers assume. Four variables determine the actual figure: how deep the personal client relationship runs versus the bank brand, wallet share concentration in the top 20 relationships, the scope and enforceability of any non-solicit clause under Swiss law, and the compliance and documentation status of cross-border client files. The Portability Score below maps all four dimensions in under ten minutes.",
-            },
-            {
-              q: "What is the average client retention rate when a private banker changes bank?",
-              a: "Based on Executive Partners placement data across 200+ senior transactions in Geneva and Zurich, the average AUM transfer rate within 12 months of a move is 45 to 65 percent for UHNW books and 60 to 75 percent for HNW books. Family office relationships where the RM personally owns the primary client contact transfer at 70 to 85 percent. Institutionally-supported relationships transfer at 20 to 40 percent. The single strongest predictor of transfer success is not book size — it is wallet share concentration in the top 20 client relationships.",
-            },
-            {
-              q: "How do banks calculate AUM portability before making an offer?",
-              a: "Hiring banks run their own portability model before approving any senior RM offer. They will ask you to walk through your top 10 to 20 client relationships individually — not as an aggregate AUM figure. They want to understand relationship tenure, whether the introduction was personal or institutional, total client wealth and your wallet share, cross-border compliance status, and non-solicit exposure. The banks that move fastest on offers work with candidates who arrive with this analysis pre-built. The Portability Score produces exactly that — formatted for a hiring committee conversation.",
-            },
-          ].map(({ q, a }) => (
-            <div key={q} className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur">
-              <h2 className="text-lg font-semibold text-white mb-3 leading-snug">{q}</h2>
-              <p className="text-sm leading-relaxed text-neutral-400">{a}</p>
-            </div>
-          ))}
-
+        {/* SEO H2 sections — clean minimal layout */}
+        <div className="mx-auto max-w-3xl px-6 pb-16">
+          <div className="divide-y divide-white/8">
+            {[
+              {
+                q: "How much of my AUM is actually portable?",
+                a: "Most private bankers overestimate their portable AUM by 20 to 40 percent. The mistake is treating total AUM and portable AUM as the same number. In books where top clients sit below average wallet share concentration, the portable fraction typically represents 30 to 45 percent of headline AUM, not the 60 to 70 percent most bankers assume. Four variables determine the actual figure: how deep the personal client relationship runs versus the bank brand, wallet share concentration in the top 20 relationships, the scope and enforceability of any non-solicit clause under Swiss law, and the compliance and documentation status of cross-border client files. The Portability Score below maps all four dimensions in under ten minutes.",
+              },
+              {
+                q: "What is the average client retention rate when a private banker changes bank?",
+                a: "Based on Executive Partners placement data across 200+ senior transactions in Geneva and Zurich, the average AUM transfer rate within 12 months of a move is 45 to 65 percent for UHNW books and 60 to 75 percent for HNW books. Family office relationships where the RM personally owns the primary client contact transfer at 70 to 85 percent. Institutionally-supported relationships transfer at 20 to 40 percent. The single strongest predictor of transfer success is not book size — it is wallet share concentration in the top 20 client relationships.",
+              },
+              {
+                q: "How do banks calculate AUM portability before making an offer?",
+                a: "Hiring banks run their own portability model before approving any senior RM offer. They will ask you to walk through your top 10 to 20 client relationships individually — not as an aggregate AUM figure. They want to understand relationship tenure, whether the introduction was personal or institutional, total client wealth and your wallet share, cross-border compliance status, and non-solicit exposure. The banks that move fastest on offers work with candidates who arrive with this analysis pre-built. The Portability Score produces exactly that — formatted for a hiring committee conversation.",
+              },
+            ].map(({ q, a }) => (
+              <div key={q} className="py-6">
+                <h2 className="text-sm font-semibold text-brandGoldSoft mb-2 leading-snug">{q}</h2>
+                <p className="text-sm leading-relaxed text-neutral-500">{a}</p>
+              </div>
+            ))}
+          </div>
         </div>
       <ClientWrapper />
     </>
