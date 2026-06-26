@@ -170,10 +170,10 @@ export default function Section3Prospects() {
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <label className="text-sm text-white/80 space-y-1 block">
-      <div className="font-medium text-white">{label}</div>
-      <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">{children}</div>
-    </label>
+    <div className="text-sm text-white/80 space-y-1 block">
+      <div className="font-medium text-white mb-1">{label}</div>
+      <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 focus-within:border-white/30 transition-colors">{children}</div>
+    </div>
   );
 }
 
