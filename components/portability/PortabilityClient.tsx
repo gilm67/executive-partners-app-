@@ -385,8 +385,7 @@ export default function PortabilityClient({
     };
   }, [coreScores, legalState, advancedScores, bookingCentres, permissions, profile]);
  
-  /* ── onScoreReady fires only after candidate submits email + downloads PDF ── */
-  // This ensures the candidate has genuinely completed the assessment before advancing.
+
 
   /* ── Handlers ─────────────────────────────────────────── */
  
@@ -1509,8 +1508,8 @@ export default function PortabilityClient({
                 </p>
                 <button
                   onClick={() => setCapture(p => ({ ...p, showModal: true, done: false }))}
-                  className="w-full rounded-full py-3.5 text-sm font-semibold text-black transition hover:brightness-110"
-                  style={{ background: 'linear-gradient(135deg, #C9A14A 0%, #E8C46A 100%)' }}
+                  className="w-full rounded-full py-3.5 text-sm font-semibold transition hover:brightness-110"
+                  style={{ background: 'linear-gradient(135deg, #C9A14A 0%, #E8C46A 100%)', color: '#000000' }}
                 >
                   Download your confidential EP dossier →
                 </button>
@@ -1543,8 +1542,8 @@ export default function PortabilityClient({
                       });
                     }
                   }}
-                  className="w-full rounded-full py-3.5 text-sm font-semibold text-black transition hover:brightness-110"
-                  style={{ background: 'linear-gradient(135deg, #C9A14A 0%, #E8C46A 100%)' }}
+                  className="w-full rounded-full py-3.5 text-sm font-semibold transition hover:brightness-110"
+                  style={{ background: 'linear-gradient(135deg, #C9A14A 0%, #E8C46A 100%)', color: '#000000' }}
                 >
                   Continue to Business Plan →
                 </button>
