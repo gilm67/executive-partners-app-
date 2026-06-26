@@ -145,12 +145,20 @@ function Guide({ children }: { children: React.ReactNode }) {
    COMPONENT
 ───────────────────────────────────────────────────────────── */
  
-export default function PortabilityClient() {
+export default function PortabilityClient({
+  prefillName,
+  prefillMarket,
+  prefillHub,
+}: {
+  prefillName?: string;
+  prefillMarket?: string;
+  prefillHub?: string;
+} = {}) {
  
   /* ── State ─────────────────────────────────────────────── */
  
   const [profile, setProfile] = useState<ProfileState>({
-    market: "CH Onshore", mainHub: "Geneva", roaBps: 80,
+    market: prefillMarket || "CH Onshore", mainHub: prefillHub || "Geneva", roaBps: 80,
     recurringShare: 60, eddShare: 20, pepsShare: 5,
     walletShareScore: 3, tenureKey: "4-8",
   });
@@ -177,7 +185,7 @@ export default function PortabilityClient() {
   );
  
   const [capture, setCapture] = useState<CaptureState>({
-    showModal: false, name: "", email: "", submitting: false, done: false,
+    showModal: false, name: prefillName || "", email: "", submitting: false, done: false,
   });
   const [exporting, setExporting] = useState(false);
   const captureRef = useRef<HTMLDivElement | null>(null);

@@ -20,6 +20,8 @@ export async function GET(
       candidateName: entry.candidateName || "",
       institution: entry.institution || "",
       mandate: entry.mandate || "",
+      market: entry.market || "",
+      hub: entry.hub || "",
     });
   } catch (e) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
