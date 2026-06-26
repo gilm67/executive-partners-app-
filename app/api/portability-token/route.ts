@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    const url = `https://www.execpartners.ch/en/portability/${token}`;
+    const url = `https://www.execpartners.ch/en/candidate/${token}`;
     return NextResponse.json({ success: true, token, url });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
