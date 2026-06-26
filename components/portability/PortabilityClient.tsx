@@ -749,7 +749,8 @@ export default function PortabilityClient({
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
             <button type="button" onClick={handleDownload} disabled={exporting}
-              className="rounded-full bg-brandGold px-5 py-2.5 text-sm font-semibold text-black shadow-lg shadow-brandGold/30 hover:bg-brandGoldDark disabled:opacity-60 transition"
+              className="rounded-full px-5 py-2.5 text-sm font-semibold shadow-lg disabled:opacity-60 transition"
+            style={{backgroundColor:'#C9A14A', color:'#000000'}}
             >{exporting ? "Preparing PDF…" : "Download full PDF diagnostic"}</button>
             <PrimaryButton href="/en/contact" className="whitespace-nowrap">
               Discuss results confidentially
