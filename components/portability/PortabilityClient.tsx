@@ -730,7 +730,7 @@ export default function PortabilityClient({
                 />
                 <div className="flex gap-2 pt-1">
                   <button type="submit" disabled={capture.submitting || !capture.email}
-                    className="flex-1 rounded-xl bg-brandGold px-4 py-2.5 text-sm font-semibold text-black hover:bg-brandGoldDark disabled:opacity-50 transition"
+                    className="flex-1 rounded-xl px-4 py-2.5 text-sm font-semibold disabled:opacity-50 transition" style={{backgroundColor:"#C9A14A",color:"#000000"}}
                   >{capture.submitting ? "One moment…" : "Download PDF →"}</button>
                   <button type="button" onClick={() => setCapture(p => ({ ...p, showModal: false }))}
                     className="rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-gray-400 hover:text-white transition"
