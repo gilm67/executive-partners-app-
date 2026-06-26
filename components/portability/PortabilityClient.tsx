@@ -137,6 +137,7 @@ function Guide({ children }: { children: React.ReactNode }) {
   return (
     <div className="mt-2 rounded-lg border-l-2 border-brandGold/35 bg-brandGold/5 pl-3 pr-2 py-2">
       <p className="text-[11px] text-gray-300 leading-relaxed">{children}</p>
+
     </div>
   );
 }
@@ -666,22 +667,6 @@ export default function PortabilityClient({
         }),
       });
     } catch { /* silent fail */ }
-    // Fire onScoreReady — candidate submitted email and downloaded PDF (genuine completion)
-    if (onScoreReady && !scoreReadyFired.current) {
-      scoreReadyFired.current = true;
-      onScoreReady({
-        overallPct: computed.overallPct,
-        overallLevel: computed.overallLevel,
-        expectedTransferRange: computed.expectedTransferRange,
-        onboardingSpeed: computed.onboardingSpeed,
-        corePct: computed.corePct,
-        legalPct: computed.legalPct,
-        advancedPct: computed.advancedPct,
-        roaBps: profile.roaBps,
-        market: profile.market,
-        hub: profile.mainHub,
-      });
-    }
     setCapture(p => ({ ...p, submitting: false, done: true, showModal: false }));
     track('portability_email_captured', { score: computed.overallPct, market: profile.market, hub: profile.mainHub });
   };
@@ -1479,7 +1464,7 @@ export default function PortabilityClient({
           </motion.section>
  
           {/* ── Next Steps — hidden inside unified candidate journey ── */}
-          {!onScoreReady && <section className="rounded-2xl border border-white/10 bg-black/40 p-5 text-sm text-gray-200">
+          {!onScoreReady && (<section className="rounded-2xl border border-white/10 bg-black/40 p-5 text-sm text-gray-200">
             <h2 className="text-lg font-semibold text-white">Next steps with Executive Partners</h2>
             <p className="mt-2">If your portability profile is commercially credible, we can help you approach the right platforms and booking centres in a structured, discreet process, one that protects your reputation throughout.</p>
  
@@ -1507,9 +1492,69 @@ export default function PortabilityClient({
             <p className="mt-3 text-[11px] text-gray-400">
               This tool is indicative and for preparation purposes only. Final onboarding decisions rest solely with the receiving institution and its compliance, tax, legal and risk frameworks. This is not legal advice, consult a qualified employment lawyer for your specific situation.
             </p>
-          </section>}
+          </section>)}
 
  
+        {/* ── Journey completion panel — only shown inside unified candidate journey ── */}
+        {onScoreReady && (
+          <div className="mx-4 mb-8 rounded-2xl border border-[#D4AF37]/30 bg-[#D4AF37]/5 p-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#D4AF37] mb-2">
+              Step 1 of 3 — Portability Assessment
+            </p>
+            {!capture.done ? (
+              <>
+                <h3 className="text-lg font-semibold text-white mb-2">Download your diagnostic to continue</h3>
+                <p className="text-sm text-white/55 mb-4 leading-relaxed">
+                  Your score is ready. Download the PDF — it takes 30 seconds and produces a bank-ready document. Your Business Plan simulator unlocks immediately after.
+                </p>
+                <button
+                  onClick={() => setCapture(p => ({ ...p, showModal: true, done: false }))}
+                  className="w-full rounded-full py-3.5 text-sm font-semibold text-black transition hover:brightness-110"
+                  style={{ background: 'linear-gradient(135deg, #C9A14A 0%, #E8C46A 100%)' }}
+                >
+                  Download your confidential EP dossier →
+                </button>
+                <p className="text-[11px] text-white/30 text-center mt-2">Strictly confidential · Not shared without your consent</p>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 text-lg shrink-0">✓</div>
+                  <div>
+                    <p className="text-sm font-semibold text-emerald-300">Assessment complete — PDF downloaded</p>
+                    <p className="text-xs text-white/40 mt-0.5">Score: {computed.overallPct}% · {computed.overallLevel} · {computed.expectedTransferRange} transfer range</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    if (!scoreReadyFired.current) {
+                      scoreReadyFired.current = true;
+                      onScoreReady({
+                        overallPct: computed.overallPct,
+                        overallLevel: computed.overallLevel,
+                        expectedTransferRange: computed.expectedTransferRange,
+                        onboardingSpeed: computed.onboardingSpeed,
+                        corePct: computed.corePct,
+                        legalPct: computed.legalPct,
+                        advancedPct: computed.advancedPct,
+                        roaBps: profile.roaBps,
+                        market: profile.market,
+                        hub: profile.mainHub,
+                      });
+                    }
+                  }}
+                  className="w-full rounded-full py-3.5 text-sm font-semibold text-black transition hover:brightness-110"
+                  style={{ background: 'linear-gradient(135deg, #C9A14A 0%, #E8C46A 100%)' }}
+                >
+                  Continue to Business Plan →
+                </button>
+                <p className="text-[11px] text-white/30 text-center mt-2">
+                  Your ROA ({profile.roaBps} bps) will be pre-filled in the Business Plan simulator.
+                </p>
+              </>
+            )}
+          </div>
+        )}
         </div>
       </div>
     </>
