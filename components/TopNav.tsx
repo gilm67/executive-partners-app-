@@ -17,11 +17,11 @@ export default function TopNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false); // mobile panel
   const [scrolled, setScrolled] = useState(false);
-  const [dd, setDd] = useState<null | "Tools" | "Insights" | "Specialists">(null); // desktop dropdown
+  const [dd, setDd] = useState<null | "Tools" | "Insights" | "Markets">(null); // desktop dropdown
 
   // ✅ Prevent dropdown from closing instantly when moving cursor button -> panel
   const closeTimer = useRef<number | null>(null);
-  const openDd = (which: "Tools" | "Insights" | "Specialists") => {
+  const openDd = (which: "Tools" | "Insights" | "Markets") => {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
     setDd(which);
   };
@@ -48,10 +48,8 @@ export default function TopNav() {
 
   // ----- Nav structure (unprefixed routes)
   const TOP: NavItem[] = [
-    { href: "/markets", label: "Markets" },
-    { href: "/jobs", label: "Jobs" },
     { href: "/candidates", label: "Candidates" },
-    { href: "/en/specialist-bench", label: "Specialist Bench" },
+    { href: "/jobs", label: "Mandates" },
     { href: "/hiring-managers", label: "Hiring Managers" },
     { href: "/about", label: "About" },
   ];
@@ -69,12 +67,12 @@ export default function TopNav() {
     },
   ];
 
-  const SPECIALISTS: NavItem[] = [
+  const MARKETS_DD: NavItem[] = [
+    { href: "/markets", label: "All Financial Hubs" },
     { href: "/latam-private-banking-recruiter-geneva", label: "LATAM Private Banking" },
     { href: "/mea-private-banking-recruiter-geneva", label: "MEA Private Banking" },
     { href: "/nri-private-banking-recruiter-switzerland", label: "NRI Private Banking" },
     { href: "/israeli-market-private-banking-switzerland", label: "Israeli Market" },
-    { href: "/private-banking-recruitment-company", label: "Our Firm" },
     { href: "/apac-private-banking-recruiter-switzerland", label: "APAC Private Banking" },
   ];
 
@@ -93,8 +91,8 @@ export default function TopNav() {
     () => INSIGHTS.map((i) => (i.external ? i : { ...i, href: withBase(base, i.href) })),
     [base]
   );
-  const SPECIALISTS_BASE = useMemo(
-    () => SPECIALISTS.map((i) => (i.external ? i : { ...i, href: withBase(base, i.href) })),
+  const MARKETS_DD_BASE = useMemo(
+    () => MARKETS_DD.map((i) => (i.external ? i : { ...i, href: withBase(base, i.href) })),
     [base]
   );
 
@@ -177,7 +175,7 @@ export default function TopNav() {
 
   const toolsActive = TOOLS.some((i) => isActive(i.href));
   const insightsActive = INSIGHTS.some((i) => isActive(i.href));
-  const specialistsActive = SPECIALISTS.some((i) => isActive(i.href));
+  const marketsActive = MARKETS_DD.some((i) => isActive(i.href));
 
   return (
     <header className={bar}>
@@ -298,30 +296,30 @@ export default function TopNav() {
                 )}
               </div>
 
-              {/* Specialists dropdown */}
+              {/* Markets dropdown */}
               <div
                 className="relative"
-                onMouseEnter={() => openDd("Specialists")}
+                onMouseEnter={() => openDd("Markets")}
                 onMouseLeave={scheduleCloseDd}
               >
                 <button
                   type="button"
-                  className={ddButtonClasses(specialistsActive, dd === "Specialists")}
+                  className={ddButtonClasses(marketsActive, dd === "Markets")}
                   aria-haspopup="menu"
-                  aria-expanded={dd === "Specialists"}
-                  onClick={() => setDd(dd === "Specialists" ? null : "Specialists")}
+                  aria-expanded={dd === "Markets"}
+                  onClick={() => setDd(dd === "Markets" ? null : "Markets")}
                 >
-                  Specialists <span className="text-xs opacity-80">▾</span>
+                  Markets <span className="text-xs opacity-80">▾</span>
                 </button>
 
-                {dd === "Specialists" && (
+                {dd === "Markets" && (
                   <div
                     role="menu"
                     className={ddPanel}
-                    onMouseEnter={() => openDd("Specialists")}
+                    onMouseEnter={() => openDd("Markets")}
                     onMouseLeave={scheduleCloseDd}
                   >
-                    {SPECIALISTS_BASE.map((i) => (
+                    {MARKETS_DD_BASE.map((i) => (
                       <Link
                         key={i.href}
                         href={i.href}
@@ -464,11 +462,11 @@ export default function TopNav() {
               );
             })}
 
-            {/* Mobile section: Specialists */}
+            {/* Mobile section: Markets */}
             <li className="mt-2 px-3 pt-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">
-              Specialists
+              Markets
             </li>
-            {SPECIALISTS_BASE.map((item) => {
+            {MARKETS_DD_BASE.map((item) => {
               const active = isActive(item.href.replace(base, "") || item.href);
               const cls = [
                 "block rounded-md px-3 py-2 text-sm transition-colors",
