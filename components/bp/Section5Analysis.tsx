@@ -307,21 +307,50 @@ export default function Section5Analysis() {
       const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4' });
       const pageW = pdf.internal.pageSize.getWidth();
       const pageH = pdf.internal.pageSize.getHeight();
-      pdf.setTextColor(30); pdf.setFontSize(14);
-      pdf.text('Business Plan Analysis — Executive Partners', 30, 40);
-      try {
-        const anyPdf = pdf as any;
-        pdf.saveGraphicsState();
-        pdf.setGState(new anyPdf.GState({ opacity: 0.06 }));
-        pdf.setFontSize(48); pdf.setTextColor(30);
-        pdf.text('Executive Partners', pageW / 2, pageH / 2, { align: 'center', angle: 30 });
-        pdf.restoreGraphicsState();
-      } catch { /* silent */ }
+      const NAVY: [number,number,number] = [27,58,107];
+      const GOLD: [number,number,number] = [212,175,55];
+      const WHITE: [number,number,number] = [255,255,255];
+      const ML = 30;
+      // EP Header
+      pdf.setFillColor(...NAVY); pdf.rect(0, 0, pageW, 50, 'F');
+      pdf.setFontSize(9); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...GOLD);
+      pdf.text('EXECUTIVE PARTNERS', ML, 18);
+      pdf.setFontSize(8); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(...WHITE);
+      pdf.text('Business Plan Analysis  ·  Private Banking & Wealth Management  ·  Confidential', ML, 30);
+      pdf.setFontSize(14); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...WHITE);
+      pdf.text('Business Plan — Committee Readiness Report', ML, 44);
+      // Content
       const imgW = pageW - 60;
       const imgH = (canvas.height / canvas.width) * imgW;
-      pdf.addImage(imgData, 'PNG', 30, 60, imgW, imgH, undefined, 'FAST');
+      pdf.addImage(imgData, 'PNG', ML, 60, imgW, imgH, undefined, 'FAST');
+      // Watermark + footer on all pages
+      const total = pdf.getNumberOfPages();
+      for (let p = 1; p <= total; p++) {
+        pdf.setPage(p);
+        try {
+          const anyPdf = pdf as any;
+          pdf.saveGraphicsState();
+          pdf.setGState(new anyPdf.GState({ opacity: 0.045 }));
+          pdf.setFontSize(38); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...GOLD);
+          pdf.text('EXECUTIVE PARTNERS — CONFIDENTIAL', pageW / 2, pageH / 2, { align: 'center', angle: 38 });
+          pdf.restoreGraphicsState();
+        } catch { /* silent */ }
+        pdf.setFillColor(...NAVY); pdf.rect(0, pageH - 26, pageW, 26, 'F');
+        pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(...GOLD);
+        pdf.text('Gil M. Chalem, Managing Partner  ·  Executive Partners', ML, pageH - 12);
+        pdf.setTextColor(...WHITE);
+        pdf.text(`recruiter@execpartners.ch  ·  execpartners.ch  ·  p${p}/${total}`, pageW - 220, pageH - 12);
+      }
       const fname = `EP_BP_${(i.candidate_name || 'Candidate').replace(/\s+/g, '_')}.pdf`;
-      pdf.save(fname);
+      const blob = pdf.output('blob');
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fname;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
       setExportStatus?.('ready', fname);
     } catch (e) {
       console.error(e); setSaved('err'); setExportStatus?.('error', null);
