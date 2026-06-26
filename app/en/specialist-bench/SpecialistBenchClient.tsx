@@ -229,7 +229,7 @@ export default function SpecialistBenchPage() {
       {/* Roles line */}
       <div style={{ textAlign: "center", padding: "8px 16px 48px" }}>
         <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.3)", margin: 0, letterSpacing: "0.02em" }}>
-          Open to all specialist and support roles in private banking and wealth management.
+          <strong>Open to all specialist and support roles in private banking and wealth management.</strong>
         </p>
       </div>
 
