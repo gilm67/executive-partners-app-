@@ -51,7 +51,6 @@ export default function TopNav() {
     { href: "/candidates", label: "Candidates" },
     { href: "/jobs", label: "Mandates" },
     { href: "/hiring-managers", label: "Hiring Managers" },
-    { href: "/about", label: "About" },
   ];
 
   const TOOLS: NavItem[] = [
@@ -334,6 +333,15 @@ export default function TopNav() {
                 )}
               </div>
 
+              {/* About link */}
+              <Link
+                href={withBase(base, "/about")}
+                className={linkClasses(isActive("/about"))}
+                aria-current={isActive("/about") ? "page" : undefined}
+              >
+                About
+              </Link>
+
               {/* German language link */}
               <Link
                 href="/de"
@@ -487,6 +495,23 @@ export default function TopNav() {
                 </li>
               );
             })}
+
+            {/* Mobile About */}
+            <li>
+              <Link
+                href={withBase(base, "/about")}
+                className={[
+                  "block rounded-md px-3 py-2 text-sm transition-colors",
+                  isActive("/about")
+                    ? "bg-white/10 text-[#F5D778]"
+                    : "text-slate-200 hover:text-white hover:bg-white/5",
+                ].join(" ")}
+                onClick={() => setOpen(false)}
+                aria-current={isActive("/about") ? "page" : undefined}
+              >
+                About
+              </Link>
+            </li>
 
             {/* Mobile German language link */}
             <li className="mt-2">
