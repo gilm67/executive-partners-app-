@@ -42,6 +42,7 @@ export default function Section5Analysis() {
   const i = useBP((s: any) => s.i);
   const set = useBP((s: any) => s.set);
   const setExportStatus = useBP((s: any) => s.setExportStatus);
+  const journeyMode: boolean = useBP((s: any) => s.journeyMode ?? false);
 
   const pathname = usePathname();
   const base = useMemo(() => (pathname?.startsWith('/en') ? '/en' : ''), [pathname]);
@@ -487,8 +488,8 @@ export default function Section5Analysis() {
 
       </div>
 
-      {/* ── Link to Portability Tool ── */}
-      <div className="rounded-2xl border border-amber-400/25 bg-amber-400/8 p-4">
+      {/* ── Link to Portability Tool — hidden in journey ── */}
+      {!journeyMode && <div className="rounded-2xl border border-amber-400/25 bg-amber-400/8 p-4">
         <div className="text-white font-semibold text-sm">Complete the Portability Diagnostic</div>
         <p className="text-xs text-white/70 mt-1">
           The portability haircut ({portabilityPct}%) is the most important single assumption in this BP.
@@ -500,19 +501,19 @@ export default function Section5Analysis() {
         >
           Run the Portability Diagnostic →
         </Link>
-      </div>
+      </div>}
 
 
 
-      {/* ── Confidential Review CTA ── */}
-      <div className="rounded-2xl border border-[#C9A14A]/30 bg-[#C9A14A]/5 p-5">
+      {/* ── Confidential Review CTA — hidden in journey ── */}
+      {!journeyMode && <div className="rounded-2xl border border-[#C9A14A]/30 bg-[#C9A14A]/5 p-5">
         <div className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-2" style={{color:"rgba(201,161,74,.8)"}}>Confidential · Senior-level · No obligation</div>
         <div className="text-base font-semibold text-white mb-1">Want us to review this privately?</div>
         <p className="text-sm text-white/65 mb-4">Book a 15-minute call with Executive Partners. We will walk through your committee readiness score, identify what to strengthen before presenting, and match your profile to active mandates.</p>
         <a href="https://calendly.com/execpartners/15-minute-career-consultation" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all hover:brightness-110" style={{background:"linear-gradient(135deg, #C9A14A 0%, #E8C46A 100%)",color:"#090C14"}}>
           Schedule a confidential call
         </a>
-      </div>
+      </div>}
 
       {/* Hidden trigger — fired by bottom email capture form */}
       <button id="bp-save-btn" onClick={onSaveAndPDF} disabled={saving}

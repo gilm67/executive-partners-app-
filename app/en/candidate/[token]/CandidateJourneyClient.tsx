@@ -618,6 +618,7 @@ export default function CandidateJourneyClient({ token }: { token: string }) {
           <BPClient
             prefill={bpPrefill}
             showTips={false}
+            journeyMode={true}
             onResultReady={handleBpDone}
           />
           {bpResultReady && (

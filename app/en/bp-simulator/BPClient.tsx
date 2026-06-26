@@ -33,6 +33,7 @@ export type BPClientProps = {
 
   /** ✅ NEW: lets parent (BpSimulatorClient) show sticky CTA only after results exist */
   onResultReady?: () => void;
+  journeyMode?: boolean;
 
   /** ✅ NEW: lets BPClient itself request calibration + scroll */
   onRequestCalibration?: () => void;
@@ -94,6 +95,7 @@ export default function BPClient({
   showTips = true,
   prefill = null,
   onResultReady,
+  journeyMode = false,
   onRequestCalibration,
 }: BPClientProps) {
   const sectionProps: BPSectionProps = { showTips, prefill };
@@ -120,6 +122,9 @@ export default function BPClient({
   });
 
   // fire only once
+  const setJourneyMode = useBP((s: any) => s.setJourneyMode);
+  useEffect(() => { setJourneyMode?.(journeyMode); }, [journeyMode, setJourneyMode]);
+
   const firedRef = useRef(false);
   useEffect(() => {
     if (firedRef.current) return;

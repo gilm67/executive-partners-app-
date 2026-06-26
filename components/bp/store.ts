@@ -71,6 +71,8 @@ export type Inputs = {
 type BPState = {
   i: Inputs;
   set: (patch: Partial<Inputs>) => void;
+  journeyMode: boolean;
+  setJourneyMode: (v: boolean) => void;
 
   // Prefill support (Portability -> BP)
   prefillApplied: boolean;
@@ -237,6 +239,8 @@ export const useBP = create<BPState>((set, get) => ({
     exportFileName: null,
   },
 
+  journeyMode: false,
+  setJourneyMode: (v: boolean) => set({ journeyMode: v }),
   set: (patch) => set((s) => ({ i: { ...s.i, ...patch } })),
 
   /* ---------------- Prefill ---------------- */
