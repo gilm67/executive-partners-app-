@@ -1478,8 +1478,8 @@ export default function PortabilityClient({
             )}
           </motion.section>
  
-          {/* ── Next Steps ── */}
-          <section className="rounded-2xl border border-white/10 bg-black/40 p-5 text-sm text-gray-200">
+          {/* ── Next Steps — hidden inside unified candidate journey ── */}
+          {!onScoreReady && <section className="rounded-2xl border border-white/10 bg-black/40 p-5 text-sm text-gray-200">
             <h2 className="text-lg font-semibold text-white">Next steps with Executive Partners</h2>
             <p className="mt-2">If your portability profile is commercially credible, we can help you approach the right platforms and booking centres in a structured, discreet process, one that protects your reputation throughout.</p>
  
@@ -1507,7 +1507,8 @@ export default function PortabilityClient({
             <p className="mt-3 text-[11px] text-gray-400">
               This tool is indicative and for preparation purposes only. Final onboarding decisions rest solely with the receiving institution and its compliance, tax, legal and risk frameworks. This is not legal advice, consult a qualified employment lawyer for your specific situation.
             </p>
-          </section>
+          </section>}
+
  
         </div>
       </div>
