@@ -97,12 +97,16 @@ export default function Section5Analysis() {
   const nm3 = rev3 - annualCost;
   const nmTotal = nm1 + nm2 + nm3;
 
-  // Breakeven
+  // Breakeven — correctly accounts for garden leave dead period and cumulative costs
+  // During garden leave months: zero revenue, but full monthly cost accrues
+  // Total investment = sign-on bonus + all annual costs paid before breakeven
   let breakEvenMonth: number | null = null;
-  let cumulativeMargin = -signOnBonus;
+  let cumulativeMargin = -(signOnBonus);
   for (let m = 1; m <= 36; m++) {
     const yr = m <= 12 ? 1 : m <= 24 ? 2 : 3;
-    cumulativeMargin += ([rev1, rev2, rev3][yr - 1] - annualCost) / 12;
+    const monthlyRevenue = m <= gardenLeaveMonths ? 0 : ([rev1, rev2, rev3][yr - 1] / (12 - (yr === 1 ? gardenLeaveMonths : 0)));
+    const monthlyCost = annualCost / 12;
+    cumulativeMargin += monthlyRevenue - monthlyCost;
     if (cumulativeMargin >= 0 && breakEvenMonth === null) breakEvenMonth = m;
   }
 
@@ -111,7 +115,13 @@ export default function Section5Analysis() {
     const dims: Array<{ label: string; score: number; max: number; note: string; flag?: string }> = [];
 
     // 1. AUM Size vs market threshold (0-20)
-    const aumMin = i.current_market === 'CH Onshore' ? 250 : 200;
+    // Thresholds reflect actual hiring committee minimums by market
+    const aumMin = (
+      i.current_market === 'CH Onshore' ? 250
+      : ['MEA / GCC', 'UAE', 'Saudi Arabia', 'Dubai', 'Abu Dhabi'].some(m => (i.current_market || '').includes(m)) ? 300
+      : i.current_market === 'EAM' ? 150
+      : 200
+    );
     const aumScore = currentAUM_m >= aumMin ? 20
       : currentAUM_m >= aumMin * 0.8 ? 14
       : currentAUM_m >= aumMin * 0.6 ? 8 : 3;
@@ -151,16 +161,24 @@ export default function Section5Analysis() {
     });
 
     // 4. NNM growth trajectory (0-10)
+    // Penalises Y3 decline separately — front-loading risk is a red flag for committees
+    const y2GrowsFromY1 = nnm2 >= nnm1 * 0.85;
+    const y3GrowsFromY2 = nnm3 >= nnm2 * 0.85;
+    const y3Declines = nnm3 < nnm2 * 0.75;
     const nnmGrowthScore = nnm1 === 0 ? 0
-      : nnm2 >= nnm1 && nnm3 >= nnm2 ? 10
-      : nnm2 >= nnm1 * 0.8 ? 7
-      : nnm2 >= nnm1 * 0.6 ? 4 : 1;
+      : y2GrowsFromY1 && y3GrowsFromY2 ? 10
+      : y2GrowsFromY1 && !y3Declines ? 7
+      : y2GrowsFromY1 && y3Declines ? 4   // Y3 decline is a specific flag
+      : !y2GrowsFromY1 && y3GrowsFromY2 ? 5
+      : 2;
     dims.push({
       label: 'NNM Growth Trajectory', score: nnmGrowthScore, max: 10,
       note: nnm1 === 0 ? 'No NNM provided'
-        : nnm2 >= nnm1 && nnm3 >= nnm2 ? 'NNM grows consistently across 3 years — credible ramp'
-        : nnm2 < nnm1 * 0.8 ? 'NNM declines in Y2 — committees prefer a growing ramp, not a front-loaded plan'
-        : 'NNM is broadly stable — acceptable but less compelling than a growth trajectory',
+        : y2GrowsFromY1 && y3GrowsFromY2 ? 'NNM grows consistently across 3 years — credible ramp'
+        : y3Declines ? `NNM declines in Y3 (${nnm3.toFixed(1)}M vs Y2 ${nnm2.toFixed(1)}M) — front-loading raises portability questions. Committees will ask why momentum drops.`
+        : !y2GrowsFromY1 ? `NNM drops in Y2 (${nnm2.toFixed(1)}M vs Y1 ${nnm1.toFixed(1)}M) — committees expect a ramp, not a peak-and-decline`
+        : 'NNM broadly stable — acceptable but less compelling than a growth trajectory',
+      flag: y3Declines ? 'Y3 NNM decline signals client concentration or front-loading — prepare a specific explanation' : undefined,
     });
 
     // 5. P&L viability — Y3 margin vs cost (0-20)

@@ -1,3 +1,7 @@
+// ⚠️  DEPRECATED — NOT USED BY LIVE PORTABILITY TOOL
+// This is a legacy scoring engine with different inputs than the live PortabilityClient.tsx.
+// The live tool has its own inline scoring engine. Do not reference this file.
+
 // lib/portability/score.ts
 import { BOOKING_CENTRE_MULTIPLIER } from "./config";
 

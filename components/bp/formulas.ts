@@ -1,3 +1,8 @@
+// ⚠️  DEPRECATED — NOT USED BY LIVE TOOL
+// This file uses old field names (roa_y1_pct, current_assets_mchf) and NNM-only revenue model.
+// All live calculations are in Section4Revenue.tsx and Section5Analysis.tsx.
+// Do not modify or reference this file. Kept for historical reference only.
+
 import type { CandidateInputs, Prospect } from './types';
 
 export const HEADER_ORDER = [

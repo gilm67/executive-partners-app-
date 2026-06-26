@@ -113,15 +113,18 @@ export default function Section4Revenue() {
     const nmTotal = nm1 + nm2 + nm3;
 
     // ── BREAKEVEN ───────────────────────────────────────────
-    // Total investment = sign-on + accumulated losses until positive margin
-    // Find the month when cumulative net margin turns positive
+    // Months 1..gardenLeaveMonths: zero revenue, cost accrues (bank pays salary, no return)
+    // After garden leave: revenue from transferred book starts
+    // Sign-on is paid upfront (not amortized here — that's annualCostTotal already)
     let breakEvenMonth: number | null = null;
-    let cumulativeMargin = -signOnBonus; // start in the red by sign-on amount
+    let cumulativeMargin = -signOnBonus;
 
-    // Monthly approximations (linear ramp within each year)
     for (let m = 1; m <= 36; m++) {
       const year = m <= 12 ? 1 : m <= 24 ? 2 : 3;
-      const monthlyRev = [rev1, rev2, rev3][year - 1] / 12;
+      const activeMonthsY1 = Math.max(1, 12 - gardenLeaveMonths);
+      const monthlyRev = m <= gardenLeaveMonths
+        ? 0
+        : [rev1, rev2, rev3][year - 1] / (year === 1 ? activeMonthsY1 : 12);
       const monthlyCost = annualCostTotal / 12;
       cumulativeMargin += (monthlyRev - monthlyCost);
       if (cumulativeMargin >= 0 && breakEvenMonth === null) {
@@ -277,10 +280,11 @@ export default function Section4Revenue() {
           </Field>
           <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs space-y-1">
             <p className="text-white/60">Annual cost breakdown</p>
-            <p>Base salary: <strong className="text-white">{fmt0.format(toNum(i.base_salary))}</strong></p>
-            <p>Employer charges + overhead ({c.instData.multiplier}x): <strong className="text-white">{fmt0.format(c.annualCostBase)}</strong></p>
+            <p className="text-white/50 text-[11px]">Base: {fmt0.format(toNum(i.base_salary))} × {c.instData.multiplier} multiplier</p>
+            <p>All-in annual cost (base × {c.instData.multiplier}x): <strong className="text-white">{fmt0.format(c.annualCostBase)}</strong></p>
+            <p className="text-white/40 text-[11px]">Covers base salary, employer social charges (~18%), bonus provision, overhead allocation</p>
             {toNum((i as any).sign_on_bonus) > 0 && (
-              <p>Sign-on amortised (÷3): <strong className="text-amber-300">{fmt0.format(c.signOnAmortPerYear)}</strong></p>
+              <p>Sign-on amortised over 3Y (÷3): <strong className="text-amber-300">{fmt0.format(c.signOnAmortPerYear)}</strong></p>
             )}
             <p className="font-semibold text-white border-t border-white/10 pt-1 mt-1">
               Total annual cost: {fmt0.format(c.annualCostTotal)}
