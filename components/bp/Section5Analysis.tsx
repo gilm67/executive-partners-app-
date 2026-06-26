@@ -101,7 +101,7 @@ export default function Section5Analysis() {
   // During garden leave months: zero revenue, but full monthly cost accrues
   // Total investment = sign-on bonus + all annual costs paid before breakeven
   let breakEvenMonth: number | null = null;
-  let cumulativeMargin = -(signOnBonus);
+  let cumulativeMargin = 0; // sign-on already included via annualCost amortization (signOnBonus/3 × 3Y)
   for (let m = 1; m <= 36; m++) {
     const yr = m <= 12 ? 1 : m <= 24 ? 2 : 3;
     const monthlyRevenue = m <= gardenLeaveMonths ? 0 : ([rev1, rev2, rev3][yr - 1] / (12 - (yr === 1 ? gardenLeaveMonths : 0)));
