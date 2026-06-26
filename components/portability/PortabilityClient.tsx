@@ -621,6 +621,8 @@ export default function PortabilityClient() {
     e.preventDefault();
     if (!capture.email.includes("@")) return;
     setCapture(p => ({ ...p, submitting: true }));
+    // PDF must fire BEFORE any await to preserve browser user-gesture context
+    _executeDownload();
     try {
       await fetch("/api/capture-lead", {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -630,7 +632,6 @@ export default function PortabilityClient() {
         }),
       });
     } catch { /* silent fail */ }
-    _executeDownload();
     setCapture(p => ({ ...p, submitting: false, done: true, showModal: false }));
     track('portability_email_captured', { score: computed.overallPct, market: profile.market, hub: profile.mainHub });
   };
