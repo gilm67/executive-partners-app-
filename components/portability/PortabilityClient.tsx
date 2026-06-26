@@ -149,10 +149,23 @@ export default function PortabilityClient({
   prefillName,
   prefillMarket,
   prefillHub,
+  onScoreReady,
 }: {
   prefillName?: string;
   prefillMarket?: string;
   prefillHub?: string;
+  onScoreReady?: (result: {
+    overallPct: number;
+    overallLevel: string;
+    expectedTransferRange: string;
+    onboardingSpeed: string;
+    corePct: number;
+    legalPct: number;
+    advancedPct: number;
+    roaBps: number;
+    market: string;
+    hub: string;
+  }) => void;
 } = {}) {
  
   /* ── State ─────────────────────────────────────────────── */
