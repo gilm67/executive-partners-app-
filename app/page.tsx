@@ -104,14 +104,13 @@ export default function HomePage() {
 
                 {/* H1 */}
                 <h1 className="font-[var(--font-playfair)] text-[2.6rem] font-semibold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08]">
-                  Where the right banker<br />
-                  meets the{" "}
-                  <span className="gold">right bank.</span>
+                  Most recruiters send profiles.<br />
+                  <span className="gold">We validate revenue.</span>
                 </h1>
 
                 {/* Subline */}
                 <p className="mt-4 text-sm sm:text-base text-white/90 leading-relaxed max-w-lg mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-                  Senior Relationship Managers, Team Heads and Investment Advisors placed across the world&apos;s leading private banking hubs.
+                  Executive search exclusively for senior Relationship Managers, Team Heads and Investment Advisors across 14 global private banking hubs. Mandates only. No CV flow.
                 </p>
 
                 {/* Dual CTA */}
