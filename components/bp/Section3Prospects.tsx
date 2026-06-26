@@ -70,8 +70,10 @@ export default function Section3Prospects() {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
         <Field label="Name">
           <input
-            className="w-full bg-transparent outline-none"
-            value={i.p_name}
+            type="text"
+            className="w-full bg-transparent outline-none text-white placeholder:text-white/30"
+            value={i.p_name ?? ""}
+            placeholder="e.g. Family Office Geneva"
             onChange={(e) => set({ p_name: e.target.value })}
           />
         </Field>
