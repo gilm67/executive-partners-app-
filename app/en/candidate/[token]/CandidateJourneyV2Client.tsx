@@ -82,8 +82,11 @@ function computeBP(s:BS) {
   const aum=n(s.currentAUM),portPct=n(s.portPct)||60,gl=n(s.glMonths),signOn=n(s.signOn),base=n(s.baseSalary);
   const nnm1=n(s.nnm1),nnm2=n(s.nnm2),nnm3=n(s.nnm3),roa=n(s.roa)||0.80;
   const inst=INSTITUTION_TYPES.find(t=>t.key===s.instType)??INSTITUTION_TYPES[0];
+  // NNM figures represent cumulative projected book at new bank
+  // Y1=NNM1, Y2=NNM1+NNM2, Y3=NNM1+NNM2+NNM3
+  // Current AUM and portability are used for committee score only, not revenue
   const portAUM=aum*(portPct/100),glF=Math.max(0,Math.min(1,(12-gl)/12));
-  const a1=portAUM*glF+nnm1,a2=a1+nnm2,a3=a2+nnm3;
+  const a1=nnm1,a2=nnm1+nnm2,a3=nnm1+nnm2+nnm3;
   const r1=a1*1_000_000*(roa/100),r2=a2*1_000_000*(roa/100),r3=a3*1_000_000*(roa/100);
   const cost=base*inst.mult+signOn/3;
   const nm1=r1-cost,nm2=r2-cost,nm3=r3-cost;
