@@ -48,6 +48,7 @@ type BS = {
   currentAUM:number;yearsExp:number;baseSalary:number;email:string;
   nnm1:number;nnm2:number;nnm3:number;roa:number;
   portPct:number;glMonths:number;instType:string;signOn:number;market:string;
+  onboardingMonths:number;
 };
 type Prospect = {
   name:string;source:"Self Acquired"|"Inherited"|"Finder";wealth:number;bestNNM:number;worstNNM:number;
@@ -90,7 +91,12 @@ function computeBP(s:BS) {
   // Y1=NNM1, Y2=NNM1+NNM2, Y3=NNM1+NNM2+NNM3
   // Current AUM and portability are used for committee score only, not revenue
   const portAUM=aum*(portPct/100),glF=Math.max(0,Math.min(1,(12-gl)/12));
-  const a1=nnm1,a2=nnm1+nnm2,a3=nnm1+nnm2+nnm3;
+  // NNM onboarding ramp factor: if candidate onboards NNM1 over N months linearly,
+  // average AUM earning revenue in Y1 = NNM1 × (1 - N/24)
+  // e.g. 6 months ramp → 75% of full-year revenue on NNM1
+  const ob=n(s.onboardingMonths)||6;
+  const rampF=Math.max(0.1,Math.min(1,1-(ob/24)));
+  const a1=nnm1*rampF,a2=nnm1+nnm2,a3=nnm1+nnm2+nnm3;
   const r1=a1*1_000_000*(roa/100),r2=a2*1_000_000*(roa/100),r3=a3*1_000_000*(roa/100);
   const cost=base*inst.mult+signOn/3;
   const nm1=r1-cost,nm2=r2-cost,nm3=r3-cost;
@@ -221,6 +227,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
   const [bp,setBp]=useState<BS>({
     currentAUM:0,yearsExp:0,baseSalary:0,email:"",
     nnm1:0,nnm2:0,nnm3:0,roa:0.80,portPct:60,glMonths:3,instType:"tier1_swiss",signOn:0,market:market||"CH Onshore",
+    onboardingMonths:6,
   });
   const pb=(p:Partial<BS>)=>setBp(s=>({...s,...p}));
 
@@ -246,7 +253,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
   const pm=(p:Partial<MS>)=>setMotiv(s=>({...s,...p}));
 
   const ps=useMemo(()=>computePort(port),[port]);
-  const bc=useMemo(()=>computeBP({...bp,market:port.market}),[bp,port.market]);
+  const bc=useMemo(()=>computeBP({...bp,market:port.market,onboardingMonths:bp.onboardingMonths}),[bp,port.market]);
 
   const scroll=()=>window.scrollTo({top:0,behavior:"smooth"});
 
@@ -598,13 +605,31 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
                 {bp.nnm2>=bp.nnm1&&bp.nnm3>=bp.nnm2&&bp.nnm1>0&&<span className="text-emerald-300 text-xs">✓ Growing ramp — strong committee signal</span>}
               </div>
             )}
+            <div className="mt-4 space-y-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">Y1 NNM onboarding pace</label>
+              <p className="text-[11px] text-white/25 mb-3 leading-relaxed">
+                In how many months do you expect to fully onboard your Year 1 NNM target? This directly affects Year 1 revenue — a candidate who onboards all assets on day 1 generates full-year revenue. One who ramps over 12 months generates only 50% of the theoretical revenue. The model applies a linear ramp factor: Revenue Y1 = NNM1 × (1 − months/24) × ROA.
+              </p>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                {[{m:1,l:"Month 1"},{m:2,l:"2 months"},{m:3,l:"3 months"},{m:6,l:"6 months"},{m:9,l:"9 months"},{m:12,l:"12 months"}].map(g=>(
+                  <button key={g.m} type="button" onClick={()=>pb({onboardingMonths:g.m})}
+                    className={`rounded-xl border px-2 py-2.5 text-xs text-center transition ${bp.onboardingMonths===g.m?"border-[#D4AF37]/60 bg-[#D4AF37]/12 text-[#D4AF37]":"border-white/10 bg-white/[0.02] text-white/40 hover:border-white/20"}`}>
+                    {g.l}
+                    <span className="block text-[10px] opacity-60 mt-0.5">{(Math.max(0.1,1-(g.m/24))*100).toFixed(0)}% rev</span>
+                  </button>
+                ))}
+              </div>
+              {bp.nnm1>0&&<div className="rounded-xl border border-white/8 bg-white/5 px-4 py-2.5 text-xs text-white/50">
+                Y1 effective revenue = {bp.nnm1}M × {(Math.max(0.1,1-(bp.onboardingMonths/24))*100).toFixed(0)}% ramp × {bp.roa||0.80}% ROA = <strong className="text-emerald-300">CHF {new Intl.NumberFormat("en-CH",{maximumFractionDigits:0}).format(bp.nnm1*(Math.max(0.1,1-(bp.onboardingMonths/24)))*1_000_000*((bp.roa||0.80)/100))}</strong>
+              </div>}
+            </div>
           </Card>
 
           {/* 3: Prospects */}
           <Card>
             <SectionHeader num="3" title="Key Client Prospects" desc="List your key client relationships. This is what the committee will ask you to walk through one by one. Be specific — aggregate AUM without names is not a business plan."/>
             <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
                 <div className="sm:col-span-2">
                   <label className="block text-xs text-white/35 mb-1">Client / Prospect name</label>
                   <input type="text" value={pForm.name} onChange={e=>setPForm(p=>({...p,name:e.target.value}))} className={INP} placeholder="e.g. Family Office Paris"/>
@@ -622,8 +647,14 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
                   <input type="number" value={pForm.wealth||""} onChange={e=>setPForm(p=>({...p,wealth:Number(e.target.value)}))} className={INP} placeholder="0"/>
                 </div>
                 <div>
-                  <label className="block text-xs text-white/35 mb-1">Expected NNM (M)</label>
+                  <label className="block text-xs text-white/35 mb-1">Best NNM (M)</label>
+                  <p className="text-[10px] text-white/20 mb-1">Optimistic</p>
                   <input type="number" value={pForm.bestNNM||""} onChange={e=>setPForm(p=>({...p,bestNNM:Number(e.target.value)}))} className={INP} placeholder="0"/>
+                </div>
+                <div>
+                  <label className="block text-xs text-white/35 mb-1">Worst NNM (M)</label>
+                  <p className="text-[10px] text-white/20 mb-1">Pessimistic</p>
+                  <input type="number" value={pForm.worstNNM||""} onChange={e=>setPForm(p=>({...p,worstNNM:Number(e.target.value)}))} className={INP} placeholder="0"/>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -635,7 +666,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
                   <table className="min-w-full text-xs">
                     <thead style={{background:"rgba(255,255,255,0.04)"}}>
                       <tr>
-                        {["Client / Prospect","Source","Total Wealth (M)","Expected NNM (M)",""].map(h=>(
+                        {["Client / Prospect","Source","Total Wealth (M)","Best NNM (M)","Worst NNM (M)",""].map(h=>(
                           <th key={h} className="px-4 py-2.5 text-white/30 font-medium text-left">{h}</th>
                         ))}
                       </tr>
@@ -647,6 +678,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
                           <td className="px-4 py-2.5 text-white/40">{p.source}</td>
                           <td className="px-4 py-2.5 text-amber-300">{p.wealth}M</td>
                           <td className="px-4 py-2.5 text-emerald-300">{p.bestNNM}M</td>
+                          <td className="px-4 py-2.5 text-rose-300/70">{p.worstNNM}M</td>
                           <td className="px-4 py-2.5">
                             <div className="flex gap-2">
                               <button type="button" onClick={()=>{setEditIdx(i);setPForm(p);}} className="text-[11px] text-white/30 hover:text-white/60 transition">Edit</button>
@@ -660,6 +692,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
                         <td className="px-4 py-2.5"/>
                         <td className="px-4 py-2.5 text-amber-300 font-semibold">{prospects.reduce((s,p)=>s+p.wealth,0).toFixed(1)}M</td>
                         <td className="px-4 py-2.5 text-emerald-300 font-semibold">{prospects.reduce((s,p)=>s+p.bestNNM,0).toFixed(1)}M</td>
+                        <td className="px-4 py-2.5 text-rose-300/70 font-semibold">{prospects.reduce((s,p)=>s+p.worstNNM,0).toFixed(1)}M</td>
                         <td/>
                       </tr>
                     </tbody>
@@ -669,13 +702,19 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
               {prospects.length>0&&(()=>{
                 const totalNNM=bp.nnm1+bp.nnm2+bp.nnm3;
                 const prospectSum=prospects.reduce((s,p)=>s+p.bestNNM,0);
+                const worstSum=prospects.reduce((s,p)=>s+p.worstNNM,0);
                 const gap=prospectSum-totalNNM;
                 return (
-                  <div className={`rounded-xl border px-4 py-3 text-xs ${Math.abs(gap)<=totalNNM*0.15?"border-emerald-500/25 bg-emerald-500/8 text-emerald-300":"border-amber-500/25 bg-amber-500/8 text-amber-300"}`}>
-                    {Math.abs(gap)<=totalNNM*0.15
-                      ?`✓ Prospect NNM (${prospectSum.toFixed(1)}M) aligns with your 3Y NNM total (${totalNNM.toFixed(1)}M) — strong committee signal`
-                      :`⚠ Gap of ${Math.abs(gap).toFixed(1)}M between prospect sum (${prospectSum.toFixed(1)}M) and 3Y NNM (${totalNNM.toFixed(1)}M) — committee will ask you to reconcile`
-                    }
+                  <div className="space-y-2">
+                    <div className={`rounded-xl border px-4 py-3 text-xs ${Math.abs(gap)<=totalNNM*0.15?"border-emerald-500/25 bg-emerald-500/8 text-emerald-300":"border-amber-500/25 bg-amber-500/8 text-amber-300"}`}>
+                      {Math.abs(gap)<=totalNNM*0.15
+                        ?`✓ Best NNM (${prospectSum.toFixed(1)}M) aligns with your 3Y NNM total (${totalNNM.toFixed(1)}M) — strong committee signal`
+                        :`⚠ Gap of ${Math.abs(gap).toFixed(1)}M between best NNM sum (${prospectSum.toFixed(1)}M) and 3Y NNM (${totalNNM.toFixed(1)}M) — committee will ask you to reconcile`
+                      }
+                    </div>
+                    {worstSum>0&&<div className="rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 text-xs text-rose-300/70">
+                      Downside scenario: worst-case NNM total {worstSum.toFixed(1)}M — committees always stress-test against your pessimistic assumptions. Be ready to defend the gap between {prospectSum.toFixed(1)}M and {worstSum.toFixed(1)}M.
+                    </div>}
                   </div>
                 );
               })()}
