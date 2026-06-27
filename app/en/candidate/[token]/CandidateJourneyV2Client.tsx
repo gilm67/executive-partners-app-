@@ -160,25 +160,6 @@ function GBtn({onClick,children,disabled=false,full=false}:{onClick?:()=>void;ch
   );
 }
 
-function Tip({text}:{text:string}) {
-  const [show,setShow] = useState(false);
-  return (
-    <span className="relative inline-flex ml-1.5 align-middle">
-      <button type="button" onMouseEnter={()=>setShow(true)} onMouseLeave={()=>setShow(false)}
-        onClick={()=>setShow(s=>!s)}
-        className="flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold transition"
-        style={{background:"rgba(212,175,55,0.15)",color:"rgba(212,175,55,0.7)",border:"1px solid rgba(212,175,55,0.3)"}}>
-        ?
-      </button>
-      {show&&(
-        <div className="absolute left-0 top-5 z-50 w-64 rounded-xl border border-white/15 p-3 text-xs text-white/60 leading-relaxed shadow-2xl" style={{background:"#0D1120"}}>
-          {text}
-        </div>
-      )}
-    </span>
-  );
-}
-
 function Chip({label,active,onClick}:{label:string;active:boolean;onClick:()=>void}) {
   return (
     <button type="button" onClick={onClick}
@@ -365,18 +346,18 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
             <SectionHeader num="A" title="Profile & Revenue" desc="Your current position, tenure, and book quality metrics."/>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-2">Primary market<Tip text="Select the geographic market that describes the majority of your client base — not your personal location. A Geneva-based banker whose clients are French should select French Market, not CH Onshore." /></label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">Primary market</label><p className="text-[11px] text-white/25 mb-2 leading-relaxed">Select the market that describes the majority of your client base — not your personal location. A Geneva-based banker whose clients are French should select French Market, not CH Onshore.</p>
                 <select value={port.market} onChange={e=>pp({market:e.target.value})} className={INP+" bg-black/40"}>
                   {MARKETS.map(m=><option key={m} value={m}>{m}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-2">ROA (bps, last 12 months)<Tip text="Revenue on Assets: your total annual revenue divided by your total AUM, in basis points. Example: CHF 1.5M revenue on CHF 200M AUM = 75 bps. Do not include one-off items." /></label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">ROA (bps, last 12 months)</label><p className="text-[11px] text-white/25 mb-2 leading-relaxed">Your total annual revenue ÷ total AUM in basis points. Example: CHF 1.5M on CHF 200M AUM = 75 bps. Do not include one-off items. CH onshore typical: 65–90 bps.</p>
                 <input type="number" value={port.roaBps||""} onChange={e=>pp({roaBps:Number(e.target.value)})} className={INP} placeholder="80"/>
                 <p className="text-[11px] text-white/20 mt-1">CH onshore typical: 65–90 bps</p>
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-2">Time at current institution<Tip text="Banks apply an informal minimum of 2–3 years before treating a senior RM move as commercially credible. A short tenure suggests clients have not had time to bond with you personally." /></label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">Time at current institution</label><p className="text-[11px] text-white/25 mb-2 leading-relaxed">Banks apply an informal minimum of 2–3 years before treating a senior RM move as commercially credible. Short tenure raises questions about client bonding and stability.</p>
                 <div className="grid grid-cols-3 gap-1.5">
                   {TENURE_OPTIONS.map(t=>(
                     <button key={t.key} type="button" onClick={()=>pp({tenureKey:t.key})}
@@ -387,7 +368,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-2">Wallet share depth<Tip text="What proportion of your clients total investable wealth do you actually manage? Example: a client with CHF 20M total wealth where you manage CHF 5M = 25% wallet share. High wallet share means they depend primarily on you." /></label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">Wallet share depth</label><p className="text-[11px] text-white/25 mb-2 leading-relaxed">What proportion of your clients' total investable wealth do you manage? Example: client with CHF 20M total, you manage CHF 5M = 25% wallet share. High share means they depend primarily on you.</p>
                 <div className="grid grid-cols-5 gap-1">
                   {WALLET_OPTIONS.map(w=>(
                     <button key={w.score} type="button" onClick={()=>pp({walletScore:w.score})}
@@ -419,7 +400,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
             <SectionHeader num="C" title="Legal & Structural Risk" desc="The most underestimated dimension. Each element can be a standalone disqualifier."/>
             <div className="space-y-5">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-3">Governing law<Tip text="Check your employment contract — the clause titled Governing Law or Applicable Law, usually in the final pages. The difference between Swiss and English law can change your overall score by 15–20 points." /></label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">Governing law</label><p className="text-[11px] text-white/25 mb-3 leading-relaxed">Check your contract — the clause titled Governing Law or Applicable Law, usually in the final pages. Swiss vs English law can change your score by 15–20 points.</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {Object.entries(JURISDICTION_DATA).map(([k,v])=>(
                     <button key={k} type="button" onClick={()=>pp({jurisdiction:k})}
@@ -430,7 +411,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-3">Garden leave<Tip text="During garden leave your employer keeps you on salary but prohibits you from working elsewhere or contacting clients. It begins from the date you resign. Select No clause only if your contract explicitly contains none." /></label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">Garden leave</label><p className="text-[11px] text-white/25 mb-3 leading-relaxed">Your employer keeps you on salary but prohibits client contact. Begins from your resignation date. Select No clause only if your contract explicitly contains none.</p>
                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                   {GARDEN_LEAVE_OPTS.map(g=>(
                     <button key={g.key} type="button" onClick={()=>pp({gardenLeave:g.key})}
@@ -442,7 +423,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-3">Clawback<Tip text="A retention bonus with a clawback means you must repay part or all of a bonus if you leave before a specified date. Most receiving banks will gross this up in their sign-on — but only if you disclose it upfront and quantify it precisely." /></label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">Clawback</label><p className="text-[11px] text-white/25 mb-3 leading-relaxed">Must you repay a bonus if you leave before a specified date? Most receiving banks will cover this in their sign-on — but only if you disclose it upfront and quantify it precisely.</p>
                   <div className="flex gap-2">
                     {[{k:false,l:"No clawback"},{k:true,l:"Clawback applies"}].map(o=>(
                       <button key={String(o.k)} type="button" onClick={()=>pp({hasClawback:o.k as boolean})}
@@ -454,7 +435,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
                   {port.hasClawback&&<input type="number" value={port.clawbackPct||""} onChange={e=>pp({clawbackPct:Number(e.target.value)})} className={INP+" mt-3"} placeholder="Clawback % exposure"/>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-3">EAM co-management<Tip text="If an EAM manages a portion of your clients portfolios, those assets sit in a legally ambiguous position when you move. The receiving bank cannot onboard EAM-managed assets without the EAMs active cooperation." /></label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">EAM co-management</label><p className="text-[11px] text-white/25 mb-3 leading-relaxed">If an EAM manages a portion of your clients' portfolios, those assets are legally ambiguous at transfer. The receiving bank cannot onboard EAM-managed AUM without the EAM's active cooperation.</p>
                   <div className="grid grid-cols-5 gap-1">
                     {[{v:1,l:"< 5%"},{v:2,l:"5–10%"},{v:3,l:"10–20%"},{v:4,l:"20–35%"},{v:5,l:"> 35%"}].map(o=>(
                       <button key={o.v} type="button" onClick={()=>pp({eamExposure:o.v})}
@@ -605,7 +586,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
             <div className="space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-2">ROA %<Tip text="Enter as a percentage — e.g. 0.80 for 80 basis points. This is applied to your cumulative AUM each year. Typical CH onshore: 0.65–0.90%. International: 0.80–1.20%. MEA/APAC: 0.90–1.30%." /></label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">ROA % (e.g. 0.80 = 80 bps)</label><p className="text-[11px] text-white/25 mb-2 leading-relaxed">Applied to your cumulative AUM each year. CH onshore: 0.65–0.90% · International: 0.80–1.20% · MEA/APAC: 0.90–1.30%.</p>
                   <input type="number" step="0.05" value={bp.roa||""} onChange={e=>pb({roa:Number(e.target.value)})} className={INP} placeholder="0.80"/>
                 </div>
                 <div>
@@ -613,12 +594,12 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
                   <input type="number" min={10} max={100} value={bp.portPct} onChange={e=>pb({portPct:Number(e.target.value)})} className={INP}/>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-2">Sign-on bonus (CHF)<Tip text="Sign-on bonus from the receiving bank, typically used to cover garden leave income loss or outstanding clawback. Amortised over 3 years in the cost model." /></label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">Sign-on bonus (CHF)</label><p className="text-[11px] text-white/25 mb-2 leading-relaxed">From the receiving bank — typically covers garden leave income loss or outstanding clawback. Amortised over 3 years in the cost model.</p>
                   <input type="number" value={bp.signOn||""} onChange={e=>pb({signOn:Number(e.target.value)})} className={INP} placeholder="0"/>
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-3">Garden leave<Tip text="Months before you can start generating revenue at the new institution. During this period costs accrue but revenue is zero." /></label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">Garden leave</label><p className="text-[11px] text-white/25 mb-3 leading-relaxed">Months before you can start generating revenue. During this period costs accrue but your NNM contribution is zero.</p>
                 <div className="flex flex-wrap gap-2">
                   {[{m:0,l:"None"},{m:1,l:"1 month"},{m:2,l:"2 months"},{m:3,l:"3 months"},{m:6,l:"6 months"}].map(g=>(
                     <Chip key={g.m} label={g.l} active={bp.glMonths===g.m} onClick={()=>pb({glMonths:g.m})}/>
@@ -626,7 +607,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-3">Target institution<Tip text="Determines the all-in cost multiplier applied to your base salary. This covers employer social charges (~18% in Switzerland), bonus provision, infrastructure overhead, and compliance costs." /></label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-white/35 mb-1">Target institution</label><p className="text-[11px] text-white/25 mb-3 leading-relaxed">Determines the all-in cost multiplier applied to your base salary — covers employer social charges (~18% CH), bonus provision, and overhead.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {INSTITUTION_TYPES.map(inst=>(
                     <button key={inst.key} type="button" onClick={()=>pb({instType:inst.key})}
