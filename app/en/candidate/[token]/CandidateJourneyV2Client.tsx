@@ -269,6 +269,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
     try{
       await fetch("/api/candidate-journey",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
         token,candidateName,institution,mandate,
+        candidateEmail:bp.email||"",
         portabilityResult:{overallPct:ps.overall,overallLevel:ps.level,expectedTransferRange:ps.transferRange,onboardingSpeed:ps.onboarding,corePct:ps.corePct,legalPct:ps.legalPct,advancedPct:ps.advPct,roaBps:port.roaBps,market:port.market,hub:hub||"Geneva"},
         bpResult:{committeeScore:bc.cs,breakEvenMonth:bc.beMo,grossTotal:bc.gross,nmTotal:bc.nmTotal},
         motivation:motiv,
