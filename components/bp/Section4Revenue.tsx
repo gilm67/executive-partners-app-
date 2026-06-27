@@ -66,6 +66,9 @@ export default function Section4Revenue() {
     const currentAUM_m = toNum(i.current_assets_m);
     const portabilityPct = toNum((i as any).portability_pct ?? 60);
     const gardenLeaveMonths = toNum((i as any).garden_leave_months ?? 3);
+    const onboardingMonths = toNum((i as any).onboarding_months ?? 6);
+    // Y1 ramp: candidate onboards NNM on month N → earns (12-N) months of revenue
+    const rampF = Math.max(0, Math.min(1, (12 - onboardingMonths) / 12));
     const institutionType = (i as any).institution_type ?? 'tier1_swiss';
     const signOnBonus = toNum((i as any).sign_on_bonus ?? 0);
 
@@ -98,7 +101,7 @@ export default function Section4Revenue() {
     const aum_y2_m = nnm1_m + nnm2_m;
     const aum_y3_m = nnm1_m + nnm2_m + nnm3_m;
 
-    const rev1 = aum_y1_m * 1_000_000 * (roa1 / 100);
+    const rev1 = nnm1_m * rampF * 1_000_000 * (roa1 / 100); // Y1 revenue ramped by onboarding pace; AUM for Y2/Y3 still uses full nnm1_m
     const rev2 = aum_y2_m * 1_000_000 * (roa2 / 100);
     const rev3 = aum_y3_m * 1_000_000 * (roa3 / 100);
 
@@ -150,7 +153,7 @@ export default function Section4Revenue() {
     const down_aum_y2 = down_aum_y1 + downside_nnm2;
     const down_aum_y3 = down_aum_y2 + downside_nnm3;
 
-    const down_rev1 = down_aum_y1 * 1_000_000 * (roa1 / 100);
+    const down_rev1 = downside_nnm1 * rampF * 1_000_000 * (roa1 / 100);
     const down_rev2 = down_aum_y2 * 1_000_000 * (roa2 / 100);
     const down_rev3 = down_aum_y3 * 1_000_000 * (roa3 / 100);
     const down_nm1 = down_rev1 - annualCostTotal;
@@ -179,6 +182,7 @@ export default function Section4Revenue() {
     i.current_assets_m,
     (i as any).portability_pct,
     (i as any).garden_leave_months,
+    (i as any).onboarding_months,
     (i as any).institution_type,
     (i as any).sign_on_bonus,
     (i as any).roa_y1,

@@ -54,6 +54,7 @@ export type Inputs = {
   // Section 4 — AUM transfer & cost model inputs (v2)
   portability_pct: number;       // % of current AUM truly portable (0-100, default 60)
   garden_leave_months: number;   // months dead period before revenue starts (default 3)
+  onboarding_months: number;     // months to fully onboard NNM Y1 — affects Y1 revenue ramp
   institution_type: string;      // 'tier1_swiss' | 'international' | 'boutique' | 'eam'
   sign_on_bonus: number;         // sign-on bonus from receiving bank (for breakeven calc)
 
@@ -225,6 +226,7 @@ export const useBP = create<BPState>((set, get) => ({
     // Section 4 defaults (v2 — new fields)
     portability_pct: 60,
     garden_leave_months: 3,
+    onboarding_months: 6,
     institution_type: "tier1_swiss",
     sign_on_bonus: 0,
 

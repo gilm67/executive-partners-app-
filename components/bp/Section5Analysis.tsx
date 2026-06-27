@@ -57,6 +57,8 @@ export default function Section5Analysis() {
   const currentAUM_m = n(i.current_assets_m);
   const portabilityPct = n((i as any).portability_pct ?? 60);
   const gardenLeaveMonths = n((i as any).garden_leave_months ?? 3);
+  const onboardingMonths = n((i as any).onboarding_months ?? 6);
+  const rampF = Math.max(0, Math.min(1, (12 - onboardingMonths) / 12));
   const signOnBonus = n((i as any).sign_on_bonus ?? 0);
   const baseSalary = n(i.base_salary);
 
