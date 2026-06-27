@@ -78,9 +78,10 @@ export default function Section5Analysis() {
   const portableAUM_m = currentAUM_m * (portabilityPct / 100);
   const gardenLeaveFactor = Math.max(0, Math.min(1, (12 - gardenLeaveMonths) / 12));
 
-  const aum_y1_m = portableAUM_m * gardenLeaveFactor + nnm1;
-  const aum_y2_m = aum_y1_m + nnm2;
-  const aum_y3_m = aum_y2_m + nnm3;
+  // NNM figures represent cumulative projected book at new institution
+  const aum_y1_m = nnm1;
+  const aum_y2_m = nnm1 + nnm2;
+  const aum_y3_m = nnm1 + nnm2 + nnm3;
 
   const rev1 = aum_y1_m * 1_000_000 * (roa1 / 100);
   const rev2 = aum_y2_m * 1_000_000 * (roa2 / 100);

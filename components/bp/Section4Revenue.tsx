@@ -90,10 +90,13 @@ export default function Section4Revenue() {
     const gardenLeaveFactor = Math.max(0, Math.min(1, (12 - gardenLeaveMonths) / 12));
 
     // ── BASE CASE: Cumulative AUM model ────────────────────
-    const effectivePortableY1 = portableAUM_m * gardenLeaveFactor;
-    const aum_y1_m = effectivePortableY1 + nnm1_m;
-    const aum_y2_m = aum_y1_m + nnm2_m;  // Y1 AUM stays and earns in Y2
-    const aum_y3_m = aum_y2_m + nnm3_m;
+    // NNM figures represent cumulative projected book at new institution
+    // Y1 = NNM1, Y2 = NNM1+NNM2, Y3 = NNM1+NNM2+NNM3
+    // Current AUM and portability used for committee score only
+    const effectivePortableY1 = 0;
+    const aum_y1_m = nnm1_m;
+    const aum_y2_m = nnm1_m + nnm2_m;
+    const aum_y3_m = nnm1_m + nnm2_m + nnm3_m;
 
     const rev1 = aum_y1_m * 1_000_000 * (roa1 / 100);
     const rev2 = aum_y2_m * 1_000_000 * (roa2 / 100);
