@@ -255,6 +255,34 @@ export default function Section4Revenue() {
             </Field>
           </div>
 
+          <div>
+            <Field label="Y1 NNM onboarding pace — in which month do you fully onboard your Year 1 NNM target?">
+              <p className="text-xs text-white/40 mb-2 leading-relaxed">
+                A candidate who onboards on Month 1 earns 11 months of revenue. One who onboards on Month 12 earns 0 months.
+                Formula: Revenue Y1 = NNM1 × (12 − N) / 12 × ROA. Y2 and Y3 use the full cumulative book.
+              </p>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                {([1,2,3,6,9,12] as const).map(m => (
+                  <button key={m} type="button"
+                    onClick={() => set({ onboarding_months: m } as any)}
+                    className={`rounded-lg border px-2 py-2 text-xs font-medium transition text-center ${
+                      toNum((i as any).onboarding_months ?? 6) === m
+                        ? 'border-amber-400/60 bg-amber-400/15 text-amber-200'
+                        : 'border-white/15 bg-white/5 text-white/70 hover:border-white/30'
+                    }`}>
+                    <span className="block font-semibold">{m === 1 ? 'Month 1' : `${m} months`}</span>
+                    <span className="block text-[10px] opacity-60 mt-0.5">{Math.round(((12-m)/12)*100)}% rev</span>
+                  </button>
+                ))}
+              </div>
+              {toNum(i.nnm_y1_m) > 0 && (
+                <div className="mt-2 rounded-lg border border-white/8 bg-white/5 px-3 py-2 text-xs text-white/50">
+                  Y1 effective revenue = {toNum(i.nnm_y1_m).toFixed(0)}M × {Math.round(((12 - toNum((i as any).onboarding_months ?? 6))/12)*100)}% ramp × {toNum((i as any).roa_y1 || 0.80)}% ROA = <strong className="text-emerald-300">CHF {new Intl.NumberFormat('en-CH',{maximumFractionDigits:0}).format(toNum(i.nnm_y1_m) * ((12 - toNum((i as any).onboarding_months ?? 6))/12) * 1_000_000 * (toNum((i as any).roa_y1 || 0.80)/100))}</strong>
+                </div>
+              )}
+            </Field>
+          </div>
+
         </div>
       </div>
 
