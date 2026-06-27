@@ -96,9 +96,10 @@ function computeBP(s:BS) {
   // e.g. 6 months ramp → 75% of full-year revenue on NNM1
   const ob=n(s.onboardingMonths)||6;
   // Ramp factor: candidate onboards full NNM1 on month N → earns (12-N) months of revenue in Y1
+  // AUM carries forward at full NNM1 into Y2 regardless of onboarding pace
   const rampF=Math.max(0,Math.min(1,(12-ob)/12));
-  const a1=nnm1*rampF,a2=nnm1+nnm2,a3=nnm1+nnm2+nnm3;
-  const r1=a1*1_000_000*(roa/100),r2=a2*1_000_000*(roa/100),r3=a3*1_000_000*(roa/100);
+  const a1=nnm1,a2=nnm1+nnm2,a3=nnm1+nnm2+nnm3;
+  const r1=nnm1*rampF*1_000_000*(roa/100),r2=a2*1_000_000*(roa/100),r3=a3*1_000_000*(roa/100);
   const cost=base*inst.mult+signOn/3;
   const nm1=r1-cost,nm2=r2-cost,nm3=r3-cost;
   let beMo:number|null=null,cum=0;
@@ -630,12 +631,12 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
           <Card>
             <SectionHeader num="3" title="Key Client Prospects" desc="List your key client relationships. This is what the committee will ask you to walk through one by one. Be specific — aggregate AUM without names is not a business plan."/>
             <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
-                <div className="sm:col-span-2">
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                <div className="sm:col-span-4">
                   <label className="block text-xs text-white/35 mb-1">Client / Prospect name</label>
                   <input type="text" value={pForm.name} onChange={e=>setPForm(p=>({...p,name:e.target.value}))} className={INP} placeholder="e.g. Family Office Paris"/>
                 </div>
-                <div>
+                <div className="sm:col-span-2">
                   <label className="block text-xs text-white/35 mb-1">Source</label>
                   <select value={pForm.source} onChange={e=>setPForm(p=>({...p,source:e.target.value as any}))} className={INP+" bg-black/40"}>
                     <option>Self Acquired</option>
@@ -643,16 +644,16 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
                     <option>Finder</option>
                   </select>
                 </div>
-                <div>
+                <div className="sm:col-span-2">
                   <label className="block text-xs text-white/35 mb-1">Total wealth (M)</label>
                   <input type="number" value={pForm.wealth||""} onChange={e=>setPForm(p=>({...p,wealth:Number(e.target.value)}))} className={INP} placeholder="0"/>
                 </div>
-                <div>
+                <div className="sm:col-span-2">
                   <label className="block text-xs text-white/35 mb-1">Best NNM (M)</label>
                   <p className="text-[10px] text-white/20 mb-1">Optimistic</p>
                   <input type="number" value={pForm.bestNNM||""} onChange={e=>setPForm(p=>({...p,bestNNM:Number(e.target.value)}))} className={INP} placeholder="0"/>
                 </div>
-                <div>
+                <div className="sm:col-span-2">
                   <label className="block text-xs text-white/35 mb-1">Worst NNM (M)</label>
                   <p className="text-[10px] text-white/20 mb-1">Pessimistic</p>
                   <input type="number" value={pForm.worstNNM||""} onChange={e=>setPForm(p=>({...p,worstNNM:Number(e.target.value)}))} className={INP} placeholder="0"/>
