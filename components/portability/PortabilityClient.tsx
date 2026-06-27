@@ -126,8 +126,8 @@ const GARDEN_LEAVE_OPTIONS: Array<{ key: GardenLeaveKey; label: string; modifier
   { key: "6+", label: "6+ months", modifier: -22 },
 ];
  
-const BOOKING_CENTRES = ["Geneva", "Zurich", "London", "Luxembourg", "Monaco", "Dubai (DIFC/ADGM)", "Abu Dhabi", "Singapore", "Hong Kong", "Miami", "New York", "Lisbon", "Madrid"];
-const REG_PERMISSIONS = ["FINMA outbound (CH)", "FCA (UK)", "DFSA / FSRA (UAE)", "MAS (Singapore)", "SFC (Hong Kong)", "SEC / US offshore", "MiFID / EU passport"];
+const BOOKING_CENTRES = ["Geneva", "Zurich", "Lugano", "London", "Luxembourg", "Monaco", "Dubai (DIFC)", "Abu Dhabi (ADGM)", "Singapore", "Hong Kong", "Tel Aviv", "New York", "Miami", "Milan", "Lisbon", "Madrid"];
+const REG_PERMISSIONS = ["FINMA outbound (CH)", "FCA (UK)", "DFSA / FSRA (UAE)", "MAS (Singapore)", "SFC (Hong Kong)", "ISA licence (Israel)", "SEC / US offshore", "MiFID / EU passport", "CySEC (Cyprus/EU)"];
  
 /* ─────────────────────────────────────────────────────────────
    GUIDE COMPONENT, consistent field-level guidance

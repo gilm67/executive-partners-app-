@@ -12,8 +12,8 @@ const WALLET_OPTIONS = [
   {label:"< 15%",score:1,mult:0.88},{label:"15–35%",score:2,mult:0.94},
   {label:"35–50%",score:3,mult:1.00},{label:"50–70%",score:4,mult:1.06},{label:"> 70%",score:5,mult:1.12},
 ];
-const BOOKING_CENTRES = ["Geneva","Zurich","Lugano","London","Luxembourg","Monaco","Dubai (DIFC)","Abu Dhabi (ADGM)","Singapore","Hong Kong","New York","Miami"];
-const PERMISSIONS = ["FINMA outbound (CH)","FCA (UK)","DFSA / FSRA (UAE)","MAS (Singapore)","SFC (Hong Kong)","MiFID / EU passport"];
+const BOOKING_CENTRES = ["Geneva","Zurich","Lugano","London","Luxembourg","Monaco","Dubai (DIFC)","Abu Dhabi (ADGM)","Singapore","Hong Kong","Tel Aviv","New York","Miami","Milan","Lisbon","Madrid"];
+const PERMISSIONS = ["FINMA outbound (CH)","FCA (UK)","DFSA / FSRA (UAE)","MAS (Singapore)","SFC (Hong Kong)","ISA licence (Israel)","SEC / US offshore","MiFID / EU passport","CySEC (Cyprus/EU)"];
 const JURISDICTION_DATA: Record<string,{base:number;label:string}> = {
   swiss:{base:72,label:"Switzerland"},uk:{base:58,label:"United Kingdom"},
   eu:{base:65,label:"EU / Luxembourg"},uae:{base:70,label:"UAE (DIFC/ADGM)"},
