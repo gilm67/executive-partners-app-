@@ -49,6 +49,10 @@ type BS = {
   nnm1:number;nnm2:number;nnm3:number;roa:number;
   portPct:number;glMonths:number;instType:string;signOn:number;market:string;
 };
+type Prospect = {
+  name:string;source:"Self Acquired"|"Inherited"|"Finder";wealth:number;bestNNM:number;worstNNM:number;
+};
+
 type MS = {
   pushFactors:string[];pullFactors:string;competing:string;
   baseSalary:string;totalComp:string;guarantee:string;clawback:string;timeline:string;extra:string;
@@ -219,6 +223,21 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
     nnm1:0,nnm2:0,nnm3:0,roa:0.80,portPct:60,glMonths:3,instType:"tier1_swiss",signOn:0,market:market||"CH Onshore",
   });
   const pb=(p:Partial<BS>)=>setBp(s=>({...s,...p}));
+
+  const [prospects,setProspects]=useState<Prospect[]>([]);
+  const [pForm,setPForm]=useState<Prospect>({name:"",source:"Self Acquired",wealth:0,bestNNM:0,worstNNM:0});
+  const [editIdx,setEditIdx]=useState<number|null>(null);
+
+  const addProspect=()=>{
+    if(!pForm.name.trim()) return;
+    if(editIdx!==null){
+      setProspects(ps=>ps.map((p,i)=>i===editIdx?pForm:p));
+      setEditIdx(null);
+    } else {
+      setProspects(ps=>[...ps,pForm]);
+    }
+    setPForm({name:"",source:"Self Acquired",wealth:0,bestNNM:0,worstNNM:0});
+  };
 
   const [motiv,setMotiv]=useState<MS>({
     pushFactors:[],pullFactors:"",competing:"",
@@ -580,9 +599,92 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
             )}
           </Card>
 
-          {/* 3 */}
+          {/* 3: Prospects */}
           <Card>
-            <SectionHeader num="3" title="Revenue & Cost Assumptions" desc="Parameters that drive the P&L model and breakeven calculation."/>
+            <SectionHeader num="3" title="Key Client Prospects" desc="List your key client relationships. This is what the committee will ask you to walk through one by one. Be specific — aggregate AUM without names is not a business plan."/>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="block text-xs text-white/35 mb-1">Client / Prospect name</label>
+                  <input type="text" value={pForm.name} onChange={e=>setPForm(p=>({...p,name:e.target.value}))} className={INP} placeholder="e.g. Family Office Paris"/>
+                </div>
+                <div>
+                  <label className="block text-xs text-white/35 mb-1">Source</label>
+                  <select value={pForm.source} onChange={e=>setPForm(p=>({...p,source:e.target.value as any}))} className={INP+" bg-black/40"}>
+                    <option>Self Acquired</option>
+                    <option>Inherited</option>
+                    <option>Finder</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-white/35 mb-1">Total wealth (M)</label>
+                  <input type="number" value={pForm.wealth||""} onChange={e=>setPForm(p=>({...p,wealth:Number(e.target.value)}))} className={INP} placeholder="0"/>
+                </div>
+                <div>
+                  <label className="block text-xs text-white/35 mb-1">Expected NNM (M)</label>
+                  <input type="number" value={pForm.bestNNM||""} onChange={e=>setPForm(p=>({...p,bestNNM:Number(e.target.value)}))} className={INP} placeholder="0"/>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <GBtn onClick={addProspect}>{editIdx!==null?"Update prospect":"Add prospect"}</GBtn>
+                {editIdx!==null&&<button type="button" onClick={()=>{setEditIdx(null);setPForm({name:"",source:"Self Acquired",wealth:0,bestNNM:0,worstNNM:0});}} className="rounded-full border border-white/15 px-5 py-2 text-xs text-white/40 hover:text-white/70 transition">Cancel</button>}
+              </div>
+              {prospects.length>0&&(
+                <div className="overflow-x-auto rounded-xl border border-white/10">
+                  <table className="min-w-full text-xs">
+                    <thead style={{background:"rgba(255,255,255,0.04)"}}>
+                      <tr>
+                        {["Client / Prospect","Source","Total Wealth (M)","Expected NNM (M)",""].map(h=>(
+                          <th key={h} className="px-4 py-2.5 text-white/30 font-medium text-left">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {prospects.map((p,i)=>(
+                        <tr key={i} className={i>0?"border-t border-white/5":""}>
+                          <td className="px-4 py-2.5 text-white/70 font-medium">{p.name}</td>
+                          <td className="px-4 py-2.5 text-white/40">{p.source}</td>
+                          <td className="px-4 py-2.5 text-amber-300">{p.wealth}M</td>
+                          <td className="px-4 py-2.5 text-emerald-300">{p.bestNNM}M</td>
+                          <td className="px-4 py-2.5">
+                            <div className="flex gap-2">
+                              <button type="button" onClick={()=>{setEditIdx(i);setPForm(p);}} className="text-[11px] text-white/30 hover:text-white/60 transition">Edit</button>
+                              <button type="button" onClick={()=>setProspects(ps=>ps.filter((_,j)=>j!==i))} className="text-[11px] text-rose-400/50 hover:text-rose-400 transition">Remove</button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      <tr className="border-t border-white/10" style={{background:"rgba(255,255,255,0.03)"}}>
+                        <td className="px-4 py-2.5 text-white/50 font-semibold">TOTAL</td>
+                        <td className="px-4 py-2.5"/>
+                        <td className="px-4 py-2.5 text-amber-300 font-semibold">{prospects.reduce((s,p)=>s+p.wealth,0).toFixed(1)}M</td>
+                        <td className="px-4 py-2.5 text-emerald-300 font-semibold">{prospects.reduce((s,p)=>s+p.bestNNM,0).toFixed(1)}M</td>
+                        <td/>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {prospects.length>0&&(()=>{
+                const totalNNM=bp.nnm1+bp.nnm2+bp.nnm3;
+                const prospectSum=prospects.reduce((s,p)=>s+p.bestNNM,0);
+                const gap=prospectSum-totalNNM;
+                return (
+                  <div className={`rounded-xl border px-4 py-3 text-xs ${Math.abs(gap)<=totalNNM*0.15?"border-emerald-500/25 bg-emerald-500/8 text-emerald-300":"border-amber-500/25 bg-amber-500/8 text-amber-300"}`}>
+                    {Math.abs(gap)<=totalNNM*0.15
+                      ?`✓ Prospect NNM (${prospectSum.toFixed(1)}M) aligns with your 3Y NNM total (${totalNNM.toFixed(1)}M) — strong committee signal`
+                      :`⚠ Gap of ${Math.abs(gap).toFixed(1)}M between prospect sum (${prospectSum.toFixed(1)}M) and 3Y NNM (${totalNNM.toFixed(1)}M) — committee will ask you to reconcile`
+                    }
+                  </div>
+                );
+              })()}
+              <p className="text-[11px] text-white/20 leading-relaxed">Names are strictly confidential and not shared with any institution without your consent. Do not include full client names if you prefer — initials or descriptions are sufficient.</p>
+            </div>
+          </Card>
+
+          {/* 4 */}
+          <Card>
+            <SectionHeader num="4" title="Revenue & Cost Assumptions" desc="Parameters that drive the P&L model and breakeven calculation."/>
             <div className="space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                 <div>
@@ -623,7 +725,7 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
 
           {/* 4: Results */}
           <Card gold>
-            <SectionHeader num="4" title="Committee Readiness Analysis" desc="Live P&L model based on your inputs above. Confirm to advance to Motivation & Fit."/>
+            <SectionHeader num="5" title="Committee Readiness Analysis" desc="Live P&L model based on your inputs above. Confirm to advance to Motivation & Fit."/>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
               {[
                 {l:"Committee Score",v:`${bc.cs}`,u:"/100",c:sc(bc.cs)},
