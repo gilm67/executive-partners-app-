@@ -95,7 +95,8 @@ function computeBP(s:BS) {
   // average AUM earning revenue in Y1 = NNM1 × (1 - N/24)
   // e.g. 6 months ramp → 75% of full-year revenue on NNM1
   const ob=n(s.onboardingMonths)||6;
-  const rampF=Math.max(0.1,Math.min(1,1-(ob/24)));
+  // Ramp factor: candidate onboards full NNM1 on month N → earns (12-N) months of revenue in Y1
+  const rampF=Math.max(0,Math.min(1,(12-ob)/12));
   const a1=nnm1*rampF,a2=nnm1+nnm2,a3=nnm1+nnm2+nnm3;
   const r1=a1*1_000_000*(roa/100),r2=a2*1_000_000*(roa/100),r3=a3*1_000_000*(roa/100);
   const cost=base*inst.mult+signOn/3;
@@ -615,12 +616,12 @@ export default function CandidateJourneyV2Client({token,candidateName,institutio
                   <button key={g.m} type="button" onClick={()=>pb({onboardingMonths:g.m})}
                     className={`rounded-xl border px-2 py-2.5 text-xs text-center transition ${bp.onboardingMonths===g.m?"border-[#D4AF37]/60 bg-[#D4AF37]/12 text-[#D4AF37]":"border-white/10 bg-white/[0.02] text-white/40 hover:border-white/20"}`}>
                     {g.l}
-                    <span className="block text-[10px] opacity-60 mt-0.5">{(Math.max(0.1,1-(g.m/24))*100).toFixed(0)}% rev</span>
+                    <span className="block text-[10px] opacity-60 mt-0.5">{(Math.max(0,(12-g.m)/12)*100).toFixed(0)}% rev</span>
                   </button>
                 ))}
               </div>
               {bp.nnm1>0&&<div className="rounded-xl border border-white/8 bg-white/5 px-4 py-2.5 text-xs text-white/50">
-                Y1 effective revenue = {bp.nnm1}M × {(Math.max(0.1,1-(bp.onboardingMonths/24))*100).toFixed(0)}% ramp × {bp.roa||0.80}% ROA = <strong className="text-emerald-300">CHF {new Intl.NumberFormat("en-CH",{maximumFractionDigits:0}).format(bp.nnm1*(Math.max(0.1,1-(bp.onboardingMonths/24)))*1_000_000*((bp.roa||0.80)/100))}</strong>
+                Y1 effective revenue = {bp.nnm1}M × {(Math.max(0,(12-(bp.onboardingMonths||6))/12)*100).toFixed(0)}% ramp × {bp.roa||0.80}% ROA = <strong className="text-emerald-300">CHF {new Intl.NumberFormat("en-CH",{maximumFractionDigits:0}).format(bp.nnm1*(Math.max(0,(12-(bp.onboardingMonths||6))/12))*1_000_000*((bp.roa||0.80)/100))}</strong>
               </div>}
             </div>
           </Card>
