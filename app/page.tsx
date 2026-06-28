@@ -189,8 +189,8 @@ export default function HomePage() {
           {/* Subtle gold glow top-right */}
           <div className="pointer-events-none absolute -top-32 right-0 h-[500px] w-[500px] rounded-full opacity-[0.07]" style={{background:"radial-gradient(circle, #C9A14A, transparent 70%)", filter:"blur(60px)"}} />
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="max-w-2xl">
-              <div className="flex items-center gap-3 mb-6">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="h-px w-10" style={{background:"#C9A14A"}} />
                 <p className="text-[10px] font-semibold uppercase tracking-[0.3em]" style={{color:"#C9A14A"}}>
                   Market Intelligence · New Tool
@@ -205,7 +205,7 @@ export default function HomePage() {
                 No CV. No bank names. No pressure. If your profile matches an open mandate,
                 you will see that too.
               </p>
-              <div className="flex flex-col sm:flex-row items-start gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a
                   href="/en/tools/fit-assessment"
                   className="inline-flex items-center justify-center rounded-full px-8 py-4 text-base font-semibold transition-all hover:opacity-90"
@@ -220,7 +220,7 @@ export default function HomePage() {
                   Or run the Portability Score™ →
                 </a>
               </div>
-              <div className="mt-8 flex flex-wrap gap-6 text-xs text-white/30">
+              <div className="mt-8 flex flex-wrap gap-6 text-xs text-white/30 justify-center">
                 <span>✓ 200+ placements tested</span>
                 <span>✓ Strictly confidential</span>
                 <span>✓ No data shared without consent</span>
