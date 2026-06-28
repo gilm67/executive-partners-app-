@@ -402,91 +402,97 @@ export default function TopNav() {
           </button>
         </div>
 
-        {/* Mobile panel */}
+        {/* Mobile panel — compact grid, no scroll */}
         <div className={(open ? "mt-2" : "hidden") + " md:hidden"}>
           <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#050814] shadow-2xl">
 
-            {/* ── Primary nav ── */}
-            <div className="px-2 pt-3 pb-1">
-              {TOP_BASE.map((item) => {
-                const active = isActive(item.href.replace(base, "") || item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={[
-                      "flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                      active ? "bg-amber-500/10 text-amber-300" : "text-slate-200 hover:bg-white/6 hover:text-white",
-                    ].join(" ")}
-                    onClick={() => setOpen(false)}
-                    aria-current={active ? "page" : undefined}
-                    {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
+            {/* ── Primary nav: 2×2 grid ── */}
+            <div className="p-2 pb-1">
+              <div className="grid grid-cols-2 gap-1">
+                {TOP_BASE.map((item) => {
+                  const active = isActive(item.href.replace(base, "") || item.href);
+                  return (
+                    <Link key={item.href} href={item.href}
+                      className={["flex items-center rounded-xl px-3 py-3 text-sm font-medium transition-colors",
+                        active ? "bg-amber-500/15 text-amber-300" : "text-slate-200 hover:bg-white/5 hover:text-white"].join(" ")}
+                      onClick={() => setOpen(false)}
+                      aria-current={active ? "page" : undefined}
+                      {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="mx-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-            {/* ── Tools ── */}
-            <div className="px-2 py-1">
-              <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-500/70">Tools</p>
-              {TOOLS_BASE.map((item) => {
-                const active = isActive(item.href.replace(base, "") || item.href);
-                return (
-                  <Link key={item.href} href={item.href}
-                    className={["flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors", active ? "bg-amber-500/10 text-amber-300" : "text-slate-200 hover:bg-white/6 hover:text-white"].join(" ")}
-                    onClick={() => setOpen(false)} aria-current={active ? "page" : undefined}>
-                    {item.label}
-                  </Link>
-                );
-              })}
+            {/* ── Tools + Intelligence: side by side ── */}
+            <div className="grid grid-cols-2 divide-x divide-white/8">
+              <div className="px-2 py-2">
+                <p className="px-2 pb-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-amber-500/70">Tools</p>
+                {TOOLS_BASE.map((item) => {
+                  const active = isActive(item.href.replace(base, "") || item.href);
+                  return (
+                    <Link key={item.href} href={item.href}
+                      className={["flex items-center rounded-lg px-2 py-2 text-xs font-medium leading-tight transition-colors",
+                        active ? "bg-amber-500/15 text-amber-300" : "text-slate-300 hover:bg-white/5 hover:text-white"].join(" ")}
+                      onClick={() => setOpen(false)}>
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+              <div className="px-2 py-2">
+                <p className="px-2 pb-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-amber-500/70">Intelligence</p>
+                {INSIGHTS_BASE.map((item) => {
+                  const active = isActive(item.href.replace(base, "") || item.href);
+                  return (
+                    <Link key={item.href} href={item.href}
+                      className={["flex items-center rounded-lg px-2 py-2 text-xs font-medium leading-tight transition-colors",
+                        active ? "bg-amber-500/15 text-amber-300" : "text-slate-300 hover:bg-white/5 hover:text-white"].join(" ")}
+                      onClick={() => setOpen(false)}>
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="mx-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-            {/* ── Intelligence ── */}
-            <div className="px-2 py-1">
-              <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-500/70">Intelligence</p>
-              {INSIGHTS_BASE.map((item) => {
-                const active = isActive(item.href.replace(base, "") || item.href);
-                return (
-                  <Link key={item.href} href={item.href}
-                    className={["flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors", active ? "bg-amber-500/10 text-amber-300" : "text-slate-200 hover:bg-white/6 hover:text-white"].join(" ")}
-                    onClick={() => setOpen(false)} aria-current={active ? "page" : undefined}>
-                    {item.label}
-                  </Link>
-                );
-              })}
+            {/* ── Markets: pill chips ── */}
+            <div className="px-3 py-2.5">
+              <p className="pb-2 text-[9px] font-bold uppercase tracking-[0.2em] text-amber-500/70">Markets</p>
+              <div className="flex flex-wrap gap-1.5">
+                {MARKETS_DD_BASE.slice(0, 5).map((item) => {
+                  const active = isActive(item.href.replace(base, "") || item.href);
+                  const short = item.label
+                    .replace(" Private Banking", "")
+                    .replace("All Financial Hubs", "All Hubs");
+                  return (
+                    <Link key={item.href} href={item.href}
+                      className={["rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+                        active
+                          ? "border-amber-500/50 bg-amber-500/15 text-amber-300"
+                          : "border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:text-white"].join(" ")}
+                      onClick={() => setOpen(false)}>
+                      {short}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="mx-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-            {/* ── Markets (top 4 only) ── */}
-            <div className="px-2 py-1">
-              <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-500/70">Markets</p>
-              {MARKETS_DD_BASE.slice(0, 4).map((item) => {
-                const active = isActive(item.href.replace(base, "") || item.href);
-                return (
-                  <Link key={item.href} href={item.href}
-                    className={["flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors", active ? "bg-amber-500/10 text-amber-300" : "text-slate-300 hover:bg-white/6 hover:text-white"].join(" ")}
-                    onClick={() => setOpen(false)} aria-current={active ? "page" : undefined}>
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </div>
-
-            <div className="mx-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
-            {/* ── Company ── */}
-            <div className="px-2 py-1">
-              <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-500/70">Company</p>
+            {/* ── Company: 2-col ── */}
+            <div className="grid grid-cols-2 gap-1 p-2">
               <Link
                 href={withBase(base, "/about")}
-                className={["flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors", isActive("/about") ? "bg-amber-500/10 text-amber-300" : "text-slate-200 hover:bg-white/6 hover:text-white"].join(" ")}
+                className={["flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                  isActive("/about") ? "bg-amber-500/15 text-amber-300" : "text-slate-200 hover:bg-white/5 hover:text-white"].join(" ")}
                 onClick={() => setOpen(false)}
                 aria-current={isActive("/about") ? "page" : undefined}
               >
@@ -494,27 +500,28 @@ export default function TopNav() {
               </Link>
               <Link
                 href="/en/press"
-                className={["flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors", isActive("/press") ? "bg-amber-500/10 text-amber-300" : "text-slate-200 hover:bg-white/6 hover:text-white"].join(" ")}
+                className={["flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                  isActive("/press") ? "bg-amber-500/15 text-amber-300" : "text-slate-200 hover:bg-white/5 hover:text-white"].join(" ")}
                 onClick={() => setOpen(false)}
               >
-                <span>In the Press</span>
-                <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold tracking-wide text-amber-400">FINEWS</span>
+                <span>Press</span>
+                <span className="rounded-full bg-amber-500/20 px-1.5 py-0.5 text-[9px] font-bold tracking-wide text-amber-400">FN</span>
               </Link>
             </div>
 
             {/* ── Footer: DE + Contact ── */}
-            <div className="mt-1 border-t border-white/8 bg-white/3 px-3 py-3 flex flex-col gap-2">
+            <div className="flex items-center gap-2 border-t border-white/8 bg-white/2 px-3 py-3">
               <Link
                 href="/de"
-                className="flex items-center justify-center gap-2 rounded-lg py-2 text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-white/10 py-2.5 text-xs font-medium text-slate-400 transition-colors hover:text-slate-200"
                 onClick={() => setOpen(false)}
               >
-                <span className="text-sm">🇩🇪</span>
-                <span>Deutsche Version</span>
+                <span className="text-base">🇩🇪</span>
+                <span>DE</span>
               </Link>
               <Link
                 href={CONTACT_BASE.href}
-                className="flex items-center justify-center rounded-xl bg-[#F5D778] py-3 text-sm font-semibold text-[#050814] hover:opacity-90 transition-opacity"
+                className="flex flex-[2] items-center justify-center rounded-xl bg-[#F5D778] py-2.5 text-sm font-semibold text-[#050814] transition-opacity hover:opacity-90"
                 onClick={() => setOpen(false)}
               >
                 Contact Us
