@@ -185,45 +185,55 @@ export default function HomePage() {
         </section>
 
         <HomeClient />
-        {/* ── Three-tool strip ── */}
-        <section className="relative z-10 bg-neutral-950 border-t border-white/10 py-14">
-          <div className="mx-auto max-w-5xl px-4">
-            <p className="text-center text-[10px] uppercase tracking-[0.3em] text-white/30 mb-10">
-              Executive Partners · Free Candidate Tools
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                {
-                  title: "Portability Score™",
-                  desc: "Assess how much of your book is genuinely transferable before any conversation starts.",
-                  href: "/en/portability",
-                  cta: "Run the diagnostic →",
-                },
-                {
-                  title: "Migration Friction Analyser",
-                  desc: "Model your realistic AUM migration curve over 18 months, by geography and onboarding speed.",
-                  href: "/en/tools/fit-assessment",
-                  cta: "Model your curve →",
-                },
-                {
-                  title: "Market Fit Assessment",
-                  desc: "Discover where your profile sits structurally in the current private banking market.",
-                  href: "/en/tools/fit-assessment",
-                  cta: "Assess your profile →",
-                },
-              ].map((tool) => (
-                <a
-                  key={tool.title}
-                  href={tool.href}
-                  className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-6 hover:border-[#C9A14A]/40 hover:bg-white/[0.05] transition-all duration-200"
-                >
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-[#C9A14A] mb-3 font-semibold">{tool.title}</p>
-                    <p className="text-sm text-white/60 leading-relaxed">{tool.desc}</p>
-                  </div>
-                  <p className="mt-6 text-xs text-[#C9A14A] font-semibold group-hover:underline">{tool.cta}</p>
-                </a>
-              ))}
+        {/* ── Market Intelligence Tool Strip ── */}
+        <section className="relative z-10 bg-neutral-950 border-t border-white/10 py-20">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-14">
+              <p className="mx-auto text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">
+                Market Intelligence · Executive Partners
+              </p>
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white md:text-4xl">
+                Know your market position<br className="hidden md:block" /> before your first conversation.
+              </h2>
+              <p className="mt-4 text-white/55 max-w-xl mx-auto text-sm leading-relaxed">
+                Three institutional-grade tools. Free. No login required. Used by senior private bankers
+                across Geneva, Dubai, Singapore and London.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <a
+                href="/en/portability"
+                className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 hover:border-brandGold/30 hover:bg-white/[0.05] transition-all duration-200"
+              >
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90 mb-3">Portability Score™</p>
+                  <p className="text-base font-semibold text-white mb-2 leading-snug">How much of your book will actually follow you?</p>
+                  <p className="text-sm text-white/55 leading-relaxed">Six dimensions. Real-time flags. Specific recommendations built on 200+ EP placements.</p>
+                </div>
+                <p className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brandGoldPale group-hover:underline">Run the diagnostic →</p>
+              </a>
+              <a
+                href="/en/tools/fit-assessment"
+                className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 hover:border-brandGold/30 hover:bg-white/[0.05] transition-all duration-200"
+              >
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90 mb-3">Migration Friction Analyser</p>
+                  <p className="text-base font-semibold text-white mb-2 leading-snug">Model your AUM migration curve before you move.</p>
+                  <p className="text-sm text-white/55 leading-relaxed">18-month ramp projection by client geography, onboarding speed, and non-solicitation period.</p>
+                </div>
+                <p className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brandGoldPale group-hover:underline">Model your curve →</p>
+              </a>
+              <a
+                href="/en/tools/fit-assessment"
+                className="group flex flex-col justify-between rounded-2xl border border-brandGold/40 bg-brandGold/5 p-6 sm:p-8 hover:bg-brandGold/10 transition-all duration-200"
+              >
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90 mb-3">Market Fit Assessment ✦ New</p>
+                  <p className="text-base font-semibold text-white mb-2 leading-snug">Where does your profile stand in the current market?</p>
+                  <p className="text-sm text-white/55 leading-relaxed">AI-generated positioning in 90 seconds. No CV. No bank names. No pressure.</p>
+                </div>
+                <p className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brandGoldPale group-hover:underline">Assess my profile →</p>
+              </a>
             </div>
           </div>
         </section>

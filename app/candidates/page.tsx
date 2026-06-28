@@ -105,28 +105,31 @@ export default function CandidatesPage() {
   return (
     <>
       {/* Market Fit Assessment CTA */}
-      <div className="bg-neutral-950 border-b border-white/10 py-10">
-        <div className="mx-auto max-w-4xl px-4 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.3em] text-[#C9A14A] mb-2 font-semibold">
-              New · Free Tool
-            </p>
-            <h2 className="text-xl font-semibold text-white mb-2">
-              Where does your profile stand in the current market?
-            </h2>
-            <p className="text-sm text-white/55 max-w-lg leading-relaxed">
-              Enter your AUM, market, and mandate style. Get a structured market positioning
-              assessment in 90 seconds. No CV. No bank names. No pressure.
-            </p>
+      <div className="bg-neutral-950 border-b border-white/10 py-12">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-brandGold/25 bg-brandGold/5 px-8 py-8 md:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex-1">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90 mb-3">
+                New · Free Tool · No Login Required
+              </p>
+              <h2 className="text-2xl font-extrabold tracking-tight text-white mb-3">
+                Where does your profile stand<br className="hidden md:block" /> in the current market?
+              </h2>
+              <p className="text-sm text-white/60 max-w-lg leading-relaxed">
+                Enter your AUM range, primary market, and mandate style. Receive a structured
+                market positioning assessment in 90 seconds. No CV. No bank names. No pipeline pressure.
+              </p>
+            </div>
+            <div className="flex-shrink-0 flex flex-col items-center gap-3">
+              <a
+                href="/en/tools/fit-assessment"
+                className="inline-flex items-center justify-center rounded-full px-7 py-3.5 text-sm font-semibold bg-brandGold text-black shadow-lg shadow-brandGold/35 hover:bg-brandGoldDark transition"
+              >
+                Assess my profile →
+              </a>
+              <p className="text-[10px] text-white/35 text-center">Takes 90 seconds · Strictly confidential</p>
+            </div>
           </div>
-          
-          <a
-            href="/en/tools/fit-assessment"
-            className="flex-shrink-0 rounded-full px-7 py-3.5 text-sm font-semibold transition-all hover:opacity-90"
-            style={{ background: "#C9A14A", color: "#000" }}
-          >
-            Assess my profile →
-          </a>
         </div>
       </div>
       {/* Breadcrumb Schema (using component) */}
