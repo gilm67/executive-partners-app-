@@ -200,7 +200,7 @@ export default function HomePage() {
                 The private banking market<br />has a position for your profile.
                 <br /><span style={{color:"#C9A14A"}}>You just don't know what it is yet.</span>
               </h2>
-              <p className="text-white/55 text-base leading-relaxed mb-8 max-w-xl">
+              <p className="text-white/55 text-base leading-relaxed mb-8 max-w-xl mx-auto text-center">
                 A 90-second market positioning assessment built on 200+ EP placements.
                 No CV. No bank names. No pressure. If your profile matches an open mandate,
                 you will see that too.
