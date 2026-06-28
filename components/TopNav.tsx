@@ -57,6 +57,7 @@ export default function TopNav() {
   const TOOLS: NavItem[] = [
     { href: "/bp-simulator", label: "Business Plan Simulator" },
     { href: "/portability", label: "Portability Score" },
+    { href: "/en/tools/fit-assessment", label: "Market Fit Assessment" },
   ];
 
   const INSIGHTS: NavItem[] = [
