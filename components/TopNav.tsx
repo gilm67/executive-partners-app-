@@ -403,141 +403,90 @@ export default function TopNav() {
         </div>
 
         {/* Mobile panel */}
-        <div
-          className={
-            (open ? "mt-3" : "hidden") +
-            " md:hidden rounded-2xl border border-white/10 bg-[#050814]/95 backdrop-blur p-3"
-          }
-        >
-          <ul className="grid gap-1">
-            {TOP_BASE.map((item) => {
-              const active = isActive(item.href.replace(base, "") || item.href);
-              const cls = [
-                "block rounded-md px-3 py-2 text-sm transition-colors",
-                active
-                  ? "bg-white/10 text-[#F5D778]"
-                  : "text-slate-200 hover:text-white hover:bg-white/5",
-              ].join(" ");
+        <div className={(open ? "mt-2" : "hidden") + " md:hidden"}>
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#050814] shadow-2xl">
 
-              return (
-                <li key={item.href}>
-                  {item.external ? (
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={cls}
-                      onClick={() => setOpen(false)}
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      className={cls}
-                      onClick={() => setOpen(false)}
-                      aria-current={active ? "page" : undefined}
-                    >
-                      {item.label}
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
-
-            {/* Mobile section: Tools */}
-            <li className="mt-2 px-3 pt-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">
-              Tools
-            </li>
-            {TOOLS_BASE.map((item) => {
-              const active = isActive(item.href.replace(base, "") || item.href);
-              const cls = [
-                "block rounded-md px-3 py-2 text-sm transition-colors",
-                active
-                  ? "bg-white/10 text-[#F5D778]"
-                  : "text-slate-200 hover:text-white hover:bg-white/5",
-              ].join(" ");
-
-              return (
-                <li key={item.href}>
+            {/* ── Primary nav ── */}
+            <div className="px-2 pt-3 pb-1">
+              {TOP_BASE.map((item) => {
+                const active = isActive(item.href.replace(base, "") || item.href);
+                return (
                   <Link
+                    key={item.href}
                     href={item.href}
-                    className={cls}
+                    className={[
+                      "flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      active ? "bg-amber-500/10 text-amber-300" : "text-slate-200 hover:bg-white/6 hover:text-white",
+                    ].join(" ")}
                     onClick={() => setOpen(false)}
                     aria-current={active ? "page" : undefined}
+                    {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   >
                     {item.label}
                   </Link>
-                </li>
-              );
-            })}
+                );
+              })}
+            </div>
 
-            {/* Mobile section: Insights */}
-            <li className="mt-2 px-3 pt-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">
-              Insights
-            </li>
-            {INSIGHTS_BASE.map((item) => {
-              const active = isActive(item.href.replace(base, "") || item.href);
-              const cls = [
-                "block rounded-md px-3 py-2 text-sm transition-colors",
-                active
-                  ? "bg-white/10 text-[#F5D778]"
-                  : "text-slate-200 hover:text-white hover:bg-white/5",
-              ].join(" ");
+            <div className="mx-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={cls}
-                    onClick={() => setOpen(false)}
-                    aria-current={active ? "page" : undefined}
-                  >
+            {/* ── Tools ── */}
+            <div className="px-2 py-1">
+              <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-500/70">Tools</p>
+              {TOOLS_BASE.map((item) => {
+                const active = isActive(item.href.replace(base, "") || item.href);
+                return (
+                  <Link key={item.href} href={item.href}
+                    className={["flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors", active ? "bg-amber-500/10 text-amber-300" : "text-slate-200 hover:bg-white/6 hover:text-white"].join(" ")}
+                    onClick={() => setOpen(false)} aria-current={active ? "page" : undefined}>
                     {item.label}
                   </Link>
-                </li>
-              );
-            })}
+                );
+              })}
+            </div>
 
-            {/* Mobile section: Markets */}
-            <li className="mt-2 px-3 pt-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">
-              Markets
-            </li>
-            {MARKETS_DD_BASE.map((item) => {
-              const active = isActive(item.href.replace(base, "") || item.href);
-              const cls = [
-                "block rounded-md px-3 py-2 text-sm transition-colors",
-                active
-                  ? "bg-white/10 text-[#F5D778]"
-                  : "text-slate-200 hover:text-white hover:bg-white/5",
-              ].join(" ");
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={cls}
-                    onClick={() => setOpen(false)}
-                    aria-current={active ? "page" : undefined}
-                  >
+            <div className="mx-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+            {/* ── Intelligence ── */}
+            <div className="px-2 py-1">
+              <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-500/70">Intelligence</p>
+              {INSIGHTS_BASE.map((item) => {
+                const active = isActive(item.href.replace(base, "") || item.href);
+                return (
+                  <Link key={item.href} href={item.href}
+                    className={["flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors", active ? "bg-amber-500/10 text-amber-300" : "text-slate-200 hover:bg-white/6 hover:text-white"].join(" ")}
+                    onClick={() => setOpen(false)} aria-current={active ? "page" : undefined}>
                     {item.label}
                   </Link>
-                </li>
-              );
-            })}
+                );
+              })}
+            </div>
 
-            {/* Mobile — Company section */}
-            <li>
-              <p className="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
-                Company
-              </p>
+            <div className="mx-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+            {/* ── Markets (top 4 only) ── */}
+            <div className="px-2 py-1">
+              <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-500/70">Markets</p>
+              {MARKETS_DD_BASE.slice(0, 4).map((item) => {
+                const active = isActive(item.href.replace(base, "") || item.href);
+                return (
+                  <Link key={item.href} href={item.href}
+                    className={["flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors", active ? "bg-amber-500/10 text-amber-300" : "text-slate-300 hover:bg-white/6 hover:text-white"].join(" ")}
+                    onClick={() => setOpen(false)} aria-current={active ? "page" : undefined}>
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="mx-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+            {/* ── Company ── */}
+            <div className="px-2 py-1">
+              <p className="px-3 pt-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-500/70">Company</p>
               <Link
                 href={withBase(base, "/about")}
-                className={[
-                  "block rounded-md px-3 py-2 text-sm transition-colors",
-                  isActive("/about")
-                    ? "bg-white/10 text-[#F5D778]"
-                    : "text-slate-200 hover:text-white hover:bg-white/5",
-                ].join(" ")}
+                className={["flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors", isActive("/about") ? "bg-amber-500/10 text-amber-300" : "text-slate-200 hover:bg-white/6 hover:text-white"].join(" ")}
                 onClick={() => setOpen(false)}
                 aria-current={isActive("/about") ? "page" : undefined}
               >
@@ -545,43 +494,34 @@ export default function TopNav() {
               </Link>
               <Link
                 href="/en/press"
-                className={[
-                  "flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors",
-                  isActive("/press")
-                    ? "bg-white/10 text-[#F5D778]"
-                    : "text-slate-200 hover:text-white hover:bg-white/5",
-                ].join(" ")}
+                className={["flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors", isActive("/press") ? "bg-amber-500/10 text-amber-300" : "text-slate-200 hover:bg-white/6 hover:text-white"].join(" ")}
                 onClick={() => setOpen(false)}
               >
                 <span>In the Press</span>
-                <span className="text-[10px] font-semibold tracking-wide text-amber-500 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded-full">
-                  Finews
-                </span>
+                <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold tracking-wide text-amber-400">FINEWS</span>
               </Link>
-            </li>
+            </div>
 
-            {/* Mobile German language link */}
-            <li className="mt-2">
+            {/* ── Footer: DE + Contact ── */}
+            <div className="mt-1 border-t border-white/8 bg-white/3 px-3 py-3 flex flex-col gap-2">
               <Link
                 href="/de"
-                className="block rounded-md px-3 py-2 text-sm text-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                className="flex items-center justify-center gap-2 rounded-lg py-2 text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors"
                 onClick={() => setOpen(false)}
               >
-                Deutsche Version (DE)
+                <span className="text-sm">🇩🇪</span>
+                <span>Deutsche Version</span>
               </Link>
-            </li>
-
-            {/* Mobile Contact CTA */}
-            <li className="mt-2">
               <Link
                 href={CONTACT_BASE.href}
-                className="block rounded-xl bg-[#F5D778] px-4 py-3 text-sm font-semibold text-[#050814] text-center hover:opacity-90 transition"
+                className="flex items-center justify-center rounded-xl bg-[#F5D778] py-3 text-sm font-semibold text-[#050814] hover:opacity-90 transition-opacity"
                 onClick={() => setOpen(false)}
               >
-                Contact
+                Contact Us
               </Link>
-            </li>
-          </ul>
+            </div>
+
+          </div>
         </div>
       </nav>
 
