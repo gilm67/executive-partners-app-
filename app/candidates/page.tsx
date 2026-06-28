@@ -105,24 +105,24 @@ export default function CandidatesPage() {
   return (
     <>
       {/* Market Fit Assessment CTA */}
-      <div className="relative overflow-hidden border-b border-white/10 py-14" style={{ background: "linear-gradient(135deg, #0a0800 0%, #1a1200 50%, #0a0800 100%)" }}>
-        <div className="pointer-events-none absolute -top-20 right-0 h-[400px] w-[400px] rounded-full opacity-20" style={{ background: "radial-gradient(circle, #C9A14A 0%, transparent 70%)" }} />
+      <div className="relative overflow-hidden border-b border-white/10 py-14" style={{ background: "linear-gradient(135deg, #1a0f00 0%, #2d1a00 40%, #1a0f00 100%)" }}>
+        <div className="pointer-events-none absolute -top-20 right-0 h-[400px] w-[400px] rounded-full opacity-20" style={{ background: "radial-gradient(circle, #C9A14A 0%, transparent 65%)", filter: "blur(40px)" }} />
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-10">
             <div className="flex-1">
-              <div className="inline-flex items-center gap-2 rounded-full border border-brandGold/40 bg-brandGold/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-brandGoldPale mb-5">
+              <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] mb-5" style={{ border: "1px solid #C9A14A", background: "rgba(201,161,74,0.15)", color: "#C9A14A" }}>
                 <span className="h-1.5 w-1.5 rounded-full bg-brandGold" />
                 New · Free Tool · No Login Required
               </div>
               <h2 className="text-3xl font-extrabold tracking-tight text-white mb-4 md:text-4xl">
                 Where does your profile stand<br className="hidden md:block" />{" "}
-                <span className="text-brandGold">in the current market?</span>
+                <span style={{ color: "#C9A14A" }}>in the current market?</span>
               </h2>
               <p className="text-sm text-white/60 max-w-lg leading-relaxed">
                 Enter your AUM range, primary market, and mandate style. Receive a structured
                 market positioning assessment in 90 seconds. No CV. No bank names. No pipeline pressure.
               </p>
-              <div className="mt-5 flex flex-wrap gap-4 text-xs text-white/40">
+              <div className="mt-5 flex flex-wrap gap-4 text-xs" style={{ color: "rgba(201,161,74,0.6)" }}>
                 <span>✓ 200+ placements tested</span>
                 <span>✓ Strictly confidential</span>
                 <span>✓ No data shared without consent</span>
@@ -131,7 +131,8 @@ export default function CandidatesPage() {
             <div className="flex-shrink-0 flex flex-col items-center gap-3">
               <a
                 href="/en/tools/fit-assessment"
-                className="inline-flex items-center justify-center rounded-full px-8 py-4 text-sm font-semibold bg-brandGold text-black shadow-lg shadow-brandGold/35 hover:bg-brandGoldDark transition"
+                className="inline-flex items-center justify-center rounded-full px-8 py-4 text-sm font-semibold transition"
+                style={{ background: "#C9A14A", color: "#000", boxShadow: "0 8px 32px rgba(201,161,74,0.4)" }}
               >
                 Assess my profile →
               </a>
