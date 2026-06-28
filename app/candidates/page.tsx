@@ -105,25 +105,33 @@ export default function CandidatesPage() {
   return (
     <>
       {/* Market Fit Assessment CTA */}
-      <div className="bg-neutral-950 border-b border-white/10 py-12">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-brandGold/25 bg-brandGold/5 px-8 py-8 md:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
+      <div className="relative overflow-hidden border-b border-white/10 py-14" style={{ background: "linear-gradient(135deg, #0a0800 0%, #1a1200 50%, #0a0800 100%)" }}>
+        <div className="pointer-events-none absolute -top-20 right-0 h-[400px] w-[400px] rounded-full opacity-20" style={{ background: "radial-gradient(circle, #C9A14A 0%, transparent 70%)" }} />
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-10">
             <div className="flex-1">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90 mb-3">
+              <div className="inline-flex items-center gap-2 rounded-full border border-brandGold/40 bg-brandGold/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-brandGoldPale mb-5">
+                <span className="h-1.5 w-1.5 rounded-full bg-brandGold" />
                 New · Free Tool · No Login Required
-              </p>
-              <h2 className="text-2xl font-extrabold tracking-tight text-white mb-3">
-                Where does your profile stand<br className="hidden md:block" /> in the current market?
+              </div>
+              <h2 className="text-3xl font-extrabold tracking-tight text-white mb-4 md:text-4xl">
+                Where does your profile stand<br className="hidden md:block" />{" "}
+                <span className="text-brandGold">in the current market?</span>
               </h2>
               <p className="text-sm text-white/60 max-w-lg leading-relaxed">
                 Enter your AUM range, primary market, and mandate style. Receive a structured
                 market positioning assessment in 90 seconds. No CV. No bank names. No pipeline pressure.
               </p>
+              <div className="mt-5 flex flex-wrap gap-4 text-xs text-white/40">
+                <span>✓ 200+ placements tested</span>
+                <span>✓ Strictly confidential</span>
+                <span>✓ No data shared without consent</span>
+              </div>
             </div>
             <div className="flex-shrink-0 flex flex-col items-center gap-3">
               <a
                 href="/en/tools/fit-assessment"
-                className="inline-flex items-center justify-center rounded-full px-7 py-3.5 text-sm font-semibold bg-brandGold text-black shadow-lg shadow-brandGold/35 hover:bg-brandGoldDark transition"
+                className="inline-flex items-center justify-center rounded-full px-8 py-4 text-sm font-semibold bg-brandGold text-black shadow-lg shadow-brandGold/35 hover:bg-brandGoldDark transition"
               >
                 Assess my profile →
               </a>
