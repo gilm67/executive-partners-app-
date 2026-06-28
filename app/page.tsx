@@ -185,55 +185,48 @@ export default function HomePage() {
         </section>
 
         <HomeClient />
-        {/* ── Market Intelligence Tool Strip ── */}
-        <section className="relative z-10 bg-neutral-950 border-t border-white/10 py-20">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-14">
-              <p className="mx-auto text-[11px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90">
-                Market Intelligence · Executive Partners
-              </p>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white md:text-4xl">
-                Know your market position<br className="hidden md:block" /> before your first conversation.
+        {/* ── Market Fit Hero Section ── */}
+        <section className="relative z-10 border-t border-white/10 py-24 overflow-hidden" style={{background:"#0a0a0a"}}>
+          {/* Subtle gold glow top-right */}
+          <div className="pointer-events-none absolute -top-32 right-0 h-[500px] w-[500px] rounded-full opacity-[0.07]" style={{background:"radial-gradient(circle, #C9A14A, transparent 70%)", filter:"blur(60px)"}} />
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-px w-10" style={{background:"#C9A14A"}} />
+                <p className="text-[10px] font-semibold uppercase tracking-[0.3em]" style={{color:"#C9A14A"}}>
+                  Market Intelligence · New Tool
+                </p>
+              </div>
+              <h2 className="text-4xl font-extrabold tracking-tight text-white mb-6 leading-tight md:text-5xl">
+                The private banking market<br />has a position for your profile.
+                <br /><span style={{color:"#C9A14A"}}>You just don't know what it is yet.</span>
               </h2>
-              <p className="mt-4 text-white/55 max-w-xl mx-auto text-sm leading-relaxed">
-                Three institutional-grade tools. Free. No login required. Used by senior private bankers
-                across Geneva, Dubai, Singapore and London.
+              <p className="text-white/55 text-base leading-relaxed mb-8 max-w-xl">
+                A 90-second market positioning assessment built on 200+ EP placements.
+                No CV. No bank names. No pressure. If your profile matches an open mandate,
+                you will see that too.
               </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <a
-                href="/en/portability"
-                className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 hover:border-brandGold/30 hover:bg-white/[0.05] transition-all duration-200"
-              >
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90 mb-3">Portability Score™</p>
-                  <p className="text-base font-semibold text-white mb-2 leading-snug">How much of your book will actually follow you?</p>
-                  <p className="text-sm text-white/55 leading-relaxed">Six dimensions. Real-time flags. Specific recommendations built on 200+ EP placements.</p>
-                </div>
-                <p className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brandGoldPale group-hover:underline">Run the diagnostic →</p>
-              </a>
-              <a
-                href="/en/tools/fit-assessment"
-                className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 hover:border-brandGold/30 hover:bg-white/[0.05] transition-all duration-200"
-              >
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90 mb-3">Migration Friction Analyser</p>
-                  <p className="text-base font-semibold text-white mb-2 leading-snug">Model your AUM migration curve before you move.</p>
-                  <p className="text-sm text-white/55 leading-relaxed">18-month ramp projection by client geography, onboarding speed, and non-solicitation period.</p>
-                </div>
-                <p className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brandGoldPale group-hover:underline">Model your curve →</p>
-              </a>
-              <a
-                href="/en/tools/fit-assessment"
-                className="group flex flex-col justify-between rounded-2xl border border-brandGold/40 bg-brandGold/5 p-6 sm:p-8 hover:bg-brandGold/10 transition-all duration-200"
-              >
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-brandGoldSoft/90 mb-3">Market Fit Assessment ✦ New</p>
-                  <p className="text-base font-semibold text-white mb-2 leading-snug">Where does your profile stand in the current market?</p>
-                  <p className="text-sm text-white/55 leading-relaxed">AI-generated positioning in 90 seconds. No CV. No bank names. No pressure.</p>
-                </div>
-                <p className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brandGoldPale group-hover:underline">Assess my profile →</p>
-              </a>
+              <div className="flex flex-col sm:flex-row items-start gap-4">
+                <a
+                  href="/en/tools/fit-assessment"
+                  className="inline-flex items-center justify-center rounded-full px-8 py-4 text-base font-semibold transition-all hover:opacity-90"
+                  style={{background:"#C9A14A", color:"#000", boxShadow:"0 4px 32px rgba(201,161,74,0.35)"}}
+                >
+                  Discover your market position →
+                </a>
+                <a
+                  href="/en/portability"
+                  className="inline-flex items-center gap-2 px-8 py-4 text-sm font-semibold text-white/50 hover:text-white/80 transition"
+                >
+                  Or run the Portability Score™ →
+                </a>
+              </div>
+              <div className="mt-8 flex flex-wrap gap-6 text-xs text-white/30">
+                <span>✓ 200+ placements tested</span>
+                <span>✓ Strictly confidential</span>
+                <span>✓ No data shared without consent</span>
+                <span>✓ Free, no login required</span>
+              </div>
             </div>
           </div>
         </section>
