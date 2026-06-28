@@ -111,6 +111,33 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": ["Organization", "ProfessionalService"],
+        "sameAs": [
+          "https://www.linkedin.com/company/executive-partners-ch",
+          "https://execpartners.ch"
+        ],
+        "subjectOf": [
+          {
+            "@type": "Article",
+            "name": "The Relationship Manager of 2030: Empathy, AI and the New Bar for Private Bankers",
+            "url": "https://www.finews.ch/news/banken/72277-privatbanken-kundenberater-empathie-ki-ai-swissbanking-finanzplatz-schweiz-privatebanking-switzerland",
+            "datePublished": "2026-05-20",
+            "publisher": { "@type": "Organization", "name": "Finews.ch", "url": "https://www.finews.ch" }
+          },
+          {
+            "@type": "Article",
+            "name": "Private Banking: Why the CHF 10 Billion Question Is Only Half the Truth",
+            "url": "https://www.finews.ch/news/banken/72188-swissbanking-privatebanking-gil-m-chalem-headhunter-assetsundermanagement-finanzplatz-schweiz-max-fischer",
+            "datePublished": "2026-05-12",
+            "publisher": { "@type": "Organization", "name": "Finews.ch", "url": "https://www.finews.ch" }
+          },
+          {
+            "@type": "Article",
+            "name": "Is a Sell-Off Coming for Swiss Private Banks?",
+            "url": "https://www.finews.ch/news/banken/72130-swiss-private-banking-swissbanking-kleinbanken-finanzplatz-schweiz-m-a-eigenkapitalrendite-konsolidierung-gil-m-chalem",
+            "datePublished": "2026-05-07",
+            "publisher": { "@type": "Organization", "name": "Finews.ch", "url": "https://www.finews.ch" }
+          }
+        ],
     name: "Executive Partners",
     url: CANONICAL_DOMAIN,
     sameAs: ["https://www.linkedin.com/company/executive-partners/"],

@@ -65,6 +65,18 @@ export default function SubscribePage() {
         </div>
 
         {/* Headline */}
+        <div className="mb-6 inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-amber-700">
+          <span>As featured in</span>
+          
+            href="https://www.finews.ch"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:opacity-70 transition-opacity"
+          >
+            Finews.ch
+          </a>
+          <span>— Switzerland's #1 financial media</span>
+        </div>
         <h1 className="mt-6 text-center text-3xl font-extrabold tracking-tight md:text-5xl">
           The private banking intelligence<br className="hidden md:block" /> your peers are reading
         </h1>
