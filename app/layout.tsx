@@ -111,10 +111,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": ["Organization", "ProfessionalService"],
-        "sameAs": [
-          "https://www.linkedin.com/company/executive-partners-ch",
-          "https://execpartners.ch"
-        ],
         "subjectOf": [
           {
             "@type": "Article",
