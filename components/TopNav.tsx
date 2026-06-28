@@ -17,11 +17,11 @@ export default function TopNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false); // mobile panel
   const [scrolled, setScrolled] = useState(false);
-  const [dd, setDd] = useState<null | "Tools" | "Insights" | "Markets">(null); // desktop dropdown
+  const [dd, setDd] = useState<null | "Tools" | "Insights" | "Markets" | "About">(null); // desktop dropdown
 
   // ✅ Prevent dropdown from closing instantly when moving cursor button -> panel
   const closeTimer = useRef<number | null>(null);
-  const openDd = (which: "Tools" | "Insights" | "Markets") => {
+  const openDd = (which: "Tools" | "Insights" | "Markets" | "About") => {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
     setDd(which);
   };
@@ -334,14 +334,42 @@ export default function TopNav() {
                 )}
               </div>
 
-              {/* About link */}
-              <Link
-                href={withBase(base, "/about")}
-                className={linkClasses(isActive("/about"))}
-                aria-current={isActive("/about") ? "page" : undefined}
+              {/* About dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => openDd("About")}
+                onMouseLeave={scheduleCloseDd}
               >
-                About
-              </Link>
+                <button
+                  className={linkClasses(isActive("/about") || isActive("/press"))}
+                  aria-haspopup="menu"
+                  aria-expanded={dd === "About"}
+                >
+                  About
+                </button>
+                {dd === "About" && (
+                  <div
+                    className="absolute left-0 top-full mt-1 w-44 rounded-xl border border-white/10 bg-[#0B0F1A]/95 py-1.5 shadow-xl backdrop-blur-sm z-50"
+                    role="menu"
+                    onMouseEnter={() => openDd("About")}
+                    onMouseLeave={scheduleCloseDd}
+                  >
+                    {[
+                      { href: withBase(base, "/about"), label: "About Us" },
+                      { href: "/en/press", label: "In the Press" },
+                    ].map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        role="menuitem"
+                        className="block px-4 py-2 text-sm text-slate-200 hover:text-white hover:bg-white/5 transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               {/* German language link */}
               <Link
@@ -511,6 +539,20 @@ export default function TopNav() {
                 aria-current={isActive("/about") ? "page" : undefined}
               >
                 About
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/en/press"
+                className={[
+                  "block rounded-md px-3 py-2 pl-6 text-sm transition-colors",
+                  isActive("/press")
+                    ? "bg-white/10 text-[#F5D778]"
+                    : "text-slate-400 hover:text-white hover:bg-white/5",
+                ].join(" ")}
+                onClick={() => setOpen(false)}
+              >
+                In the Press
               </Link>
             </li>
 
