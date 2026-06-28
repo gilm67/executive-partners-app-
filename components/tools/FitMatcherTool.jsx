@@ -172,11 +172,10 @@ export default function FitMatcherTool() {
       const res = await fetch("/api/fit-matcher-assess", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000, system: SYSTEM, messages: [{ role: "user", content: userMsg }] }),
+        body: JSON.stringify({ profile: userMsg }),
       });
       const data = await res.json();
-      const raw = data.content?.find(b => b.type === "text")?.text || "";
-      const parsed = JSON.parse(raw.replace(/```json|```/g, "").trim());
+      const parsed = data.result;
       setResult(parsed);
       setPhase("results");
       fetch("/api/fit-matcher", {
