@@ -151,11 +151,9 @@ export default function Footer() {
 
         {/* ── DESKTOP ── */}
         <div className="hidden md:block py-16">
-          <div className="flex items-start justify-between mb-12 pb-12 border-b border-white/[0.06]">
-            <div className="max-w-sm">
-              <Image src="/transparent-ep-logo.png" alt="Executive Partners" width={290} height={60} sizes="220px" className="h-auto w-[220px] opacity-90 mb-4" />
-              <p className="text-sm text-white/80 leading-relaxed">Geneva-based executive search for Private Banking & Wealth Management. 200+ placements across 14 global hubs.</p>
-            </div>
+          <div className="flex flex-col items-center text-center mb-12 pb-12 border-b border-white/[0.06] gap-5">
+            <Image src="/transparent-ep-logo.png" alt="Executive Partners" width={290} height={60} sizes="220px" className="h-auto w-[220px] opacity-90" />
+            <p className="text-sm text-white/80 leading-relaxed max-w-sm">Geneva-based executive search for Private Banking & Wealth Management. 200+ placements across 14 global hubs.</p>
             <Link href="https://calendly.com/execpartners/15-minute-career-consultation"
               target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all hover:brightness-110"
