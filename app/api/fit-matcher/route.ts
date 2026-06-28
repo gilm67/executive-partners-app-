@@ -80,6 +80,29 @@ export async function POST(req: NextRequest) {
       </div>`,
     });
 
+    // Candidate confirmation email
+    if (email && email.includes("@")) {
+      const greeting = (name || "").trim().split(" ")[0] || "Colleague";
+      await resend.emails.send({
+        from: "Gil M. Chalem · Executive Partners <noreply@auth.execpartners.ch>",
+        to: email,
+        subject: `Your Private Bank Fit Assessment — ${segment}`,
+        html: `<div style="font-family:Georgia,serif;max-width:560px;color:#1a1a2e;padding:32px 0">
+          <p style="font-size:13px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#C9A14A;margin:0 0 24px">Executive Partners · Confidential</p>
+          <p style="font-size:16px;margin:0 0 16px">Dear ${greeting},</p>
+          <p style="font-size:15px;margin:0 0 16px">Your market positioning assessment has been completed.</p>
+          <div style="background:#f9f7f2;border-left:3px solid #C9A14A;padding:16px 20px;margin:0 0 20px">
+            <p style="font-size:13px;font-weight:600;color:#1a1a2e;margin:0 0 6px">${segment}</p>
+            <p style="font-size:13px;color:#444;margin:0">Market Demand: <strong>${demand}</strong></p>
+          </div>
+          <p style="font-size:14px;color:#444;margin:0 0 16px">We will review your profile against current market activity and be in touch within 48 hours if we identify relevant positioning for your specific configuration.</p>
+          <p style="font-size:14px;color:#444;margin:0 0 24px">If you would like to discuss your positioning in confidence before then, I am available for a 20-minute call.</p>
+          <p style="font-size:14px;margin:24px 0 0"><a href="https://www.execpartners.ch/en/contact" style="background:#C9A14A;color:#000;padding:10px 22px;border-radius:20px;text-decoration:none;font-weight:600;font-size:13px">Schedule a confidential call &#8594;</a></p>
+          <p style="font-size:13px;color:#888;margin:32px 0 0;border-top:1px solid #eee;padding-top:16px">Gil M. Chalem<br>Managing Partner, Executive Partners<br><a href="https://www.execpartners.ch" style="color:#C9A14A">execpartners.ch</a></p>
+        </div>`,
+      });
+    }
+
     logToSheet([ts || new Date().toISOString(), name || "", email, aumLabel, seniority, geography, clientType, mandate, employment, booking, segment, demand]).catch(() => {});
 
     return NextResponse.json({ ok: true });

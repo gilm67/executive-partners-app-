@@ -12,6 +12,7 @@ const NAV = [
       { href: "/en/portability", text: "Portability Score" },
       { href: "/en/specialist-bench", text: "Specialist Bench" },
       { href: "/en/bp-simulator", text: "BP Simulator" },
+      { href: "/en/tools/fit-assessment", text: "Fit Assessment" },
     ],
   },
   {

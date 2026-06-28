@@ -51,6 +51,7 @@ export default function SiteHeader() {
     ['Hiring Managers', `${base}/hiring-managers`],
     ['BP Simulator', `${base}/bp-simulator`],      // ✅ tool route
     ['Portability', `${base}/portability`],        // ✅ tool route
+    ['Fit Assessment', `${base}/tools/fit-assessment`], // ✅ tool route
     ['Insights', `${base}/insights`],
     ['Contact', `${base}/contact`],
   ] as const;
