@@ -525,8 +525,11 @@ export default function TopNav() {
               );
             })}
 
-            {/* Mobile About */}
+            {/* Mobile — Company section */}
             <li>
+              <p className="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                Company
+              </p>
               <Link
                 href={withBase(base, "/about")}
                 className={[
@@ -540,19 +543,20 @@ export default function TopNav() {
               >
                 About
               </Link>
-            </li>
-            <li>
               <Link
                 href="/en/press"
                 className={[
-                  "block rounded-md px-3 py-2 pl-6 text-sm transition-colors",
+                  "flex items-center justify-between rounded-md px-3 py-2 text-sm transition-colors",
                   isActive("/press")
                     ? "bg-white/10 text-[#F5D778]"
-                    : "text-slate-400 hover:text-white hover:bg-white/5",
+                    : "text-slate-200 hover:text-white hover:bg-white/5",
                 ].join(" ")}
                 onClick={() => setOpen(false)}
               >
-                In the Press
+                <span>In the Press</span>
+                <span className="text-[10px] font-semibold tracking-wide text-amber-500 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded-full">
+                  Finews
+                </span>
               </Link>
             </li>
 
