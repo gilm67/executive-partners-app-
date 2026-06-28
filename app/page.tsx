@@ -184,7 +184,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        <HomeClient />
         {/* ── Market Fit Hero Section ── */}
         <section className="relative z-10 border-t border-white/10 py-24 overflow-hidden" style={{background:"#0a0a0a"}}>
           {/* Subtle gold glow top-right */}
@@ -230,6 +229,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+        <HomeClient />
       </main>
     </>
   );
