@@ -49,6 +49,7 @@ export default function TopNav() {
   // ----- Nav structure (unprefixed routes)
   const TOP: NavItem[] = [
     { href: "/candidates", label: "Candidates" },
+    { href: "/en/tools/fit-assessment", label: "Market Fit ✦" },
     { href: "/en/specialist-bench", label: "Specialist Bench" },
     { href: "/jobs", label: "Mandates" },
     { href: "/hiring-managers", label: "Hiring Managers" },

@@ -104,6 +104,31 @@ export default function CandidatesPage() {
 
   return (
     <>
+      {/* Market Fit Assessment CTA */}
+      <div className="bg-neutral-950 border-b border-white/10 py-10">
+        <div className="mx-auto max-w-4xl px-4 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-[#C9A14A] mb-2 font-semibold">
+              New · Free Tool
+            </p>
+            <h2 className="text-xl font-semibold text-white mb-2">
+              Where does your profile stand in the current market?
+            </h2>
+            <p className="text-sm text-white/55 max-w-lg leading-relaxed">
+              Enter your AUM, market, and mandate style. Get a structured market positioning
+              assessment in 90 seconds. No CV. No bank names. No pressure.
+            </p>
+          </div>
+          
+          <a
+            href="/en/tools/fit-assessment"
+            className="flex-shrink-0 rounded-full px-7 py-3.5 text-sm font-semibold transition-all hover:opacity-90"
+            style={{ background: "#C9A14A", color: "#000" }}
+          >
+            Assess my profile →
+          </a>
+        </div>
+      </div>
       {/* Breadcrumb Schema (using component) */}
       <BreadcrumbSchema
         items={[

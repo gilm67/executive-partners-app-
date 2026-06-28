@@ -185,6 +185,48 @@ export default function HomePage() {
         </section>
 
         <HomeClient />
+        {/* ── Three-tool strip ── */}
+        <section className="relative z-10 bg-neutral-950 border-t border-white/10 py-14">
+          <div className="mx-auto max-w-5xl px-4">
+            <p className="text-center text-[10px] uppercase tracking-[0.3em] text-white/30 mb-10">
+              Executive Partners · Free Candidate Tools
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                {
+                  title: "Portability Score™",
+                  desc: "Assess how much of your book is genuinely transferable before any conversation starts.",
+                  href: "/en/portability",
+                  cta: "Run the diagnostic →",
+                },
+                {
+                  title: "Migration Friction Analyser",
+                  desc: "Model your realistic AUM migration curve over 18 months, by geography and onboarding speed.",
+                  href: "/en/tools/fit-assessment",
+                  cta: "Model your curve →",
+                },
+                {
+                  title: "Market Fit Assessment",
+                  desc: "Discover where your profile sits structurally in the current private banking market.",
+                  href: "/en/tools/fit-assessment",
+                  cta: "Assess your profile →",
+                },
+              ].map((tool) => (
+                <a
+                  key={tool.title}
+                  href={tool.href}
+                  className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-6 hover:border-[#C9A14A]/40 hover:bg-white/[0.05] transition-all duration-200"
+                >
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-[#C9A14A] mb-3 font-semibold">{tool.title}</p>
+                    <p className="text-sm text-white/60 leading-relaxed">{tool.desc}</p>
+                  </div>
+                  <p className="mt-6 text-xs text-[#C9A14A] font-semibold group-hover:underline">{tool.cta}</p>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
     </>
   );
