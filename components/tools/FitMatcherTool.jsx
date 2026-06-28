@@ -77,6 +77,16 @@ const DEMAND_STYLE = {
   Emerging:  { color: "#5a88b0", borderColor: "#3a5878", bg: "rgba(58,88,120,0.08)" },
 };
 
+const ACTIVE_MANDATES = {
+  gcc:       "/en/jobs/senior-relationship-manager-mea-dubai",
+  israel:    "/en/jobs/senior-relationship-manager-tel-aviv",
+  eu_france: "/en/jobs/senior-relationship-manager-french-market-geneva",
+  eu_italy:  "/en/jobs/senior-relationship-manager-italian-market-geneva",
+  latam_br:  "/en/jobs/senior-relationship-manager-brazil-ch",
+  swiss:     "/en/jobs",
+  apac_sg:   "/en/jobs",
+};
+
 const SYSTEM = `You are the market intelligence engine for Executive Partners, a Geneva-based boutique executive search firm specialising exclusively in private banking and wealth management. Generate personalised market positioning assessments. RULES: Never name specific institutions actively hiring. Only refer to institution types. Use only publicly known structural market dynamics. Be specific to this exact profile. Elegant institutional prose only. No bullet points. No em dashes. Valid JSON only, no markdown. Format: {"segment":"4-6 word label","demandLevel":"High|Selective|Emerging","demandRationale":"one sentence","positioning":"2-3 sentences","assets":"2-3 sentences","friction":"1-2 sentences","outlook":"1-2 sentences"}`;
 
 function EPLabel({ children }) {
@@ -271,7 +281,18 @@ export default function FitMatcherTool() {
               <p className="text-sm font-mono tracking-wider" style={{ color: dc.color }}>{result.demandLevel}</p>
             </div>
           </div>
-          <p className="text-xs text-white/40 italic leading-relaxed mb-7">{result.demandRationale}</p>
+          <p className="text-xs text-white/40 italic leading-relaxed mb-4">{result.demandRationale}</p>
+          {ACTIVE_MANDATES[f.geography] && (
+            <a
+              href={ACTIVE_MANDATES[f.geography]}
+              className="inline-flex items-center gap-2 mb-7 text-xs font-semibold rounded-full px-4 py-2 border transition-all hover:opacity-80"
+              style={{ color: GOLD, borderColor: "rgba(201,161,74,0.35)", background: "rgba(201,161,74,0.07)" }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: GOLD }} />
+              A mandate currently open matches your profile configuration
+              <span style={{ color: GOLD }}>→</span>
+            </a>
+          )}
           <div className="border-t border-white/10 my-7" />
           <ResultRow label="Market Positioning" content={result.positioning} />
           <ResultRow label="Commercial Assets" content={result.assets} />
