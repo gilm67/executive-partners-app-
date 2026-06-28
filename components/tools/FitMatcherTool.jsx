@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const GOLD = "#b89557";
+const GOLD = "#C9A14A";
 
 const OPT = {
   aum: [
@@ -169,13 +169,14 @@ export default function FitMatcherTool() {
     setPhase("loading");
     const userMsg = "Profile: AUM=" + f.aum + ", Seniority=" + f.seniority + ", Geography=" + f.geography + ", ClientType=" + f.clientType + ", Mandate=" + f.mandate + ", Employment=" + f.employment + ", Booking=" + f.booking;
     try {
-      const res = await fetch("/api/fit-matcher-assess", {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile: userMsg }),
+        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000, system: SYSTEM, messages: [{ role: "user", content: userMsg }] }),
       });
       const data = await res.json();
-      const parsed = data.result;
+      const raw = data.content?.find(b => b.type === "text")?.text || "";
+      const parsed = JSON.parse(raw.replace(/```json|```/g, "").trim());
       setResult(parsed);
       setPhase("results");
       fetch("/api/fit-matcher", {
@@ -195,10 +196,10 @@ export default function FitMatcherTool() {
     <div className="max-w-3xl mx-auto px-6 py-12">
 
       <div className="border-b border-white/10 pb-8 mb-10">
-        <p className="text-[9px] tracking-[0.4em] uppercase text-white/30 mb-3">
-          Executive Partners · Geneva · execpartners.ch
-        </p>
-        <h1 className="text-2xl font-light text-white/90 mb-3">
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-white/70 mb-3">
+            Executive Partners · Free tool <span className="h-1 w-1 rounded-full bg-[#C9A14A]/80" /> Market Fit
+          </div>
+        <h1 className="mt-5 text-3xl font-semibold tracking-tight text-white mb-3">
           Private Bank Fit Assessment
         </h1>
         <p className="text-sm text-white/50 leading-relaxed max-w-lg">
