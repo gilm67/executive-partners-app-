@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const GOLD = "#C9A14A";
+const GOLD = "#C9A14A"; // matches brandGold
 
 const OPT = {
   aum: [
@@ -205,10 +205,10 @@ export default function FitMatcherTool() {
     <div className="max-w-3xl mx-auto px-6 py-12">
 
       <div className="border-b border-white/10 pb-8 mb-10">
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-white/70 mb-3">
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.28em] text-brandGoldSoft/90 mb-3 font-semibold">
             Executive Partners · Free tool <span className="h-1 w-1 rounded-full bg-[#C9A14A]/80" /> Market Fit
           </div>
-        <h1 className="mt-5 text-3xl font-semibold tracking-tight text-white mb-3">
+        <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white mb-3 md:text-5xl">
           Private Bank Fit Assessment
         </h1>
         <p className="text-sm text-white/50 leading-relaxed max-w-lg">
