@@ -1,5 +1,5 @@
 // @ts-ignore
-import FitAssessmentV2Client from "@/components/tools/FitAssessmentV2Client";
+import FitAssessmentV2Client from "@/components/FitAssessmentV2Client";
 
 export const metadata = {
   title: "Private Bank Fit Assessment | Executive Partners",

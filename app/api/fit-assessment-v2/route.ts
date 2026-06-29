@@ -1,7 +1,9 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Resend initialized inside handler (moved to avoid build-time env error);
 
 const SHEET_ID = "1Osr2RrgQZqDjK28knSXlqNXqJk2rcaATLqE1Yjy_W0c";
 const SHEET_TAB = "SpecialistBench";
@@ -75,7 +77,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Notify EP team
-    await resend.emails.send({
+    await new (require('resend').Resend)(process.env.RESEND_API_KEY).emails.send({
       from: "Executive Partners <recruiter@execpartners.ch>",
       to: ["recruiter@execpartners.ch"],
       subject: `[Specialist Bench] New profile: ${fullName} — ${role}`,
@@ -106,7 +108,7 @@ export async function POST(req: NextRequest) {
     });
 
     // 3. Confirmation to candidate
-    await resend.emails.send({
+    await new (require('resend').Resend)(process.env.RESEND_API_KEY).emails.send({
       from: "Executive Partners <recruiter@execpartners.ch>",
       to: [email],
       subject: "You are on the Executive Partners Specialist Bench",
