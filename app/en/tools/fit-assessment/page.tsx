@@ -1,5 +1,5 @@
 // @ts-ignore
-import FitMatcherTool from "@/components/tools/FitMatcherTool";
+import FitAssessmentV2Client from "@/components/tools/FitAssessmentV2Client";
 
 export const metadata = {
   title: "Private Bank Fit Assessment | Executive Partners",
@@ -7,5 +7,5 @@ export const metadata = {
 };
 
 export default function FitAssessmentPage() {
-  return <FitMatcherTool />;
+  return <FitAssessmentV2Client />;
 }
