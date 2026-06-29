@@ -1,691 +1,679 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Step = 1 | 2 | 3 | 4 | 'result'
-
 interface FormData {
-  aumRange: string
-  revenueRange: string
-  portabilityEstimate: string
-  clientTier: string
-  seniority: string
-  institutionType: string
-  primaryGeography: string
-  languages: string[]
-  mandateStyle: string
-  employmentStructure: string
-  regulatoryLicence: string
-  targetBookingCentre: string
-  timeline: string
-  legalConstraints: string
-  name: string
-  email: string
+  aumRange: string; feeIncome: string; portabilityEstimate: string
+  institutionType: string; seniority: string; primaryGeography: string
+  secondaryGeography: string; clientTier: string; languages: string[]
+  mandateStyle: string; employmentStructure: string; targetBookingCentre: string
+  priorityFactor: string; noticePeriod: string; nonSolicitation: string
+  moveMotivation: string; name: string; email: string
 }
 
-interface MarketFit {
-  market: string
-  fitLabel: 'Excellent' | 'Strong' | 'Moderate' | 'Limited'
-  rationale: string
-  openDoors: string[]
-  constraints: string | null
+interface TopMarket {
+  city: string; flag: string; fitLevel: string
+  rationale: string; hiringContext: string; keyRequirement?: string
 }
 
 interface AssessmentResult {
-  executiveSummary: string
-  overallFitScore: number
-  overallFitLabel: string
-  commercialProfile: { rating: string; rationale: string }
-  portabilityRisk: { rating: string; rationale: string }
-  marketFit: MarketFit[]
-  strengtheners: string[]
-  recommendedNextStep: string
+  headline: string; overallFit: string; positioning: string
+  commercialSummary: string; topMarkets: TopMarket[]
+  strengths: string[]; gaps: string[]
+  legalNote?: string; timingNote?: string
+  epAssessment: string; urgency: string
 }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const LANGUAGES = [
-  'English', 'French', 'German', 'Italian', 'Spanish', 'Portuguese',
-  'Arabic', 'Hebrew', 'Russian', 'Mandarin', 'Hindi', 'Turkish',
-  'Polish', 'Greek', 'Dutch', 'Other',
-]
-
-const INITIAL_FORM: FormData = {
-  aumRange: '', revenueRange: '', portabilityEstimate: '', clientTier: '',
-  seniority: '', institutionType: '', primaryGeography: '', languages: [],
-  mandateStyle: '', employmentStructure: '', regulatoryLicence: '',
-  targetBookingCentre: '', timeline: '', legalConstraints: '',
-  name: '', email: '',
+const INIT: FormData = {
+  aumRange: '', feeIncome: '', portabilityEstimate: '', institutionType: '', seniority: '',
+  primaryGeography: '', secondaryGeography: '', clientTier: '', languages: [],
+  mandateStyle: '', employmentStructure: '', targetBookingCentre: '', priorityFactor: '',
+  noticePeriod: '', nonSolicitation: '', moveMotivation: '', name: '', email: '',
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+const FC: Record<string, string> = {
+  Exceptional: '#10b981', Strong: '#10b981', Good: '#f59e0b',
+  Moderate: '#f97316', Limited: '#ef4444', Weak: '#ef4444',
+}
+const FB: Record<string, string> = {
+  Exceptional: 'rgba(16,185,129,0.10)', Strong: 'rgba(16,185,129,0.10)',
+  Good: 'rgba(245,158,11,0.10)', Moderate: 'rgba(249,115,22,0.10)',
+  Limited: 'rgba(239,68,68,0.10)', Weak: 'rgba(239,68,68,0.10)',
+}
+const SCORE: Record<string, number> = {
+  Exceptional: 96, Strong: 81, Good: 65, Moderate: 46, Limited: 26,
+}
 
-function Section({ label, title, children, hint }: {
-  label: string; title: string; children: React.ReactNode; hint?: string
+// ─── Custom dropdown ──────────────────────────────────────────────────────────
+
+interface Opt { value: string; label: string; sub?: string }
+
+function Select({ value, onChange, options, placeholder = 'Select an option' }: {
+  value: string; onChange: (v: string) => void; options: Opt[]; placeholder?: string
 }) {
-  return (
-    <div>
-      <div className="flex items-baseline gap-2 mb-1">
-        <span className="text-xs text-amber-400/50 font-mono w-6 shrink-0">{label}</span>
-        <h2 className="text-sm font-semibold text-white/90">{title}</h2>
-      </div>
-      {hint && <p className="text-xs text-white/35 mb-3 ml-8">{hint}</p>}
-      <div className="ml-8">{children}</div>
-    </div>
-  )
-}
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
 
-function Radio({ value, label, sub, selected, onChange }: {
-  value: string; label: string; sub?: string; selected: boolean; onChange: (v: string) => void
-}) {
-  return (
-    <button
-      type="button"
-      onClick={() => onChange(value)}
-      className={`w-full text-left px-4 py-3 rounded border text-sm transition-all ${
-        selected
-          ? 'border-amber-400 bg-amber-400/10 text-amber-100'
-          : 'border-white/10 bg-white/5 text-white/65 hover:border-white/25 hover:text-white'
-      }`}
-    >
-      <span className={`inline-block w-3.5 h-3.5 rounded-full border mr-3 align-middle shrink-0 transition-colors ${
-        selected ? 'border-amber-400 bg-amber-400' : 'border-white/30'
-      }`} />
-      <span className="font-medium">{label}</span>
-      {sub && <span className={`block ml-7 mt-0.5 text-xs ${selected ? 'text-amber-200/60' : 'text-white/30'}`}>{sub}</span>}
-    </button>
-  )
-}
+  useEffect(() => {
+    const h = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', h)
+    return () => document.removeEventListener('mousedown', h)
+  }, [])
 
-function CheckPill({ value, label, selected, onChange }: {
-  value: string; label: string; selected: boolean; onChange: (v: string) => void
-}) {
-  return (
-    <button
-      type="button"
-      onClick={() => onChange(value)}
-      className={`px-3 py-2 rounded border text-xs font-medium transition-all ${
-        selected
-          ? 'border-amber-400 bg-amber-400/10 text-amber-200'
-          : 'border-white/10 bg-white/5 text-white/50 hover:border-white/25 hover:text-white'
-      }`}
-    >
-      {selected && <span className="mr-1.5">✓</span>}
-      {label}
-    </button>
-  )
-}
+  const sel = options.find(o => o.value === value)
 
-function NavButtons({ canNext, onNext, onBack, label = 'Continue →' }: {
-  canNext: boolean; onNext: () => void; onBack?: () => void; label?: string
-}) {
   return (
-    <div className="space-y-2 pt-2">
+    <div ref={ref} style={{ position: 'relative', width: '100%' }}>
       <button
-        onClick={onNext}
-        disabled={!canNext}
-        className="w-full py-3.5 bg-amber-400 text-black font-semibold rounded text-sm hover:bg-amber-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        type="button" onClick={() => setOpen(o => !o)}
+        style={{
+          width: '100%', display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between', gap: 12,
+          background: open ? 'rgba(201,169,110,0.07)' : value ? 'rgba(201,169,110,0.04)' : 'rgba(255,255,255,0.03)',
+          border: `1px solid ${open ? 'rgba(201,169,110,0.5)' : value ? 'rgba(201,169,110,0.28)' : 'rgba(255,255,255,0.09)'}`,
+          borderRadius: 10, padding: '14px 18px', cursor: 'pointer',
+          transition: 'all 0.18s', textAlign: 'left',
+        }}
       >
-        {label}
+        <span style={{ fontSize: 13.5, color: sel ? '#e8d5c4' : 'rgba(255,255,255,0.28)', fontWeight: 400, flex: 1 }}>
+          {sel ? sel.label : placeholder}
+        </span>
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"
+          style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }}>
+          <path d="M2 4.5L6.5 9L11 4.5" stroke="#C9A96E" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
-      {onBack && (
-        <button onClick={onBack} className="w-full py-2 text-white/35 text-sm hover:text-white/70 transition-colors">
-          ← Back
-        </button>
+
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 5px)', left: 0, right: 0, zIndex: 60,
+          background: '#0c1220', border: '1px solid rgba(201,169,110,0.2)',
+          borderRadius: 10, overflow: 'hidden auto', maxHeight: 290,
+          boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
+        }}>
+          {options.map((opt, i) => (
+            <button
+              key={opt.value} type="button"
+              onClick={() => { onChange(opt.value); setOpen(false) }}
+              style={{
+                width: '100%', textAlign: 'left', padding: '12px 18px',
+                background: opt.value === value ? 'rgba(201,169,110,0.11)' : 'transparent',
+                border: 'none', borderBottom: i < options.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                cursor: 'pointer', display: 'flex', alignItems: 'center',
+                justifyContent: 'space-between', gap: 12, transition: 'background 0.1s',
+              }}
+              onMouseEnter={e => { if (opt.value !== value) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)' }}
+              onMouseLeave={e => { if (opt.value !== value) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
+            >
+              <div>
+                <div style={{ fontSize: 13, color: opt.value === value ? '#e8d5a3' : '#c0cfe0', lineHeight: 1.4 }}>{opt.label}</div>
+                {opt.sub && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', marginTop: 2 }}>{opt.sub}</div>}
+              </div>
+              {opt.value === value && (
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }}>
+                  <path d="M2 6L4.8 8.8L10 3" stroke="#C9A96E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </button>
+          ))}
+        </div>
       )}
     </div>
   )
 }
 
-function ScoreRing({ score }: { score: number }) {
-  const r = 52
-  const circ = 2 * Math.PI * r
-  const dash = (score / 100) * circ
-  const color = score >= 75 ? '#f59e0b' : score >= 55 ? '#818cf8' : '#f87171'
+// ─── Chip multi-select ────────────────────────────────────────────────────────
+
+function ChipSelect({ options, selected, toggle }: {
+  options: [string, string][]; selected: string[]; toggle: (v: string) => void
+}) {
   return (
-    <div className="relative inline-flex items-center justify-center w-32 h-32">
-      <svg width={128} height={128} className="-rotate-90">
-        <circle cx={64} cy={64} r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={8} />
-        <circle
-          cx={64} cy={64} r={r} fill="none" stroke={color} strokeWidth={8}
-          strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
-        />
-      </svg>
-      <div className="absolute text-center">
-        <div className="text-3xl font-bold text-white leading-none">{score}</div>
-        <div className="text-xs text-white/40 mt-0.5">/100</div>
-      </div>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+      {options.map(([val, label]) => {
+        const on = selected.includes(val)
+        return (
+          <button key={val} type="button" onClick={() => toggle(val)} style={{
+            padding: '7px 15px', borderRadius: 100, cursor: 'pointer', fontSize: 12, fontWeight: 500,
+            background: on ? 'rgba(201,169,110,0.16)' : 'rgba(255,255,255,0.04)',
+            border: `1px solid ${on ? 'rgba(201,169,110,0.5)' : 'rgba(255,255,255,0.08)'}`,
+            color: on ? '#e8d5a3' : 'rgba(255,255,255,0.42)',
+            transition: 'all 0.14s', letterSpacing: '0.01em',
+          }}>
+            {label}
+          </button>
+        )
+      })}
     </div>
   )
 }
 
-function FitBadge({ label }: { label: string }) {
-  const cls: Record<string, string> = {
-    Excellent: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-    Strong:    'bg-amber-500/15 text-amber-300 border-amber-500/30',
-    Moderate:  'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',
-    Limited:   'bg-red-500/15 text-red-300 border-red-500/30',
-  }
+// ─── Shared UI atoms ──────────────────────────────────────────────────────────
+
+function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
-    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${cls[label] ?? cls.Moderate}`}>
-      {label}
-    </span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div>
+        <div style={{ color: '#C9A96E', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{label}</div>
+        {hint && <div style={{ color: 'rgba(255,255,255,0.28)', fontSize: 11, marginTop: 3 }}>{hint}</div>}
+      </div>
+      {children}
+    </div>
   )
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+function StepHeader({ n, title, subtitle }: { n: number; title: string; subtitle: string }) {
+  return (
+    <div style={{ marginBottom: 36 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+        <div style={{
+          width: 26, height: 26, borderRadius: '50%',
+          border: '1px solid rgba(201,169,110,0.38)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 10, fontWeight: 700, color: '#C9A96E',
+        }}>{String(n).padStart(2, '0')}</div>
+        <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase' }}>of 5</span>
+      </div>
+      <h2 style={{ fontSize: 22, fontWeight: 300, color: '#f1f5f9', letterSpacing: '-0.015em', margin: '0 0 7px', lineHeight: 1.25 }}>{title}</h2>
+      <p style={{ color: 'rgba(255,255,255,0.33)', fontSize: 12.5, margin: 0, lineHeight: 1.6 }}>{subtitle}</p>
+    </div>
+  )
+}
+
+function NavRow({ onBack, onNext, nextLabel = 'Continue', disabled, loading }: {
+  onBack?: () => void; onNext: () => void; nextLabel?: string; disabled?: boolean; loading?: boolean
+}) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 36, paddingTop: 28, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      {onBack ? (
+        <button type="button" onClick={onBack} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.28)', cursor: 'pointer', fontSize: 12.5, padding: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8.5 2L4 6.5L8.5 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          Back
+        </button>
+      ) : <div />}
+      <button type="button" onClick={onNext} disabled={disabled || loading} style={{
+        background: disabled || loading ? 'rgba(255,255,255,0.05)' : '#C9A96E',
+        color: disabled || loading ? 'rgba(255,255,255,0.18)' : '#080d16',
+        border: 'none', borderRadius: 9, padding: '13px 30px',
+        fontSize: 12.5, fontWeight: 700, letterSpacing: '0.04em',
+        cursor: disabled || loading ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
+        display: 'flex', alignItems: 'center', gap: 7,
+      }}>
+        {loading ? 'Generating…' : nextLabel}
+        {!loading && !disabled && (
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2L8.5 6L4 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        )}
+      </button>
+    </div>
+  )
+}
+
+// ─── Option data ──────────────────────────────────────────────────────────────
+
+const GEO: Opt[] = [
+  { value: 'gcc', label: 'GCC – UAE, Saudi Arabia, Qatar' },
+  { value: 'israel', label: 'Israel' },
+  { value: 'europe_france', label: 'Europe – France' },
+  { value: 'europe_italy', label: 'Europe – Italy' },
+  { value: 'europe_iberia', label: 'Europe – Iberia' },
+  { value: 'europe_dach', label: 'Europe – DACH' },
+  { value: 'latam_brazil', label: 'Latin America – Brazil' },
+  { value: 'latam_mexico', label: 'Latin America – Mexico / Colombia' },
+  { value: 'latam_southern', label: 'Latin America – Argentina / Chile' },
+  { value: 'cee', label: 'CEE – Poland, Czech, Hungary' },
+  { value: 'swiss_domestic', label: 'Swiss Domestic' },
+  { value: 'uk_onshore', label: 'UK Onshore' },
+  { value: 'apac_singapore', label: 'APAC – Singapore' },
+  { value: 'apac_hk', label: 'APAC – Hong Kong' },
+  { value: 'apac_other', label: 'APAC – Japan, Australia' },
+  { value: 'nri', label: 'NRI – India' },
+  { value: 'cis', label: 'CIS – Russia, Kazakhstan, Ukraine' },
+  { value: 'mea', label: 'MEA – Africa, South Africa' },
+  { value: 'multi', label: 'Multi-market' },
+]
+
+const LANGS: [string, string][] = [
+  ['en','English'], ['fr','French'], ['de','German'], ['it','Italian'],
+  ['ar','Arabic'], ['he','Hebrew'], ['ru','Russian'], ['pt','Portuguese'],
+  ['es','Spanish'], ['zh','Mandarin'], ['tr','Turkish'], ['pl','Polish/Czech'],
+  ['hi','Hindi/Gujarati'], ['other','Other'],
+]
+
+// ─── Form steps ───────────────────────────────────────────────────────────────
+
+function Step1({ f, set, onNext }: { f: FormData; set: (k: keyof FormData, v: string) => void; onNext: () => void }) {
+  const ok = !!(f.aumRange && f.feeIncome && f.portabilityEstimate && f.institutionType && f.seniority)
+  return (
+    <>
+      <StepHeader n={1} title="Commercial Profile" subtitle="AUM, revenue, and portability together define your commercial proposition to any hiring institution." />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <Field label="AUM under management">
+            <Select value={f.aumRange} onChange={v => set('aumRange', v)} options={[
+              { value: 'under_50m', label: 'Under CHF 50M' },
+              { value: '50m_150m', label: 'CHF 50M – 150M' },
+              { value: '150m_500m', label: 'CHF 150M – 500M', sub: 'Core senior RM range' },
+              { value: '500m_1b', label: 'CHF 500M – 1B', sub: 'Team Head / MD territory' },
+              { value: 'above_1b', label: 'Above CHF 1B', sub: 'Market Head profile' },
+            ]} placeholder="Select AUM range" />
+          </Field>
+          <Field label="Annual fee income" hint="Gross, incl. retrocessions">
+            <Select value={f.feeIncome} onChange={v => set('feeIncome', v)} options={[
+              { value: 'under_500k', label: 'Under CHF 500K' },
+              { value: '500k_1m', label: 'CHF 500K – 1M' },
+              { value: '1m_2m', label: 'CHF 1M – 2M', sub: 'Strong senior RM profile' },
+              { value: '2m_5m', label: 'CHF 2M – 5M', sub: 'Top performer / team head' },
+              { value: 'above_5m', label: 'Above CHF 5M', sub: 'Leadership mandate' },
+            ]} placeholder="Select fee range" />
+          </Field>
+        </div>
+        <Field label="Estimated portable AUM" hint="Realistic % that follows you to a new platform">
+          <Select value={f.portabilityEstimate} onChange={v => set('portabilityEstimate', v)} options={[
+            { value: 'under_30', label: 'Under 30%', sub: 'High custody / EAM-locked' },
+            { value: '30_50', label: '30 – 50%', sub: 'Moderate portability' },
+            { value: '50_70', label: '50 – 70%', sub: 'Good — typical senior range' },
+            { value: '70_90', label: '70 – 90%', sub: 'Strong portability' },
+            { value: 'above_90', label: 'Above 90%', sub: 'Fully relationship-driven' },
+          ]} placeholder="Select portability estimate" />
+        </Field>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <Field label="Current institution type">
+            <Select value={f.institutionType} onChange={v => set('institutionType', v)} options={[
+              { value: 'big4_swiss', label: 'Big 4 Swiss bank', sub: 'UBS, PostFinance, Raiffeisen, ZKB' },
+              { value: 'swiss_private_boutique', label: 'Swiss private bank boutique', sub: 'Pictet, Lombard Odier, Mirabaud' },
+              { value: 'intl_private_bank', label: 'International private bank', sub: 'Julius Baer, EFG, UBP, BNP PB' },
+              { value: 'eam', label: 'External Asset Manager (EAM)' },
+              { value: 'family_office', label: 'Family Office / MFO' },
+              { value: 'other', label: 'Other / prefer not to say' },
+            ]} placeholder="Select institution type" />
+          </Field>
+          <Field label="Seniority level">
+            <Select value={f.seniority} onChange={v => set('seniority', v)} options={[
+              { value: 'ia_rm', label: 'Investment Advisor / RM' },
+              { value: 'senior_rm', label: 'Senior Relationship Manager' },
+              { value: 'team_head_md', label: 'Team Head / MD' },
+              { value: 'market_head', label: 'Market Head / Regional Head' },
+            ]} placeholder="Select seniority" />
+          </Field>
+        </div>
+      </div>
+      <NavRow onNext={onNext} disabled={!ok} />
+    </>
+  )
+}
+
+function Step2({ f, set, toggleLang, onBack, onNext }: {
+  f: FormData; set: (k: keyof FormData, v: string) => void
+  toggleLang: (l: string) => void; onBack: () => void; onNext: () => void
+}) {
+  const ok = !!(f.primaryGeography && f.clientTier && f.languages.length > 0)
+  const secGeo = [{ value: 'none', label: 'None — single market only' }, ...GEO.filter(o => o.value !== f.primaryGeography)]
+  return (
+    <>
+      <StepHeader n={2} title="Client Focus" subtitle="Geography and language are the primary filters institutions apply when assessing real-world market access." />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <Field label="Primary client geography">
+            <Select value={f.primaryGeography} onChange={v => set('primaryGeography', v)} options={GEO} placeholder="Select primary geography" />
+          </Field>
+          <Field label="Secondary market" hint="Optional">
+            <Select value={f.secondaryGeography} onChange={v => set('secondaryGeography', v)} options={secGeo} placeholder="None / single market" />
+          </Field>
+        </div>
+        <Field label="Client tier">
+          <Select value={f.clientTier} onChange={v => set('clientTier', v)} options={[
+            { value: 'hnw', label: 'HNW — CHF 1M to 10M' },
+            { value: 'uhnw', label: 'UHNW — CHF 10M to 50M' },
+            { value: 'vhnw_fo', label: 'VHNW / Family Office — CHF 50M+' },
+            { value: 'mixed', label: 'Mixed HNW / UHNW' },
+          ]} placeholder="Select client tier" />
+        </Field>
+        <Field label="Client languages spoken" hint="Select all that apply — this directly determines which markets are structurally open">
+          <ChipSelect options={LANGS} selected={f.languages} toggle={toggleLang} />
+        </Field>
+      </div>
+      <NavRow onBack={onBack} onNext={onNext} disabled={!ok} />
+    </>
+  )
+}
+
+function Step3({ f, set, onBack, onNext }: {
+  f: FormData; set: (k: keyof FormData, v: string) => void; onBack: () => void; onNext: () => void
+}) {
+  const ok = !!(f.mandateStyle && f.employmentStructure && f.targetBookingCentre && f.priorityFactor)
+  return (
+    <>
+      <StepHeader n={3} title="Career Preferences" subtitle="Mandate style and employment structure shape which opportunities are realistically accessible." />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <Field label="Mandate style">
+            <Select value={f.mandateStyle} onChange={v => set('mandateStyle', v)} options={[
+              { value: 'hunter', label: 'Hunter', sub: 'New asset origination' },
+              { value: 'farmer', label: 'Farmer', sub: 'Relationship deepening' },
+              { value: 'both', label: 'Hunter + Farmer', sub: 'Comfortable with both' },
+            ]} placeholder="Select mandate style" />
+          </Field>
+          <Field label="Employment structure">
+            <Select value={f.employmentStructure} onChange={v => set('employmentStructure', v)} options={[
+              { value: 'employed_pb', label: 'Employed private bank', sub: 'Full-time salaried' },
+              { value: 'eam', label: 'External Asset Manager', sub: 'Independent, own contracts' },
+              { value: 'both', label: 'Open to both' },
+            ]} placeholder="Select structure" />
+          </Field>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <Field label="Target booking centre">
+            <Select value={f.targetBookingCentre} onChange={v => set('targetBookingCentre', v)} options={[
+              { value: 'geneva', label: 'Geneva' }, { value: 'zurich', label: 'Zurich' },
+              { value: 'dubai', label: 'Dubai (DIFC)' }, { value: 'abu_dhabi', label: 'Abu Dhabi (ADGM)' },
+              { value: 'singapore', label: 'Singapore' }, { value: 'hong_kong', label: 'Hong Kong' },
+              { value: 'london', label: 'London' }, { value: 'luxembourg', label: 'Luxembourg' },
+              { value: 'liechtenstein', label: 'Liechtenstein' }, { value: 'monaco', label: 'Monaco' },
+              { value: 'tel_aviv', label: 'Tel Aviv' }, { value: 'miami', label: 'Miami' },
+              { value: 'new_york', label: 'New York' }, { value: 'multiple', label: 'Multiple / Flexible' },
+            ]} placeholder="Select booking centre" />
+          </Field>
+          <Field label="Primary driver for next move">
+            <Select value={f.priorityFactor} onChange={v => set('priorityFactor', v)} options={[
+              { value: 'compensation', label: 'Compensation', sub: 'Better revenue share or package' },
+              { value: 'brand', label: 'Platform brand', sub: 'Name and backing' },
+              { value: 'market', label: 'Market opportunity', sub: 'Better geography or access' },
+              { value: 'autonomy', label: 'Autonomy', sub: 'Independence and flexibility' },
+              { value: 'culture', label: 'Culture / Leadership', sub: 'Stability and quality' },
+              { value: 'growth', label: 'Growth / Promotion', sub: 'Clear senior path' },
+            ]} placeholder="Select primary driver" />
+          </Field>
+        </div>
+      </div>
+      <NavRow onBack={onBack} onNext={onNext} disabled={!ok} />
+    </>
+  )
+}
+
+function Step4({ f, set, onBack, onNext }: {
+  f: FormData; set: (k: keyof FormData, v: string) => void; onBack: () => void; onNext: () => void
+}) {
+  const ok = !!(f.noticePeriod && f.nonSolicitation && f.moveMotivation)
+  return (
+    <>
+      <StepHeader n={4} title="Timing & Constraints" subtitle="Legal restrictions and notice periods directly determine which mandates can be realistically pursued." />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <Field label="Availability / notice period">
+            <Select value={f.noticePeriod} onChange={v => set('noticePeriod', v)} options={[
+              { value: 'immediate', label: 'Available immediately' },
+              { value: '1_3m', label: '1 – 3 months', sub: 'Standard notice' },
+              { value: '3_6m', label: '3 – 6 months', sub: 'Extended / senior' },
+              { value: '6_12m', label: '6 – 12 months', sub: 'MD-level or contractual' },
+              { value: 'exploring', label: 'Exploring only — no firm timeline' },
+            ]} placeholder="Select availability" />
+          </Field>
+          <Field label="Non-solicitation clause" hint="Materially affects which firms can approach you">
+            <Select value={f.nonSolicitation} onChange={v => set('nonSolicitation', v)} options={[
+              { value: 'active', label: 'Active restriction', sub: '12–24 month clause running' },
+              { value: 'expired', label: 'Expired or expiring soon', sub: 'No longer binding' },
+              { value: 'none', label: 'No restriction in place' },
+              { value: 'unsure', label: 'Unsure — need to check contract' },
+            ]} placeholder="Select status" />
+          </Field>
+        </div>
+        <Field label="Primary motivation for exploring a move">
+          <Select value={f.moveMotivation} onChange={v => set('moveMotivation', v)} options={[
+            { value: 'comp', label: 'Compensation / Economics' },
+            { value: 'leadership', label: 'Leadership or management change' },
+            { value: 'strategy', label: 'Strategic direction of firm' },
+            { value: 'opportunity', label: 'Market or geography opportunity' },
+            { value: 'personal', label: 'Personal / lifestyle reasons' },
+            { value: 'platform', label: 'Platform or technology limitations' },
+          ]} placeholder="Select primary motivation" />
+        </Field>
+      </div>
+      <NavRow onBack={onBack} onNext={onNext} disabled={!ok} />
+    </>
+  )
+}
+
+function Step5({ f, set, onBack, onSubmit, loading, error }: {
+  f: FormData; set: (k: keyof FormData, v: string) => void
+  onBack: () => void; onSubmit: () => void; loading: boolean; error: string
+}) {
+  return (
+    <>
+      <StepHeader n={5} title="Receive your assessment" subtitle="Generated instantly and personally reviewed by Gil M. Chalem against live market activity within 48 hours." />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <Field label="Name" hint="Optional">
+          <input value={f.name} onChange={e => set('name', e.target.value)} placeholder="Your name"
+            style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '14px 18px', color: '#f1f5f9', fontSize: 13.5, outline: 'none' }} />
+        </Field>
+        <Field label="Email address" hint="Your assessment is delivered here — no CV required, no unsolicited contact">
+          <input type="email" value={f.email} onChange={e => set('email', e.target.value)} placeholder="your@email.com"
+            style={{ width: '100%', boxSizing: 'border-box', background: 'rgba(255,255,255,0.03)', border: `1px solid ${f.email ? 'rgba(201,169,110,0.4)' : 'rgba(255,255,255,0.08)'}`, borderRadius: 10, padding: '14px 18px', color: '#f1f5f9', fontSize: 13.5, outline: 'none' }} />
+        </Field>
+        {error && (
+          <div style={{ background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 9, padding: '12px 16px', color: '#fca5a5', fontSize: 13 }}>{error}</div>
+        )}
+      </div>
+      <NavRow onBack={onBack} onNext={onSubmit} nextLabel="Generate Assessment" disabled={!f.email} loading={loading} />
+      <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.16)', fontSize: 11, marginTop: 18 }}>
+        No CV required · Strictly confidential · Swiss data protection
+      </p>
+    </>
+  )
+}
+
+// ─── Score arc ────────────────────────────────────────────────────────────────
+
+function Arc({ score, color }: { score: number; color: string }) {
+  const r = 40, cx = 50, cy = 50, circ = 2 * Math.PI * r
+  const dash = (score / 100) * circ
+  return (
+    <svg width={100} height={100} viewBox="0 0 100 100">
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={5} />
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth={5}
+        strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
+        transform={`rotate(-90 ${cx} ${cy})`} />
+      <text x={cx} y={cy + 6} textAnchor="middle" fill={color} fontSize={17} fontWeight={300} fontFamily="Inter,system-ui,sans-serif">{score}</text>
+    </svg>
+  )
+}
+
+// ─── Results page ─────────────────────────────────────────────────────────────
+
+function Results({ result, name }: { result: AssessmentResult; name: string }) {
+  const fc = FC[result.overallFit] || '#C9A96E'
+  const fb = FB[result.overallFit] || 'rgba(201,169,110,0.1)'
+  const sc = SCORE[result.overallFit] || 65
+  const card = (children: React.ReactNode, style?: React.CSSProperties) => (
+    <div style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '22px 26px', ...style }}>{children}</div>
+  )
+  const sLabel = (text: string, color = '#C9A96E') => (
+    <div style={{ color, fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>{text}</div>
+  )
+
+  return (
+    <div style={{ maxWidth: 800, margin: '0 auto', padding: '60px 24px 80px' }}>
+
+      {/* Hero */}
+      <div style={{ textAlign: 'center', marginBottom: 40 }}>
+        <div style={{ color: '#C9A96E', fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 20 }}>
+          Executive Partners · Market Intelligence Report
+        </div>
+        <div style={{ display: 'inline-block', marginBottom: 16 }}>
+          <Arc score={sc} color={fc} />
+        </div>
+        <div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: fb, border: `1px solid ${fc}40`, borderRadius: 100, padding: '5px 15px', marginBottom: 16 }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: fc }} />
+            <span style={{ color: fc, fontSize: 11, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase' }}>{result.overallFit} Market Fit</span>
+          </div>
+        </div>
+        <h1 style={{ fontSize: 'clamp(18px,3.5vw,30px)', fontWeight: 300, color: '#f1f5f9', letterSpacing: '-0.02em', margin: '0 0 10px', lineHeight: 1.3 }}>
+          {result.headline}
+        </h1>
+        {name && <p style={{ color: 'rgba(255,255,255,0.28)', fontSize: 12.5, margin: 0 }}>Assessment prepared for {name}</p>}
+      </div>
+
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', marginBottom: 20 }} />
+
+      {/* Position + commercial */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+        {card(<><div>{sLabel('Market Position')}</div><p style={{ color: '#7a8fa6', fontSize: 13, lineHeight: 1.75, margin: 0 }}>{result.positioning}</p></>)}
+        {card(<><div>{sLabel('Commercial Value')}</div><p style={{ color: '#7a8fa6', fontSize: 13, lineHeight: 1.75, margin: 0 }}>{result.commercialSummary}</p></>)}
+      </div>
+
+      {/* Top markets */}
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ color: '#C9A96E', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>Top Market Matches</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {result.topMarkets.map((m, i) => {
+            const mc = FC[m.fitLevel] || '#C9A96E', mb = FB[m.fitLevel] || 'rgba(201,169,110,0.1)'
+            return (
+              <div key={i} style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '18px 22px', display: 'flex', gap: 14 }}>
+                <div style={{ fontSize: 22, lineHeight: 1, marginTop: 2, flexShrink: 0 }}>{m.flag}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 9, flexWrap: 'wrap', marginBottom: 7 }}>
+                    <span style={{ color: '#f1f5f9', fontSize: 14, fontWeight: 500 }}>{m.city}</span>
+                    <span style={{ background: mb, color: mc, fontSize: 10, fontWeight: 700, padding: '2px 9px', borderRadius: 100, border: `1px solid ${mc}35`, letterSpacing: '0.07em', textTransform: 'uppercase' }}>{m.fitLevel}</span>
+                  </div>
+                  <p style={{ color: '#6e8099', fontSize: 12.5, lineHeight: 1.65, margin: '0 0 5px' }}>{m.rationale}</p>
+                  <p style={{ color: 'rgba(255,255,255,0.22)', fontSize: 11.5, fontStyle: 'italic', margin: 0 }}>{m.hiringContext}</p>
+                  {m.keyRequirement && (
+                    <div style={{ marginTop: 9, background: 'rgba(201,169,110,0.06)', border: '1px solid rgba(201,169,110,0.16)', borderRadius: 6, padding: '7px 12px', color: '#C9A96E', fontSize: 11 }}>
+                      Threshold: {m.keyRequirement}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Strengths + gaps */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+        <div style={{ background: 'rgba(16,185,129,0.04)', border: '1px solid rgba(16,185,129,0.12)', borderRadius: 12, padding: '20px 22px' }}>
+          {sLabel('What opens doors', '#10b981')}
+          <ul style={{ margin: 0, padding: '0 0 0 14px', display: 'flex', flexDirection: 'column', gap: 7 }}>
+            {result.strengths.map((s, i) => <li key={i} style={{ color: '#6e8099', fontSize: 12.5, lineHeight: 1.55 }}>{s}</li>)}
+          </ul>
+        </div>
+        <div style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.12)', borderRadius: 12, padding: '20px 22px' }}>
+          {sLabel('What limits options', '#ef4444')}
+          <ul style={{ margin: 0, padding: '0 0 0 14px', display: 'flex', flexDirection: 'column', gap: 7 }}>
+            {result.gaps.map((g, i) => <li key={i} style={{ color: '#6e8099', fontSize: 12.5, lineHeight: 1.55 }}>{g}</li>)}
+          </ul>
+        </div>
+      </div>
+
+      {/* Legal / timing */}
+      {(result.legalNote || result.timingNote) && (
+        <div style={{ background: 'rgba(245,158,11,0.04)', border: '1px solid rgba(245,158,11,0.16)', borderRadius: 12, padding: '20px 22px', marginBottom: 14 }}>
+          {sLabel('Considerations', '#f59e0b')}
+          {result.legalNote && <p style={{ color: '#6e8099', fontSize: 12.5, lineHeight: 1.65, margin: result.timingNote ? '0 0 8px' : 0 }}>{result.legalNote}</p>}
+          {result.timingNote && <p style={{ color: '#6e8099', fontSize: 12.5, lineHeight: 1.65, margin: 0 }}>{result.timingNote}</p>}
+        </div>
+      )}
+
+      {/* EP assessment CTA */}
+      <div style={{ background: 'rgba(201,169,110,0.06)', border: '1px solid rgba(201,169,110,0.2)', borderRadius: 16, padding: '36px 40px', textAlign: 'center' }}>
+        {sLabel("EP's assessment")}
+        <p style={{ color: '#a0b4c8', fontSize: 13.5, lineHeight: 1.8, margin: '0 auto 26px', maxWidth: 500 }}>{result.epAssessment}</p>
+        <a href="https://calendly.com/execpartners/15-minute-career-consultation" target="_blank" rel="noopener noreferrer"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#C9A96E', color: '#080d16', textDecoration: 'none', borderRadius: 9, padding: '14px 34px', fontSize: 13, fontWeight: 700, letterSpacing: '0.04em' }}>
+          Schedule a Confidential Call
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2L8.5 6L4 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </a>
+        <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11, marginTop: 14 }}>15 minutes · No obligation · Senior-level only</p>
+      </div>
+
+      <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.15)', fontSize: 10.5, lineHeight: 1.7, marginTop: 40 }}>
+        Executive Partners · Geneva · execpartners.ch · recruiter@execpartners.ch<br />
+        Assessment based on structural market dynamics only. All submissions treated with absolute discretion under Swiss data protection standards.
+      </p>
+    </div>
+  )
+}
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function FitAssessmentV2Client() {
-  const [step, setStep] = useState<Step>(1)
-  const [form, setForm] = useState<FormData>(INITIAL_FORM)
+  const [step, setStep] = useState(1)
+  const [form, setForm] = useState<FormData>(INIT)
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<AssessmentResult | null>(null)
   const [error, setError] = useState('')
 
-  const set = (key: keyof FormData) => (val: string) =>
-    setForm(prev => ({ ...prev, [key]: val }))
-
-  const toggleLang = (lang: string) =>
-    setForm(prev => ({
-      ...prev,
-      languages: prev.languages.includes(lang)
-        ? prev.languages.filter(l => l !== lang)
-        : [...prev.languages, lang],
-    }))
-
-  const showLicenceQ = form.employmentStructure === 'eam'
-
-  const valid = {
-    1: !!(form.aumRange && form.revenueRange && form.portabilityEstimate && form.clientTier),
-    2: !!(form.seniority && form.institutionType && form.primaryGeography && form.languages.length > 0),
-    3: !!(form.mandateStyle && form.employmentStructure && form.targetBookingCentre &&
-          form.timeline && form.legalConstraints && (!showLicenceQ || form.regulatoryLicence)),
-    4: !!(form.email && form.email.includes('@') && form.email.includes('.')),
-  }
+  const set = useCallback((k: keyof FormData, v: string) => setForm(f => ({ ...f, [k]: v })), [])
+  const toggle = useCallback((l: string) => setForm(f => ({
+    ...f, languages: f.languages.includes(l) ? f.languages.filter(x => x !== l) : [...f.languages, l],
+  })), [])
 
   const submit = async () => {
-    setLoading(true)
-    setError('')
+    if (!form.email) return
+    setLoading(true); setError('')
     try {
       const res = await fetch('/api/fit-assessment-v2', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
       })
-      if (!res.ok) throw new Error('Assessment failed')
       const data = await res.json()
-      if (data.error) throw new Error(data.error)
-      setResult(data.assessment)
-      setStep('result')
-    } catch (e: any) {
-      setError(e.message || 'Something went wrong. Please try again.')
-    } finally {
-      setLoading(false)
-    }
+      if (!res.ok) throw new Error(data.error || 'Assessment failed')
+      setResult(data.result); setStep(6)
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.')
+    } finally { setLoading(false) }
   }
 
-  const progress = step === 'result' ? 100 : ((step as number) / 4) * 100
+  const BG = '#080d16'
 
-  const stepLabels = ['Commercial Footprint', 'Your Profile', 'Mandate Preferences', 'Contact']
+  if (step === 6 && result) {
+    return <div style={{ minHeight: '100vh', background: BG, color: '#e2e8f0', fontFamily: 'Inter,system-ui,sans-serif' }}><Results result={result} name={form.name} /></div>
+  }
 
   return (
-    <div className="min-h-screen bg-[#0B0F1A] text-white">
-      <div className="max-w-xl mx-auto px-5 py-14">
+    <div style={{ minHeight: '100vh', background: BG, color: '#e2e8f0', fontFamily: 'Inter,system-ui,sans-serif', padding: '60px 20px 80px' }}>
 
-        {/* Page Header */}
-        <div className="mb-10">
-          <p className="text-[10px] text-amber-400 font-semibold tracking-[0.2em] uppercase mb-3">
-            Executive Partners · Market Intelligence
-          </p>
-          <h1 className="text-3xl font-bold text-white mb-3 leading-tight">
-            Private Bank<br />Fit Assessment
-          </h1>
-          <p className="text-white/45 text-sm leading-relaxed">
-            A rigorous market positioning analysis calibrated to your specific commercial profile.
-            Assessed against live market activity within 48 hours.
-          </p>
-          <p className="text-xs text-white/25 mt-2">
-            Confidential · Discretion Guaranteed · No CV Required
-          </p>
+      {/* Page header */}
+      <div style={{ textAlign: 'center', marginBottom: 44 }}>
+        <div style={{ color: '#C9A96E', fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 12 }}>
+          Executive Partners · Market Intelligence
         </div>
-
-        {/* Progress */}
-        {step !== 'result' && (
-          <div className="mb-8">
-            <div className="flex justify-between text-[10px] text-white/30 mb-2">
-              <span>Step {step as number} of 4</span>
-              <span className="text-white/50">{stepLabels[(step as number) - 1]}</span>
-            </div>
-            <div className="h-0.5 bg-white/8 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-amber-400 rounded-full transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* ── STEP 1: Commercial Footprint ── */}
-        {step === 1 && (
-          <div className="space-y-7">
-            <Section label="01" title="AUM Under Management">
-              <div className="space-y-2">
-                {([
-                  ['under_50',  'Under CHF 50M'],
-                  ['50_150',    'CHF 50M – 150M'],
-                  ['150_500',   'CHF 150M – 500M'],
-                  ['500_1b',    'CHF 500M – 1B'],
-                  ['above_1b',  'Above CHF 1B'],
-                ] as [string, string][]).map(([v, l]) => (
-                  <Radio key={v} value={v} label={l} selected={form.aumRange === v} onChange={set('aumRange')} />
-                ))}
-              </div>
-            </Section>
-
-            <Section label="02" title="Annual Revenue Generated" hint="Your estimated annual fee income contribution to your current institution">
-              <div className="space-y-2">
-                {([
-                  ['under_300k', 'Under CHF 300K'],
-                  ['300k_600k', 'CHF 300K – 600K'],
-                  ['600k_1m',   'CHF 600K – 1M'],
-                  ['1m_2m',     'CHF 1M – 2M'],
-                  ['above_2m',  'Above CHF 2M'],
-                  ['prefer_not','Prefer not to disclose'],
-                ] as [string, string][]).map(([v, l]) => (
-                  <Radio key={v} value={v} label={l} selected={form.revenueRange === v} onChange={set('revenueRange')} />
-                ))}
-              </div>
-            </Section>
-
-            <Section label="03" title="Estimated AUM Portability" hint="What proportion of your book would realistically follow you to a new institution?">
-              <div className="space-y-2">
-                {([
-                  ['0_20',     'Under 20%',     'Primarily institutional / discretionary mandates'],
-                  ['20_40',    '20 – 40%',       'Mix of portable and institutionalised relationships'],
-                  ['40_60',    '40 – 60%',       'Majority of relationships are personal'],
-                  ['60_80',    '60 – 80%',       'Strong personal ties, few EAM conflicts'],
-                  ['above_80', 'Above 80%',      'Fully portable book'],
-                ] as [string, string, string][]).map(([v, l, s]) => (
-                  <Radio key={v} value={v} label={l} sub={s} selected={form.portabilityEstimate === v} onChange={set('portabilityEstimate')} />
-                ))}
-              </div>
-            </Section>
-
-            <Section label="04" title="Client Tier">
-              <div className="space-y-2">
-                {([
-                  ['hnw',   'HNW',          'CHF 1M – 10M per client'],
-                  ['uhnw',  'UHNW',         'CHF 10M – 50M per client'],
-                  ['vhnw',  'VHNW / Family Office', 'CHF 50M+ per client'],
-                  ['mixed', 'Mixed HNW / UHNW', ''],
-                ] as [string, string, string][]).map(([v, l, s]) => (
-                  <Radio key={v} value={v} label={l} sub={s || undefined} selected={form.clientTier === v} onChange={set('clientTier')} />
-                ))}
-              </div>
-            </Section>
-
-            <NavButtons canNext={valid[1]} onNext={() => setStep(2)} />
-          </div>
-        )}
-
-        {/* ── STEP 2: Your Profile ── */}
-        {step === 2 && (
-          <div className="space-y-7">
-            <Section label="05" title="Seniority Level">
-              <div className="space-y-2">
-                {([
-                  ['rm',          'Relationship Manager / Investment Advisor'],
-                  ['senior_rm',   'Senior Relationship Manager'],
-                  ['team_head',   'Team Head / Managing Director'],
-                  ['market_head', 'Market Head / Regional Head'],
-                ] as [string, string][]).map(([v, l]) => (
-                  <Radio key={v} value={v} label={l} selected={form.seniority === v} onChange={set('seniority')} />
-                ))}
-              </div>
-            </Section>
-
-            <Section label="06" title="Current Institution Type">
-              <div className="space-y-2">
-                {([
-                  ['swiss_private', 'Swiss Private Bank',       'Pictet, Lombard Odier, Julius Baer, UBP, EFG, Vontobel…'],
-                  ['intl_private',  'International Private Bank', 'HSBC PWM, Citi Private, Deutsche Bank, BNP Paribas Wealth…'],
-                  ['universal',     'Universal / Cantonal Bank',  'UBS, ZKB, BCGE, PostFinance, Raiffeisen…'],
-                  ['eam',           'External Asset Manager (EAM)', 'FINMA-regulated independent wealth manager'],
-                  ['family_office', 'Family Office',              'Single-family or multi-family office'],
-                  ['other',         'Other / Prefer not to say',  ''],
-                ] as [string, string, string][]).map(([v, l, s]) => (
-                  <Radio key={v} value={v} label={l} sub={s || undefined} selected={form.institutionType === v} onChange={set('institutionType')} />
-                ))}
-              </div>
-            </Section>
-
-            <Section label="07" title="Primary Client Geography">
-              <div className="space-y-2">
-                {([
-                  ['gcc',           'GCC – UAE, Saudi Arabia, Qatar'],
-                  ['israel',        'Israel'],
-                  ['europe_france', 'Europe – France'],
-                  ['europe_italy',  'Europe – Italy'],
-                  ['europe_iberia', 'Europe – Iberia (Spain, Portugal)'],
-                  ['europe_dach',   'Europe – DACH'],
-                  ['latam_brazil',  'Latin America – Brazil'],
-                  ['latam_mx_co',   'Latin America – Mexico / Colombia'],
-                  ['latam_arg_cl',  'Latin America – Argentina / Chile'],
-                  ['cee',           'CEE – Poland, Czech Republic, Hungary'],
-                  ['swiss_domestic','Swiss Domestic'],
-                  ['uk_onshore',    'UK Onshore'],
-                  ['apac_sg',       'APAC – Singapore'],
-                  ['apac_hk',       'APAC – Hong Kong'],
-                  ['apac_other',    'APAC – Japan, Australia'],
-                  ['nri',           'NRI – India'],
-                  ['cis',           'CIS – Russia, Kazakhstan, Ukraine'],
-                  ['mea',           'MEA – Africa, South Africa'],
-                  ['multi',         'Multi-market'],
-                ] as [string, string][]).map(([v, l]) => (
-                  <Radio key={v} value={v} label={l} selected={form.primaryGeography === v} onChange={set('primaryGeography')} />
-                ))}
-              </div>
-            </Section>
-
-            <Section label="08" title="Languages Spoken (Client-Facing)" hint="Select all that apply — this is a primary market fit signal">
-              <div className="flex flex-wrap gap-2">
-                {LANGUAGES.map(lang => (
-                  <CheckPill
-                    key={lang}
-                    value={lang}
-                    label={lang}
-                    selected={form.languages.includes(lang)}
-                    onChange={toggleLang}
-                  />
-                ))}
-              </div>
-            </Section>
-
-            <NavButtons canNext={valid[2]} onNext={() => setStep(3)} onBack={() => setStep(1)} />
-          </div>
-        )}
-
-        {/* ── STEP 3: Mandate Preferences ── */}
-        {step === 3 && (
-          <div className="space-y-7">
-            <Section label="09" title="Mandate Style">
-              <div className="space-y-2">
-                {([
-                  ['hunter', 'Hunter',         'New asset origination is my primary strength'],
-                  ['farmer', 'Farmer',          'Relationship development and AUM deepening'],
-                  ['both',   'Hunter + Farmer', 'I originate and deepen with equal strength'],
-                ] as [string, string, string][]).map(([v, l, s]) => (
-                  <Radio key={v} value={v} label={l} sub={s} selected={form.mandateStyle === v} onChange={set('mandateStyle')} />
-                ))}
-              </div>
-            </Section>
-
-            <Section label="10" title="Preferred Employment Structure">
-              <div className="space-y-2">
-                {([
-                  ['employed', 'Employed (Private Bank)', 'Fixed salary + variable bonus'],
-                  ['eam',      'External Asset Manager',  'Revenue share / fully independent model'],
-                  ['both',     'Open to Both',            ''],
-                ] as [string, string, string][]).map(([v, l, s]) => (
-                  <Radio key={v} value={v} label={l} sub={s || undefined} selected={form.employmentStructure === v} onChange={set('employmentStructure')} />
-                ))}
-              </div>
-            </Section>
-
-            {/* Adaptive: EAM regulatory licence */}
-            {showLicenceQ && (
-              <div className="border border-amber-400/20 rounded-lg p-4 bg-amber-400/5">
-                <Section label="10b" title="Regulatory Licence Status" hint="EAM activity in Switzerland requires FINMA authorisation since January 2023">
-                  <div className="space-y-2">
-                    {([
-                      ['licensed',    'Fully Licensed',           'FINMA / DFSA / MAS or equivalent in place'],
-                      ['in_progress', 'Application In Progress',  'Licence submission filed or underway'],
-                      ['not_yet',     'Not Yet Licensed',         ''],
-                    ] as [string, string, string][]).map(([v, l, s]) => (
-                      <Radio key={v} value={v} label={l} sub={s || undefined} selected={form.regulatoryLicence === v} onChange={set('regulatoryLicence')} />
-                    ))}
-                  </div>
-                </Section>
-              </div>
-            )}
-
-            <Section label="11" title="Target Booking Centre">
-              <div className="space-y-2">
-                {([
-                  ['geneva',       'Geneva'],
-                  ['zurich',       'Zurich'],
-                  ['dubai',        'Dubai (DIFC)'],
-                  ['abu_dhabi',    'Abu Dhabi (ADGM)'],
-                  ['singapore',    'Singapore'],
-                  ['hong_kong',    'Hong Kong'],
-                  ['london',       'London'],
-                  ['luxembourg',   'Luxembourg'],
-                  ['liechtenstein','Liechtenstein'],
-                  ['monaco',       'Monaco'],
-                  ['tel_aviv',     'Tel Aviv'],
-                  ['miami',        'Miami'],
-                  ['new_york',     'New York'],
-                  ['multiple',     'Multiple / Flexible'],
-                ] as [string, string][]).map(([v, l]) => (
-                  <Radio key={v} value={v} label={l} selected={form.targetBookingCentre === v} onChange={set('targetBookingCentre')} />
-                ))}
-              </div>
-            </Section>
-
-            <Section label="12" title="Availability / Timeline">
-              <div className="space-y-2">
-                {([
-                  ['active',    'Actively Looking',     'Available within 1–3 months'],
-                  ['open',      'Open to Opportunity',  'No hard timeline — right mandate only'],
-                  ['exploring', 'Exploring Discreetly', '6–12 month horizon'],
-                  ['notional',  'Long-Term Horizon',    '12+ months away'],
-                ] as [string, string, string][]).map(([v, l, s]) => (
-                  <Radio key={v} value={v} label={l} sub={s} selected={form.timeline === v} onChange={set('timeline')} />
-                ))}
-              </div>
-            </Section>
-
-            <Section label="13" title="Legal Constraints">
-              <div className="space-y-2">
-                {([
-                  ['none',       'None',                      'Clean departure possible immediately'],
-                  ['notice',     'Standard Notice Period',    '1–3 months'],
-                  ['long_notice','Extended Notice Period',    '3–6 months'],
-                  ['garden',     'Garden Leave Clause',       ''],
-                  ['non_sol',    'Non-Solicitation Agreement','In place with current employer'],
-                  ['unsure',     'Unsure',                    'Need to review contract terms'],
-                ] as [string, string, string][]).map(([v, l, s]) => (
-                  <Radio key={v} value={v} label={l} sub={s || undefined} selected={form.legalConstraints === v} onChange={set('legalConstraints')} />
-                ))}
-              </div>
-            </Section>
-
-            <NavButtons canNext={valid[3]} onNext={() => setStep(4)} onBack={() => setStep(2)} />
-          </div>
-        )}
-
-        {/* ── STEP 4: Contact ── */}
-        {step === 4 && (
-          <div className="space-y-6">
-            <div className="bg-white/5 rounded-lg border border-white/8 p-4">
-              <p className="text-xs text-white/45 leading-relaxed">
-                Your assessment is generated by our market intelligence engine and reviewed by our team.
-                Results are displayed immediately and sent to your inbox. No CV or bank names are required or disclosed.
-              </p>
-            </div>
-
-            <Section label="14" title="Name">
-              <input
-                type="text"
-                placeholder="Optional"
-                value={form.name}
-                onChange={e => set('name')(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-amber-400/60 transition-colors"
-              />
-            </Section>
-
-            <Section label="15" title="Email Address">
-              <input
-                type="email"
-                placeholder="Your assessment will be sent here"
-                value={form.email}
-                onChange={e => set('email')(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-amber-400/60 transition-colors"
-              />
-            </Section>
-
-            {error && (
-              <p className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded px-4 py-3">
-                {error}
-              </p>
-            )}
-
-            <div className="space-y-2 pt-1">
-              <button
-                onClick={submit}
-                disabled={!valid[4] || loading}
-                className="w-full py-4 bg-amber-400 text-black font-bold rounded text-sm hover:bg-amber-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-                    </svg>
-                    Generating your assessment…
-                  </span>
-                ) : 'Generate Market Assessment →'}
-              </button>
-              <button onClick={() => setStep(3)} className="w-full py-2 text-white/30 text-sm hover:text-white/60 transition-colors">
-                ← Back
-              </button>
-            </div>
-
-            <p className="text-center text-[11px] text-white/20 leading-relaxed">
-              No CV required · Strictly confidential<br />
-              Treated under Swiss data protection standards
-            </p>
-          </div>
-        )}
-
-        {/* ── RESULT ── */}
-        {step === 'result' && result && (
-          <div className="space-y-5">
-            {/* Score card */}
-            <div className="bg-gradient-to-br from-white/8 to-white/3 rounded-xl border border-white/12 p-6">
-              <p className="text-[10px] text-amber-400 font-semibold tracking-[0.2em] uppercase mb-5">
-                EP Market Intelligence Report
-              </p>
-              <div className="flex items-center gap-6 mb-5">
-                <ScoreRing score={result.overallFitScore} />
-                <div>
-                  <p className="text-2xl font-bold text-white leading-tight">{result.overallFitLabel}</p>
-                  <p className="text-white/40 text-sm">Market Position</p>
-                  {form.name && <p className="text-white/30 text-xs mt-2">{form.name}</p>}
-                </div>
-              </div>
-              <p className="text-white/65 text-sm leading-relaxed border-t border-white/8 pt-4">
-                {result.executiveSummary}
-              </p>
-            </div>
-
-            {/* Commercial Profile + Portability Risk */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white/5 rounded-lg border border-white/8 p-4">
-                <p className="text-[10px] text-white/35 uppercase tracking-wider mb-1.5">Commercial Profile</p>
-                <p className="text-amber-300 font-semibold text-sm mb-2">{result.commercialProfile.rating}</p>
-                <p className="text-white/50 text-xs leading-relaxed">{result.commercialProfile.rationale}</p>
-              </div>
-              <div className="bg-white/5 rounded-lg border border-white/8 p-4">
-                <p className="text-[10px] text-white/35 uppercase tracking-wider mb-1.5">Portability Risk</p>
-                <p className={`font-semibold text-sm mb-2 ${
-                  result.portabilityRisk.rating === 'Low'      ? 'text-emerald-400' :
-                  result.portabilityRisk.rating === 'Moderate' ? 'text-amber-300'   :
-                  result.portabilityRisk.rating === 'Elevated' ? 'text-orange-400'  :
-                                                                  'text-red-400'
-                }`}>{result.portabilityRisk.rating}</p>
-                <p className="text-white/50 text-xs leading-relaxed">{result.portabilityRisk.rationale}</p>
-              </div>
-            </div>
-
-            {/* Market Fit by Geography */}
-            <div>
-              <h3 className="text-[10px] text-white/30 uppercase tracking-[0.15em] mb-3">Market Fit by Geography</h3>
-              <div className="space-y-3">
-                {result.marketFit.map((m, i) => (
-                  <div key={i} className="bg-white/5 rounded-lg border border-white/8 p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-white font-semibold text-sm">{m.market}</span>
-                      <FitBadge label={m.fitLabel} />
-                    </div>
-                    <p className="text-white/55 text-xs leading-relaxed mb-3">{m.rationale}</p>
-                    {m.openDoors.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {m.openDoors.map((d, j) => (
-                          <span key={j} className="text-[11px] bg-white/5 border border-white/8 rounded px-2 py-0.5 text-white/40">
-                            {d}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    {m.constraints && (
-                      <p className="text-xs text-amber-400/60 mt-2.5 flex gap-1.5">
-                        <span>⚠</span>
-                        <span>{m.constraints}</span>
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Strengtheners */}
-            <div className="bg-white/5 rounded-lg border border-white/8 p-4">
-              <h3 className="text-[10px] text-white/30 uppercase tracking-[0.15em] mb-3">What Would Strengthen Your Candidacy</h3>
-              <ul className="space-y-2.5">
-                {result.strengtheners.map((s, i) => (
-                  <li key={i} className="flex gap-2.5 text-xs text-white/55">
-                    <span className="text-amber-400 shrink-0 mt-0.5">→</span>
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Recommended Next Step */}
-            <div className="bg-amber-400/8 rounded-lg border border-amber-400/25 p-4">
-              <h3 className="text-[10px] text-amber-400/60 uppercase tracking-[0.15em] mb-2">Recommended Next Step</h3>
-              <p className="text-white/75 text-sm leading-relaxed">{result.recommendedNextStep}</p>
-            </div>
-
-            {/* CTA */}
-            <div className="space-y-3 pt-1">
-              <a
-                href="https://calendly.com/execpartners/15-minute-career-consultation"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full py-4 bg-amber-400 text-black font-bold rounded text-sm text-center hover:bg-amber-300 transition-all"
-              >
-                Schedule a Confidential Review Call →
-              </a>
-              <p className="text-center text-[11px] text-white/25">
-                Full report sent to {form.email} · No obligation · Swiss discretion guaranteed
-              </p>
-            </div>
-
-            <div className="text-center pt-2">
-              <button
-                onClick={() => { setForm(INITIAL_FORM); setResult(null); setStep(1) }}
-                className="text-xs text-white/20 hover:text-white/40 transition-colors"
-              >
-                Start a new assessment
-              </button>
-            </div>
-          </div>
-        )}
+        <h1 style={{ fontSize: 'clamp(22px,4.5vw,38px)', fontWeight: 300, color: '#f1f5f9', letterSpacing: '-0.02em', margin: '0 0 10px', lineHeight: 1.2 }}>
+          Private Bank Fit Assessment
+        </h1>
+        <p style={{ color: 'rgba(255,255,255,0.32)', fontSize: 13, maxWidth: 440, margin: '0 auto', lineHeight: 1.65 }}>
+          A candid, expert analysis of your market position — calibrated to your commercial profile. Reviewed against live mandates within 48 hours.
+        </p>
       </div>
+
+      {/* Progress line */}
+      <div style={{ maxWidth: 660, margin: '0 auto 32px', height: 2, background: 'rgba(255,255,255,0.05)', borderRadius: 2 }}>
+        <div style={{ height: '100%', width: `${((step - 1) / 4) * 100}%`, background: 'linear-gradient(90deg,rgba(201,169,110,0.45),#C9A96E)', borderRadius: 2, transition: 'width 0.4s cubic-bezier(0.4,0,0.2,1)' }} />
+      </div>
+
+      {/* Step labels */}
+      <div style={{ maxWidth: 660, margin: '0 auto 32px', display: 'flex', justifyContent: 'space-between' }}>
+        {['Commercial', 'Client Focus', 'Preferences', 'Timing', 'Contact'].map((label, i) => (
+          <div key={i} style={{ fontSize: 10, color: step === i + 1 ? '#C9A96E' : 'rgba(255,255,255,0.18)', fontWeight: step === i + 1 ? 700 : 400, letterSpacing: '0.06em', textTransform: 'uppercase', textAlign: 'center', flex: 1 }}>
+            {label}
+          </div>
+        ))}
+      </div>
+
+      {/* Form card */}
+      <div style={{ maxWidth: 660, margin: '0 auto', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 18, padding: '44px 44px 36px' }}>
+        {step === 1 && <Step1 f={form} set={set} onNext={() => setStep(2)} />}
+        {step === 2 && <Step2 f={form} set={set} toggleLang={toggle} onBack={() => setStep(1)} onNext={() => setStep(3)} />}
+        {step === 3 && <Step3 f={form} set={set} onBack={() => setStep(2)} onNext={() => setStep(4)} />}
+        {step === 4 && <Step4 f={form} set={set} onBack={() => setStep(3)} onNext={() => setStep(5)} />}
+        {step === 5 && <Step5 f={form} set={set} onBack={() => setStep(4)} onSubmit={submit} loading={loading} error={error} />}
+      </div>
+
+      <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.15)', fontSize: 11, marginTop: 20 }}>
+        No CV required · Strictly confidential · No bank names disclosed
+      </p>
     </div>
   )
 }
