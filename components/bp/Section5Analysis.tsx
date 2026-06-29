@@ -329,39 +329,47 @@ export default function Section5Analysis() {
       const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4' });
       const pageW = pdf.internal.pageSize.getWidth();
       const pageH = pdf.internal.pageSize.getHeight();
-      const NAVY: [number,number,number] = [27,58,107];
-      const GOLD: [number,number,number] = [212,175,55];
+      const NAVY: [number,number,number] = [5,7,14];
+      const GOLD: [number,number,number] = [201,161,74];
+      const GOLD_PALE: [number,number,number] = [232,196,106];
       const WHITE: [number,number,number] = [255,255,255];
+      const GRAY: [number,number,number] = [136,146,164];
       const ML = 30;
-      // EP Header
-      pdf.setFillColor(...NAVY); pdf.rect(0, 0, pageW, 50, 'F');
-      pdf.setFontSize(9); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...GOLD);
+      // EP Header — dark brand
+      pdf.setFillColor(201,161,74); pdf.rect(0, 0, pageW, 2, 'F'); // gold top line
+      pdf.setFillColor(...NAVY); pdf.rect(0, 2, pageW, 52, 'F');
+      pdf.setFontSize(8); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...GOLD);
       pdf.text('EXECUTIVE PARTNERS', ML, 18);
-      pdf.setFontSize(8); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(...WHITE);
-      pdf.text('Business Plan Analysis  ·  Private Banking & Wealth Management  ·  Confidential', ML, 30);
-      pdf.setFontSize(14); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...WHITE);
-      pdf.text('Business Plan — Committee Readiness Report', ML, 44);
+      pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(...GRAY);
+      pdf.text('Business Plan Analysis  ·  Private Banking & Wealth Management  ·  Confidential', ML, 29);
+      pdf.setFontSize(15); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...WHITE);
+      pdf.text('Business Plan', ML, 44);
+      pdf.setFontSize(15); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...GOLD_PALE);
+      pdf.text(' — Committee Readiness Report', ML + pdf.getTextWidth('Business Plan'), 44);
+      const dateStr2 = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+      pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(...GRAY);
+      pdf.text(dateStr2, pageW - ML - pdf.getTextWidth(dateStr2), 18);
       // Content
       const imgW = pageW - 60;
       const imgH = (canvas.height / canvas.width) * imgW;
-      pdf.addImage(imgData, 'PNG', ML, 60, imgW, imgH, undefined, 'FAST');
-      // Watermark + footer on all pages
+      pdf.addImage(imgData, 'PNG', ML, 64, imgW, imgH, undefined, 'FAST');
+      // Footer on all pages
       const total = pdf.getNumberOfPages();
       for (let p = 1; p <= total; p++) {
         pdf.setPage(p);
-        try {
-          const anyPdf = pdf as any;
-          pdf.saveGraphicsState();
-          pdf.setGState(new anyPdf.GState({ opacity: 0.045 }));
-          pdf.setFontSize(38); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...GOLD);
-          pdf.text('EXECUTIVE PARTNERS — CONFIDENTIAL', pageW / 2, pageH / 2, { align: 'center', angle: 38 });
-          pdf.restoreGraphicsState();
-        } catch { /* silent */ }
-        pdf.setFillColor(...NAVY); pdf.rect(0, pageH - 26, pageW, 26, 'F');
+        pdf.setFillColor(10,13,22); pdf.rect(0, pageH - 30, pageW, 30, 'F');
+        pdf.setDrawColor(...GOLD); pdf.setLineWidth(0.3);
+        pdf.setGState(pdf.GState({opacity:0.25}));
+        pdf.line(0, pageH - 30, pageW, pageH - 30);
+        pdf.setGState(pdf.GState({opacity:1}));
         pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(...GOLD);
-        pdf.text('Gil M. Chalem, Managing Partner  ·  Executive Partners', ML, pageH - 12);
-        pdf.setTextColor(...WHITE);
-        pdf.text(`recruiter@execpartners.ch  ·  execpartners.ch  ·  p${p}/${total}`, pageW - 220, pageH - 12);
+        pdf.text('Gil M. Chalem, Managing Partner  ·  Executive Partners', ML, pageH - 17);
+        pdf.setTextColor(...GRAY);
+        pdf.text('recruiter@execpartners.ch  ·  execpartners.ch', ML, pageH - 7);
+        pdf.text('Strictly Confidential — Not for Distribution', pageW - ML - pdf.getTextWidth('Strictly Confidential — Not for Distribution'), pageH - 17);
+        pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...GOLD);
+        const pg = 'p' + p + '/' + total;
+        pdf.text(pg, pageW - ML - pdf.getTextWidth(pg), pageH - 7);
       }
       const fname = `EP_BP_${(i.candidate_name || 'Candidate').replace(/\s+/g, '_')}.pdf`;
       const blob = pdf.output('blob');

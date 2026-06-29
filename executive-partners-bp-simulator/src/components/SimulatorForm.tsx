@@ -86,28 +86,64 @@ export default function SimulatorForm() {
   };
 
   const exportPdf = async () => {
-    // Only works if you installed jspdf + html2canvas
     try {
       const { jsPDF } = await import("jspdf");
       const html2canvas = (await import("html2canvas")).default;
+      const NAVY: [number,number,number] = [5,7,14];
+      const GOLD: [number,number,number] = [201,161,74];
+      const GRAY: [number,number,number] = [136,146,164];
+      const WHITE: [number,number,number] = [255,255,255];
+      const ML = 30;
 
       const el = containerRef.current!;
-      const canvas = await html2canvas(el, { scale: 2 });
+      const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#080B14' });
       const imgData = canvas.toDataURL("image/png");
 
       const pdf = new jsPDF({ unit: "pt", format: "a4" });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
 
-      const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);
-      const w = canvas.width * ratio;
-      const h = canvas.height * ratio;
-      const x = (pageWidth - w) / 2;
-      const y = 40;
+      // Dark header
+      pdf.setFillColor(201,161,74); pdf.rect(0, 0, pageWidth, 2, 'F');
+      pdf.setFillColor(...NAVY); pdf.rect(0, 2, pageWidth, 52, 'F');
+      pdf.setFontSize(8); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...GOLD);
+      pdf.text('EXECUTIVE PARTNERS', ML, 18);
+      pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(...GRAY);
+      pdf.text('Business Plan Simulator  ·  Private Banking & Wealth Management  ·  Confidential', ML, 29);
+      pdf.setFontSize(14); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...WHITE);
+      pdf.text('Business Plan Simulator', ML, 44);
+      const d = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+      pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(...GRAY);
+      pdf.text(d, pageWidth - ML - pdf.getTextWidth(d), 18);
 
-      pdf.text("Executive Partners – BP Simulator", 40, 24);
-      pdf.addImage(imgData, "PNG", x, y, w, h);
-      pdf.save("bp-simulator.pdf");
+      // Content
+      const imgW = pageWidth - 60;
+      const imgH = (canvas.height / canvas.width) * imgW;
+      pdf.addImage(imgData, "PNG", ML, 64, imgW, imgH, undefined, "FAST");
+
+      // Footer
+      const total = pdf.getNumberOfPages();
+      for (let p = 1; p <= total; p++) {
+        pdf.setPage(p);
+        pdf.setFillColor(10,13,22); pdf.rect(0, pageHeight - 30, pageWidth, 30, 'F');
+        pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(...GOLD);
+        pdf.text('Gil M. Chalem, Managing Partner  ·  Executive Partners', ML, pageHeight - 17);
+        pdf.setTextColor(...GRAY);
+        pdf.text('recruiter@execpartners.ch  ·  execpartners.ch', ML, pageHeight - 7);
+        pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...GOLD);
+        const pg = 'p' + p + '/' + total;
+        pdf.text(pg, pageWidth - ML - pdf.getTextWidth(pg), pageHeight - 7);
+      }
+
+      const blob = pdf.output("blob");
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "ep-bp-simulator.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (e) {
       alert("PDF export requires jspdf & html2canvas to be installed.");
     }
