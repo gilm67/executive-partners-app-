@@ -186,40 +186,60 @@ export default function Section5Analysis() {
       const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4' });
       const pageW = pdf.internal.pageSize.getWidth();
       const pageH = pdf.internal.pageSize.getHeight();
+      const NAVY: [number,number,number] = [5,7,14];
+      const GOLD: [number,number,number] = [201,161,74];
+      const GOLD_PALE: [number,number,number] = [232,196,106];
+      const GRAY: [number,number,number] = [136,146,164];
+      const WHITE: [number,number,number] = [255,255,255];
+      const ML = 30;
 
-      // Title
-      pdf.setTextColor(30);
-      pdf.setFontSize(14);
-      pdf.text('Business Plan Simulator – Analysis Summary', 30, 40);
-
-      // Watermark fallback-safe
-      const anyPdf = pdf as any;
-      try {
-        if (anyPdf.GState && anyPdf.setGState) {
-          pdf.saveGraphicsState();
-          pdf.setGState(new anyPdf.GState({ opacity: 0.08 }));
-          pdf.setFontSize(48);
-          pdf.setTextColor(30);
-          pdf.text('Executive Partners', pageW / 2, pageH / 2, { align: 'center', angle: 30 });
-          pdf.restoreGraphicsState();
-        } else {
-          pdf.setFontSize(48);
-          pdf.setTextColor(220);
-          pdf.text('Executive Partners', pageW / 2, pageH / 2, { align: 'center', angle: 30 });
-        }
-      } catch {
-        pdf.setFontSize(48);
-        pdf.setTextColor(220);
-        pdf.text('Executive Partners', pageW / 2, pageH / 2, { align: 'center', angle: 30 });
-      }
+      // Dark EP header
+      pdf.setFillColor(201,161,74); pdf.rect(0, 0, pageW, 2, 'F');
+      pdf.setFillColor(...NAVY); pdf.rect(0, 2, pageW, 52, 'F');
+      pdf.setFontSize(8); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...GOLD);
+      pdf.text('EXECUTIVE PARTNERS', ML, 18);
+      pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(...GRAY);
+      pdf.text('Business Plan Analysis  ·  Private Banking & Wealth Management  ·  Confidential', ML, 29);
+      pdf.setFontSize(14); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...WHITE);
+      pdf.text('Business Plan', ML, 44);
+      pdf.setFontSize(14); pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...GOLD_PALE);
+      pdf.text(' — Analysis Summary', ML + pdf.getTextWidth('Business Plan'), 44);
+      const dStr = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+      pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(...GRAY);
+      pdf.text(dStr, pageW - ML - pdf.getTextWidth(dStr), 18);
 
       // Snapshot image
       const imgW = pageW - 60;
       const imgH = (canvas.height / canvas.width) * imgW;
-      pdf.addImage(imgData, 'PNG', 30, 60, imgW, imgH, undefined, 'FAST');
+      pdf.addImage(imgData, 'PNG', ML, 64, imgW, imgH, undefined, 'FAST');
+
+      // Footer on all pages
+      const total2 = pdf.getNumberOfPages();
+      for (let p = 1; p <= total2; p++) {
+        pdf.setPage(p);
+        pdf.setFillColor(10,13,22); pdf.rect(0, pageH - 30, pageW, 30, 'F');
+        pdf.setDrawColor(...GOLD); pdf.setLineWidth(0.3);
+        pdf.setGState(pdf.GState({opacity:0.25}));
+        pdf.line(0, pageH - 30, pageW, pageH - 30);
+        pdf.setGState(pdf.GState({opacity:1}));
+        pdf.setFontSize(7); pdf.setFont('helvetica', 'normal'); pdf.setTextColor(...GOLD);
+        pdf.text('Gil M. Chalem, Managing Partner  ·  Executive Partners', ML, pageH - 17);
+        pdf.setTextColor(...GRAY);
+        pdf.text('recruiter@execpartners.ch  ·  execpartners.ch', ML, pageH - 7);
+        pdf.text('Strictly Confidential — Not for Distribution', pageW - ML - pdf.getTextWidth('Strictly Confidential — Not for Distribution'), pageH - 17);
+        pdf.setFont('helvetica', 'bold'); pdf.setTextColor(...GOLD);
+        const pg2 = 'p' + p + '/' + total2;
+        pdf.text(pg2, pageW - ML - pdf.getTextWidth(pg2), pageH - 7);
+      }
 
       const fname = `EP_BP_Analysis_${(i.candidate_name || 'Candidate').replace(/\s+/g,'_')}.pdf`;
-      pdf.save(fname);
+      const blob2 = pdf.output('blob');
+      const url2 = URL.createObjectURL(blob2);
+      const link2 = document.createElement('a');
+      link2.href = url2; link2.download = fname;
+      document.body.appendChild(link2); link2.click();
+      document.body.removeChild(link2);
+      setTimeout(() => URL.revokeObjectURL(url2), 1000);
     } catch (e) {
       console.error(e);
       setSaved('err');
