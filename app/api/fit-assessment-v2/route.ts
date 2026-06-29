@@ -1,157 +1,171 @@
 export const dynamic = 'force-dynamic'
 
-import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import { NextRequest, NextResponse } from 'next/server'
 
-// Resend initialized inside handler (moved to avoid build-time env error);
+interface FormData {
+  aumRange: string; feeIncome: string; portabilityEstimate: string
+  institutionType: string; seniority: string; primaryGeography: string
+  secondaryGeography: string; clientTier: string; languages: string[]
+  mandateStyle: string; employmentStructure: string; targetBookingCentre: string
+  priorityFactor: string; noticePeriod: string; nonSolicitation: string
+  moveMotivation: string; name: string; email: string
+}
 
-const SHEET_ID = "1Osr2RrgQZqDjK28knSXlqNXqJk2rcaATLqE1Yjy_W0c";
-const SHEET_TAB = "SpecialistBench";
+const AUM: Record<string,string> = { under_50m:'Under CHF 50M', '50m_150m':'CHF 50M-150M', '150m_500m':'CHF 150M-500M', '500m_1b':'CHF 500M-1B', above_1b:'Above CHF 1B' }
+const FEE: Record<string,string> = { under_500k:'Under CHF 500K', '500k_1m':'CHF 500K-1M', '1m_2m':'CHF 1M-2M', '2m_5m':'CHF 2M-5M', above_5m:'Above CHF 5M' }
+const PORT: Record<string,string> = { under_30:'Under 30%', '30_50':'30-50%', '50_70':'50-70%', '70_90':'70-90%', above_90:'Above 90%' }
+const INST: Record<string,string> = { big4_swiss:'Big 4 Swiss bank', swiss_private_boutique:'Swiss private bank boutique', intl_private_bank:'International private bank', eam:'EAM', family_office:'Family Office', other:'Other' }
+const SEN: Record<string,string> = { ia_rm:'IA / RM', senior_rm:'Senior RM', team_head_md:'Team Head / MD', market_head:'Market Head' }
+const GEO: Record<string,string> = { gcc:'GCC', israel:'Israel', europe_france:'France', europe_italy:'Italy', europe_iberia:'Iberia', europe_dach:'DACH', latam_brazil:'Brazil', latam_mexico:'Mexico/Colombia', latam_southern:'Argentina/Chile', cee:'CEE', swiss_domestic:'Swiss Domestic', uk_onshore:'UK Onshore', apac_singapore:'Singapore', apac_hk:'Hong Kong', apac_other:'Japan/Australia', nri:'NRI India', cis:'CIS', mea:'MEA/Africa', multi:'Multi-market' }
+const TIER: Record<string,string> = { hnw:'HNW', uhnw:'UHNW', vhnw_fo:'VHNW/FO', mixed:'Mixed HNW/UHNW' }
+const LANG: Record<string,string> = { en:'English', fr:'French', de:'German', it:'Italian', ar:'Arabic', he:'Hebrew', ru:'Russian', pt:'Portuguese', es:'Spanish', zh:'Mandarin/Cantonese', tr:'Turkish', pl:'Polish/Czech/Hungarian', hi:'Hindi/Gujarati', other:'Other' }
+const MAN: Record<string,string> = { hunter:'Hunter', farmer:'Farmer', both:'Hunter+Farmer' }
+const EMP: Record<string,string> = { employed_pb:'Employed private bank', eam:'EAM', both:'Open to both' }
+const BOOK: Record<string,string> = { geneva:'Geneva', zurich:'Zurich', dubai:'Dubai (DIFC)', abu_dhabi:'Abu Dhabi (ADGM)', singapore:'Singapore', hong_kong:'Hong Kong', london:'London', luxembourg:'Luxembourg', liechtenstein:'Liechtenstein', monaco:'Monaco', tel_aviv:'Tel Aviv', miami:'Miami', new_york:'New York', multiple:'Multiple/Flexible' }
+const NOTICE: Record<string,string> = { immediate:'Available immediately', '1_3m':'1-3 months', '3_6m':'3-6 months', '6_12m':'6-12 months', exploring:'Exploring only' }
+const SOL: Record<string,string> = { active:'Non-solicitation ACTIVE', expired:'Non-solicitation expired', none:'No restriction', unsure:'Unsure' }
+const MOT: Record<string,string> = { comp:'Compensation', leadership:'Leadership change', strategy:'Strategic direction', opportunity:'Market opportunity', personal:'Personal/lifestyle', platform:'Platform limitations' }
+const PRI: Record<string,string> = { compensation:'Compensation structure', brand:'Platform brand', market:'Market opportunity', autonomy:'Autonomy', culture:'Culture/Leadership', growth:'Growth/Promotion' }
 
-async function appendToSheet(row: string[]) {
-  const serviceAccountKey = JSON.parse(
-    process.env.GOOGLE_SERVICE_ACCOUNT_KEY || "{}"
-  );
+const SYSTEM = `You are the head of market intelligence at Executive Partners, a Geneva-based boutique executive search firm specializing in private banking and wealth management. Give a frank expert assessment — the honest analysis a senior recruiter gives privately, not a marketing pitch. If the profile has real limitations, name them. If a market is cold, say so.
 
-  const { GoogleAuth } = await import("google-auth-library");
-  const auth = new GoogleAuth({
-    credentials: serviceAccountKey,
-    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-  });
-  const client = await auth.getClient();
-  const token = await client.getAccessToken();
+KEY PRINCIPLES:
+1. AUM + revenue + portability together form the commercial proposition — never evaluate AUM alone
+2. Portability matters more than AUM size
+3. Language capability is often the single most decisive market access filter — weight it heavily
+4. Active non-solicitation clauses are genuinely limiting — do not minimize them
+5. Notice periods over 6 months reduce live mandate options materially
+6. UHNW client tiers open more doors than HNW
+7. Hunter profiles are in higher demand in 2026
+8. Never name specific institutions — use categories only
+9. Do not invent statistics
 
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_TAB}!A1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+Return ONLY valid JSON, no markdown, no preamble:
+{
+  "headline": "3-6 word headline",
+  "overallFit": "Exceptional|Strong|Good|Moderate|Limited",
+  "positioning": "3-4 sentences referencing AUM, revenue, portability, geography and seniority together",
+  "commercialSummary": "2-3 sentences on commercial attractiveness and portability context",
+  "topMarkets": [
+    {
+      "city": "city name",
+      "flag": "emoji flag",
+      "fitLevel": "Strong|Good|Moderate|Weak",
+      "rationale": "2-3 sentences specific to this profile",
+      "hiringContext": "1-2 sentences on current 2026 market activity",
+      "keyRequirement": "single most important threshold — omit field entirely if none"
+    }
+  ],
+  "strengths": ["specific strength 1", "specific strength 2", "specific strength 3"],
+  "gaps": ["honest gap 1", "honest gap 2"],
+  "legalNote": "practical guidance if non-solicitation is active — omit field entirely if no active constraint",
+  "timingNote": "timing context if notice is 6+ months or exploring only — omit field entirely if not material",
+  "epAssessment": "2-3 sentences on EP recommendation and what a confidential conversation unlocks",
+  "urgency": "high|moderate|low"
+}`
 
-  await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token.token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ values: [row] }),
-  });
+function buildProfile(f: FormData): string {
+  const langs = f.languages.map(l => LANG[l] || l).join(', ')
+  const sec = f.secondaryGeography && f.secondaryGeography !== 'none' ? GEO[f.secondaryGeography] || f.secondaryGeography : 'None'
+  return `COMMERCIAL PROFILE
+AUM: ${AUM[f.aumRange] || f.aumRange}
+Annual fee income: ${FEE[f.feeIncome] || f.feeIncome}
+Portable AUM estimate: ${PORT[f.portabilityEstimate] || f.portabilityEstimate}
+Current institution: ${INST[f.institutionType] || f.institutionType}
+Seniority: ${SEN[f.seniority] || f.seniority}
+
+CLIENT FOCUS
+Primary geography: ${GEO[f.primaryGeography] || f.primaryGeography}
+Secondary market: ${sec}
+Client tier: ${TIER[f.clientTier] || f.clientTier}
+Languages: ${langs}
+
+CAREER PREFERENCES
+Mandate style: ${MAN[f.mandateStyle] || f.mandateStyle}
+Employment: ${EMP[f.employmentStructure] || f.employmentStructure}
+Target booking centre: ${BOOK[f.targetBookingCentre] || f.targetBookingCentre}
+Primary driver: ${PRI[f.priorityFactor] || f.priorityFactor}
+
+TIMING & CONSTRAINTS
+Availability: ${NOTICE[f.noticePeriod] || f.noticePeriod}
+Legal: ${SOL[f.nonSolicitation] || f.nonSolicitation}
+Move motivation: ${MOT[f.moveMotivation] || f.moveMotivation}`
+}
+
+async function getSheetToken(): Promise<string> {
+  const key = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY || '{}')
+  const { client_email, private_key } = key
+  const now = Math.floor(Date.now() / 1000)
+  const enc = (o: object) => btoa(JSON.stringify(o)).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_')
+  const header = { alg:'RS256', typ:'JWT' }
+  const payload = { iss:client_email, scope:'https://www.googleapis.com/auth/spreadsheets', aud:'https://oauth2.googleapis.com/token', exp:now+3600, iat:now }
+  const toSign = `${enc(header)}.${enc(payload)}`
+  const pem = private_key.replace(/\\n/g,'\n').replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----/g,'').replace(/\n/g,'')
+  const der = Uint8Array.from(atob(pem), c => c.charCodeAt(0))
+  const ck = await crypto.subtle.importKey('pkcs8', der.buffer, { name:'RSASSA-PKCS1-v1_5', hash:'SHA-256' }, false, ['sign'])
+  const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', ck, new TextEncoder().encode(toSign))
+  const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_')
+  const jwt = `${toSign}.${sigB64}`
+  const tr = await fetch('https://oauth2.googleapis.com/token', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:`grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${jwt}` })
+  const td = await tr.json()
+  return td.access_token
+}
+
+async function logToSheets(f: FormData, fitLevel: string, headline: string) {
+  try {
+    const token = await getSheetToken()
+    const row = [new Date().toISOString(), f.name||'', f.email, AUM[f.aumRange]||f.aumRange, FEE[f.feeIncome]||f.feeIncome, PORT[f.portabilityEstimate]||f.portabilityEstimate, INST[f.institutionType]||f.institutionType, SEN[f.seniority]||f.seniority, GEO[f.primaryGeography]||f.primaryGeography, TIER[f.clientTier]||f.clientTier, f.languages.map(l=>LANG[l]||l).join(', '), MAN[f.mandateStyle]||f.mandateStyle, BOOK[f.targetBookingCentre]||f.targetBookingCentre, NOTICE[f.noticePeriod]||f.noticePeriod, SOL[f.nonSolicitation]||f.nonSolicitation, fitLevel, headline]
+    const SHEET_ID = '1Osr2RrgQZqDjK28knSXlqNXqJk2rcaATLqE1Yjy_W0c'
+    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Assessments!A:Q:append?valueInputOption=USER_ENTERED`, { method:'POST', headers:{ Authorization:`Bearer ${token}`, 'Content-Type':'application/json' }, body:JSON.stringify({ values:[row] }) })
+  } catch(e) { console.error('Sheets error:', e) }
+}
+
+async function sendEmails(f: FormData, fitLevel: string, headline: string) {
+  const key = process.env.RESEND_API_KEY
+  if (!key) return
+  const greeting = f.name ? `Dear ${f.name},` : 'Dear candidate,'
+  const emails = [
+    { from:'Executive Partners <recruiter@execpartners.ch>', to:['gil.chalem@execpartners.ch'], subject:`[Fit Assessment] ${fitLevel} — ${f.name||f.email}`, html:`<h2 style="color:#C9A96E">New Fit Assessment: ${fitLevel}</h2><p><strong>${headline}</strong></p><p>Name: ${f.name||'—'}<br>Email: ${f.email}<br>AUM: ${AUM[f.aumRange]||f.aumRange}<br>Revenue: ${FEE[f.feeIncome]||f.feeIncome}<br>Portability: ${PORT[f.portabilityEstimate]||f.portabilityEstimate}<br>Institution: ${INST[f.institutionType]||f.institutionType}<br>Seniority: ${SEN[f.seniority]||f.seniority}<br>Geography: ${GEO[f.primaryGeography]||f.primaryGeography}<br>Languages: ${f.languages.map(l=>LANG[l]||l).join(', ')}<br>Booking: ${BOOK[f.targetBookingCentre]||f.targetBookingCentre}<br>Notice: ${NOTICE[f.noticePeriod]||f.noticePeriod}<br>Legal: ${SOL[f.nonSolicitation]||f.nonSolicitation}</p>` },
+    { from:'Executive Partners <recruiter@execpartners.ch>', to:[f.email], subject:'Your Private Bank Fit Assessment — Executive Partners', html:`<p>${greeting}</p><p>Thank you for completing your Private Bank Fit Assessment.</p><p>Your market fit has been assessed as <strong>${fitLevel}</strong>.</p><p style="border-left:3px solid #C9A96E;padding:8px 16px;font-style:italic">${headline}</p><p>Our team reviews every submission against live mandates within 48 hours. Schedule a confidential call: <a href="https://calendly.com/execpartners/15-minute-career-consultation">calendly.com/execpartners</a></p><p>Confidentially,<br><strong>Gil M. Chalem</strong><br>Managing Partner, Executive Partners</p>` },
+  ]
+  await Promise.allSettled(emails.map(e => fetch('https://api.resend.com/emails', { method:'POST', headers:{ Authorization:`Bearer ${key}`, 'Content-Type':'application/json' }, body:JSON.stringify(e) })))
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const {
-      firstName,
-      lastName,
-      email,
-      role,
-      institution,
-      experience,
-      markets,
-      languages,
-      brief,
-    } = body;
+    const form: FormData = await req.json()
+    if (!form.email) return NextResponse.json({ error:'Email is required' }, { status:400 })
 
-    // Basic validation
-    if (!firstName || !lastName || !email || !role || !institution || !experience) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const profile = buildProfile(form)
+
+    const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'x-api-key': process.env.ANTHROPIC_API_KEY||'', 'anthropic-version':'2023-06-01', 'Content-Type':'application/json' },
+      body:JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:2000, system:SYSTEM, messages:[{ role:'user', content:`Generate a Market Fit Assessment for this private banking professional:\n\n${profile}` }] })
+    })
+
+    if (!anthropicRes.ok) {
+      const err = await anthropicRes.text()
+      console.error('Anthropic error:', err)
+      return NextResponse.json({ error:'Assessment generation failed' }, { status:500 })
     }
 
-    const timestamp = new Date().toISOString();
-    const fullName = `${firstName} ${lastName}`;
-    const marketsStr = Array.isArray(markets) ? markets.join(", ") : "";
+    const ad = await anthropicRes.json()
+    const raw: string = ad.content?.[0]?.text || ''
+    const cleaned = raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim()
 
-    // 1. Log to Google Sheets
-    try {
-      await appendToSheet([
-        timestamp,
-        fullName,
-        email,
-        role,
-        institution,
-        experience,
-        marketsStr,
-        languages || "",
-        brief || "",
-        "New",
-      ]);
-    } catch (sheetErr) {
-      console.error("Sheet append failed:", sheetErr);
-      // Non-blocking: continue even if Sheets fails
-    }
+    let result: Record<string, unknown>
+    try { result = JSON.parse(cleaned) }
+    catch { console.error('JSON parse failed:', cleaned); return NextResponse.json({ error:'Assessment parsing failed' }, { status:500 }) }
 
-    // 2. Notify EP team
-    await new (require('resend').Resend)(process.env.RESEND_API_KEY).emails.send({
-      from: "Executive Partners <recruiter@execpartners.ch>",
-      to: ["recruiter@execpartners.ch"],
-      subject: `[Specialist Bench] New profile: ${fullName} — ${role}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; color: #1a1a1a;">
-          <div style="background: #1B3A6B; padding: 24px; border-radius: 8px 8px 0 0;">
-            <h2 style="color: #C9A14A; margin: 0; font-size: 16px; letter-spacing: 1px; text-transform: uppercase;">
-              Specialist Bench — New Registration
-            </h2>
-          </div>
-          <div style="background: #f8f7f4; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e3de;">
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr><td style="padding: 8px 0; font-size: 13px; color: #666; width: 140px;">Name</td><td style="padding: 8px 0; font-weight: 600; font-size: 14px;">${fullName}</td></tr>
-              <tr><td style="padding: 8px 0; font-size: 13px; color: #666;">Email</td><td style="padding: 8px 0; font-size: 14px;"><a href="mailto:${email}" style="color: #1B3A6B;">${email}</a></td></tr>
-              <tr><td style="padding: 8px 0; font-size: 13px; color: #666;">Role</td><td style="padding: 8px 0; font-size: 14px;">${role}</td></tr>
-              <tr><td style="padding: 8px 0; font-size: 13px; color: #666;">Institution</td><td style="padding: 8px 0; font-size: 14px;">${institution}</td></tr>
-              <tr><td style="padding: 8px 0; font-size: 13px; color: #666;">Experience</td><td style="padding: 8px 0; font-size: 14px;">${experience}</td></tr>
-              <tr><td style="padding: 8px 0; font-size: 13px; color: #666;">Markets</td><td style="padding: 8px 0; font-size: 14px;">${marketsStr || "Not specified"}</td></tr>
-              <tr><td style="padding: 8px 0; font-size: 13px; color: #666;">Languages</td><td style="padding: 8px 0; font-size: 14px;">${languages || "Not specified"}</td></tr>
-              ${brief ? `<tr><td style="padding: 8px 0; font-size: 13px; color: #666; vertical-align: top;">Notes</td><td style="padding: 8px 0; font-size: 14px;">${brief}</td></tr>` : ""}
-            </table>
-          </div>
-          <p style="font-size: 11px; color: #999; margin-top: 16px;">
-            Received: ${timestamp} — Executive Partners Specialist Bench
-          </p>
-        </div>
-      `,
-    });
+    const fitLevel = (result.overallFit as string) || 'Good'
+    const headline = (result.headline as string) || 'Assessment complete'
 
-    // 3. Confirmation to candidate
-    await new (require('resend').Resend)(process.env.RESEND_API_KEY).emails.send({
-      from: "Executive Partners <recruiter@execpartners.ch>",
-      to: [email],
-      subject: "You are on the Executive Partners Specialist Bench",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; color: #1a1a1a;">
-          <div style="background: #1B3A6B; padding: 32px; border-radius: 8px 8px 0 0; text-align: center;">
-            <h1 style="color: #C9A14A; margin: 0; font-size: 20px; letter-spacing: 0.5px;">
-              Executive Partners
-            </h1>
-            <p style="color: white; margin: 8px 0 0; font-size: 13px; opacity: 0.7;">Private Banking Recruitment, Geneva</p>
-          </div>
-          <div style="background: white; padding: 36px; border: 1px solid #e5e3de; border-top: none; border-radius: 0 0 8px 8px;">
-            <p style="color: #1B3A6B; font-size: 18px; font-weight: 600; margin-top: 0;">Dear ${firstName},</p>
-            <p style="line-height: 1.7; color: #444;">
-              Your profile has been registered on our Specialist Bench. We have noted your background as <strong>${role}</strong> at ${institution}.
-            </p>
-            <p style="line-height: 1.7; color: #444;">
-              We work exclusively with leading private banks and wealth managers in Switzerland and internationally. When a partner institution requests a profile that matches yours, we will reach out to you directly and confidentially.
-            </p>
-            <p style="line-height: 1.7; color: #444;">
-              In the meantime, there is nothing you need to do. No follow-up required on your side.
-            </p>
-            <div style="background: #f8f7f4; border-left: 3px solid #C9A14A; padding: 16px 20px; margin: 28px 0; border-radius: 0 8px 8px 0;">
-              <p style="margin: 0; font-size: 13px; color: #555; line-height: 1.6;">
-                Should your situation change, you can update your profile or withdraw your registration at any time by replying to this email or writing to <a href="mailto:recruiter@execpartners.ch" style="color: #1B3A6B;">recruiter@execpartners.ch</a>.
-              </p>
-            </div>
-            <p style="line-height: 1.7; color: #444; margin-bottom: 0;">
-              With kind regards,
-            </p>
-            <p style="color: #1B3A6B; font-weight: 600; margin-top: 6px;">
-              Gil M. Chalem<br/>
-              <span style="font-weight: 400; font-size: 13px; color: #666;">Managing Partner, Executive Partners</span><br/>
-              <span style="font-weight: 400; font-size: 13px; color: #666;">execpartners.ch</span>
-            </p>
-          </div>
-        </div>
-      `,
-    });
+    Promise.allSettled([logToSheets(form, fitLevel, headline), sendEmails(form, fitLevel, headline)])
 
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error("Specialist bench submission error:", err);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return NextResponse.json({ result })
+  } catch(err) {
+    console.error('fit-assessment-v2 error:', err)
+    return NextResponse.json({ error:'Internal server error' }, { status:500 })
   }
 }
