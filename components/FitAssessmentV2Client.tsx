@@ -104,10 +104,11 @@ function Select({ value, onChange, options, placeholder = 'Select an option' }: 
                 background: opt.value === value ? 'rgba(201,169,110,0.11)' : 'transparent',
                 border: 'none', borderBottom: i < options.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
                 cursor: 'pointer', display: 'flex', alignItems: 'center',
-                justifyContent: 'space-between', gap: 12, transition: 'background 0.1s',
+                justifyContent: 'space-between', gap: 12, transition: 'background 0.1s', outline: 'none',
               }}
               onMouseEnter={e => { if (opt.value !== value) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)' }}
               onMouseLeave={e => { if (opt.value !== value) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
+              onFocus={e => { (e.currentTarget as HTMLElement).style.outline = 'none' }}
             >
               <div>
                 <div style={{ fontSize: 13, color: opt.value === value ? '#e8d5a3' : '#c0cfe0', lineHeight: 1.4 }}>{opt.label}</div>
