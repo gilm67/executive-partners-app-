@@ -83,23 +83,137 @@ export async function POST(req: NextRequest) {
     // Candidate confirmation email
     if (email && email.includes("@")) {
       const greeting = (name || "").trim().split(" ")[0] || "Colleague";
+      const demandColor = demand === "High" ? "#C9A14A" : demand === "Emerging" ? "#5a88b0" : "#a07840";
       await resend.emails.send({
         from: "Gil M. Chalem · Executive Partners <noreply@auth.execpartners.ch>",
         to: email,
         subject: `Your Private Bank Fit Assessment — ${segment}`,
-        html: `<div style="font-family:Georgia,serif;max-width:560px;color:#1a1a2e;padding:32px 0">
-          <p style="font-size:13px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#C9A14A;margin:0 0 24px">Executive Partners · Confidential</p>
-          <p style="font-size:16px;margin:0 0 16px">Dear ${greeting},</p>
-          <p style="font-size:15px;margin:0 0 16px">Your market positioning assessment has been completed.</p>
-          <div style="background:#f9f7f2;border-left:3px solid #C9A14A;padding:16px 20px;margin:0 0 20px">
-            <p style="font-size:13px;font-weight:600;color:#1a1a2e;margin:0 0 6px">${segment}</p>
-            <p style="font-size:13px;color:#444;margin:0">Market Demand: <strong>${demand}</strong></p>
-          </div>
-          <p style="font-size:14px;color:#444;margin:0 0 16px">We will review your profile against current market activity and be in touch within 48 hours if we identify relevant positioning for your specific configuration.</p>
-          <p style="font-size:14px;color:#444;margin:0 0 24px">If you would like to discuss your positioning in confidence before then, I am available for a 20-minute call.</p>
-          <p style="font-size:14px;margin:24px 0 0"><a href="https://www.execpartners.ch/en/contact" style="background:#C9A14A;color:#000;padding:10px 22px;border-radius:20px;text-decoration:none;font-weight:600;font-size:13px">Schedule a confidential call &#8594;</a></p>
-          <p style="font-size:13px;color:#888;margin:32px 0 0;border-top:1px solid #eee;padding-top:16px">Gil M. Chalem<br>Managing Partner, Executive Partners<br><a href="https://www.execpartners.ch" style="color:#C9A14A">execpartners.ch</a></p>
-        </div>`,
+        html: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f4f4f0;font-family:Georgia,'Times New Roman',serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f0;padding:40px 16px">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:580px">
+
+        <!-- HEADER -->
+        <tr><td style="background:#05070E;padding:0">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr><td style="height:3px;background:linear-gradient(90deg,#05070E 0%,#C9A14A 35%,#C9A14A 65%,#05070E 100%)"></td></tr>
+            <tr><td style="padding:28px 36px 24px">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <p style="margin:0 0 6px;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#C9A14A;font-family:Arial,sans-serif;font-weight:700">Executive Partners</p>
+                    <p style="margin:0;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.35);font-family:Arial,sans-serif">Private Banking · Geneva · Confidential</p>
+                  </td>
+                  <td align="right" style="font-size:9px;color:rgba(255,255,255,0.25);font-family:Arial,sans-serif;letter-spacing:1px">
+                    Market Intelligence
+                  </td>
+                </tr>
+              </table>
+            </td></tr>
+            <tr><td style="padding:0 36px 32px">
+              <h1 style="margin:0;font-size:26px;font-weight:400;color:#ffffff;letter-spacing:-0.5px;line-height:1.2">
+                Private Bank<br><span style="color:#C9A14A;font-weight:700">Fit Assessment</span>
+              </h1>
+            </td></tr>
+          </table>
+        </td></tr>
+
+        <!-- GREETING -->
+        <tr><td style="background:#ffffff;padding:36px 36px 0">
+          <p style="margin:0 0 8px;font-size:15px;color:#1a1a2e">Dear ${greeting},</p>
+          <p style="margin:0;font-size:14px;color:#555;line-height:1.7">
+            Your market positioning assessment has been completed and is summarised below.
+          </p>
+        </td></tr>
+
+        <!-- SEGMENT CARD -->
+        <tr><td style="background:#ffffff;padding:24px 36px">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#05070E;border:1px solid rgba(201,161,74,0.2)">
+            <tr><td style="height:2px;background:#C9A14A"></td></tr>
+            <tr><td style="padding:20px 24px">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <p style="margin:0 0 4px;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(201,161,74,0.6);font-family:Arial,sans-serif;font-weight:700">Market Segment</p>
+                    <p style="margin:0;font-size:18px;font-weight:700;color:#ffffff;letter-spacing:-0.3px">${segment}</p>
+                  </td>
+                  <td align="right" valign="top">
+                    <table cellpadding="0" cellspacing="0" style="border:1px solid ${demandColor};background:rgba(201,161,74,0.08)">
+                      <tr><td style="padding:10px 16px;text-align:center">
+                        <p style="margin:0 0 3px;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.35);font-family:Arial,sans-serif">Demand</p>
+                        <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${demandColor};font-family:Arial,sans-serif">${demand}</p>
+                      </td></tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td></tr>
+            <tr><td style="padding:0 24px 20px">
+              <p style="margin:12px 0 0;font-size:12px;color:rgba(255,255,255,0.4);line-height:1.7;font-style:italic">${rationale}</p>
+            </td></tr>
+          </table>
+        </td></tr>
+
+        <!-- BODY TEXT -->
+        <tr><td style="background:#ffffff;padding:8px 36px 28px">
+          <p style="margin:0 0 14px;font-size:14px;color:#444;line-height:1.75">
+            We will review your profile against current market activity and contact you within 48 hours if we identify relevant positioning for your specific configuration.
+          </p>
+          <p style="margin:0;font-size:14px;color:#444;line-height:1.75">
+            If you would like to discuss your positioning in confidence before then, I am available for a 20-minute call.
+          </p>
+        </td></tr>
+
+        <!-- CTA -->
+        <tr><td style="background:#ffffff;padding:4px 36px 36px">
+          <table cellpadding="0" cellspacing="0">
+            <tr><td style="background:#C9A14A">
+              <a href="https://www.execpartners.ch/en/contact"
+                style="display:inline-block;padding:14px 32px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#000000;text-decoration:none;font-family:Arial,sans-serif">
+                Schedule a Confidential Call &rarr;
+              </a>
+            </td></tr>
+          </table>
+        </td></tr>
+
+        <!-- DIVIDER -->
+        <tr><td style="background:#ffffff;padding:0 36px">
+          <div style="height:1px;background:#e8e4dc"></div>
+        </td></tr>
+
+        <!-- SIGNATURE -->
+        <tr><td style="background:#ffffff;padding:24px 36px 36px">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td>
+                <p style="margin:0 0 3px;font-size:14px;font-weight:600;color:#1a1a2e">Gil M. Chalem</p>
+                <p style="margin:0 0 3px;font-size:12px;color:#888">Managing Partner, Executive Partners</p>
+                <p style="margin:0;font-size:12px"><a href="https://www.execpartners.ch" style="color:#C9A14A;text-decoration:none">execpartners.ch</a></p>
+              </td>
+              <td align="right" valign="bottom">
+                <p style="margin:0;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#ccc;font-family:Arial,sans-serif">Geneva · Switzerland</p>
+              </td>
+            </tr>
+          </table>
+        </td></tr>
+
+        <!-- FOOTER -->
+        <tr><td style="background:#05070E;padding:20px 36px">
+          <p style="margin:0;font-size:10px;color:rgba(255,255,255,0.2);font-family:Arial,sans-serif;line-height:1.7;text-align:center">
+            Executive Partners Sarl · Geneva · recruiter@execpartners.ch<br>
+            This assessment is based on structural market dynamics only. Treated with absolute discretion under Swiss data protection standards.
+          </p>
+        </td></tr>
+        <tr><td style="height:3px;background:linear-gradient(90deg,#05070E 0%,#C9A14A 35%,#C9A14A 65%,#05070E 100%);opacity:0.5"></td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`,
       });
     }
 
