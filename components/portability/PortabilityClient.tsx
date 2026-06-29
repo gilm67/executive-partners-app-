@@ -397,14 +397,17 @@ export default function PortabilityClient({
     setExporting(true);
     try {
       const NAVY: [number,number,number] = [27,58,107];
-      const GOLD: [number,number,number] = [212,175,55];
-      const DARK: [number,number,number] = [20,20,30];
-      const GRAY: [number,number,number] = [100,100,110];
-      const LIGHT: [number,number,number] = [245,246,248];
+      const GOLD: [number,number,number] = [201,161,74];
+      const DARK: [number,number,number] = [8,11,20];
+      const CARD: [number,number,number] = [14,19,32];
+      const ROW_ALT: [number,number,number] = [12,16,28];
+      const GRAY: [number,number,number] = [136,146,164];
+      const LIGHT: [number,number,number] = [197,205,216];
       const WHITE: [number,number,number] = [255,255,255];
-      const GREEN: [number,number,number] = [34,139,80];
-      const RED: [number,number,number] = [185,50,50];
-      const AMBER: [number,number,number] = [180,120,20];
+      const GREEN: [number,number,number] = [76,175,125];
+      const RED: [number,number,number] = [224,82,82];
+      const AMBER: [number,number,number] = [212,136,42];
+      const GOLD_PALE: [number,number,number] = [232,196,106];
 
       const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4' });
       const W = pdf.internal.pageSize.getWidth();
@@ -419,30 +422,45 @@ export default function PortabilityClient({
         pdf.setFillColor(...col); pdf.rect(x, yy, w, h, 'F');
       };
       const hline = (yy: number, col: [number,number,number] = GOLD) => {
-        pdf.setDrawColor(...col); pdf.setLineWidth(0.5); pdf.line(ML, yy, MR, yy);
+        pdf.setDrawColor(...col); pdf.setLineWidth(0.3);
+        pdf.setGState(pdf.GState({opacity:0.25}));
+        pdf.line(ML, yy, MR, yy);
+        pdf.setGState(pdf.GState({opacity:1}));
       };
       const bar = (x: number, yy: number, w: number, h: number, pct: number) => {
-        fill(x, yy, w, h, LIGHT);
+        fill(x, yy, w, h, [26,32,53]);
         const col: [number,number,number] = pct >= 70 ? GREEN : pct >= 45 ? AMBER : RED;
-        fill(x, yy, (w * Math.min(pct,100)) / 100, h, col);
+        if (pct > 0) fill(x, yy, Math.max((w * Math.min(pct,100)) / 100, h), h, col);
       };
 
       // ── HEADER ──
-      fill(0, 0, W, 88, NAVY);
-      sf(9, 'bold', GOLD); pdf.text('EXECUTIVE PARTNERS', ML, 22);
-      sf(8, 'normal', WHITE); pdf.text('Private Banking & Wealth Management Search  ·  Geneva  ·  Confidential', ML, 35);
-      sf(17, 'bold', WHITE); pdf.text('Portability Readiness Score™', ML, 62);
-      sf(9, 'normal', GOLD); pdf.text('Advanced Diagnostic', ML, 76);
+      fill(0, 0, W, 2, GOLD); // gold top bar
+      fill(0, 2, W, 88, NAVY);
+      sf(8, 'bold', GOLD); pdf.text('EXECUTIVE PARTNERS', ML, 20);
+      sf(7, 'normal', GRAY); pdf.text('Private Banking & Wealth Management Search  ·  Geneva  ·  Confidential', ML, 32);
+      sf(19, 'bold', WHITE); pdf.text('Portability Readiness Score', ML, 60);
+      sf(19, 'bold', GOLD); pdf.text('™', ML + pdf.getTextWidth('Portability Readiness Score'), 60);
+      sf(8, 'normal', GOLD_PALE); pdf.text('Advanced Diagnostic', ML, 76);
       const dateStr = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-      sf(8, 'normal', WHITE); pdf.text(dateStr, MR - 55, 22);
-      sf(26, 'bold', GOLD); pdf.text(`${computed.overallPct}%`, MR - 72, 62);
-      sf(7, 'normal', WHITE); pdf.text('OVERALL SCORE', MR - 76, 74);
-      y = 100;
+      sf(7, 'normal', GRAY); pdf.text(dateStr, MR - 60, 20);
+      // Score badge box
+      pdf.setFillColor(14,19,32); pdf.roundedRect(MR - 80, 12, 68, 68, 4, 4, 'F');
+      pdf.setDrawColor(...GOLD); pdf.setLineWidth(0.6); pdf.setGState(pdf.GState({opacity: 0.4}));
+      pdf.roundedRect(MR - 80, 12, 68, 68, 4, 4, 'S');
+      pdf.setGState(pdf.GState({opacity: 1}));
+      sf(28, 'bold', GOLD); const scoreStr = String(computed.overallPct)+'%';
+      const sW = pdf.getTextWidth(scoreStr);
+      pdf.text(scoreStr, MR - 80 + (68 - sW)/2, 56);
+      sf(6, 'bold', GRAY); const oLabel = 'OVERALL SCORE';
+      const oW = pdf.getTextWidth(oLabel);
+      pdf.text(oLabel, MR - 80 + (68 - oW)/2, 71);
+      y = 96;
 
       // ── PROFILE STRIP ──
-      fill(ML, y, CW, 34, LIGHT);
-      sf(7, 'bold', NAVY); pdf.text('CANDIDATE PROFILE', ML+8, y+11);
-      sf(8, 'normal', DARK);
+      fill(ML, y, CW, 34, CARD);
+      pdf.setDrawColor(30,38,60); pdf.setLineWidth(0.4); pdf.rect(ML, y, CW, 34, 'S');
+      sf(7, 'bold', GOLD); pdf.text('CANDIDATE PROFILE', ML+8, y+11);
+      sf(8, 'normal', LIGHT);
       const pItems = [
         profile.market && `Market: ${profile.market}`,
         profile.mainHub && `Hub: ${profile.mainHub}`,
@@ -462,36 +480,51 @@ export default function PortabilityClient({
       const cw2 = (CW - 12) / 3;
       cards.forEach((card, idx) => {
         const cx = ML + idx * (cw2 + 6);
-        fill(cx, y, cw2, 56, WHITE);
-        pdf.setDrawColor(...LIGHT); pdf.setLineWidth(0.5); pdf.rect(cx, y, cw2, 56, 'S');
-        sf(7, 'bold', GRAY); pdf.text(card.label, cx+8, y+13);
         const sc: [number,number,number] = card.score >= 70 ? GREEN : card.score >= 45 ? AMBER : RED;
-        sf(20, 'bold', sc); pdf.text(`${card.score}%`, cx+8, y+37);
-        sf(7, 'normal', GRAY); pdf.text(String(card.level||''), cx+8, y+49);
-        bar(cx+8, y+52, cw2-16, 3, card.score);
+        fill(cx, y, cw2, 58, CARD);
+        pdf.setDrawColor(...sc); pdf.setLineWidth(0.5);
+        pdf.setGState(pdf.GState({opacity:0.35}));
+        pdf.rect(cx, y, cw2, 58, 'S');
+        pdf.setGState(pdf.GState({opacity:1}));
+        sf(6, 'bold', GRAY); pdf.text(card.label, cx+8, y+13);
+        sf(22, 'bold', sc); pdf.text(`${card.score}%`, cx+8, y+38);
+        sf(7, 'normal', GRAY); pdf.text(String(card.level||''), cx+8, y+50);
+        bar(cx+8, y+54, cw2-16, 3, card.score);
       });
-      y += 66;
+      y += 70;
 
       // ── VERDICT BAND ──
-      const vc: [number,number,number] = computed.overallPct >= 72 ? GREEN : computed.overallPct >= 55 ? AMBER : RED;
-      fill(ML, y, CW, 30, vc);
-      sf(9, 'bold', WHITE); pdf.text(String(computed.overallLevel||''), ML+10, y+13);
-      sf(8, 'normal', WHITE);
-      pdf.text(`Transfer range: ${computed.expectedTransferRange}   ·   Onboarding: ${computed.onboardingSpeed}`, ML+10, y+24);
-      y += 40;
+      fill(ML, y, CW, 34, [26,18,0]);
+      pdf.setDrawColor(...GOLD); pdf.setLineWidth(0.6);
+      pdf.setGState(pdf.GState({opacity:0.5}));
+      pdf.rect(ML, y, CW, 34, 'S');
+      pdf.setGState(pdf.GState({opacity:1}));
+      sf(9, 'bold', GOLD_PALE); pdf.text(String(computed.overallLevel||''), ML+10, y+13);
+      sf(8, 'normal', LIGHT);
+      pdf.text('Transfer range: ' + computed.expectedTransferRange + '   ·   Onboarding: ' + computed.onboardingSpeed, ML+10, y+25);
+      y += 44;
 
       // ── BENCHMARK BAR ──
-      sf(7, 'bold', NAVY); pdf.text('EP BENCHMARK POSITION', ML, y+9);
+      sf(7, 'bold', GOLD); pdf.text('EP BENCHMARK POSITION', ML, y+9);
+      pdf.setDrawColor(...GOLD); pdf.setLineWidth(0.3);
+      pdf.setGState(pdf.GState({opacity:0.3}));
+      pdf.line(ML + pdf.getTextWidth('EP BENCHMARK POSITION') + 6, y+6, MR, y+6);
+      pdf.setGState(pdf.GState({opacity:1}));
       y += 13;
-      bar(ML, y, CW, 7, computed.overallPct);
+      fill(ML, y, CW, 10, CARD);
+      bar(ML, y, CW, 10, computed.overallPct);
       sf(6.5, 'normal', GRAY);
-      pdf.text('Calibrated against Executive Partners placement experience', ML, y+16);
-      y += 28;
+      pdf.text('Calibrated against Executive Partners placement experience', ML, y+19);
+      y += 32;
 
-      hline(y); y += 14;
+      pdf.setDrawColor(...GOLD); pdf.setLineWidth(0.3);
+      pdf.setGState(pdf.GState({opacity:0.25}));
+      pdf.line(ML, y, MR, y);
+      pdf.setGState(pdf.GState({opacity:1}));
+      y += 14;
 
       // ── DETAILED BREAKDOWN ──
-      sf(9, 'bold', NAVY); pdf.text('DETAILED ASSESSMENT', ML, y); y += 14;
+      sf(9, 'bold', GOLD); pdf.text('DETAILED ASSESSMENT', ML, y); y += 14;
 
       const details = [
         ['Wallet Share Depth', `${profile.walletShareScore || 3}/5`, `${['<20%','20-35%','35-50%','50-65%','>65%'][Math.min((profile.walletShareScore||3)-1,4)]} of client total wealth`],
@@ -504,19 +537,28 @@ export default function PortabilityClient({
       ];
 
       details.forEach((row, idx) => {
-        fill(ML, y, CW, 24, idx % 2 === 0 ? LIGHT : WHITE);
-        sf(7, 'normal', GRAY); pdf.text(String(row[0]), ML+8, y+9);
-        sf(8, 'bold', DARK); pdf.text(String(row[1]).trim(), ML+8, y+20);
-        sf(7, 'normal', GRAY); pdf.text(String(row[2]), ML+60, y+20);
-        y += 24;
+        fill(ML, y, CW, 26, idx % 2 === 0 ? ROW_ALT : DARK);
+        sf(7.5, 'normal', LIGHT); pdf.text(String(row[0]), ML+8, y+10);
+        sf(8, 'bold', WHITE); pdf.text(String(row[1]).trim(), ML+8, y+21);
+        sf(7, 'normal', GRAY); pdf.text(String(row[2]), ML+62, y+21);
+        y += 26;
       });
-      y += 8;
+      y += 10;
 
-      hline(y); y += 14;
+      pdf.setDrawColor(...GOLD); pdf.setLineWidth(0.3);
+      pdf.setGState(pdf.GState({opacity:0.25}));
+      pdf.line(ML, y, MR, y);
+      pdf.setGState(pdf.GState({opacity:1}));
+      y += 14;
 
       // ── CORE DIMENSIONS — always new page ──
       pdf.addPage(); y = 40;
-      sf(9, 'bold', NAVY); pdf.text('CORE PORTABILITY DIMENSIONS', ML, y); y += 14;
+      fill(0, 0, W, 2, GOLD);
+      fill(0, 2, W, 28, NAVY);
+      sf(8, 'bold', GOLD); pdf.text('EXECUTIVE PARTNERS', ML, 18);
+      sf(7, 'normal', GRAY); pdf.text('Portability Readiness Score™  ·  Continued', ML, 28);
+      y = 46;
+      sf(9, 'bold', GOLD); pdf.text('CORE PORTABILITY DIMENSIONS', ML, y); y += 14;
       const coreDims = [
         ['Custodian / Booking Centre Footprint', coreScores.custodian],
         ['AUM Mix & Diversification', coreScores.aum],
@@ -526,19 +568,21 @@ export default function PortabilityClient({
         ['Compliance & KYC Reuse', coreScores.compliance],
       ];
       coreDims.forEach((dim, idx) => {
-        fill(ML, y, CW, 22, idx % 2 === 0 ? LIGHT : WHITE);
-        sf(7.5, 'normal', DARK); pdf.text(String(dim[0]), ML+8, y+14);
+        fill(ML, y, CW, 24, idx % 2 === 0 ? ROW_ALT : DARK);
+        sf(7.5, 'normal', LIGHT); pdf.text(String(dim[0]), ML+8, y+15);
         const sc = Number(dim[1]||0);
         const scColor: [number,number,number] = sc >= 4 ? GREEN : sc >= 3 ? AMBER : RED;
-        sf(8, 'bold', scColor); pdf.text(String(sc) + '/5', MR-30, y+14);
-        bar(MR-95, y+8, 58, 6, sc*20);
-        y += 22;
+        sf(8, 'bold', scColor);
+        const scTxt = String(sc) + '/5';
+        pdf.text(scTxt, MR - 28 - pdf.getTextWidth(scTxt), y+15);
+        bar(MR-95, y+9, 58, 6, sc*20);
+        y += 24;
       });
-      y += 8;
+      y += 10;
 
       // ── ADVANCED FACTORS ──
       if (y > 620) { pdf.addPage(); y = 40; }
-      sf(9, 'bold', NAVY); pdf.text('ADVANCED PORTABILITY FACTORS', ML, y); y += 14;
+      sf(9, 'bold', GOLD); pdf.text('ADVANCED PORTABILITY FACTORS', ML, y); y += 14;
       const advDims = [
         ['AUM Diversification (Advisory/DPM/Lending)', advancedScores.aumDiversification],
         ['Alternatives & Structured Products', advancedScores.altsStructured],
@@ -549,48 +593,63 @@ export default function PortabilityClient({
         ['Fit with Tier-1 Private Banking Platform', advancedScores.platformFit],
       ];
       advDims.forEach((dim, idx) => {
-        fill(ML, y, CW, 22, idx % 2 === 0 ? LIGHT : WHITE);
-        sf(7.5, 'normal', DARK); pdf.text(String(dim[0]), ML+8, y+14);
+        fill(ML, y, CW, 24, idx % 2 === 0 ? ROW_ALT : DARK);
+        sf(7.5, 'normal', LIGHT); pdf.text(String(dim[0]), ML+8, y+15);
         const sc = Number(dim[1]||0);
         const scColor: [number,number,number] = sc >= 4 ? GREEN : sc >= 3 ? AMBER : RED;
-        sf(8, 'bold', scColor); pdf.text(String(sc) + '/5', MR-30, y+14);
-        bar(MR-95, y+8, 58, 6, sc*20);
-        y += 22;
+        sf(8, 'bold', scColor);
+        const scTxt2 = String(sc) + '/5';
+        pdf.text(scTxt2, MR - 28 - pdf.getTextWidth(scTxt2), y+15);
+        bar(MR-95, y+9, 58, 6, sc*20);
+        y += 24;
       });
-      y += 8;
+      y += 10;
 
       // ── BOOKING CENTRES & PERMISSIONS ──
       const selectedBC = Object.entries(bookingCentres).filter(([_k, v]) => v).map(([k]) => k);
       const selectedPerm = Object.entries(permissions).filter(([_k, v]) => v).map(([k]) => k);
       if (selectedBC.length > 0 || selectedPerm.length > 0) {
         if (y > 680) { pdf.addPage(); y = 40; }
-        sf(9, 'bold', NAVY); pdf.text('GEOGRAPHIC COVERAGE', ML, y); y += 12;
+        sf(9, 'bold', GOLD); pdf.text('GEOGRAPHIC COVERAGE', ML, y); y += 14;
+        fill(ML, y, CW, selectedBC.length > 0 && selectedPerm.length > 0 ? 36 : 20, CARD);
+        pdf.setDrawColor(30,38,60); pdf.setLineWidth(0.4); pdf.rect(ML, y, CW, selectedBC.length > 0 && selectedPerm.length > 0 ? 36 : 20, 'S');
         if (selectedBC.length > 0) {
-          sf(7, 'bold', GRAY); pdf.text('Booking centres:', ML, y+10);
-          sf(7, 'normal', DARK); pdf.text(selectedBC.join('  ·  '), ML+80, y+10);
-          y += 16;
+          sf(7, 'bold', GRAY); pdf.text('Booking centres:', ML+8, y+12);
+          sf(7.5, 'normal', WHITE); pdf.text(selectedBC.join('  ·  '), ML+80, y+12);
+          y += 18;
         }
         if (selectedPerm.length > 0) {
-          sf(7, 'bold', GRAY); pdf.text('Regulatory permissions:', ML, y+10);
-          sf(7, 'normal', DARK); pdf.text(selectedPerm.join('  ·  '), ML+110, y+10);
-          y += 16;
+          sf(7, 'bold', GRAY); pdf.text('Regulatory permissions:', ML+8, y+12);
+          sf(7.5, 'normal', WHITE); pdf.text(selectedPerm.join('  ·  '), ML+112, y+12);
+          y += 18;
         }
-        y += 6;
+        y += 8;
       }
 
       hline(y); y += 14;
 
       // ── FLAGS ──
       if (computed.flags && computed.flags.length > 0) {
-        sf(9, 'bold', NAVY); pdf.text('RISK FLAGS', ML, y); y += 14;
+        sf(9, 'bold', GOLD); pdf.text('RISK FLAGS', ML, y); y += 14;
         computed.flags.forEach((flag: any) => {
           if (y > H - 90) { pdf.addPage(); y = 40; }
           const fc: [number,number,number] = flag.severity==='red' ? RED : flag.severity==='amber' ? AMBER : GREEN;
-          sf(8, 'bold', fc);
-          pdf.text(`${flag.severity==='red'?'CRITICAL FLAG':flag.severity==='amber'?'ADVISORY FLAG':'POSITIVE'}  ${flag.title}`, ML, y+10);
-          const lines = pdf.splitTextToSize(flag.detail, CW-14);
-          sf(7.5, 'normal', DARK); pdf.text(lines, ML+12, y+20);
-          y += 14 + lines.length * 10 + 4;
+          const bgFlag: [number,number,number] = flag.severity==='red' ? [28,8,8] : flag.severity==='amber' ? [26,16,0] : [8,24,14];
+          const lines = pdf.splitTextToSize(flag.detail, CW-20);
+          const fh = 30 + lines.length * 10;
+          fill(ML, y, CW, fh, bgFlag);
+          pdf.setDrawColor(...fc); pdf.setLineWidth(0.5);
+          pdf.setGState(pdf.GState({opacity:0.45}));
+          pdf.rect(ML, y, CW, fh, 'S');
+          pdf.setGState(pdf.GState({opacity:1}));
+          // Badge
+          fill(ML+8, y+6, pdf.getTextWidth(flag.severity==='red'?'CRITICAL FLAG':flag.severity==='amber'?'ADVISORY FLAG':'POSITIVE')+10, 12, fc);
+          sf(6.5, 'bold', DARK);
+          pdf.text(flag.severity==='red'?'CRITICAL FLAG':flag.severity==='amber'?'ADVISORY FLAG':'POSITIVE', ML+13, y+15);
+          sf(7.5, 'bold', WHITE);
+          pdf.text(flag.title, ML + pdf.getTextWidth(flag.severity==='red'?'CRITICAL FLAG':flag.severity==='amber'?'ADVISORY FLAG':'POSITIVE') + 22, y+15);
+          sf(7, 'normal', LIGHT); pdf.text(lines, ML+12, y+26);
+          y += fh + 8;
         });
         y += 4;
       }
@@ -599,20 +658,25 @@ export default function PortabilityClient({
 
       // ── RECOMMENDATIONS ──
       if (computed.recommendations && computed.recommendations.length > 0) {
-        sf(9, 'bold', NAVY); pdf.text('SPECIFIC RECOMMENDATIONS', ML, y); y += 14;
+        sf(9, 'bold', GOLD); pdf.text('SPECIFIC RECOMMENDATIONS', ML, y); y += 14;
         computed.recommendations.forEach((rec: any) => {
           if (y > H - 100) { pdf.addPage(); y = 40; }
           const pc: [number,number,number] = rec.priority==='critical' ? RED : rec.priority==='important' ? AMBER : GOLD;
-          sf(7, 'bold', pc);
+          const bgRec: [number,number,number] = rec.priority==='critical' ? [28,8,8] : rec.priority==='important' ? [26,16,0] : [14,19,32];
           const pLabel = rec.priority.toUpperCase();
-          const pW = pdf.getTextWidth(pLabel) + 10;
+          const lines = pdf.splitTextToSize(rec.detail, CW-20);
+          const rh = 32 + lines.length * 10;
+          fill(ML, y, CW, rh, bgRec);
           pdf.setDrawColor(...pc); pdf.setLineWidth(0.5);
-          pdf.roundedRect(ML, y+2, pW, 11, 2, 2, 'S');
-          pdf.text(pLabel, ML+5, y+11);
-          sf(8, 'bold', DARK); pdf.text(rec.action, ML+pW+6, y+11);
-          const lines = pdf.splitTextToSize(rec.detail, CW-16);
-          sf(7.5, 'normal', GRAY); pdf.text(lines, ML+12, y+22);
-          y += 16 + lines.length*10 + 8;
+          pdf.setGState(pdf.GState({opacity:0.4}));
+          pdf.rect(ML, y, CW, rh, 'S');
+          pdf.setGState(pdf.GState({opacity:1}));
+          const pW = pdf.getTextWidth(pLabel) + 10;
+          fill(ML+8, y+6, pW, 12, pc);
+          sf(6.5, 'bold', DARK); pdf.text(pLabel, ML+13, y+15);
+          sf(8, 'bold', WHITE); pdf.text(rec.action, ML+pW+14, y+15);
+          sf(7, 'normal', LIGHT); pdf.text(lines, ML+12, y+26);
+          y += rh + 8;
         });
       }
 
@@ -620,11 +684,20 @@ export default function PortabilityClient({
       const total = pdf.getNumberOfPages();
       for (let p = 1; p <= total; p++) {
         pdf.setPage(p);
-        fill(0, H-26, W, 26, NAVY);
+        fill(0, H-30, W, 30, [10,13,22]);
+        pdf.setDrawColor(...GOLD); pdf.setLineWidth(0.3);
+        pdf.setGState(pdf.GState({opacity:0.25}));
+        pdf.line(0, H-30, W, H-30);
+        pdf.setGState(pdf.GState({opacity:1}));
         sf(7, 'normal', GOLD);
-        pdf.text('Gil M. Chalem, Managing Partner  ·  Executive Partners', ML, H-12);
-        sf(7, 'normal', WHITE);
-        pdf.text(`recruiter@execpartners.ch  ·  execpartners.ch  ·  p${p}/${total}`, MR-180, H-12);
+        pdf.text('Gil M. Chalem, Managing Partner  ·  Executive Partners', ML, H-18);
+        sf(7, 'normal', GRAY);
+        pdf.text('recruiter@execpartners.ch  ·  execpartners.ch', ML, H-8);
+        sf(7, 'normal', GRAY);
+        pdf.text('Strictly Confidential — Not for Distribution', MR - pdf.getTextWidth('Strictly Confidential — Not for Distribution'), H-18);
+        sf(7, 'bold', GOLD);
+        const pgLabel = 'p' + p + '/' + total;
+        pdf.text(pgLabel, MR - pdf.getTextWidth(pgLabel), H-8);
       }
 
       const blob = pdf.output('blob');
