@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { MANDATES } from '@/app/en/jobs/mandates-data'
+import { generateFitAssessmentPdf, FitResult } from '@/lib/pdf/fitAssessmentReport'
 
 interface Mandate {
   id: string; title: string; subtitle?: string; location: string
@@ -85,6 +86,12 @@ const PRI: Record<string,string> = { compensation:'Compensation structure', bran
 
 const SYSTEM = `You are the head of market intelligence at Executive Partners, a Geneva-based boutique executive search firm specializing in private banking and wealth management. Give a frank expert assessment — the honest analysis a senior recruiter gives privately, not a marketing pitch. If the profile has real limitations, name them. If a market is cold, say so.
 
+CRITICAL — AVOID GENERIC OUTPUT:
+- Every sentence must reference at least one concrete number, label, or fact from the submitted profile (AUM band, fee income, portability %, languages, booking centre, notice period). Do not write sentences that could apply to any candidate.
+- Do not repeat the same observation in two different sections using different words — each section must add new information.
+- When discussing a market, name the SPECIFIC tension or alignment between this candidate's actual client geography and that market's booking/regulatory reality. Do not describe a market in the abstract.
+- "topMarkets" must be ranked by genuine fit given THIS candidate's languages, booking centre preference, and client geography — not a generic top-3 of major hubs. If the candidate's own booking centre preference is a poor fit, say so explicitly rather than softening it.
+
 KEY PRINCIPLES:
 1. AUM + revenue + portability together form the commercial proposition — never evaluate AUM alone
 2. Portability matters more than AUM size
@@ -95,28 +102,29 @@ KEY PRINCIPLES:
 7. Hunter profiles are in higher demand in 2026
 8. Never name specific institutions — use categories only
 9. Do not invent statistics
+10. If the candidate's stated booking centre preference conflicts with their client geography (e.g. a UK onshore book paired with a Zurich booking preference), name this as the single biggest constraint up front in positioning, not buried later
 
 Return ONLY valid JSON, no markdown, no preamble:
 {
   "headline": "3-6 word headline",
   "overallFit": "Exceptional|Strong|Good|Moderate|Limited",
-  "positioning": "3-4 sentences referencing AUM, revenue, portability, geography and seniority together",
-  "commercialSummary": "2-3 sentences on commercial attractiveness and portability context",
+  "positioning": "3-4 sentences referencing AUM, revenue, portability, geography and seniority together — open with the single most decisive fact about this profile, not a generic restatement",
+  "commercialSummary": "2-3 sentences on commercial attractiveness and portability context, citing the actual portable CHF range implied by the stated AUM band and portability percentage",
   "topMarkets": [
     {
       "city": "city name",
       "flag": "emoji flag",
       "fitLevel": "Strong|Good|Moderate|Weak",
-      "rationale": "2-3 sentences specific to this profile",
-      "hiringContext": "1-2 sentences on current 2026 market activity",
+      "rationale": "2-3 sentences specific to this profile — must reference the candidate's actual client geography or language set, not generic market commentary",
+      "hiringContext": "1-2 sentences on current 2026 market activity specific to this client segment, not a generic 'hiring remains active' line",
       "keyRequirement": "single most important threshold — omit field entirely if none"
     }
   ],
-  "strengths": ["specific strength 1", "specific strength 2", "specific strength 3"],
-  "gaps": ["honest gap 1", "honest gap 2"],
+  "strengths": ["specific strength 1 tied to a submitted fact", "specific strength 2", "specific strength 3"],
+  "gaps": ["honest gap 1 tied to a submitted fact", "honest gap 2"],
   "legalNote": "practical guidance if non-solicitation is active — omit field entirely if no active constraint",
   "timingNote": "timing context if notice is 6+ months or exploring only — omit field entirely if not material",
-  "epAssessment": "2-3 sentences on EP recommendation and what a confidential conversation unlocks",
+  "epAssessment": "2-3 sentences on EP recommendation — must name the single biggest lever the candidate could pull (e.g. recalibrating booking centre preference, broadening client tier framing) and what a confidential conversation specifically unlocks",
   "urgency": "high|moderate|low"
 }`
 
@@ -176,13 +184,16 @@ async function logToSheets(f: FormData, fitLevel: string, headline: string) {
   } catch(e) { console.error('Sheets error:', e) }
 }
 
-async function sendEmails(f: FormData, fitLevel: string, headline: string) {
+async function sendEmails(f: FormData, fitLevel: string, headline: string, pdfBase64?: string) {
   const key = process.env.RESEND_API_KEY
   if (!key) return
   const greeting = f.name ? `Dear ${f.name},` : 'Dear candidate,'
+  const attachments = pdfBase64
+    ? [{ filename: `EP-Fit-Assessment-${(f.name || f.email).replace(/[^a-zA-Z0-9]+/g, '-')}.pdf`, content: pdfBase64 }]
+    : undefined
   const emails = [
-    { from:'Executive Partners <recruiter@execpartners.ch>', to:['gil.chalem@execpartners.ch'], subject:`[Fit Assessment] ${fitLevel} — ${f.name||f.email}`, html:`<h2 style="color:#C9A96E">New Fit Assessment: ${fitLevel}</h2><p><strong>${headline}</strong></p><p>Name: ${f.name||'—'}<br>Email: ${f.email}<br>AUM: ${AUM[f.aumRange]||f.aumRange}<br>Revenue: ${FEE[f.feeIncome]||f.feeIncome}<br>Portability: ${PORT[f.portabilityEstimate]||f.portabilityEstimate}<br>Institution: ${INST[f.institutionType]||f.institutionType}<br>Seniority: ${SEN[f.seniority]||f.seniority}<br>Geography: ${GEO[f.primaryGeography]||f.primaryGeography}<br>Languages: ${f.languages.map(l=>LANG[l]||l).join(', ')}<br>Booking: ${BOOK[f.targetBookingCentre]||f.targetBookingCentre}<br>Notice: ${NOTICE[f.noticePeriod]||f.noticePeriod}<br>Legal: ${SOL[f.nonSolicitation]||f.nonSolicitation}</p>` },
-    { from:'Executive Partners <recruiter@execpartners.ch>', to:[f.email], subject:'Your Private Bank Fit Assessment — Executive Partners', html:`<p>${greeting}</p><p>Thank you for completing your Private Bank Fit Assessment.</p><p>Your market fit has been assessed as <strong>${fitLevel}</strong>.</p><p style="border-left:3px solid #C9A96E;padding:8px 16px;font-style:italic">${headline}</p><p>Our team reviews every submission against live mandates within 48 hours. Schedule a confidential call: <a href="https://calendly.com/execpartners/15-minute-career-consultation">calendly.com/execpartners</a></p><p>Confidentially,<br><strong>Gil M. Chalem</strong><br>Managing Partner, Executive Partners</p>` },
+    { from:'Executive Partners <recruiter@execpartners.ch>', to:['gil.chalem@execpartners.ch'], subject:`[Fit Assessment] ${fitLevel} — ${f.name||f.email}`, html:`<h2 style="color:#C9A96E">New Fit Assessment: ${fitLevel}</h2><p><strong>${headline}</strong></p><p>Name: ${f.name||'—'}<br>Email: ${f.email}<br>AUM: ${AUM[f.aumRange]||f.aumRange}<br>Revenue: ${FEE[f.feeIncome]||f.feeIncome}<br>Portability: ${PORT[f.portabilityEstimate]||f.portabilityEstimate}<br>Institution: ${INST[f.institutionType]||f.institutionType}<br>Seniority: ${SEN[f.seniority]||f.seniority}<br>Geography: ${GEO[f.primaryGeography]||f.primaryGeography}<br>Languages: ${f.languages.map(l=>LANG[l]||l).join(', ')}<br>Booking: ${BOOK[f.targetBookingCentre]||f.targetBookingCentre}<br>Notice: ${NOTICE[f.noticePeriod]||f.noticePeriod}<br>Legal: ${SOL[f.nonSolicitation]||f.nonSolicitation}</p>`, attachments },
+    { from:'Executive Partners <recruiter@execpartners.ch>', to:[f.email], subject:'Your Private Bank Fit Assessment — Executive Partners', html:`<p>${greeting}</p><p>Thank you for completing your Private Bank Fit Assessment.</p><p>Your market fit has been assessed as <strong>${fitLevel}</strong>.</p><p style="border-left:3px solid #C9A96E;padding:8px 16px;font-style:italic">${headline}</p><p>Your full report is attached as a PDF. Our team reviews every submission against live mandates within 48 hours. Schedule a confidential call: <a href="https://calendly.com/execpartners/15-minute-career-consultation">calendly.com/execpartners</a></p><p>Confidentially,<br><strong>Gil M. Chalem</strong><br>Managing Partner, Executive Partners</p>`, attachments },
   ]
   await Promise.allSettled(emails.map(e => fetch('https://api.resend.com/emails', { method:'POST', headers:{ Authorization:`Bearer ${key}`, 'Content-Type':'application/json' }, body:JSON.stringify(e) })))
 }
@@ -233,7 +244,18 @@ export async function POST(req: NextRequest) {
     const fitLevel = (result.overallFit as string) || 'Good'
     const headline = (result.headline as string) || 'Assessment complete'
 
-    Promise.allSettled([logToSheets(form, fitLevel, headline), sendEmails(form, fitLevel, headline)])
+    let pdfBase64: string | undefined
+    try {
+      const pdfBuffer = await generateFitAssessmentPdf(
+        { name: form.name, email: form.email },
+        result as unknown as FitResult
+      )
+      pdfBase64 = pdfBuffer.toString('base64')
+    } catch (pdfErr) {
+      console.error('PDF generation error:', pdfErr)
+    }
+
+    Promise.allSettled([logToSheets(form, fitLevel, headline), sendEmails(form, fitLevel, headline, pdfBase64)])
 
     return NextResponse.json({ result })
   } catch(err) {

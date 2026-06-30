@@ -593,7 +593,10 @@ function Results({ result, name }: { result: AssessmentResult; name: string }) {
                 <div style={{ fontSize: 20, flexShrink: 0 }}>{m.flag}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ color: '#f1f5f9', fontSize: 13.5, fontWeight: 500, marginBottom: 2 }}>{m.title}</div>
-                  <div style={{ color: '#7a8fa6', fontSize: 12 }}>{m.location}{m.aum ? ` · ${m.aum}` : ''}</div>
+                  {m.subtitle && (
+                    <div style={{ color: '#C9A96E', fontSize: 11, fontWeight: 500, marginBottom: 2 }}>{m.subtitle}</div>
+                  )}
+                  <div style={{ color: '#7a8fa6', fontSize: 12 }}>Booked in {m.location}{m.aum ? ` · ${m.aum}` : ''}</div>
                 </div>
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}><path d="M4.5 2L9.5 7L4.5 12" stroke="#C9A96E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </a>
