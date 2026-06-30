@@ -283,9 +283,9 @@ function Step1({ f, set, onNext }: { f: FormData; set: (k: keyof FormData, v: st
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, alignItems: 'start' }}>
           <Field label="Current institution type">
             <Select value={f.institutionType} onChange={v => set('institutionType', v)} options={[
-              { value: 'universal_bank', label: 'Universal bank private banking arm', sub: 'UBS, Credit Suisse legacy, large international banks' },
-              { value: 'swiss_pure_play', label: 'Swiss pure-play private bank', sub: 'Pictet, Lombard Odier, Julius Baer, Mirabaud' },
-              { value: 'intl_private_bank', label: 'International private bank', sub: 'EFG, UBP, BNP Paribas WM, HSBC PB' },
+              { value: 'universal_bank', label: 'Universal bank wealth division', sub: 'UBS, BNP Paribas WM, HSBC Private Bank, Deutsche Bank' },
+              { value: 'swiss_pure_play', label: 'Swiss independent private bank', sub: 'Pictet, Lombard Odier, Julius Baer, UBP, Mirabaud, EFG' },
+              { value: 'intl_private_bank', label: 'Foreign-headquartered private bank', sub: 'JPMorgan PB, Citi Private Bank, Barclays, Coutts' },
               { value: 'eam', label: 'External Asset Manager (EAM)' },
               { value: 'family_office', label: 'Family Office / MFO' },
               { value: 'other', label: 'Other / prefer not to say' },
