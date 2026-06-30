@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { MANDATES } from '@/app/en/jobs/mandates-data'
-import { generateFitAssessmentPdf, FitResult } from '@/lib/pdf/fitAssessmentReport'
+import { generateFitAssessmentPdf, FitResult } from '@/lib/reports/fitAssessmentReport'
 
 interface Mandate {
   id: string; title: string; subtitle?: string; location: string
