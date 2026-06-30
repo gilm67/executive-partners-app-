@@ -186,7 +186,7 @@ async function logToSheets(f: FormData, fitLevel: string, headline: string) {
 
 async function sendEmails(f: FormData, fitLevel: string, headline: string, pdfBase64?: string) {
   const key = process.env.RESEND_API_KEY
-  if (!key) return
+  if (!key) { console.error('RESEND_API_KEY is missing — no emails will be sent'); return }
   const greeting = f.name ? `Dear ${f.name},` : 'Dear candidate,'
   const attachments = pdfBase64
     ? [{ filename: `EP-Fit-Assessment-${(f.name || f.email).replace(/[^a-zA-Z0-9]+/g, '-')}.pdf`, content: pdfBase64 }]
@@ -195,7 +195,18 @@ async function sendEmails(f: FormData, fitLevel: string, headline: string, pdfBa
     { from:'Executive Partners <recruiter@execpartners.ch>', to:['gil.chalem@execpartners.ch'], subject:`[Fit Assessment] ${fitLevel} — ${f.name||f.email}`, html:`<h2 style="color:#C9A96E">New Fit Assessment: ${fitLevel}</h2><p><strong>${headline}</strong></p><p>Name: ${f.name||'—'}<br>Email: ${f.email}<br>AUM: ${AUM[f.aumRange]||f.aumRange}<br>Revenue: ${FEE[f.feeIncome]||f.feeIncome}<br>Portability: ${PORT[f.portabilityEstimate]||f.portabilityEstimate}<br>Institution: ${INST[f.institutionType]||f.institutionType}<br>Seniority: ${SEN[f.seniority]||f.seniority}<br>Geography: ${GEO[f.primaryGeography]||f.primaryGeography}<br>Languages: ${f.languages.map(l=>LANG[l]||l).join(', ')}<br>Booking: ${BOOK[f.targetBookingCentre]||f.targetBookingCentre}<br>Notice: ${NOTICE[f.noticePeriod]||f.noticePeriod}<br>Legal: ${SOL[f.nonSolicitation]||f.nonSolicitation}</p>`, attachments },
     { from:'Executive Partners <recruiter@execpartners.ch>', to:[f.email], subject:'Your Private Bank Fit Assessment — Executive Partners', html:`<p>${greeting}</p><p>Thank you for completing your Private Bank Fit Assessment.</p><p>Your market fit has been assessed as <strong>${fitLevel}</strong>.</p><p style="border-left:3px solid #C9A96E;padding:8px 16px;font-style:italic">${headline}</p><p>Your full report is attached as a PDF. Our team reviews every submission against live mandates within 48 hours. Schedule a confidential call: <a href="https://calendly.com/execpartners/15-minute-career-consultation">calendly.com/execpartners</a></p><p>Confidentially,<br><strong>Gil M. Chalem</strong><br>Managing Partner, Executive Partners</p>`, attachments },
   ]
-  await Promise.allSettled(emails.map(e => fetch('https://api.resend.com/emails', { method:'POST', headers:{ Authorization:`Bearer ${key}`, 'Content-Type':'application/json' }, body:JSON.stringify(e) })))
+  const results = await Promise.allSettled(emails.map(e => fetch('https://api.resend.com/emails', { method:'POST', headers:{ Authorization:`Bearer ${key}`, 'Content-Type':'application/json' }, body:JSON.stringify(e) })))
+  for (let i = 0; i < results.length; i++) {
+    const r = results[i]
+    if (r.status === 'rejected') {
+      console.error(`Resend email #${i} (${emails[i].to}) network error:`, r.reason)
+    } else if (!r.value.ok) {
+      const bodyText = await r.value.text().catch(() => '<no body>')
+      console.error(`Resend email #${i} (${emails[i].to}) failed with status ${r.value.status}:`, bodyText)
+    } else {
+      console.log(`Resend email #${i} (${emails[i].to}) sent OK`)
+    }
+  }
 }
 
 const BOOKING_TO_JOBS_SLUG: Record<string,string> = {
