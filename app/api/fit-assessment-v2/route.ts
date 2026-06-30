@@ -215,7 +215,7 @@ export async function POST(req: NextRequest) {
     const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
       headers:{ 'x-api-key': process.env.ANTHROPIC_API_KEY||'', 'anthropic-version':'2023-06-01', 'Content-Type':'application/json' },
-      body:JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:2000, system:SYSTEM, messages:[{ role:'user', content:`Generate a Market Fit Assessment for this private banking professional:\n\n${profile}` }] })
+      body:JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:4000, system:SYSTEM, messages:[{ role:'user', content:`Generate a Market Fit Assessment for this private banking professional:\n\n${profile}` }] })
     })
 
     if (!anthropicRes.ok) {
@@ -229,8 +229,22 @@ export async function POST(req: NextRequest) {
     const cleaned = raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim()
 
     let result: Record<string, unknown>
-    try { result = JSON.parse(cleaned) }
-    catch { console.error('JSON parse failed:', cleaned); return NextResponse.json({ error:'Assessment parsing failed' }, { status:500 }) }
+    try {
+      result = JSON.parse(cleaned)
+    } catch {
+      const match = cleaned.match(/\{[\s\S]*\}/)
+      if (match) {
+        try {
+          result = JSON.parse(match[0])
+        } catch {
+          console.error('JSON parse failed even after extraction. Raw length:', cleaned.length, 'Raw tail:', cleaned.slice(-300))
+          return NextResponse.json({ error:'Assessment parsing failed' }, { status:500 })
+        }
+      } else {
+        console.error('JSON parse failed, no JSON object found. Raw length:', cleaned.length, 'Raw tail:', cleaned.slice(-300))
+        return NextResponse.json({ error:'Assessment parsing failed' }, { status:500 })
+      }
+    }
 
     const matchedMandates = findMatchingMandates(form)
     result.matchedMandates = matchedMandates.map(m => ({
