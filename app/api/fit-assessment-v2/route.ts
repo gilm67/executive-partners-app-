@@ -14,7 +14,7 @@ interface FormData {
 const AUM: Record<string,string> = { under_50m:'Under CHF 50M', '50m_150m':'CHF 50M-150M', '150m_500m':'CHF 150M-500M', '500m_1b':'CHF 500M-1B', above_1b:'Above CHF 1B' }
 const FEE: Record<string,string> = { under_500k:'Under CHF 500K', '500k_1m':'CHF 500K-1M', '1m_2m':'CHF 1M-2M', '2m_5m':'CHF 2M-5M', above_5m:'Above CHF 5M' }
 const PORT: Record<string,string> = { under_30:'Under 30%', '30_50':'30-50%', '50_70':'50-70%', '70_90':'70-90%', above_90:'Above 90%' }
-const INST: Record<string,string> = { big4_swiss:'Big 4 Swiss bank', swiss_private_boutique:'Swiss private bank boutique', intl_private_bank:'International private bank', eam:'EAM', family_office:'Family Office', other:'Other' }
+const INST: Record<string,string> = { universal_bank:'Universal bank private banking arm', swiss_pure_play:'Swiss pure-play private bank', intl_private_bank:'International private bank', eam:'EAM', family_office:'Family Office', other:'Other' }
 const SEN: Record<string,string> = { ia_rm:'IA / RM', senior_rm:'Senior RM', team_head_md:'Team Head / MD', market_head:'Market Head' }
 const GEO: Record<string,string> = { gcc:'GCC', israel:'Israel', europe_france:'France', europe_italy:'Italy', europe_iberia:'Iberia', europe_dach:'DACH', latam_brazil:'Brazil', latam_mexico:'Mexico/Colombia', latam_southern:'Argentina/Chile', cee:'CEE', swiss_domestic:'Swiss Domestic', uk_onshore:'UK Onshore', apac_singapore:'Singapore', apac_hk:'Hong Kong', apac_other:'Japan/Australia', nri:'NRI India', cis:'CIS', mea:'MEA/Africa', multi:'Multi-market' }
 const TIER: Record<string,string> = { hnw:'HNW', uhnw:'UHNW', vhnw_fo:'VHNW/FO', mixed:'Mixed HNW/UHNW' }

@@ -156,10 +156,10 @@ function ChipSelect({ options, selected, toggle }: {
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, height: '100%' }}>
+      <div style={{ minHeight: 32 }}>
         <div style={{ color: '#C9A96E', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{label}</div>
-        {hint && <div style={{ color: 'rgba(255,255,255,0.28)', fontSize: 11, marginTop: 3 }}>{hint}</div>}
+        <div style={{ color: 'rgba(255,255,255,0.28)', fontSize: 11, marginTop: 3, minHeight: 14 }}>{hint || '\u00A0'}</div>
       </div>
       {children}
     </div>
@@ -251,7 +251,7 @@ function Step1({ f, set, onNext }: { f: FormData; set: (k: keyof FormData, v: st
     <>
       <StepHeader n={1} title="Commercial Profile" subtitle="AUM, revenue, and portability together define your commercial proposition to any hiring institution." />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, alignItems: 'start' }}>
           <Field label="AUM under management">
             <Select value={f.aumRange} onChange={v => set('aumRange', v)} options={[
               { value: 'under_50m', label: 'Under CHF 50M' },
@@ -280,11 +280,11 @@ function Step1({ f, set, onNext }: { f: FormData; set: (k: keyof FormData, v: st
             { value: 'above_90', label: 'Above 90%', sub: 'Fully relationship-driven' },
           ]} placeholder="Select portability estimate" />
         </Field>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, alignItems: 'start' }}>
           <Field label="Current institution type">
             <Select value={f.institutionType} onChange={v => set('institutionType', v)} options={[
-              { value: 'universal_bank', label: 'Universal bank private banking arm', sub: 'UBS, PostFinance, Raiffeisen, ZKB' },
-              { value: 'swiss_pure_play', label: 'Swiss pure-play private bank', sub: 'Pictet, Lombard Odier, Mirabaud, Julius Baer' },
+              { value: 'universal_bank', label: 'Universal bank private banking arm', sub: 'UBS, Credit Suisse legacy, large international banks' },
+              { value: 'swiss_pure_play', label: 'Swiss pure-play private bank', sub: 'Pictet, Lombard Odier, Julius Baer, Mirabaud' },
               { value: 'intl_private_bank', label: 'International private bank', sub: 'EFG, UBP, BNP Paribas WM, HSBC PB' },
               { value: 'eam', label: 'External Asset Manager (EAM)' },
               { value: 'family_office', label: 'Family Office / MFO' },
@@ -316,7 +316,7 @@ function Step2({ f, set, toggleLang, onBack, onNext }: {
     <>
       <StepHeader n={2} title="Client Focus" subtitle="Geography and language are the primary filters institutions apply when assessing real-world market access." />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, alignItems: 'start' }}>
           <Field label="Primary client geography">
             <Select value={f.primaryGeography} onChange={v => set('primaryGeography', v)} options={GEO} placeholder="Select primary geography" />
           </Field>
@@ -349,7 +349,7 @@ function Step3({ f, set, onBack, onNext }: {
     <>
       <StepHeader n={3} title="Career Preferences" subtitle="Mandate style and employment structure shape which opportunities are realistically accessible." />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, alignItems: 'start' }}>
           <Field label="Mandate style">
             <Select value={f.mandateStyle} onChange={v => set('mandateStyle', v)} options={[
               { value: 'hunter', label: 'Hunter', sub: 'New asset origination' },
@@ -365,7 +365,7 @@ function Step3({ f, set, onBack, onNext }: {
             ]} placeholder="Select structure" />
           </Field>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, alignItems: 'start' }}>
           <Field label="Target booking centre">
             <Select value={f.targetBookingCentre} onChange={v => set('targetBookingCentre', v)} options={[
               { value: 'geneva', label: 'Geneva' }, { value: 'zurich', label: 'Zurich' },
@@ -402,7 +402,7 @@ function Step4({ f, set, onBack, onNext }: {
     <>
       <StepHeader n={4} title="Timing & Constraints" subtitle="Legal restrictions and notice periods directly determine which mandates can be realistically pursued." />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, alignItems: 'start' }}>
           <Field label="Availability / notice period">
             <Select value={f.noticePeriod} onChange={v => set('noticePeriod', v)} options={[
               { value: 'immediate', label: 'Available immediately' },
