@@ -9,6 +9,25 @@ const RESEND_FROM = (
     ? 'Executive Partners <onboarding@resend.dev>'
     : 'Executive Partners <no-reply@auth.execpartners.ch>')
 ).trim()
+
+async function sendWithRetry(
+  resend: Resend,
+  payload: Parameters<Resend['emails']['send']>[0],
+  label: string,
+  attempts = 2
+) {
+  let lastError: unknown = null
+  for (let i = 0; i < attempts; i++) {
+    const result = await resend.emails.send(payload)
+    if (!result.error) return result
+    lastError = result.error
+    console.warn(`${label} attempt ${i + 1} failed:`, JSON.stringify(result.error))
+    if (i < attempts - 1) {
+      await new Promise((r) => setTimeout(r, 500))
+    }
+  }
+  return { data: null, error: lastError, headers: null } as Awaited<ReturnType<Resend['emails']['send']>>
+}
 import { generateFitAssessmentPdf, FitResult } from '@/lib/reports/fitAssessmentReport'
 import { Resend } from 'resend'
 
@@ -207,21 +226,21 @@ async function sendEmails(f: FormData, fitLevel: string, headline: string, pdfBa
   const candidateHtml = `<p>${greeting}</p><p>Thank you for completing your Private Bank Fit Assessment.</p><p>Your market fit has been assessed as <strong>${fitLevel}</strong>.</p><p style="border-left:3px solid #C9A96E;padding:8px 16px;font-style:italic">${headline}</p><p>Your full report is attached as a PDF. Our team reviews every submission against live mandates within 48 hours. Schedule a confidential call: <a href="https://calendly.com/execpartners/15-minute-career-consultation">calendly.com/execpartners</a></p><p>Confidentially,<br><strong>Gil M. Chalem</strong><br>Managing Partner, Executive Partners</p>`
 
   const [internalOutcome, candidateOutcome] = await Promise.allSettled([
-    resend.emails.send({
+    sendWithRetry(resend, {
       from: RESEND_FROM,
       to: 'gil.chalem@execpartners.ch',
       replyTo: f.email,
       subject: `[Fit Assessment] ${fitLevel} — ${f.name || f.email}`,
       html: internalHtml,
       attachments,
-    }),
-    resend.emails.send({
+    }, 'internal email'),
+    sendWithRetry(resend, {
       from: RESEND_FROM,
       to: f.email,
       subject: 'Your Private Bank Fit Assessment — Executive Partners',
       html: candidateHtml,
       attachments,
-    }),
+    }, 'candidate email'),
   ])
 
   if (internalOutcome.status === 'fulfilled') {
