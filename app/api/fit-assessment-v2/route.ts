@@ -206,31 +206,34 @@ async function sendEmails(f: FormData, fitLevel: string, headline: string, pdfBa
 
   const candidateHtml = `<p>${greeting}</p><p>Thank you for completing your Private Bank Fit Assessment.</p><p>Your market fit has been assessed as <strong>${fitLevel}</strong>.</p><p style="border-left:3px solid #C9A96E;padding:8px 16px;font-style:italic">${headline}</p><p>Your full report is attached as a PDF. Our team reviews every submission against live mandates within 48 hours. Schedule a confidential call: <a href="https://calendly.com/execpartners/15-minute-career-consultation">calendly.com/execpartners</a></p><p>Confidentially,<br><strong>Gil M. Chalem</strong><br>Managing Partner, Executive Partners</p>`
 
-  try {
-    const internalResult = await resend.emails.send({
+  const [internalOutcome, candidateOutcome] = await Promise.allSettled([
+    resend.emails.send({
       from: RESEND_FROM,
       to: 'gil.chalem@execpartners.ch',
       replyTo: f.email,
       subject: `[Fit Assessment] ${fitLevel} — ${f.name || f.email}`,
       html: internalHtml,
       attachments,
-    })
-    console.log('Resend internal email result:', JSON.stringify(internalResult))
-  } catch (err) {
-    console.error('Resend internal email failed:', err)
-  }
-
-  try {
-    const candidateResult = await resend.emails.send({
+    }),
+    resend.emails.send({
       from: RESEND_FROM,
       to: f.email,
       subject: 'Your Private Bank Fit Assessment — Executive Partners',
       html: candidateHtml,
       attachments,
-    })
-    console.log('Resend candidate email result:', JSON.stringify(candidateResult))
-  } catch (err) {
-    console.error('Resend candidate email failed:', err)
+    }),
+  ])
+
+  if (internalOutcome.status === 'fulfilled') {
+    console.log('Resend internal email result:', JSON.stringify(internalOutcome.value))
+  } else {
+    console.error('Resend internal email failed:', internalOutcome.reason)
+  }
+
+  if (candidateOutcome.status === 'fulfilled') {
+    console.log('Resend candidate email result:', JSON.stringify(candidateOutcome.value))
+  } else {
+    console.error('Resend candidate email failed:', candidateOutcome.reason)
   }
 }
 
@@ -305,7 +308,7 @@ export async function POST(req: NextRequest) {
       console.error('PDF generation error (candidate will not receive attachment):', pdfErr)
     }
 
-    Promise.allSettled([logToSheets(form, fitLevel, headline), sendEmails(form, fitLevel, headline, pdfBase64)])
+    await Promise.allSettled([logToSheets(form, fitLevel, headline), sendEmails(form, fitLevel, headline, pdfBase64)])
 
     return NextResponse.json({ result })
   } catch(err) {
