@@ -460,6 +460,11 @@ function Step5({ f, set, onBack, onSubmit, loading, error }: {
         )}
       </div>
       <NavRow onBack={onBack} onNext={onSubmit} nextLabel="Generate Assessment" disabled={!f.email} loading={loading} />
+      {loading && (
+        <p style={{ textAlign: 'center', color: '#C9A96E', fontSize: 12, marginTop: 16, fontWeight: 500 }}>
+          This usually takes 30-60 seconds. Please keep this page open and avoid clicking again.
+        </p>
+      )}
       <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.16)', fontSize: 11, marginTop: 18 }}>
         No CV required · Strictly confidential · Swiss data protection
       </p>
