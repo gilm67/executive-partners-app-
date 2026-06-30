@@ -25,6 +25,7 @@ interface AssessmentResult {
   legalNote?: string; timingNote?: string
   epAssessment: string; urgency: string
   jobsUrl?: string; jobsMarketLabel?: string
+  matchedMandates?: { id: string; title: string; subtitle: string; location: string; aum: string; flag: string; url: string }[]
 }
 
 const INIT: FormData = {
@@ -579,12 +580,31 @@ function Results({ result, name }: { result: AssessmentResult; name: string }) {
         </div>
       )}
 
-      {/* Open mandates link */}
-      {result.jobsUrl && (
+      {/* Matched live mandates */}
+      {result.matchedMandates && result.matchedMandates.length > 0 ? (
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ color: '#C9A96E', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>Live mandates matching your profile</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {result.matchedMandates.map((m, i) => (
+              <a key={i} href={m.url} target="_blank" rel="noopener noreferrer" style={{
+                background: 'rgba(201,169,110,0.045)', border: '1px solid rgba(201,169,110,0.18)', borderRadius: 12,
+                padding: '16px 20px', display: 'flex', gap: 14, alignItems: 'center', textDecoration: 'none',
+              }}>
+                <div style={{ fontSize: 20, flexShrink: 0 }}>{m.flag}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ color: '#f1f5f9', fontSize: 13.5, fontWeight: 500, marginBottom: 2 }}>{m.title}</div>
+                  <div style={{ color: '#7a8fa6', fontSize: 12 }}>{m.location}{m.aum ? ` · ${m.aum}` : ''}</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}><path d="M4.5 2L9.5 7L4.5 12" stroke="#C9A96E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : result.jobsUrl && (
         <div style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '18px 22px', marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
           <div>
             <div style={{ color: '#C9A96E', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>Live mandates</div>
-            <p style={{ color: '#7a8fa6', fontSize: 12.5, margin: 0 }}>Current open roles in {result.jobsMarketLabel}</p>
+            <p style={{ color: '#7a8fa6', fontSize: 12.5, margin: 0 }}>No exact match right now — browse current open roles in {result.jobsMarketLabel}</p>
           </div>
           <a href={result.jobsUrl} target="_blank" rel="noopener noreferrer"
             style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color: '#C9A96E', textDecoration: 'none', fontSize: 12.5, fontWeight: 600, border: '1px solid rgba(201,169,110,0.3)', borderRadius: 8, padding: '9px 16px', whiteSpace: 'nowrap' }}>

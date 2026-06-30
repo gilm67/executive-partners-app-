@@ -1,6 +1,59 @@
 export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
+import { MANDATES } from '@/app/en/jobs/mandates-data'
+
+interface Mandate {
+  id: string; title: string; subtitle?: string; location: string
+  tag?: string; aum?: string; comp_base?: string; flag?: string
+}
+
+// Keywords to match a candidate's primary geography against mandate tag/title/location text
+const GEO_KEYWORDS: Record<string,string[]> = {
+  gcc: ['gcc','uae','dubai','saudi','qatar','mea'],
+  israel: ['israel','israeli'],
+  europe_france: ['france','french','frontalier','cross-border'],
+  europe_italy: ['italy','italian'],
+  europe_iberia: ['iberia','spain','spanish','portugal'],
+  europe_dach: ['dach','germany','austria','german'],
+  latam_brazil: ['brazil','brazilian'],
+  latam_mexico: ['mexico','colombia'],
+  latam_southern: ['argentina','argentine','chile'],
+  cee: ['cee','poland','czech','hungary'],
+  swiss_domestic: ['swiss onshore','switzerland','domestic'],
+  uk_onshore: ['uk','united kingdom','london'],
+  apac_singapore: ['singapore'],
+  apac_hk: ['hong kong'],
+  apac_other: ['japan','australia','apac'],
+  nri: ['nri','india'],
+  cis: ['cis','russia','kazakhstan','ukraine'],
+  mea: ['mea','africa'],
+  multi: [],
+}
+
+// Keywords to match candidate's target booking centre against mandate location
+const BOOK_KEYWORDS: Record<string,string[]> = {
+  geneva: ['geneva'], zurich: ['zurich'], dubai: ['dubai'], abu_dhabi: ['abu dhabi'],
+  singapore: ['singapore'], hong_kong: ['hong kong'], london: ['london'],
+  luxembourg: ['luxembourg'], liechtenstein: ['liechtenstein'], monaco: ['monaco'],
+  tel_aviv: ['tel aviv'], miami: ['miami'], new_york: ['new york'], multiple: [],
+}
+
+function findMatchingMandates(form: FormData): Mandate[] {
+  const geoTerms = GEO_KEYWORDS[form.primaryGeography] || []
+  const bookTerms = BOOK_KEYWORDS[form.targetBookingCentre] || []
+  const haystack = (m: Mandate) => `${m.tag||''} ${m.title||''} ${m.subtitle||''} ${m.location||''}`.toLowerCase()
+
+  const scored = (MANDATES as Mandate[]).map(m => {
+    const text = haystack(m)
+    let score = 0
+    if (geoTerms.some(t => text.includes(t))) score += 2
+    if (bookTerms.some(t => text.includes(t))) score += 1
+    return { m, score }
+  })
+
+  return scored.filter(s => s.score > 0).sort((a,b) => b.score - a.score).slice(0,3).map(s => s.m)
+}
 
 interface FormData {
   aumRange: string; feeIncome: string; portabilityEstimate: string
@@ -165,6 +218,11 @@ export async function POST(req: NextRequest) {
     try { result = JSON.parse(cleaned) }
     catch { console.error('JSON parse failed:', cleaned); return NextResponse.json({ error:'Assessment parsing failed' }, { status:500 }) }
 
+    const matchedMandates = findMatchingMandates(form)
+    result.matchedMandates = matchedMandates.map(m => ({
+      id: m.id, title: m.title, subtitle: m.subtitle || '', location: m.location,
+      aum: m.aum || '', flag: m.flag || '', url: `https://www.execpartners.ch/en/jobs/${m.id}`,
+    }))
     const jobsSlug = BOOKING_TO_JOBS_SLUG[form.targetBookingCentre] || 'geneva'
     result.jobsUrl = `https://www.execpartners.ch/en/private-banker-jobs-${jobsSlug}`
     result.jobsMarketLabel = BOOK[form.targetBookingCentre] || 'your target market'
