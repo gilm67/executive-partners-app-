@@ -131,6 +131,13 @@ async function sendEmails(f: FormData, fitLevel: string, headline: string) {
   await Promise.allSettled(emails.map(e => fetch('https://api.resend.com/emails', { method:'POST', headers:{ Authorization:`Bearer ${key}`, 'Content-Type':'application/json' }, body:JSON.stringify(e) })))
 }
 
+const BOOKING_TO_JOBS_SLUG: Record<string,string> = {
+  geneva: 'geneva', zurich: 'zurich', dubai: 'dubai', singapore: 'singapore',
+  hong_kong: 'hong-kong', london: 'london', miami: 'miami', new_york: 'new-york',
+  tel_aviv: 'tel-aviv', monaco: 'geneva', luxembourg: 'london', liechtenstein: 'zurich',
+  abu_dhabi: 'dubai', multiple: 'geneva',
+}
+
 export async function POST(req: NextRequest) {
   try {
     const form: FormData = await req.json()
@@ -157,6 +164,10 @@ export async function POST(req: NextRequest) {
     let result: Record<string, unknown>
     try { result = JSON.parse(cleaned) }
     catch { console.error('JSON parse failed:', cleaned); return NextResponse.json({ error:'Assessment parsing failed' }, { status:500 }) }
+
+    const jobsSlug = BOOKING_TO_JOBS_SLUG[form.targetBookingCentre] || 'geneva'
+    result.jobsUrl = `https://www.execpartners.ch/en/private-banker-jobs-${jobsSlug}`
+    result.jobsMarketLabel = BOOK[form.targetBookingCentre] || 'your target market'
 
     const fitLevel = (result.overallFit as string) || 'Good'
     const headline = (result.headline as string) || 'Assessment complete'

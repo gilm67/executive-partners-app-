@@ -24,6 +24,7 @@ interface AssessmentResult {
   strengths: string[]; gaps: string[]
   legalNote?: string; timingNote?: string
   epAssessment: string; urgency: string
+  jobsUrl?: string; jobsMarketLabel?: string
 }
 
 const INIT: FormData = {
@@ -575,6 +576,21 @@ function Results({ result, name }: { result: AssessmentResult; name: string }) {
           {sLabel('Considerations', '#f59e0b')}
           {result.legalNote && <p style={{ color: '#6e8099', fontSize: 12.5, lineHeight: 1.65, margin: result.timingNote ? '0 0 8px' : 0 }}>{result.legalNote}</p>}
           {result.timingNote && <p style={{ color: '#6e8099', fontSize: 12.5, lineHeight: 1.65, margin: 0 }}>{result.timingNote}</p>}
+        </div>
+      )}
+
+      {/* Open mandates link */}
+      {result.jobsUrl && (
+        <div style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '18px 22px', marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ color: '#C9A96E', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>Live mandates</div>
+            <p style={{ color: '#7a8fa6', fontSize: 12.5, margin: 0 }}>Current open roles in {result.jobsMarketLabel}</p>
+          </div>
+          <a href={result.jobsUrl} target="_blank" rel="noopener noreferrer"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color: '#C9A96E', textDecoration: 'none', fontSize: 12.5, fontWeight: 600, border: '1px solid rgba(201,169,110,0.3)', borderRadius: 8, padding: '9px 16px', whiteSpace: 'nowrap' }}>
+            View open mandates
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2L8.5 6L4 10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </a>
         </div>
       )}
 
