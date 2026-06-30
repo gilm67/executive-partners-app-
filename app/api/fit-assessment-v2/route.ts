@@ -46,10 +46,13 @@ function findMatchingMandates(form: FormData): Mandate[] {
 
   const scored = (MANDATES as Mandate[]).map(m => {
     const text = haystack(m)
+    const geoMatch = geoTerms.length > 0 && geoTerms.some(t => text.includes(t))
+    const bookMatch = bookTerms.length > 0 && bookTerms.some(t => text.includes(t))
     let score = 0
-    if (geoTerms.some(t => text.includes(t))) score += 2
-    if (bookTerms.some(t => text.includes(t))) score += 1
-    return { m, score }
+    if (geoMatch) score += 2
+    if (bookMatch) score += 1
+    // Booking-centre overlap alone is not a real match — geography must match
+    return { m, score: geoMatch ? score : 0 }
   })
 
   return scored.filter(s => s.score > 0).sort((a,b) => b.score - a.score).slice(0,3).map(s => s.m)
