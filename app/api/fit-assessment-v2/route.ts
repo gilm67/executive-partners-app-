@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { MANDATES } from '@/app/en/jobs/mandates-data'
+import { jobsList } from '@/data/jobs'
 
 const RESEND_FROM = (
   process.env.RESEND_FROM ||
@@ -67,6 +68,38 @@ const BOOK_KEYWORDS: Record<string,string[]> = {
   tel_aviv: ['tel aviv'], miami: ['miami'], new_york: ['new york'], multiple: [],
 }
 
+const MARKET_FLAGS: Record<string, string> = {
+  spain: '🇪🇸', spanish: '🇪🇸', iberia: '🇪🇸', madrid: '🇪🇸',
+  portugal: '🇵🇹', portuguese: '🇵🇹', lisbon: '🇵🇹',
+  italy: '🇮🇹', italian: '🇮🇹', milan: '🇮🇹',
+  france: '🇫🇷', french: '🇫🇷', paris: '🇫🇷',
+  germany: '🇩🇪', german: '🇩🇪', dach: '🇩🇪',
+  switzerland: '🇨🇭', swiss: '🇨🇭', geneva: '🇨🇭', zurich: '🇨🇭',
+  'united kingdom': '🇬🇧', uk: '🇬🇧', london: '🇬🇧',
+  'united arab emirates': '🇦🇪', uae: '🇦🇪', dubai: '🇦🇪', 'abu dhabi': '🇦🇪',
+  'saudi arabia': '🇸🇦', saudi: '🇸🇦', riyadh: '🇸🇦', gcc: '🇸🇦',
+  israel: '🇮🇱', 'tel aviv': '🇮🇱',
+  singapore: '🇸🇬',
+  'hong kong': '🇭🇰',
+  'united states': '🇺🇸', usa: '🇺🇸', 'new york': '🇺🇸', miami: '🇺🇸',
+  brazil: '🇧🇷', brazilian: '🇧🇷',
+  argentina: '🇦🇷', argentine: '🇦🇷',
+  mexico: '🇲🇽',
+  russia: '🇷🇺', cis: '🇷🇺',
+  greece: '🇬🇷', cyprus: '🇨🇾',
+  'south africa': '🇿🇦',
+  india: '🇮🇳', nri: '🇮🇳',
+  turkey: '🇹🇷',
+}
+
+function flagForJob(market: string, location: string): string {
+  const text = `${market} ${location}`.toLowerCase()
+  for (const key of Object.keys(MARKET_FLAGS)) {
+    if (text.includes(key)) return MARKET_FLAGS[key]
+  }
+  return ''
+}
+
 function findMatchingMandates(form: FormData): Mandate[] {
   const geoTerms = GEO_KEYWORDS[form.primaryGeography] || []
   const bookTerms = BOOK_KEYWORDS[form.targetBookingCentre] || []
@@ -83,7 +116,46 @@ function findMatchingMandates(form: FormData): Mandate[] {
     return { m, score: geoMatch ? score : 0 }
   })
 
-  return scored.filter(s => s.score > 0).sort((a,b) => b.score - a.score).slice(0,3).map(s => s.m)
+  const curatedMatches = scored.filter(s => s.score > 0).sort((a,b) => b.score - a.score).map(s => s.m)
+
+  // Also search the full live jobs list (data/jobs.ts) — mandates-data.ts
+  // is a small curated subset and frequently misses real live mandates
+  const jobHaystack = (j: typeof jobsList[number]) =>
+    `${j.market || ''} ${j.title || ''} ${j.location || ''} ${j.summary || ''}`.toLowerCase()
+
+  const jobScored = jobsList
+    .filter(j => j.active !== false)
+    .map(j => {
+      const text = jobHaystack(j)
+      const geoMatch = geoTerms.length > 0 && geoTerms.some(t => text.includes(t))
+      const bookMatch = bookTerms.length > 0 && bookTerms.some(t => text.includes(t))
+      let score = 0
+      if (geoMatch) score += 2
+      if (bookMatch) score += 1
+      return { j, score: geoMatch ? score : 0 }
+    })
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(s => ({
+      id: s.j.slug,
+      title: s.j.title,
+      subtitle: s.j.market,
+      location: s.j.location,
+      flag: flagForJob(s.j.market, s.j.location),
+      aum: '',
+    } as Mandate))
+
+  // Merge: curated mandates first (they're hand-vetted), then live jobs,
+  // dedupe by id, cap at 3 total
+  const seen = new Set<string>()
+  const merged: Mandate[] = []
+  for (const m of [...curatedMatches, ...jobScored]) {
+    if (seen.has(m.id)) continue
+    seen.add(m.id)
+    merged.push(m)
+    if (merged.length >= 3) break
+  }
+  return merged
 }
 
 interface FormData {
