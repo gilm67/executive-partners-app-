@@ -629,7 +629,7 @@ function Results({ result, name }: { result: AssessmentResult; name: string }) {
         <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11, marginTop: 14 }}>15 minutes · No obligation · Senior-level only</p>
       </div>
 
-      <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.15)', fontSize: 10.5, lineHeight: 1.7, marginTop: 40 }}>
+      <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.42)', fontSize: 11.5, lineHeight: 1.75, marginTop: 40 }}>
         Executive Partners · Geneva · execpartners.ch · recruiter@execpartners.ch<br />
         Assessment based on structural market dynamics only. All submissions treated with absolute discretion under Swiss data protection standards.
       </p>

@@ -252,7 +252,7 @@ export async function POST(req: NextRequest) {
       )
       pdfBase64 = pdfBuffer.toString('base64')
     } catch (pdfErr) {
-      console.error('PDF generation error:', pdfErr)
+      console.error('PDF generation error (candidate will not receive attachment):', pdfErr)
     }
 
     Promise.allSettled([logToSheets(form, fitLevel, headline), sendEmails(form, fitLevel, headline, pdfBase64)])

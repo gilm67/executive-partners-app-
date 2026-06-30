@@ -1,7 +1,12 @@
-// lib/pdf/fitAssessmentReport.ts
+// lib/reports/fitAssessmentReport.ts
 //
 // Generates an EP-branded PDF for FitAssessmentV2 results.
 // Matches the exact JSON shape returned by app/api/fit-assessment-v2/route.ts.
+//
+// IMPORTANT: pdf-lib's standard fonts (Helvetica) only support WinAnsi
+// encoding (roughly Latin-1). Emoji (flags, etc.) and other extended
+// Unicode characters will throw at draw time if not stripped first —
+// sanitizeText() below handles this for every piece of dynamic text.
 //
 // Install once: npm install pdf-lib
 
@@ -17,6 +22,18 @@ const MARGIN = 50;
 const PAGE_W = PageSizes.A4[0];
 const PAGE_H = PageSizes.A4[1];
 const CONTENT_W = PAGE_W - MARGIN * 2;
+
+function sanitizeText(text: string | undefined | null): string {
+  if (!text) return "";
+  return text
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2013\u2014]/g, "-")
+    .replace(/\u2026/g, "...")
+    .replace(/[^\x00-\xFF]/g, "") // strips emoji flags + any other non-Latin1 char
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 export interface FitFormData {
   name?: string;
@@ -66,7 +83,7 @@ export async function generateFitAssessmentPdf(
   result: FitResult
 ): Promise<Buffer> {
   const pdfDoc = await PDFDocument.create();
-  pdfDoc.setTitle(`Fit Assessment Report - ${form.name || form.email}`);
+  pdfDoc.setTitle(`Fit Assessment Report - ${sanitizeText(form.name) || form.email}`);
   pdfDoc.setAuthor("Executive Partners");
 
   const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
@@ -185,7 +202,7 @@ function ensureSpace(
 
 function runningHeader(c: Cursor, bold: PDFFont, form: FitFormData) {
   c.page.drawText("EXECUTIVE PARTNERS", { x: MARGIN, y: c.y, size: 9, font: bold, color: NAVY });
-  const label = form.name || form.email;
+  const label = sanitizeText(form.name) || form.email;
   c.page.drawText(label, {
     x: PAGE_W - MARGIN - bold.widthOfTextAtSize(label, 9),
     y: c.y, size: 9, font: bold, color: GREY_TEXT,
@@ -205,9 +222,9 @@ function drawHeader(c: Cursor, bold: PDFFont, regular: PDFFont, form: FitFormDat
   c.y -= 22;
 
   const meta = [
-    `Candidate: ${form.name || form.email}`,
+    `Candidate: ${sanitizeText(form.name) || form.email}`,
     `Date: ${new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}`,
-    `Overall fit: ${result.overallFit}`,
+    `Overall fit: ${sanitizeText(result.overallFit)}`,
   ];
   for (const line of meta) {
     c.page.drawText(line, { x: MARGIN, y: c.y, size: 10, font: regular, color: DARK_TEXT });
@@ -216,7 +233,7 @@ function drawHeader(c: Cursor, bold: PDFFont, regular: PDFFont, form: FitFormDat
 
   c.y -= 6;
   c.page.drawRectangle({ x: MARGIN, y: c.y - 4, width: 4, height: 14, color: GOLD });
-  c.page.drawText(result.headline, { x: MARGIN + 10, y: c.y, size: 12.5, font: bold, color: NAVY });
+  c.page.drawText(sanitizeText(result.headline), { x: MARGIN + 10, y: c.y, size: 12.5, font: bold, color: NAVY });
   c.y -= 24;
   drawDivider(c);
 }
@@ -231,9 +248,12 @@ function drawSectionTitle(c: Cursor, bold: PDFFont, title: string) {
 }
 
 function drawMandate(c: Cursor, bold: PDFFont, regular: PDFFont, m: MatchedMandate): Cursor {
-  const title = `${m.flag ? m.flag + " " : ""}${m.title}`;
-  const marketLine = m.subtitle ? `${m.subtitle}  -  booked in ${m.location}` : m.location;
-  const meta = [marketLine, m.aum].filter(Boolean).join("  -  ");
+  const title = sanitizeText(m.title);
+  const subtitle = sanitizeText(m.subtitle);
+  const location = sanitizeText(m.location);
+  const aum = sanitizeText(m.aum);
+  const marketLine = subtitle ? `${subtitle}  -  booked in ${location}` : location;
+  const meta = [marketLine, aum].filter(Boolean).join("  -  ");
   c.page.drawText(title, { x: MARGIN, y: c.y, size: 10, font: bold, color: NAVY });
   c.y -= 13;
   if (meta) {
@@ -245,7 +265,7 @@ function drawMandate(c: Cursor, bold: PDFFont, regular: PDFFont, m: MatchedManda
 }
 
 function drawMarket(c: Cursor, bold: PDFFont, regular: PDFFont, m: TopMarket): Cursor {
-  const title = `${m.flag ? m.flag + " " : ""}${m.city}  -  ${m.fitLevel} fit`;
+  const title = sanitizeText(`${m.city}  -  ${m.fitLevel} fit`);
   c.page.drawText(title, { x: MARGIN, y: c.y, size: 10.5, font: bold, color: NAVY });
   c.y -= 14;
   let cur = drawParagraph(c, regular, m.rationale, 9.5, DARK_TEXT, 13);
@@ -262,7 +282,8 @@ function drawMarket(c: Cursor, bold: PDFFont, regular: PDFFont, m: TopMarket): C
 
 function drawBullet(c: Cursor, regular: PDFFont, text: string, dotColor: ReturnType<typeof rgb>): Cursor {
   c.page.drawCircle({ x: MARGIN + 3, y: c.y + 3, size: 2, color: dotColor });
-  const words = text.split(/\s+/);
+  const clean = sanitizeText(text);
+  const words = clean.split(/\s+/);
   let line = "";
   let y = c.y;
   const x0 = MARGIN + 12;
@@ -283,7 +304,8 @@ function drawBullet(c: Cursor, regular: PDFFont, text: string, dotColor: ReturnT
 function drawParagraph(
   c: Cursor, font: PDFFont, text: string, size: number, color: ReturnType<typeof rgb>, lineHeight: number
 ): Cursor {
-  const words = (text || "").split(/\s+/);
+  const clean = sanitizeText(text);
+  const words = clean.split(/\s+/);
   let line = "";
   let y = c.y;
   const flush = () => {
