@@ -76,7 +76,7 @@ function Select({ value, onChange, options, placeholder = 'Select an option' }: 
           background: open ? 'rgba(201,169,110,0.07)' : value ? 'rgba(201,169,110,0.04)' : 'rgba(255,255,255,0.03)',
           border: `1px solid ${open ? 'rgba(201,169,110,0.5)' : value ? 'rgba(201,169,110,0.28)' : 'rgba(255,255,255,0.09)'}`,
           borderRadius: 10, padding: '14px 18px', cursor: 'pointer',
-          transition: 'all 0.18s', textAlign: 'left',
+          transition: 'all 0.18s', textAlign: 'left', outline: 'none', WebkitTapHighlightColor: 'transparent',
         }}
       >
         <span style={{ fontSize: 13.5, color: sel ? '#e8d5c4' : 'rgba(255,255,255,0.28)', fontWeight: 400, flex: 1 }}>
@@ -283,9 +283,9 @@ function Step1({ f, set, onNext }: { f: FormData; set: (k: keyof FormData, v: st
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
           <Field label="Current institution type">
             <Select value={f.institutionType} onChange={v => set('institutionType', v)} options={[
-              { value: 'big4_swiss', label: 'Big 4 Swiss bank', sub: 'UBS, PostFinance, Raiffeisen, ZKB' },
-              { value: 'swiss_private_boutique', label: 'Swiss private bank boutique', sub: 'Pictet, Lombard Odier, Mirabaud' },
-              { value: 'intl_private_bank', label: 'International private bank', sub: 'Julius Baer, EFG, UBP, BNP PB' },
+              { value: 'universal_bank', label: 'Universal bank private banking arm', sub: 'UBS, PostFinance, Raiffeisen, ZKB' },
+              { value: 'swiss_pure_play', label: 'Swiss pure-play private bank', sub: 'Pictet, Lombard Odier, Mirabaud, Julius Baer' },
+              { value: 'intl_private_bank', label: 'International private bank', sub: 'EFG, UBP, BNP Paribas WM, HSBC PB' },
               { value: 'eam', label: 'External Asset Manager (EAM)' },
               { value: 'family_office', label: 'Family Office / MFO' },
               { value: 'other', label: 'Other / prefer not to say' },
